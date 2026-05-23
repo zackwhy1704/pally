@@ -1,0 +1,487 @@
+// coverage:ignore-file
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of 'upload_result.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+
+UploadResult _$UploadResultFromJson(Map<String, dynamic> json) {
+  return _UploadResult.fromJson(json);
+}
+
+/// @nodoc
+mixin _$UploadResult {
+  String get id => throw _privateConstructorUsedError;
+  String get avatarId => throw _privateConstructorUsedError;
+  String get fileName => throw _privateConstructorUsedError;
+  UploadStatus get status => throw _privateConstructorUsedError;
+  int get pageCount => throw _privateConstructorUsedError;
+  String? get errorMessage => throw _privateConstructorUsedError;
+  DateTime? get uploadedAt => throw _privateConstructorUsedError;
+
+  /// Serializes this UploadResult to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of UploadResult
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $UploadResultCopyWith<UploadResult> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $UploadResultCopyWith<$Res> {
+  factory $UploadResultCopyWith(
+          UploadResult value, $Res Function(UploadResult) then) =
+      _$UploadResultCopyWithImpl<$Res, UploadResult>;
+  @useResult
+  $Res call(
+      {String id,
+      String avatarId,
+      String fileName,
+      UploadStatus status,
+      int pageCount,
+      String? errorMessage,
+      DateTime? uploadedAt});
+}
+
+/// @nodoc
+class _$UploadResultCopyWithImpl<$Res, $Val extends UploadResult>
+    implements $UploadResultCopyWith<$Res> {
+  _$UploadResultCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of UploadResult
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? avatarId = null,
+    Object? fileName = null,
+    Object? status = null,
+    Object? pageCount = null,
+    Object? errorMessage = freezed,
+    Object? uploadedAt = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      avatarId: null == avatarId
+          ? _value.avatarId
+          : avatarId // ignore: cast_nullable_to_non_nullable
+              as String,
+      fileName: null == fileName
+          ? _value.fileName
+          : fileName // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as UploadStatus,
+      pageCount: null == pageCount
+          ? _value.pageCount
+          : pageCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      errorMessage: freezed == errorMessage
+          ? _value.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      uploadedAt: freezed == uploadedAt
+          ? _value.uploadedAt
+          : uploadedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$UploadResultImplCopyWith<$Res>
+    implements $UploadResultCopyWith<$Res> {
+  factory _$$UploadResultImplCopyWith(
+          _$UploadResultImpl value, $Res Function(_$UploadResultImpl) then) =
+      __$$UploadResultImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String avatarId,
+      String fileName,
+      UploadStatus status,
+      int pageCount,
+      String? errorMessage,
+      DateTime? uploadedAt});
+}
+
+/// @nodoc
+class __$$UploadResultImplCopyWithImpl<$Res>
+    extends _$UploadResultCopyWithImpl<$Res, _$UploadResultImpl>
+    implements _$$UploadResultImplCopyWith<$Res> {
+  __$$UploadResultImplCopyWithImpl(
+      _$UploadResultImpl _value, $Res Function(_$UploadResultImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of UploadResult
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? avatarId = null,
+    Object? fileName = null,
+    Object? status = null,
+    Object? pageCount = null,
+    Object? errorMessage = freezed,
+    Object? uploadedAt = freezed,
+  }) {
+    return _then(_$UploadResultImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      avatarId: null == avatarId
+          ? _value.avatarId
+          : avatarId // ignore: cast_nullable_to_non_nullable
+              as String,
+      fileName: null == fileName
+          ? _value.fileName
+          : fileName // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as UploadStatus,
+      pageCount: null == pageCount
+          ? _value.pageCount
+          : pageCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      errorMessage: freezed == errorMessage
+          ? _value.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      uploadedAt: freezed == uploadedAt
+          ? _value.uploadedAt
+          : uploadedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$UploadResultImpl implements _UploadResult {
+  const _$UploadResultImpl(
+      {required this.id,
+      required this.avatarId,
+      required this.fileName,
+      required this.status,
+      this.pageCount = 0,
+      this.errorMessage,
+      this.uploadedAt});
+
+  factory _$UploadResultImpl.fromJson(Map<String, dynamic> json) =>
+      _$$UploadResultImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String avatarId;
+  @override
+  final String fileName;
+  @override
+  final UploadStatus status;
+  @override
+  @JsonKey()
+  final int pageCount;
+  @override
+  final String? errorMessage;
+  @override
+  final DateTime? uploadedAt;
+
+  @override
+  String toString() {
+    return 'UploadResult(id: $id, avatarId: $avatarId, fileName: $fileName, status: $status, pageCount: $pageCount, errorMessage: $errorMessage, uploadedAt: $uploadedAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UploadResultImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.avatarId, avatarId) ||
+                other.avatarId == avatarId) &&
+            (identical(other.fileName, fileName) ||
+                other.fileName == fileName) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.pageCount, pageCount) ||
+                other.pageCount == pageCount) &&
+            (identical(other.errorMessage, errorMessage) ||
+                other.errorMessage == errorMessage) &&
+            (identical(other.uploadedAt, uploadedAt) ||
+                other.uploadedAt == uploadedAt));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, avatarId, fileName, status,
+      pageCount, errorMessage, uploadedAt);
+
+  /// Create a copy of UploadResult
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UploadResultImplCopyWith<_$UploadResultImpl> get copyWith =>
+      __$$UploadResultImplCopyWithImpl<_$UploadResultImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UploadResultImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _UploadResult implements UploadResult {
+  const factory _UploadResult(
+      {required final String id,
+      required final String avatarId,
+      required final String fileName,
+      required final UploadStatus status,
+      final int pageCount,
+      final String? errorMessage,
+      final DateTime? uploadedAt}) = _$UploadResultImpl;
+
+  factory _UploadResult.fromJson(Map<String, dynamic> json) =
+      _$UploadResultImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get avatarId;
+  @override
+  String get fileName;
+  @override
+  UploadStatus get status;
+  @override
+  int get pageCount;
+  @override
+  String? get errorMessage;
+  @override
+  DateTime? get uploadedAt;
+
+  /// Create a copy of UploadResult
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UploadResultImplCopyWith<_$UploadResultImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+RelevanceCheckResponse _$RelevanceCheckResponseFromJson(
+    Map<String, dynamic> json) {
+  return _RelevanceCheckResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RelevanceCheckResponse {
+  bool get isRelevant => throw _privateConstructorUsedError;
+  double get score => throw _privateConstructorUsedError;
+  String? get reason => throw _privateConstructorUsedError;
+
+  /// Serializes this RelevanceCheckResponse to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of RelevanceCheckResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $RelevanceCheckResponseCopyWith<RelevanceCheckResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RelevanceCheckResponseCopyWith<$Res> {
+  factory $RelevanceCheckResponseCopyWith(RelevanceCheckResponse value,
+          $Res Function(RelevanceCheckResponse) then) =
+      _$RelevanceCheckResponseCopyWithImpl<$Res, RelevanceCheckResponse>;
+  @useResult
+  $Res call({bool isRelevant, double score, String? reason});
+}
+
+/// @nodoc
+class _$RelevanceCheckResponseCopyWithImpl<$Res,
+        $Val extends RelevanceCheckResponse>
+    implements $RelevanceCheckResponseCopyWith<$Res> {
+  _$RelevanceCheckResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of RelevanceCheckResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? isRelevant = null,
+    Object? score = null,
+    Object? reason = freezed,
+  }) {
+    return _then(_value.copyWith(
+      isRelevant: null == isRelevant
+          ? _value.isRelevant
+          : isRelevant // ignore: cast_nullable_to_non_nullable
+              as bool,
+      score: null == score
+          ? _value.score
+          : score // ignore: cast_nullable_to_non_nullable
+              as double,
+      reason: freezed == reason
+          ? _value.reason
+          : reason // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RelevanceCheckResponseImplCopyWith<$Res>
+    implements $RelevanceCheckResponseCopyWith<$Res> {
+  factory _$$RelevanceCheckResponseImplCopyWith(
+          _$RelevanceCheckResponseImpl value,
+          $Res Function(_$RelevanceCheckResponseImpl) then) =
+      __$$RelevanceCheckResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool isRelevant, double score, String? reason});
+}
+
+/// @nodoc
+class __$$RelevanceCheckResponseImplCopyWithImpl<$Res>
+    extends _$RelevanceCheckResponseCopyWithImpl<$Res,
+        _$RelevanceCheckResponseImpl>
+    implements _$$RelevanceCheckResponseImplCopyWith<$Res> {
+  __$$RelevanceCheckResponseImplCopyWithImpl(
+      _$RelevanceCheckResponseImpl _value,
+      $Res Function(_$RelevanceCheckResponseImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of RelevanceCheckResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? isRelevant = null,
+    Object? score = null,
+    Object? reason = freezed,
+  }) {
+    return _then(_$RelevanceCheckResponseImpl(
+      isRelevant: null == isRelevant
+          ? _value.isRelevant
+          : isRelevant // ignore: cast_nullable_to_non_nullable
+              as bool,
+      score: null == score
+          ? _value.score
+          : score // ignore: cast_nullable_to_non_nullable
+              as double,
+      reason: freezed == reason
+          ? _value.reason
+          : reason // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RelevanceCheckResponseImpl implements _RelevanceCheckResponse {
+  const _$RelevanceCheckResponseImpl(
+      {required this.isRelevant, required this.score, this.reason});
+
+  factory _$RelevanceCheckResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RelevanceCheckResponseImplFromJson(json);
+
+  @override
+  final bool isRelevant;
+  @override
+  final double score;
+  @override
+  final String? reason;
+
+  @override
+  String toString() {
+    return 'RelevanceCheckResponse(isRelevant: $isRelevant, score: $score, reason: $reason)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RelevanceCheckResponseImpl &&
+            (identical(other.isRelevant, isRelevant) ||
+                other.isRelevant == isRelevant) &&
+            (identical(other.score, score) || other.score == score) &&
+            (identical(other.reason, reason) || other.reason == reason));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, isRelevant, score, reason);
+
+  /// Create a copy of RelevanceCheckResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RelevanceCheckResponseImplCopyWith<_$RelevanceCheckResponseImpl>
+      get copyWith => __$$RelevanceCheckResponseImplCopyWithImpl<
+          _$RelevanceCheckResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RelevanceCheckResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RelevanceCheckResponse implements RelevanceCheckResponse {
+  const factory _RelevanceCheckResponse(
+      {required final bool isRelevant,
+      required final double score,
+      final String? reason}) = _$RelevanceCheckResponseImpl;
+
+  factory _RelevanceCheckResponse.fromJson(Map<String, dynamic> json) =
+      _$RelevanceCheckResponseImpl.fromJson;
+
+  @override
+  bool get isRelevant;
+  @override
+  double get score;
+  @override
+  String? get reason;
+
+  /// Create a copy of RelevanceCheckResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$RelevanceCheckResponseImplCopyWith<_$RelevanceCheckResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}

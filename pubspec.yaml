@@ -1,0 +1,66 @@
+name: pally
+description: Pally (小伴) — Kids AI Tutor App
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+  hooks_riverpod: ^2.6.1
+
+  # Navigation
+  go_router: ^15.1.0
+
+  # Data / serialisation
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+
+  # Fonts
+  google_fonts: ^6.2.1
+
+  # Networking
+  dio: ^5.7.0
+
+  # File picking / camera
+  file_picker: ^8.1.2
+  image_picker: ^1.1.2
+  camera: ^0.10.5+9
+  permission_handler: ^11.3.1
+  google_mlkit_text_recognition: ^0.13.0
+
+  # Utilities
+  uuid: ^4.4.0
+  intl: ^0.19.0
+  logger: ^2.4.0
+  shared_preferences: ^2.3.2
+  path_provider: ^2.1.4
+  flutter_secure_storage: ^9.2.2
+  speech_to_text: ^7.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  mocktail: ^1.0.4
+
+  # Code generation
+  build_runner: ^2.4.13
+  riverpod_generator: ^2.6.1
+  freezed: ^2.5.7
+  json_serializable: ^6.8.0
+  go_router_builder: ^2.7.1
+
+flutter:
+  uses-material-design: true
+
+  fonts:
+    - family: Nunito
+      fonts:
+        - asset: test/fonts/Nunito-Regular.ttf

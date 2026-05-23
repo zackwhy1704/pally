@@ -21,6 +21,8 @@ class UploadState {
     this.error,
     this.pendingFile,
     this.pendingRelevance,
+    this.topicTag,
+    this.sourceType,
   });
 
   final Avatar? avatar;
@@ -28,12 +30,10 @@ class UploadState {
   final bool isUploading;
   final bool isCheckingRelevance;
   final String? error;
-
-  /// File currently undergoing relevance check
   final PlatformFile? pendingFile;
-
-  /// Relevance check result for pending file
   final RelevanceCheckResponse? pendingRelevance;
+  final String? topicTag;
+  final String? sourceType;
 
   int get totalFiles => files.length;
   bool get hasFiles => files.isNotEmpty;
@@ -46,6 +46,8 @@ class UploadState {
     Object? error = _sentinel,
     Object? pendingFile = _sentinel,
     Object? pendingRelevance = _sentinel,
+    Object? topicTag = _sentinel,
+    Object? sourceType = _sentinel,
   }) {
     return UploadState(
       avatar: avatar ?? this.avatar,
@@ -59,6 +61,8 @@ class UploadState {
       pendingRelevance: pendingRelevance == _sentinel
           ? this.pendingRelevance
           : pendingRelevance as RelevanceCheckResponse?,
+      topicTag: topicTag == _sentinel ? this.topicTag : topicTag as String?,
+      sourceType: sourceType == _sentinel ? this.sourceType : sourceType as String?,
     );
   }
 }
@@ -76,6 +80,9 @@ class UploadViewModel extends _$UploadViewModel {
     _loadFiles();
     return const UploadState();
   }
+
+  void setTopicTag(String? tag) => state = state.copyWith(topicTag: tag);
+  void setSourceType(String? type) => state = state.copyWith(sourceType: type);
 
   Future<void> _loadAvatar() async {
     try {
@@ -189,6 +196,8 @@ class UploadViewModel extends _$UploadViewModel {
       final dio = ref.read(dioProvider);
       final formData = FormData.fromMap({
         'file': await MultipartFile.fromFile(file.path!, filename: file.name),
+        if (state.topicTag != null) 'topicTag': state.topicTag,
+        if (state.sourceType != null) 'sourceType': state.sourceType,
       });
       final response = await dio.post<Map<String, dynamic>>(
         '/api/v1/avatars/$_avatarId/files',

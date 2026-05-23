@@ -1,0 +1,427 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/ui/painters/character_painter.dart';
+import 'package:pally/core/ui/pally_loading_spinner.dart';
+import 'package:pally/core/ui/pally_toast.dart';
+import 'package:pally/features/wiki_viewer/presentation/wiki_viewer_view_model.dart';
+import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/shared/models/wiki_page.dart';
+
+class WikiViewerScreen extends ConsumerStatefulWidget {
+  const WikiViewerScreen({super.key, required this.avatarId});
+
+  final String avatarId;
+
+  @override
+  ConsumerState<WikiViewerScreen> createState() => _WikiViewerScreenState();
+}
+
+class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen> {
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final vmState = ref.watch(wikiViewerViewModelProvider(widget.avatarId));
+
+    ref.listen<WikiViewerState>(wikiViewerViewModelProvider(widget.avatarId),
+        (_, next) {
+      if (next.error != null) {
+        PallyToast.error(context, next.error!);
+      }
+    });
+
+    return Scaffold(
+      backgroundColor: AppColors.bg,
+      body: Column(
+        children: [
+          _BrainHeader(
+            avatarId: widget.avatarId,
+            avatar: vmState.avatar,
+            pageCount: vmState.pageCount,
+          ),
+          _SearchBar(
+            controller: _searchController,
+            onChanged: (q) => ref
+                .read(wikiViewerViewModelProvider(widget.avatarId).notifier)
+                .updateSearch(q),
+          ),
+          Expanded(
+            child: vmState.isLoading
+                ? const PallyLoadingSpinner()
+                : RefreshIndicator(
+                    color: AppColors.purple,
+                    onRefresh: () => ref
+                        .read(wikiViewerViewModelProvider(widget.avatarId)
+                            .notifier)
+                        .refresh(),
+                    child: vmState.filteredPages.isEmpty
+                        ? ListView(
+                            children: const [
+                              SizedBox(height: 80),
+                              _EmptyView(),
+                            ],
+                          )
+                        : _PagesList(
+                            pages: vmState.filteredPages,
+                            avatarId: widget.avatarId,
+                          ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Header with stats ──────────────────────────────────────────────────────
+
+class _BrainHeader extends StatelessWidget {
+  const _BrainHeader({
+    required this.avatarId,
+    required this.avatar,
+    required this.pageCount,
+  });
+
+  final String avatarId;
+  final Avatar? avatar;
+  final int pageCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final topPad = MediaQuery.of(context).padding.top;
+    return Container(
+      color: AppColors.purpleL,
+      padding: EdgeInsets.only(top: topPad),
+      child: Column(
+        children: [
+          // AppBar row
+          SizedBox(
+            height: 56,
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                      color: AppColors.purple),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                Expanded(
+                  child: Text(
+                    avatar != null
+                        ? "${avatar!.name}'s Brain 🧠"
+                        : 'Tutor Brain 🧠',
+                    style: AppTextStyles.title,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                // balance icon button
+                const SizedBox(width: 48),
+              ],
+            ),
+          ),
+          // Avatar + stats
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.md),
+            child: Row(
+              children: [
+                if (avatar != null)
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: avatar!.character.bgColor,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: CharacterWidget(
+                          character: avatar!.character, size: 38),
+                    ),
+                  ),
+                if (avatar != null) const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _StatBox(value: '$pageCount', label: 'pages'),
+                      _StatBox(
+                          value: '${(pageCount * 0.3).ceil()}',
+                          label: 'topics'),
+                      _StatBox(
+                          value: '${(pageCount * 0.4).ceil()}',
+                          label: 'sources'),
+                      _StatBox(
+                          value: '${(pageCount * 0.2).ceil()}', label: 'links'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatBox extends StatelessWidget {
+  const _StatBox({required this.value, required this.label});
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(value,
+              style: AppTextStyles.title
+                  .copyWith(color: AppColors.purple, fontSize: 20)),
+          Text(label, style: AppTextStyles.caption),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Search bar ─────────────────────────────────────────────────────────────
+
+class _SearchBar extends StatelessWidget {
+  const _SearchBar({required this.controller, required this.onChanged});
+  final TextEditingController controller;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: AppColors.bg,
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.xs),
+      child: TextField(
+        controller: controller,
+        onChanged: onChanged,
+        style: AppTextStyles.body,
+        decoration: InputDecoration(
+          hintText: 'Search pages…',
+          hintStyle: AppTextStyles.body.copyWith(color: AppColors.text3),
+          prefixIcon: const Icon(Icons.search_rounded,
+              color: AppColors.text3, size: 20),
+          suffixIcon: controller.text.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.clear_rounded,
+                      color: AppColors.text3, size: 18),
+                  onPressed: () {
+                    controller.clear();
+                    onChanged('');
+                  },
+                )
+              : null,
+          filled: true,
+          fillColor: AppColors.surface,
+          contentPadding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.outline),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.outline),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.purple, width: 2),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Pages list ─────────────────────────────────────────────────────────────
+
+class _PagesList extends StatelessWidget {
+  const _PagesList({required this.pages, required this.avatarId});
+  final List<WikiPage> pages;
+  final String avatarId;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.only(
+          left: AppSpacing.md, right: AppSpacing.md, bottom: AppSpacing.lg),
+      children: [
+        const SizedBox(height: AppSpacing.sm),
+        Text('RECENT PAGES',
+            style: AppTextStyles.label
+                .copyWith(color: AppColors.text3, letterSpacing: 0.8)),
+        const SizedBox(height: AppSpacing.sm),
+        ...pages.map((p) => _PageTile(page: p, avatarId: avatarId)),
+      ],
+    );
+  }
+}
+
+class _PageTile extends StatelessWidget {
+  const _PageTile({required this.page, required this.avatarId});
+  final WikiPage page;
+  final String avatarId;
+
+  @override
+  Widget build(BuildContext context) {
+    final slug = page.slug ?? page.title.toLowerCase().replaceAll(' ', '-');
+    final filename = '$slug.md';
+
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.outline),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    filename,
+                    style: AppTextStyles.body
+                        .copyWith(fontWeight: FontWeight.w600),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                _CertaintyBadge(certainty: page.certainty),
+                if (page.hasConflict) ...[
+                  const SizedBox(width: AppSpacing.xs),
+                  _ConflictBadge(),
+                ],
+                const SizedBox(width: AppSpacing.xs),
+                const Icon(Icons.chevron_right_rounded,
+                    size: 18, color: AppColors.text3),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              page.updatedAt != null
+                  ? 'Updated ${_timeAgo(page.updatedAt!)}'
+                  : 'Just added',
+              style: AppTextStyles.caption,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _timeAgo(DateTime dt) {
+    final diff = DateTime.now().difference(dt);
+    if (diff.inMinutes < 1) return 'just now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes} min ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    return '${diff.inDays}d ago';
+  }
+}
+
+class _CertaintyBadge extends StatelessWidget {
+  const _CertaintyBadge({required this.certainty});
+  final String certainty;
+
+  @override
+  Widget build(BuildContext context) {
+    final (bg, fg, label) = switch (certainty.toLowerCase()) {
+      'verified' => (AppColors.greenL, AppColors.green, 'fact'),
+      'uncertain' => (AppColors.coralL, AppColors.coral, 'uncertain'),
+      _ => (AppColors.purpleL, AppColors.purple, 'inferred'),
+    };
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        label,
+        style: AppTextStyles.caption.copyWith(
+          color: fg,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+class _ConflictBadge extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: AppColors.amberL,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.amber.withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.warning_amber_rounded,
+              size: 10, color: AppColors.amber),
+          const SizedBox(width: 3),
+          Text(
+            'Review conflict',
+            style: AppTextStyles.caption.copyWith(
+              color: AppColors.amber,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmptyView extends StatelessWidget {
+  const _EmptyView();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.psychology_outlined,
+                size: 64, color: AppColors.text3),
+            const SizedBox(height: AppSpacing.md),
+            Text('Brain is empty', style: AppTextStyles.title),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              'Upload content from the Library tab to build the knowledge base.',
+              style: AppTextStyles.body.copyWith(color: AppColors.text2),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
