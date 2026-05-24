@@ -28,7 +28,7 @@ if $USE_PROD; then
   echo "Mode: PRODUCTION (Railway)"
   # No local health check needed for prod
 else
-  API_URL="http://10.0.2.2:8080"
+  API_URL="${LOCAL_URL:-http://10.0.2.2:8080}"
   echo "Mode: LOCAL"
   if ! curl -sf http://localhost:8080/actuator/health 2>/dev/null | grep -q '"status":"UP"'; then
     echo "ERROR: Backend is not running on port 8080."

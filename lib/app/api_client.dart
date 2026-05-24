@@ -5,11 +5,11 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'api_client.g.dart';
 
-// Android emulator routes 10.0.2.2 → host machine localhost.
-// Pass --dart-define=API_BASE_URL=http://10.0.2.2:8080 or override at build time.
+// Default points to the Railway production backend.
+// Override for local dev: --dart-define=API_BASE_URL=http://10.0.2.2:8080
 const _baseUrl = String.fromEnvironment(
   'API_BASE_URL',
-  defaultValue: 'http://10.0.2.2:8080',
+  defaultValue: 'https://pallybackend-production.up.railway.app',
 );
 
 @riverpod
