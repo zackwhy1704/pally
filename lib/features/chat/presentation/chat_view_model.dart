@@ -15,6 +15,7 @@ import 'package:pally/core/utils/logger.dart';
 import 'package:pally/core/local_db/pally_database.dart';
 import 'package:pally/features/chat/data/local/chat_local_data_source.dart';
 import 'package:pally/features/chat/data/local/chat_message_mapper.dart';
+import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
 
 part 'chat_view_model.g.dart';
 
@@ -29,6 +30,9 @@ class ChatState {
     this.isSending = false,
     this.isProcessingPhoto = false,
     this.processingPhotoQuestions = const [],
+    this.teachingMode = TeachingMode.teaching,
+    this.socraticAttempts = 0,
+    this.showEscapeHatch = false,
     this.error,
   });
 
@@ -40,6 +44,9 @@ class ChatState {
   final bool isSending;
   final bool isProcessingPhoto;
   final List<PhotoQuestion> processingPhotoQuestions;
+  final TeachingMode teachingMode;
+  final int socraticAttempts;
+  final bool showEscapeHatch;
   final String? error;
 
   bool get canSend => !isSending && !isTyping && !isProcessingPhoto;
@@ -55,6 +62,9 @@ class ChatState {
     bool? isSending,
     bool? isProcessingPhoto,
     List<PhotoQuestion>? processingPhotoQuestions,
+    TeachingMode? teachingMode,
+    int? socraticAttempts,
+    bool? showEscapeHatch,
     Object? error = _sentinel,
   }) {
     return ChatState(
@@ -67,6 +77,9 @@ class ChatState {
       isProcessingPhoto: isProcessingPhoto ?? this.isProcessingPhoto,
       processingPhotoQuestions:
           processingPhotoQuestions ?? this.processingPhotoQuestions,
+      teachingMode: teachingMode ?? this.teachingMode,
+      socraticAttempts: socraticAttempts ?? this.socraticAttempts,
+      showEscapeHatch: showEscapeHatch ?? this.showEscapeHatch,
       error: error == _sentinel ? this.error : error as String?,
     );
   }
@@ -230,6 +243,11 @@ class ChatViewModel extends _$ChatViewModel {
       );
       await _localDb.saveMessage(finalMsg.toRecord());
 
+      // Track socratic attempts (count how many turns user has tried)
+      if (state.teachingMode == TeachingMode.teaching) {
+        _trackSocraticAttempt();
+      }
+
       // Update session state
       final updatedSession =
           _buildUpdatedSessionState(state.sessionState, userMessage.content);
@@ -384,6 +402,44 @@ class ChatViewModel extends _$ChatViewModel {
 
   Future<void> saveScrollOffset(double offset) async {
     await _localDb.saveScrollOffset(_avatarId, offset);
+  }
+
+  void toggleMode() {
+    final next = state.teachingMode == TeachingMode.teaching
+        ? TeachingMode.direct
+        : TeachingMode.teaching;
+    state = state.copyWith(
+      teachingMode: next,
+      socraticAttempts: 0,
+      showEscapeHatch: false,
+    );
+    appLog.i('[Chat] Teaching mode toggled → ${next.name}');
+    unawaited(_syncTeachingMode(next));
+  }
+
+  void dismissEscapeHatch() {
+    state = state.copyWith(showEscapeHatch: false);
+  }
+
+  Future<void> _syncTeachingMode(TeachingMode mode) async {
+    try {
+      await ref.read(dioProvider).patch(
+        '/api/v1/avatars/$_avatarId/teaching-mode',
+        data: {'mode': mode.name.toUpperCase()},
+      );
+    } catch (e) {
+      appLog.w('[Chat] Teaching mode sync failed: $e');
+    }
+  }
+
+  // Updates socratic attempt counter and triggers escape hatch after 3 attempts
+  void _trackSocraticAttempt() {
+    final attempts = state.socraticAttempts + 1;
+    final showEscape = attempts >= 3 && state.teachingMode == TeachingMode.teaching;
+    state = state.copyWith(
+      socraticAttempts: attempts,
+      showEscapeHatch: showEscape,
+    );
   }
 
   Future<String> cacheImage(File file) async {

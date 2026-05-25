@@ -22,6 +22,7 @@ void main() async {
         pallyDatabaseProvider.overrideWithValue(db),
       ],
       child: PallyApp(router: router),
+
     ),
   );
 }
