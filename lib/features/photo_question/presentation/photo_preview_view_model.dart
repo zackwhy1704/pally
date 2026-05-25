@@ -65,29 +65,35 @@ class PhotoPreviewViewModel extends _$PhotoPreviewViewModel {
   }
 
   List<PhotoQuestion> _parseQuestions(String text) {
-    final lines = text.split('\n').where((l) => l.trim().isNotEmpty).toList();
+    final lines = text.split('\n').map((l) => l.trim()).where((l) => l.isNotEmpty).toList();
+    final questionStartRe = RegExp(r'^(Q?\d+[\.\):\s]|[a-e][\.\)])');
     final questions = <PhotoQuestion>[];
+    final List<List<String>> groups = [];
 
+    // Group lines: a new group starts at each numbered question line
     for (final line in lines) {
-      final trimmed = line.trim();
-      if (RegExp(r'^(Q?\d+[\.\):]|[a-e][\.\)])').hasMatch(trimmed)) {
-        questions.add(PhotoQuestion(
-          id: _uuid.v4(),
-          rawText: trimmed,
-          questionIndex: questions.length + 1,
-          isSelected: true,
-        ));
+      if (questionStartRe.hasMatch(line)) {
+        groups.add([line]);
+      } else if (groups.isNotEmpty) {
+        // Continuation of the current question
+        groups.last.add(line);
       }
     }
 
-    // Fallback: treat entire text as a single question
-    if (questions.isEmpty && text.trim().isNotEmpty) {
-      final trimmed = text.trim().length > 120
-          ? '${text.trim().substring(0, 120)}…'
-          : text.trim();
+    for (final group in groups) {
       questions.add(PhotoQuestion(
         id: _uuid.v4(),
-        rawText: trimmed,
+        rawText: group.join(' '),
+        questionIndex: questions.length + 1,
+        isSelected: true,
+      ));
+    }
+
+    // Fallback: treat entire text as a single question if no numbered lines found
+    if (questions.isEmpty && text.trim().isNotEmpty) {
+      questions.add(PhotoQuestion(
+        id: _uuid.v4(),
+        rawText: text.trim(),
         questionIndex: 1,
         isSelected: true,
       ));
