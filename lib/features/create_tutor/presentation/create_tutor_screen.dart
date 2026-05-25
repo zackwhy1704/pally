@@ -4,7 +4,6 @@ import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/features/create_tutor/presentation/character_picker_step.dart';
-import 'package:pally/features/create_tutor/presentation/grade_step.dart';
 import 'package:pally/features/create_tutor/presentation/name_step.dart';
 import 'package:pally/features/create_tutor/presentation/subject_step.dart';
 import 'package:pally/core/ui/pally_toast.dart';
@@ -42,7 +41,7 @@ class CreateTutorScreen extends ConsumerWidget {
           preferredSize: const Size.fromHeight(4),
           child: _StepIndicator(
             currentStep: state.stepIndex,
-            totalSteps: 4,
+            totalSteps: 3,
           ),
         ),
       ),
@@ -64,23 +63,17 @@ class CreateTutorScreen extends ConsumerWidget {
               selectedCharacter: state.selectedCharacter,
               tutorName: state.trimmedName,
               onSubjectChanged: vm.setSubject,
-              isLoading: false,
+              isLoading: state.isLoading,
               canCreate: state.canCreate,
               error: state.error,
-              onCreate: state.canCreate ? vm.nextStep : null,
-            ),
-          CreateTutorStep.grade => GradeStep(
-              gradeLevel: state.gradeLevel,
-              curriculumType: state.curriculumType,
-              onGradeChanged: vm.setGradeLevel,
-              onCurriculumChanged: vm.setCurriculumType,
-              isLoading: state.isLoading,
-              onCreate: () async {
-                final id = await vm.createAvatar();
-                if (id != null && context.mounted) {
-                  UploadRoute(avatarId: id).push(context);
-                }
-              },
+              onCreate: state.canCreate
+                  ? () async {
+                      final id = await vm.createAvatar();
+                      if (id != null && context.mounted) {
+                        UploadRoute(avatarId: id).push(context);
+                      }
+                    }
+                  : null,
             ),
         },
       ),
