@@ -86,7 +86,30 @@ class ChatViewModel extends _$ChatViewModel {
     _localDb = ChatLocalDataSource(ref.read(pallyDatabaseProvider));
     _loadAvatar();
     _loadFromLocalDb();
+
+    // Start cache keepalive — non-critical, chat works without it
+    unawaited(_startSession());
+    ref.onDispose(() => unawaited(_endSession()));
+
     return const ChatState();
+  }
+
+  Future<void> _startSession() async {
+    try {
+      await ref.read(dioProvider).post('/api/v1/avatars/$_avatarId/chat/session-start');
+      appLog.d('[Cache] Session started for avatar=$_avatarId');
+    } catch (e) {
+      appLog.w('[Cache] session-start failed (non-critical): $e');
+    }
+  }
+
+  Future<void> _endSession() async {
+    try {
+      await ref.read(dioProvider).post('/api/v1/avatars/$_avatarId/chat/session-end');
+      appLog.d('[Cache] Session ended for avatar=$_avatarId');
+    } catch (e) {
+      appLog.w('[Cache] session-end failed (non-critical): $e');
+    }
   }
 
   Future<void> _loadAvatar() async {
