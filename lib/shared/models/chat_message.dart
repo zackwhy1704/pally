@@ -8,6 +8,8 @@ enum MessageRole { user, tutor }
 
 enum MessageType { text, photo, homeworkResult }
 
+enum FeedbackType { helpful, wrong, confused, saveToBrain }
+
 @freezed
 class ChatMessage with _$ChatMessage {
   const factory ChatMessage({
@@ -18,11 +20,14 @@ class ChatMessage with _$ChatMessage {
     @Default([]) List<String> sources,
     @Default(false) bool isStreaming,
     DateTime? createdAt,
-    // Photo question fields — not persisted on backend
+    // Photo question fields
     @Default(MessageType.text) MessageType messageType,
     String? imagePath,
     @Default([]) List<PhotoQuestion> photoQuestions,
     HomeworkScanResult? scanResult,
+    // Persistence / feedback fields
+    FeedbackType? feedbackType,
+    @Default(false) bool savedToBrain,
   }) = _ChatMessage;
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) =>

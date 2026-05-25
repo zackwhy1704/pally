@@ -9,8 +9,12 @@ import 'package:uuid/uuid.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/chat_message.dart';
 import 'package:pally/shared/models/photo_question.dart';
+import 'package:pally/shared/models/session_state.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/core/local_db/pally_database.dart';
+import 'package:pally/features/chat/data/local/chat_local_data_source.dart';
+import 'package:pally/features/chat/data/local/chat_message_mapper.dart';
 
 part 'chat_view_model.g.dart';
 
@@ -19,6 +23,8 @@ class ChatState {
   const ChatState({
     this.avatar,
     this.messages = const [],
+    this.sessionState,
+    this.savedScrollOffset = 0.0,
     this.isTyping = false,
     this.isSending = false,
     this.isProcessingPhoto = false,
@@ -28,6 +34,8 @@ class ChatState {
 
   final Avatar? avatar;
   final List<ChatMessage> messages;
+  final SessionState? sessionState;
+  final double savedScrollOffset;
   final bool isTyping;
   final bool isSending;
   final bool isProcessingPhoto;
@@ -41,6 +49,8 @@ class ChatState {
   ChatState copyWith({
     Avatar? avatar,
     List<ChatMessage>? messages,
+    SessionState? sessionState,
+    double? savedScrollOffset,
     bool? isTyping,
     bool? isSending,
     bool? isProcessingPhoto,
@@ -50,6 +60,8 @@ class ChatState {
     return ChatState(
       avatar: avatar ?? this.avatar,
       messages: messages ?? this.messages,
+      sessionState: sessionState ?? this.sessionState,
+      savedScrollOffset: savedScrollOffset ?? this.savedScrollOffset,
       isTyping: isTyping ?? this.isTyping,
       isSending: isSending ?? this.isSending,
       isProcessingPhoto: isProcessingPhoto ?? this.isProcessingPhoto,
@@ -66,12 +78,14 @@ const _uuid = Uuid();
 @riverpod
 class ChatViewModel extends _$ChatViewModel {
   late String _avatarId;
+  late ChatLocalDataSource _localDb;
 
   @override
   ChatState build(String avatarId) {
     _avatarId = avatarId;
+    _localDb = ChatLocalDataSource(ref.read(pallyDatabaseProvider));
     _loadAvatar();
-    _loadHistory();
+    _loadFromLocalDb();
     return const ChatState();
   }
 
@@ -97,8 +111,35 @@ class ChatViewModel extends _$ChatViewModel {
     }
   }
 
-  Future<void> _loadHistory() async {
-    appLog.d('[Chat] Loading history for avatar $_avatarId');
+  Future<void> _loadFromLocalDb() async {
+    appLog.d('[Chat] Loading messages from local DB for $_avatarId');
+    try {
+      final localMessages =
+          await _localDb.loadRecentMessages(_avatarId, limit: 50);
+      final sessionRecord = await _localDb.getTodaySession(_avatarId);
+      final sessionState = sessionRecord ?? SessionState.empty(_avatarId);
+      final scrollOffset = await _localDb.getScrollOffset(_avatarId);
+
+      appLog.i('[Chat] Loaded ${localMessages.length} messages from local DB');
+
+      state = state.copyWith(
+        messages: localMessages,
+        sessionState: sessionState,
+        savedScrollOffset: scrollOffset,
+      );
+
+      // If local DB is empty (fresh install / re-install), pull from backend
+      if (localMessages.isEmpty) {
+        await _fetchHistoryFromBackend();
+      }
+    } catch (e, st) {
+      appLog.w('[Chat] Local DB load failed', error: e, stackTrace: st);
+      await _fetchHistoryFromBackend();
+    }
+  }
+
+  Future<void> _fetchHistoryFromBackend() async {
+    appLog.d('[Chat] Fetching history from backend for $_avatarId');
     try {
       final dio = ref.read(dioProvider);
       final response = await dio.get<List<dynamic>>(
@@ -107,13 +148,18 @@ class ChatViewModel extends _$ChatViewModel {
       final messages = (response.data ?? [])
           .map((e) => ChatMessage.fromJson(e as Map<String, dynamic>))
           .toList();
-      appLog.i('[Chat] Loaded ${messages.length} history messages');
+      appLog.i('[Chat] Loaded ${messages.length} history messages from backend');
       state = state.copyWith(messages: messages);
+
+      // Persist fetched messages to local DB for future opens
+      for (final msg in messages) {
+        await _localDb.saveMessage(msg.toRecord());
+      }
     } catch (e, st) {
-      appLog.w('[Chat] History load failed, starting fresh', error: e, stackTrace: st);
+      appLog.w('[Chat] Backend history load failed, starting fresh',
+          error: e, stackTrace: st);
     }
   }
-
 
   Future<void> sendMessage(String text) async {
     if (text.trim().isEmpty || !state.canSend) return;
@@ -126,6 +172,9 @@ class ChatViewModel extends _$ChatViewModel {
       content: text.trim(),
       createdAt: DateTime.now(),
     );
+
+    // Save user message BEFORE API call
+    await _localDb.saveMessage(userMessage.toRecord());
 
     state = state.copyWith(
       messages: [...state.messages, userMessage],
@@ -150,6 +199,22 @@ class ChatViewModel extends _$ChatViewModel {
 
     try {
       await _streamResponse(text, streamId);
+
+      // Save finalized tutor message ONCE after stream ends
+      final finalMsg = state.messages.firstWhere(
+        (m) => m.id == streamId,
+        orElse: () => streamingMessage,
+      );
+      await _localDb.saveMessage(finalMsg.toRecord());
+
+      // Update session state
+      final updatedSession =
+          _buildUpdatedSessionState(state.sessionState, userMessage.content);
+      await _localDb.saveSessionState(updatedSession.toRecord());
+      state = state.copyWith(sessionState: updatedSession);
+
+      // Non-blocking backend sync
+      unawaited(_syncMessagesToBackend([userMessage, finalMsg]));
     } catch (e, st) {
       appLog.e('[Chat] sendMessage failed', error: e, stackTrace: st);
       _finaliseStreamingMessage(
@@ -165,7 +230,6 @@ class ChatViewModel extends _$ChatViewModel {
       String imagePath, List<PhotoQuestion> questions) async {
     final messageId = _uuid.v4();
 
-    // Add user-side photo bubble immediately
     final photoMessage = ChatMessage(
       id: messageId,
       avatarId: _avatarId,
@@ -176,6 +240,9 @@ class ChatViewModel extends _$ChatViewModel {
       photoQuestions: questions,
       createdAt: DateTime.now(),
     );
+
+    // Save photo message immediately
+    await _localDb.saveMessage(photoMessage.toRecord());
 
     state = state.copyWith(
       messages: [...state.messages, photoMessage],
@@ -213,27 +280,28 @@ class ChatViewModel extends _$ChatViewModel {
         status: HomeworkScanStatus.complete,
       );
 
-      // Replace photo message with result message
+      final resultMessage = ChatMessage(
+        id: messageId,
+        avatarId: _avatarId,
+        role: MessageRole.tutor,
+        content: '',
+        messageType: MessageType.homeworkResult,
+        scanResult: result,
+        createdAt: DateTime.now(),
+      );
+
+      // Save result message
+      await _localDb.saveMessage(resultMessage.toRecord());
+
       state = state.copyWith(
         messages: state.messages.map((m) {
-          if (m.id == messageId) {
-            return ChatMessage(
-              id: messageId,
-              avatarId: _avatarId,
-              role: MessageRole.tutor,
-              content: '',
-              messageType: MessageType.homeworkResult,
-              scanResult: result,
-              createdAt: DateTime.now(),
-            );
-          }
+          if (m.id == messageId) return resultMessage;
           return m;
         }).toList(),
         isProcessingPhoto: false,
         processingPhotoQuestions: const [],
       );
     } on DioException catch (_) {
-      // Offline stub — show a fake result so the UI still renders
       final stubAnswers = questions.where((q) => q.isSelected).map((q) {
         return QuestionAnswer(
           questionId: q.id,
@@ -253,19 +321,21 @@ class ChatViewModel extends _$ChatViewModel {
         status: HomeworkScanStatus.complete,
       );
 
+      final stubMessage = ChatMessage(
+        id: messageId,
+        avatarId: _avatarId,
+        role: MessageRole.tutor,
+        content: '',
+        messageType: MessageType.homeworkResult,
+        scanResult: stubResult,
+        createdAt: DateTime.now(),
+      );
+
+      await _localDb.saveMessage(stubMessage.toRecord());
+
       state = state.copyWith(
         messages: state.messages.map((m) {
-          if (m.id == messageId) {
-            return ChatMessage(
-              id: messageId,
-              avatarId: _avatarId,
-              role: MessageRole.tutor,
-              content: '',
-              messageType: MessageType.homeworkResult,
-              scanResult: stubResult,
-              createdAt: DateTime.now(),
-            );
-          }
+          if (m.id == messageId) return stubMessage;
           return m;
         }).toList(),
         isProcessingPhoto: false,
@@ -280,12 +350,70 @@ class ChatViewModel extends _$ChatViewModel {
     }
   }
 
+  Future<void> submitFeedback(String messageId, FeedbackType type) async {
+    await _localDb.updateFeedback(messageId, type.name);
+    if (type == FeedbackType.saveToBrain) {
+      await _localDb.markSavedToBrain(messageId);
+    }
+    unawaited(_syncFeedbackToBackend(messageId, type));
+    appLog.i('[Chat] Feedback $type submitted for message $messageId');
+  }
+
+  Future<void> saveScrollOffset(double offset) async {
+    await _localDb.saveScrollOffset(_avatarId, offset);
+  }
+
   Future<String> cacheImage(File file) async {
     final dir = await getApplicationDocumentsDirectory();
     final dest = File('${dir.path}/photo_questions/${_uuid.v4()}.jpg');
     await dest.parent.create(recursive: true);
     await file.copy(dest.path);
     return dest.path;
+  }
+
+  // ── Helpers ───────────────────────────────────────────────────────
+
+  SessionState _buildUpdatedSessionState(
+      SessionState? current, String userMessage) {
+    final base = current ?? SessionState.empty(_avatarId);
+    return base.copyWith(
+      questionsAsked: base.questionsAsked + 1,
+      updatedAt: DateTime.now(),
+    );
+  }
+
+  Future<void> _syncMessagesToBackend(List<ChatMessage> messages) async {
+    try {
+      final dio = ref.read(dioProvider);
+      final syncDtos = messages.map((m) => {
+            'id': m.id,
+            'role': m.role.name.toUpperCase(),
+            'content': m.content,
+            'sourceWikiSlug': m.sources.firstOrNull,
+            'isPhotoMessage': m.messageType == MessageType.photo,
+            'createdAt': (m.createdAt ?? DateTime.now()).toIso8601String(),
+          }).toList();
+      await dio.post<void>(
+        '/api/v1/avatars/$_avatarId/chat/sync',
+        data: {'messages': syncDtos},
+      );
+      appLog.d('[Chat] Synced ${messages.length} messages to backend');
+    } catch (e) {
+      appLog.w('[Chat] Backend sync failed, will retry on next open: $e');
+    }
+  }
+
+  Future<void> _syncFeedbackToBackend(
+      String messageId, FeedbackType type) async {
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.post<void>(
+        '/api/v1/avatars/$_avatarId/chat/$messageId/feedback',
+        data: {'type': type.name.toUpperCase()},
+      );
+    } catch (e) {
+      appLog.w('[Chat] Feedback sync failed: $e');
+    }
   }
 
   Future<void> _streamResponse(String text, String streamId) async {
@@ -343,30 +471,18 @@ class ChatViewModel extends _$ChatViewModel {
       _finaliseStreamingMessage(streamId, buffer.toString(), sources);
       state = state.copyWith(isTyping: false);
     } on DioException catch (e, st) {
-      appLog.w('[Chat] SSE request failed, falling back to stub', error: e, stackTrace: st);
+      appLog.w('[Chat] SSE request failed, falling back to stub',
+          error: e, stackTrace: st);
       await _simulateStubResponse(streamId);
     }
   }
 
   Future<void> _simulateStubResponse(String streamId) async {
     final stubWords = [
-      'Great',
-      ' question!',
-      ' Let',
-      ' me',
-      ' think',
-      ' about',
-      ' that',
-      '...',
-      ' Based',
-      ' on',
-      ' your',
-      ' notes,',
-      ' here\'s',
-      ' what',
-      ' I',
-      ' know!',
-      ' 🎉',
+      'Great', ' question!', ' Let', ' me', ' think',
+      ' about', ' that', '...', ' Based', ' on',
+      ' your', ' notes,', ' here\'s', ' what', ' I',
+      ' know!', ' 🎉',
     ];
 
     final buffer = StringBuffer();
@@ -401,11 +517,4 @@ class ChatViewModel extends _$ChatViewModel {
     }).toList();
     state = state.copyWith(messages: updated);
   }
-
-  List<String> get quickReplies => const [
-        'Can you explain more?',
-        'Give me an example',
-        'How do I solve this?',
-        'What does this mean?',
-      ];
 }

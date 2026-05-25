@@ -27,11 +27,14 @@ mixin _$ChatMessage {
   List<String> get sources => throw _privateConstructorUsedError;
   bool get isStreaming => throw _privateConstructorUsedError;
   DateTime? get createdAt =>
-      throw _privateConstructorUsedError; // Photo question fields — not persisted on backend
+      throw _privateConstructorUsedError; // Photo question fields
   MessageType get messageType => throw _privateConstructorUsedError;
   String? get imagePath => throw _privateConstructorUsedError;
   List<PhotoQuestion> get photoQuestions => throw _privateConstructorUsedError;
-  HomeworkScanResult? get scanResult => throw _privateConstructorUsedError;
+  HomeworkScanResult? get scanResult =>
+      throw _privateConstructorUsedError; // Persistence / feedback fields
+  FeedbackType? get feedbackType => throw _privateConstructorUsedError;
+  bool get savedToBrain => throw _privateConstructorUsedError;
 
   /// Serializes this ChatMessage to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -60,7 +63,9 @@ abstract class $ChatMessageCopyWith<$Res> {
       MessageType messageType,
       String? imagePath,
       List<PhotoQuestion> photoQuestions,
-      HomeworkScanResult? scanResult});
+      HomeworkScanResult? scanResult,
+      FeedbackType? feedbackType,
+      bool savedToBrain});
 
   $HomeworkScanResultCopyWith<$Res>? get scanResult;
 }
@@ -91,6 +96,8 @@ class _$ChatMessageCopyWithImpl<$Res, $Val extends ChatMessage>
     Object? imagePath = freezed,
     Object? photoQuestions = null,
     Object? scanResult = freezed,
+    Object? feedbackType = freezed,
+    Object? savedToBrain = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -137,6 +144,14 @@ class _$ChatMessageCopyWithImpl<$Res, $Val extends ChatMessage>
           ? _value.scanResult
           : scanResult // ignore: cast_nullable_to_non_nullable
               as HomeworkScanResult?,
+      feedbackType: freezed == feedbackType
+          ? _value.feedbackType
+          : feedbackType // ignore: cast_nullable_to_non_nullable
+              as FeedbackType?,
+      savedToBrain: null == savedToBrain
+          ? _value.savedToBrain
+          : savedToBrain // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 
@@ -174,7 +189,9 @@ abstract class _$$ChatMessageImplCopyWith<$Res>
       MessageType messageType,
       String? imagePath,
       List<PhotoQuestion> photoQuestions,
-      HomeworkScanResult? scanResult});
+      HomeworkScanResult? scanResult,
+      FeedbackType? feedbackType,
+      bool savedToBrain});
 
   @override
   $HomeworkScanResultCopyWith<$Res>? get scanResult;
@@ -204,6 +221,8 @@ class __$$ChatMessageImplCopyWithImpl<$Res>
     Object? imagePath = freezed,
     Object? photoQuestions = null,
     Object? scanResult = freezed,
+    Object? feedbackType = freezed,
+    Object? savedToBrain = null,
   }) {
     return _then(_$ChatMessageImpl(
       id: null == id
@@ -250,6 +269,14 @@ class __$$ChatMessageImplCopyWithImpl<$Res>
           ? _value.scanResult
           : scanResult // ignore: cast_nullable_to_non_nullable
               as HomeworkScanResult?,
+      feedbackType: freezed == feedbackType
+          ? _value.feedbackType
+          : feedbackType // ignore: cast_nullable_to_non_nullable
+              as FeedbackType?,
+      savedToBrain: null == savedToBrain
+          ? _value.savedToBrain
+          : savedToBrain // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -268,7 +295,9 @@ class _$ChatMessageImpl implements _ChatMessage {
       this.messageType = MessageType.text,
       this.imagePath,
       final List<PhotoQuestion> photoQuestions = const [],
-      this.scanResult})
+      this.scanResult,
+      this.feedbackType,
+      this.savedToBrain = false})
       : _sources = sources,
         _photoQuestions = photoQuestions;
 
@@ -297,7 +326,7 @@ class _$ChatMessageImpl implements _ChatMessage {
   final bool isStreaming;
   @override
   final DateTime? createdAt;
-// Photo question fields — not persisted on backend
+// Photo question fields
   @override
   @JsonKey()
   final MessageType messageType;
@@ -314,10 +343,16 @@ class _$ChatMessageImpl implements _ChatMessage {
 
   @override
   final HomeworkScanResult? scanResult;
+// Persistence / feedback fields
+  @override
+  final FeedbackType? feedbackType;
+  @override
+  @JsonKey()
+  final bool savedToBrain;
 
   @override
   String toString() {
-    return 'ChatMessage(id: $id, avatarId: $avatarId, role: $role, content: $content, sources: $sources, isStreaming: $isStreaming, createdAt: $createdAt, messageType: $messageType, imagePath: $imagePath, photoQuestions: $photoQuestions, scanResult: $scanResult)';
+    return 'ChatMessage(id: $id, avatarId: $avatarId, role: $role, content: $content, sources: $sources, isStreaming: $isStreaming, createdAt: $createdAt, messageType: $messageType, imagePath: $imagePath, photoQuestions: $photoQuestions, scanResult: $scanResult, feedbackType: $feedbackType, savedToBrain: $savedToBrain)';
   }
 
   @override
@@ -342,7 +377,11 @@ class _$ChatMessageImpl implements _ChatMessage {
             const DeepCollectionEquality()
                 .equals(other._photoQuestions, _photoQuestions) &&
             (identical(other.scanResult, scanResult) ||
-                other.scanResult == scanResult));
+                other.scanResult == scanResult) &&
+            (identical(other.feedbackType, feedbackType) ||
+                other.feedbackType == feedbackType) &&
+            (identical(other.savedToBrain, savedToBrain) ||
+                other.savedToBrain == savedToBrain));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -359,7 +398,9 @@ class _$ChatMessageImpl implements _ChatMessage {
       messageType,
       imagePath,
       const DeepCollectionEquality().hash(_photoQuestions),
-      scanResult);
+      scanResult,
+      feedbackType,
+      savedToBrain);
 
   /// Create a copy of ChatMessage
   /// with the given fields replaced by the non-null parameter values.
@@ -389,7 +430,9 @@ abstract class _ChatMessage implements ChatMessage {
       final MessageType messageType,
       final String? imagePath,
       final List<PhotoQuestion> photoQuestions,
-      final HomeworkScanResult? scanResult}) = _$ChatMessageImpl;
+      final HomeworkScanResult? scanResult,
+      final FeedbackType? feedbackType,
+      final bool savedToBrain}) = _$ChatMessageImpl;
 
   factory _ChatMessage.fromJson(Map<String, dynamic> json) =
       _$ChatMessageImpl.fromJson;
@@ -407,7 +450,7 @@ abstract class _ChatMessage implements ChatMessage {
   @override
   bool get isStreaming;
   @override
-  DateTime? get createdAt; // Photo question fields — not persisted on backend
+  DateTime? get createdAt; // Photo question fields
   @override
   MessageType get messageType;
   @override
@@ -415,7 +458,11 @@ abstract class _ChatMessage implements ChatMessage {
   @override
   List<PhotoQuestion> get photoQuestions;
   @override
-  HomeworkScanResult? get scanResult;
+  HomeworkScanResult? get scanResult; // Persistence / feedback fields
+  @override
+  FeedbackType? get feedbackType;
+  @override
+  bool get savedToBrain;
 
   /// Create a copy of ChatMessage
   /// with the given fields replaced by the non-null parameter values.

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
@@ -27,9 +28,44 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   final _scrollController = ScrollController();
   final _textController = TextEditingController();
   final _focusNode = FocusNode();
+  Timer? _scrollSaveTimer;
+  bool _scrollRestored = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    // Restore scroll position once messages are loaded
+    WidgetsBinding.instance.addPostFrameCallback((_) => _restoreScroll());
+  }
+
+  void _restoreScroll() {
+    if (_scrollRestored) return;
+    final offset =
+        ref.read(chatViewModelProvider(widget.avatarId)).savedScrollOffset;
+    if (offset > 0 && _scrollController.hasClients) {
+      _scrollController.jumpTo(
+        offset.clamp(0.0, _scrollController.position.maxScrollExtent),
+      );
+      _scrollRestored = true;
+    }
+  }
+
+  void _onScroll() {
+    _scrollSaveTimer?.cancel();
+    _scrollSaveTimer = Timer(const Duration(milliseconds: 500), () {
+      if (_scrollController.hasClients) {
+        ref
+            .read(chatViewModelProvider(widget.avatarId).notifier)
+            .saveScrollOffset(_scrollController.offset);
+      }
+    });
+  }
 
   @override
   void dispose() {
+    _scrollSaveTimer?.cancel();
+    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     _textController.dispose();
     _focusNode.dispose();

@@ -32,6 +32,9 @@ _$ChatMessageImpl _$$ChatMessageImplFromJson(Map<String, dynamic> json) =>
           ? null
           : HomeworkScanResult.fromJson(
               json['scanResult'] as Map<String, dynamic>),
+      feedbackType:
+          $enumDecodeNullable(_$FeedbackTypeEnumMap, json['feedbackType']),
+      savedToBrain: json['savedToBrain'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$ChatMessageImplToJson(_$ChatMessageImpl instance) =>
@@ -47,6 +50,8 @@ Map<String, dynamic> _$$ChatMessageImplToJson(_$ChatMessageImpl instance) =>
       'imagePath': instance.imagePath,
       'photoQuestions': instance.photoQuestions,
       'scanResult': instance.scanResult,
+      'feedbackType': _$FeedbackTypeEnumMap[instance.feedbackType],
+      'savedToBrain': instance.savedToBrain,
     };
 
 const _$MessageRoleEnumMap = {
@@ -58,6 +63,13 @@ const _$MessageTypeEnumMap = {
   MessageType.text: 'text',
   MessageType.photo: 'photo',
   MessageType.homeworkResult: 'homeworkResult',
+};
+
+const _$FeedbackTypeEnumMap = {
+  FeedbackType.helpful: 'helpful',
+  FeedbackType.wrong: 'wrong',
+  FeedbackType.confused: 'confused',
+  FeedbackType.saveToBrain: 'saveToBrain',
 };
 
 _$ChatRequestImpl _$$ChatRequestImplFromJson(Map<String, dynamic> json) =>
