@@ -114,22 +114,6 @@ class ChatViewModel extends _$ChatViewModel {
     }
   }
 
-  Future<void> togglePedagogyMode() async {
-    final current = state.avatar?.pedagogyMode ?? PedagogyMode.socratic;
-    final next = current == PedagogyMode.socratic ? PedagogyMode.direct : PedagogyMode.socratic;
-    try {
-      final dio = ref.read(dioProvider);
-      await dio.patch<void>(
-        '/api/v1/avatars/$_avatarId/pedagogy',
-        data: {'mode': next.name.toUpperCase()},
-      );
-      final updated = state.avatar?.copyWith(pedagogyMode: next);
-      if (updated != null) state = state.copyWith(avatar: updated);
-      appLog.i('[Chat] Pedagogy toggled to $next');
-    } catch (e, st) {
-      appLog.w('[Chat] Pedagogy toggle failed', error: e, stackTrace: st);
-    }
-  }
 
   Future<void> sendMessage(String text) async {
     if (text.trim().isEmpty || !state.canSend) return;

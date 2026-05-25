@@ -111,6 +111,14 @@ class PhotoPreviewViewModel extends _$PhotoPreviewViewModel {
     state = current.copyWith(questions: updated);
   }
 
+  // Replaces question text with user-corrected versions from EditQuestionsSheet.
+  // Does NOT re-run OCR — only updates rawText fields.
+  void updateQuestions(List<PhotoQuestion> updated) {
+    final current = state;
+    if (current is! PhotoPreviewDetected) return;
+    state = current.copyWith(questions: updated);
+  }
+
   List<PhotoQuestion> get selectedQuestions {
     final current = state;
     if (current is! PhotoPreviewDetected) return [];

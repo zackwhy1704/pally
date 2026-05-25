@@ -2,14 +2,24 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/features/chat/presentation/chat_view_model.dart';
 import 'package:pally/features/photo_question/presentation/photo_preview_view_model.dart';
+import 'package:pally/features/photo_question/presentation/widgets/edit_questions_sheet.dart';
+import 'package:pally/features/photo_question/presentation/widgets/retake_confirmation_dialog.dart';
 import 'package:pally/shared/models/photo_question.dart';
 
-class PhotoPreviewScreen extends ConsumerWidget {
+const List<Color> _kQuestionColors = [
+  AppColors.teal,
+  AppColors.green,
+  AppColors.purple,
+  AppColors.amber,
+];
+
+class PhotoPreviewScreen extends ConsumerStatefulWidget {
   const PhotoPreviewScreen({
     super.key,
     required this.photoPath,
@@ -20,8 +30,59 @@ class PhotoPreviewScreen extends ConsumerWidget {
   final String avatarId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(photoPreviewViewModelProvider(photoPath));
+  ConsumerState<PhotoPreviewScreen> createState() => _PhotoPreviewScreenState();
+}
+
+class _PhotoPreviewScreenState extends ConsumerState<PhotoPreviewScreen> {
+  String get _photoPath => widget.photoPath;
+
+  Future<void> _showEditQuestionsSheet(
+      BuildContext context, List<PhotoQuestion> questions) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => EditQuestionsSheet(
+        questions: questions,
+        onSave: (updated) {
+          ref
+              .read(photoPreviewViewModelProvider(_photoPath).notifier)
+              .updateQuestions(updated);
+        },
+      ),
+    );
+  }
+
+  Future<void> _showRetakeConfirmation(BuildContext context) async {
+    final choice = await showDialog<RetakeChoice>(
+      context: context,
+      builder: (_) => const RetakeConfirmationDialog(),
+    );
+    if (choice == null || !context.mounted) return;
+
+    switch (choice) {
+      case RetakeChoice.keepPhoto:
+        break;
+      case RetakeChoice.retake:
+        context.pop();
+      case RetakeChoice.gallery:
+        final picker = ImagePicker();
+        final picked =
+            await picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
+        if (picked != null && context.mounted) {
+          // Pop back to chat and push new preview with gallery photo
+          context.pop();
+          context.push(
+            '/photo-preview',
+            extra: {'photoPath': picked.path, 'avatarId': widget.avatarId},
+          );
+        }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(photoPreviewViewModelProvider(_photoPath));
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -32,19 +93,20 @@ class PhotoPreviewScreen extends ConsumerWidget {
             photoPath: photoPath,
             questions: questions,
             onToggle: (id) => ref
-                .read(photoPreviewViewModelProvider(photoPath).notifier)
+                .read(photoPreviewViewModelProvider(_photoPath).notifier)
                 .toggleQuestion(id),
             onConfirm: () {
               final selected = ref
-                  .read(photoPreviewViewModelProvider(photoPath).notifier)
+                  .read(photoPreviewViewModelProvider(_photoPath).notifier)
                   .selectedQuestions;
               if (selected.isEmpty) return;
               ref
-                  .read(chatViewModelProvider(avatarId).notifier)
+                  .read(chatViewModelProvider(widget.avatarId).notifier)
                   .sendPhotoMessage(photoPath, selected);
               context.pop();
             },
-            onRetake: () => context.pop(),
+            onRetakeTap: () => _showRetakeConfirmation(context),
+            onEditTap: () => _showEditQuestionsSheet(context, questions),
           ),
         PhotoPreviewError(:final message) => _ErrorView(
             message: message,
@@ -86,14 +148,16 @@ class _DetectedView extends StatelessWidget {
     required this.questions,
     required this.onToggle,
     required this.onConfirm,
-    required this.onRetake,
+    required this.onRetakeTap,
+    required this.onEditTap,
   });
 
   final String photoPath;
   final List<PhotoQuestion> questions;
   final void Function(String) onToggle;
   final VoidCallback onConfirm;
-  final VoidCallback onRetake;
+  final VoidCallback onRetakeTap;
+  final VoidCallback onEditTap;
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +173,7 @@ class _DetectedView extends StatelessWidget {
           left: 0,
           right: 0,
           bottom: 0,
-          height: MediaQuery.of(context).size.height * 0.55,
+          height: MediaQuery.of(context).size.height * 0.6,
           child: DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -117,21 +181,54 @@ class _DetectedView extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withValues(alpha: 0.85),
+                  Colors.black.withValues(alpha: 0.88),
                 ],
               ),
             ),
           ),
         ),
 
-        // Top close button
+        // Top bar: close (left) + retake (right)
         Positioned(
-          top: MediaQuery.of(context).padding.top + 8,
-          left: 8,
-          child: IconButton(
-            icon:
-                const Icon(Icons.close_rounded, color: Colors.white, size: 28),
-            onPressed: onRetake,
+          top: MediaQuery.of(context).padding.top + 4,
+          left: 4,
+          right: 12,
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.close_rounded,
+                    color: Colors.white, size: 28),
+                onPressed: () => context.pop(),
+              ),
+              const Spacer(),
+              GestureDetector(
+                onTap: onRetakeTap,
+                child: Container(
+                  width: 72,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.4), width: 1),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('↺', style: TextStyle(color: Colors.white, fontSize: 13)),
+                      SizedBox(width: 4),
+                      Text(
+                        'Retake',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
 
@@ -149,7 +246,7 @@ class _DetectedView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Header
+                  // Header row: badge + edit button
                   Row(
                     children: [
                       Container(
@@ -167,15 +264,82 @@ class _DetectedView extends StatelessWidget {
                           ),
                         ),
                       ),
+                      const Spacer(),
+                      GestureDetector(
+                        onTap: onEditTap,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.3)),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('✏️', style: TextStyle(fontSize: 11)),
+                              SizedBox(width: 5),
+                              Text(
+                                'Edit questions',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.md),
 
-                  // Question toggles
-                  ...questions.map((q) => _QuestionToggleRow(
-                        question: q,
-                        onToggle: () => onToggle(q.id),
-                      )),
+                  const SizedBox(height: 12),
+
+                  // Pill-chip question toggles
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: questions.map((q) {
+                      final color =
+                          _kQuestionColors[(q.questionIndex - 1) % _kQuestionColors.length];
+                      final isSelected = q.isSelected;
+                      return GestureDetector(
+                        onTap: () => onToggle(q.id),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          width: 80,
+                          height: 34,
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? color.withValues(alpha: 0.22)
+                                : Colors.white.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(17),
+                            border: Border.all(
+                              color: isSelected
+                                  ? color
+                                  : Colors.white.withValues(alpha: 0.25),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              isSelected
+                                  ? 'Q${q.questionIndex} ✓'
+                                  : 'Q${q.questionIndex} ✕',
+                              style: TextStyle(
+                                color:
+                                    isSelected ? color : Colors.white54,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
 
                   const SizedBox(height: AppSpacing.md),
 
@@ -208,77 +372,6 @@ class _DetectedView extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _QuestionToggleRow extends StatelessWidget {
-  const _QuestionToggleRow({
-    required this.question,
-    required this.onToggle,
-  });
-
-  final PhotoQuestion question;
-  final VoidCallback onToggle;
-
-  static const List<Color> _colors = [
-    AppColors.teal,
-    AppColors.green,
-    AppColors.purple,
-    AppColors.amber,
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    final color = _colors[(question.questionIndex - 1) % _colors.length];
-    return GestureDetector(
-      onTap: onToggle,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: AppSpacing.xs),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: question.isSelected
-              ? color.withValues(alpha: 0.15)
-              : Colors.white.withValues(alpha: 0.07),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: question.isSelected
-                ? color.withValues(alpha: 0.6)
-                : Colors.white.withValues(alpha: 0.2),
-          ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 22,
-              height: 22,
-              decoration: BoxDecoration(
-                color: question.isSelected ? color : Colors.transparent,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: question.isSelected ? color : Colors.white38,
-                  width: 1.5,
-                ),
-              ),
-              child: question.isSelected
-                  ? const Icon(Icons.check_rounded,
-                      color: Colors.white, size: 14)
-                  : null,
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                'Q${question.questionIndex}: ${question.rawText}',
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: question.isSelected ? Colors.white : Colors.white54,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

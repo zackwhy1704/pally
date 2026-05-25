@@ -157,16 +157,11 @@ bool _hasKnowledgeFromJson(Object? count) => ((count as int?) ?? 0) > 0;
 
 // ── Pedagogy mode ─────────────────────────────────────────────────────────────
 
-enum PedagogyMode { socratic, direct }
+enum PedagogyMode { socratic }
 
-PedagogyMode _pedagogyFromJson(Object? v) {
-  if (v == null) return PedagogyMode.socratic;
-  return (v as String).toUpperCase() == 'DIRECT'
-      ? PedagogyMode.direct
-      : PedagogyMode.socratic;
-}
+PedagogyMode _pedagogyFromJson(Object? v) => PedagogyMode.socratic;
 
-String _pedagogyToJson(PedagogyMode m) => m.name.toUpperCase();
+String _pedagogyToJson(PedagogyMode m) => 'SOCRATIC';
 
 // ── Models ───────────────────────────────────────────────────────────────────
 

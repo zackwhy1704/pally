@@ -65,7 +65,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(chatViewModelProvider(widget.avatarId));
-    final vm = ref.read(chatViewModelProvider(widget.avatarId).notifier);
 
     ref.listen<ChatState>(chatViewModelProvider(widget.avatarId), (prev, next) {
       _scrollToBottom();
@@ -89,13 +88,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 scrollController: _scrollController,
               ),
             ),
-            if (!state.isTyping &&
-                !state.isProcessingPhoto &&
-                state.messages.isNotEmpty)
-              _QuickReplies(
-                replies: vm.quickReplies,
-                onTap: _sendMessage,
-              ),
             _InputBar(
               controller: _textController,
               focusNode: _focusNode,
@@ -123,9 +115,6 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mode = avatar?.pedagogyMode ?? PedagogyMode.socratic;
-    final vm = ref.read(chatViewModelProvider(avatarId).notifier);
-
     return Container(
       height: 72 + MediaQuery.of(context).padding.top,
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
@@ -187,35 +176,6 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   ],
                 ),
               ],
-            ),
-          ),
-          // P5: Pedagogy mode toggle pill
-          GestureDetector(
-            onTap: () => vm.togglePedagogyMode(),
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-              padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm, vertical: 4),
-              decoration: BoxDecoration(
-                color: mode == PedagogyMode.socratic
-                    ? AppColors.purpleL
-                    : AppColors.tealL,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: mode == PedagogyMode.socratic
-                      ? AppColors.purple.withValues(alpha: 0.4)
-                      : AppColors.teal.withValues(alpha: 0.4),
-                ),
-              ),
-              child: Text(
-                mode == PedagogyMode.socratic ? '💬 Socratic' : '📖 Direct',
-                style: AppTextStyles.caption.copyWith(
-                  color: mode == PedagogyMode.socratic
-                      ? AppColors.purple
-                      : AppColors.teal,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
             ),
           ),
           IconButton(
@@ -388,41 +348,6 @@ class _TextBubble extends StatelessWidget {
             ),
           ),
       ],
-    );
-  }
-}
-
-// ── Quick replies ─────────────────────────────────────────────────────────────
-
-class _QuickReplies extends StatelessWidget {
-  const _QuickReplies({required this.replies, required this.onTap});
-
-  final List<String> replies;
-  final ValueChanged<String> onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 44,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-        itemCount: replies.length,
-        itemBuilder: (context, index) => Padding(
-          padding: const EdgeInsets.only(right: AppSpacing.sm),
-          child: ActionChip(
-            label: Text(replies[index]),
-            onPressed: () => onTap(replies[index]),
-            backgroundColor: AppColors.surface,
-            side: const BorderSide(color: AppColors.outline),
-            labelStyle: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.purple,
-              fontWeight: FontWeight.w600,
-            ),
-            shape: const StadiumBorder(),
-          ),
-        ),
-      ),
     );
   }
 }
