@@ -5,8 +5,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'api_client.g.dart';
 
-// Default points to the Railway production backend.
-// Override for local dev: --dart-define=API_BASE_URL=http://10.0.2.2:8080
 const _baseUrl = String.fromEnvironment(
   'API_BASE_URL',
   defaultValue: 'https://pallybackend-production.up.railway.app',
