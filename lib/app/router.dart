@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/core/ui/scaffold_shell.dart';
+import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/auth/screens/splash_screen.dart';
 import 'package:pally/features/auth/screens/sign_in_screen.dart';
 import 'package:pally/features/auth/screens/sign_up_screen.dart';
@@ -336,10 +338,34 @@ class PhotoPreviewRoute extends GoRouteData {
 
 // ─── Router instance ─────────────────────────────────────────────────────────
 
-GoRouter buildAppRouter() {
+// Public routes that never require authentication
+const _publicPaths = {
+  '/splash',
+  '/auth/signin',
+  '/auth/signup',
+  '/auth/setup',
+  '/auth/avatar',
+  '/onboarding',
+};
+
+GoRouter buildAppRouter({ProviderContainer? container}) {
+  final authNotifier = AuthNotifier.instance;
+
   return GoRouter(
     initialLocation: '/splash',
     debugLogDiagnostics: true,
+    refreshListenable: authNotifier,
+    redirect: (context, state) {
+      final auth = authNotifier.state;
+      final path = state.matchedLocation;
+      final isPublic = _publicPaths.any((p) => path.startsWith(p));
+
+      if (!auth.isSignedIn && !isPublic) {
+        return '/auth/signin';
+      }
+
+      return null;
+    },
     routes: $appRoutes,
   );
 }

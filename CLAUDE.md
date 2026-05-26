@@ -393,9 +393,11 @@ class ShopViewModel extends _$ShopViewModel {
 ## Base configuration
 
 ```dart
-// Inject at build time:
-// flutter run --dart-define=API_BASE_URL=http://localhost:8080
-const baseUrl = String.fromEnvironment('API_BASE_URL', defaultValue:'http://localhost:8080');
+// No --dart-define needed; all builds point to the Railway production host by default.
+const baseUrl = String.fromEnvironment(
+  'API_BASE_URL',
+  defaultValue: 'https://pallybackend-production.up.railway.app',
+);
 ```
 
 ## All endpoints Flutter must call
@@ -907,8 +909,10 @@ ls -la build/libs/*.jar   # must show pally-backend-*.jar
 
 ## PHASE 8 — API Smoke Tests (19 checks)
 
+All smoke tests run against the **remote Railway host**. No local backend needed.
+
 ```bash
-BASE="http://localhost:8080/api/v1"
+BASE="https://pallybackend-production.up.railway.app/api/v1"
 
 # 1. Register (201 or 409)
 # 2. Login → capture TOKEN
@@ -918,7 +922,7 @@ BASE="http://localhost:8080/api/v1"
 # 6. Relevance check on-topic (200, isRelevant=true)
 # 7. Relevance check off-topic (200, isRelevant=false)
 # 8. List wiki pages (200)
-# 9. Chat SSE stream — must see "event:" lines + "done"
+# 9. Chat SSE stream — must see "data:" lines + "done"
 # 10. Photo question — must see "answer" in response
 # 11. Get daily quiz (200)
 # 12. Get flashcards (200)
@@ -931,41 +935,27 @@ BASE="http://localhost:8080/api/v1"
 # 19. Delete test avatar (204)
 ```
 
-Full curl script is in the original protocol prompt. **Pass criteria:** All 19 checks pass.
+**Pass criteria:** All 19 checks pass against the remote host.
 
 ---
 
-## PHASE 9 — Restart Servers
+## PHASE 9 — Deploy Backend
 
 ```bash
-# Stop backend
-kill $(lsof -ti:8080) 2>/dev/null || true; sleep 3
-
-# Start backend
-cd pally-backend/
-nohup DB_URL=jdbc:postgresql://localhost:5434/pally \
-  CLAUDE_API_KEY=$CLAUDE_API_KEY \
-  java -jar build/libs/pally-backend-*.jar > /tmp/backend.log 2>&1 &
-
-# Wait for UP
-until curl -sf http://localhost:8080/actuator/health | grep -q '"status":"UP"'; do sleep 1; done
-echo "Backend UP"
-
-# Start Flutter
-cd ../pally/
-flutter run -d <device> \
-  --dart-define=API_BASE_URL=http://localhost:8080 \
-  --no-pub > /tmp/flutter_run.log 2>&1 &
+# Backend deploys automatically on git push to main via Railway.
+# No local server management needed.
+git -C ../pally-backend push origin main
+# Watch Railway dashboard or: railway logs --tail
 ```
 
 ---
 
-## PHASE 10 — Post-Restart Health Check
+## PHASE 10 — Post-Deploy Health Check
 
 ```bash
-curl -sf http://localhost:8080/actuator/health | grep -q '"status":"UP"' || exit 1
-echo "PASS: Backend healthy post-restart"
-# Re-login and hit one endpoint to confirm functional
+REMOTE="https://pallybackend-production.up.railway.app"
+curl -sf "$REMOTE/actuator/health" | grep -q '"status":"UP"' || exit 1
+echo "PASS: Remote backend healthy"
 ```
 
 ---
@@ -1000,19 +990,18 @@ echo "PASS: Backend healthy post-restart"
 | Golden test diff | Unintentional UI regression | Fix widget, not golden |
 | `BUILD FAILED` Gradle | Compile error, wrong dep | Fix compile error |
 | Testcontainers timeout | Docker not running | `docker info`, check ports |
-| Smoke test 500 | Backend exception | Check `/tmp/backend.log` |
+| Smoke test 500 | Backend exception | Check Railway logs: `railway logs --tail` |
 | Smoke test 401 | JWT filter issue | Fix auth or add correct header |
-| SSE timeout | Stream never closes | Check Claude API call |
-| Port 8080 in use | Old instance not killed | `lsof -ti:8080 \| xargs kill -9` |
+| SSE timeout | Stream never closes | Check Claude API call in Railway logs |
+| Deploy not live | Railway build failed | Check Railway dashboard for build errors |
 
-## ENVIRONMENT VARIABLES REQUIRED
+## ENVIRONMENT VARIABLES (set in Railway dashboard, not locally)
 
-```bash
-export CLAUDE_API_KEY="sk-ant-..."
-export DB_URL="jdbc:postgresql://localhost:5434/pally"
-export DB_USER="pally"
-export DB_PASSWORD="pally"
-export JWT_SECRET="dev-secret-min-32-chars-long-here"
+```
+CLAUDE_API_KEY   — Anthropic API key
+DB_URL           — Railway PostgreSQL internal URL
+JWT_SECRET       — min 32 chars
+PORT             — injected by Railway automatically
 ```
 
 ## SPECIAL RULES
@@ -1032,135 +1021,57 @@ export JWT_SECRET="dev-secret-min-32-chars-long-here"
 
 ## IMMEDIATE TRIAGE — CONNECTION TIMEOUT
 
-If you see this error in Logcat:
+**All traffic goes to the Railway remote host. There is no local backend.**
 
-```
-DioException [connection timeout]: The request connection took longer than 0:00:10.000000
-and it was aborted. To get rid of this exception, try raising the
-RequestOptions.connectTimeout above the duration of 0:00:10.000000
-or improve the response time of the server.
-```
+Remote host: `https://pallybackend-production.up.railway.app`
 
-Run this diagnostic sequence **before touching any code**:
+If you see a connection timeout in Logcat, run this diagnostic sequence:
 
 ---
 
-### STEP 1 — Check if backend is actually running
+### STEP 1 — Verify remote backend is up
 
 ```bash
-# Is anything listening on port 8080?
-lsof -i :8080
-# or
-netstat -an | grep 8080
-
-# If nothing is there:
-echo "Backend is NOT running — start it first"
+REMOTE="https://pallybackend-production.up.railway.app"
+curl -sf "$REMOTE/actuator/health"
+# Expected: {"status":"UP"}
+# If not UP: check Railway dashboard for deploy errors or restart the service.
 ```
-
-```bash
-# Check backend process specifically
-ps aux | grep "pally-backend\|spring\|java" | grep -v grep
-```
-
-```bash
-# If using Docker:
-docker ps | grep pally
-docker compose ps
-```
-
-**If port 8080 shows nothing → backend is down. Jump to STEP 4 to restart it.**
 
 ---
 
-### STEP 2 — Check backend logs for crash reason
+### STEP 2 — Check Railway logs for backend errors
 
 ```bash
-# If running as a process:
-tail -100 /tmp/backend.log | grep -E "ERROR|WARN|Exception|Failed|Caused by|at com.pally"
+# Via Railway CLI:
+railway logs --tail
 
-# If running in Docker:
-docker logs pally-backend --tail 100 | grep -E "ERROR|WARN|Exception|Failed|Caused by"
-
-# Show last startup attempt:
-cat /tmp/backend.log | grep -A5 "APPLICATION FAILED\|Started PallyApplication\|Tomcat started"
+# Or check the Railway dashboard → pally-backend → Deployments → most recent deploy → Logs
 ```
 
-**Common crash causes and fixes:**
+**Common Railway failure patterns:**
 
 | Log pattern | Cause | Fix |
 |---|---|---|
-| `Connection refused` to PostgreSQL | DB not running | `docker compose up -d db` or start PostgreSQL |
-| `FlywayException: Migration checksum mismatch` | Migration file edited after apply | Restore original migration file or create new one |
-| `Port 8080 already in use` | Old process still alive | `lsof -ti:8080 \| xargs kill -9` |
-| `CLAUDE_API_KEY not set` or empty | Missing env var | `export CLAUDE_API_KEY="sk-ant-..."` |
-| `OutOfMemoryError` | JVM heap too small | Add `-Xmx512m` to java start command |
-| `BeanCreationException` | Spring config error | Read the full stack trace — it states exactly which bean |
+| `Connection refused` to PostgreSQL | DB env var missing | Set `DB_URL` in Railway variables |
+| `FlywayException: Migration checksum mismatch` | Migration file edited after apply | Create a new migration file, never edit old ones |
+| `CLAUDE_API_KEY not set` or empty | Missing Railway env var | Add `CLAUDE_API_KEY` in Railway → Variables |
+| `BeanCreationException` | Spring config error | Read full stack trace in Railway logs |
+| Build times out | Gradle OOM | Add `JAVA_OPTS=-Xmx512m` in Railway variables |
 
 ---
 
-### STEP 3 — Check Flutter is pointing at the right URL
+### STEP 3 — Verify Flutter is pointing at the remote host
 
 ```bash
-# What URL is the Flutter app trying to hit?
-# Search for the base URL config:
-grep -r "API_BASE_URL\|baseUrl\|localhost\|10.0.2.2" pally-flutter/lib/ --include="*.dart"
-```
-
-**Android emulator gotcha:** `localhost` inside an Android emulator refers to the emulator itself, NOT your Mac/PC. Use `10.0.2.2` instead.
-
-```dart
-// Wrong for Android emulator:
-const baseUrl = 'http://localhost:8080';
-
-// Correct for Android emulator:
-const baseUrl = 'http://10.0.2.2:8080';
-
-// Correct for physical device on same WiFi:
-const baseUrl = 'http://192.168.x.x:8080';  // your machine's local IP
-
-// Correct for iOS simulator:
-const baseUrl = 'http://localhost:8080';  // iOS sim uses host networking
-```
-
-Check your current device type and correct the URL:
-```bash
-flutter devices
-# Then set the right --dart-define:
-# flutter run -d <device-id> --dart-define=API_BASE_URL=http://10.0.2.2:8080
+grep -r "API_BASE_URL\|baseUrl\|pallybackend\|railway" lib/ --include="*.dart"
+# Should show: defaultValue: 'https://pallybackend-production.up.railway.app'
+# No --dart-define override should be set for production builds.
 ```
 
 ---
 
-### STEP 4 — Restart backend and watch startup logs live
-
-```bash
-# Kill anything on 8080
-PIDS=$(lsof -ti:8080 2>/dev/null)
-[ -n "$PIDS" ] && kill -9 $PIDS && echo "Killed PIDs: $PIDS" || echo "Port 8080 was free"
-sleep 2
-
-# Start backend with live logging
-cd pally-backend/
-java -jar build/libs/pally-backend-*.jar \
-  --spring.profiles.active=local \
-  --server.port=8080 \
-  --logging.level.com.pally=DEBUG \
-  --logging.level.org.springframework.web=DEBUG \
-  2>&1 | tee /tmp/backend_restart.log &
-
-# Watch it start — look for "Started PallyApplication"
-tail -f /tmp/backend_restart.log | grep -E "Started|ERROR|WARN|Exception|Tomcat|Mapped"
-```
-
-```bash
-# Once started, verify:
-curl -s http://localhost:8080/actuator/health | python3 -m json.tool
-# Expected: {"status":"UP",...}
-```
-
----
-
-### STEP 5 — Re-run the failing Flutter request and read the full log
+### STEP 4 — Re-run the failing Flutter request and read the full log
 
 ```bash
 # Watch Logcat filtered to Pally while reproducing the issue:
@@ -1673,19 +1584,19 @@ docker logs -f pally-backend 2>&1 | grep -E "──►|◄──|ERROR|Claude"
 ```
 [PallyAPI] ──► REQUEST
   Method : POST
-  URL    : http://10.0.2.2:8080/api/v1/avatars/abc-123/chat
+  URL    : https://pallybackend-production.up.railway.app/api/v1/avatars/abc-123/chat
   Headers: {Authorization: Bearer [REDACTED], Content-Type: application/json}
   Body   : {"message":"What is 2+2?","wikiPageIds":[]}
 
 [PallyAPI] ◄── RESPONSE
   Status : 200 OK
-  URL    : http://10.0.2.2:8080/api/v1/avatars/abc-123/chat
+  URL    : https://pallybackend-production.up.railway.app/api/v1/avatars/abc-123/chat
   Body   : {"data":{"text":"2 + 2 = 4 🎉",...}}
 
 [PallyAPI] ✗✗✗ FAILURE
   Method : POST
   CONNECTION TIMEOUT — backend unreachable or too slow
-  Tried  : http://10.0.2.2:8080/api/v1/avatars/abc-123/chat
+  Tried  : https://pallybackend-production.up.railway.app/api/v1/avatars/abc-123/chat
   Timeout: 15s
   Fix    : Check backend is running on correct host:port
 ```
@@ -1694,7 +1605,7 @@ docker logs -f pally-backend 2>&1 | grep -E "──►|◄──|ERROR|Claude"
 
 ```
 00:28:16.414 [http-nio-8080-exec-1] INFO  c.p.s.l.PallyRequestLoggingFilter
-  [a1b2c3d4] ──► POST /api/v1/avatars/abc-123/chat | user=user-456 | ip=10.0.2.2
+  [a1b2c3d4] ──► POST /api/v1/avatars/abc-123/chat | user=user-456 | ip=<railway-proxy>
 
 00:28:16.890 [http-nio-8080-exec-1] INFO  c.p.s.l.PallyRequestLoggingFilter
   [a1b2c3d4] ◄── 200 /api/v1/avatars/abc-123/chat 476ms
@@ -1710,24 +1621,20 @@ docker logs -f pally-backend 2>&1 | grep -E "──►|◄──|ERROR|Claude"
 
 ## COMMON ERROR PATTERNS — WHAT TO LOOK FOR AND FIX
 
-### Pattern 1 — Connection timeout (the original error)
+### Pattern 1 — Connection timeout
 
 **Flutter Logcat:**
 ```
 [PallyAPI] ✗✗✗ FAILURE
   CONNECTION TIMEOUT — backend unreachable or too slow
-  Tried  : http://localhost:8080/api/v1/...
-  Fix    : Check backend is running on correct host:port
+  Tried  : https://pallybackend-production.up.railway.app/api/v1/...
+  Fix    : Check remote host is up
 ```
 
 **Diagnosis:**
-1. Is it `localhost`? On Android emulator this is wrong → change to `10.0.2.2`
-2. Is the backend running? → `lsof -i :8080`
-3. Is there a firewall blocking? → `curl http://10.0.2.2:8080/actuator/health` from inside the emulator using adb shell
-
-```bash
-adb shell curl http://10.0.2.2:8080/actuator/health
-```
+1. Check Railway health: `curl -sf https://pallybackend-production.up.railway.app/actuator/health`
+2. If DOWN: check Railway dashboard for deploy failures.
+3. If UP but app still times out: check device WiFi / mobile data connectivity.
 
 ---
 
@@ -1776,9 +1683,9 @@ ERROR c.p.a.c.ChatController - Unhandled exception in chat stream
   Fix    : Check for slow DB queries or Claude API latency
 ```
 
-**Backend log to check:**
+**Railway log to check:**
 ```bash
-tail -f /tmp/backend.log | grep "\[Claude-"
+railway logs --tail | grep "\[Claude-"
 # If you see REQUEST but no RESPONSE after 30s → Claude API is slow or CLAUDE_API_KEY is wrong
 # If you see no REQUEST at all → the bug is before the Claude call (DB query, wiki loading)
 ```
@@ -1796,8 +1703,7 @@ AndroidRuntime E FATAL EXCEPTION: main
 
 **Fix:**
 ```bash
-flutter run -d <device> --dart-define=API_BASE_URL=http://10.0.2.2:8080 \
-                         --dart-define=CLAUDE_API_KEY=sk-ant-...
+flutter run -d <device> --dart-define=API_BASE_URL=https://pallybackend-production.up.railway.app
 ```
 
 ---
