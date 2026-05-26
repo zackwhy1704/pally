@@ -7,9 +7,11 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/features/chat/presentation/chat_view_model.dart';
+import 'package:pally/features/photo_question/models/ocr_confidence_result.dart';
 import 'package:pally/features/photo_question/presentation/photo_preview_view_model.dart';
 import 'package:pally/features/photo_question/presentation/widgets/edit_questions_sheet.dart';
 import 'package:pally/features/photo_question/presentation/widgets/retake_confirmation_dialog.dart';
+import 'package:pally/features/photo_question/screens/ocr_confidence_preview_screen.dart';
 import 'package:pally/shared/models/photo_question.dart';
 
 const List<Color> _kQuestionColors = [
@@ -35,6 +37,7 @@ class PhotoPreviewScreen extends ConsumerStatefulWidget {
 
 class _PhotoPreviewScreenState extends ConsumerState<PhotoPreviewScreen> {
   String get _photoPath => widget.photoPath;
+  bool _confidenceChecked = false;
 
   Future<void> _showEditQuestionsSheet(
       BuildContext context, List<PhotoQuestion> questions) async {
@@ -83,6 +86,27 @@ class _PhotoPreviewScreenState extends ConsumerState<PhotoPreviewScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(photoPreviewViewModelProvider(_photoPath));
+
+    // One-time confidence check: push confidence preview for low-confidence results
+    if (state is PhotoPreviewDetected && !_confidenceChecked) {
+      _confidenceChecked = true;
+      final detected = state;
+      final texts = detected.questions.map((q) => q.rawText).toList();
+      final confidenceResult =
+          OcrConfidenceResult.fromOcrTexts(File(_photoPath), texts);
+      if (confidenceResult.hasLowConfidence) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          Navigator.of(context).push(MaterialPageRoute<void>(
+            builder: (_) => OcrConfidencePreviewScreen(
+              result: confidenceResult,
+              avatarId: widget.avatarId,
+              detectedTexts: texts,
+            ),
+          ));
+        });
+      }
+    }
 
     return Scaffold(
       backgroundColor: Colors.black,

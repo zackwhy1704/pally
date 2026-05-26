@@ -105,18 +105,46 @@ class CharacterCard extends StatelessWidget {
                 ]
               : null,
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            CharacterWidget(character: character, size: 52),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              character.displayName,
-              style: AppTextStyles.caption.copyWith(
-                color: AppColors.text2,
-                fontWeight: FontWeight.w600,
-              ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CharacterWidget(character: character, size: 52),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  character.displayName,
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.text2,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
+            if (character.isRare)
+              Positioned(
+                top: 4,
+                right: 4,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 5, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: AppColors.goldL,
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                        color: AppColors.gold.withValues(alpha: 0.5)),
+                  ),
+                  child: Text(
+                    '✨ RARE',
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.amber,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 7,
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),

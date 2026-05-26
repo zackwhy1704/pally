@@ -235,6 +235,7 @@ class _PhotoReviewScreenState extends ConsumerState<PhotoReviewScreen> {
                     // Question chips + inline edit
                     Column(
                       mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: List.generate(_questions.length, (i) {
                         return _QuestionRow(
                           question: _questions[i],
@@ -305,6 +306,7 @@ class _QuestionRow extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Chip row
           Row(

@@ -276,56 +276,223 @@ class _PagesList extends StatelessWidget {
   }
 }
 
-class _PageTile extends StatelessWidget {
+class _PageTile extends ConsumerStatefulWidget {
   const _PageTile({required this.page, required this.avatarId});
   final WikiPage page;
   final String avatarId;
 
   @override
-  Widget build(BuildContext context) {
-    final slug = page.slug ?? page.title.toLowerCase().replaceAll(' ', '-');
-    final filename = '$slug.md';
+  ConsumerState<_PageTile> createState() => _PageTileState();
+}
 
-    return GestureDetector(
-      onTap: () {},
+class _PageTileState extends ConsumerState<_PageTile> {
+  bool _isEditing = false;
+  bool _isSaving = false;
+  late final TextEditingController _editController;
+
+  @override
+  void initState() {
+    super.initState();
+    _editController = TextEditingController(text: widget.page.content);
+  }
+
+  @override
+  void dispose() {
+    _editController.dispose();
+    super.dispose();
+  }
+
+  String get _slug =>
+      widget.page.slug ??
+      widget.page.title.toLowerCase().replaceAll(' ', '-');
+
+  Future<void> _save() async {
+    final newContent = _editController.text.trim();
+    if (newContent.isEmpty) return;
+    setState(() => _isSaving = true);
+    await ref
+        .read(wikiViewerViewModelProvider(widget.avatarId).notifier)
+        .patchCorrection(_slug, newContent);
+    if (mounted) setState(() { _isSaving = false; _isEditing = false; });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final filename = '$_slug.md';
+
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
+      alignment: Alignment.topCenter,
       child: Container(
         margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-        padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.outline),
+          border: Border.all(
+            color: _isEditing ? AppColors.purple : AppColors.outline,
+            width: _isEditing ? 1.5 : 1.0,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    filename,
-                    style: AppTextStyles.body
-                        .copyWith(fontWeight: FontWeight.w600),
+            // Main row
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          filename,
+                          style: AppTextStyles.body
+                              .copyWith(fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      _CertaintyBadge(certainty: widget.page.certainty),
+                      if (widget.page.hasConflict) ...[
+                        const SizedBox(width: AppSpacing.xs),
+                        _ConflictBadge(
+                          onFix: () {
+                            _editController.text = widget.page.content;
+                            setState(() => _isEditing = true);
+                          },
+                        ),
+                      ],
+                      const SizedBox(width: AppSpacing.xs),
+                      // ✏️ Fix button
+                      GestureDetector(
+                        onTap: () {
+                          if (!_isEditing) {
+                            _editController.text = widget.page.content;
+                          }
+                          setState(() => _isEditing = !_isEditing);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: _isEditing
+                                ? AppColors.purpleL
+                                : AppColors.surf2,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: _isEditing
+                                  ? AppColors.purple
+                                  : AppColors.outline,
+                            ),
+                          ),
+                          child: Text(
+                            _isEditing ? '✕ Close' : '✏️ Fix',
+                            style: AppTextStyles.caption.copyWith(
+                              color: _isEditing
+                                  ? AppColors.purple
+                                  : AppColors.text2,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                _CertaintyBadge(certainty: page.certainty),
-                if (page.hasConflict) ...[
-                  const SizedBox(width: AppSpacing.xs),
-                  _ConflictBadge(),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    widget.page.updatedAt != null
+                        ? 'Updated ${_timeAgo(widget.page.updatedAt!)}'
+                        : 'Just added',
+                    style: AppTextStyles.caption,
+                  ),
                 ],
-                const SizedBox(width: AppSpacing.xs),
-                const Icon(Icons.chevron_right_rounded,
-                    size: 18, color: AppColors.text3),
-              ],
+              ),
             ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              page.updatedAt != null
-                  ? 'Updated ${_timeAgo(page.updatedAt!)}'
-                  : 'Just added',
-              style: AppTextStyles.caption,
-            ),
+
+            // Inline editor — only shown when editing
+            if (_isEditing) ...[
+              const Divider(height: 1, color: AppColors.outline),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.sm),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Edit page content',
+                      style: AppTextStyles.label.copyWith(
+                          color: AppColors.text2, fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    TextField(
+                      controller: _editController,
+                      maxLines: 5,
+                      style: AppTextStyles.bodySmall
+                          .copyWith(color: AppColors.text1),
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: AppColors.bg,
+                        contentPadding: const EdgeInsets.all(AppSpacing.sm),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(color: AppColors.outline),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(color: AppColors.outline),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(
+                              color: AppColors.purple, width: 1.5),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: _isSaving
+                                ? null
+                                : () =>
+                                    setState(() => _isEditing = false),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColors.text2,
+                              side: const BorderSide(color: AppColors.outline),
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                            ),
+                            child: const Text('Cancel'),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: FilledButton(
+                            onPressed: _isSaving ? null : _save,
+                            style: FilledButton.styleFrom(
+                              backgroundColor: AppColors.purple,
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 10),
+                            ),
+                            child: _isSaving
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Text('Save'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
       ),
@@ -370,27 +537,71 @@ class _CertaintyBadge extends StatelessWidget {
 }
 
 class _ConflictBadge extends StatelessWidget {
+  const _ConflictBadge({this.onFix});
+  final VoidCallback? onFix;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: AppColors.amberL,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.amber.withValues(alpha: 0.4)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.warning_amber_rounded,
-              size: 10, color: AppColors.amber),
-          const SizedBox(width: 3),
-          Text(
-            'Review conflict',
-            style: AppTextStyles.caption.copyWith(
-              color: AppColors.amber,
-              fontWeight: FontWeight.w600,
+    return GestureDetector(
+      onTap: () => _showConflictDialog(context),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+        decoration: BoxDecoration(
+          color: AppColors.amberL,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.amber.withValues(alpha: 0.4)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.warning_amber_rounded,
+                size: 10, color: AppColors.amber),
+            const SizedBox(width: 3),
+            Text(
+              'Review conflict',
+              style: AppTextStyles.caption.copyWith(
+                color: AppColors.amber,
+                fontWeight: FontWeight.w600,
+              ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showConflictDialog(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: AppColors.surface,
+        title: Row(
+          children: [
+            const Icon(Icons.warning_amber_rounded,
+                color: AppColors.amber, size: 22),
+            const SizedBox(width: AppSpacing.xs),
+            Text('Conflicting Info', style: AppTextStyles.title),
+          ],
+        ),
+        content: Text(
+          'This page contains information from multiple sources that may disagree with each other.\n\nYou can fix the content manually to resolve the conflict.',
+          style: AppTextStyles.body.copyWith(color: AppColors.text2),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Dismiss',
+                style: AppTextStyles.body.copyWith(color: AppColors.text2)),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              onFix?.call();
+            },
+            style: FilledButton.styleFrom(
+                backgroundColor: AppColors.purple),
+            child: const Text('Fix Now'),
           ),
         ],
       ),

@@ -98,6 +98,28 @@ class WikiViewerViewModel extends _$WikiViewerViewModel {
   void updateSearch(String query) {
     state = state.copyWith(searchQuery: query);
   }
+
+  Future<void> patchCorrection(String slug, String newContent) async {
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.patch<void>(
+        '/api/v1/avatars/$_avatarId/wiki/pages/$slug/correction',
+        data: {'content': newContent},
+      );
+      final updated = state.pages.map((p) {
+        final pageSlug = p.slug ?? p.title.toLowerCase().replaceAll(' ', '-');
+        return pageSlug == slug ? p.copyWith(content: newContent) : p;
+      }).toList();
+      state = state.copyWith(pages: updated);
+    } catch (_) {
+      // Optimistically update in-memory even if backend is unavailable
+      final updated = state.pages.map((p) {
+        final pageSlug = p.slug ?? p.title.toLowerCase().replaceAll(' ', '-');
+        return pageSlug == slug ? p.copyWith(content: newContent) : p;
+      }).toList();
+      state = state.copyWith(pages: updated);
+    }
+  }
 }
 
 const _stubPages = [

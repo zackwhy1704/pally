@@ -14,6 +14,8 @@ import 'package:pally/features/chat/presentation/chat_view_model.dart';
 import 'package:pally/features/chat/presentation/widgets/photo_message_bubble.dart';
 import 'package:pally/features/chat/presentation/widgets/photo_processing_bubble.dart';
 import 'package:pally/features/chat/presentation/widgets/homework_scan_result_bubble.dart';
+import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key, required this.avatarId});
@@ -147,12 +149,14 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final String avatarId;
 
   @override
-  Size get preferredSize => const Size.fromHeight(72);
+  Size get preferredSize => const Size.fromHeight(64);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final chatState = ref.watch(chatViewModelProvider(avatarId));
+
     return Container(
-      height: 72 + MediaQuery.of(context).padding.top,
+      height: 64 + MediaQuery.of(context).padding.top,
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
       decoration: const BoxDecoration(
         color: AppColors.surface,
@@ -172,48 +176,42 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
           ),
           if (avatar != null)
             Container(
-              width: 42,
-              height: 42,
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
                 color: avatar!.character.bgColor,
                 shape: BoxShape.circle,
               ),
               child: Center(
-                child: CharacterWidget(character: avatar!.character, size: 38),
+                child: CharacterWidget(character: avatar!.character, size: 32),
               ),
             )
           else
             Container(
-              width: 42,
-              height: 42,
+              width: 36,
+              height: 36,
               decoration: const BoxDecoration(
                   color: AppColors.purpleL, shape: BoxShape.circle),
               child: const Icon(Icons.smart_toy_outlined,
-                  color: AppColors.purple, size: 24),
+                  color: AppColors.purple, size: 20),
             ),
-          const SizedBox(width: AppSpacing.sm),
+          const SizedBox(width: AppSpacing.xs),
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(avatar?.name ?? 'Loading…', style: AppTextStyles.title),
-                Row(
-                  children: [
-                    Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                            color: AppColors.teal, shape: BoxShape.circle)),
-                    const SizedBox(width: 4),
-                    Text('Online',
-                        style: AppTextStyles.caption
-                            .copyWith(color: AppColors.teal)),
-                  ],
-                ),
-              ],
+            child: Text(
+              avatar?.name ?? 'Loading…',
+              style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w700),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
+          // Teaching mode toggle
+          TeachingModeToggle(
+            mode: chatState.teachingMode,
+            onToggle: () =>
+                ref.read(chatViewModelProvider(avatarId).notifier).toggleMode(),
+            enabled: chatState.canSend,
+          ),
+          const SizedBox(width: AppSpacing.xs),
           IconButton(
             icon:
                 const Icon(Icons.upload_file_outlined, color: AppColors.text2),
@@ -410,19 +408,69 @@ class _InputBar extends StatefulWidget {
 }
 
 class _InputBarState extends State<_InputBar> {
-  // ignore: prefer_final_fields
+  final _speech = SpeechToText();
   bool _isListening = false;
+  bool _speechAvailable = false;
 
-  void _toggleMic() async {
-    if (!mounted) return;
-    // Placeholder: actual SpeechToText integration would go here.
-    // For now, show a snackbar telling the user it's coming.
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('🎤 Voice input — tap & speak! (coming in next update)'),
-        duration: Duration(seconds: 2),
-      ),
+  @override
+  void initState() {
+    super.initState();
+    _initSpeech();
+  }
+
+  Future<void> _initSpeech() async {
+    _speechAvailable = await _speech.initialize(
+      onError: (_) => setState(() => _isListening = false),
+      onStatus: (status) {
+        if (status == SpeechToText.doneStatus ||
+            status == SpeechToText.notListeningStatus) {
+          if (mounted) setState(() => _isListening = false);
+        }
+      },
     );
+  }
+
+  Future<void> _toggleMic() async {
+    if (!mounted) return;
+    if (!_speechAvailable) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('🎤 Microphone not available on this device'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+    if (_isListening) {
+      await _speech.stop();
+      setState(() => _isListening = false);
+    } else {
+      setState(() => _isListening = true);
+      await _speech.listen(
+        onResult: (result) {
+          if (result.recognizedWords.isNotEmpty) {
+            widget.controller.text = result.recognizedWords;
+            widget.controller.selection = TextSelection.fromPosition(
+              TextPosition(offset: widget.controller.text.length),
+            );
+          }
+          if (result.finalResult) {
+            setState(() => _isListening = false);
+          }
+        },
+        listenOptions: SpeechListenOptions(
+          listenFor: const Duration(seconds: 30),
+          pauseFor: const Duration(seconds: 3),
+          cancelOnError: true,
+        ),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _speech.cancel();
+    super.dispose();
   }
 
   @override

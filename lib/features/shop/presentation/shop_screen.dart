@@ -110,7 +110,7 @@ class _StarBalance extends StatelessWidget {
   }
 }
 
-class _MysteryBoxCard extends StatelessWidget {
+class _MysteryBoxCard extends StatefulWidget {
   const _MysteryBoxCard({
     required this.stars,
     required this.isOpening,
@@ -122,8 +122,50 @@ class _MysteryBoxCard extends StatelessWidget {
   final VoidCallback onOpen;
 
   @override
+  State<_MysteryBoxCard> createState() => _MysteryBoxCardState();
+}
+
+class _MysteryBoxCardState extends State<_MysteryBoxCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _shakeController;
+  late final Animation<double> _shakeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _shakeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _shakeAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: -8.0), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: -8.0, end: 8.0), weight: 2),
+      TweenSequenceItem(tween: Tween(begin: 8.0, end: -6.0), weight: 2),
+      TweenSequenceItem(tween: Tween(begin: -6.0, end: 6.0), weight: 2),
+      TweenSequenceItem(tween: Tween(begin: 6.0, end: 0.0), weight: 1),
+    ]).animate(CurvedAnimation(
+      parent: _shakeController,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  @override
+  void didUpdateWidget(_MysteryBoxCard old) {
+    super.didUpdateWidget(old);
+    if (widget.isOpening && !old.isOpening) {
+      _shakeController.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _shakeController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final canAfford = stars >= 600;
+    final canAfford = widget.stars >= 600;
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -144,37 +186,44 @@ class _MysteryBoxCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Mystery box visual
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.3), width: 2),
+          // Mystery box visual with shake animation
+          AnimatedBuilder(
+            animation: _shakeAnimation,
+            builder: (context, child) => Transform.translate(
+              offset: Offset(_shakeAnimation.value, 0),
+              child: child,
             ),
-            child: const Stack(
-              alignment: Alignment.center,
-              children: [
-                Icon(
-                  Icons.help_outline_rounded,
-                  color: Colors.white,
-                  size: 52,
-                ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Icon(Icons.auto_awesome_rounded,
-                      color: AppColors.gold, size: 16),
-                ),
-                Positioned(
-                  bottom: 8,
-                  left: 8,
-                  child: Icon(Icons.auto_awesome_rounded,
-                      color: AppColors.gold, size: 12),
-                ),
-              ],
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.3), width: 2),
+              ),
+              child: const Stack(
+                alignment: Alignment.center,
+                children: [
+                  Icon(
+                    Icons.help_outline_rounded,
+                    color: Colors.white,
+                    size: 52,
+                  ),
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Icon(Icons.auto_awesome_rounded,
+                        color: AppColors.gold, size: 16),
+                  ),
+                  Positioned(
+                    bottom: 8,
+                    left: 8,
+                    child: Icon(Icons.auto_awesome_rounded,
+                        color: AppColors.gold, size: 12),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: AppSpacing.md),
@@ -192,7 +241,7 @@ class _MysteryBoxCard extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: FilledButton(
-              onPressed: (canAfford && !isOpening) ? onOpen : null,
+              onPressed: (canAfford && !widget.isOpening) ? widget.onOpen : null,
               style: FilledButton.styleFrom(
                 backgroundColor: canAfford ? AppColors.gold : Colors.white24,
                 foregroundColor: canAfford ? AppColors.text1 : Colors.white54,
@@ -201,7 +250,7 @@ class _MysteryBoxCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: isOpening
+              child: widget.isOpening
                   ? const SizedBox(
                       width: 20,
                       height: 20,
@@ -217,7 +266,9 @@ class _MysteryBoxCard extends StatelessWidget {
                             size: 18, color: AppColors.amber),
                         const SizedBox(width: 6),
                         Text(
-                          canAfford ? 'Open Box (600 ⭐)' : 'Need 600 ⭐ to open',
+                          canAfford
+                              ? 'Open Box (600 ⭐)'
+                              : 'Need 600 ⭐ to open',
                           style: AppTextStyles.body.copyWith(
                             fontWeight: FontWeight.w700,
                             color: canAfford ? AppColors.text1 : Colors.white54,

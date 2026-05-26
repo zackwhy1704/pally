@@ -98,9 +98,11 @@ class _WarningCard extends StatelessWidget {
               Text(icon, style: TextStyle(fontSize: 16, color: color,
                   fontWeight: FontWeight.w700)),
               const SizedBox(width: 6),
-              Text(title,
-                  style: AppTextStyles.label
-                      .copyWith(color: color, fontWeight: FontWeight.w700)),
+              Expanded(
+                child: Text(title,
+                    style: AppTextStyles.label
+                        .copyWith(color: color, fontWeight: FontWeight.w700)),
+              ),
             ],
           ),
           const SizedBox(height: 4),

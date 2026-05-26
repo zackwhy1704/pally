@@ -8,6 +8,7 @@ import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
+import 'package:pally/features/progress/presentation/progress_view_model.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -15,6 +16,7 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final avatarsAsync = ref.watch(homeViewModelProvider);
+    final progressAsync = ref.watch(progressViewModelProvider);
 
     ref.listen<AsyncValue<List<Avatar>>>(homeViewModelProvider, (_, next) {
       if (next is AsyncError) {
@@ -22,12 +24,21 @@ class HomeScreen extends ConsumerWidget {
       }
     });
 
+    final level = progressAsync.valueOrNull?.level ?? 0;
+    final xp = progressAsync.valueOrNull?.xp ?? 0;
+    final xpToNext = progressAsync.valueOrNull?.xpToNextLevel ?? 100;
+
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
         child: Column(
           children: [
-            _HomeHeader(onNewTutor: () => const CreateTutorRoute().go(context)),
+            _HomeHeader(
+              onNewTutor: () => const CreateTutorRoute().go(context),
+              level: level,
+              xp: xp,
+              xpToNext: xpToNext,
+            ),
             const _NudgeCardsRow(),
             Expanded(
               child: avatarsAsync.when(
@@ -48,19 +59,26 @@ class HomeScreen extends ConsumerWidget {
 }
 
 class _HomeHeader extends StatelessWidget {
-  const _HomeHeader({required this.onNewTutor});
+  const _HomeHeader({
+    required this.onNewTutor,
+    required this.level,
+    required this.xp,
+    required this.xpToNext,
+  });
+
   final VoidCallback onNewTutor;
+  final int level;
+  final int xp;
+  final int xpToNext;
 
   @override
   Widget build(BuildContext context) {
+    final xpFraction = xpToNext > 0 ? (xp / xpToNext).clamp(0.0, 1.0) : 0.0;
+
     return Container(
-      height: 185,
-      decoration: const BoxDecoration(
-        color: AppColors.purpleL,
-      ),
+      decoration: const BoxDecoration(color: AppColors.purpleL),
       child: Stack(
         children: [
-          // Decorative star shapes
           Positioned(
             top: 16,
             right: 24,
@@ -79,7 +97,6 @@ class _HomeHeader extends StatelessWidget {
             child: _StarShape(
                 size: 20, color: AppColors.purple.withValues(alpha: 0.12)),
           ),
-          // Content
           Padding(
             padding: const EdgeInsets.fromLTRB(
               AppSpacing.md,
@@ -90,16 +107,63 @@ class _HomeHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '👋 Hey, there!',
-                  style: AppTextStyles.heading1,
-                ),
+                Text('👋 Hey, there!', style: AppTextStyles.heading1),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   'Which tutor do you want to chat with today?',
                   style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 ),
-                const SizedBox(height: AppSpacing.md),
+
+                // Level + XP bar
+                if (level > 0) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: AppColors.amber.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: AppColors.amber.withValues(alpha: 0.5)),
+                        ),
+                        child: Text(
+                          '⭐ Level $level',
+                          style: AppTextStyles.label.copyWith(
+                              color: AppColors.amber,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              '$xp / $xpToNext XP',
+                              style: AppTextStyles.caption.copyWith(
+                                  color: AppColors.text2),
+                            ),
+                            const SizedBox(height: 3),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(3),
+                              child: LinearProgressIndicator(
+                                value: xpFraction,
+                                minHeight: 6,
+                                backgroundColor: AppColors.outline,
+                                valueColor: const AlwaysStoppedAnimation<Color>(
+                                    AppColors.amber),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+
+                const SizedBox(height: AppSpacing.sm),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -116,9 +180,8 @@ class _HomeHeader extends StatelessWidget {
                       label: const Text('New'),
                       style: TextButton.styleFrom(
                         foregroundColor: AppColors.purple,
-                        textStyle: AppTextStyles.label.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
+                        textStyle: AppTextStyles.label
+                            .copyWith(fontWeight: FontWeight.w700),
                         padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.sm,
                           vertical: AppSpacing.xs,

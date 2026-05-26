@@ -9,13 +9,16 @@ class WikiCompiledScreen extends StatelessWidget {
     super.key,
     required this.avatarId,
     required this.newPageTitles,
+    this.brainScore,
   });
 
   final String avatarId;
   final List<String> newPageTitles;
+  final int? brainScore;
 
   @override
   Widget build(BuildContext context) {
+    final score = brainScore ?? _computeScore(newPageTitles.length);
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
@@ -34,7 +37,9 @@ class WikiCompiledScreen extends StatelessWidget {
                 style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.md),
+              _BrainQualityCard(score: score, pageCount: newPageTitles.length),
+              const SizedBox(height: AppSpacing.md),
               if (newPageTitles.isNotEmpty)
                 Expanded(
                   child: _PagesList(titles: newPageTitles),
@@ -48,7 +53,135 @@ class WikiCompiledScreen extends StatelessWidget {
       ),
     );
   }
+
+  static int _computeScore(int pageCount) {
+    if (pageCount >= 10) return 9;
+    if (pageCount >= 6) return 8;
+    if (pageCount >= 3) return 7;
+    if (pageCount >= 1) return 5;
+    return 3;
+  }
 }
+
+// ── Brain Quality Score card ──────────────────────────────────────────────────
+
+class _BrainQualityCard extends StatelessWidget {
+  const _BrainQualityCard({required this.score, required this.pageCount});
+
+  final int score;
+  final int pageCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final fraction = score / 10.0;
+    final (barColor, status) = score >= 8
+        ? (AppColors.green, 'Excellent')
+        : score >= 6
+            ? (AppColors.teal, 'Good')
+            : score >= 4
+                ? (AppColors.amber, 'Building up')
+                : (AppColors.coral, 'Needs more content');
+
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.purpleL,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.outline),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('🧠', style: TextStyle(fontSize: 16)),
+              const SizedBox(width: AppSpacing.xs),
+              Text(
+                'Brain Quality Score',
+                style: AppTextStyles.label.copyWith(
+                  color: AppColors.text2,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                '$score/10',
+                style: AppTextStyles.title.copyWith(
+                  color: AppColors.purple,
+                  fontSize: 20,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: fraction,
+              minHeight: 8,
+              backgroundColor: AppColors.outline,
+              valueColor: AlwaysStoppedAnimation<Color>(barColor),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          _StatusRow(
+            icon: pageCount >= 1 ? '✅' : '⚠️',
+            text: pageCount >= 1
+                ? '$pageCount page${pageCount == 1 ? '' : 's'} of content added'
+                : 'No content uploaded yet',
+            positive: pageCount >= 1,
+          ),
+          const SizedBox(height: 4),
+          _StatusRow(
+            icon: pageCount >= 5 ? '✅' : '⚠️',
+            text: pageCount >= 5
+                ? 'Good breadth of topics'
+                : 'Upload more pages for better coverage',
+            positive: pageCount >= 5,
+          ),
+          const SizedBox(height: 4),
+          _StatusRow(
+            icon: '✅',
+            text: 'Brain status: $status',
+            positive: score >= 6,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusRow extends StatelessWidget {
+  const _StatusRow({
+    required this.icon,
+    required this.text,
+    required this.positive,
+  });
+
+  final String icon;
+  final String text;
+  final bool positive;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(icon, style: const TextStyle(fontSize: 12)),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            text,
+            style: AppTextStyles.caption.copyWith(
+              color: positive ? AppColors.text1 : AppColors.amber,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ── Success hero ──────────────────────────────────────────────────────────────
 
 class _SuccessHero extends StatelessWidget {
   @override

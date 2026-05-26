@@ -80,6 +80,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen>
                     onPractice: () => context.push('/avatar/all/quiz'),
                   ),
                 const SizedBox(height: AppSpacing.md),
+                const _ErrorPatternsCard(),
+                const SizedBox(height: AppSpacing.md),
                 if (progress.badges.isNotEmpty)
                   _BadgesCard(badges: progress.badges),
                 const SizedBox(height: AppSpacing.md),
@@ -547,6 +549,125 @@ class _NavButtons extends StatelessWidget {
     );
   }
 }
+
+// ── P8: Error Patterns ────────────────────────────────────────────────────────
+
+class _ErrorPattern {
+  const _ErrorPattern(this.topic, this.errorCount, this.description);
+  final String topic;
+  final int errorCount;
+  final String description;
+}
+
+class _ErrorPatternsCard extends StatelessWidget {
+  const _ErrorPatternsCard();
+
+  static const _patterns = [
+    _ErrorPattern(
+        'Fractions', 7, 'Often confuses numerator and denominator in division'),
+    _ErrorPattern(
+        'Photosynthesis', 4, 'Mixes up reactants and products in equation'),
+    _ErrorPattern('Past Tense', 3, 'Irregular verbs — "runned" vs "ran"'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: AppSpacing.card,
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.outline),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('🔍', style: TextStyle(fontSize: 16)),
+              const SizedBox(width: AppSpacing.xs),
+              Text('Error Patterns', style: AppTextStyles.title),
+              const Spacer(),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppColors.coralL,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '${_patterns.length} patterns',
+                  style: AppTextStyles.caption
+                      .copyWith(color: AppColors.coral),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            'Recurring mistakes across quizzes and chats',
+            style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          ..._patterns.map((p) => _ErrorPatternRow(pattern: p)),
+        ],
+      ),
+    );
+  }
+}
+
+class _ErrorPatternRow extends StatelessWidget {
+  const _ErrorPatternRow({required this.pattern});
+  final _ErrorPattern pattern;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: AppColors.coralL,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Text(
+                '${pattern.errorCount}',
+                style: AppTextStyles.label.copyWith(
+                  color: AppColors.coral,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  pattern.topic,
+                  style: AppTextStyles.body.copyWith(
+                      fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  pattern.description,
+                  style: AppTextStyles.bodySmall,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Screen error state ────────────────────────────────────────────────────────
 
 class _ErrorView extends StatelessWidget {
   const _ErrorView({required this.onRetry});
