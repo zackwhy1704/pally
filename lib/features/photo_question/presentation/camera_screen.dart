@@ -8,8 +8,6 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 
 const _kDark = Color(0xFF0F0A1A);
-
-// Fractional bounds for the scan zone (fraction of screen height)
 const _kScanTopFraction = 0.20;
 const _kScanBottomFraction = 0.82;
 
@@ -54,13 +52,11 @@ class _CameraScreenState extends State<CameraScreen>
   }
 
   void _openTips() {
-    if (_showTips) return;
-    setState(() => _showTips = true);
+    if (!_showTips) setState(() => _showTips = true);
   }
 
   void _closeTips() {
-    if (!_showTips) return;
-    setState(() => _showTips = false);
+    if (_showTips) setState(() => _showTips = false);
   }
 
   Future<void> _closeCamera() async {
@@ -77,32 +73,23 @@ class _CameraScreenState extends State<CameraScreen>
       if (mounted) await _closeCamera();
       return;
     }
-
     try {
       final cameras = await availableCameras();
       if (cameras.isEmpty) {
         if (mounted) await _closeCamera();
         return;
       }
-
       final selected = _isFront
           ? cameras.firstWhere(
               (c) => c.lensDirection == CameraLensDirection.front,
-              orElse: () => cameras.first,
-            )
+              orElse: () => cameras.first)
           : cameras.firstWhere(
               (c) => c.lensDirection == CameraLensDirection.back,
-              orElse: () => cameras.first,
-            );
+              orElse: () => cameras.first);
 
       _controller?.dispose();
-      _controller = CameraController(
-        selected,
-        ResolutionPreset.high,
-        enableAudio: false,
-        imageFormatGroup: ImageFormatGroup.jpeg,
-      );
-
+      _controller = CameraController(selected, ResolutionPreset.high,
+          enableAudio: false, imageFormatGroup: ImageFormatGroup.jpeg);
       await _controller!.initialize();
       if (mounted) setState(() => _isInitialised = true);
     } catch (_) {
@@ -126,24 +113,33 @@ class _CameraScreenState extends State<CameraScreen>
   }
 
   Future<void> _pickGallery() async {
-    final picker = ImagePicker();
-    final img = await picker.pickImage(source: ImageSource.gallery);
+    final img = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (img != null && mounted) context.pop(img.path);
   }
 
   Future<void> _toggleFlash() async {
     if (_controller == null || !_controller!.value.isInitialized) return;
     setState(() => _isFlashOn = !_isFlashOn);
-    await _controller!.setFlashMode(
-      _isFlashOn ? FlashMode.torch : FlashMode.off,
-    );
+    await _controller!
+        .setFlashMode(_isFlashOn ? FlashMode.torch : FlashMode.off);
   }
 
   @override
   Widget build(BuildContext context) {
+    // Guard: show plain black until controller is ready so the Stack has
+    // something to render. CameraPreview crashes on an uninitialised controller.
+    if (!_isInitialised || _controller == null) {
+      return const Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: CircularProgressIndicator(color: AppColors.teal),
+        ),
+      );
+    }
+
     final screenH = MediaQuery.of(context).size.height;
     final scanTop = screenH * _kScanTopFraction;
-    final scanBottom = screenH * _kScanBottomFraction;
+    final scanRange = screenH * (_kScanBottomFraction - _kScanTopFraction);
 
     return PopScope(
       canPop: false,
@@ -154,29 +150,32 @@ class _CameraScreenState extends State<CameraScreen>
         backgroundColor: Colors.black,
         resizeToAvoidBottomInset: false,
         body: Stack(
+          // StackFit.expand gives CameraPreview the tight bounded size it needs.
           fit: StackFit.expand,
           children: [
-            // ── LAYER 1: Camera preview ───────────────────────────────────
-            _isInitialised && _controller != null
-                ? CameraPreview(_controller!)
-                : const Center(
-                    child: CircularProgressIndicator(color: AppColors.teal),
-                  ),
+            // ── LAYER 1: Camera feed ─────────────────────────────────────
+            // Must be the FIRST child and a direct Stack child — no wrappers.
+            CameraPreview(_controller!),
 
-            // ── LAYER 2: Viewfinder brackets (non-interactive) ───────────
-            const IgnorePointer(
-              child: Positioned.fill(child: _ViewfinderBrackets()),
+            // ── LAYER 2: Viewfinder brackets ─────────────────────────────
+            // Positioned.fill is the direct Stack child; IgnorePointer goes
+            // INSIDE so the Positioned data is seen by the Stack's layout.
+            const Positioned.fill(
+              child: IgnorePointer(child: _ViewfinderBrackets()),
             ),
 
-            // ── LAYER 3: Animated scan line (non-interactive) ────────────
-            if (_isInitialised)
-              IgnorePointer(
+            // ── LAYER 3: Animated scan line ───────────────────────────────
+            // Positioned is a DIRECT Stack child. Transform.translate handles
+            // the animation — no nested Positioned inside AnimatedBuilder.
+            Positioned(
+              top: scanTop,
+              left: 48,
+              right: 48,
+              child: IgnorePointer(
                 child: AnimatedBuilder(
                   animation: _scanAnim,
-                  builder: (_, __) => Positioned(
-                    left: 48,
-                    right: 48,
-                    top: scanTop + (_scanAnim.value * (scanBottom - scanTop)),
+                  builder: (_, __) => Transform.translate(
+                    offset: Offset(0, _scanAnim.value * scanRange),
                     child: Container(
                       height: 2,
                       decoration: BoxDecoration(
@@ -190,19 +189,19 @@ class _CameraScreenState extends State<CameraScreen>
                   ),
                 ),
               ),
+            ),
 
-            // ── LAYER 4: Instruction banner (non-interactive) ────────────
+            // ── LAYER 4: Instruction banner ───────────────────────────────
+            // Positioned direct Stack child; IgnorePointer wraps the content.
             if (!_showTips)
-              IgnorePointer(
-                child: Positioned(
-                  bottom: screenH * 0.27,
-                  left: 40,
-                  right: 40,
-                  child: const _InstructionBanner(),
-                ),
+              Positioned(
+                bottom: screenH * 0.27,
+                left: 40,
+                right: 40,
+                child: const IgnorePointer(child: _InstructionBanner()),
               ),
 
-            // ── LAYER 5: Bottom controls — always interactive ────────────
+            // ── LAYER 5: Bottom controls ──────────────────────────────────
             if (!_showTips)
               Positioned(
                 bottom: 0,
@@ -222,10 +221,9 @@ class _CameraScreenState extends State<CameraScreen>
                 ),
               ),
 
-            // ── LAYER 6: Tips sheet — only in tree when visible ──────────
-            // No controller needed. DSS is conditional — when not in tree
-            // it cannot intercept any touches. Drag-to-close handled by
-            // NotificationListener.
+            // ── LAYER 6: Tips sheet (conditional — only in tree when open) ─
+            // No controller needed. DSS is removed from tree on close, so it
+            // cannot intercept touches when invisible.
             if (_showTips)
               NotificationListener<DraggableScrollableNotification>(
                 onNotification: (n) {
@@ -245,7 +243,7 @@ class _CameraScreenState extends State<CameraScreen>
                 ),
               ),
 
-            // ── LAYER 7: Top nav bar — last child = always on top ────────
+            // ── LAYER 7: Top nav bar — always last = highest z-order ──────
             Positioned(
               top: 0,
               left: 0,
@@ -306,15 +304,19 @@ class _TopBar extends StatelessWidget {
       ),
       child: Row(
         children: [
+          // ✕ Close
           IconButton(
-            icon: const Icon(Icons.close_rounded, color: Colors.white, size: 28),
+            icon: const Icon(Icons.close_rounded,
+                color: Colors.white, size: 28),
             onPressed: onClose,
           ),
           const Spacer(),
+          // Tips toggle pill
           GestureDetector(
             onTap: onTipsTap,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: showTips
                     ? Colors.white.withValues(alpha: 0.25)
@@ -326,26 +328,23 @@ class _TopBar extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    showTips ? '✕' : '?',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700),
-                  ),
+                  Text(showTips ? '✕' : '?',
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700)),
                   const SizedBox(width: 4),
-                  Text(
-                    showTips ? 'Close' : 'Tips',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600),
-                  ),
+                  Text(showTips ? 'Close' : 'Tips',
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600)),
                 ],
               ),
             ),
           ),
           const SizedBox(width: 4),
+          // Flash toggle
           IconButton(
             icon: Icon(
               isFlashOn ? Icons.flash_on_rounded : Icons.flash_off_rounded,
@@ -382,7 +381,6 @@ class _TipsSheet extends StatelessWidget {
         controller: scrollController,
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
         children: [
-          // Pull handle
           Center(
             child: Container(
               width: 54,
@@ -394,24 +392,19 @@ class _TipsSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
-            '📷 Tips for best results',
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'Nunito'),
-          ),
+          const Text('📷 Tips for best results',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Nunito')),
           const SizedBox(height: 4),
-          Text(
-            'Better photo = better answers from your tutor',
-            style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.55),
-                fontSize: 10,
-                fontFamily: 'Nunito'),
-          ),
+          Text('Better photo = better answers from your tutor',
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.55),
+                  fontSize: 10,
+                  fontFamily: 'Nunito')),
           const SizedBox(height: 16),
-
           const _TipRow(
               emoji: '☀️',
               label: 'Bright light',
@@ -428,44 +421,32 @@ class _TipsSheet extends StatelessWidget {
               emoji: '📐',
               label: 'Keep it straight',
               sub: 'Flat page, not tilted or curved'),
-
           const SizedBox(height: 12),
-          Container(height: 1, color: Colors.white.withValues(alpha: 0.12)),
+          Container(
+              height: 1,
+              color: Colors.white.withValues(alpha: 0.12)),
           const SizedBox(height: 12),
-
-          Text(
-            'What Zap reads:',
-            style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.55),
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'Nunito'),
-          ),
+          Text('What Zap reads:',
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.55),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Nunito')),
           const SizedBox(height: 8),
-
-          const Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: [
-              _ContentChip(label: 'Printed text ✓', color: AppColors.green),
-              _ContentChip(label: 'Clear numbers ✓', color: AppColors.green),
-              _ContentChip(label: 'Neat handwriting ✓', color: AppColors.teal),
-            ],
-          ),
+          const Wrap(spacing: 6, runSpacing: 6, children: [
+            _ContentChip(label: 'Printed text ✓', color: AppColors.green),
+            _ContentChip(
+                label: 'Clear numbers ✓', color: AppColors.green),
+            _ContentChip(
+                label: 'Neat handwriting ✓', color: AppColors.teal),
+          ]),
           const SizedBox(height: 8),
-
-          const Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: [
-              _ContentChip(label: 'Diagrams ⚠️', color: AppColors.amber),
-              _ContentChip(label: 'Symbols ⚠️', color: AppColors.amber),
-              _ContentChip(label: 'Charts ✕', color: AppColors.coral),
-            ],
-          ),
-
+          const Wrap(spacing: 6, runSpacing: 6, children: [
+            _ContentChip(label: 'Diagrams ⚠️', color: AppColors.amber),
+            _ContentChip(label: 'Symbols ⚠️', color: AppColors.amber),
+            _ContentChip(label: 'Charts ✕', color: AppColors.coral),
+          ]),
           const SizedBox(height: 16),
-          // Close button inside sheet
           SizedBox(
             width: double.infinity,
             height: 44,
@@ -473,7 +454,8 @@ class _TipsSheet extends StatelessWidget {
               onPressed: onClose,
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.white,
-                side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
+                side: BorderSide(
+                    color: Colors.white.withValues(alpha: 0.3)),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
@@ -488,12 +470,8 @@ class _TipsSheet extends StatelessWidget {
 }
 
 class _TipRow extends StatelessWidget {
-  const _TipRow({
-    required this.emoji,
-    required this.label,
-    required this.sub,
-  });
-
+  const _TipRow(
+      {required this.emoji, required this.label, required this.sub});
   final String emoji;
   final String label;
   final String sub;
@@ -549,7 +527,6 @@ class _TipRow extends StatelessWidget {
 
 class _ContentChip extends StatelessWidget {
   const _ContentChip({required this.label, required this.color});
-
   final String label;
   final Color color;
 
@@ -576,13 +553,14 @@ class _ContentChip extends StatelessWidget {
 }
 
 // ── Viewfinder brackets ───────────────────────────────────────────────────────
-// All coordinates are fractional — no hardcoded pixels.
+// All positions are fractional — adapts to any screen size.
 
 class _ViewfinderBrackets extends StatelessWidget {
   const _ViewfinderBrackets();
 
   @override
-  Widget build(BuildContext context) => CustomPaint(painter: _BracketPainter());
+  Widget build(BuildContext context) =>
+      CustomPaint(painter: _BracketPainter());
 }
 
 class _BracketPainter extends CustomPainter {
@@ -594,7 +572,6 @@ class _BracketPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
-    // All values are fractions of canvas size — works on any device
     final gapX = size.width * 0.12;
     final lenX = size.width * 0.09;
     final top = size.height * _kScanTopFraction;
@@ -680,6 +657,7 @@ class _BottomControls extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
+          // Gallery
           GestureDetector(
             onTap: onGallery,
             child: Container(
@@ -694,6 +672,7 @@ class _BottomControls extends StatelessWidget {
                   color: Colors.white, size: 28),
             ),
           ),
+          // Shutter
           GestureDetector(
             onTap: isCapturing ? null : onCapture,
             child: Container(
@@ -721,6 +700,7 @@ class _BottomControls extends StatelessWidget {
                     ),
             ),
           ),
+          // Flip
           GestureDetector(
             onTap: onFlip,
             child: Container(
