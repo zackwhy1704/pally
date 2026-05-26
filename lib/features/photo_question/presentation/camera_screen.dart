@@ -9,6 +9,10 @@ import 'package:pally/core/theme/app_text_styles.dart';
 
 const _kDark = Color(0xFF0F0A1A);
 
+// Fractional bounds for the scan zone (fraction of screen height)
+const _kScanTopFraction = 0.20;
+const _kScanBottomFraction = 0.82;
+
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
 
@@ -20,8 +24,6 @@ class _CameraScreenState extends State<CameraScreen>
     with SingleTickerProviderStateMixin {
   CameraController? _controller;
   late AnimationController _scanAnim;
-  final DraggableScrollableController _tipsController =
-      DraggableScrollableController();
 
   bool _isInitialised = false;
   bool _isFront = false;
@@ -44,31 +46,21 @@ class _CameraScreenState extends State<CameraScreen>
     final shown = prefs.getInt('ocr_tips_shown') ?? 0;
     if (shown < 1) {
       await Future.delayed(const Duration(milliseconds: 900));
-      if (mounted) _openTips(isAuto: true);
+      if (mounted) {
+        await prefs.setInt('ocr_tips_shown', 1);
+        setState(() => _showTips = true);
+      }
     }
   }
 
-  Future<void> _openTips({bool isAuto = false}) async {
+  void _openTips() {
     if (_showTips) return;
     setState(() => _showTips = true);
-    _tipsController.animateTo(
-      0.62,
-      duration: const Duration(milliseconds: 350),
-      curve: Curves.easeOutCubic,
-    );
-    if (isAuto) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('ocr_tips_shown', 1);
-    }
   }
 
-  Future<void> _closeTips() async {
-    await _tipsController.animateTo(
-      0.0,
-      duration: const Duration(milliseconds: 280),
-      curve: Curves.easeInCubic,
-    );
-    if (mounted) setState(() => _showTips = false);
+  void _closeTips() {
+    if (!_showTips) return;
+    setState(() => _showTips = false);
   }
 
   Future<void> _closeCamera() async {
@@ -149,6 +141,10 @@ class _CameraScreenState extends State<CameraScreen>
 
   @override
   Widget build(BuildContext context) {
+    final screenH = MediaQuery.of(context).size.height;
+    final scanTop = screenH * _kScanTopFraction;
+    final scanBottom = screenH * _kScanBottomFraction;
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
@@ -156,58 +152,57 @@ class _CameraScreenState extends State<CameraScreen>
       },
       child: Scaffold(
         backgroundColor: Colors.black,
+        resizeToAvoidBottomInset: false,
         body: Stack(
           fit: StackFit.expand,
           children: [
-            // ── LAYER 1: Camera preview (non-interactive background) ──────────
-            IgnorePointer(
-              child: _isInitialised && _controller != null
-                  ? CameraPreview(_controller!)
-                  : const Center(
-                      child: CircularProgressIndicator(color: AppColors.teal),
-                    ),
-            ),
+            // ── LAYER 1: Camera preview ───────────────────────────────────
+            _isInitialised && _controller != null
+                ? CameraPreview(_controller!)
+                : const Center(
+                    child: CircularProgressIndicator(color: AppColors.teal),
+                  ),
 
-            // ── LAYER 2: Decorative scanner overlays (non-interactive) ────────
+            // ── LAYER 2: Viewfinder brackets (non-interactive) ───────────
             const IgnorePointer(
               child: Positioned.fill(child: _ViewfinderBrackets()),
             ),
+
+            // ── LAYER 3: Animated scan line (non-interactive) ────────────
             if (_isInitialised)
               IgnorePointer(
                 child: AnimatedBuilder(
                   animation: _scanAnim,
-                  builder: (ctx, _) {
-                    const scanTop = 160.0;
-                    const scanBottom = 560.0;
-                    return Positioned(
-                      left: 48,
-                      right: 48,
-                      top: scanTop + (_scanAnim.value * (scanBottom - scanTop)),
-                      child: Container(
-                        height: 2,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(colors: [
-                            Colors.transparent,
-                            AppColors.teal.withValues(alpha: 0.8),
-                            Colors.transparent,
-                          ]),
-                        ),
+                  builder: (_, __) => Positioned(
+                    left: 48,
+                    right: 48,
+                    top: scanTop + (_scanAnim.value * (scanBottom - scanTop)),
+                    child: Container(
+                      height: 2,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: [
+                          Colors.transparent,
+                          AppColors.teal.withValues(alpha: 0.8),
+                          Colors.transparent,
+                        ]),
                       ),
-                    );
-                  },
-                ),
-              ),
-            if (!_showTips)
-              const IgnorePointer(
-                child: Positioned(
-                  bottom: 220,
-                  left: 40,
-                  right: 40,
-                  child: _InstructionBanner(),
+                    ),
+                  ),
                 ),
               ),
 
-            // ── LAYER 3: Bottom controls ──────────────────────────────────────
+            // ── LAYER 4: Instruction banner (non-interactive) ────────────
+            if (!_showTips)
+              IgnorePointer(
+                child: Positioned(
+                  bottom: screenH * 0.27,
+                  left: 40,
+                  right: 40,
+                  child: const _InstructionBanner(),
+                ),
+              ),
+
+            // ── LAYER 5: Bottom controls — always interactive ────────────
             if (!_showTips)
               Positioned(
                 bottom: 0,
@@ -227,26 +222,30 @@ class _CameraScreenState extends State<CameraScreen>
                 ),
               ),
 
-            // ── LAYER 4: Tips sheet ───────────────────────────────────────────
-            // IgnorePointer when collapsed so the invisible sheet never
-            // intercepts taps destined for buttons in layers 3 and 5.
-            IgnorePointer(
-              ignoring: !_showTips,
-              child: DraggableScrollableSheet(
-                controller: _tipsController,
-                initialChildSize: 0.0,
-                minChildSize: 0.0,
-                maxChildSize: 0.65,
-                snap: true,
-                snapSizes: const [0.0, 0.62],
-                builder: (_, scrollCtrl) => _TipsSheet(
-                  scrollController: scrollCtrl,
-                  onClose: _closeTips,
+            // ── LAYER 6: Tips sheet — only in tree when visible ──────────
+            // No controller needed. DSS is conditional — when not in tree
+            // it cannot intercept any touches. Drag-to-close handled by
+            // NotificationListener.
+            if (_showTips)
+              NotificationListener<DraggableScrollableNotification>(
+                onNotification: (n) {
+                  if (n.extent < 0.05) _closeTips();
+                  return true;
+                },
+                child: DraggableScrollableSheet(
+                  initialChildSize: 0.62,
+                  minChildSize: 0.0,
+                  maxChildSize: 0.65,
+                  snap: true,
+                  snapSizes: const [0.0, 0.62],
+                  builder: (_, scrollCtrl) => _TipsSheet(
+                    scrollController: scrollCtrl,
+                    onClose: _closeTips,
+                  ),
                 ),
               ),
-            ),
 
-            // ── LAYER 5: Top navigation bar (always on top, always tappable) ──
+            // ── LAYER 7: Top nav bar — last child = always on top ────────
             Positioned(
               top: 0,
               left: 0,
@@ -268,13 +267,12 @@ class _CameraScreenState extends State<CameraScreen>
   @override
   void dispose() {
     _scanAnim.dispose();
-    _tipsController.dispose();
     _controller?.dispose();
     super.dispose();
   }
 }
 
-// ── Top bar ──────────────────────────────────────────────────────────────────
+// ── Top bar ───────────────────────────────────────────────────────────────────
 
 class _TopBar extends StatelessWidget {
   const _TopBar({
@@ -313,7 +311,6 @@ class _TopBar extends StatelessWidget {
             onPressed: onClose,
           ),
           const Spacer(),
-          // Tips pill
           GestureDetector(
             onTap: onTipsTap,
             child: Container(
@@ -397,7 +394,6 @@ class _TipsSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          // Title
           const Text(
             '📷 Tips for best results',
             style: TextStyle(
@@ -416,7 +412,6 @@ class _TipsSheet extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
-          // 4 tips
           const _TipRow(
               emoji: '☀️',
               label: 'Bright light',
@@ -448,7 +443,6 @@ class _TipsSheet extends StatelessWidget {
           ),
           const SizedBox(height: 8),
 
-          // Reliable chips
           const Wrap(
             spacing: 6,
             runSpacing: 6,
@@ -460,7 +454,6 @@ class _TipsSheet extends StatelessWidget {
           ),
           const SizedBox(height: 8),
 
-          // Tricky chips
           const Wrap(
             spacing: 6,
             runSpacing: 6,
@@ -469,6 +462,24 @@ class _TipsSheet extends StatelessWidget {
               _ContentChip(label: 'Symbols ⚠️', color: AppColors.amber),
               _ContentChip(label: 'Charts ✕', color: AppColors.coral),
             ],
+          ),
+
+          const SizedBox(height: 16),
+          // Close button inside sheet
+          SizedBox(
+            width: double.infinity,
+            height: 44,
+            child: OutlinedButton(
+              onPressed: onClose,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.white,
+                side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text('Got it, close tips',
+                  style: TextStyle(fontFamily: 'Nunito', fontSize: 13)),
+            ),
           ),
         ],
       ),
@@ -493,7 +504,6 @@ class _TipRow extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          // Green check circle
           Container(
             width: 22,
             height: 22,
@@ -503,13 +513,11 @@ class _TipRow extends StatelessWidget {
               border: Border.all(color: AppColors.green, width: 1.5),
             ),
             child: const Center(
-              child: Text(
-                '✓',
-                style: TextStyle(
-                    color: AppColors.green,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700),
-              ),
+              child: Text('✓',
+                  style: TextStyle(
+                      color: AppColors.green,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700)),
             ),
           ),
           const SizedBox(width: 10),
@@ -519,21 +527,17 @@ class _TipRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'Nunito'),
-                ),
-                Text(
-                  sub,
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.55),
-                      fontSize: 9,
-                      fontFamily: 'Nunito'),
-                ),
+                Text(label,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: 'Nunito')),
+                Text(sub,
+                    style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.55),
+                        fontSize: 9,
+                        fontFamily: 'Nunito')),
               ],
             ),
           ),
@@ -560,20 +564,19 @@ class _ContentChip extends StatelessWidget {
         border: Border.all(color: color.withValues(alpha: 0.6)),
       ),
       child: Center(
-        child: Text(
-          label,
-          style: TextStyle(
-              color: color,
-              fontSize: 9,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Nunito'),
-        ),
+        child: Text(label,
+            style: TextStyle(
+                color: color,
+                fontSize: 9,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Nunito')),
       ),
     );
   }
 }
 
 // ── Viewfinder brackets ───────────────────────────────────────────────────────
+// All coordinates are fractional — no hardcoded pixels.
 
 class _ViewfinderBrackets extends StatelessWidget {
   const _ViewfinderBrackets();
@@ -591,27 +594,28 @@ class _BracketPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
-    const gap = 48.0;
-    const len = 36.0;
-    const top = 160.0;
-    const bottom = 560.0;
+    // All values are fractions of canvas size — works on any device
+    final gapX = size.width * 0.12;
+    final lenX = size.width * 0.09;
+    final top = size.height * _kScanTopFraction;
+    final bottom = size.height * _kScanBottomFraction;
 
-    canvas.drawLine(
-        const Offset(gap, top), const Offset(gap + len, top), paint);
-    canvas.drawLine(
-        const Offset(gap, top), const Offset(gap, top + len), paint);
-    canvas.drawLine(Offset(size.width - gap, top),
-        Offset(size.width - gap - len, top), paint);
-    canvas.drawLine(Offset(size.width - gap, top),
-        Offset(size.width - gap, top + len), paint);
-    canvas.drawLine(
-        const Offset(gap, bottom), const Offset(gap + len, bottom), paint);
-    canvas.drawLine(
-        const Offset(gap, bottom), const Offset(gap, bottom - len), paint);
-    canvas.drawLine(Offset(size.width - gap, bottom),
-        Offset(size.width - gap - len, bottom), paint);
-    canvas.drawLine(Offset(size.width - gap, bottom),
-        Offset(size.width - gap, bottom - len), paint);
+    // Top-left
+    canvas.drawLine(Offset(gapX, top), Offset(gapX + lenX, top), paint);
+    canvas.drawLine(Offset(gapX, top), Offset(gapX, top + lenX), paint);
+    // Top-right
+    canvas.drawLine(Offset(size.width - gapX, top),
+        Offset(size.width - gapX - lenX, top), paint);
+    canvas.drawLine(Offset(size.width - gapX, top),
+        Offset(size.width - gapX, top + lenX), paint);
+    // Bottom-left
+    canvas.drawLine(Offset(gapX, bottom), Offset(gapX + lenX, bottom), paint);
+    canvas.drawLine(Offset(gapX, bottom), Offset(gapX, bottom - lenX), paint);
+    // Bottom-right
+    canvas.drawLine(Offset(size.width - gapX, bottom),
+        Offset(size.width - gapX - lenX, bottom), paint);
+    canvas.drawLine(Offset(size.width - gapX, bottom),
+        Offset(size.width - gapX, bottom - lenX), paint);
   }
 
   @override

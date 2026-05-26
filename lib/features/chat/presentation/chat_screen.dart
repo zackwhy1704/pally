@@ -111,27 +111,49 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       }
     });
 
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return Scaffold(
       backgroundColor: AppColors.bg,
+      // Handle keyboard inset manually so only the input bar moves, not the
+      // entire list — this matches WhatsApp/Telegram behaviour.
+      resizeToAvoidBottomInset: false,
       appBar: _ChatAppBar(avatar: state.avatar, avatarId: widget.avatarId),
       body: SafeArea(
+        // We manage bottom padding ourselves via AnimatedContainer below.
+        bottom: false,
         child: Column(
           children: [
+            // Message list — tapping it dismisses the keyboard
             Expanded(
-              child: _MessageList(
-                messages: state.sortedMessages,
-                isTyping: state.isTyping,
-                isProcessingPhoto: state.isProcessingPhoto,
-                processingPhotoQuestions: state.processingPhotoQuestions,
-                scrollController: _scrollController,
+              child: GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                behavior: HitTestBehavior.opaque,
+                child: _MessageList(
+                  messages: state.sortedMessages,
+                  isTyping: state.isTyping,
+                  isProcessingPhoto: state.isProcessingPhoto,
+                  processingPhotoQuestions: state.processingPhotoQuestions,
+                  scrollController: _scrollController,
+                ),
               ),
             ),
-            _InputBar(
-              controller: _textController,
-              focusNode: _focusNode,
-              canSend: state.canSend,
-              onSend: _sendMessage,
-              onCameraPressed: _onCameraPressed,
+            // Input bar slides up with the keyboard; drops back when it closes.
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              curve: Curves.easeOut,
+              padding: EdgeInsets.only(
+                bottom: bottomInset > 0 ? bottomInset : bottomPadding,
+              ),
+              color: AppColors.bg,
+              child: _InputBar(
+                controller: _textController,
+                focusNode: _focusNode,
+                canSend: state.canSend,
+                onSend: _sendMessage,
+                onCameraPressed: _onCameraPressed,
+              ),
             ),
           ],
         ),
@@ -492,9 +514,7 @@ class _InputBarState extends State<_InputBar> {
           ),
         ],
       ),
-      child: SafeArea(
-        top: false,
-        child: Row(
+      child: Row(
           children: [
             Expanded(
               child: TextField(
@@ -601,7 +621,6 @@ class _InputBarState extends State<_InputBar> {
             ),
           ],
         ),
-      ),
     );
   }
 }
