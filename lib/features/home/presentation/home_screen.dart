@@ -11,13 +11,35 @@ import 'package:pally/core/utils/logger.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
+import 'package:pally/features/home/widgets/empty_home_state.dart';
 import 'package:pally/features/progress/presentation/progress_view_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  String _childName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadChildName();
+  }
+
+  Future<void> _loadChildName() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() => _childName = prefs.getString('child_name') ?? '');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final avatarsAsync = ref.watch(homeViewModelProvider);
     final progressAsync = ref.watch(progressViewModelProvider);
 
@@ -48,10 +70,10 @@ class HomeScreen extends ConsumerWidget {
                 loading: () => const Center(
                   child: CircularProgressIndicator(color: AppColors.purple),
                 ),
-                error: (e, _) => _EmptyState(
-                  onCreateTutor: () => const CreateTutorRoute().go(context),
-                ),
-                data: (avatars) => _AvatarGrid(avatars: avatars),
+                error: (e, _) => EmptyHomeState(childName: _childName),
+                data: (avatars) => avatars.isEmpty
+                    ? EmptyHomeState(childName: _childName)
+                    : _AvatarGrid(avatars: avatars),
               ),
             ),
           ],
@@ -219,12 +241,6 @@ class _AvatarGrid extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (avatars.isEmpty) {
-      return _EmptyState(
-        onCreateTutor: () => const CreateTutorRoute().go(context),
-      );
-    }
-
     return RefreshIndicator(
       color: AppColors.purple,
       onRefresh: () => ref.read(homeViewModelProvider.notifier).refresh(),
@@ -349,47 +365,6 @@ class _AvatarCard extends StatelessWidget {
   }
 }
 
-class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.onCreateTutor});
-  final VoidCallback onCreateTutor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.smart_toy_outlined,
-              size: 80,
-              color: AppColors.text3,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              'No tutors yet!',
-              style: AppTextStyles.title,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              'Create your first AI tutor to start getting help with your homework.',
-              style: AppTextStyles.body.copyWith(color: AppColors.text2),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            FilledButton.icon(
-              onPressed: onCreateTutor,
-              icon: const Icon(Icons.add),
-              label: const Text('Create Tutor'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 // ── P9: Nudge cards ───────────────────────────────────────────────────────────
 

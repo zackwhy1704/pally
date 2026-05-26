@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/app/pally_app.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/local_db/pally_database.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/chat/data/local/chat_local_data_source.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load persisted auth credentials before first frame.
+  await AuthNotifier.instance.load();
+
   final prefs = await SharedPreferences.getInstance();
-  final onboardingDone = prefs.getBool('onboarding_done') ?? false;
-  final router = buildAppRouter(onboardingDone: onboardingDone);
+  final router = buildAppRouter();
 
   final db = PallyDatabase();
   _runDailyMaintenanceIfNeeded(db, prefs);
@@ -37,7 +41,6 @@ void _runDailyMaintenanceIfNeeded(
   final local = ChatLocalDataSource(db);
 
   try {
-    // Get distinct avatarIds that have messages in local DB
     final avatarIds = await (db.selectOnly(db.chatMessages)
           ..addColumns([db.chatMessages.avatarId])
           ..groupBy([db.chatMessages.avatarId]))

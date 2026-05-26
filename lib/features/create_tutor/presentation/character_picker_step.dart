@@ -122,29 +122,6 @@ class CharacterCard extends StatelessWidget {
                 ),
               ],
             ),
-            if (character.isRare)
-              Positioned(
-                top: 4,
-                right: 4,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 5, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: AppColors.goldL,
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(
-                        color: AppColors.gold.withValues(alpha: 0.5)),
-                  ),
-                  child: Text(
-                    '✨ RARE',
-                    style: AppTextStyles.caption.copyWith(
-                      color: AppColors.amber,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 7,
-                    ),
-                  ),
-                ),
-              ),
           ],
         ),
       ),

@@ -1,0 +1,491 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/features/auth/auth_state.dart';
+import 'package:pally/features/auth/services/auth_service.dart';
+
+class SignUpScreen extends ConsumerStatefulWidget {
+  const SignUpScreen({super.key});
+
+  @override
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends ConsumerState<SignUpScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameCtrl = TextEditingController();
+  final _emailCtrl = TextEditingController();
+  final _passCtrl = TextEditingController();
+  final _confirmCtrl = TextEditingController();
+  bool _obscurePass = true;
+  bool _obscureConfirm = true;
+  bool _agreed = false;
+  bool _loading = false;
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    _emailCtrl.dispose();
+    _passCtrl.dispose();
+    _confirmCtrl.dispose();
+    super.dispose();
+  }
+
+  bool get _canContinue =>
+      _agreed && (_formKey.currentState?.validate() ?? false);
+
+  Future<void> _signUp() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    if (!_agreed) {
+      _showError('Please agree to the Terms of Service');
+      return;
+    }
+    setState(() => _loading = true);
+    try {
+      final result = await AuthService.instance.signUpWithEmail(
+        _emailCtrl.text.trim(),
+        _passCtrl.text,
+        _nameCtrl.text.trim(),
+      );
+      await AuthNotifier.instance.signIn(
+        userId: result.userId,
+        token: result.token,
+        setupComplete: false,
+      );
+      if (mounted) context.go('/auth/setup');
+    } on AuthException catch (e) {
+      if (mounted) _showError(e.message);
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _googleSignUp() async {
+    setState(() => _loading = true);
+    try {
+      final result = await AuthService.instance.signInWithGoogle();
+      await AuthNotifier.instance.signIn(
+        userId: result.userId,
+        token: result.token,
+        setupComplete: result.setupComplete,
+      );
+      if (mounted) {
+        if (result.isNewUser || !result.setupComplete) {
+          context.go('/auth/setup');
+        } else {
+          context.go('/');
+        }
+      }
+    } on AuthException catch (e) {
+      if (mounted) _showError(e.message);
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _appleSignUp() async {
+    setState(() => _loading = true);
+    try {
+      final result = await AuthService.instance.signInWithApple();
+      await AuthNotifier.instance.signIn(
+        userId: result.userId,
+        token: result.token,
+        setupComplete: result.setupComplete,
+      );
+      if (mounted) {
+        if (result.isNewUser || !result.setupComplete) {
+          context.go('/auth/setup');
+        } else {
+          context.go('/');
+        }
+      }
+    } on AuthException catch (e) {
+      if (mounted) _showError(e.message);
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message,
+            style: AppTextStyles.bodySmall.copyWith(color: Colors.white)),
+        backgroundColor: AppColors.coral,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      backgroundColor: AppColors.bg,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: AppSpacing.md),
+              const _ProgressBar(filled: 1 / 3),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                'Create your account ✨',
+                style: AppTextStyles.title.copyWith(fontSize: 20),
+              ),
+              Text(
+                'Step 1 of 3 — Your details',
+                style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Form(
+                key: _formKey,
+                onChanged: () => setState(() {}),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _FormField(
+                      label: 'Name',
+                      hint: 'Your name',
+                      controller: _nameCtrl,
+                      textInputAction: TextInputAction.next,
+                      validator: (v) {
+                        if (v == null || v.trim().length < 2) {
+                          return 'Name must be at least 2 characters';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    _FormField(
+                      label: 'Email',
+                      hint: 'your@email.com',
+                      controller: _emailCtrl,
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      validator: (v) {
+                        if (v == null || !v.contains('@') || !v.contains('.')) {
+                          return 'Please enter a valid email';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    _FormField(
+                      label: 'Password',
+                      hint: '••••••••',
+                      controller: _passCtrl,
+                      obscure: _obscurePass,
+                      textInputAction: TextInputAction.next,
+                      suffix: _EyeToggle(
+                        obscure: _obscurePass,
+                        onToggle: () =>
+                            setState(() => _obscurePass = !_obscurePass),
+                      ),
+                      validator: (v) {
+                        if (v == null || v.length < 8) {
+                          return 'Password must be at least 8 characters';
+                        }
+                        if (!v.contains(RegExp(r'[0-9]'))) {
+                          return 'Password must contain at least one number';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    _FormField(
+                      label: 'Confirm Password',
+                      hint: '••••••••',
+                      controller: _confirmCtrl,
+                      obscure: _obscureConfirm,
+                      textInputAction: TextInputAction.done,
+                      suffix: _EyeToggle(
+                        obscure: _obscureConfirm,
+                        onToggle: () => setState(
+                            () => _obscureConfirm = !_obscureConfirm),
+                      ),
+                      validator: (v) {
+                        if (v != _passCtrl.text) {
+                          return 'Passwords do not match';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Row(
+                children: [
+                  Checkbox(
+                    value: _agreed,
+                    onChanged: (v) => setState(() => _agreed = v ?? false),
+                    activeColor: AppColors.purple,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
+                  ),
+                  Expanded(
+                    child: Wrap(
+                      children: [
+                        Text('I agree to the ',
+                            style: AppTextStyles.bodySmall),
+                        GestureDetector(
+                          onTap: () {},
+                          child: Text(
+                            'Terms of Service',
+                            style: AppTextStyles.bodySmall
+                                .copyWith(color: AppColors.purple),
+                          ),
+                        ),
+                        Text(' and ', style: AppTextStyles.bodySmall),
+                        GestureDetector(
+                          onTap: () {},
+                          child: Text(
+                            'Privacy Policy',
+                            style: AppTextStyles.bodySmall
+                                .copyWith(color: AppColors.purple),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+              SizedBox(
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: (_canContinue && !_loading) ? _signUp : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.purple,
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor:
+                        AppColors.purple.withValues(alpha: 0.4),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14)),
+                    elevation: 0,
+                  ),
+                  child: _loading
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white),
+                        )
+                      : Text('Continue',
+                          style: AppTextStyles.body.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700)),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              _Divider(),
+              const SizedBox(height: AppSpacing.md),
+              Row(
+                children: [
+                  Expanded(
+                    child: _SocialButton(
+                      label: 'Google',
+                      icon: '🔵',
+                      dark: false,
+                      onPressed: _googleSignUp,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  if (Platform.isIOS)
+                    Expanded(
+                      child: _SocialButton(
+                        label: 'Apple',
+                        icon: '🍎',
+                        dark: true,
+                        onPressed: _appleSignUp,
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Center(
+                child: TextButton(
+                  onPressed: () => context.pop(),
+                  style: TextButton.styleFrom(
+                      foregroundColor: AppColors.text2),
+                  child: Text('Already have an account? Sign in',
+                      style: AppTextStyles.bodySmall),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xl),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProgressBar extends StatelessWidget {
+  const _ProgressBar({required this.filled});
+  final double filled;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(3),
+      child: LinearProgressIndicator(
+        value: filled,
+        minHeight: 6,
+        backgroundColor: AppColors.outline,
+        valueColor:
+            const AlwaysStoppedAnimation<Color>(AppColors.purple),
+      ),
+    );
+  }
+}
+
+class _FormField extends StatelessWidget {
+  const _FormField({
+    required this.label,
+    required this.hint,
+    required this.controller,
+    this.obscure = false,
+    this.keyboardType,
+    this.textInputAction,
+    this.validator,
+    this.suffix,
+  });
+
+  final String label;
+  final String hint;
+  final TextEditingController controller;
+  final bool obscure;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
+  final FormFieldValidator<String>? validator;
+  final Widget? suffix;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: AppTextStyles.label
+              .copyWith(fontSize: 11, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 6),
+        TextFormField(
+          controller: controller,
+          obscureText: obscure,
+          keyboardType: keyboardType,
+          textInputAction: textInputAction,
+          validator: validator,
+          style: AppTextStyles.body,
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: AppTextStyles.body.copyWith(color: AppColors.text3),
+            filled: true,
+            fillColor: const Color(0xFFEDE8F5),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: BorderSide.none,
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: AppColors.coral),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: AppColors.coral, width: 2),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            suffixIcon: suffix,
+          ),
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+        ),
+      ],
+    );
+  }
+}
+
+class _EyeToggle extends StatelessWidget {
+  const _EyeToggle({required this.obscure, required this.onToggle});
+  final bool obscure;
+  final VoidCallback onToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: Icon(
+        obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+        color: AppColors.text3,
+        size: 20,
+      ),
+      onPressed: onToggle,
+    );
+  }
+}
+
+class _Divider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Expanded(child: Divider(color: AppColors.outline)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+          child: Text('or continue with',
+              style: AppTextStyles.caption.copyWith(color: AppColors.text3)),
+        ),
+        const Expanded(child: Divider(color: AppColors.outline)),
+      ],
+    );
+  }
+}
+
+class _SocialButton extends StatelessWidget {
+  const _SocialButton({
+    required this.label,
+    required this.icon,
+    required this.dark,
+    required this.onPressed,
+  });
+
+  final String label;
+  final String icon;
+  final bool dark;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 50,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          backgroundColor: dark ? Colors.black : Colors.white,
+          foregroundColor: dark ? Colors.white : AppColors.text1,
+          side: BorderSide(
+              color: dark ? Colors.black : Colors.grey.shade300),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(icon),
+            const SizedBox(width: 6),
+            Text(label, style: AppTextStyles.bodySmall),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/features/auth/auth_state.dart' show authStateProvider;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'api_client.g.dart';
@@ -12,6 +13,10 @@ const _baseUrl = String.fromEnvironment(
 
 @riverpod
 Dio dio(Ref ref) {
+  final auth = ref.watch(authStateProvider);
+  final userId = auth.userId ?? 'dev-user';
+  final token = auth.token;
+
   final client = Dio(
     BaseOptions(
       baseUrl: _baseUrl,
@@ -21,8 +26,9 @@ Dio dio(Ref ref) {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        // Replace with real auth token once login is implemented.
-        'X-User-Id': 'dev-user',
+        'X-User-Id': userId,
+        if (token != null && token.isNotEmpty)
+          'Authorization': 'Bearer $token',
       },
     ),
   );

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/core/ui/scaffold_shell.dart';
+import 'package:pally/features/auth/screens/splash_screen.dart';
+import 'package:pally/features/auth/screens/sign_in_screen.dart';
+import 'package:pally/features/auth/screens/sign_up_screen.dart';
+import 'package:pally/features/auth/screens/child_setup_screen.dart';
+import 'package:pally/features/avatar_picker/screens/avatar_picker_screen.dart';
 import 'package:pally/features/home/presentation/home_screen.dart';
 import 'package:pally/features/create_tutor/presentation/create_tutor_screen.dart';
 import 'package:pally/features/upload/presentation/upload_screen.dart';
@@ -252,6 +257,52 @@ class BrainHealthRoute extends GoRouteData {
       BrainHealthScreen(avatarId: avatarId);
 }
 
+@TypedGoRoute<SplashRoute>(path: '/splash')
+class SplashRoute extends GoRouteData {
+  const SplashRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const SplashScreen();
+}
+
+@TypedGoRoute<SignInRoute>(path: '/auth/signin')
+class SignInRoute extends GoRouteData {
+  const SignInRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const SignInScreen();
+}
+
+@TypedGoRoute<SignUpRoute>(path: '/auth/signup')
+class SignUpRoute extends GoRouteData {
+  const SignUpRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const SignUpScreen();
+}
+
+@TypedGoRoute<ChildSetupRoute>(path: '/auth/setup')
+class ChildSetupRoute extends GoRouteData {
+  const ChildSetupRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ChildSetupScreen();
+}
+
+@TypedGoRoute<AvatarPickerRoute>(path: '/auth/avatar')
+class AvatarPickerRoute extends GoRouteData {
+  const AvatarPickerRoute({this.isOnboarding = true});
+  final bool isOnboarding;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      AvatarPickerScreen(isOnboarding: isOnboarding);
+}
+
 @TypedGoRoute<OnboardingRoute>(path: '/onboarding')
 class OnboardingRoute extends GoRouteData {
   const OnboardingRoute();
@@ -285,13 +336,12 @@ class PhotoPreviewRoute extends GoRouteData {
 
 // ─── Router instance ─────────────────────────────────────────────────────────
 
-GoRouter buildAppRouter({bool onboardingDone = false}) {
+GoRouter buildAppRouter() {
   return GoRouter(
-    initialLocation: onboardingDone ? '/' : '/onboarding',
+    initialLocation: '/splash',
     debugLogDiagnostics: true,
     routes: $appRoutes,
   );
 }
 
-// Convenience global instance (used before prefs are ready)
-final appRouter = buildAppRouter(onboardingDone: true);
+final appRouter = buildAppRouter();

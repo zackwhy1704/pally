@@ -20,6 +20,11 @@ List<RouteBase> get $appRoutes => [
       $settingsRoute,
       $homeworkScanDetailRoute,
       $brainHealthRoute,
+      $splashRoute,
+      $signInRoute,
+      $signUpRoute,
+      $childSetupRoute,
+      $avatarPickerRoute,
       $onboardingRoute,
       $cameraRoute,
       $photoPreviewRoute,
@@ -464,6 +469,144 @@ extension $BrainHealthRouteExtension on BrainHealthRoute {
       context.pushReplacement(location);
 
   void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $splashRoute => GoRouteData.$route(
+      path: '/splash',
+      factory: $SplashRouteExtension._fromState,
+    );
+
+extension $SplashRouteExtension on SplashRoute {
+  static SplashRoute _fromState(GoRouterState state) => const SplashRoute();
+
+  String get location => GoRouteData.$location(
+        '/splash',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $signInRoute => GoRouteData.$route(
+      path: '/auth/signin',
+      factory: $SignInRouteExtension._fromState,
+    );
+
+extension $SignInRouteExtension on SignInRoute {
+  static SignInRoute _fromState(GoRouterState state) => const SignInRoute();
+
+  String get location => GoRouteData.$location(
+        '/auth/signin',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $signUpRoute => GoRouteData.$route(
+      path: '/auth/signup',
+      factory: $SignUpRouteExtension._fromState,
+    );
+
+extension $SignUpRouteExtension on SignUpRoute {
+  static SignUpRoute _fromState(GoRouterState state) => const SignUpRoute();
+
+  String get location => GoRouteData.$location(
+        '/auth/signup',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $childSetupRoute => GoRouteData.$route(
+      path: '/auth/setup',
+      factory: $ChildSetupRouteExtension._fromState,
+    );
+
+extension $ChildSetupRouteExtension on ChildSetupRoute {
+  static ChildSetupRoute _fromState(GoRouterState state) =>
+      const ChildSetupRoute();
+
+  String get location => GoRouteData.$location(
+        '/auth/setup',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $avatarPickerRoute => GoRouteData.$route(
+      path: '/auth/avatar',
+      factory: $AvatarPickerRouteExtension._fromState,
+    );
+
+extension $AvatarPickerRouteExtension on AvatarPickerRoute {
+  static AvatarPickerRoute _fromState(GoRouterState state) => AvatarPickerRoute(
+        isOnboarding: _$convertMapValue(
+                'is-onboarding', state.uri.queryParameters, _$boolConverter) ??
+            true,
+      );
+
+  String get location => GoRouteData.$location(
+        '/auth/avatar',
+        queryParams: {
+          if (isOnboarding != true) 'is-onboarding': isOnboarding.toString(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T? Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}
+
+bool _$boolConverter(String value) {
+  switch (value) {
+    case 'true':
+      return true;
+    case 'false':
+      return false;
+    default:
+      throw UnsupportedError('Cannot convert "$value" into a bool.');
+  }
 }
 
 RouteBase get $onboardingRoute => GoRouteData.$route(
