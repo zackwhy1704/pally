@@ -147,7 +147,7 @@ class _SubjectStepState extends State<SubjectStep> {
           ),
           const Spacer(),
           PallyButton(
-            label: 'Create $name! 🎉',
+            label: 'Next →',
             onPressed: widget.canCreate ? widget.onCreate : null,
             loading: widget.isLoading,
             fullWidth: true,

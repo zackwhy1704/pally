@@ -6,7 +6,7 @@ import 'package:pally/app/api_client.dart';
 
 part 'create_tutor_view_model.g.dart';
 
-enum CreateTutorStep { character, name, subject }
+enum CreateTutorStep { character, name, subject, grade }
 
 @immutable
 class CreateTutorState {
@@ -14,6 +14,8 @@ class CreateTutorState {
     this.selectedCharacter,
     this.name = '',
     this.subject,
+    this.gradeLevel,
+    this.curriculumType,
     this.step = CreateTutorStep.character,
     this.isLoading = false,
     this.error,
@@ -22,6 +24,8 @@ class CreateTutorState {
   final AvatarCharacter? selectedCharacter;
   final String name;
   final String? subject;
+  final String? gradeLevel;
+  final String? curriculumType;
   final CreateTutorStep step;
   final bool isLoading;
   final String? error;
@@ -40,6 +44,8 @@ class CreateTutorState {
     AvatarCharacter? selectedCharacter,
     String? name,
     String? subject,
+    Object? gradeLevel = _sentinel,
+    Object? curriculumType = _sentinel,
     CreateTutorStep? step,
     bool? isLoading,
     Object? error = _sentinel,
@@ -48,6 +54,8 @@ class CreateTutorState {
       selectedCharacter: selectedCharacter ?? this.selectedCharacter,
       name: name ?? this.name,
       subject: subject ?? this.subject,
+      gradeLevel: gradeLevel == _sentinel ? this.gradeLevel : gradeLevel as String?,
+      curriculumType: curriculumType == _sentinel ? this.curriculumType : curriculumType as String?,
       step: step ?? this.step,
       isLoading: isLoading ?? this.isLoading,
       error: error == _sentinel ? this.error : error as String?,
@@ -77,6 +85,14 @@ class CreateTutorViewModel extends _$CreateTutorViewModel {
     state = state.copyWith(subject: subject);
   }
 
+  void setGradeLevel(String? grade) {
+    state = state.copyWith(gradeLevel: grade);
+  }
+
+  void setCurriculumType(String? curriculum) {
+    state = state.copyWith(curriculumType: curriculum);
+  }
+
   void nextStep() {
     if (state.step.index < CreateTutorStep.values.length - 1) {
       state = state.copyWith(
@@ -104,6 +120,8 @@ class CreateTutorViewModel extends _$CreateTutorViewModel {
         name: state.trimmedName,
         character: state.selectedCharacter!,
         subject: state.subject!.trim(),
+        gradeLevel: state.gradeLevel,
+        curriculumType: state.curriculumType,
       );
       final response = await dio.post<Map<String, dynamic>>(
         '/api/v1/avatars',

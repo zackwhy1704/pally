@@ -1,10 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pally/app/api_client.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
+import 'package:pally/core/utils/logger.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
@@ -390,34 +393,68 @@ class _EmptyState extends StatelessWidget {
 
 // ── P9: Nudge cards ───────────────────────────────────────────────────────────
 
-class _NudgeCardsRow extends StatefulWidget {
+class _NudgeCardsRow extends ConsumerStatefulWidget {
   const _NudgeCardsRow();
 
   @override
-  State<_NudgeCardsRow> createState() => _NudgeCardsRowState();
+  ConsumerState<_NudgeCardsRow> createState() => _NudgeCardsRowState();
 }
 
-class _NudgeCardsRowState extends State<_NudgeCardsRow> {
-  final List<_NudgeData> _nudges = [
-    const _NudgeData(
+class _NudgeCardsRowState extends ConsumerState<_NudgeCardsRow> {
+  List<_NudgeData> _nudges = [];
+
+  static const _fallback = [
+    _NudgeData(
       emoji: '⚡',
-      message: 'You have 5 flashcards due today!',
+      message: 'You have flashcards due today!',
       color: AppColors.amber,
       bgColor: AppColors.amberL,
     ),
-    const _NudgeData(
+    _NudgeData(
       emoji: '🔥',
-      message: 'Keep your 3-day streak going!',
+      message: 'Keep your streak going!',
       color: AppColors.coral,
       bgColor: AppColors.coralL,
     ),
-    const _NudgeData(
-      emoji: '📚',
-      message: 'Your tutor learned 3 new topics.',
-      color: AppColors.teal,
-      bgColor: AppColors.tealL,
-    ),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final dio = ref.read(dioProvider);
+      final res = await dio.get<Map<String, dynamic>>('/api/v1/home/nudges');
+      final List raw = (res.data?['nudges'] as List?) ?? [];
+      final parsed = raw.map((n) {
+        final m = n as Map<String, dynamic>;
+        final type = m['type'] as String? ?? 'info';
+        final (color, bgColor) = switch (type) {
+          'streak' => (AppColors.coral, AppColors.coralL),
+          'quiz' => (AppColors.purple, AppColors.purpleL),
+          'flashcard' => (AppColors.amber, AppColors.amberL),
+          'content' => (AppColors.teal, AppColors.tealL),
+          _ => (AppColors.text2, AppColors.surf2),
+        };
+        return _NudgeData(
+          emoji: m['emoji'] as String? ?? '💡',
+          message: m['message'] as String? ?? '',
+          color: color,
+          bgColor: bgColor,
+        );
+      }).where((n) => n.message.isNotEmpty).toList();
+      if (mounted) setState(() => _nudges = parsed);
+    } on DioException catch (e) {
+      appLog.d('[Home] Nudges unavailable (${e.type.name}); using fallback');
+      if (mounted) setState(() => _nudges = _fallback);
+    } catch (e, st) {
+      appLog.e('[Home] Nudges load error', error: e, stackTrace: st);
+      if (mounted) setState(() => _nudges = _fallback);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

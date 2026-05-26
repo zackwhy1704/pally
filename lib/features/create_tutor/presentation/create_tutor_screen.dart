@@ -5,6 +5,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/features/create_tutor/presentation/character_picker_step.dart';
 import 'package:pally/features/create_tutor/presentation/name_step.dart';
+import 'package:pally/features/create_tutor/presentation/grade_step.dart';
 import 'package:pally/features/create_tutor/presentation/subject_step.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/create_tutor/presentation/create_tutor_view_model.dart';
@@ -41,7 +42,7 @@ class CreateTutorScreen extends ConsumerWidget {
           preferredSize: const Size.fromHeight(4),
           child: _StepIndicator(
             currentStep: state.stepIndex,
-            totalSteps: 3,
+            totalSteps: 4,
           ),
         ),
       ),
@@ -63,9 +64,19 @@ class CreateTutorScreen extends ConsumerWidget {
               selectedCharacter: state.selectedCharacter,
               tutorName: state.trimmedName,
               onSubjectChanged: vm.setSubject,
-              isLoading: state.isLoading,
+              isLoading: false,
               canCreate: state.canCreate,
               error: state.error,
+              onCreate: state.canCreate ? vm.nextStep : null,
+            ),
+          CreateTutorStep.grade => GradeStep(
+              gradeLevel: state.gradeLevel,
+              curriculumType: state.curriculumType,
+              tutorName: state.trimmedName,
+              selectedCharacter: state.selectedCharacter,
+              onGradeChanged: vm.setGradeLevel,
+              onCurriculumChanged: vm.setCurriculumType,
+              isLoading: state.isLoading,
               onCreate: state.canCreate
                   ? () async {
                       final id = await vm.createAvatar();
