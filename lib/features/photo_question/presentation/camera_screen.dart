@@ -159,66 +159,55 @@ class _CameraScreenState extends State<CameraScreen>
         body: Stack(
           fit: StackFit.expand,
           children: [
-            // Camera preview
-            if (_isInitialised && _controller != null)
-              CameraPreview(_controller!)
-            else
-              const Center(
-                child: CircularProgressIndicator(color: AppColors.teal),
-              ),
-
-            // Top bar
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: _TopBar(
-                isFlashOn: _isFlashOn,
-                showTips: _showTips,
-                onClose: _closeCamera,
-                onFlashToggle: _toggleFlash,
-                onTipsTap: _showTips ? _closeTips : _openTips,
-              ),
+            // ── LAYER 1: Camera preview (non-interactive background) ──────────
+            IgnorePointer(
+              child: _isInitialised && _controller != null
+                  ? CameraPreview(_controller!)
+                  : const Center(
+                      child: CircularProgressIndicator(color: AppColors.teal),
+                    ),
             ),
 
-            // Viewfinder brackets
-            const Positioned.fill(child: _ViewfinderBrackets()),
-
-            // Animated scan line
+            // ── LAYER 2: Decorative scanner overlays (non-interactive) ────────
+            const IgnorePointer(
+              child: Positioned.fill(child: _ViewfinderBrackets()),
+            ),
             if (_isInitialised)
-              AnimatedBuilder(
-                animation: _scanAnim,
-                builder: (ctx, _) {
-                  const top = 160.0;
-                  const bottom = 560.0;
-                  return Positioned(
-                    left: 48,
-                    right: 48,
-                    top: top + (_scanAnim.value * (bottom - top)),
-                    child: Container(
-                      height: 2,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: [
-                          Colors.transparent,
-                          AppColors.teal.withValues(alpha: 0.8),
-                          Colors.transparent,
-                        ]),
+              IgnorePointer(
+                child: AnimatedBuilder(
+                  animation: _scanAnim,
+                  builder: (ctx, _) {
+                    const scanTop = 160.0;
+                    const scanBottom = 560.0;
+                    return Positioned(
+                      left: 48,
+                      right: 48,
+                      top: scanTop + (_scanAnim.value * (scanBottom - scanTop)),
+                      child: Container(
+                        height: 2,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(colors: [
+                            Colors.transparent,
+                            AppColors.teal.withValues(alpha: 0.8),
+                            Colors.transparent,
+                          ]),
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-
-            // Instruction label
             if (!_showTips)
-              const Positioned(
-                bottom: 220,
-                left: 40,
-                right: 40,
-                child: _InstructionBanner(),
+              const IgnorePointer(
+                child: Positioned(
+                  bottom: 220,
+                  left: 40,
+                  right: 40,
+                  child: _InstructionBanner(),
+                ),
               ),
 
-            // Bottom controls
+            // ── LAYER 3: Bottom controls ──────────────────────────────────────
             if (!_showTips)
               Positioned(
                 bottom: 0,
@@ -238,17 +227,36 @@ class _CameraScreenState extends State<CameraScreen>
                 ),
               ),
 
-            // Tips sheet (always in tree so controller works)
-            DraggableScrollableSheet(
-              controller: _tipsController,
-              initialChildSize: 0.0,
-              minChildSize: 0.0,
-              maxChildSize: 0.65,
-              snap: true,
-              snapSizes: const [0.0, 0.62],
-              builder: (_, scrollCtrl) => _TipsSheet(
-                scrollController: scrollCtrl,
-                onClose: _closeTips,
+            // ── LAYER 4: Tips sheet ───────────────────────────────────────────
+            // IgnorePointer when collapsed so the invisible sheet never
+            // intercepts taps destined for buttons in layers 3 and 5.
+            IgnorePointer(
+              ignoring: !_showTips,
+              child: DraggableScrollableSheet(
+                controller: _tipsController,
+                initialChildSize: 0.0,
+                minChildSize: 0.0,
+                maxChildSize: 0.65,
+                snap: true,
+                snapSizes: const [0.0, 0.62],
+                builder: (_, scrollCtrl) => _TipsSheet(
+                  scrollController: scrollCtrl,
+                  onClose: _closeTips,
+                ),
+              ),
+            ),
+
+            // ── LAYER 5: Top navigation bar (always on top, always tappable) ──
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: _TopBar(
+                isFlashOn: _isFlashOn,
+                showTips: _showTips,
+                onClose: _closeCamera,
+                onFlashToggle: _toggleFlash,
+                onTipsTap: _showTips ? _closeTips : _openTips,
               ),
             ),
           ],
