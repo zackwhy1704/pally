@@ -18,7 +18,12 @@ class ShopScreen extends ConsumerWidget {
 
     ref.listen<ShopState>(shopViewModelProvider, (_, next) {
       if (next.lastUnlocked != null) {
-        _showUnlockedDialog(context, next.lastUnlocked!, notifier);
+        _showResultDialog(
+          context,
+          next.lastUnlocked!,
+          next.wasDuplicate,
+          notifier,
+        );
       }
     });
 
@@ -58,15 +63,18 @@ class ShopScreen extends ConsumerWidget {
     );
   }
 
-  void _showUnlockedDialog(
+  void _showResultDialog(
     BuildContext context,
     MochiCharacter character,
+    bool wasDuplicate,
     ShopViewModel notifier,
   ) {
     notifier.clearLastUnlocked();
     showDialog<void>(
       context: context,
-      builder: (_) => _UnlockedDialog(character: character),
+      builder: (_) => wasDuplicate
+          ? _DuplicateDialog(character: character)
+          : _UnlockedDialog(character: character),
     );
   }
 }
@@ -439,8 +447,20 @@ class _UnlockedDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('You got...', style: AppTextStyles.bodySmall),
-            const SizedBox(height: AppSpacing.sm),
+            Container(
+              width: 64,
+              height: 64,
+              decoration: const BoxDecoration(
+                color: AppColors.greenL,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.celebration_rounded,
+                  color: AppColors.green, size: 32),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text('New Character Unlocked!',
+                style: AppTextStyles.title, textAlign: TextAlign.center),
+            const SizedBox(height: AppSpacing.md),
             Container(
               width: 100,
               height: 100,
@@ -481,6 +501,12 @@ class _UnlockedDialog extends StatelessWidget {
                 ),
               ),
             ],
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              'You can now select this Mochi when creating a tutor!',
+              style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: AppSpacing.lg),
             SizedBox(
               width: double.infinity,
@@ -490,6 +516,85 @@ class _UnlockedDialog extends StatelessWidget {
                   backgroundColor: AppColors.purple,
                 ),
                 child: const Text('Awesome!'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DuplicateDialog extends StatelessWidget {
+  const _DuplicateDialog({required this.character});
+
+  final MochiCharacter character;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                color: character.bgColor,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: CharacterWidget(character: character, size: 72),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              character.displayName,
+              style: AppTextStyles.heading1,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.amberL,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                'Already Unlocked',
+                style: AppTextStyles.label.copyWith(
+                  color: AppColors.amber,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              'I will learn harder and try again!',
+              style: AppTextStyles.body.copyWith(
+                color: AppColors.text2,
+                fontStyle: FontStyle.italic,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.purple,
+                  side: const BorderSide(color: AppColors.purple),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text('OK'),
               ),
             ),
           ],

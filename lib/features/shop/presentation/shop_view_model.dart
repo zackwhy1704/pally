@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/features/shop/providers/unlocked_characters_provider.dart';
 import 'package:pally/shared/models/mochi_character.dart';
 
 part 'shop_view_model.g.dart';
@@ -13,6 +14,7 @@ class ShopState {
     this.isLoading = false,
     this.isOpening = false,
     this.lastUnlocked,
+    this.wasDuplicate = false,
     this.error,
     this.collectionCount = 0,
   });
@@ -21,6 +23,7 @@ class ShopState {
   final bool isLoading;
   final bool isOpening;
   final MochiCharacter? lastUnlocked;
+  final bool wasDuplicate;
   final String? error;
   final int collectionCount;
 
@@ -29,6 +32,7 @@ class ShopState {
     bool? isLoading,
     bool? isOpening,
     Object? lastUnlocked = _sentinel,
+    bool? wasDuplicate,
     Object? error = _sentinel,
     int? collectionCount,
   }) {
@@ -39,6 +43,7 @@ class ShopState {
       lastUnlocked: lastUnlocked == _sentinel
           ? this.lastUnlocked
           : lastUnlocked as MochiCharacter?,
+      wasDuplicate: wasDuplicate ?? this.wasDuplicate,
       error: error == _sentinel ? this.error : error as String?,
       collectionCount: collectionCount ?? this.collectionCount,
     );
@@ -79,25 +84,32 @@ class ShopViewModel extends _$ShopViewModel {
           await dio.post<Map<String, dynamic>>('/api/v1/shop/open-box');
       final charStr = (response.data?['character'] as String?) ?? 'PENCIL';
       final char = MochiCharacter.fromJson(charStr);
-      state = state.copyWith(
-        stars: state.stars - 600,
-        isOpening: false,
-        lastUnlocked: char,
-        collectionCount: state.collectionCount + 1,
-      );
+      await _handlePull(char);
     } on DioException catch (_) {
-      // Simulate offline unlock
       const chars = MochiCharacter.values;
       final char = chars[DateTime.now().millisecondsSinceEpoch % chars.length];
-      state = state.copyWith(
-        stars: state.stars - 600,
-        isOpening: false,
-        lastUnlocked: char,
-        collectionCount: state.collectionCount + 1,
-      );
+      await _handlePull(char);
     } catch (e) {
       state = state.copyWith(isOpening: false, error: e.toString());
     }
+  }
+
+  Future<void> _handlePull(MochiCharacter char) async {
+    final unlockedNotifier = ref.read(unlockedCharactersProvider.notifier);
+    final alreadyUnlocked = unlockedNotifier.isUnlocked(char);
+
+    if (!alreadyUnlocked) {
+      await unlockedNotifier.unlock(char);
+    }
+
+    state = state.copyWith(
+      stars: state.stars - 600,
+      isOpening: false,
+      lastUnlocked: char,
+      wasDuplicate: alreadyUnlocked,
+      collectionCount:
+          alreadyUnlocked ? state.collectionCount : state.collectionCount + 1,
+    );
   }
 
   void clearLastUnlocked() {

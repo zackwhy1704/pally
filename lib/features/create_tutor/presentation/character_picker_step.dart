@@ -125,57 +125,59 @@ class _MochiCard extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 12),
-                Image.asset(character.assetPath,
-                    width: 88, height: 88, fit: BoxFit.contain),
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Text(
-                    character.displayName,
-                    style: AppTextStyles.caption.copyWith(
-                      color: AppColors.text1,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 11,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                if (character.rarity != MochiRarity.standard)
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(character.assetPath,
+                      width: 88, height: 88, fit: BoxFit.contain),
+                  const SizedBox(height: 8),
                   Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: character.rarity.badgeColor,
-                        borderRadius: BorderRadius.circular(10),
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Text(
+                      character.displayName,
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.text1,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 11,
                       ),
-                      child: Text(
-                        character.rarity.label,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 9,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (character.rarity != MochiRarity.standard)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: character.rarity.badgeColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          character.rarity.label,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                if (!isUnlocked)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 2),
-                    child: Text(
-                      '600 ⭐ to unlock',
-                      style: TextStyle(color: AppColors.text3, fontSize: 9),
+                  if (!isUnlocked)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 2),
+                      child: Text(
+                        '600 ⭐ to unlock',
+                        style: TextStyle(color: AppColors.text3, fontSize: 9),
+                      ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
             if (!isUnlocked) ...[
               Positioned.fill(
