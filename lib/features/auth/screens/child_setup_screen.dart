@@ -21,7 +21,7 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
   String? _selectedExamSystem;
   bool _loading = false;
 
-  static const _ages = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+  static const _ages = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
 
   static const _examSystems = [
     ('📐', 'Cambridge (IGCSE / O-Level / A-Level)', 'CAMBRIDGE', 'SG, MY, SEA, 145+ countries'),
@@ -134,7 +134,7 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
                     onTap: () => setState(() => _selectedAge = age),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 150),
-                      width: 44,
+                      width: age == 19 ? 50 : 44,
                       height: 40,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
@@ -147,7 +147,7 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
                             : Border.all(color: AppColors.outline),
                       ),
                       child: Text(
-                        '$age',
+                        age == 19 ? '18+' : '$age',
                         style: AppTextStyles.label.copyWith(
                           color: selected ? Colors.white : AppColors.text2,
                           fontWeight:

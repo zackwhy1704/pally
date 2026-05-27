@@ -6,7 +6,7 @@ import 'package:pally/core/ui/pally_button.dart';
 import 'package:pally/shared/models/mochi_character.dart';
 
 const _ages = [
-  '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18',
+  '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '18+',
 ];
 
 const _examSystems = [
