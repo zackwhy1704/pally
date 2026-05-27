@@ -5,19 +5,19 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/pally_button.dart';
 import 'package:pally/shared/models/avatar.dart';
 
-const _gradeLevels = [
-  'P1', 'P2', 'P3', 'P4', 'P5', 'P6',
-  'S1', 'S2', 'S3', 'S4', 'S5',
-  'Year 7', 'Year 8', 'Year 9', 'Year 10',
+const _ages = [
+  '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18',
 ];
 
-const _curriculums = [
-  'Singapore MOE',
-  'IB',
-  'Cambridge',
-  'Australian',
-  'US Common Core',
-  'Other',
+const _examSystems = [
+  ('📐', 'Cambridge (IGCSE / O-Level / A-Level)', 'CAMBRIDGE'),
+  ('🌍', 'IB (PYP / MYP / Diploma)', 'IB'),
+  ('🇸🇬', 'Singapore PSLE', 'SG_PSLE'),
+  ('🇲🇾', 'Malaysia SPM / KSSM', 'MY_SPM'),
+  ('🇬🇧', 'UK GCSE / A-Level', 'UK_GCSE'),
+  ('🇺🇸', 'US Common Core / AP', 'US_AP'),
+  ('🇦🇺', 'Australian Curriculum', 'AU_ATAR'),
+  ('🌐', 'Other / Not sure', 'OTHER'),
 ];
 
 class GradeStep extends StatelessWidget {
@@ -60,7 +60,7 @@ class GradeStep extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.lg),
           Text(
-            'GRADE / YEAR LEVEL',
+            'AGE',
             style: AppTextStyles.label.copyWith(
               color: AppColors.text3,
               letterSpacing: 0.8,
@@ -70,11 +70,11 @@ class GradeStep extends StatelessWidget {
           Wrap(
             spacing: AppSpacing.xs,
             runSpacing: AppSpacing.xs,
-            children: _gradeLevels.map((g) {
-              final isActive = gradeLevel == g;
+            children: _ages.map((a) {
+              final isActive = gradeLevel == a;
               return ActionChip(
-                label: Text(g),
-                onPressed: () => onGradeChanged(isActive ? null : g),
+                label: Text(a),
+                onPressed: () => onGradeChanged(isActive ? null : a),
                 backgroundColor: isActive ? accentColor : AppColors.surface,
                 labelStyle: AppTextStyles.bodySmall.copyWith(
                   color: isActive ? Colors.white : AppColors.text2,
@@ -83,39 +83,66 @@ class GradeStep extends StatelessWidget {
                 side: BorderSide(
                   color: isActive ? accentColor : AppColors.outline,
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
               );
             }).toList(),
           ),
           const SizedBox(height: AppSpacing.lg),
           Text(
-            'CURRICULUM',
+            'EXAM SYSTEM / CURRICULUM',
             style: AppTextStyles.label.copyWith(
               color: AppColors.text3,
               letterSpacing: 0.8,
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
-          Wrap(
-            spacing: AppSpacing.xs,
-            runSpacing: AppSpacing.xs,
-            children: _curriculums.map((c) {
-              final isActive = curriculumType == c;
-              return ActionChip(
-                label: Text(c),
-                onPressed: () => onCurriculumChanged(isActive ? null : c),
-                backgroundColor: isActive ? accentColor : AppColors.surface,
-                labelStyle: AppTextStyles.bodySmall.copyWith(
-                  color: isActive ? Colors.white : AppColors.text2,
-                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+          ..._examSystems.map((e) {
+            final (icon, label, id) = e;
+            final isActive = curriculumType == id;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: GestureDetector(
+                onTap: () => onCurriculumChanged(isActive ? null : id),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: isActive
+                        ? accentColor.withValues(alpha: 0.1)
+                        : AppColors.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isActive ? accentColor : AppColors.outline,
+                      width: isActive ? 2 : 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Text(icon, style: const TextStyle(fontSize: 16)),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          label,
+                          style: AppTextStyles.body.copyWith(
+                            color: isActive ? accentColor : AppColors.text1,
+                            fontWeight: isActive
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                      if (isActive)
+                        Icon(Icons.check_circle_rounded,
+                            color: accentColor, size: 20),
+                    ],
+                  ),
                 ),
-                side: BorderSide(
-                  color: isActive ? accentColor : AppColors.outline,
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-              );
-            }).toList(),
-          ),
+              ),
+            );
+          }),
           const Spacer(),
           PallyButton(
             label: 'Create $name! 🎉',
