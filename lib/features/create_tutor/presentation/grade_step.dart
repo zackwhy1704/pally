@@ -127,7 +127,7 @@ class GradeStep extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.only(top: AppSpacing.sm, bottom: AppSpacing.md + MediaQuery.of(context).padding.bottom),
-            child: PallyButton(label: 'Create $name! 🎉', onPressed: onCreate, loading: isLoading, fullWidth: true),
+            child: PallyButton(label: 'Done — Create $name! 🎉', onPressed: onCreate, loading: isLoading, fullWidth: true),
           ),
         ],
       ),

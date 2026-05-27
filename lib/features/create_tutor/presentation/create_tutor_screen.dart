@@ -81,7 +81,7 @@ class CreateTutorScreen extends ConsumerWidget {
                   ? () async {
                       final id = await vm.createAvatar();
                       if (id != null && context.mounted) {
-                        UploadRoute(avatarId: id).push(context);
+                        const HomeRoute().go(context);
                       }
                     }
                   : null,
