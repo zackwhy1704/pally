@@ -42,12 +42,11 @@ class CharacterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Image.asset(
+      character.assetPath,
       width: size,
       height: size,
-      child: CustomPaint(
-        painter: characterPainterFor(character, size),
-      ),
+      fit: BoxFit.contain,
     );
   }
 }
