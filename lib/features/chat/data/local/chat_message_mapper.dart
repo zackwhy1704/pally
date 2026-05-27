@@ -26,6 +26,12 @@ extension ChatMessagePersistence on ChatMessage {
   }
 }
 
+MessageRole _parseRoleFromDb(String role) => switch (role.toUpperCase()) {
+      'USER' => MessageRole.user,
+      'TUTOR' || 'ASSISTANT' => MessageRole.tutor,
+      _ => MessageRole.tutor,
+    };
+
 class ChatMessageMapper {
   static ChatMessage fromRecord(ChatMessageRecord r) {
     final mt = MessageType.values.byName(r.messageType);
@@ -41,7 +47,7 @@ class ChatMessageMapper {
     return ChatMessage(
       id: r.id,
       avatarId: r.avatarId,
-      role: MessageRole.values.byName(r.role),
+      role: _parseRoleFromDb(r.role),
       content: mt == MessageType.homeworkResult ? '' : r.content,
       messageType: mt,
       sources: r.sourceWikiSlug != null ? [r.sourceWikiSlug!] : [],

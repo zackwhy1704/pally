@@ -15,7 +15,10 @@ MessageRole _messageRoleFromJson(dynamic value) {
   };
 }
 
-String _messageRoleToJson(MessageRole r) => r.name.toUpperCase();
+String _messageRoleToJson(MessageRole r) => switch (r) {
+      MessageRole.user => 'USER',
+      MessageRole.tutor => 'ASSISTANT',
+    };
 
 enum MessageType { text, photo, homeworkResult }
 
