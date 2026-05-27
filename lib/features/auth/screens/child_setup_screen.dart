@@ -17,24 +17,27 @@ class ChildSetupScreen extends ConsumerStatefulWidget {
 
 class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
   final _nameCtrl = TextEditingController();
-  String? _selectedYear;
-  String? _selectedCurriculum;
+  int? _selectedAge;
+  String? _selectedExamSystem;
   bool _loading = false;
 
-  static const _years = ['Y1', 'Y2', 'Y3', 'Y4', 'Y5', 'Y6', 'Y7', 'Y8'];
+  static const _ages = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
 
-  static const _curricula = [
-    ('🇸🇬', 'Singapore MOE', 'SINGAPORE_MOE'),
-    ('🇦🇺', 'Australian', 'AUSTRALIAN'),
-    ('🇬🇧', 'UK National', 'UK_NATIONAL'),
-    ('🇺🇸', 'US Common Core', 'US_COMMON_CORE'),
-    ('🌐', 'Other', 'OTHER'),
+  static const _examSystems = [
+    ('📐', 'Cambridge (IGCSE / O-Level / A-Level)', 'CAMBRIDGE', 'SG, MY, SEA, 145+ countries'),
+    ('🌍', 'IB (PYP / MYP / Diploma)', 'IB', 'International schools worldwide'),
+    ('🇸🇬', 'Singapore PSLE', 'SG_PSLE', 'Singapore national primary'),
+    ('🇲🇾', 'Malaysia SPM / KSSM', 'MY_SPM', 'Malaysia national curriculum'),
+    ('🇬🇧', 'UK GCSE / A-Level', 'UK_GCSE', 'UK & British international schools'),
+    ('🇺🇸', 'US Common Core / AP', 'US_AP', 'US & American international schools'),
+    ('🇦🇺', 'Australian Curriculum (ATAR)', 'AU_ATAR', 'Australia & Australian intl schools'),
+    ('🌐', 'Other / Not sure', 'OTHER', 'Custom or homeschool curriculum'),
   ];
 
   bool get _canContinue =>
       _nameCtrl.text.trim().isNotEmpty &&
-      _selectedYear != null &&
-      _selectedCurriculum != null;
+      _selectedAge != null &&
+      _selectedExamSystem != null;
 
   @override
   void dispose() {
@@ -50,8 +53,8 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
         '/api/v1/auth/setup',
         data: {
           'childName': _nameCtrl.text.trim(),
-          'yearLevel': int.tryParse(_selectedYear!.replaceAll('Y', '')) ?? 1,
-          'curriculum': _selectedCurriculum,
+          'yearLevel': _selectedAge,
+          'curriculum': _selectedExamSystem,
         },
       );
       await AuthNotifier.instance.setChildName(_nameCtrl.text.trim());
@@ -62,12 +65,11 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Could not save setup — check your connection',
-                style: AppTextStyles.bodySmall
-                    .copyWith(color: Colors.white)),
+                style: AppTextStyles.bodySmall.copyWith(color: Colors.white)),
             backgroundColor: AppColors.coral,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
         );
       }
@@ -97,7 +99,6 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
                       AppTextStyles.bodySmall.copyWith(color: AppColors.text2)),
               const SizedBox(height: AppSpacing.lg),
 
-              // Child name
               const _SectionLabel("Child's name"),
               const SizedBox(height: 6),
               TextField(
@@ -122,101 +123,111 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
               ),
               const SizedBox(height: AppSpacing.lg),
 
-              // Year selector
-              const _SectionLabel('What year are they in?'),
+              const _SectionLabel('How old are they?'),
               const SizedBox(height: 8),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: _years.map((y) {
-                    final selected = _selectedYear == y;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: GestureDetector(
-                        onTap: () => setState(() => _selectedYear = y),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 150),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 18, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: selected
-                                ? AppColors.purple
-                                : const Color(0xFFEDE8F5),
-                            borderRadius: BorderRadius.circular(20),
-                            border: selected
-                                ? null
-                                : Border.all(
-                                    color: AppColors.outline,
-                                    width: 1,
-                                  ),
-                          ),
-                          child: Text(
-                            y,
-                            style: AppTextStyles.label.copyWith(
-                              color:
-                                  selected ? Colors.white : AppColors.text2,
-                              fontWeight: selected
-                                  ? FontWeight.w700
-                                  : FontWeight.w400,
-                            ),
-                          ),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: _ages.map((age) {
+                  final selected = _selectedAge == age;
+                  return GestureDetector(
+                    onTap: () => setState(() => _selectedAge = age),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 150),
+                      width: 44,
+                      height: 40,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: selected
+                            ? AppColors.purple
+                            : const Color(0xFFEDE8F5),
+                        borderRadius: BorderRadius.circular(12),
+                        border: selected
+                            ? null
+                            : Border.all(color: AppColors.outline),
+                      ),
+                      child: Text(
+                        '$age',
+                        style: AppTextStyles.label.copyWith(
+                          color: selected ? Colors.white : AppColors.text2,
+                          fontWeight:
+                              selected ? FontWeight.w700 : FontWeight.w400,
+                          fontSize: 13,
                         ),
                       ),
-                    );
-                  }).toList(),
-                ),
+                    ),
+                  );
+                }).toList(),
               ),
               const SizedBox(height: AppSpacing.lg),
 
-              // Curriculum selector
-              const _SectionLabel('Curriculum'),
+              const _SectionLabel('Exam system / Curriculum'),
+              const SizedBox(height: 4),
+              Text(
+                'Choose what matches your school or country',
+                style: AppTextStyles.caption.copyWith(color: AppColors.text3),
+              ),
               const SizedBox(height: 8),
-              ..._curricula.map(
-                (c) {
-                  final (flag, name, id) = c;
-                  final selected = _selectedCurriculum == id;
+              ..._examSystems.map(
+                (e) {
+                  final (icon, name, id, region) = e;
+                  final selected = _selectedExamSystem == id;
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: GestureDetector(
-                      onTap: () => setState(() => _selectedCurriculum = id),
+                      onTap: () =>
+                          setState(() => _selectedExamSystem = id),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 150),
-                        height: 42,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.md),
+                            horizontal: 14, vertical: 10),
                         decoration: BoxDecoration(
                           color: selected
                               ? AppColors.purpleL
                               : AppColors.surface,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: selected
-                                ? AppColors.purple
-                                : AppColors.outline,
+                            color:
+                                selected ? AppColors.purple : AppColors.outline,
                             width: selected ? 2 : 1,
                           ),
                         ),
                         child: Row(
                           children: [
-                            Text(flag,
-                                style: const TextStyle(fontSize: 16)),
+                            Text(icon,
+                                style: const TextStyle(fontSize: 18)),
                             const SizedBox(width: 10),
                             Expanded(
-                              child: Text(
-                                name,
-                                style: AppTextStyles.body.copyWith(
-                                  color: selected
-                                      ? AppColors.purple
-                                      : AppColors.text1,
-                                  fontWeight: selected
-                                      ? FontWeight.w600
-                                      : FontWeight.w400,
-                                ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    name,
+                                    style: AppTextStyles.body.copyWith(
+                                      color: selected
+                                          ? AppColors.purple
+                                          : AppColors.text1,
+                                      fontWeight: selected
+                                          ? FontWeight.w600
+                                          : FontWeight.w400,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  Text(
+                                    region,
+                                    style: AppTextStyles.caption.copyWith(
+                                      color: selected
+                                          ? AppColors.purple
+                                              .withValues(alpha: 0.7)
+                                          : AppColors.text3,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             if (selected)
-                              const Icon(Icons.check_rounded,
-                                  color: AppColors.purple, size: 18),
+                              const Icon(Icons.check_circle_rounded,
+                                  color: AppColors.purple, size: 20),
                           ],
                         ),
                       ),
@@ -289,8 +300,7 @@ class _ProgressBar extends StatelessWidget {
         value: filled,
         minHeight: 6,
         backgroundColor: AppColors.outline,
-        valueColor:
-            const AlwaysStoppedAnimation<Color>(AppColors.purple),
+        valueColor: const AlwaysStoppedAnimation<Color>(AppColors.purple),
       ),
     );
   }
