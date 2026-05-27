@@ -10,7 +10,7 @@ _$ChatMessageImpl _$$ChatMessageImplFromJson(Map<String, dynamic> json) =>
     _$ChatMessageImpl(
       id: json['id'] as String,
       avatarId: json['avatarId'] as String,
-      role: $enumDecode(_$MessageRoleEnumMap, json['role']),
+      role: _messageRoleFromJson(json['role']),
       content: json['content'] as String,
       sources: (json['sources'] as List<dynamic>?)
               ?.map((e) => e as String)
@@ -41,7 +41,7 @@ Map<String, dynamic> _$$ChatMessageImplToJson(_$ChatMessageImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'avatarId': instance.avatarId,
-      'role': _$MessageRoleEnumMap[instance.role]!,
+      'role': _messageRoleToJson(instance.role),
       'content': instance.content,
       'sources': instance.sources,
       'isStreaming': instance.isStreaming,
@@ -53,11 +53,6 @@ Map<String, dynamic> _$$ChatMessageImplToJson(_$ChatMessageImpl instance) =>
       'feedbackType': _$FeedbackTypeEnumMap[instance.feedbackType],
       'savedToBrain': instance.savedToBrain,
     };
-
-const _$MessageRoleEnumMap = {
-  MessageRole.user: 'user',
-  MessageRole.tutor: 'tutor',
-};
 
 const _$MessageTypeEnumMap = {
   MessageType.text: 'text',

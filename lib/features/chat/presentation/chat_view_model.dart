@@ -179,16 +179,34 @@ class ChatViewModel extends _$ChatViewModel {
     appLog.d('[Chat] Fetching history from backend for $_avatarId');
     try {
       final dio = ref.read(dioProvider);
-      final response = await dio.get<List<dynamic>>(
+      final response = await dio.get<dynamic>(
         '/api/v1/avatars/$_avatarId/chat/history',
       );
-      final messages = (response.data ?? [])
-          .map((e) => ChatMessage.fromJson(e as Map<String, dynamic>))
-          .toList();
+
+      List<dynamic> raw;
+      final data = response.data;
+      if (data is List) {
+        raw = data;
+      } else if (data is Map) {
+        raw = (data['messages'] ?? data['data'] ?? data['history'] ?? [])
+            as List<dynamic>;
+      } else {
+        raw = [];
+      }
+
+      final messages = <ChatMessage>[];
+      for (final e in raw) {
+        try {
+          messages.add(ChatMessage.fromJson(e as Map<String, dynamic>));
+        } catch (parseErr, st) {
+          appLog.e('[Chat] Failed to parse history message: $e',
+              error: parseErr, stackTrace: st);
+        }
+      }
+
       appLog.i('[Chat] Loaded ${messages.length} history messages from backend');
       state = state.copyWith(messages: messages);
 
-      // Persist fetched messages to local DB for future opens
       for (final msg in messages) {
         await _localDb.saveMessage(msg.toRecord());
       }

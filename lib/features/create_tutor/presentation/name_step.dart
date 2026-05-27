@@ -46,47 +46,61 @@ class _NameStepState extends State<NameStep> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (widget.selectedCharacter != null)
-            Center(
-              child: Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: widget.selectedCharacter!.bgColor,
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: CharacterWidget(
-                    character: widget.selectedCharacter!,
-                    size: 72,
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (widget.selectedCharacter != null)
+                    Center(
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: widget.selectedCharacter!.bgColor,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: CharacterWidget(
+                            character: widget.selectedCharacter!,
+                            size: 72,
+                          ),
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: AppSpacing.lg),
+                  Text('Give your tutor a name',
+                      style: AppTextStyles.heading1),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    'What would you like to call your tutor?',
+                    style:
+                        AppTextStyles.body.copyWith(color: AppColors.text2),
                   ),
-                ),
+                  const SizedBox(height: AppSpacing.md),
+                  TextField(
+                    controller: _controller,
+                    onChanged: widget.onNameChanged,
+                    textCapitalization: TextCapitalization.words,
+                    decoration: const InputDecoration(
+                      hintText: 'e.g. Robo, Prof. Felix…',
+                      prefixIcon:
+                          Icon(Icons.edit_outlined, color: AppColors.text3),
+                    ),
+                    style: AppTextStyles.body,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                ],
               ),
             ),
-          const SizedBox(height: AppSpacing.lg),
-          Text('Give your tutor a name', style: AppTextStyles.heading1),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            'What would you like to call your tutor?',
-            style: AppTextStyles.body.copyWith(color: AppColors.text2),
           ),
-          const SizedBox(height: AppSpacing.md),
-          TextField(
-            controller: _controller,
-            onChanged: widget.onNameChanged,
-            textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(
-              hintText: 'e.g. Robo, Prof. Felix…',
-              prefixIcon: Icon(Icons.edit_outlined, color: AppColors.text3),
-            ),
-            style: AppTextStyles.body,
-          ),
-          const Spacer(),
           PallyButton(
             label: 'Next',
             onPressed: widget.onNext,
             fullWidth: true,
           ),
+          SizedBox(height: MediaQuery.of(context).padding.bottom + 4),
         ],
       ),
     );

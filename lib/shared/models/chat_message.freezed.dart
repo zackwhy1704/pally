@@ -22,6 +22,7 @@ ChatMessage _$ChatMessageFromJson(Map<String, dynamic> json) {
 mixin _$ChatMessage {
   String get id => throw _privateConstructorUsedError;
   String get avatarId => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _messageRoleFromJson, toJson: _messageRoleToJson)
   MessageRole get role => throw _privateConstructorUsedError;
   String get content => throw _privateConstructorUsedError;
   List<String> get sources => throw _privateConstructorUsedError;
@@ -55,6 +56,7 @@ abstract class $ChatMessageCopyWith<$Res> {
   $Res call(
       {String id,
       String avatarId,
+      @JsonKey(fromJson: _messageRoleFromJson, toJson: _messageRoleToJson)
       MessageRole role,
       String content,
       List<String> sources,
@@ -181,6 +183,7 @@ abstract class _$$ChatMessageImplCopyWith<$Res>
   $Res call(
       {String id,
       String avatarId,
+      @JsonKey(fromJson: _messageRoleFromJson, toJson: _messageRoleToJson)
       MessageRole role,
       String content,
       List<String> sources,
@@ -287,6 +290,7 @@ class _$ChatMessageImpl implements _ChatMessage {
   const _$ChatMessageImpl(
       {required this.id,
       required this.avatarId,
+      @JsonKey(fromJson: _messageRoleFromJson, toJson: _messageRoleToJson)
       required this.role,
       required this.content,
       final List<String> sources = const [],
@@ -309,6 +313,7 @@ class _$ChatMessageImpl implements _ChatMessage {
   @override
   final String avatarId;
   @override
+  @JsonKey(fromJson: _messageRoleFromJson, toJson: _messageRoleToJson)
   final MessageRole role;
   @override
   final String content;
@@ -422,6 +427,7 @@ abstract class _ChatMessage implements ChatMessage {
   const factory _ChatMessage(
       {required final String id,
       required final String avatarId,
+      @JsonKey(fromJson: _messageRoleFromJson, toJson: _messageRoleToJson)
       required final MessageRole role,
       required final String content,
       final List<String> sources,
@@ -442,6 +448,7 @@ abstract class _ChatMessage implements ChatMessage {
   @override
   String get avatarId;
   @override
+  @JsonKey(fromJson: _messageRoleFromJson, toJson: _messageRoleToJson)
   MessageRole get role;
   @override
   String get content;

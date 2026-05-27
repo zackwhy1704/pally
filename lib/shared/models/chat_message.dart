@@ -6,6 +6,17 @@ part 'chat_message.g.dart';
 
 enum MessageRole { user, tutor }
 
+MessageRole _messageRoleFromJson(dynamic value) {
+  final s = (value as String? ?? '').toUpperCase();
+  return switch (s) {
+    'USER' => MessageRole.user,
+    'TUTOR' || 'ASSISTANT' => MessageRole.tutor,
+    _ => MessageRole.tutor,
+  };
+}
+
+String _messageRoleToJson(MessageRole r) => r.name.toUpperCase();
+
 enum MessageType { text, photo, homeworkResult }
 
 enum FeedbackType { helpful, wrong, confused, saveToBrain }
@@ -15,6 +26,7 @@ class ChatMessage with _$ChatMessage {
   const factory ChatMessage({
     required String id,
     required String avatarId,
+    @JsonKey(fromJson: _messageRoleFromJson, toJson: _messageRoleToJson)
     required MessageRole role,
     required String content,
     @Default([]) List<String> sources,

@@ -153,83 +153,95 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               ),
             ),
             SafeArea(
-              child: Column(
-                children: [
-                  const Spacer(),
-                  Container(
-                    width: 230,
-                    height: 230,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(40),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFFFFB81A).withValues(alpha: 0.20),
-                          offset: const Offset(0, 12),
-                          blurRadius: 40,
+              child: SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: MediaQuery.of(context).size.height -
+                        MediaQuery.of(context).padding.top -
+                        MediaQuery.of(context).padding.bottom,
+                  ),
+                  child: IntrinsicHeight(
+                    child: Column(
+                      children: [
+                        const Spacer(),
+                        Container(
+                          width: 230,
+                          height: 230,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(40),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFFFB81A)
+                                    .withValues(alpha: 0.20),
+                                offset: const Offset(0, 12),
+                                blurRadius: 40,
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Image.asset(
+                              'assets/images/mochi.png',
+                              width: 200,
+                              height: 200,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
                         ),
+                        const SizedBox(height: 24),
+                        const Text(
+                          'Mochi',
+                          style: TextStyle(
+                            fontFamily: 'Nunito',
+                            fontSize: 44,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1F1733),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Your study buddy',
+                          style: TextStyle(
+                            fontFamily: 'Nunito',
+                            fontSize: 14,
+                            color: Color(0xFF6B618A),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          width: 80,
+                          height: 26,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFEBE0FF),
+                            borderRadius: BorderRadius.circular(13),
+                          ),
+                          alignment: Alignment.center,
+                          child: const Text(
+                            '小伴',
+                            style: TextStyle(
+                              fontFamily: 'Nunito',
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF7042ED),
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _AnimDot(_dot1Ctrl, isFirst: true),
+                            const SizedBox(width: 8),
+                            _AnimDot(_dot2Ctrl),
+                            const SizedBox(width: 8),
+                            _AnimDot(_dot3Ctrl),
+                          ],
+                        ),
+                        const SizedBox(height: 40),
                       ],
                     ),
-                    child: Center(
-                      child: Image.asset(
-                        'assets/images/mochi.png',
-                        width: 200,
-                        height: 200,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
                   ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    'Mochi',
-                    style: TextStyle(
-                      fontFamily: 'Nunito',
-                      fontSize: 44,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1F1733),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Your study buddy ✨',
-                    style: TextStyle(
-                      fontFamily: 'Nunito',
-                      fontSize: 14,
-                      color: Color(0xFF6B618A),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    width: 80,
-                    height: 26,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFEBE0FF),
-                      borderRadius: BorderRadius.circular(13),
-                    ),
-                    alignment: Alignment.center,
-                    child: const Text(
-                      '小伴',
-                      style: TextStyle(
-                        fontFamily: 'Nunito',
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF7042ED),
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _AnimDot(_dot1Ctrl, isFirst: true),
-                      const SizedBox(width: 8),
-                      _AnimDot(_dot2Ctrl),
-                      const SizedBox(width: 8),
-                      _AnimDot(_dot3Ctrl),
-                    ],
-                  ),
-                  const SizedBox(height: 40),
-                ],
+                ),
               ),
             ),
           ],

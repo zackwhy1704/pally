@@ -37,13 +37,14 @@ class PallyRelevanceWarningDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final maxW = (MediaQuery.of(context).size.width - 48).clamp(0.0, 346.0);
     return Dialog(
       backgroundColor: AppColors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(28),
       ),
-      child: SizedBox(
-        width: 346,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxW),
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(

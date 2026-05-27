@@ -89,69 +89,89 @@ class _SubjectStepState extends State<SubjectStep> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('What subject?', style: AppTextStyles.heading1),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            'What will $name help you with?',
-            style: AppTextStyles.body.copyWith(color: AppColors.text2),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          TextField(
-            controller: _controller,
-            onChanged: widget.onSubjectChanged,
-            textCapitalization: TextCapitalization.words,
-            decoration: InputDecoration(
-              hintText: 'e.g. Maths, Science, Guitar…',
-              prefixIcon: Icon(
-                Icons.menu_book_outlined,
-                color: accentColor,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: accentColor, width: 2),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('What subject?', style: AppTextStyles.heading1),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    'What will $name help you with?',
+                    style:
+                        AppTextStyles.body.copyWith(color: AppColors.text2),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  TextField(
+                    controller: _controller,
+                    onChanged: widget.onSubjectChanged,
+                    textCapitalization: TextCapitalization.words,
+                    decoration: InputDecoration(
+                      hintText: 'e.g. Maths, Science, Guitar…',
+                      prefixIcon: Icon(
+                        Icons.menu_book_outlined,
+                        color: accentColor,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide:
+                            BorderSide(color: accentColor, width: 2),
+                      ),
+                    ),
+                    style: AppTextStyles.body,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
+                    'Quick picks',
+                    style: AppTextStyles.label.copyWith(
+                      color: AppColors.text3,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  Wrap(
+                    spacing: AppSpacing.xs,
+                    runSpacing: AppSpacing.xs,
+                    children: _suggestions.map((s) {
+                      final isActive = _controller.text
+                              .trim()
+                              .toLowerCase() ==
+                          s.toLowerCase();
+                      return ActionChip(
+                        label: Text(s),
+                        onPressed: () => _pickSuggestion(s),
+                        backgroundColor:
+                            isActive ? accentColor : AppColors.surface,
+                        labelStyle: AppTextStyles.bodySmall.copyWith(
+                          color:
+                              isActive ? Colors.white : AppColors.text2,
+                          fontWeight: isActive
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                        ),
+                        side: BorderSide(
+                          color:
+                              isActive ? accentColor : AppColors.outline,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xs,
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                ],
               ),
             ),
-            style: AppTextStyles.body,
           ),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            'Quick picks',
-            style: AppTextStyles.label.copyWith(
-              color: AppColors.text3,
-              letterSpacing: 0.8,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Wrap(
-            spacing: AppSpacing.xs,
-            runSpacing: AppSpacing.xs,
-            children: _suggestions.map((s) {
-              final isActive =
-                  _controller.text.trim().toLowerCase() == s.toLowerCase();
-              return ActionChip(
-                label: Text(s),
-                onPressed: () => _pickSuggestion(s),
-                backgroundColor: isActive ? accentColor : AppColors.surface,
-                labelStyle: AppTextStyles.bodySmall.copyWith(
-                  color: isActive ? Colors.white : AppColors.text2,
-                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-                ),
-                side: BorderSide(
-                  color: isActive ? accentColor : AppColors.outline,
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xs,
-                ),
-              );
-            }).toList(),
-          ),
-          const Spacer(),
           PallyButton(
             label: 'Next →',
             onPressed: widget.canCreate ? widget.onCreate : null,
             loading: widget.isLoading,
             fullWidth: true,
           ),
+          SizedBox(height: MediaQuery.of(context).padding.bottom + 4),
         ],
       ),
     );

@@ -641,8 +641,10 @@ class _BiometricSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sheetHeight =
+        (MediaQuery.of(context).size.height * 0.55).clamp(360.0, 480.0);
     return Container(
-      height: 434,
+      height: sheetHeight,
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
@@ -776,7 +778,7 @@ class _BiometricSheet extends StatelessWidget {
           ),
         ],
         if (state == _BiometricState.scanning) ...[
-          const Spacer(),
+          const SizedBox(height: AppSpacing.xl),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 112),
             child: OutlinedButton(

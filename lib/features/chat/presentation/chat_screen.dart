@@ -373,12 +373,20 @@ class _TextBubble extends StatelessWidget {
                         ),
                       ),
                     )
-                  : Text(
-                      message.content,
-                      style: AppTextStyles.body.copyWith(
-                        color: _isUser ? Colors.white : AppColors.text1,
-                      ),
-                    ),
+                  : message.content.isEmpty
+                      ? Text(
+                          'Hmm, I lost my train of thought. Ask me again!',
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColors.text2,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        )
+                      : Text(
+                          message.content,
+                          style: AppTextStyles.body.copyWith(
+                            color: _isUser ? Colors.white : AppColors.text1,
+                          ),
+                        ),
             ),
           ),
         ),
