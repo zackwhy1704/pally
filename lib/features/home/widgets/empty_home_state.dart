@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -38,120 +38,106 @@ class _EmptyHomeStateState extends State<EmptyHomeState>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+    return SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.of(context).size.height
+              - MediaQuery.of(context).padding.top
+              - MediaQuery.of(context).padding.bottom
+              - 120,
+        ),
+        child: IntrinsicHeight(
           child: Column(
             children: [
-              Text(
-                'Hi ${widget.childName}! 👋',
-                style: AppTextStyles.title.copyWith(fontSize: 18),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                "Let's set up your first tutor",
-                style: AppTextStyles.bodySmall
-                    .copyWith(color: AppColors.text2),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-        const Spacer(),
-        SizedBox(
-          width: 260,
-          height: 260,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                width: 200,
-                height: 200,
-                decoration: BoxDecoration(
-                  color: AppColors.purpleL.withValues(alpha: 0.6),
-                  shape: BoxShape.circle,
-                ),
-              ),
-              ScaleTransition(
-                scale: _scaleAnim,
-                child: Image.asset(
-                  'assets/images/mochi.png',
-                  width: 160,
-                  height: 160,
-                  fit: BoxFit.contain,
-                ),
-              ),
-              const Positioned(
-                  top: 24, left: 24, child: Text('✨', style: TextStyle(fontSize: 20))),
-              const Positioned(
-                  top: 20, right: 28, child: Text('⭐', style: TextStyle(fontSize: 16))),
-              const Positioned(
-                  bottom: 28, left: 30, child: Text('✦', style: TextStyle(fontSize: 18))),
-            ],
-          ),
-        ),
-        const Spacer(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-          child: Column(
-            children: [
-              Text(
-                'No tutors yet!',
-                style: AppTextStyles.heading1.copyWith(fontSize: 22),
-                textAlign: TextAlign.center,
-              ),
               const SizedBox(height: AppSpacing.sm),
-              Text(
-                'Create your first Pally tutor and start learning something amazing 🚀',
-                style: AppTextStyles.body
-                    .copyWith(color: AppColors.text2, height: 1.5),
-                textAlign: TextAlign.center,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                child: Column(
+                  children: [
+                    Text('Hi ${widget.childName}! 👋',
+                        style: AppTextStyles.title.copyWith(fontSize: 18),
+                        textAlign: TextAlign.center),
+                    const SizedBox(height: 4),
+                    Text("Let's set up your first tutor",
+                        style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
+                        textAlign: TextAlign.center),
+                  ],
+                ),
               ),
-              const SizedBox(height: AppSpacing.md),
-              const Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _FeatureChip('🧠 Learn from your notes'),
-                  _FeatureChip('💬 Ask any question'),
-                  _FeatureChip('⭐ Earn XP & rewards'),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.lg),
+              const Spacer(),
               SizedBox(
-                height: 56,
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => context.push('/auth/avatar'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.purple,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    '+ Create My First Tutor ✨',
-                    style: AppTextStyles.body.copyWith(
-                        color: Colors.white, fontWeight: FontWeight.w700),
-                  ),
+                width: 240,
+                height: 240,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ScaleTransition(
+                      scale: _scaleAnim,
+                      child: Image.asset('assets/images/mochi.png',
+                          width: 180, height: 180, fit: BoxFit.contain),
+                    ),
+                    const Positioned(top: 20, left: 20,
+                        child: Text('✨', style: TextStyle(fontSize: 22))),
+                    const Positioned(top: 16, right: 24,
+                        child: Text('⭐', style: TextStyle(fontSize: 18))),
+                    const Positioned(bottom: 24, left: 28,
+                        child: Text('✦', style: TextStyle(fontSize: 20))),
+                  ],
                 ),
               ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                'Pick a buddy, teach it your notes, ask it anything!',
-                style: AppTextStyles.label.copyWith(color: AppColors.text3),
-                textAlign: TextAlign.center,
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                child: Column(
+                  children: [
+                    Text('No tutors yet!',
+                        style: AppTextStyles.heading1.copyWith(fontSize: 22),
+                        textAlign: TextAlign.center),
+                    const SizedBox(height: AppSpacing.sm),
+                    Text('Create your first Mochi tutor and start learning something amazing 🚀',
+                        style: AppTextStyles.body.copyWith(color: AppColors.text2, height: 1.5),
+                        textAlign: TextAlign.center),
+                    const SizedBox(height: AppSpacing.md),
+                    const Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        _FeatureChip('🧠 Learn from your notes'),
+                        _FeatureChip('💬 Ask any question'),
+                        _FeatureChip('⭐ Earn XP & rewards'),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    SizedBox(
+                      height: 56,
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => const CreateTutorRoute().go(context),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.purple,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          elevation: 0,
+                        ),
+                        child: Text('+ Create My First Tutor ✨',
+                            style: AppTextStyles.body.copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Text('Pick a buddy, teach it your notes, ask it anything!',
+                        style: AppTextStyles.label.copyWith(color: AppColors.text3),
+                        textAlign: TextAlign.center),
+                  ],
+                ),
               ),
+              const Spacer(),
+              const SizedBox(height: AppSpacing.md),
             ],
           ),
         ),
-        const Spacer(),
-      ],
+      ),
     );
   }
 }

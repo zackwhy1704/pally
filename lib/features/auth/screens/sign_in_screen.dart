@@ -478,77 +478,54 @@ class _BiometricIcon extends StatelessWidget {
 class _HeaderBand extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        bottomLeft: Radius.circular(32),
-        bottomRight: Radius.circular(32),
+    final topPadding = MediaQuery.of(context).padding.top;
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.32,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFF5F0FF), Color(0xFFE8DEFF), Color(0xFFD4BFFF)],
+        ),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(32),
+          bottomRight: Radius.circular(32),
+        ),
       ),
-      child: Container(
-        height: 300,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFF5F0FF),
-              Color(0xFFE8DEFF),
-              Color(0xFFD4BFFF),
-            ],
+      child: Stack(
+        children: [
+          Positioned(
+            top: topPadding + 8,
+            left: 16,
+            child: GestureDetector(
+              onTap: () {
+                if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+              },
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.7),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.arrow_back_ios_new_rounded, size: 16, color: Color(0xFF1F1733)),
+              ),
+            ),
           ),
-        ),
-        child: Stack(
-          children: [
-            SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 16, top: 8),
-                child: GestureDetector(
-                  onTap: () {
-                    if (Navigator.of(context).canPop()) {
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  child: Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.7),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.arrow_back_ios,
-                      size: 16,
-                      color: Color(0xFF1F1733),
-                    ),
-                  ),
-                ),
+          Positioned.fill(
+            top: topPadding + 8,
+            child: Align(
+              alignment: Alignment.center,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Image.asset('assets/images/mochi.png', width: 150, height: 150, fit: BoxFit.contain),
+                  const Positioned(right: -20, top: 0, child: Text('👋', style: TextStyle(fontSize: 26))),
+                ],
               ),
             ),
-            Positioned(
-              top: 50,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Image.asset(
-                      'assets/images/mochi.png',
-                      width: 160,
-                      height: 160,
-                      fit: BoxFit.contain,
-                    ),
-                    const Positioned(
-                      right: -16,
-                      top: 8,
-                      child: Text('👋', style: TextStyle(fontSize: 28)),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

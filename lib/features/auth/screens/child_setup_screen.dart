@@ -59,7 +59,7 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
       );
       await AuthNotifier.instance.setChildName(_nameCtrl.text.trim());
       await AuthNotifier.instance.markSetupComplete();
-      if (mounted) context.go('/auth/avatar');
+      if (mounted) context.go('/onboarding');
     } on DioException {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

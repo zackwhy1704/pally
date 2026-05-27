@@ -92,7 +92,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     }
 
     if (!auth.isOnboardingComplete) {
-      context.go('/auth/avatar');
+      context.go('/onboarding');
       return;
     }
 

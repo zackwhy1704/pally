@@ -48,107 +48,86 @@ class GradeStep extends StatelessWidget {
     final accentColor = selectedCharacter?.primaryColor ?? AppColors.purple;
 
     return Padding(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Almost there! 🎓', style: AppTextStyles.heading1),
           const SizedBox(height: AppSpacing.xs),
-          Text(
-            'Help $name teach at the right level. (Optional)',
-            style: AppTextStyles.body.copyWith(color: AppColors.text2),
-          ),
+          Text('Help $name teach at the right level. (Optional)',
+              style: AppTextStyles.body.copyWith(color: AppColors.text2)),
           const SizedBox(height: AppSpacing.lg),
-          Text(
-            'AGE',
-            style: AppTextStyles.label.copyWith(
-              color: AppColors.text3,
-              letterSpacing: 0.8,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Wrap(
-            spacing: AppSpacing.xs,
-            runSpacing: AppSpacing.xs,
-            children: _ages.map((a) {
-              final isActive = gradeLevel == a;
-              return ActionChip(
-                label: Text(a),
-                onPressed: () => onGradeChanged(isActive ? null : a),
-                backgroundColor: isActive ? accentColor : AppColors.surface,
-                labelStyle: AppTextStyles.bodySmall.copyWith(
-                  color: isActive ? Colors.white : AppColors.text2,
-                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-                ),
-                side: BorderSide(
-                  color: isActive ? accentColor : AppColors.outline,
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Text(
-            'EXAM SYSTEM / CURRICULUM',
-            style: AppTextStyles.label.copyWith(
-              color: AppColors.text3,
-              letterSpacing: 0.8,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          ..._examSystems.map((e) {
-            final (icon, label, id) = e;
-            final isActive = curriculumType == id;
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 6),
-              child: GestureDetector(
-                onTap: () => onCurriculumChanged(isActive ? null : id),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 150),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: isActive
-                        ? accentColor.withValues(alpha: 0.1)
-                        : AppColors.surface,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isActive ? accentColor : AppColors.outline,
-                      width: isActive ? 2 : 1,
-                    ),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('AGE', style: AppTextStyles.label.copyWith(color: AppColors.text3, letterSpacing: 0.8)),
+                  const SizedBox(height: AppSpacing.sm),
+                  Wrap(
+                    spacing: AppSpacing.xs,
+                    runSpacing: AppSpacing.xs,
+                    children: _ages.map((a) {
+                      final isActive = gradeLevel == a;
+                      return ActionChip(
+                        label: Text(a),
+                        onPressed: () => onGradeChanged(isActive ? null : a),
+                        backgroundColor: isActive ? accentColor : AppColors.surface,
+                        labelStyle: AppTextStyles.bodySmall.copyWith(
+                          color: isActive ? Colors.white : AppColors.text2,
+                          fontWeight: isActive ? FontWeight.w600 : FontWeight.w400),
+                        side: BorderSide(color: isActive ? accentColor : AppColors.outline),
+                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+                      );
+                    }).toList(),
                   ),
-                  child: Row(
-                    children: [
-                      Text(icon, style: const TextStyle(fontSize: 16)),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          label,
-                          style: AppTextStyles.body.copyWith(
-                            color: isActive ? accentColor : AppColors.text1,
-                            fontWeight: isActive
-                                ? FontWeight.w600
-                                : FontWeight.w400,
-                            fontSize: 13,
+                  const SizedBox(height: AppSpacing.lg),
+                  Text('EXAM SYSTEM / CURRICULUM', style: AppTextStyles.label.copyWith(color: AppColors.text3, letterSpacing: 0.8)),
+                  const SizedBox(height: AppSpacing.sm),
+                  ..._examSystems.map((e) {
+                    final (icon, label, id) = e;
+                    final isActive = curriculumType == id;
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: GestureDetector(
+                        onTap: () => onCurriculumChanged(isActive ? null : id),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: isActive ? accentColor.withValues(alpha: 0.1) : AppColors.surface,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isActive ? accentColor : AppColors.outline,
+                              width: isActive ? 2 : 1),
+                          ),
+                          child: Row(
+                            children: [
+                              Text(icon, style: const TextStyle(fontSize: 16)),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(label,
+                                  style: AppTextStyles.body.copyWith(
+                                    color: isActive ? accentColor : AppColors.text1,
+                                    fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                                    fontSize: 13)),
+                              ),
+                              if (isActive) Icon(Icons.check_circle_rounded, color: accentColor, size: 20),
+                            ],
                           ),
                         ),
                       ),
-                      if (isActive)
-                        Icon(Icons.check_circle_rounded,
-                            color: accentColor, size: 20),
-                    ],
-                  ),
-                ),
+                    );
+                  }),
+                  const SizedBox(height: AppSpacing.md),
+                ],
               ),
-            );
-          }),
-          const Spacer(),
-          PallyButton(
-            label: 'Create $name! 🎉',
-            onPressed: onCreate,
-            loading: isLoading,
-            fullWidth: true,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: AppSpacing.sm, bottom: AppSpacing.md + MediaQuery.of(context).padding.bottom),
+            child: PallyButton(label: 'Create $name! 🎉', onPressed: onCreate, loading: isLoading, fullWidth: true),
           ),
         ],
       ),
