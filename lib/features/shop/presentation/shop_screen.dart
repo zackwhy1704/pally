@@ -237,7 +237,37 @@ class _MysteryBoxCardState extends State<_MysteryBoxCard>
             style: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.md),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
+            decoration: BoxDecoration(
+              color: AppColors.amberL,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.amber.withValues(alpha: 0.4)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '💡 FYI — Probability:',
+                  style: AppTextStyles.label.copyWith(
+                    color: const Color(0xFFB8860B),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Secret (Gold Star) = 1/24  ·  Rare (Headmaster) = 23/24',
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.text2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
           SizedBox(
             width: double.infinity,
             child: FilledButton(
