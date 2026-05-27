@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -57,52 +56,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         setupComplete: false,
       );
       if (mounted) context.go('/auth/setup');
-    } on AuthException catch (e) {
-      if (mounted) _showError(e.message);
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
-  }
-
-  Future<void> _googleSignUp() async {
-    setState(() => _loading = true);
-    try {
-      final result = await AuthService.instance.signInWithGoogle();
-      await AuthNotifier.instance.signIn(
-        userId: result.userId,
-        token: result.token,
-        setupComplete: result.setupComplete,
-      );
-      if (mounted) {
-        if (result.isNewUser || !result.setupComplete) {
-          context.go('/auth/setup');
-        } else {
-          context.go('/');
-        }
-      }
-    } on AuthException catch (e) {
-      if (mounted) _showError(e.message);
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
-  }
-
-  Future<void> _appleSignUp() async {
-    setState(() => _loading = true);
-    try {
-      final result = await AuthService.instance.signInWithApple();
-      await AuthNotifier.instance.signIn(
-        userId: result.userId,
-        token: result.token,
-        setupComplete: result.setupComplete,
-      );
-      if (mounted) {
-        if (result.isNewUser || !result.setupComplete) {
-          context.go('/auth/setup');
-        } else {
-          context.go('/');
-        }
-      }
     } on AuthException catch (e) {
       if (mounted) _showError(e.message);
     } finally {
@@ -286,31 +239,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              _Divider(),
-              const SizedBox(height: AppSpacing.md),
-              Row(
-                children: [
-                  Expanded(
-                    child: _SocialButton(
-                      label: 'Google',
-                      icon: '🔵',
-                      dark: false,
-                      onPressed: _googleSignUp,
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  if (Platform.isIOS)
-                    Expanded(
-                      child: _SocialButton(
-                        label: 'Apple',
-                        icon: '🍎',
-                        dark: true,
-                        onPressed: _appleSignUp,
-                      ),
-                    ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
               Center(
                 child: TextButton(
                   onPressed: () => context.pop(),
@@ -433,59 +361,3 @@ class _EyeToggle extends StatelessWidget {
   }
 }
 
-class _Divider extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const Expanded(child: Divider(color: AppColors.outline)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-          child: Text('or continue with',
-              style: AppTextStyles.caption.copyWith(color: AppColors.text3)),
-        ),
-        const Expanded(child: Divider(color: AppColors.outline)),
-      ],
-    );
-  }
-}
-
-class _SocialButton extends StatelessWidget {
-  const _SocialButton({
-    required this.label,
-    required this.icon,
-    required this.dark,
-    required this.onPressed,
-  });
-
-  final String label;
-  final String icon;
-  final bool dark;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 50,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          backgroundColor: dark ? Colors.black : Colors.white,
-          foregroundColor: dark ? Colors.white : AppColors.text1,
-          side: BorderSide(
-              color: dark ? Colors.black : Colors.grey.shade300),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(icon),
-            const SizedBox(width: 6),
-            Text(label, style: AppTextStyles.bodySmall),
-          ],
-        ),
-      ),
-    );
-  }
-}

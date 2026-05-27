@@ -1,9 +1,7 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/auth/auth_state.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 const _baseUrl = String.fromEnvironment(
   'API_BASE_URL',
@@ -28,14 +26,14 @@ class AuthService {
   AuthService._();
   static final instance = AuthService._();
 
+  static const _storage = FlutterSecureStorage();
+
   final _http = Dio(BaseOptions(
     baseUrl: _baseUrl,
     connectTimeout: const Duration(seconds: 15),
     receiveTimeout: const Duration(seconds: 30),
     headers: {'Content-Type': 'application/json'},
   ));
-
-  final _googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
 
   Future<AuthResult> signInWithEmail(String email, String password) async {
     try {
@@ -62,56 +60,7 @@ class AuthService {
     }
   }
 
-  Future<AuthResult> signInWithGoogle() async {
-    try {
-      final account = await _googleSignIn.signIn();
-      if (account == null) throw const AuthException('Google sign-in cancelled');
-
-      final auth = await account.authentication;
-      final idToken = auth.idToken;
-      if (idToken == null) {
-        throw const AuthException('Failed to get Google ID token');
-      }
-
-      final res = await _http.post<Map<String, dynamic>>(
-        '/api/v1/auth/google',
-        data: {'idToken': idToken},
-      );
-      return _parseAuthResponse(res.data!);
-    } on DioException catch (e) {
-      throw _mapDioError(e);
-    }
-  }
-
-  Future<AuthResult> signInWithApple() async {
-    if (!Platform.isIOS && !Platform.isMacOS) {
-      throw const AuthException('Apple Sign In is only available on iOS');
-    }
-    try {
-      final credential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-      );
-
-      final res = await _http.post<Map<String, dynamic>>(
-        '/api/v1/auth/apple',
-        data: {
-          'identityToken': credential.identityToken,
-          'authCode': credential.authorizationCode,
-        },
-      );
-      return _parseAuthResponse(res.data!);
-    } on DioException catch (e) {
-      throw _mapDioError(e);
-    }
-  }
-
   Future<void> signOut() async {
-    try {
-      await _googleSignIn.signOut();
-    } catch (_) {}
     await AuthNotifier.instance.signOut();
   }
 
@@ -124,6 +73,54 @@ class AuthService {
     } on DioException catch (e) {
       throw _mapDioError(e);
     }
+  }
+
+  Future<String> getBiometricChallenge() async {
+    try {
+      final token = await _storage.read(key: 'auth_token');
+      final res = await _http.post<Map<String, dynamic>>(
+        '/api/v1/auth/biometric/challenge',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      final data = (res.data?['data'] as Map<String, dynamic>?) ?? res.data!;
+      return data['challenge'] as String;
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  Future<AuthResult> verifyBiometric({
+    required String userId,
+    required String challenge,
+    required String deviceId,
+  }) async {
+    try {
+      final res = await _http.post<Map<String, dynamic>>(
+        '/api/v1/auth/biometric/verify',
+        data: {
+          'userId': userId,
+          'challenge': challenge,
+          'deviceId': deviceId,
+        },
+      );
+      return _parseAuthResponse(res.data!);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  Future<void> registerBiometricDevice({
+    required String deviceId,
+    required String deviceName,
+  }) async {
+    try {
+      final token = await _storage.read(key: 'auth_token');
+      await _http.post<void>(
+        '/api/v1/auth/biometric/register',
+        data: {'deviceId': deviceId, 'deviceName': deviceName},
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } catch (_) {}
   }
 
   AuthResult _parseAuthResponse(Map<String, dynamic> data) {
@@ -143,8 +140,7 @@ class AuthService {
 
     if (e.type == DioExceptionType.connectionError ||
         e.type == DioExceptionType.connectionTimeout) {
-      return const AuthException(
-          'No internet connection — check your WiFi');
+      return const AuthException('No internet connection — check your WiFi');
     }
 
     switch (status) {
@@ -156,9 +152,13 @@ class AuthService {
       case 404:
         return const AuthException('No account found for this email');
       case 409:
-        return const AuthException('An account with this email already exists');
+        return const AuthException(
+            'An account with this email already exists');
       case 422:
         return AuthException(serverMsg ?? 'Please check your details');
+      case 423:
+        return AuthException(
+            serverMsg ?? 'Account temporarily locked — try again later');
       default:
         appLog.e('[Auth] Unexpected error $status: $serverMsg');
         return AuthException(serverMsg ?? 'Something went wrong');

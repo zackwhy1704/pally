@@ -1,12 +1,16 @@
-import 'dart:io';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/utils/device_info.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/auth/services/auth_service.dart';
+
+enum _BiometricState { scanning, success, failed }
 
 class SignInScreen extends ConsumerStatefulWidget {
   const SignInScreen({super.key});
@@ -22,6 +26,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   final _passFocus = FocusNode();
   bool _obscure = true;
   bool _loading = false;
+  final _localAuth = LocalAuthentication();
+  final _bioStateCtrl = StreamController<_BiometricState>.broadcast();
 
   @override
   void dispose() {
@@ -29,6 +35,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     _passCtrl.dispose();
     _emailFocus.dispose();
     _passFocus.dispose();
+    _bioStateCtrl.close();
     super.dispose();
   }
 
@@ -49,12 +56,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         setupComplete: result.setupComplete,
         onboardingComplete: result.setupComplete,
       );
+      _registerBiometricSilently();
       if (mounted) {
-        if (!result.setupComplete) {
-          context.go('/auth/setup');
-        } else {
-          context.go('/');
-        }
+        context.go(result.setupComplete ? '/' : '/auth/setup');
       }
     } on AuthException catch (e) {
       if (mounted) _showError(e.message);
@@ -63,52 +67,108 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     }
   }
 
-  Future<void> _googleSignIn() async {
-    setState(() => _loading = true);
+  void _registerBiometricSilently() async {
     try {
-      final result = await AuthService.instance.signInWithGoogle();
+      final deviceId = await DeviceInfo.getStableDeviceId();
+      final deviceName = await DeviceInfo.getDeviceName();
+      await AuthService.instance.registerBiometricDevice(
+        deviceId: deviceId,
+        deviceName: deviceName,
+      );
+      await AuthNotifier.instance.markBiometricRegistered();
+    } catch (_) {}
+  }
+
+  Future<void> _biometricSignIn() async {
+    final canAuth = await _canUseBiometrics();
+    if (!canAuth) {
+      _showError('Biometrics not set up on this device');
+      return;
+    }
+    final isRegistered = await AuthNotifier.instance.isBiometricRegistered();
+    if (!isRegistered) {
+      _showError('Please sign in with your password first to enable biometrics');
+      return;
+    }
+    final userId = AuthNotifier.instance.state.userId;
+    if (userId == null) {
+      _showError('Please sign in with your password first');
+      return;
+    }
+
+    _showBiometricSheet();
+
+    try {
+      final authenticated = await _localAuth.authenticate(
+        localizedReason: 'Sign in to Pally',
+        options: const AuthenticationOptions(
+          biometricOnly: true,
+          stickyAuth: true,
+        ),
+      );
+      if (!authenticated) {
+        _bioStateCtrl.add(_BiometricState.failed);
+        return;
+      }
+
+      final challenge = await AuthService.instance.getBiometricChallenge();
+      final deviceId = await DeviceInfo.getStableDeviceId();
+      final result = await AuthService.instance.verifyBiometric(
+        userId: userId,
+        challenge: challenge,
+        deviceId: deviceId,
+      );
       await AuthNotifier.instance.signIn(
         userId: result.userId,
         token: result.token,
         setupComplete: result.setupComplete,
         onboardingComplete: result.setupComplete,
       );
+      _bioStateCtrl.add(_BiometricState.success);
+      await Future.delayed(const Duration(milliseconds: 1200));
       if (mounted) {
-        if (result.isNewUser || !result.setupComplete) {
-          context.go('/auth/setup');
-        } else {
-          context.go('/');
-        }
+        Navigator.of(context).pop();
+        context.go(result.setupComplete ? '/' : '/auth/setup');
       }
     } on AuthException catch (e) {
+      _bioStateCtrl.add(_BiometricState.failed);
       if (mounted) _showError(e.message);
-    } finally {
-      if (mounted) setState(() => _loading = false);
+    } catch (_) {
+      _bioStateCtrl.add(_BiometricState.failed);
     }
   }
 
-  Future<void> _appleSignIn() async {
-    setState(() => _loading = true);
+  Future<bool> _canUseBiometrics() async {
     try {
-      final result = await AuthService.instance.signInWithApple();
-      await AuthNotifier.instance.signIn(
-        userId: result.userId,
-        token: result.token,
-        setupComplete: result.setupComplete,
-        onboardingComplete: result.setupComplete,
-      );
-      if (mounted) {
-        if (result.isNewUser || !result.setupComplete) {
-          context.go('/auth/setup');
-        } else {
-          context.go('/');
-        }
-      }
-    } on AuthException catch (e) {
-      if (mounted) _showError(e.message);
-    } finally {
-      if (mounted) setState(() => _loading = false);
+      return await _localAuth.canCheckBiometrics &&
+          await _localAuth.isDeviceSupported();
+    } catch (_) {
+      return false;
     }
+  }
+
+  void _showBiometricSheet() {
+    _bioStateCtrl.add(_BiometricState.scanning);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: const Color(0xFF0F0A1A).withValues(alpha: 0.55),
+      isDismissible: false,
+      enableDrag: false,
+      builder: (_) => _BiometricSheet(
+        stateStream: _bioStateCtrl.stream,
+        onCancel: () {
+          _localAuth.stopAuthentication();
+          Navigator.of(context).pop();
+        },
+        onRetry: () {
+          Navigator.of(context).pop();
+          _biometricSignIn();
+        },
+        onUsePassword: () => Navigator.of(context).pop(),
+      ),
+    );
   }
 
   void _showForgotPasswordDialog() {
@@ -126,8 +186,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               style: AppTextStyles.body,
               decoration: InputDecoration(
                 hintText: 'your@email.com',
-                hintStyle:
-                    AppTextStyles.body.copyWith(color: AppColors.text3),
+                hintStyle: AppTextStyles.body.copyWith(color: AppColors.text3),
                 filled: true,
                 fillColor: const Color(0xFFEDE8F5),
                 border: OutlineInputBorder(
@@ -135,9 +194,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   borderSide: BorderSide.none,
                 ),
                 contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: 14,
-                ),
+                    horizontal: AppSpacing.md, vertical: 14),
               ),
             ),
             actions: [
@@ -163,8 +220,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                                 backgroundColor: AppColors.green,
                                 behavior: SnackBarBehavior.floating,
                                 shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(12)),
+                                    borderRadius: BorderRadius.circular(12)),
                               ),
                             );
                           }
@@ -181,8 +237,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     ? const SizedBox(
                         width: 16,
                         height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
+                        child: CircularProgressIndicator(strokeWidth: 2))
                     : const Text('Send Reset Link'),
               ),
             ],
@@ -275,30 +330,66 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     loading: _loading,
                     onPressed: _signIn,
                   ),
-                  const SizedBox(height: AppSpacing.lg),
-                  _Divider(),
-                  const SizedBox(height: AppSpacing.md),
+                  const SizedBox(height: 28),
                   Row(
                     children: [
-                      Expanded(
-                        child: _SocialButton(
-                          label: 'Google',
-                          icon: '🔵',
-                          dark: false,
-                          onPressed: _googleSignIn,
+                      const Expanded(
+                          child: Divider(color: AppColors.outline)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Text('or',
+                            style: AppTextStyles.caption
+                                .copyWith(color: AppColors.text3)),
+                      ),
+                      const Expanded(
+                          child: Divider(color: AppColors.outline)),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Center(
+                    child: GestureDetector(
+                      onTap: _biometricSignIn,
+                      child: Container(
+                        width: 176,
+                        height: 54,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFAF7FF),
+                          borderRadius: BorderRadius.circular(27),
+                          border: Border.all(
+                              color: AppColors.teal, width: 1.5),
+                          boxShadow: [
+                            BoxShadow(
+                              color:
+                                  AppColors.teal.withValues(alpha: 0.15),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _BiometricIcon(),
+                            const SizedBox(width: 10),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Use Biometrics',
+                                    style: AppTextStyles.label.copyWith(
+                                        color: AppColors.teal,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 12)),
+                                Text('Face ID / Touch ID',
+                                    style: AppTextStyles.caption.copyWith(
+                                        color: AppColors.text2,
+                                        fontSize: 9)),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: AppSpacing.sm),
-                      if (Platform.isIOS)
-                        Expanded(
-                          child: _SocialButton(
-                            label: 'Apple',
-                            icon: '🍎',
-                            dark: true,
-                            onPressed: _appleSignIn,
-                          ),
-                        ),
-                    ],
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.xl),
                   Row(
@@ -337,6 +428,52 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   }
 }
 
+class _BiometricIcon extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 34,
+      height: 34,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            width: 34, height: 34,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.teal.withValues(alpha: 0.12),
+              border: Border.all(
+                  color: AppColors.teal.withValues(alpha: 0.9), width: 1.5),
+            ),
+          ),
+          Container(
+            width: 22, height: 22,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                  color: AppColors.teal.withValues(alpha: 0.7), width: 1.5),
+            ),
+          ),
+          Container(
+            width: 10, height: 10,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.teal.withValues(alpha: 0.25),
+              border: Border.all(
+                  color: AppColors.teal.withValues(alpha: 0.9), width: 1.5),
+            ),
+          ),
+          Container(
+            width: 4, height: 4,
+            decoration: const BoxDecoration(
+                shape: BoxShape.circle, color: AppColors.teal),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _HeaderBand extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -366,14 +503,9 @@ class _FieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: AppTextStyles.label.copyWith(
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        color: AppColors.text2,
-      ),
-    );
+    return Text(text,
+        style: AppTextStyles.label.copyWith(
+            fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.text2));
   }
 }
 
@@ -418,9 +550,7 @@ class _TextField extends StatelessWidget {
           borderSide: BorderSide.none,
         ),
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: 14,
-        ),
+            horizontal: AppSpacing.md, vertical: 14),
         suffixIcon: suffix,
       ),
     );
@@ -447,9 +577,8 @@ class _PrimaryButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.purple,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           elevation: 0,
         ),
         child: loading
@@ -457,8 +586,7 @@ class _PrimaryButton extends StatelessWidget {
                 width: 22,
                 height: 22,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
-              )
+                    strokeWidth: 2, color: Colors.white))
             : Text(label,
                 style: AppTextStyles.body
                     .copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
@@ -467,61 +595,192 @@ class _PrimaryButton extends StatelessWidget {
   }
 }
 
-class _Divider extends StatelessWidget {
+class _BiometricSheet extends StatelessWidget {
+  const _BiometricSheet({
+    required this.stateStream,
+    required this.onCancel,
+    required this.onRetry,
+    required this.onUsePassword,
+  });
+
+  final Stream<_BiometricState> stateStream;
+  final VoidCallback onCancel;
+  final VoidCallback onRetry;
+  final VoidCallback onUsePassword;
+
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Container(
+      height: 434,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      child: StreamBuilder<_BiometricState>(
+        stream: stateStream,
+        initialData: _BiometricState.scanning,
+        builder: (context, snapshot) {
+          final state = snapshot.data ?? _BiometricState.scanning;
+          return _buildContent(context, state);
+        },
+      ),
+    );
+  }
+
+  Widget _buildContent(BuildContext context, _BiometricState state) {
+    final Color ringColor = switch (state) {
+      _BiometricState.scanning => AppColors.teal,
+      _BiometricState.success => AppColors.green,
+      _BiometricState.failed => AppColors.coral,
+    };
+
+    return Column(
       children: [
-        const Expanded(child: Divider(color: AppColors.outline)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-          child: Text('or continue with',
-              style: AppTextStyles.caption.copyWith(color: AppColors.text3)),
+        const SizedBox(height: 12),
+        Container(
+          width: 54, height: 5,
+          decoration: BoxDecoration(
+              color: AppColors.outline, borderRadius: BorderRadius.circular(3)),
         ),
-        const Expanded(child: Divider(color: AppColors.outline)),
+        const SizedBox(height: 24),
+        SizedBox(
+          width: 152, height: 152,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              _Ring(size: 152, color: ringColor, opacity: 0.1),
+              _Ring(size: 120, color: ringColor, opacity: 0.2),
+              _Ring(size: 88, color: ringColor, opacity: 0.35),
+              Container(
+                width: 56, height: 56,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: ringColor.withValues(alpha: 0.2),
+                  border: Border.all(
+                      color: ringColor.withValues(alpha: 0.8), width: 2),
+                ),
+              ),
+              if (state == _BiometricState.scanning)
+                Icon(Icons.fingerprint_rounded, color: ringColor, size: 28)
+              else if (state == _BiometricState.success)
+                Icon(Icons.check_rounded, color: ringColor, size: 28)
+              else
+                Icon(Icons.close_rounded, color: ringColor, size: 28),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          switch (state) {
+            _BiometricState.scanning => 'Scanning...',
+            _BiometricState.success => 'Verified! ✨',
+            _BiometricState.failed => "Couldn't verify",
+          },
+          style: AppTextStyles.title.copyWith(fontSize: 20),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          switch (state) {
+            _BiometricState.scanning =>
+              'Place your finger or look at your camera',
+            _BiometricState.success => 'Signing you in...',
+            _BiometricState.failed => 'Face or fingerprint not recognised',
+          },
+          style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
+          textAlign: TextAlign.center,
+        ),
+        if (state == _BiometricState.success) ...[
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(2),
+              child: const LinearProgressIndicator(
+                value: null,
+                backgroundColor: AppColors.outline,
+                valueColor: AlwaysStoppedAnimation(AppColors.green),
+                minHeight: 4,
+              ),
+            ),
+          ),
+        ],
+        if (state == _BiometricState.failed) ...[
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              children: [
+                SizedBox(
+                  width: double.infinity, height: 50,
+                  child: ElevatedButton(
+                    onPressed: onRetry,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.teal,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
+                      elevation: 0,
+                    ),
+                    child: const Text('Try Again',
+                        style: TextStyle(fontWeight: FontWeight.w600)),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity, height: 44,
+                  child: OutlinedButton(
+                    onPressed: onUsePassword,
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppColors.outline),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
+                    ),
+                    child: Text('Use password instead',
+                        style: AppTextStyles.bodySmall
+                            .copyWith(color: AppColors.text2)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+        if (state == _BiometricState.scanning) ...[
+          const Spacer(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 112),
+            child: OutlinedButton(
+              onPressed: onCancel,
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(166, 44),
+                side: const BorderSide(color: AppColors.outline),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(22)),
+              ),
+              child: Text('Cancel',
+                  style: AppTextStyles.bodySmall
+                      .copyWith(color: AppColors.text2)),
+            ),
+          ),
+          const SizedBox(height: 24),
+        ],
       ],
     );
   }
 }
 
-class _SocialButton extends StatelessWidget {
-  const _SocialButton({
-    required this.label,
-    required this.icon,
-    required this.dark,
-    required this.onPressed,
-  });
-
-  final String label;
-  final String icon;
-  final bool dark;
-  final VoidCallback onPressed;
+class _Ring extends StatelessWidget {
+  const _Ring({required this.size, required this.color, required this.opacity});
+  final double size;
+  final Color color;
+  final double opacity;
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 50,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          backgroundColor: dark ? Colors.black : Colors.white,
-          foregroundColor: dark ? Colors.white : AppColors.text1,
-          side: BorderSide(
-            color: dark ? Colors.black : Colors.grey.shade300,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+  Widget build(BuildContext context) => Container(
+        width: size, height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+              color: color.withValues(alpha: opacity), width: 1.5),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(icon),
-            const SizedBox(width: 6),
-            Text(label, style: AppTextStyles.bodySmall),
-          ],
-        ),
-      ),
-    );
-  }
+      );
 }

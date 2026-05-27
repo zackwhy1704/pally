@@ -51,6 +51,7 @@ class AuthNotifier extends ChangeNotifier {
   static const _keySetupComplete = 'auth_setup_complete';
   static const _keyOnboardingComplete = 'auth_onboarding_complete';
   static const _keyChildName = 'auth_child_name';
+  static const _keyBiometricRegistered = 'biometric_registered';
 
   AuthState _state = const AuthState();
   AuthState get state => _state;
@@ -112,6 +113,14 @@ class AuthNotifier extends ChangeNotifier {
     await _storage.write(key: _keyChildName, value: name);
     _state = _state.copyWith(childName: name);
     notifyListeners();
+  }
+
+  Future<void> markBiometricRegistered() async {
+    await _storage.write(key: _keyBiometricRegistered, value: 'true');
+  }
+
+  Future<bool> isBiometricRegistered() async {
+    return await _storage.read(key: _keyBiometricRegistered) == 'true';
   }
 
   Future<void> signOut() async {
