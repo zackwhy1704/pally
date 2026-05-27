@@ -489,7 +489,7 @@ class ChatViewModel extends _$ChatViewModel {
             'content': m.content,
             'sourceWikiSlug': m.sources.firstOrNull,
             'isPhotoMessage': m.messageType == MessageType.photo,
-            'createdAt': (m.createdAt ?? DateTime.now()).toIso8601String(),
+            'createdAt': (m.createdAt ?? DateTime.now()).toUtc().toIso8601String(),
           }).toList();
       await dio.post<void>(
         '/api/v1/avatars/$_avatarId/chat/sync',
