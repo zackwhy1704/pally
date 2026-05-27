@@ -485,7 +485,7 @@ class ChatViewModel extends _$ChatViewModel {
       final dio = ref.read(dioProvider);
       final syncDtos = messages.map((m) => {
             'id': m.id,
-            'role': m.role.name.toUpperCase(),
+            'role': m.role == MessageRole.tutor ? 'ASSISTANT' : 'USER',
             'content': m.content,
             'sourceWikiSlug': m.sources.firstOrNull,
             'isPhotoMessage': m.messageType == MessageType.photo,
@@ -530,35 +530,53 @@ class ChatViewModel extends _$ChatViewModel {
       final sources = <String>[];
 
       String currentEvent = '';
+      final dataLines = <String>[];
       await for (final chunk in stream) {
         final raw = utf8.decode(chunk);
         for (final line in raw.split('\n')) {
           if (line.startsWith('event: ')) {
             currentEvent = line.substring(7).trim();
-          } else if (line.startsWith('data: ')) {
-            final data = line.substring(6);
-            if (data == '[DONE]') {
-              _finaliseStreamingMessage(streamId, buffer.toString(), sources);
-              state = state.copyWith(isTyping: false);
-              return;
-            }
-            if (currentEvent == 'done') {
+          } else if (line.startsWith('data: ') || line.startsWith('data:')) {
+            final data = line.startsWith('data: ')
+                ? line.substring(6)
+                : line.substring(5);
+            dataLines.add(data);
+          } else if (line.trim().isEmpty && dataLines.isNotEmpty) {
+            final fullData = dataLines.join('\n');
+            dataLines.clear();
+
+            if (fullData == '[DONE]' || currentEvent == 'done') {
               _finaliseStreamingMessage(streamId, buffer.toString(), sources);
               state = state.copyWith(isTyping: false);
               return;
             }
             if (currentEvent == 'delta' || currentEvent.isEmpty) {
               try {
-                final json = jsonDecode(data) as Map<String, dynamic>;
-                final text = json['text'] as String? ?? data;
+                final json = jsonDecode(fullData) as Map<String, dynamic>;
+                final text = json['text'] as String? ?? fullData;
                 buffer.write(text);
               } catch (_) {
-                buffer.write(data);
+                buffer.write(fullData);
               }
               _updateStreamingMessage(streamId, buffer.toString());
             }
             currentEvent = '';
           }
+        }
+      }
+
+      if (dataLines.isNotEmpty) {
+        final fullData = dataLines.join('\n');
+        if (currentEvent == 'done' || fullData == '[DONE]') {
+          _finaliseStreamingMessage(streamId, buffer.toString(), sources);
+        } else if (currentEvent == 'delta' || currentEvent.isEmpty) {
+          try {
+            final json = jsonDecode(fullData) as Map<String, dynamic>;
+            buffer.write(json['text'] as String? ?? fullData);
+          } catch (_) {
+            buffer.write(fullData);
+          }
+          _updateStreamingMessage(streamId, buffer.toString());
         }
       }
 
