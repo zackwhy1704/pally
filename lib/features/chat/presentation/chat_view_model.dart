@@ -511,38 +511,35 @@ class ChatViewModel extends _$ChatViewModel {
       final buffer = StringBuffer();
       final sources = <String>[];
 
+      String currentEvent = '';
       await for (final chunk in stream) {
         final raw = utf8.decode(chunk);
         for (final line in raw.split('\n')) {
-          if (line.startsWith('data: ')) {
+          if (line.startsWith('event: ')) {
+            currentEvent = line.substring(7).trim();
+          } else if (line.startsWith('data: ')) {
             final data = line.substring(6);
             if (data == '[DONE]') {
               _finaliseStreamingMessage(streamId, buffer.toString(), sources);
               state = state.copyWith(isTyping: false);
               return;
             }
-            try {
-              final json = jsonDecode(data) as Map<String, dynamic>;
-              final event = ChatStreamEvent.fromJson(json);
-              event.when(
-                token: (token) {
-                  buffer.write(token);
-                  _updateStreamingMessage(streamId, buffer.toString());
-                },
-                sources: (s) => sources.addAll(s),
-                done: () {
-                  appLog.i('[Chat] Stream complete. source=${sources.firstOrNull}');
-                  _finaliseStreamingMessage(
-                      streamId, buffer.toString(), sources);
-                  state = state.copyWith(isTyping: false);
-                },
-                error: (msg) {
-                  appLog.e('[Chat] SSE error event: $msg');
-                  _finaliseStreamingMessage(streamId, msg, []);
-                  state = state.copyWith(isTyping: false);
-                },
-              );
-            } catch (_) {}
+            if (currentEvent == 'done') {
+              _finaliseStreamingMessage(streamId, buffer.toString(), sources);
+              state = state.copyWith(isTyping: false);
+              return;
+            }
+            if (currentEvent == 'delta' || currentEvent.isEmpty) {
+              try {
+                final json = jsonDecode(data) as Map<String, dynamic>;
+                final text = json['text'] as String? ?? data;
+                buffer.write(text);
+              } catch (_) {
+                buffer.write(data);
+              }
+              _updateStreamingMessage(streamId, buffer.toString());
+            }
+            currentEvent = '';
           }
         }
       }
