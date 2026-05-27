@@ -7,7 +7,6 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/features/auth/auth_state.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ChildSetupScreen extends ConsumerStatefulWidget {
   const ChildSetupScreen({super.key});
@@ -55,8 +54,6 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
           'curriculum': _selectedCurriculum,
         },
       );
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('child_name', _nameCtrl.text.trim());
       await AuthNotifier.instance.setChildName(_nameCtrl.text.trim());
       await AuthNotifier.instance.markSetupComplete();
       if (mounted) context.go('/auth/avatar');

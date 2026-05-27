@@ -111,6 +111,87 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     }
   }
 
+  void _showForgotPasswordDialog() {
+    final emailCtrl = TextEditingController(text: _emailCtrl.text.trim());
+    showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        var sending = false;
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) => AlertDialog(
+            title: const Text('Reset Password'),
+            content: TextField(
+              controller: emailCtrl,
+              keyboardType: TextInputType.emailAddress,
+              style: AppTextStyles.body,
+              decoration: InputDecoration(
+                hintText: 'your@email.com',
+                hintStyle:
+                    AppTextStyles.body.copyWith(color: AppColors.text3),
+                filled: true,
+                fillColor: const Color(0xFFEDE8F5),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: 14,
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: sending
+                    ? null
+                    : () async {
+                        final email = emailCtrl.text.trim();
+                        if (email.isEmpty) return;
+                        setDialogState(() => sending = true);
+                        try {
+                          await AuthService.instance.forgotPassword(email);
+                          if (ctx.mounted) Navigator.of(ctx).pop();
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text(
+                                    'Check your email for a reset link'),
+                                backgroundColor: AppColors.green,
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(12)),
+                              ),
+                            );
+                          }
+                        } on AuthException catch (e) {
+                          if (ctx.mounted) Navigator.of(ctx).pop();
+                          if (mounted) _showError(e.message);
+                        } finally {
+                          if (ctx.mounted) {
+                            setDialogState(() => sending = false);
+                          }
+                        }
+                      },
+                child: sending
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Send Reset Link'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -179,7 +260,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: _showForgotPasswordDialog,
                       style: TextButton.styleFrom(
                           foregroundColor: AppColors.purple,
                           padding: EdgeInsets.zero),

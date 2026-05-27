@@ -8,7 +8,6 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/utils/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 // ── Pally avatar data model ───────────────────────────────────────────────────
 
@@ -192,9 +191,6 @@ class _AvatarPickerScreenState extends ConsumerState<AvatarPickerScreen> {
       );
       final avatarId = res.data?['id'] as String? ?? '';
       appLog.i('[AvatarPicker] Created avatar ${av.name} id=$avatarId');
-
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('child_avatar_name', av.name);
 
       if (mounted) {
         if (widget.isOnboarding) {

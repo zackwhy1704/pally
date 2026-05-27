@@ -4,7 +4,6 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/features/auth/auth_state.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -16,28 +15,10 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final _controller = PageController();
   int _page = 0;
-  String _avatarName = 'Mochi';
-
-  @override
-  void initState() {
-    super.initState();
-    _loadAvatarName();
-  }
-
-  Future<void> _loadAvatarName() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) {
-      setState(
-        () => _avatarName = prefs.getString('child_avatar_name') ?? 'Mochi',
-      );
-    }
-  }
+  final String _avatarName = 'Mochi';
 
   Future<void> _finish() async {
     await AuthNotifier.instance.markOnboardingComplete();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('onboarding_complete', true);
-    await prefs.setBool('onboarding_done', true);
     if (mounted) context.go('/');
   }
 

@@ -11,9 +11,9 @@ import 'package:pally/core/utils/logger.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
+import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/home/widgets/empty_home_state.dart';
 import 'package:pally/features/progress/presentation/progress_view_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -23,25 +23,11 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  String _childName = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _loadChildName();
-  }
-
-  Future<void> _loadChildName() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) {
-      setState(() => _childName = prefs.getString('child_name') ?? '');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final avatarsAsync = ref.watch(homeViewModelProvider);
     final progressAsync = ref.watch(progressViewModelProvider);
+    final childName = ref.watch(authStateProvider).childName ?? '';
 
     ref.listen<AsyncValue<List<Avatar>>>(homeViewModelProvider, (_, next) {
       if (next is AsyncError) {
@@ -70,9 +56,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 loading: () => const Center(
                   child: CircularProgressIndicator(color: AppColors.purple),
                 ),
-                error: (e, _) => EmptyHomeState(childName: _childName),
+                error: (e, _) => EmptyHomeState(childName: childName),
                 data: (avatars) => avatars.isEmpty
-                    ? EmptyHomeState(childName: _childName)
+                    ? EmptyHomeState(childName: childName)
                     : _AvatarGrid(avatars: avatars),
               ),
             ),

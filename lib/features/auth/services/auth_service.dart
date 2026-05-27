@@ -115,6 +115,17 @@ class AuthService {
     await AuthNotifier.instance.signOut();
   }
 
+  Future<void> forgotPassword(String email) async {
+    try {
+      await _http.post<void>(
+        '/api/v1/auth/forgot-password',
+        data: {'email': email},
+      );
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
   AuthResult _parseAuthResponse(Map<String, dynamic> data) {
     final inner = (data['data'] as Map<String, dynamic>?) ?? data;
     return AuthResult(

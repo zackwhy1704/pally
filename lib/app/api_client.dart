@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/utils/logger.dart';
-import 'package:pally/features/auth/auth_state.dart' show authStateProvider;
+import 'package:pally/features/auth/auth_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'api_client.g.dart';
@@ -14,7 +14,6 @@ const _baseUrl = String.fromEnvironment(
 @riverpod
 Dio dio(Ref ref) {
   final auth = ref.watch(authStateProvider);
-  final userId = auth.userId ?? 'dev-user';
   final token = auth.token;
 
   final client = Dio(
@@ -26,7 +25,7 @@ Dio dio(Ref ref) {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'X-User-Id': userId,
+        if (auth.userId != null) 'X-User-Id': auth.userId!,
         if (token != null && token.isNotEmpty)
           'Authorization': 'Bearer $token',
       },
@@ -36,6 +35,7 @@ Dio dio(Ref ref) {
   client.interceptors.addAll([
     _PallyLoggingInterceptor(),
     _ApiResponseInterceptor(),
+    _SessionExpiredInterceptor(),
   ]);
 
   return client;
@@ -139,5 +139,16 @@ class _ApiResponseInterceptor extends Interceptor {
       response.data = body['data'];
     }
     handler.next(response);
+  }
+}
+
+class _SessionExpiredInterceptor extends Interceptor {
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    if (err.response?.statusCode == 401 &&
+        !err.requestOptions.path.contains('/auth/')) {
+      AuthNotifier.instance.signOut();
+    }
+    handler.next(err);
   }
 }

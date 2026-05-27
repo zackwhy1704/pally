@@ -1,24 +1,137 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pally/app/api_client.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/features/auth/auth_state.dart';
+import 'package:pally/features/auth/services/auth_service.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
-  final _nameController = TextEditingController(text: 'Alex');
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  late final TextEditingController _nameController;
   TimeOfDay _reminderTime = const TimeOfDay(hour: 18, minute: 0);
   bool _dailyReminder = true;
+  bool _savingName = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final childName = ref.read(authStateProvider).childName ?? '';
+    _nameController = TextEditingController(text: childName);
+  }
 
   @override
   void dispose() {
     _nameController.dispose();
     super.dispose();
+  }
+
+  Future<void> _saveDisplayName() async {
+    final name = _nameController.text.trim();
+    if (name.isEmpty) return;
+    setState(() => _savingName = true);
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.patch<void>(
+        '/api/v1/auth/setup',
+        data: {'childName': name},
+      );
+      await AuthNotifier.instance.setChildName(name);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Name updated!'),
+            backgroundColor: AppColors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } on DioException {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not save name — check your connection'),
+            backgroundColor: AppColors.coral,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _savingName = false);
+    }
+  }
+
+  Future<void> _confirmSignOut() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Sign Out?'),
+        content: const Text("You'll need to sign in again"),
+        actions: [
+          TextButton(
+            onPressed: () => ctx.pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => ctx.pop(true),
+            child: const Text('Sign Out',
+                style: TextStyle(color: AppColors.coral)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    await AuthService.instance.signOut();
+    if (mounted) context.go('/auth/signin');
+  }
+
+  Future<void> _confirmDeleteAccount() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Account?'),
+        content: const Text(
+          'This will permanently delete your account and all your tutors. This cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => ctx.pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => ctx.pop(true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.coral),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.delete<void>('/api/v1/auth/account');
+      await AuthService.instance.signOut();
+      if (mounted) context.go('/auth/signin');
+    } on DioException {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not delete account — try again later'),
+            backgroundColor: AppColors.coral,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -42,6 +155,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 controller: _nameController,
                 icon: Icons.person_outline_rounded,
               ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: AppSpacing.md,
+                  right: AppSpacing.md,
+                  bottom: AppSpacing.sm,
+                ),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: SizedBox(
+                    height: 34,
+                    child: ElevatedButton(
+                      onPressed: _savingName ? null : _saveDisplayName,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.purple,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        elevation: 0,
+                      ),
+                      child: _savingName
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: Colors.white),
+                            )
+                          : Text('Save',
+                              style: AppTextStyles.label
+                                  .copyWith(color: Colors.white)),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.md),
@@ -61,7 +209,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   label: 'Reminder time',
                   trailing: Text(
                     _reminderTime.format(context),
-                    style: AppTextStyles.body.copyWith(color: AppColors.purple),
+                    style: AppTextStyles.body
+                        .copyWith(color: AppColors.purple),
                   ),
                   onTap: () => _pickTime(context),
                 ),
@@ -83,9 +232,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 label: 'Privacy Policy',
                 trailing: const Icon(Icons.open_in_new_rounded,
                     size: 16, color: AppColors.text3),
-                onTap: () {
-                  // Open privacy policy URL in real app
-                },
+                onTap: () {},
               ),
               const Divider(height: 1, color: AppColors.outline),
               _TappableTile(
@@ -93,14 +240,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 label: 'Help & Support',
                 trailing: const Icon(Icons.open_in_new_rounded,
                     size: 16, color: AppColors.text3),
-                onTap: () {
-                  // Open help URL in real app
-                },
+                onTap: () {},
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          const _SectionHeader(title: 'Account'),
+          _SettingsCard(
+            children: [
+              _TappableTile(
+                icon: Icons.logout_rounded,
+                label: 'Sign Out',
+                trailing: const Icon(Icons.chevron_right_rounded,
+                    size: 20, color: AppColors.text3),
+                onTap: _confirmSignOut,
+                labelColor: AppColors.coral,
+              ),
+              const Divider(height: 1, color: AppColors.outline),
+              _TappableTile(
+                icon: Icons.delete_outline_rounded,
+                label: 'Delete Account',
+                trailing: const Icon(Icons.chevron_right_rounded,
+                    size: 20, color: AppColors.text3),
+                onTap: _confirmDeleteAccount,
+                labelColor: AppColors.coral,
               ),
             ],
           ),
           const SizedBox(height: AppSpacing.lg),
-          _SaveButton(onSave: () => _save(context)),
         ],
       ),
     );
@@ -122,17 +289,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
     );
     if (picked != null) setState(() => _reminderTime = picked);
-  }
-
-  void _save(BuildContext context) {
-    // In production: save to SharedPreferences / backend
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Settings saved!'),
-        backgroundColor: AppColors.green,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 }
 
@@ -270,15 +426,18 @@ class _TappableTile extends StatelessWidget {
     required this.label,
     required this.trailing,
     required this.onTap,
+    this.labelColor,
   });
 
   final IconData icon;
   final String label;
   final Widget trailing;
   final VoidCallback onTap;
+  final Color? labelColor;
 
   @override
   Widget build(BuildContext context) {
+    final color = labelColor ?? AppColors.text2;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
@@ -286,9 +445,12 @@ class _TappableTile extends StatelessWidget {
         padding: AppSpacing.card,
         child: Row(
           children: [
-            Icon(icon, color: AppColors.text2, size: 20),
+            Icon(icon, color: color, size: 20),
             const SizedBox(width: AppSpacing.sm),
-            Expanded(child: Text(label, style: AppTextStyles.body)),
+            Expanded(
+              child: Text(label,
+                  style: AppTextStyles.body.copyWith(color: color)),
+            ),
             trailing,
           ],
         ),
@@ -320,30 +482,6 @@ class _InfoTile extends StatelessWidget {
           Text(value,
               style: AppTextStyles.bodySmall.copyWith(color: AppColors.text3)),
         ],
-      ),
-    );
-  }
-}
-
-class _SaveButton extends StatelessWidget {
-  const _SaveButton({required this.onSave});
-
-  final VoidCallback onSave;
-
-  @override
-  Widget build(BuildContext context) {
-    return FilledButton(
-      onPressed: onSave,
-      style: FilledButton.styleFrom(
-        backgroundColor: AppColors.purple,
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      child: Text(
-        'Save Settings',
-        style: AppTextStyles.body.copyWith(color: Colors.white),
       ),
     );
   }
