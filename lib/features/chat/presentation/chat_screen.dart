@@ -15,7 +15,6 @@ import 'package:pally/features/chat/presentation/widgets/photo_message_bubble.da
 import 'package:pally/features/chat/presentation/widgets/photo_processing_bubble.dart';
 import 'package:pally/features/chat/presentation/widgets/homework_scan_result_bubble.dart';
 import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
-import 'package:speech_to_text/speech_to_text.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key, required this.avatarId});
@@ -418,7 +417,7 @@ class _TextBubble extends StatelessWidget {
 
 // ── Input bar ─────────────────────────────────────────────────────────────────
 
-class _InputBar extends StatefulWidget {
+class _InputBar extends StatelessWidget {
   const _InputBar({
     required this.controller,
     required this.focusNode,
@@ -434,80 +433,7 @@ class _InputBar extends StatefulWidget {
   final VoidCallback onCameraPressed;
 
   @override
-  State<_InputBar> createState() => _InputBarState();
-}
-
-class _InputBarState extends State<_InputBar> {
-  final _speech = SpeechToText();
-  bool _isListening = false;
-  bool _speechAvailable = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _initSpeech();
-  }
-
-  Future<void> _initSpeech() async {
-    _speechAvailable = await _speech.initialize(
-      onError: (_) => setState(() => _isListening = false),
-      onStatus: (status) {
-        if (status == SpeechToText.doneStatus ||
-            status == SpeechToText.notListeningStatus) {
-          if (mounted) setState(() => _isListening = false);
-        }
-      },
-    );
-  }
-
-  Future<void> _toggleMic() async {
-    if (!mounted) return;
-    if (!_speechAvailable) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('🎤 Microphone not available on this device'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-      return;
-    }
-    if (_isListening) {
-      await _speech.stop();
-      setState(() => _isListening = false);
-    } else {
-      setState(() => _isListening = true);
-      await _speech.listen(
-        onResult: (result) {
-          if (result.recognizedWords.isNotEmpty) {
-            widget.controller.text = result.recognizedWords;
-            widget.controller.selection = TextSelection.fromPosition(
-              TextPosition(offset: widget.controller.text.length),
-            );
-          }
-          if (result.finalResult) {
-            setState(() => _isListening = false);
-          }
-        },
-        listenOptions: SpeechListenOptions(
-          listenFor: const Duration(seconds: 30),
-          pauseFor: const Duration(seconds: 3),
-          cancelOnError: true,
-        ),
-      );
-    }
-  }
-
-  @override
-  void dispose() {
-    _speech.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final canSend = widget.canSend;
-    final controller = widget.controller;
-    final focusNode = widget.focusNode;
     return Container(
       padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
@@ -523,112 +449,89 @@ class _InputBarState extends State<_InputBar> {
         ],
       ),
       child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: controller,
-                focusNode: focusNode,
-                enabled: canSend,
-                decoration: InputDecoration(
-                  hintText: canSend ? 'Ask anything…' : 'Please wait…',
-                  hintStyle:
-                      AppTextStyles.body.copyWith(color: AppColors.text3),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: const BorderSide(color: AppColors.outline),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: const BorderSide(color: AppColors.outline),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide:
-                        const BorderSide(color: AppColors.purple, width: 2),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-                  filled: true,
-                  fillColor: AppColors.bg,
+        children: [
+          Expanded(
+            child: TextField(
+              controller: controller,
+              focusNode: focusNode,
+              enabled: canSend,
+              decoration: InputDecoration(
+                hintText: canSend ? 'Ask anything…' : 'Please wait…',
+                hintStyle:
+                    AppTextStyles.body.copyWith(color: AppColors.text3),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: const BorderSide(color: AppColors.outline),
                 ),
-                style: AppTextStyles.body,
-                textInputAction: TextInputAction.send,
-                onSubmitted: canSend ? widget.onSend : null,
-                maxLines: null,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: const BorderSide(color: AppColors.outline),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide:
+                      const BorderSide(color: AppColors.purple, width: 2),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+                filled: true,
+                fillColor: AppColors.bg,
               ),
+              style: AppTextStyles.body,
+              textInputAction: TextInputAction.send,
+              onSubmitted: canSend ? onSend : null,
+              maxLines: null,
             ),
-            const SizedBox(width: AppSpacing.xs),
+          ),
+          const SizedBox(width: AppSpacing.xs),
 
-            // Mic button — green
-            GestureDetector(
-              onTap: canSend ? _toggleMic : null,
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: _isListening ? AppColors.green : AppColors.greenL,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: canSend ? AppColors.green : AppColors.outline,
-                    width: 1.5,
-                  ),
-                ),
-                child: Icon(
-                  _isListening ? Icons.mic : Icons.mic_none_rounded,
-                  color: canSend ? AppColors.green : AppColors.text3,
-                  size: 20,
+          // Camera button — teal
+          GestureDetector(
+            onTap: canSend ? onCameraPressed : null,
+            child: Container(
+              width: 44,
+              height: 52,
+              decoration: BoxDecoration(
+                color: canSend ? AppColors.tealL : AppColors.outline,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: canSend ? AppColors.teal : AppColors.outline,
+                  width: 1.5,
                 ),
               ),
-            ),
-            const SizedBox(width: AppSpacing.xs),
-
-            // Camera button — teal
-            GestureDetector(
-              onTap: canSend ? widget.onCameraPressed : null,
-              child: Container(
-                width: 44,
-                height: 52,
-                decoration: BoxDecoration(
-                  color: canSend ? AppColors.tealL : AppColors.outline,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: canSend ? AppColors.teal : AppColors.outline,
-                    width: 1.5,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '📷',
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: canSend ? null : AppColors.text3),
                   ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '📷',
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: canSend ? null : AppColors.text3),
+                  Text(
+                    'Snap',
+                    style: AppTextStyles.caption.copyWith(
+                      color: canSend ? AppColors.teal : AppColors.text3,
+                      fontSize: 8,
+                      fontWeight: FontWeight.w700,
                     ),
-                    Text(
-                      'Snap',
-                      style: AppTextStyles.caption.copyWith(
-                        color: canSend ? AppColors.teal : AppColors.text3,
-                        fontSize: 8,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(width: AppSpacing.xs),
+          ),
+          const SizedBox(width: AppSpacing.xs),
 
-            // Send button — purple
-            FloatingActionButton(
-              mini: false,
-              onPressed: canSend ? () => widget.onSend(controller.text) : null,
-              backgroundColor: canSend ? AppColors.purple : AppColors.outline,
-              elevation: 0,
-              child: const Icon(Icons.send_rounded, color: Colors.white),
-            ),
-          ],
-        ),
+          // Send button — purple
+          FloatingActionButton(
+            mini: false,
+            onPressed: canSend ? () => onSend(controller.text) : null,
+            backgroundColor: canSend ? AppColors.purple : AppColors.outline,
+            elevation: 0,
+            child: const Icon(Icons.send_rounded, color: Colors.white),
+          ),
+        ],
+      ),
     );
   }
 }
