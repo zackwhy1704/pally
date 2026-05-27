@@ -63,11 +63,18 @@ class UploadScreen extends ConsumerWidget {
         ),
         title: const Text('Add Knowledge'),
         actions: [
-          if (state.hasFiles)
-            TextButton(
-              onPressed: () => ChatRoute(avatarId: avatarId).push(context),
-              child: const Text('Done'),
-            ),
+          TextButton(
+            onPressed: () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                const HomeRoute().go(context);
+              }
+            },
+            child: Text('Done',
+                style: AppTextStyles.body.copyWith(
+                    color: AppColors.purple, fontWeight: FontWeight.w600)),
+          ),
         ],
       ),
       body: SafeArea(
