@@ -26,8 +26,24 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   final _passFocus = FocusNode();
   bool _obscure = true;
   bool _loading = false;
+  bool _biometricAvailable = false;
   final _localAuth = LocalAuthentication();
   final _bioStateCtrl = StreamController<_BiometricState>.broadcast();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBiometric();
+  }
+
+  Future<void> _checkBiometric() async {
+    final registered = await AuthNotifier.instance.isBiometricRegistered();
+    final lastUser = await AuthNotifier.instance.getLastUserId();
+    final canAuth = await _canUseBiometrics();
+    if (mounted) {
+      setState(() => _biometricAvailable = registered && lastUser != null && canAuth);
+    }
+  }
 
   @override
   void dispose() {
@@ -56,7 +72,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         setupComplete: result.setupComplete,
         onboardingComplete: result.setupComplete,
       );
-      _registerBiometricSilently();
       if (mounted) {
         context.go(result.setupComplete ? '/' : '/auth/setup');
       }
@@ -67,18 +82,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     }
   }
 
-  void _registerBiometricSilently() async {
-    try {
-      final deviceId = await DeviceInfo.getStableDeviceId();
-      final deviceName = await DeviceInfo.getDeviceName();
-      await AuthService.instance.registerBiometricDevice(
-        deviceId: deviceId,
-        deviceName: deviceName,
-      );
-      await AuthNotifier.instance.markBiometricRegistered();
-    } catch (_) {}
-  }
-
   Future<void> _biometricSignIn() async {
     final canAuth = await _canUseBiometrics();
     if (!canAuth) {
@@ -86,11 +89,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       return;
     }
     final isRegistered = await AuthNotifier.instance.isBiometricRegistered();
-    if (!isRegistered) {
-      _showError('Please sign in with your password first to enable biometrics');
-      return;
-    }
-    final userId = AuthNotifier.instance.state.userId;
+    if (!isRegistered) return;
+
+    final userId = await AuthNotifier.instance.getLastUserId();
     if (userId == null) {
       _showError('Please sign in with your password first');
       return;
@@ -111,11 +112,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         return;
       }
 
-      final challenge = await AuthService.instance.getBiometricChallenge();
       final deviceId = await DeviceInfo.getStableDeviceId();
       final result = await AuthService.instance.verifyBiometric(
         userId: userId,
-        challenge: challenge,
         deviceId: deviceId,
       );
       await AuthNotifier.instance.signIn(
@@ -330,67 +329,69 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     loading: _loading,
                     onPressed: _signIn,
                   ),
-                  const SizedBox(height: 28),
-                  Row(
-                    children: [
-                      const Expanded(
-                          child: Divider(color: AppColors.outline)),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Text('or',
-                            style: AppTextStyles.caption
-                                .copyWith(color: AppColors.text3)),
-                      ),
-                      const Expanded(
-                          child: Divider(color: AppColors.outline)),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Center(
-                    child: GestureDetector(
-                      onTap: _biometricSignIn,
-                      child: Container(
-                        width: 176,
-                        height: 54,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFAF7FF),
-                          borderRadius: BorderRadius.circular(27),
-                          border: Border.all(
-                              color: AppColors.teal, width: 1.5),
-                          boxShadow: [
-                            BoxShadow(
-                              color:
-                                  AppColors.teal.withValues(alpha: 0.15),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
+                  if (_biometricAvailable) ...[
+                    const SizedBox(height: 28),
+                    Row(
+                      children: [
+                        const Expanded(
+                            child: Divider(color: AppColors.outline)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Text('or',
+                              style: AppTextStyles.caption
+                                  .copyWith(color: AppColors.text3)),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _BiometricIcon(),
-                            const SizedBox(width: 10),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Use Biometrics',
-                                    style: AppTextStyles.label.copyWith(
-                                        color: AppColors.teal,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12)),
-                                Text('Face ID / Touch ID',
-                                    style: AppTextStyles.caption.copyWith(
-                                        color: AppColors.text2,
-                                        fontSize: 9)),
-                              ],
-                            ),
-                          ],
+                        const Expanded(
+                            child: Divider(color: AppColors.outline)),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Center(
+                      child: GestureDetector(
+                        onTap: _biometricSignIn,
+                        child: Container(
+                          width: 176,
+                          height: 54,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFAF7FF),
+                            borderRadius: BorderRadius.circular(27),
+                            border: Border.all(
+                                color: AppColors.teal, width: 1.5),
+                            boxShadow: [
+                              BoxShadow(
+                                color:
+                                    AppColors.teal.withValues(alpha: 0.15),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _BiometricIcon(),
+                              const SizedBox(width: 10),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Use Biometrics',
+                                      style: AppTextStyles.label.copyWith(
+                                          color: AppColors.teal,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12)),
+                                  Text('Face ID / Touch ID',
+                                      style: AppTextStyles.caption.copyWith(
+                                          color: AppColors.text2,
+                                          fontSize: 9)),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                   const SizedBox(height: AppSpacing.xl),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

@@ -2,10 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/utils/device_info.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/auth/services/auth_service.dart';
 
@@ -21,12 +23,97 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   TimeOfDay _reminderTime = const TimeOfDay(hour: 18, minute: 0);
   bool _dailyReminder = true;
   bool _savingName = false;
+  bool _biometricEnabled = false;
+  bool _biometricSupported = true;
+  final _localAuth = LocalAuthentication();
 
   @override
   void initState() {
     super.initState();
     final childName = ref.read(authStateProvider).childName ?? '';
     _nameController = TextEditingController(text: childName);
+    _loadBiometricState();
+  }
+
+  Future<void> _loadBiometricState() async {
+    final supported = await _deviceSupportsBiometrics();
+    final registered = await AuthNotifier.instance.isBiometricRegistered();
+    if (mounted) {
+      setState(() {
+        _biometricSupported = supported;
+        _biometricEnabled = registered && supported;
+      });
+    }
+  }
+
+  Future<bool> _deviceSupportsBiometrics() async {
+    try {
+      return await _localAuth.canCheckBiometrics &&
+          await _localAuth.isDeviceSupported();
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<void> _toggleBiometric(bool value) async {
+    if (value) {
+      try {
+        final authenticated = await _localAuth.authenticate(
+          localizedReason: 'Verify to enable biometric login',
+          options: const AuthenticationOptions(
+            biometricOnly: true,
+            stickyAuth: true,
+          ),
+        );
+        if (!authenticated) return;
+
+        final deviceId = await DeviceInfo.getStableDeviceId();
+        final deviceName = await DeviceInfo.getDeviceName();
+        await AuthService.instance.registerBiometricDevice(
+          deviceId: deviceId,
+          deviceName: deviceName,
+        );
+        await AuthNotifier.instance.markBiometricRegistered();
+        if (mounted) {
+          setState(() => _biometricEnabled = true);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Biometric login enabled'),
+              backgroundColor: AppColors.green,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+            ),
+          );
+        }
+      } catch (_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Could not enable biometric login'),
+              backgroundColor: AppColors.coral,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+            ),
+          );
+        }
+      }
+    } else {
+      await AuthNotifier.instance.clearBiometricRegistration();
+      if (mounted) {
+        setState(() => _biometricEnabled = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Biometric login disabled'),
+            backgroundColor: AppColors.text2,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -218,6 +305,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
+          const _SectionHeader(title: 'Security'),
+          _SettingsCard(
+            children: [
+              _SwitchTile(
+                icon: Icons.fingerprint_rounded,
+                label: 'Biometric Login',
+                subtitle: _biometricSupported
+                    ? null
+                    : 'Not available on this device',
+                value: _biometricEnabled,
+                onChanged: _biometricSupported ? _toggleBiometric : null,
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
           const _SectionHeader(title: 'About'),
           _SettingsCard(
             children: [
@@ -392,23 +494,43 @@ class _SwitchTile extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.value,
-    required this.onChanged,
+    this.subtitle,
+    this.onChanged,
   });
 
   final IconData icon;
   final String label;
   final bool value;
-  final ValueChanged<bool> onChanged;
+  final String? subtitle;
+  final ValueChanged<bool>? onChanged;
 
   @override
   Widget build(BuildContext context) {
+    final disabled = onChanged == null;
     return Padding(
       padding: AppSpacing.card,
       child: Row(
         children: [
-          Icon(icon, color: AppColors.text2, size: 20),
+          Icon(icon,
+              color: disabled ? AppColors.text3 : AppColors.text2, size: 20),
           const SizedBox(width: AppSpacing.sm),
-          Expanded(child: Text(label, style: AppTextStyles.body)),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label,
+                    style: AppTextStyles.body.copyWith(
+                        color: disabled ? AppColors.text3 : AppColors.text1)),
+                if (subtitle != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(subtitle!,
+                        style: AppTextStyles.caption
+                            .copyWith(color: AppColors.text3)),
+                  ),
+              ],
+            ),
+          ),
           Switch(
             value: value,
             onChanged: onChanged,

@@ -75,23 +75,8 @@ class AuthService {
     }
   }
 
-  Future<String> getBiometricChallenge() async {
-    try {
-      final token = await _storage.read(key: 'auth_token');
-      final res = await _http.post<Map<String, dynamic>>(
-        '/api/v1/auth/biometric/challenge',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
-      final data = (res.data?['data'] as Map<String, dynamic>?) ?? res.data!;
-      return data['challenge'] as String;
-    } on DioException catch (e) {
-      throw _mapDioError(e);
-    }
-  }
-
   Future<AuthResult> verifyBiometric({
     required String userId,
-    required String challenge,
     required String deviceId,
   }) async {
     try {
@@ -99,7 +84,6 @@ class AuthService {
         '/api/v1/auth/biometric/verify',
         data: {
           'userId': userId,
-          'challenge': challenge,
           'deviceId': deviceId,
         },
       );

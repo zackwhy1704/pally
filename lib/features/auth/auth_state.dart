@@ -52,6 +52,7 @@ class AuthNotifier extends ChangeNotifier {
   static const _keyOnboardingComplete = 'auth_onboarding_complete';
   static const _keyChildName = 'auth_child_name';
   static const _keyBiometricRegistered = 'biometric_registered';
+  static const _keyLastUserId = 'auth_last_user_id';
 
   AuthState _state = const AuthState();
   AuthState get state => _state;
@@ -123,7 +124,19 @@ class AuthNotifier extends ChangeNotifier {
     return await _storage.read(key: _keyBiometricRegistered) == 'true';
   }
 
+  Future<String?> getLastUserId() async {
+    return _storage.read(key: _keyLastUserId);
+  }
+
+  Future<void> clearBiometricRegistration() async {
+    await _storage.delete(key: _keyBiometricRegistered);
+    await _storage.delete(key: _keyLastUserId);
+  }
+
   Future<void> signOut() async {
+    if (_state.userId != null) {
+      await _storage.write(key: _keyLastUserId, value: _state.userId);
+    }
     await _storage.delete(key: _keyUserId);
     await _storage.delete(key: _keyToken);
     await _storage.delete(key: _keySetupComplete);
