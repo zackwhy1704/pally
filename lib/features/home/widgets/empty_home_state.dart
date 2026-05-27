@@ -77,7 +77,12 @@ class _EmptyHomeStateState extends State<EmptyHomeState>
               ),
               ScaleTransition(
                 scale: _scaleAnim,
-                child: const Text('✨', style: TextStyle(fontSize: 80)),
+                child: Image.asset(
+                  'assets/images/mochi.png',
+                  width: 160,
+                  height: 160,
+                  fit: BoxFit.contain,
+                ),
               ),
               const Positioned(
                   top: 24, left: 24, child: Text('✨', style: TextStyle(fontSize: 20))),

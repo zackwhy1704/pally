@@ -111,31 +111,43 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF7042ED),
+      backgroundColor: const Color(0xFFFFFBF0),
       body: FadeTransition(
         opacity: _fadeCtrl,
         child: Stack(
           children: [
             Positioned(
-              top: -80,
-              left: -80,
+              top: -40,
+              right: -60,
               child: Container(
-                width: 280,
-                height: 280,
+                width: 200,
+                height: 200,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.06),
+                  color: const Color(0xFFFFE4B5).withValues(alpha: 0.5),
                   shape: BoxShape.circle,
                 ),
               ),
             ),
             Positioned(
-              bottom: -120,
-              right: -100,
+              bottom: -80,
+              left: -60,
               child: Container(
-                width: 360,
-                height: 360,
+                width: 240,
+                height: 240,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.06),
+                  color: const Color(0xFFD9F6F1).withValues(alpha: 0.4),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+            Positioned(
+              top: MediaQuery.of(context).size.height * 0.35,
+              right: -40,
+              child: Container(
+                width: 180,
+                height: 180,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEBE0FF).withValues(alpha: 0.3),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -145,56 +157,78 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 children: [
                   const Spacer(),
                   Container(
-                    width: 100,
-                    height: 100,
+                    width: 230,
+                    height: 230,
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
-                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(40),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFFFB81A).withValues(alpha: 0.20),
+                          offset: const Offset(0, 12),
+                          blurRadius: 40,
+                        ),
+                      ],
                     ),
-                    child: const Center(
-                      child: Text('✨', style: TextStyle(fontSize: 58)),
+                    child: Center(
+                      child: Image.asset(
+                        'assets/images/mochi.png',
+                        width: 200,
+                        height: 200,
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
                   const Text(
-                    'Pally',
+                    'Mochi',
                     style: TextStyle(
                       fontFamily: 'Nunito',
-                      fontSize: 38,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                      fontSize: 44,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1F1733),
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'Your pocket tutor, just for you ✨',
+                  const Text(
+                    'Your study buddy ✨',
                     style: TextStyle(
                       fontFamily: 'Nunito',
-                      fontSize: 13,
-                      color: Colors.white.withValues(alpha: 0.75),
+                      fontSize: 14,
+                      color: Color(0xFF6B618A),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    width: 80,
+                    height: 26,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEBE0FF),
+                      borderRadius: BorderRadius.circular(13),
+                    ),
+                    alignment: Alignment.center,
+                    child: const Text(
+                      '小伴',
+                      style: TextStyle(
+                        fontFamily: 'Nunito',
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF7042ED),
+                      ),
                     ),
                   ),
                   const Spacer(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _AnimDot(_dot1Ctrl),
+                      _AnimDot(_dot1Ctrl, isFirst: true),
                       const SizedBox(width: 8),
                       _AnimDot(_dot2Ctrl),
                       const SizedBox(width: 8),
                       _AnimDot(_dot3Ctrl),
                     ],
                   ),
-                  const SizedBox(height: 24),
-                  Container(
-                    width: 80,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.4),
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
@@ -206,22 +240,28 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 }
 
 class _AnimDot extends StatelessWidget {
-  const _AnimDot(this.controller);
+  const _AnimDot(this.controller, {this.isFirst = false});
   final AnimationController controller;
+  final bool isFirst;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: controller,
-      builder: (_, __) => Container(
-        width: 8,
-        height: 8,
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(
-              alpha: 0.4 + (controller.value * 0.6)),
-          shape: BoxShape.circle,
-        ),
-      ),
+      builder: (_, __) {
+        final size = isFirst ? 12.0 : 9.0;
+        final color = isFirst
+            ? const Color(0xFF7042ED)
+            : const Color(0xFFD4CFEA);
+        return Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+          ),
+        );
+      },
     );
   }
 }

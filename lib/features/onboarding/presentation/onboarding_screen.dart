@@ -108,16 +108,11 @@ class _PageOne extends StatelessWidget {
             height: 280,
             color: AppColors.purpleL,
             child: Center(
-              child: Container(
+              child: Image.asset(
+                'assets/images/mochi.png',
                 width: 150,
                 height: 150,
-                decoration: BoxDecoration(
-                  color: AppColors.purple.withValues(alpha: 0.15),
-                  shape: BoxShape.circle,
-                ),
-                child: const Center(
-                  child: Text('✨', style: TextStyle(fontSize: 68)),
-                ),
+                fit: BoxFit.contain,
               ),
             ),
           ),
@@ -339,8 +334,17 @@ class _PageThree extends StatelessWidget {
           Container(
             height: 160,
             color: AppColors.purpleL,
-            child: const Center(
-              child: Text('✏️', style: TextStyle(fontSize: 64)),
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('✏️', style: TextStyle(fontSize: 48)),
+                  const SizedBox(width: 8),
+                  const Text('→', style: TextStyle(fontSize: 24, color: AppColors.text2)),
+                  const SizedBox(width: 8),
+                  Image.asset('assets/images/mochi.png', width: 80, height: 80, fit: BoxFit.contain),
+                ],
+              ),
             ),
           ),
           Padding(
