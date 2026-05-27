@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/shared/models/mochi_character.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/utils/logger.dart';
 
@@ -62,25 +63,25 @@ class HomeViewModel extends _$HomeViewModel {
 const _stubAvatars = [
   Avatar(
     id: 'stub-1',
-    name: 'Zap',
-    character: AvatarCharacter.zap,
-    subject: 'Maths',
+    name: 'Pencil Mochi',
+    character: MochiCharacter.pencil,
+    subject: 'English',
     hasKnowledge: true,
     fileCount: 3,
   ),
   Avatar(
     id: 'stub-2',
-    name: 'Mochi',
-    character: AvatarCharacter.mochi,
+    name: 'Science Mochi',
+    character: MochiCharacter.science,
     subject: 'Science',
     hasKnowledge: false,
     fileCount: 0,
   ),
   Avatar(
     id: 'stub-3',
-    name: 'Finn',
-    character: AvatarCharacter.finn,
-    subject: 'History',
+    name: 'Art Mochi',
+    character: MochiCharacter.art,
+    subject: 'Art',
     hasKnowledge: true,
     fileCount: 5,
   ),

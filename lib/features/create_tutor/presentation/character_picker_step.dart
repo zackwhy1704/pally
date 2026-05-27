@@ -4,7 +4,7 @@ import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/ui/pally_button.dart';
-import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/shared/models/mochi_character.dart';
 
 class CharacterPickerStep extends StatelessWidget {
   const CharacterPickerStep({
@@ -14,8 +14,8 @@ class CharacterPickerStep extends StatelessWidget {
     required this.onNext,
   });
 
-  final AvatarCharacter? selectedCharacter;
-  final ValueChanged<AvatarCharacter> onSelect;
+  final MochiCharacter? selectedCharacter;
+  final ValueChanged<MochiCharacter> onSelect;
   final VoidCallback onNext;
 
   @override
@@ -46,9 +46,9 @@ class CharacterPickerStep extends StatelessWidget {
               mainAxisSpacing: 12,
               childAspectRatio: 112 / 130,
             ),
-            itemCount: AvatarCharacter.values.length,
+            itemCount: MochiCharacter.values.length,
             itemBuilder: (context, index) {
-              final character = AvatarCharacter.values[index];
+              final character = MochiCharacter.values[index];
               return CharacterCard(
                 character: character,
                 isSelected: character == selectedCharacter,
@@ -78,7 +78,7 @@ class CharacterCard extends StatelessWidget {
     required this.onTap,
   });
 
-  final AvatarCharacter character;
+  final MochiCharacter character;
   final bool isSelected;
   final VoidCallback onTap;
 

@@ -6,7 +6,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/features/shop/presentation/shop_view_model.dart';
-import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/shared/models/mochi_character.dart';
 
 class ShopScreen extends ConsumerWidget {
   const ShopScreen({super.key});
@@ -60,7 +60,7 @@ class ShopScreen extends ConsumerWidget {
 
   void _showUnlockedDialog(
     BuildContext context,
-    AvatarCharacter character,
+    MochiCharacter character,
     ShopViewModel notifier,
   ) {
     notifier.clearLastUnlocked();
@@ -384,7 +384,7 @@ class _CollectionCard extends StatelessWidget {
                 style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
               ),
               Text(
-                '$count / ${AvatarCharacter.values.length} characters unlocked',
+                '$count / ${MochiCharacter.values.length} characters unlocked',
                 style: AppTextStyles.bodySmall,
               ),
             ],
@@ -398,7 +398,7 @@ class _CollectionCard extends StatelessWidget {
 class _UnlockedDialog extends StatelessWidget {
   const _UnlockedDialog({required this.character});
 
-  final AvatarCharacter character;
+  final MochiCharacter character;
 
   @override
   Widget build(BuildContext context) {
@@ -433,7 +433,7 @@ class _UnlockedDialog extends StatelessWidget {
               '${character.defaultSubject} tutor',
               style: AppTextStyles.bodySmall,
             ),
-            if (character.isRare) ...[
+            if (character.rarity != MochiRarity.standard) ...[
               const SizedBox(height: AppSpacing.xs),
               Container(
                 padding:
@@ -443,7 +443,7 @@ class _UnlockedDialog extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  '✨ RARE',
+                  '✨ ${character.rarity.label}',
                   style: AppTextStyles.label.copyWith(
                     color: AppColors.gold,
                     fontWeight: FontWeight.w700,

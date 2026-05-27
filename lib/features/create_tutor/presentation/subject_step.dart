@@ -3,7 +3,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/pally_button.dart';
-import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/shared/models/mochi_character.dart';
 
 const _suggestions = [
   'Maths',
@@ -32,7 +32,7 @@ class SubjectStep extends StatefulWidget {
   });
 
   final String? subject;
-  final AvatarCharacter? selectedCharacter;
+  final MochiCharacter? selectedCharacter;
   final String tutorName;
   final ValueChanged<String> onSubjectChanged;
   final bool isLoading;

@@ -3,7 +3,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/pally_button.dart';
-import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/shared/models/mochi_character.dart';
 
 const _ages = [
   '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18',
@@ -36,7 +36,7 @@ class GradeStep extends StatelessWidget {
   final String? gradeLevel;
   final String? curriculumType;
   final String tutorName;
-  final AvatarCharacter? selectedCharacter;
+  final MochiCharacter? selectedCharacter;
   final ValueChanged<String?> onGradeChanged;
   final ValueChanged<String?> onCurriculumChanged;
   final bool isLoading;

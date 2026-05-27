@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/shared/models/mochi_character.dart';
 import 'package:pally/core/ui/painters/mochi_painter.dart';
 import 'package:pally/core/ui/painters/zap_painter.dart';
 import 'package:pally/core/ui/painters/finn_painter.dart';
@@ -7,35 +7,29 @@ import 'package:pally/core/ui/painters/boba_painter.dart';
 import 'package:pally/core/ui/painters/puddi_painter.dart';
 import 'package:pally/core/ui/painters/byte_painter.dart';
 import 'package:pally/core/ui/painters/nori_painter.dart';
-import 'package:pally/core/ui/painters/chimi_painter.dart';
 import 'package:pally/core/ui/painters/lumis_painter.dart';
 
-/// Returns the correct [CustomPainter] for [character] at [size].
-CustomPainter characterPainterFor(AvatarCharacter character, double size) {
+CustomPainter characterPainterFor(MochiCharacter character, double size) {
   switch (character) {
-    case AvatarCharacter.mochi:
+    case MochiCharacter.pencil:
       return MochiPainter(size);
-    case AvatarCharacter.zap:
+    case MochiCharacter.science:
       return ZapPainter(size);
-    case AvatarCharacter.finn:
+    case MochiCharacter.pe:
       return FinnPainter(size);
-    case AvatarCharacter.boba:
+    case MochiCharacter.art:
       return BobaPainter(size);
-    case AvatarCharacter.puddi:
+    case MochiCharacter.lunchbox:
       return PuddiPainter(size);
-    case AvatarCharacter.byte:
+    case MochiCharacter.library:
       return BytePainter(size);
-    case AvatarCharacter.nori:
+    case MochiCharacter.headmaster:
       return NoriPainter(size);
-    case AvatarCharacter.chimi:
-      return ChimiPainter(size);
-    case AvatarCharacter.lumis:
+    case MochiCharacter.goldstar:
       return LumisPainter(size);
   }
 }
 
-/// Convenience widget that renders the character painter inside a
-/// [SizedBox] of [size] × [size].
 class CharacterWidget extends StatelessWidget {
   const CharacterWidget({
     super.key,
@@ -43,7 +37,7 @@ class CharacterWidget extends StatelessWidget {
     required this.size,
   });
 
-  final AvatarCharacter character;
+  final MochiCharacter character;
   final double size;
 
   @override

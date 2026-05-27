@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/shared/models/mochi_character.dart';
 import 'package:pally/app/api_client.dart';
 
 part 'create_tutor_view_model.g.dart';
@@ -21,7 +22,7 @@ class CreateTutorState {
     this.error,
   });
 
-  final AvatarCharacter? selectedCharacter;
+  final MochiCharacter? selectedCharacter;
   final String name;
   final String? subject;
   final String? gradeLevel;
@@ -41,7 +42,7 @@ class CreateTutorState {
   String get trimmedName => name.trim();
 
   CreateTutorState copyWith({
-    AvatarCharacter? selectedCharacter,
+    MochiCharacter? selectedCharacter,
     String? name,
     String? subject,
     Object? gradeLevel = _sentinel,
@@ -70,7 +71,7 @@ class CreateTutorViewModel extends _$CreateTutorViewModel {
   @override
   CreateTutorState build() => const CreateTutorState();
 
-  void selectCharacter(AvatarCharacter character) {
+  void selectCharacter(MochiCharacter character) {
     state = state.copyWith(
       selectedCharacter: character,
       subject: character.defaultSubject,

@@ -26,7 +26,7 @@ mixin _$Avatar {
       name: 'characterType',
       fromJson: _characterFromJson,
       toJson: _characterToJson)
-  AvatarCharacter get character => throw _privateConstructorUsedError;
+  MochiCharacter get character => throw _privateConstructorUsedError;
   @JsonKey(fromJson: _subjectFromJson, toJson: _subjectToJson)
   String get subject => throw _privateConstructorUsedError;
   @JsonKey(name: 'wikiPageCount', fromJson: _hasKnowledgeFromJson)
@@ -60,7 +60,7 @@ abstract class $AvatarCopyWith<$Res> {
           name: 'characterType',
           fromJson: _characterFromJson,
           toJson: _characterToJson)
-      AvatarCharacter character,
+      MochiCharacter character,
       @JsonKey(fromJson: _subjectFromJson, toJson: _subjectToJson)
       String subject,
       @JsonKey(name: 'wikiPageCount', fromJson: _hasKnowledgeFromJson)
@@ -113,7 +113,7 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
       character: null == character
           ? _value.character
           : character // ignore: cast_nullable_to_non_nullable
-              as AvatarCharacter,
+              as MochiCharacter,
       subject: null == subject
           ? _value.subject
           : subject // ignore: cast_nullable_to_non_nullable
@@ -164,7 +164,7 @@ abstract class _$$AvatarImplCopyWith<$Res> implements $AvatarCopyWith<$Res> {
           name: 'characterType',
           fromJson: _characterFromJson,
           toJson: _characterToJson)
-      AvatarCharacter character,
+      MochiCharacter character,
       @JsonKey(fromJson: _subjectFromJson, toJson: _subjectToJson)
       String subject,
       @JsonKey(name: 'wikiPageCount', fromJson: _hasKnowledgeFromJson)
@@ -215,7 +215,7 @@ class __$$AvatarImplCopyWithImpl<$Res>
       character: null == character
           ? _value.character
           : character // ignore: cast_nullable_to_non_nullable
-              as AvatarCharacter,
+              as MochiCharacter,
       subject: null == subject
           ? _value.subject
           : subject // ignore: cast_nullable_to_non_nullable
@@ -287,7 +287,7 @@ class _$AvatarImpl implements _Avatar {
       name: 'characterType',
       fromJson: _characterFromJson,
       toJson: _characterToJson)
-  final AvatarCharacter character;
+  final MochiCharacter character;
   @override
   @JsonKey(fromJson: _subjectFromJson, toJson: _subjectToJson)
   final String subject;
@@ -380,7 +380,7 @@ abstract class _Avatar implements Avatar {
           name: 'characterType',
           fromJson: _characterFromJson,
           toJson: _characterToJson)
-      required final AvatarCharacter character,
+      required final MochiCharacter character,
       @JsonKey(fromJson: _subjectFromJson, toJson: _subjectToJson)
       required final String subject,
       @JsonKey(name: 'wikiPageCount', fromJson: _hasKnowledgeFromJson)
@@ -404,7 +404,7 @@ abstract class _Avatar implements Avatar {
       name: 'characterType',
       fromJson: _characterFromJson,
       toJson: _characterToJson)
-  AvatarCharacter get character;
+  MochiCharacter get character;
   @override
   @JsonKey(fromJson: _subjectFromJson, toJson: _subjectToJson)
   String get subject;
@@ -444,7 +444,7 @@ mixin _$CreateAvatarRequest {
       name: 'characterType',
       fromJson: _characterFromJson,
       toJson: _characterToJson)
-  AvatarCharacter get character => throw _privateConstructorUsedError;
+  MochiCharacter get character => throw _privateConstructorUsedError;
   @JsonKey(toJson: _subjectToJson, fromJson: _subjectFromJson)
   String get subject => throw _privateConstructorUsedError;
   String? get gradeLevel => throw _privateConstructorUsedError;
@@ -472,7 +472,7 @@ abstract class $CreateAvatarRequestCopyWith<$Res> {
           name: 'characterType',
           fromJson: _characterFromJson,
           toJson: _characterToJson)
-      AvatarCharacter character,
+      MochiCharacter character,
       @JsonKey(toJson: _subjectToJson, fromJson: _subjectFromJson)
       String subject,
       String? gradeLevel,
@@ -508,7 +508,7 @@ class _$CreateAvatarRequestCopyWithImpl<$Res, $Val extends CreateAvatarRequest>
       character: null == character
           ? _value.character
           : character // ignore: cast_nullable_to_non_nullable
-              as AvatarCharacter,
+              as MochiCharacter,
       subject: null == subject
           ? _value.subject
           : subject // ignore: cast_nullable_to_non_nullable
@@ -539,7 +539,7 @@ abstract class _$$CreateAvatarRequestImplCopyWith<$Res>
           name: 'characterType',
           fromJson: _characterFromJson,
           toJson: _characterToJson)
-      AvatarCharacter character,
+      MochiCharacter character,
       @JsonKey(toJson: _subjectToJson, fromJson: _subjectFromJson)
       String subject,
       String? gradeLevel,
@@ -573,7 +573,7 @@ class __$$CreateAvatarRequestImplCopyWithImpl<$Res>
       character: null == character
           ? _value.character
           : character // ignore: cast_nullable_to_non_nullable
-              as AvatarCharacter,
+              as MochiCharacter,
       subject: null == subject
           ? _value.subject
           : subject // ignore: cast_nullable_to_non_nullable
@@ -615,7 +615,7 @@ class _$CreateAvatarRequestImpl implements _CreateAvatarRequest {
       name: 'characterType',
       fromJson: _characterFromJson,
       toJson: _characterToJson)
-  final AvatarCharacter character;
+  final MochiCharacter character;
   @override
   @JsonKey(toJson: _subjectToJson, fromJson: _subjectFromJson)
   final String subject;
@@ -673,7 +673,7 @@ abstract class _CreateAvatarRequest implements CreateAvatarRequest {
           name: 'characterType',
           fromJson: _characterFromJson,
           toJson: _characterToJson)
-      required final AvatarCharacter character,
+      required final MochiCharacter character,
       @JsonKey(toJson: _subjectToJson, fromJson: _subjectFromJson)
       required final String subject,
       final String? gradeLevel,
@@ -689,7 +689,7 @@ abstract class _CreateAvatarRequest implements CreateAvatarRequest {
       name: 'characterType',
       fromJson: _characterFromJson,
       toJson: _characterToJson)
-  AvatarCharacter get character;
+  MochiCharacter get character;
   @override
   @JsonKey(toJson: _subjectToJson, fromJson: _subjectFromJson)
   String get subject;

@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/shared/models/mochi_character.dart';
 import 'package:pally/shared/models/chat_message.dart';
 import 'package:pally/shared/models/photo_question.dart';
 import 'package:pally/shared/models/session_state.dart';
@@ -140,7 +141,7 @@ class ChatViewModel extends _$ChatViewModel {
         avatar: const Avatar(
           id: 'stub',
           name: 'Zap',
-          character: AvatarCharacter.zap,
+          character: MochiCharacter.pencil,
           subject: 'Maths',
         ),
       );

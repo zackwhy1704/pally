@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
-import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/shared/models/mochi_character.dart';
 
 part 'shop_view_model.g.dart';
 
@@ -20,7 +20,7 @@ class ShopState {
   final int stars;
   final bool isLoading;
   final bool isOpening;
-  final AvatarCharacter? lastUnlocked;
+  final MochiCharacter? lastUnlocked;
   final String? error;
   final int collectionCount;
 
@@ -38,7 +38,7 @@ class ShopState {
       isOpening: isOpening ?? this.isOpening,
       lastUnlocked: lastUnlocked == _sentinel
           ? this.lastUnlocked
-          : lastUnlocked as AvatarCharacter?,
+          : lastUnlocked as MochiCharacter?,
       error: error == _sentinel ? this.error : error as String?,
       collectionCount: collectionCount ?? this.collectionCount,
     );
@@ -77,11 +77,8 @@ class ShopViewModel extends _$ShopViewModel {
       final dio = ref.read(dioProvider);
       final response =
           await dio.post<Map<String, dynamic>>('/api/v1/shop/open-box');
-      final charStr = (response.data?['character'] as String?) ?? 'MOCHI';
-      final char = AvatarCharacter.values.firstWhere(
-        (c) => c.name.toUpperCase() == charStr.toUpperCase(),
-        orElse: () => AvatarCharacter.mochi,
-      );
+      final charStr = (response.data?['character'] as String?) ?? 'PENCIL';
+      final char = MochiCharacter.fromJson(charStr);
       state = state.copyWith(
         stars: state.stars - 600,
         isOpening: false,
@@ -90,7 +87,7 @@ class ShopViewModel extends _$ShopViewModel {
       );
     } on DioException catch (_) {
       // Simulate offline unlock
-      const chars = AvatarCharacter.values;
+      const chars = MochiCharacter.values;
       final char = chars[DateTime.now().millisecondsSinceEpoch % chars.length];
       state = state.copyWith(
         stars: state.stars - 600,

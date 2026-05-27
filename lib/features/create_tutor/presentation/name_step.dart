@@ -4,7 +4,7 @@ import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/ui/pally_button.dart';
-import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/shared/models/mochi_character.dart';
 
 class NameStep extends StatefulWidget {
   const NameStep({
@@ -16,7 +16,7 @@ class NameStep extends StatefulWidget {
   });
 
   final String name;
-  final AvatarCharacter? selectedCharacter;
+  final MochiCharacter? selectedCharacter;
   final ValueChanged<String> onNameChanged;
   final VoidCallback? onNext;
 
