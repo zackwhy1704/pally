@@ -494,24 +494,6 @@ class _HeaderBand extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          Positioned(
-            top: topPadding + 8,
-            left: 16,
-            child: GestureDetector(
-              onTap: () {
-                if (Navigator.of(context).canPop()) Navigator.of(context).pop();
-              },
-              child: Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.7),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.arrow_back_ios_new_rounded, size: 16, color: Color(0xFF1F1733)),
-              ),
-            ),
-          ),
           Positioned.fill(
             top: topPadding + 8,
             child: Align(

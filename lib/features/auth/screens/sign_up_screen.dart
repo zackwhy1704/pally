@@ -88,10 +88,30 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             children: [
               const SizedBox(height: AppSpacing.md),
               const _ProgressBar(filled: 1 / 3),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                'Create your account ✨',
-                style: AppTextStyles.title.copyWith(fontSize: 20),
+              const SizedBox(height: AppSpacing.sm),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => context.pop(),
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: const BoxDecoration(
+                        color: AppColors.purpleL,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.arrow_back_ios_new_rounded,
+                          size: 16, color: AppColors.purple),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Create your account ✨',
+                      style: AppTextStyles.title.copyWith(fontSize: 20),
+                    ),
+                  ),
+                ],
               ),
               Text(
                 'Step 1 of 3 — Your details',
