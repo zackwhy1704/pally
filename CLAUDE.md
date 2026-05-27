@@ -1720,3 +1720,150 @@ flutter run -d <device> --dart-define=API_BASE_URL=https://pallybackend-producti
 - ✅ Backend must log every request with method, path, user ID, and response time in milliseconds
 - ✅ Claude API calls must log prompt character count and response time
 - ✅ Use `[FeatureName]` tags in log messages so `grep` filtering works: `[Chat]`, `[Upload]`, `[Quiz]`, `[Auth]`, `[Shop]`, `[Claude-xxxx]`
+
+---
+
+# PART 15 — UI OVERFLOW PREVENTION RULES
+
+> **Apply these 5 rules to every existing and future screen file. No exceptions.**
+
+---
+
+## Rule 1 — Spacer() safety checklist
+
+Before using `Spacer()`, confirm the parent `Column`/`Row` has a **guaranteed bounded constraint** (e.g. inside `Expanded`, `Flexible`, or a container with explicit height). If unsure → use `SizedBox(height: AppSpacing.XX)` instead.
+
+```dart
+// ✅ SAFE — Column is the direct child of Scaffold.body, which is bounded:
+Scaffold(
+  body: Column(children: [
+    Expanded(child: ListView(...)),
+    Spacer(),   // fine — siblings are bounded
+    Button(),
+  ]),
+)
+
+// ❌ UNSAFE — Spacer inside a scrollable Column has no bounded height:
+SingleChildScrollView(
+  child: Column(children: [Spacer(), ...])
+)
+// ✅ FIX:
+SingleChildScrollView(
+  child: Column(children: [SizedBox(height: 24), ...])
+)
+
+// ❌ UNSAFE — Spacer inside a Column with no parent constraint:
+Column(children: [
+  Text('header'),
+  Spacer(),       // no parent Expanded/Flexible → overflow on small screens
+  PallyButton(),
+])
+// ✅ FIX — wrap content in Expanded(SingleChildScrollView), pin button:
+Column(children: [
+  Expanded(child: SingleChildScrollView(child: Column(children: [
+    Text('header'),
+    // ... scrollable content ...
+    SizedBox(height: AppSpacing.md),
+  ]))),
+  PallyButton(),
+  SizedBox(height: MediaQuery.of(context).padding.bottom + 4),
+])
+```
+
+**Exception:** `Spacer()` inside a `Row` is always safe — it pushes items apart horizontally.
+
+---
+
+## Rule 2 — ClipRRect wrapping fixed-height containers
+
+`ClipRRect` around a `Container(height: N)` inside a scroll view can cause a "sliced header" visual glitch. Move `borderRadius` to `BoxDecoration` on the container and remove the `ClipRRect` wrapper.
+
+```dart
+// ❌ BAD — ClipRRect wrapping a fixed-height container:
+ClipRRect(
+  borderRadius: BorderRadius.circular(16),
+  child: Container(height: 300, decoration: BoxDecoration(gradient: ...)),
+)
+
+// ✅ GOOD — borderRadius on BoxDecoration directly:
+Container(
+  height: MediaQuery.of(context).size.height * 0.35,
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(16),
+    gradient: ...,
+  ),
+)
+```
+
+**Exception:** `ClipRRect` wrapping a `LinearProgressIndicator` or `Image` to round its edges is valid — keep it.
+
+---
+
+## Rule 3 — Dialog responsive width
+
+Dialogs must **never** use a fixed width that could exceed `(screenWidth - 48)`. Always constrain:
+
+```dart
+final maxW = (MediaQuery.of(context).size.width - 48).clamp(0.0, 346.0);
+return Dialog(
+  child: ConstrainedBox(
+    constraints: BoxConstraints(maxWidth: maxW),
+    child: Padding(...),
+  ),
+);
+```
+
+---
+
+## Rule 4 — resizeToAvoidBottomInset on form Scaffolds
+
+Every `Scaffold` containing a `TextField` must set `resizeToAvoidBottomInset`:
+- `true` (default) — if the screen is a simple form. The system resizes the body to avoid the keyboard.
+- `false` — **only** if the screen manually handles keyboard insets (e.g. `AnimatedContainer` with `MediaQuery.of(context).viewInsets.bottom`, like `ChatScreen`). In this case, content above the input must be inside `SingleChildScrollView` or `Expanded`.
+
+```bash
+# Audit command — find Scaffolds missing the declaration:
+grep -rn "Scaffold(" lib/features/ --include="*.dart" -A 3 | grep -B 1 "resizeToAvoidBottomInset"
+```
+
+---
+
+## Rule 5 — SafeArea placement
+
+`SafeArea` must be a **direct child of `Scaffold.body`**, never nested inside a `Stack` inside a `SingleChildScrollView`. Nesting causes double top padding on notched devices.
+
+```dart
+// ❌ BAD:
+Scaffold(body: SingleChildScrollView(child: Stack(children: [SafeArea(...)])))
+
+// ✅ GOOD:
+Scaffold(body: SafeArea(child: SingleChildScrollView(...)))
+```
+
+---
+
+## Rule 6 — Fixed pixel heights for bottom sheets
+
+Bottom sheets must use `MediaQuery`-based heights, not hardcoded pixel values, to prevent overflow on short screens:
+
+```dart
+// ❌ BAD:
+Container(height: 434, ...)
+
+// ✅ GOOD:
+final sheetHeight = (MediaQuery.of(context).size.height * 0.55).clamp(360.0, 480.0);
+Container(height: sheetHeight, ...)
+```
+
+---
+
+## Quick grep audit — run before every PR
+
+```bash
+# Find potential overflow violations in lib/:
+grep -rn "Spacer()\|ClipRRect\|height: [3-9][0-9][0-9]\b" lib/ \
+  --include="*.dart" \
+  | grep -v ".g.dart\|.freezed.dart\|//\|fontSize\|borderRadius\|blurRadius\|elevation\|strokeWidth"
+```
+
+Inspect every match. If a `Spacer()` is in a `Column` without bounded constraints, fix it. If a `ClipRRect` wraps a fixed-height container in a scroll view, refactor it. If a `height: NNN` is a hardcoded bottom sheet or dialog size, make it responsive.
