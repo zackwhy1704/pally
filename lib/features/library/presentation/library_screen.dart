@@ -136,8 +136,17 @@ class _AvatarRow extends StatelessWidget {
                 _ActionChip(
                   label: 'Quiz',
                   icon: Icons.bolt_rounded,
-                  color: AppColors.amber,
-                  onTap: () => QuizRoute(avatarId: avatar.id).push(context),
+                  color: avatar.hasKnowledge ? AppColors.amber : AppColors.text3,
+                  onTap: avatar.hasKnowledge
+                      ? () => QuizRoute(avatarId: avatar.id).push(context)
+                      : () => ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text('Upload notes first to unlock quizzes'),
+                              backgroundColor: AppColors.amber,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                          ),
                 ),
               ],
             ),

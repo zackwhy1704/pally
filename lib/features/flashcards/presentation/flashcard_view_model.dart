@@ -96,7 +96,11 @@ class FlashCardViewModel extends _$FlashCardViewModel {
           .map((e) => FlashCard.fromJson(e as Map<String, dynamic>))
           .toList();
       state = state.copyWith(cards: cards, isLoading: false);
-    } on DioException catch (_) {
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404 || e.response?.statusCode == 500) {
+        state = state.copyWith(cards: [], isLoading: false);
+        return;
+      }
       state = state.copyWith(cards: _stubCards, isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());

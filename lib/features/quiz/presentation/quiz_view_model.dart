@@ -91,7 +91,11 @@ class QuizViewModel extends _$QuizViewModel {
           .map((e) => QuizQuestion.fromJson(e as Map<String, dynamic>))
           .toList();
       state = state.copyWith(questions: questions, isLoading: false);
-    } on DioException catch (_) {
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404 || e.response?.statusCode == 500) {
+        state = state.copyWith(questions: [], isLoading: false);
+        return;
+      }
       state = state.copyWith(questions: _stubQuestions, isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());

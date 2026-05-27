@@ -26,7 +26,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   final _passFocus = FocusNode();
   bool _obscure = true;
   bool _loading = false;
-  bool _biometricAvailable = false;
+  bool _biometricSupported = false;
+  bool _biometricRegistered = false;
   final _localAuth = LocalAuthentication();
   final _bioStateCtrl = StreamController<_BiometricState>.broadcast();
 
@@ -37,11 +38,14 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   }
 
   Future<void> _checkBiometric() async {
+    final canAuth = await _canUseBiometrics();
     final registered = await AuthNotifier.instance.isBiometricRegistered();
     final lastUser = await AuthNotifier.instance.getLastUserId();
-    final canAuth = await _canUseBiometrics();
     if (mounted) {
-      setState(() => _biometricAvailable = registered && lastUser != null && canAuth);
+      setState(() {
+        _biometricSupported = canAuth;
+        _biometricRegistered = registered && lastUser != null;
+      });
     }
   }
 
@@ -83,17 +87,18 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   }
 
   Future<void> _biometricSignIn() async {
-    final canAuth = await _canUseBiometrics();
-    if (!canAuth) {
-      _showError('Biometrics not set up on this device');
+    if (!_biometricSupported) {
+      _showError('Biometrics not available on this device');
       return;
     }
-    final isRegistered = await AuthNotifier.instance.isBiometricRegistered();
-    if (!isRegistered) return;
+    if (!_biometricRegistered) {
+      _showError('Sign in with your password first — biometrics will be enabled in Settings');
+      return;
+    }
 
     final userId = await AuthNotifier.instance.getLastUserId();
     if (userId == null) {
-      _showError('Please sign in with your password first');
+      _showError('Sign in with your password first');
       return;
     }
 
@@ -329,7 +334,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     loading: _loading,
                     onPressed: _signIn,
                   ),
-                  if (_biometricAvailable) ...[
+                  if (_biometricSupported) ...[
                     const SizedBox(height: 28),
                     Row(
                       children: [
@@ -391,6 +396,16 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                         ),
                       ),
                     ),
+                    if (!_biometricRegistered)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          'Sign in once to enable biometric login',
+                          style: AppTextStyles.caption
+                              .copyWith(color: AppColors.text3),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                   ],
                   const SizedBox(height: AppSpacing.xl),
                   Row(
