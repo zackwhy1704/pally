@@ -340,7 +340,6 @@ class PhotoPreviewRoute extends GoRouteData {
 
 // Public routes that never require authentication
 const _publicPaths = {
-  '/splash',
   '/auth/signin',
   '/auth/signup',
   '/auth/setup',
@@ -352,7 +351,7 @@ GoRouter buildAppRouter({ProviderContainer? container}) {
   final authNotifier = AuthNotifier.instance;
 
   return GoRouter(
-    initialLocation: '/splash',
+    initialLocation: '/',
     debugLogDiagnostics: true,
     refreshListenable: authNotifier,
     redirect: (context, state) {
@@ -362,6 +361,11 @@ GoRouter buildAppRouter({ProviderContainer? container}) {
 
       if (!auth.isSignedIn && !isPublic) {
         return '/auth/signin';
+      }
+
+      if (auth.isSignedIn && path == '/') {
+        if (!auth.isSetupComplete) return '/auth/setup';
+        if (!auth.isOnboardingComplete) return '/onboarding';
       }
 
       return null;
