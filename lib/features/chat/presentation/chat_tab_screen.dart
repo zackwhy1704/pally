@@ -81,12 +81,20 @@ class _AvatarTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(avatar.name,
-                      style: AppTextStyles.body
-                          .copyWith(fontWeight: FontWeight.w700)),
-                  Text(avatar.subject,
-                      style: AppTextStyles.bodySmall
-                          .copyWith(color: AppColors.text2)),
+                  Text(
+                    avatar.name,
+                    style: AppTextStyles.body
+                        .copyWith(fontWeight: FontWeight.w700),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    avatar.subject,
+                    style: AppTextStyles.bodySmall
+                        .copyWith(color: AppColors.text2),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ],
               ),
             ),

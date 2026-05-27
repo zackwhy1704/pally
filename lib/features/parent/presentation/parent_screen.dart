@@ -341,7 +341,15 @@ class _SubjectBreakdown extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(s.subject, style: AppTextStyles.bodySmall),
+                      Flexible(
+                        child: Text(
+                          s.subject,
+                          style: AppTextStyles.bodySmall,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
                       Text('$pct%',
                           style: AppTextStyles.label
                               .copyWith(color: AppColors.purple)),

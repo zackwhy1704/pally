@@ -521,6 +521,7 @@ class _CertaintyBadge extends StatelessWidget {
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      constraints: const BoxConstraints(maxWidth: 80),
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(20),
@@ -531,6 +532,8 @@ class _CertaintyBadge extends StatelessWidget {
           color: fg,
           fontWeight: FontWeight.w600,
         ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
@@ -558,7 +561,7 @@ class _ConflictBadge extends StatelessWidget {
                 size: 10, color: AppColors.amber),
             const SizedBox(width: 3),
             Text(
-              'Review conflict',
+              'Conflict',
               style: AppTextStyles.caption.copyWith(
                 color: AppColors.amber,
                 fontWeight: FontWeight.w600,

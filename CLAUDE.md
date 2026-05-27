@@ -1857,6 +1857,47 @@ Container(height: sheetHeight, ...)
 
 ---
 
+## Rule 7 — Every Text inside a Row must have maxLines + overflow
+
+A `Text` widget inside a `Row` must always declare `maxLines` and `overflow` unless the Row is inside a horizontal `SingleChildScrollView`.
+
+```dart
+// ❌ NEVER — "Physical Education" overflows by 24px
+Row(children: [Text(avatar.name), SubjectBadge(avatar.subject)])
+
+// ✅ CORRECT — name shrinks, badge stays readable
+Row(children: [
+  Flexible(child: Text(avatar.name, maxLines: 1, overflow: TextOverflow.ellipsis)),
+  SubjectBadge(avatar.subject),
+])
+```
+
+**Badge/pill widgets** (Container wrapping a short Text) must also declare `constraints: BoxConstraints(maxWidth: N)` (80–140px for subject badges), plus `maxLines: 1` and `overflow: TextOverflow.ellipsis` on the inner Text.
+
+---
+
+## Rule 8 — Row with spaceBetween needs Flexible on the growing child
+
+```dart
+// ❌ NEVER
+Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [Text(longSubjectName), Text('94%')],
+)
+
+// ✅ CORRECT
+Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    Flexible(child: Text(longSubjectName, maxLines: 1, overflow: TextOverflow.ellipsis)),
+    const SizedBox(width: 8),
+    Text('94%'),
+  ],
+)
+```
+
+---
+
 ## Quick grep audit — run before every PR
 
 ```bash

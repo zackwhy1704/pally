@@ -86,10 +86,14 @@ class _AvatarRow extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        avatar.name,
-                        style: AppTextStyles.body
-                            .copyWith(fontWeight: FontWeight.w700),
+                      Flexible(
+                        child: Text(
+                          avatar.name,
+                          style: AppTextStyles.body
+                              .copyWith(fontWeight: FontWeight.w700),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       const SizedBox(width: AppSpacing.xs),
                       _SubjectBadge(
@@ -172,6 +176,7 @@ class _SubjectBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      constraints: const BoxConstraints(maxWidth: 140),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(6),
@@ -182,6 +187,8 @@ class _SubjectBadge extends StatelessWidget {
           color: color,
           fontWeight: FontWeight.w600,
         ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
