@@ -57,7 +57,8 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
       );
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('child_name', _nameCtrl.text.trim());
-      AuthNotifier.instance.markSetupComplete();
+      await AuthNotifier.instance.setChildName(_nameCtrl.text.trim());
+      await AuthNotifier.instance.markSetupComplete();
       if (mounted) context.go('/auth/avatar');
     } on DioException {
       if (mounted) {

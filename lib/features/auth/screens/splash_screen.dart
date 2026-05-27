@@ -1,7 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pally/features/auth/auth_state.dart' show authStateProvider;
+import 'package:pally/app/api_client.dart';
+import 'package:pally/features/auth/auth_state.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -52,12 +54,37 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   Future<void> _navigate() async {
     if (!mounted) return;
-    final auth = ref.read(authStateProvider);
+    var auth = ref.read(authStateProvider);
 
     if (!auth.isSignedIn) {
       context.go('/auth/signin');
       return;
     }
+
+    try {
+      final dio = ref.read(dioProvider);
+      final response = await dio.get<Map<String, dynamic>>('/api/v1/auth/me');
+      final data = response.data;
+      if (data != null) {
+        final backendSetup = data['setupComplete'] == true;
+        if (backendSetup && !auth.isSetupComplete) {
+          await AuthNotifier.instance.markSetupComplete();
+        }
+        if (backendSetup && !auth.isOnboardingComplete) {
+          await AuthNotifier.instance.markOnboardingComplete();
+        }
+        final childName = data['childName'] as String?;
+        if (childName != null && childName.isNotEmpty && childName != auth.childName) {
+          await AuthNotifier.instance.setChildName(childName);
+        }
+        if (!mounted) return;
+        auth = ref.read(authStateProvider);
+      }
+    } on DioException {
+      // ignore
+    }
+
+    if (!mounted) return;
 
     if (!auth.isSetupComplete) {
       context.go('/auth/setup');
@@ -125,7 +152,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       shape: BoxShape.circle,
                     ),
                     child: const Center(
-                      child: Text('🐷', style: TextStyle(fontSize: 58)),
+                      child: Text('✨', style: TextStyle(fontSize: 58)),
                     ),
                   ),
                   const SizedBox(height: 20),

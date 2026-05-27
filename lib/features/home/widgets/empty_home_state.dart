@@ -77,7 +77,7 @@ class _EmptyHomeStateState extends State<EmptyHomeState>
               ),
               ScaleTransition(
                 scale: _scaleAnim,
-                child: const Text('🐷', style: TextStyle(fontSize: 80)),
+                child: const Text('✨', style: TextStyle(fontSize: 80)),
               ),
               const Positioned(
                   top: 24, left: 24, child: Text('✨', style: TextStyle(fontSize: 20))),
@@ -130,7 +130,7 @@ class _EmptyHomeStateState extends State<EmptyHomeState>
                     elevation: 0,
                   ),
                   child: Text(
-                    '+ Create My First Tutor 🐷',
+                    '+ Create My First Tutor ✨',
                     style: AppTextStyles.body.copyWith(
                         color: Colors.white, fontWeight: FontWeight.w700),
                   ),
@@ -138,7 +138,7 @@ class _EmptyHomeStateState extends State<EmptyHomeState>
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
-                'Pick a pig, teach it your notes, ask it anything!',
+                'Pick a buddy, teach it your notes, ask it anything!',
                 style: AppTextStyles.label.copyWith(color: AppColors.text3),
                 textAlign: TextAlign.center,
               ),

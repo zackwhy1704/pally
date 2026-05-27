@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/features/auth/auth_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -33,6 +34,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Future<void> _finish() async {
+    await AuthNotifier.instance.markOnboardingComplete();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_complete', true);
     await prefs.setBool('onboarding_done', true);
@@ -133,7 +135,7 @@ class _PageOne extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
-                  child: Text('🐷', style: TextStyle(fontSize: 68)),
+                  child: Text('✨', style: TextStyle(fontSize: 68)),
                 ),
               ),
             ),

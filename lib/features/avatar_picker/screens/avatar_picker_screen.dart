@@ -8,7 +8,6 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/utils/logger.dart';
-import 'package:pally/features/auth/auth_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ── Pally avatar data model ───────────────────────────────────────────────────
@@ -22,6 +21,8 @@ class PallyAvatar {
     required this.themeColor,
     required this.cardBgColor,
     required this.description,
+    required this.backendSubject,
+    required this.backendCharacterType,
   });
 
   final String id;
@@ -31,116 +32,100 @@ class PallyAvatar {
   final Color themeColor;
   final Color cardBgColor;
   final String description;
+  final String backendSubject;
+  final String backendCharacterType;
 }
 
 const List<PallyAvatar> kAllAvatars = [
   PallyAvatar(
-    id: 'mochi',
-    name: 'Mochi',
-    emoji: '🍡',
-    subject: 'Maths',
-    themeColor: Color(0xFF7042ED),
-    cardBgColor: Color(0xFFE5E0FC),
-    description: 'Loves numbers!',
-  ),
-  PallyAvatar(
-    id: 'boba',
-    name: 'Boba',
-    emoji: '🧋',
-    subject: 'English',
-    themeColor: Color(0xFF00BAA3),
-    cardBgColor: Color(0xFFD9F6F1),
-    description: 'Wordsmith pig!',
-  ),
-  PallyAvatar(
-    id: 'yuzu',
-    name: 'Yuzu',
-    emoji: '🍋',
-    subject: 'Science',
-    themeColor: Color(0xFFD4A50D),
-    cardBgColor: Color(0xFFFFF7D6),
+    id: 'mochi', name: 'Mochi', emoji: '🍡', subject: 'Science 🔬',
+    themeColor: Color(0xFFFFB81A), cardBgColor: Color(0xFFFFF5D1),
     description: 'Lab explorer!',
+    backendSubject: 'SCIENCE', backendCharacterType: 'MOCHI',
   ),
   PallyAvatar(
-    id: 'lychee',
-    name: 'Lychee',
-    emoji: '🍈',
-    subject: 'History',
-    themeColor: Color(0xFFBD6524),
-    cardBgColor: Color(0xFFF5EBE0),
+    id: 'boba', name: 'Boba', emoji: '🧋', subject: 'Maths ➕',
+    themeColor: Color(0xFF7042ED), cardBgColor: Color(0xFFEBE0FF),
+    description: 'Loves numbers!',
+    backendSubject: 'MATHS', backendCharacterType: 'BOBA',
+  ),
+  PallyAvatar(
+    id: 'tofu', name: 'Tofu', emoji: '🧈', subject: 'History 📜',
+    themeColor: Color(0xFFC78533), cardBgColor: Color(0xFFF5EBE0),
     description: 'Time traveller!',
+    backendSubject: 'HISTORY', backendCharacterType: 'ZAP',
   ),
   PallyAvatar(
-    id: 'taro',
-    name: 'Taro',
-    emoji: '💜',
-    subject: 'Art',
-    themeColor: Color(0xFF8C44CC),
-    cardBgColor: Color(0xFFF0E6FA),
-    description: 'Creative pig!',
+    id: 'tempura', name: 'Tempura', emoji: '🍤', subject: 'English 📖',
+    themeColor: Color(0xFF2EC770), cardBgColor: Color(0xFFDBFAE8),
+    description: 'Wordsmith buddy!',
+    backendSubject: 'ENGLISH', backendCharacterType: 'FINN',
   ),
   PallyAvatar(
-    id: 'kiwi',
-    name: 'Kiwi',
-    emoji: '🥝',
-    subject: 'Coding',
-    themeColor: Color(0xFF2EC770),
-    cardBgColor: Color(0xFFE0FAE9),
+    id: 'dumpling', name: 'Dumpling', emoji: '🥟', subject: 'Art 🎨',
+    themeColor: Color(0xFFE05587), cardBgColor: Color(0xFFFFE0F0),
+    description: 'Creative buddy!',
+    backendSubject: 'ART', backendCharacterType: 'PUDDI',
+  ),
+  PallyAvatar(
+    id: 'matcha', name: 'Matcha', emoji: '🍵', subject: 'Coding 💻',
+    themeColor: Color(0xFF00BAA3), cardBgColor: Color(0xFFD9F6F1),
     description: 'Bug squasher!',
+    backendSubject: 'CODING', backendCharacterType: 'BYTE',
   ),
   PallyAvatar(
-    id: 'pudding',
-    name: 'Pudding',
-    emoji: '🍮',
-    subject: 'Geography',
-    themeColor: Color(0xFFE68C25),
-    cardBgColor: Color(0xFFFFF3E0),
+    id: 'sushi', name: 'Sushi', emoji: '🍣', subject: 'Geography 🌍',
+    themeColor: Color(0xFF2B87B0), cardBgColor: Color(0xFFD6EFF8),
     description: 'World explorer!',
+    backendSubject: 'GEOGRAPHY', backendCharacterType: 'NORI',
   ),
   PallyAvatar(
-    id: 'peach',
-    name: 'Peach',
-    emoji: '🍑',
-    subject: 'Music',
-    themeColor: Color(0xFFEF5350),
-    cardBgColor: Color(0xFFFFECEC),
-    description: 'Rock star pig!',
+    id: 'kimchi', name: 'Kimchi', emoji: '🌶️', subject: 'Languages 🗣',
+    themeColor: Color(0xFFC73D2E), cardBgColor: Color(0xFFFFE5E4),
+    description: 'Polyglot buddy!',
+    backendSubject: 'LANGUAGES', backendCharacterType: 'CHIMI',
   ),
   PallyAvatar(
-    id: 'matcha',
-    name: 'Matcha',
-    emoji: '🍵',
-    subject: 'Languages',
-    themeColor: Color(0xFF33A04C),
-    cardBgColor: Color(0xFFE3F5E7),
-    description: 'Polyglot pig!',
+    id: 'waffle', name: 'Waffle', emoji: '🧇', subject: 'Music 🎵',
+    themeColor: Color(0xFFE6A800), cardBgColor: Color(0xFFFFF5D1),
+    description: 'Rock star buddy!',
+    backendSubject: 'MUSIC', backendCharacterType: 'LUMIS',
   ),
   PallyAvatar(
-    id: 'durian',
-    name: 'Durian',
-    emoji: '🟡',
-    subject: 'P.E.',
-    themeColor: Color(0xFF99B81A),
-    cardBgColor: Color(0xFFF7FAE0),
-    description: 'Athletic pig!',
+    id: 'ramen', name: 'Ramen', emoji: '🍜', subject: 'P.E. ⚽',
+    themeColor: Color(0xFFE07028), cardBgColor: Color(0xFFFFF3E0),
+    description: 'Athletic buddy!',
+    backendSubject: 'SCIENCE', backendCharacterType: 'MOCHI',
   ),
   PallyAvatar(
-    id: 'berry',
-    name: 'Rambutan',
-    emoji: '🍓',
-    subject: 'Drama',
-    themeColor: Color(0xFFE83A4E),
-    cardBgColor: Color(0xFFFFE5E8),
+    id: 'taiyaki', name: 'Taiyaki', emoji: '🐟', subject: 'Drama 🎭',
+    themeColor: Color(0xFF8C44CC), cardBgColor: Color(0xFFF0E6FA),
     description: 'Star performer!',
+    backendSubject: 'ART', backendCharacterType: 'PUDDI',
   ),
   PallyAvatar(
-    id: 'mangosteen',
-    name: 'Mangosteen',
-    emoji: '🍇',
-    subject: 'Philosophy',
-    themeColor: Color(0xFF7B30D9),
-    cardBgColor: Color(0xFFF1E6FF),
+    id: 'croissant', name: 'Croissant', emoji: '🥐', subject: 'Philosophy 🤔',
+    themeColor: Color(0xFFB89840), cardBgColor: Color(0xFFFFF8E0),
     description: 'Deep thinker!',
+    backendSubject: 'HISTORY', backendCharacterType: 'ZAP',
+  ),
+  PallyAvatar(
+    id: 'naan', name: 'Naan', emoji: '🫓', subject: 'Economics 📊',
+    themeColor: Color(0xFFA0825A), cardBgColor: Color(0xFFF5EBE0),
+    description: 'Money wise!',
+    backendSubject: 'MATHS', backendCharacterType: 'BOBA',
+  ),
+  PallyAvatar(
+    id: 'gelato', name: 'Gelato', emoji: '🍨', subject: 'Design 🎨',
+    themeColor: Color(0xFF4A90C0), cardBgColor: Color(0xFFD6EFF8),
+    description: 'Pixel perfect!',
+    backendSubject: 'ART', backendCharacterType: 'NORI',
+  ),
+  PallyAvatar(
+    id: 'churro', name: 'Churro', emoji: '🍩', subject: 'Writing ✏️',
+    themeColor: Color(0xFFC0883A), cardBgColor: Color(0xFFFFF3E0),
+    description: 'Story teller!',
+    backendSubject: 'ENGLISH', backendCharacterType: 'FINN',
   ),
 ];
 
@@ -200,10 +185,9 @@ class _AvatarPickerScreenState extends ConsumerState<AvatarPickerScreen> {
       final res = await dio.post<Map<String, dynamic>>(
         '/api/v1/avatars',
         data: {
-          'characterId': av.id,
           'name': av.name,
-          'subject': av.subject.toUpperCase().replaceAll('.', ''),
-          'characterType': av.id.toUpperCase(),
+          'subject': av.backendSubject,
+          'characterType': av.backendCharacterType,
         },
       );
       final avatarId = res.data?['id'] as String? ?? '';
@@ -214,7 +198,6 @@ class _AvatarPickerScreenState extends ConsumerState<AvatarPickerScreen> {
 
       if (mounted) {
         if (widget.isOnboarding) {
-          AuthNotifier.instance.markOnboardingComplete();
           context.go('/onboarding');
         } else {
           context.pop();
@@ -256,7 +239,7 @@ class _AvatarPickerScreenState extends ConsumerState<AvatarPickerScreen> {
               padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.md, vertical: 4),
               child: Text(
-                'Each one is a chubby pig friend 🍡 Pick who you want to learn with!',
+                'Each one is unique 🍡 Pick who you want to learn with!',
                 style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
                 textAlign: TextAlign.center,
               ),
@@ -329,7 +312,7 @@ class _TopBar extends StatelessWidget {
             ),
           Expanded(
             child: Text(
-              'Choose Your Pally 🐷',
+              'Choose Your Pally ✨',
               style: AppTextStyles.title,
               textAlign: isOnboarding ? TextAlign.center : TextAlign.start,
             ),
@@ -450,10 +433,10 @@ class _AvatarCard extends StatelessWidget {
                     ),
                     child: Stack(
                       children: [
-                        const Center(
+                        Center(
                           child: Text(
-                            '🐷',
-                            style: TextStyle(fontSize: 46),
+                            avatar.emoji,
+                            style: const TextStyle(fontSize: 46),
                           ),
                         ),
                         Positioned(
