@@ -18,6 +18,7 @@ List<RouteBase> get $appRoutes => [
       $parentRoute,
       $parentReportsRoute,
       $parentReportDetailRoute,
+      $brainMapRoute,
       $teachMochiRoute,
       $studyPlanRoute,
       $settingsRoute,
@@ -413,6 +414,30 @@ extension $ParentReportDetailRouteExtension on ParentReportDetailRoute {
 
   String get location => GoRouteData.$location(
         '/parent/reports/${Uri.encodeComponent(weekId)}',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $brainMapRoute => GoRouteData.$route(
+      path: '/avatar/:avatarId/brain-map',
+      factory: $BrainMapRouteExtension._fromState,
+    );
+
+extension $BrainMapRouteExtension on BrainMapRoute {
+  static BrainMapRoute _fromState(GoRouterState state) => BrainMapRoute(
+        avatarId: state.pathParameters['avatarId']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/avatar/${Uri.encodeComponent(avatarId)}/brain-map',
       );
 
   void go(BuildContext context) => context.go(location);

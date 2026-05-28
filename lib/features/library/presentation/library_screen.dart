@@ -197,20 +197,41 @@ class _AvatarRow extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: AppSpacing.xs),
-                _ActionChip(
-                  label: 'Quiz',
-                  icon: Icons.bolt_rounded,
-                  color: avatar.hasKnowledge ? AppColors.amber : AppColors.text3,
-                  onTap: avatar.hasKnowledge
-                      ? () => QuizRoute(avatarId: avatar.id).push(context)
-                      : () => ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text('Upload notes first to unlock quizzes'),
-                              backgroundColor: AppColors.amber,
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            ),
-                          ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _ActionChip(
+                      label: 'Quiz',
+                      icon: Icons.bolt_rounded,
+                      color: avatar.hasKnowledge
+                          ? AppColors.amber
+                          : AppColors.text3,
+                      onTap: avatar.hasKnowledge
+                          ? () => QuizRoute(avatarId: avatar.id).push(context)
+                          : () => ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text(
+                                      'Upload notes first to unlock quizzes'),
+                                  backgroundColor: AppColors.amber,
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                ),
+                              ),
+                    ),
+                    const SizedBox(width: AppSpacing.xs),
+                    _ActionChip(
+                      label: 'Map',
+                      icon: Icons.bubble_chart_rounded,
+                      color: avatar.hasKnowledge
+                          ? AppColors.teal
+                          : AppColors.text3,
+                      onTap: avatar.hasKnowledge
+                          ? () =>
+                              BrainMapRoute(avatarId: avatar.id).push(context)
+                          : null,
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -265,7 +286,7 @@ class _ActionChip extends StatelessWidget {
   final String label;
   final IconData icon;
   final Color color;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {

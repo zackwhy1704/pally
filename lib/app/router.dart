@@ -29,6 +29,7 @@ import 'package:pally/features/photo_question/presentation/camera_screen.dart';
 import 'package:pally/features/photo_question/presentation/photo_preview_screen.dart';
 import 'package:pally/features/photo_question/presentation/homework_scan_detail_screen.dart';
 import 'package:pally/features/onboarding/presentation/onboarding_screen.dart';
+import 'package:pally/features/brain_map/presentation/brain_map_screen.dart';
 import 'package:pally/features/teach_mochi/presentation/teach_mochi_screen.dart';
 import 'package:pally/features/brain_health/presentation/brain_health_screen.dart';
 import 'package:pally/shared/models/photo_question.dart';
@@ -233,6 +234,16 @@ class ParentReportDetailRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       ReportDetailScreen(weekId: weekId);
+}
+
+@TypedGoRoute<BrainMapRoute>(path: '/avatar/:avatarId/brain-map')
+class BrainMapRoute extends GoRouteData {
+  const BrainMapRoute({required this.avatarId});
+  final String avatarId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      BrainMapScreen(avatarId: avatarId);
 }
 
 @TypedGoRoute<TeachMochiRoute>(path: '/avatar/:avatarId/teach')
