@@ -647,7 +647,14 @@ class ChatViewModel extends _$ChatViewModel {
             dataLines.clear();
 
             if (fullData == '[DONE]' || currentEvent == 'done') {
-              _finaliseStreamingMessage(streamId, buffer.toString(), sources);
+              // Done payload carries the wiki page slug per backend contract.
+              if (currentEvent == 'done' &&
+                  fullData.isNotEmpty &&
+                  fullData != '[DONE]') {
+                sources.add(fullData);
+              }
+              _finaliseStreamingMessage(
+                  streamId, _stripSourceTrailer(buffer.toString()), sources);
               state = state.copyWith(isTyping: false);
               return;
             }
@@ -682,7 +689,13 @@ class ChatViewModel extends _$ChatViewModel {
       if (dataLines.isNotEmpty) {
         final fullData = dataLines.join('\n');
         if (currentEvent == 'done' || fullData == '[DONE]') {
-          _finaliseStreamingMessage(streamId, buffer.toString(), sources);
+          if (currentEvent == 'done' &&
+              fullData.isNotEmpty &&
+              fullData != '[DONE]') {
+            sources.add(fullData);
+          }
+          _finaliseStreamingMessage(
+              streamId, _stripSourceTrailer(buffer.toString()), sources);
         } else if (currentEvent == 'delta' || currentEvent.isEmpty) {
           try {
             final json = jsonDecode(fullData) as Map<String, dynamic>;
@@ -695,7 +708,8 @@ class ChatViewModel extends _$ChatViewModel {
       }
 
       appLog.i('[Chat] Stream ended, chars=${buffer.length}');
-      _finaliseStreamingMessage(streamId, buffer.toString(), sources);
+      _finaliseStreamingMessage(
+          streamId, _stripSourceTrailer(buffer.toString()), sources);
       state = state.copyWith(isTyping: false);
     } on DioException catch (e, st) {
       appLog.w('[Chat] SSE request failed, falling back to stub',
@@ -729,6 +743,15 @@ class ChatViewModel extends _$ChatViewModel {
     }).toList();
     state = state.copyWith(messages: updated);
   }
+
+  // Defensive client-side strip — backend already removes the SOURCE trailer
+  // before persisting, but a partial stream (e.g. dropped final SSE frame)
+  // could leak it into the rendered bubble. Belt-and-braces.
+  static final RegExp _sourceTrailerPattern = RegExp(
+      r'\s*\n*SOURCE\s*:?\s*\[?[a-zA-Z0-9_\-/]+\]?\s*$');
+
+  String _stripSourceTrailer(String content) =>
+      content.replaceFirst(_sourceTrailerPattern, '').trimRight();
 
   void _finaliseStreamingMessage(
       String id, String content, List<String> sources) {

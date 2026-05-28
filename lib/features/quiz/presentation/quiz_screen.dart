@@ -80,6 +80,7 @@ class QuizScreen extends ConsumerWidget {
                       avatarId: avatarId,
                     )
                   : _QuizBody(
+                      avatarId: avatarId,
                       quizState: quizState,
                       onAnswer: (i) => ref
                           .read(quizViewModelProvider(avatarId).notifier)
@@ -97,11 +98,13 @@ class _QuizBody extends StatelessWidget {
     required this.quizState,
     required this.onAnswer,
     required this.onNext,
+    required this.avatarId,
   });
 
   final QuizState quizState;
   final ValueChanged<int> onAnswer;
   final VoidCallback onNext;
+  final String avatarId;
 
   @override
   Widget build(BuildContext context) {
@@ -138,6 +141,7 @@ class _QuizBody extends StatelessWidget {
             _ExplanationCard(
               question: question,
               isCorrect: quizState.selectedAnswer == question.correctIndex,
+              avatarId: avatarId,
             ),
             const SizedBox(height: AppSpacing.md),
             const _XpBadge(xp: 20),
@@ -322,10 +326,15 @@ class _OptionButton extends StatelessWidget {
 }
 
 class _ExplanationCard extends StatelessWidget {
-  const _ExplanationCard({required this.question, required this.isCorrect});
+  const _ExplanationCard({
+    required this.question,
+    required this.isCorrect,
+    required this.avatarId,
+  });
 
   final QuizQuestion question;
   final bool isCorrect;
+  final String avatarId;
 
   @override
   Widget build(BuildContext context) {
@@ -363,17 +372,34 @@ class _ExplanationCard extends StatelessWidget {
           ],
           if (question.sourcePage.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.xs),
-            Row(
-              children: [
-                const Icon(Icons.source_rounded,
-                    size: 12, color: AppColors.text3),
-                const SizedBox(width: 4),
-                Text(
-                  question.sourcePage,
-                  style: AppTextStyles.caption
-                      .copyWith(fontStyle: FontStyle.italic),
+            InkWell(
+              onTap: () => WikiViewerRoute(avatarId: avatarId).go(context),
+              borderRadius: BorderRadius.circular(6),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Row(
+                  children: [
+                    const Icon(Icons.source_rounded,
+                        size: 12, color: AppColors.purple),
+                    const SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        question.sourcePage,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.caption.copyWith(
+                          fontStyle: FontStyle.italic,
+                          color: AppColors.purple,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(Icons.arrow_outward_rounded,
+                        size: 11, color: AppColors.purple),
+                  ],
                 ),
-              ],
+              ),
             ),
           ],
         ],

@@ -6,7 +6,9 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
+import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/features/study_plan/presentation/study_plan_view_model.dart';
+import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/study_plan_item.dart';
 
 class StudyPlanScreen extends ConsumerWidget {
@@ -77,7 +79,7 @@ class StudyPlanScreen extends ConsumerWidget {
                     ...upcomingItems.map((item) => _UpcomingTile(item: item)),
                   ],
                   const SizedBox(height: AppSpacing.md),
-                  _TestCountdownCard(),
+                  _TestCountdownCard(avatarId: avatarId),
                 ],
               ),
             ),
@@ -344,12 +346,25 @@ class _UpcomingTile extends StatelessWidget {
   }
 }
 
-class _TestCountdownCard extends StatelessWidget {
+class _TestCountdownCard extends ConsumerWidget {
+  const _TestCountdownCard({required this.avatarId});
+
+  final String avatarId;
+
   @override
-  Widget build(BuildContext context) {
-    // Stub: show a test countdown. In production, use saved test date.
-    final testDate = DateTime.now().add(const Duration(days: 14));
+  Widget build(BuildContext context, WidgetRef ref) {
+    final avatarsAsync = ref.watch(libraryViewModelProvider);
+    final Avatar? avatar = avatarsAsync.maybeWhen(
+      data: (list) => list.where((a) => a.id == avatarId).firstOrNull,
+      orElse: () => null,
+    );
+    final testDate = avatar?.testDate;
+
+    if (testDate == null) {
+      return _NoTestDateCard(avatarId: avatarId);
+    }
     final daysLeft = testDate.difference(DateTime.now()).inDays;
+    final subject = avatar?.subject ?? '';
 
     return Container(
       padding: AppSpacing.card,
@@ -375,11 +390,17 @@ class _TestCountdownCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Science Test',
+                  subject.isEmpty ? 'Upcoming Test' : '$subject Test',
                   style: AppTextStyles.body.copyWith(color: Colors.white70),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  '$daysLeft days left',
+                  daysLeft <= 0
+                      ? 'Today'
+                      : daysLeft == 1
+                          ? '1 day left'
+                          : '$daysLeft days left',
                   style: AppTextStyles.title.copyWith(color: Colors.white),
                 ),
               ],
@@ -387,13 +408,48 @@ class _TestCountdownCard extends StatelessWidget {
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            constraints: const BoxConstraints(maxWidth: 100),
             decoration: BoxDecoration(
               color: AppColors.coral.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
               DateFormat('MMM d').format(testDate),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: AppTextStyles.label.copyWith(color: AppColors.coral),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NoTestDateCard extends StatelessWidget {
+  const _NoTestDateCard({required this.avatarId});
+
+  final String avatarId;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: AppSpacing.card,
+      decoration: BoxDecoration(
+        color: AppColors.surf2,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.outline),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.event_note_rounded,
+              color: AppColors.text2, size: 24),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Text(
+              'Set a test date in Settings to see a countdown here.',
+              style:
+                  AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
             ),
           ),
         ],

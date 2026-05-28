@@ -13,6 +13,7 @@ class UploadResult with _$UploadResult {
     required String fileName,
     required UploadStatus status,
     @Default(0) int pageCount,
+    @Default(<String>[]) List<String> wikiPageTitles,
     String? errorMessage,
     DateTime? uploadedAt,
   }) = _UploadResult;

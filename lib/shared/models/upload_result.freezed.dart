@@ -25,6 +25,7 @@ mixin _$UploadResult {
   String get fileName => throw _privateConstructorUsedError;
   UploadStatus get status => throw _privateConstructorUsedError;
   int get pageCount => throw _privateConstructorUsedError;
+  List<String> get wikiPageTitles => throw _privateConstructorUsedError;
   String? get errorMessage => throw _privateConstructorUsedError;
   DateTime? get uploadedAt => throw _privateConstructorUsedError;
 
@@ -50,6 +51,7 @@ abstract class $UploadResultCopyWith<$Res> {
       String fileName,
       UploadStatus status,
       int pageCount,
+      List<String> wikiPageTitles,
       String? errorMessage,
       DateTime? uploadedAt});
 }
@@ -74,6 +76,7 @@ class _$UploadResultCopyWithImpl<$Res, $Val extends UploadResult>
     Object? fileName = null,
     Object? status = null,
     Object? pageCount = null,
+    Object? wikiPageTitles = null,
     Object? errorMessage = freezed,
     Object? uploadedAt = freezed,
   }) {
@@ -98,6 +101,10 @@ class _$UploadResultCopyWithImpl<$Res, $Val extends UploadResult>
           ? _value.pageCount
           : pageCount // ignore: cast_nullable_to_non_nullable
               as int,
+      wikiPageTitles: null == wikiPageTitles
+          ? _value.wikiPageTitles
+          : wikiPageTitles // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       errorMessage: freezed == errorMessage
           ? _value.errorMessage
           : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -124,6 +131,7 @@ abstract class _$$UploadResultImplCopyWith<$Res>
       String fileName,
       UploadStatus status,
       int pageCount,
+      List<String> wikiPageTitles,
       String? errorMessage,
       DateTime? uploadedAt});
 }
@@ -146,6 +154,7 @@ class __$$UploadResultImplCopyWithImpl<$Res>
     Object? fileName = null,
     Object? status = null,
     Object? pageCount = null,
+    Object? wikiPageTitles = null,
     Object? errorMessage = freezed,
     Object? uploadedAt = freezed,
   }) {
@@ -170,6 +179,10 @@ class __$$UploadResultImplCopyWithImpl<$Res>
           ? _value.pageCount
           : pageCount // ignore: cast_nullable_to_non_nullable
               as int,
+      wikiPageTitles: null == wikiPageTitles
+          ? _value._wikiPageTitles
+          : wikiPageTitles // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       errorMessage: freezed == errorMessage
           ? _value.errorMessage
           : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -191,8 +204,10 @@ class _$UploadResultImpl implements _UploadResult {
       required this.fileName,
       required this.status,
       this.pageCount = 0,
+      final List<String> wikiPageTitles = const <String>[],
       this.errorMessage,
-      this.uploadedAt});
+      this.uploadedAt})
+      : _wikiPageTitles = wikiPageTitles;
 
   factory _$UploadResultImpl.fromJson(Map<String, dynamic> json) =>
       _$$UploadResultImplFromJson(json);
@@ -208,6 +223,15 @@ class _$UploadResultImpl implements _UploadResult {
   @override
   @JsonKey()
   final int pageCount;
+  final List<String> _wikiPageTitles;
+  @override
+  @JsonKey()
+  List<String> get wikiPageTitles {
+    if (_wikiPageTitles is EqualUnmodifiableListView) return _wikiPageTitles;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_wikiPageTitles);
+  }
+
   @override
   final String? errorMessage;
   @override
@@ -215,7 +239,7 @@ class _$UploadResultImpl implements _UploadResult {
 
   @override
   String toString() {
-    return 'UploadResult(id: $id, avatarId: $avatarId, fileName: $fileName, status: $status, pageCount: $pageCount, errorMessage: $errorMessage, uploadedAt: $uploadedAt)';
+    return 'UploadResult(id: $id, avatarId: $avatarId, fileName: $fileName, status: $status, pageCount: $pageCount, wikiPageTitles: $wikiPageTitles, errorMessage: $errorMessage, uploadedAt: $uploadedAt)';
   }
 
   @override
@@ -231,6 +255,8 @@ class _$UploadResultImpl implements _UploadResult {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.pageCount, pageCount) ||
                 other.pageCount == pageCount) &&
+            const DeepCollectionEquality()
+                .equals(other._wikiPageTitles, _wikiPageTitles) &&
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage) &&
             (identical(other.uploadedAt, uploadedAt) ||
@@ -239,8 +265,16 @@ class _$UploadResultImpl implements _UploadResult {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, avatarId, fileName, status,
-      pageCount, errorMessage, uploadedAt);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      avatarId,
+      fileName,
+      status,
+      pageCount,
+      const DeepCollectionEquality().hash(_wikiPageTitles),
+      errorMessage,
+      uploadedAt);
 
   /// Create a copy of UploadResult
   /// with the given fields replaced by the non-null parameter values.
@@ -265,6 +299,7 @@ abstract class _UploadResult implements UploadResult {
       required final String fileName,
       required final UploadStatus status,
       final int pageCount,
+      final List<String> wikiPageTitles,
       final String? errorMessage,
       final DateTime? uploadedAt}) = _$UploadResultImpl;
 
@@ -281,6 +316,8 @@ abstract class _UploadResult implements UploadResult {
   UploadStatus get status;
   @override
   int get pageCount;
+  @override
+  List<String> get wikiPageTitles;
   @override
   String? get errorMessage;
   @override

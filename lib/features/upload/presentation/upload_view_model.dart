@@ -235,15 +235,21 @@ class UploadViewModel extends _$UploadViewModel {
       final data = response.data ?? const {};
       // Backend Success: { fileId, pageCount }
       // Backend RelevanceWarning: { fileId, score, reason }
+      final titlesRaw = data['wikiPageTitles'];
+      final wikiPageTitles = titlesRaw is List
+          ? titlesRaw.whereType<String>().toList()
+          : <String>[];
       final result = UploadResult(
         id: (data['fileId'] ?? data['id'] ?? '') as String,
         avatarId: _avatarId,
         fileName: file.name,
         status: UploadStatus.ready,
         pageCount: (data['pageCount'] as num?)?.toInt() ?? 0,
+        wikiPageTitles: wikiPageTitles,
         uploadedAt: DateTime.now(),
       );
-      appLog.i('[Upload] Upload success: fileId=${result.id} pages=${result.pageCount}');
+      appLog.i('[Upload] Upload success: fileId=${result.id} '
+          'pages=${result.pageCount} wikiTitles=${wikiPageTitles.length}');
       state = state.copyWith(
         isUploading: false,
         files: [...state.files, result],

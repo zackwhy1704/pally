@@ -13,6 +13,10 @@ _$UploadResultImpl _$$UploadResultImplFromJson(Map<String, dynamic> json) =>
       fileName: json['fileName'] as String,
       status: $enumDecode(_$UploadStatusEnumMap, json['status']),
       pageCount: (json['pageCount'] as num?)?.toInt() ?? 0,
+      wikiPageTitles: (json['wikiPageTitles'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const <String>[],
       errorMessage: json['errorMessage'] as String?,
       uploadedAt: json['uploadedAt'] == null
           ? null
@@ -26,6 +30,7 @@ Map<String, dynamic> _$$UploadResultImplToJson(_$UploadResultImpl instance) =>
       'fileName': instance.fileName,
       'status': _$UploadStatusEnumMap[instance.status]!,
       'pageCount': instance.pageCount,
+      'wikiPageTitles': instance.wikiPageTitles,
       'errorMessage': instance.errorMessage,
       'uploadedAt': instance.uploadedAt?.toIso8601String(),
     };

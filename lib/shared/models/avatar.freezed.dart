@@ -38,6 +38,8 @@ mixin _$Avatar {
   PedagogyMode get pedagogyMode => throw _privateConstructorUsedError;
   String? get gradeLevel => throw _privateConstructorUsedError;
   String? get curriculumType => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
+  DateTime? get testDate => throw _privateConstructorUsedError;
 
   /// Serializes this Avatar to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -71,7 +73,9 @@ abstract class $AvatarCopyWith<$Res> {
       @JsonKey(fromJson: _pedagogyFromJson, toJson: _pedagogyToJson)
       PedagogyMode pedagogyMode,
       String? gradeLevel,
-      String? curriculumType});
+      String? curriculumType,
+      @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
+      DateTime? testDate});
 }
 
 /// @nodoc
@@ -100,6 +104,7 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
     Object? pedagogyMode = null,
     Object? gradeLevel = freezed,
     Object? curriculumType = freezed,
+    Object? testDate = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -146,6 +151,10 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
           ? _value.curriculumType
           : curriculumType // ignore: cast_nullable_to_non_nullable
               as String?,
+      testDate: freezed == testDate
+          ? _value.testDate
+          : testDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ) as $Val);
   }
 }
@@ -175,7 +184,9 @@ abstract class _$$AvatarImplCopyWith<$Res> implements $AvatarCopyWith<$Res> {
       @JsonKey(fromJson: _pedagogyFromJson, toJson: _pedagogyToJson)
       PedagogyMode pedagogyMode,
       String? gradeLevel,
-      String? curriculumType});
+      String? curriculumType,
+      @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
+      DateTime? testDate});
 }
 
 /// @nodoc
@@ -202,6 +213,7 @@ class __$$AvatarImplCopyWithImpl<$Res>
     Object? pedagogyMode = null,
     Object? gradeLevel = freezed,
     Object? curriculumType = freezed,
+    Object? testDate = freezed,
   }) {
     return _then(_$AvatarImpl(
       id: null == id
@@ -248,6 +260,10 @@ class __$$AvatarImplCopyWithImpl<$Res>
           ? _value.curriculumType
           : curriculumType // ignore: cast_nullable_to_non_nullable
               as String?,
+      testDate: freezed == testDate
+          ? _value.testDate
+          : testDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 }
@@ -273,7 +289,9 @@ class _$AvatarImpl implements _Avatar {
       @JsonKey(fromJson: _pedagogyFromJson, toJson: _pedagogyToJson)
       this.pedagogyMode = PedagogyMode.socratic,
       this.gradeLevel,
-      this.curriculumType});
+      this.curriculumType,
+      @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
+      this.testDate});
 
   factory _$AvatarImpl.fromJson(Map<String, dynamic> json) =>
       _$$AvatarImplFromJson(json);
@@ -308,10 +326,13 @@ class _$AvatarImpl implements _Avatar {
   final String? gradeLevel;
   @override
   final String? curriculumType;
+  @override
+  @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
+  final DateTime? testDate;
 
   @override
   String toString() {
-    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType)';
+    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate)';
   }
 
   @override
@@ -337,7 +358,9 @@ class _$AvatarImpl implements _Avatar {
             (identical(other.gradeLevel, gradeLevel) ||
                 other.gradeLevel == gradeLevel) &&
             (identical(other.curriculumType, curriculumType) ||
-                other.curriculumType == curriculumType));
+                other.curriculumType == curriculumType) &&
+            (identical(other.testDate, testDate) ||
+                other.testDate == testDate));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -354,7 +377,8 @@ class _$AvatarImpl implements _Avatar {
       updatedAt,
       pedagogyMode,
       gradeLevel,
-      curriculumType);
+      curriculumType,
+      testDate);
 
   /// Create a copy of Avatar
   /// with the given fields replaced by the non-null parameter values.
@@ -391,7 +415,9 @@ abstract class _Avatar implements Avatar {
       @JsonKey(fromJson: _pedagogyFromJson, toJson: _pedagogyToJson)
       final PedagogyMode pedagogyMode,
       final String? gradeLevel,
-      final String? curriculumType}) = _$AvatarImpl;
+      final String? curriculumType,
+      @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
+      final DateTime? testDate}) = _$AvatarImpl;
 
   factory _Avatar.fromJson(Map<String, dynamic> json) = _$AvatarImpl.fromJson;
 
@@ -424,6 +450,9 @@ abstract class _Avatar implements Avatar {
   String? get gradeLevel;
   @override
   String? get curriculumType;
+  @override
+  @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
+  DateTime? get testDate;
 
   /// Create a copy of Avatar
   /// with the given fields replaced by the non-null parameter values.

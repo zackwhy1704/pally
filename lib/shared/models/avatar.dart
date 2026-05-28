@@ -51,6 +51,24 @@ String _pedagogyToJson(PedagogyMode m) => 'SOCRATIC';
 
 // ── Models ───────────────────────────────────────────────────────────────────
 
+DateTime? _testDateFromJson(Object? v) {
+  if (v == null) return null;
+  if (v is DateTime) return v;
+  if (v is String && v.isNotEmpty) {
+    try {
+      return DateTime.parse(v);
+    } catch (_) {
+      return null;
+    }
+  }
+  return null;
+}
+
+String? _testDateToJson(DateTime? d) =>
+    d == null ? null : '${d.year.toString().padLeft(4, '0')}-'
+        '${d.month.toString().padLeft(2, '0')}-'
+        '${d.day.toString().padLeft(2, '0')}';
+
 @freezed
 class Avatar with _$Avatar {
   const factory Avatar({
@@ -74,6 +92,8 @@ class Avatar with _$Avatar {
     PedagogyMode pedagogyMode,
     String? gradeLevel,
     String? curriculumType,
+    @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
+    DateTime? testDate,
   }) = _Avatar;
 
   factory Avatar.fromJson(Map<String, dynamic> json) => _$AvatarFromJson(json);

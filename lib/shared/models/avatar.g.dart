@@ -26,6 +26,7 @@ _$AvatarImpl _$$AvatarImplFromJson(Map<String, dynamic> json) => _$AvatarImpl(
           : _pedagogyFromJson(json['pedagogyMode']),
       gradeLevel: json['gradeLevel'] as String?,
       curriculumType: json['curriculumType'] as String?,
+      testDate: _testDateFromJson(json['testDate']),
     );
 
 Map<String, dynamic> _$$AvatarImplToJson(_$AvatarImpl instance) =>
@@ -41,6 +42,7 @@ Map<String, dynamic> _$$AvatarImplToJson(_$AvatarImpl instance) =>
       'pedagogyMode': _pedagogyToJson(instance.pedagogyMode),
       'gradeLevel': instance.gradeLevel,
       'curriculumType': instance.curriculumType,
+      'testDate': _testDateToJson(instance.testDate),
     };
 
 _$CreateAvatarRequestImpl _$$CreateAvatarRequestImplFromJson(

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/services/notification_service.dart';
@@ -12,6 +13,8 @@ import 'package:pally/core/utils/device_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/auth/services/auth_service.dart';
+import 'package:pally/features/library/presentation/library_view_model.dart';
+import 'package:pally/shared/models/avatar.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -348,6 +351,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
+          const _SectionHeader(title: 'Test dates'),
+          _TestDatesSection(onPick: _pickTestDate),
+          const SizedBox(height: AppSpacing.md),
           const _SectionHeader(title: 'Security'),
           _SettingsCard(
             children: [
@@ -416,6 +422,58 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _pickTestDate(Avatar avatar) async {
+    final now = DateTime.now();
+    final initial = avatar.testDate ?? now.add(const Duration(days: 14));
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initial.isBefore(now) ? now : initial,
+      firstDate: now,
+      lastDate: now.add(const Duration(days: 365 * 2)),
+      builder: (context, child) => Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: Theme.of(context).colorScheme.copyWith(
+                primary: AppColors.purple,
+              ),
+        ),
+        child: child!,
+      ),
+    );
+    if (picked == null) return;
+    final iso = '${picked.year.toString().padLeft(4, '0')}-'
+        '${picked.month.toString().padLeft(2, '0')}-'
+        '${picked.day.toString().padLeft(2, '0')}';
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.patch<void>(
+        '/api/v1/avatars/${avatar.id}/test-date',
+        data: {'testDate': iso},
+      );
+      // Refresh the avatar list so the new date appears everywhere.
+      ref.invalidate(libraryViewModelProvider);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                '${avatar.name} test date set for ${DateFormat('MMM d, yyyy').format(picked)}'),
+            backgroundColor: AppColors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } on DioException {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not save test date — check your connection'),
+            backgroundColor: AppColors.coral,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _pickTime(BuildContext context) async {
@@ -623,6 +681,79 @@ class _TappableTile extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _TestDatesSection extends ConsumerWidget {
+  const _TestDatesSection({required this.onPick});
+
+  final Future<void> Function(Avatar) onPick;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final avatarsAsync = ref.watch(libraryViewModelProvider);
+    return avatarsAsync.when(
+      loading: () => const _SettingsCard(children: [
+        Padding(
+          padding: AppSpacing.card,
+          child: Row(
+            children: [
+              SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                    strokeWidth: 2, color: AppColors.purple),
+              ),
+              SizedBox(width: AppSpacing.sm),
+              Text('Loading tutors…'),
+            ],
+          ),
+        ),
+      ]),
+      error: (_, __) => _SettingsCard(children: [
+        Padding(
+          padding: AppSpacing.card,
+          child: Text('Could not load tutors',
+              style: AppTextStyles.bodySmall
+                  .copyWith(color: AppColors.text2)),
+        ),
+      ]),
+      data: (avatars) {
+        if (avatars.isEmpty) {
+          return _SettingsCard(children: [
+            Padding(
+              padding: AppSpacing.card,
+              child: Text(
+                'Create a tutor first, then set a test date here.',
+                style: AppTextStyles.bodySmall
+                    .copyWith(color: AppColors.text2),
+              ),
+            ),
+          ]);
+        }
+        return _SettingsCard(
+          children: [
+            for (var i = 0; i < avatars.length; i++) ...[
+              _TappableTile(
+                icon: Icons.event_rounded,
+                label: '${avatars[i].name} · ${avatars[i].subject}',
+                trailing: Text(
+                  avatars[i].testDate != null
+                      ? DateFormat('MMM d, yyyy')
+                          .format(avatars[i].testDate!)
+                      : 'Set date',
+                  style: AppTextStyles.body
+                      .copyWith(color: AppColors.purple),
+                ),
+                onTap: () => onPick(avatars[i]),
+              ),
+              if (i < avatars.length - 1)
+                const Divider(height: 1, color: AppColors.outline),
+            ],
+          ],
+        );
+      },
     );
   }
 }
