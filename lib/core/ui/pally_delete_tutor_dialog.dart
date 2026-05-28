@@ -27,10 +27,15 @@ class PallyDeleteTutorDialog extends StatelessWidget {
     return showDialog<bool>(
       context: context,
       barrierColor: const Color(0x7A1F1733),
-      builder: (_) => PallyDeleteTutorDialog(
+      // Always pop using the DIALOG's own context (dialogCtx). Using the
+      // outer context here pops the screen-level navigator instead of the
+      // dialog, which inside a StatefulShellRoute branch (Library tab)
+      // empties the branch's route stack and crashes GoRouter with
+      // "popped the last page off of the stack".
+      builder: (dialogCtx) => PallyDeleteTutorDialog(
         avatar: avatar,
-        onCancel: () => Navigator.of(context).pop(false),
-        onDelete: () => Navigator.of(context).pop(true),
+        onCancel: () => Navigator.of(dialogCtx).pop(false),
+        onDelete: () => Navigator.of(dialogCtx).pop(true),
       ),
     );
   }

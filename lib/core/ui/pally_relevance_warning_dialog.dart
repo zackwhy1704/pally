@@ -27,11 +27,13 @@ class PallyRelevanceWarningDialog extends StatelessWidget {
     return showDialog<bool>(
       context: context,
       barrierColor: const Color(0x7A1F1733),
-      builder: (_) => PallyRelevanceWarningDialog(
+      // Pop with the dialog's own context — never the outer context (see
+      // PallyDeleteTutorDialog for explanation).
+      builder: (dialogCtx) => PallyRelevanceWarningDialog(
         subject: subject,
         reason: reason,
-        onGoBack: () => Navigator.of(context).pop(false),
-        onAddAnyway: () => Navigator.of(context).pop(true),
+        onGoBack: () => Navigator.of(dialogCtx).pop(false),
+        onAddAnyway: () => Navigator.of(dialogCtx).pop(true),
       ),
     );
   }
