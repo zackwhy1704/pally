@@ -4,10 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/services/notification_service.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/utils/device_info.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/auth/services/auth_service.dart';
 
@@ -27,12 +29,49 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _biometricSupported = true;
   final _localAuth = LocalAuthentication();
 
+  static const _kReminderEnabled = 'settings_daily_reminder_enabled';
+  static const _kReminderHour = 'settings_daily_reminder_hour';
+  static const _kReminderMinute = 'settings_daily_reminder_minute';
+
   @override
   void initState() {
     super.initState();
     final childName = ref.read(authStateProvider).childName ?? '';
     _nameController = TextEditingController(text: childName);
     _loadBiometricState();
+    _loadReminderSettings();
+  }
+
+  Future<void> _loadReminderSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    setState(() {
+      _dailyReminder = prefs.getBool(_kReminderEnabled) ?? true;
+      _reminderTime = TimeOfDay(
+        hour: prefs.getInt(_kReminderHour) ?? 18,
+        minute: prefs.getInt(_kReminderMinute) ?? 0,
+      );
+    });
+  }
+
+  Future<void> _persistReminderEnabled(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_kReminderEnabled, enabled);
+    if (enabled) {
+      await NotificationService.scheduleDailyQuizReminder(
+          _reminderTime.hour, _reminderTime.minute);
+    } else {
+      await NotificationService.cancelDailyQuizReminder();
+    }
+  }
+
+  Future<void> _persistReminderTime(TimeOfDay t) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_kReminderHour, t.hour);
+    await prefs.setInt(_kReminderMinute, t.minute);
+    if (_dailyReminder) {
+      await NotificationService.scheduleDailyQuizReminder(t.hour, t.minute);
+    }
   }
 
   Future<void> _loadBiometricState() async {
@@ -288,7 +327,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 icon: Icons.notifications_outlined,
                 label: 'Daily quiz reminder',
                 value: _dailyReminder,
-                onChanged: (v) => setState(() => _dailyReminder = v),
+                onChanged: (v) {
+                  setState(() => _dailyReminder = v);
+                  _persistReminderEnabled(v);
+                },
               ),
               if (_dailyReminder) ...[
                 const Divider(height: 1, color: AppColors.outline),
@@ -391,7 +433,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         );
       },
     );
-    if (picked != null) setState(() => _reminderTime = picked);
+    if (picked != null) {
+      setState(() => _reminderTime = picked);
+      await _persistReminderTime(picked);
+    }
   }
 }
 

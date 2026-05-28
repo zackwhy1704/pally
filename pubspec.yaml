@@ -49,6 +49,8 @@ dependencies:
   sqlite3_flutter_libs: ^0.5.4
   local_auth: ^2.3.0
   device_info_plus: ^10.1.0
+  flutter_local_notifications: ^20.1.0
+  timezone: ^0.10.1
 
 dev_dependencies:
   flutter_test:

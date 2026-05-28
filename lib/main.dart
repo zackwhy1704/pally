@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/pally_app.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/local_db/pally_database.dart';
+import 'package:pally/core/services/notification_service.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/chat/data/local/chat_local_data_source.dart';
@@ -13,6 +14,9 @@ void main() async {
 
   // Load persisted auth credentials before first frame.
   await AuthNotifier.instance.load();
+
+  // Initialise local notifications. Non-fatal if it fails.
+  await NotificationService.init();
 
   final prefs = await SharedPreferences.getInstance();
   final router = buildAppRouter();
