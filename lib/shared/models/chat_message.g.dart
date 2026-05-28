@@ -35,6 +35,9 @@ _$ChatMessageImpl _$$ChatMessageImplFromJson(Map<String, dynamic> json) =>
       feedbackType:
           $enumDecodeNullable(_$FeedbackTypeEnumMap, json['feedbackType']),
       savedToBrain: json['savedToBrain'] as bool? ?? false,
+      syncStatus: json['syncStatus'] == null
+          ? SyncStatus.synced
+          : _syncStatusFromJson(json['syncStatus']),
     );
 
 Map<String, dynamic> _$$ChatMessageImplToJson(_$ChatMessageImpl instance) =>
@@ -52,6 +55,7 @@ Map<String, dynamic> _$$ChatMessageImplToJson(_$ChatMessageImpl instance) =>
       'scanResult': instance.scanResult,
       'feedbackType': _$FeedbackTypeEnumMap[instance.feedbackType],
       'savedToBrain': instance.savedToBrain,
+      'syncStatus': _syncStatusToJson(instance.syncStatus),
     };
 
 const _$MessageTypeEnumMap = {

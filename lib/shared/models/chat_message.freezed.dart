@@ -36,6 +36,8 @@ mixin _$ChatMessage {
       throw _privateConstructorUsedError; // Persistence / feedback fields
   FeedbackType? get feedbackType => throw _privateConstructorUsedError;
   bool get savedToBrain => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _syncStatusFromJson, toJson: _syncStatusToJson)
+  SyncStatus get syncStatus => throw _privateConstructorUsedError;
 
   /// Serializes this ChatMessage to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -67,7 +69,9 @@ abstract class $ChatMessageCopyWith<$Res> {
       List<PhotoQuestion> photoQuestions,
       HomeworkScanResult? scanResult,
       FeedbackType? feedbackType,
-      bool savedToBrain});
+      bool savedToBrain,
+      @JsonKey(fromJson: _syncStatusFromJson, toJson: _syncStatusToJson)
+      SyncStatus syncStatus});
 
   $HomeworkScanResultCopyWith<$Res>? get scanResult;
 }
@@ -100,6 +104,7 @@ class _$ChatMessageCopyWithImpl<$Res, $Val extends ChatMessage>
     Object? scanResult = freezed,
     Object? feedbackType = freezed,
     Object? savedToBrain = null,
+    Object? syncStatus = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -154,6 +159,10 @@ class _$ChatMessageCopyWithImpl<$Res, $Val extends ChatMessage>
           ? _value.savedToBrain
           : savedToBrain // ignore: cast_nullable_to_non_nullable
               as bool,
+      syncStatus: null == syncStatus
+          ? _value.syncStatus
+          : syncStatus // ignore: cast_nullable_to_non_nullable
+              as SyncStatus,
     ) as $Val);
   }
 
@@ -194,7 +203,9 @@ abstract class _$$ChatMessageImplCopyWith<$Res>
       List<PhotoQuestion> photoQuestions,
       HomeworkScanResult? scanResult,
       FeedbackType? feedbackType,
-      bool savedToBrain});
+      bool savedToBrain,
+      @JsonKey(fromJson: _syncStatusFromJson, toJson: _syncStatusToJson)
+      SyncStatus syncStatus});
 
   @override
   $HomeworkScanResultCopyWith<$Res>? get scanResult;
@@ -226,6 +237,7 @@ class __$$ChatMessageImplCopyWithImpl<$Res>
     Object? scanResult = freezed,
     Object? feedbackType = freezed,
     Object? savedToBrain = null,
+    Object? syncStatus = null,
   }) {
     return _then(_$ChatMessageImpl(
       id: null == id
@@ -280,6 +292,10 @@ class __$$ChatMessageImplCopyWithImpl<$Res>
           ? _value.savedToBrain
           : savedToBrain // ignore: cast_nullable_to_non_nullable
               as bool,
+      syncStatus: null == syncStatus
+          ? _value.syncStatus
+          : syncStatus // ignore: cast_nullable_to_non_nullable
+              as SyncStatus,
     ));
   }
 }
@@ -301,7 +317,9 @@ class _$ChatMessageImpl implements _ChatMessage {
       final List<PhotoQuestion> photoQuestions = const [],
       this.scanResult,
       this.feedbackType,
-      this.savedToBrain = false})
+      this.savedToBrain = false,
+      @JsonKey(fromJson: _syncStatusFromJson, toJson: _syncStatusToJson)
+      this.syncStatus = SyncStatus.synced})
       : _sources = sources,
         _photoQuestions = photoQuestions;
 
@@ -354,10 +372,13 @@ class _$ChatMessageImpl implements _ChatMessage {
   @override
   @JsonKey()
   final bool savedToBrain;
+  @override
+  @JsonKey(fromJson: _syncStatusFromJson, toJson: _syncStatusToJson)
+  final SyncStatus syncStatus;
 
   @override
   String toString() {
-    return 'ChatMessage(id: $id, avatarId: $avatarId, role: $role, content: $content, sources: $sources, isStreaming: $isStreaming, createdAt: $createdAt, messageType: $messageType, imagePath: $imagePath, photoQuestions: $photoQuestions, scanResult: $scanResult, feedbackType: $feedbackType, savedToBrain: $savedToBrain)';
+    return 'ChatMessage(id: $id, avatarId: $avatarId, role: $role, content: $content, sources: $sources, isStreaming: $isStreaming, createdAt: $createdAt, messageType: $messageType, imagePath: $imagePath, photoQuestions: $photoQuestions, scanResult: $scanResult, feedbackType: $feedbackType, savedToBrain: $savedToBrain, syncStatus: $syncStatus)';
   }
 
   @override
@@ -386,7 +407,9 @@ class _$ChatMessageImpl implements _ChatMessage {
             (identical(other.feedbackType, feedbackType) ||
                 other.feedbackType == feedbackType) &&
             (identical(other.savedToBrain, savedToBrain) ||
-                other.savedToBrain == savedToBrain));
+                other.savedToBrain == savedToBrain) &&
+            (identical(other.syncStatus, syncStatus) ||
+                other.syncStatus == syncStatus));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -405,7 +428,8 @@ class _$ChatMessageImpl implements _ChatMessage {
       const DeepCollectionEquality().hash(_photoQuestions),
       scanResult,
       feedbackType,
-      savedToBrain);
+      savedToBrain,
+      syncStatus);
 
   /// Create a copy of ChatMessage
   /// with the given fields replaced by the non-null parameter values.
@@ -438,7 +462,9 @@ abstract class _ChatMessage implements ChatMessage {
       final List<PhotoQuestion> photoQuestions,
       final HomeworkScanResult? scanResult,
       final FeedbackType? feedbackType,
-      final bool savedToBrain}) = _$ChatMessageImpl;
+      final bool savedToBrain,
+      @JsonKey(fromJson: _syncStatusFromJson, toJson: _syncStatusToJson)
+      final SyncStatus syncStatus}) = _$ChatMessageImpl;
 
   factory _ChatMessage.fromJson(Map<String, dynamic> json) =
       _$ChatMessageImpl.fromJson;
@@ -470,6 +496,9 @@ abstract class _ChatMessage implements ChatMessage {
   FeedbackType? get feedbackType;
   @override
   bool get savedToBrain;
+  @override
+  @JsonKey(fromJson: _syncStatusFromJson, toJson: _syncStatusToJson)
+  SyncStatus get syncStatus;
 
   /// Create a copy of ChatMessage
   /// with the given fields replaced by the non-null parameter values.

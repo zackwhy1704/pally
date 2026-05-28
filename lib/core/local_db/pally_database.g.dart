@@ -83,6 +83,14 @@ class $ChatMessagesTable extends ChatMessages
   late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
       'created_at', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _syncStatusMeta =
+      const VerificationMeta('syncStatus');
+  @override
+  late final GeneratedColumn<String> syncStatus = GeneratedColumn<String>(
+      'sync_status', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('synced'));
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -95,7 +103,8 @@ class $ChatMessagesTable extends ChatMessages
         savedToBrain,
         isPhotoMessage,
         photoPath,
-        createdAt
+        createdAt,
+        syncStatus
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -170,6 +179,12 @@ class $ChatMessagesTable extends ChatMessages
     } else if (isInserting) {
       context.missing(_createdAtMeta);
     }
+    if (data.containsKey('sync_status')) {
+      context.handle(
+          _syncStatusMeta,
+          syncStatus.isAcceptableOrUnknown(
+              data['sync_status']!, _syncStatusMeta));
+    }
     return context;
   }
 
@@ -201,6 +216,8 @@ class $ChatMessagesTable extends ChatMessages
           .read(DriftSqlType.string, data['${effectivePrefix}photo_path']),
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      syncStatus: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}sync_status'])!,
     );
   }
 
@@ -223,6 +240,7 @@ class ChatMessageRecord extends DataClass
   final bool isPhotoMessage;
   final String? photoPath;
   final DateTime createdAt;
+  final String syncStatus;
   const ChatMessageRecord(
       {required this.id,
       required this.avatarId,
@@ -234,7 +252,8 @@ class ChatMessageRecord extends DataClass
       required this.savedToBrain,
       required this.isPhotoMessage,
       this.photoPath,
-      required this.createdAt});
+      required this.createdAt,
+      required this.syncStatus});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -255,6 +274,7 @@ class ChatMessageRecord extends DataClass
       map['photo_path'] = Variable<String>(photoPath);
     }
     map['created_at'] = Variable<DateTime>(createdAt);
+    map['sync_status'] = Variable<String>(syncStatus);
     return map;
   }
 
@@ -277,6 +297,7 @@ class ChatMessageRecord extends DataClass
           ? const Value.absent()
           : Value(photoPath),
       createdAt: Value(createdAt),
+      syncStatus: Value(syncStatus),
     );
   }
 
@@ -295,6 +316,7 @@ class ChatMessageRecord extends DataClass
       isPhotoMessage: serializer.fromJson<bool>(json['isPhotoMessage']),
       photoPath: serializer.fromJson<String?>(json['photoPath']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      syncStatus: serializer.fromJson<String>(json['syncStatus']),
     );
   }
   @override
@@ -312,6 +334,7 @@ class ChatMessageRecord extends DataClass
       'isPhotoMessage': serializer.toJson<bool>(isPhotoMessage),
       'photoPath': serializer.toJson<String?>(photoPath),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'syncStatus': serializer.toJson<String>(syncStatus),
     };
   }
 
@@ -326,7 +349,8 @@ class ChatMessageRecord extends DataClass
           bool? savedToBrain,
           bool? isPhotoMessage,
           Value<String?> photoPath = const Value.absent(),
-          DateTime? createdAt}) =>
+          DateTime? createdAt,
+          String? syncStatus}) =>
       ChatMessageRecord(
         id: id ?? this.id,
         avatarId: avatarId ?? this.avatarId,
@@ -341,6 +365,7 @@ class ChatMessageRecord extends DataClass
         isPhotoMessage: isPhotoMessage ?? this.isPhotoMessage,
         photoPath: photoPath.present ? photoPath.value : this.photoPath,
         createdAt: createdAt ?? this.createdAt,
+        syncStatus: syncStatus ?? this.syncStatus,
       );
   ChatMessageRecord copyWithCompanion(ChatMessagesCompanion data) {
     return ChatMessageRecord(
@@ -364,6 +389,8 @@ class ChatMessageRecord extends DataClass
           : this.isPhotoMessage,
       photoPath: data.photoPath.present ? data.photoPath.value : this.photoPath,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      syncStatus:
+          data.syncStatus.present ? data.syncStatus.value : this.syncStatus,
     );
   }
 
@@ -380,7 +407,8 @@ class ChatMessageRecord extends DataClass
           ..write('savedToBrain: $savedToBrain, ')
           ..write('isPhotoMessage: $isPhotoMessage, ')
           ..write('photoPath: $photoPath, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('syncStatus: $syncStatus')
           ..write(')'))
         .toString();
   }
@@ -397,7 +425,8 @@ class ChatMessageRecord extends DataClass
       savedToBrain,
       isPhotoMessage,
       photoPath,
-      createdAt);
+      createdAt,
+      syncStatus);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -412,7 +441,8 @@ class ChatMessageRecord extends DataClass
           other.savedToBrain == this.savedToBrain &&
           other.isPhotoMessage == this.isPhotoMessage &&
           other.photoPath == this.photoPath &&
-          other.createdAt == this.createdAt);
+          other.createdAt == this.createdAt &&
+          other.syncStatus == this.syncStatus);
 }
 
 class ChatMessagesCompanion extends UpdateCompanion<ChatMessageRecord> {
@@ -427,6 +457,7 @@ class ChatMessagesCompanion extends UpdateCompanion<ChatMessageRecord> {
   final Value<bool> isPhotoMessage;
   final Value<String?> photoPath;
   final Value<DateTime> createdAt;
+  final Value<String> syncStatus;
   final Value<int> rowid;
   const ChatMessagesCompanion({
     this.id = const Value.absent(),
@@ -440,6 +471,7 @@ class ChatMessagesCompanion extends UpdateCompanion<ChatMessageRecord> {
     this.isPhotoMessage = const Value.absent(),
     this.photoPath = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.syncStatus = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ChatMessagesCompanion.insert({
@@ -454,6 +486,7 @@ class ChatMessagesCompanion extends UpdateCompanion<ChatMessageRecord> {
     this.isPhotoMessage = const Value.absent(),
     this.photoPath = const Value.absent(),
     required DateTime createdAt,
+    this.syncStatus = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         avatarId = Value(avatarId),
@@ -472,6 +505,7 @@ class ChatMessagesCompanion extends UpdateCompanion<ChatMessageRecord> {
     Expression<bool>? isPhotoMessage,
     Expression<String>? photoPath,
     Expression<DateTime>? createdAt,
+    Expression<String>? syncStatus,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -486,6 +520,7 @@ class ChatMessagesCompanion extends UpdateCompanion<ChatMessageRecord> {
       if (isPhotoMessage != null) 'is_photo_message': isPhotoMessage,
       if (photoPath != null) 'photo_path': photoPath,
       if (createdAt != null) 'created_at': createdAt,
+      if (syncStatus != null) 'sync_status': syncStatus,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -502,6 +537,7 @@ class ChatMessagesCompanion extends UpdateCompanion<ChatMessageRecord> {
       Value<bool>? isPhotoMessage,
       Value<String?>? photoPath,
       Value<DateTime>? createdAt,
+      Value<String>? syncStatus,
       Value<int>? rowid}) {
     return ChatMessagesCompanion(
       id: id ?? this.id,
@@ -515,6 +551,7 @@ class ChatMessagesCompanion extends UpdateCompanion<ChatMessageRecord> {
       isPhotoMessage: isPhotoMessage ?? this.isPhotoMessage,
       photoPath: photoPath ?? this.photoPath,
       createdAt: createdAt ?? this.createdAt,
+      syncStatus: syncStatus ?? this.syncStatus,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -555,6 +592,9 @@ class ChatMessagesCompanion extends UpdateCompanion<ChatMessageRecord> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (syncStatus.present) {
+      map['sync_status'] = Variable<String>(syncStatus.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -575,6 +615,7 @@ class ChatMessagesCompanion extends UpdateCompanion<ChatMessageRecord> {
           ..write('isPhotoMessage: $isPhotoMessage, ')
           ..write('photoPath: $photoPath, ')
           ..write('createdAt: $createdAt, ')
+          ..write('syncStatus: $syncStatus, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1311,6 +1352,283 @@ class ChatScrollPositionsCompanion extends UpdateCompanion<ChatScrollRecord> {
   }
 }
 
+class $PendingSyncsTable extends PendingSyncs
+    with TableInfo<$PendingSyncsTable, PendingSyncRecord> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PendingSyncsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _messageIdMeta =
+      const VerificationMeta('messageId');
+  @override
+  late final GeneratedColumn<String> messageId = GeneratedColumn<String>(
+      'message_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _avatarIdMeta =
+      const VerificationMeta('avatarId');
+  @override
+  late final GeneratedColumn<String> avatarId = GeneratedColumn<String>(
+      'avatar_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _queuedAtMeta =
+      const VerificationMeta('queuedAt');
+  @override
+  late final GeneratedColumn<DateTime> queuedAt = GeneratedColumn<DateTime>(
+      'queued_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _retryCountMeta =
+      const VerificationMeta('retryCount');
+  @override
+  late final GeneratedColumn<int> retryCount = GeneratedColumn<int>(
+      'retry_count', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [messageId, avatarId, queuedAt, retryCount];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'pending_syncs';
+  @override
+  VerificationContext validateIntegrity(Insertable<PendingSyncRecord> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('message_id')) {
+      context.handle(_messageIdMeta,
+          messageId.isAcceptableOrUnknown(data['message_id']!, _messageIdMeta));
+    } else if (isInserting) {
+      context.missing(_messageIdMeta);
+    }
+    if (data.containsKey('avatar_id')) {
+      context.handle(_avatarIdMeta,
+          avatarId.isAcceptableOrUnknown(data['avatar_id']!, _avatarIdMeta));
+    } else if (isInserting) {
+      context.missing(_avatarIdMeta);
+    }
+    if (data.containsKey('queued_at')) {
+      context.handle(_queuedAtMeta,
+          queuedAt.isAcceptableOrUnknown(data['queued_at']!, _queuedAtMeta));
+    } else if (isInserting) {
+      context.missing(_queuedAtMeta);
+    }
+    if (data.containsKey('retry_count')) {
+      context.handle(
+          _retryCountMeta,
+          retryCount.isAcceptableOrUnknown(
+              data['retry_count']!, _retryCountMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {messageId};
+  @override
+  PendingSyncRecord map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PendingSyncRecord(
+      messageId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}message_id'])!,
+      avatarId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}avatar_id'])!,
+      queuedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}queued_at'])!,
+      retryCount: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}retry_count'])!,
+    );
+  }
+
+  @override
+  $PendingSyncsTable createAlias(String alias) {
+    return $PendingSyncsTable(attachedDatabase, alias);
+  }
+}
+
+class PendingSyncRecord extends DataClass
+    implements Insertable<PendingSyncRecord> {
+  final String messageId;
+  final String avatarId;
+  final DateTime queuedAt;
+  final int retryCount;
+  const PendingSyncRecord(
+      {required this.messageId,
+      required this.avatarId,
+      required this.queuedAt,
+      required this.retryCount});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['message_id'] = Variable<String>(messageId);
+    map['avatar_id'] = Variable<String>(avatarId);
+    map['queued_at'] = Variable<DateTime>(queuedAt);
+    map['retry_count'] = Variable<int>(retryCount);
+    return map;
+  }
+
+  PendingSyncsCompanion toCompanion(bool nullToAbsent) {
+    return PendingSyncsCompanion(
+      messageId: Value(messageId),
+      avatarId: Value(avatarId),
+      queuedAt: Value(queuedAt),
+      retryCount: Value(retryCount),
+    );
+  }
+
+  factory PendingSyncRecord.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PendingSyncRecord(
+      messageId: serializer.fromJson<String>(json['messageId']),
+      avatarId: serializer.fromJson<String>(json['avatarId']),
+      queuedAt: serializer.fromJson<DateTime>(json['queuedAt']),
+      retryCount: serializer.fromJson<int>(json['retryCount']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'messageId': serializer.toJson<String>(messageId),
+      'avatarId': serializer.toJson<String>(avatarId),
+      'queuedAt': serializer.toJson<DateTime>(queuedAt),
+      'retryCount': serializer.toJson<int>(retryCount),
+    };
+  }
+
+  PendingSyncRecord copyWith(
+          {String? messageId,
+          String? avatarId,
+          DateTime? queuedAt,
+          int? retryCount}) =>
+      PendingSyncRecord(
+        messageId: messageId ?? this.messageId,
+        avatarId: avatarId ?? this.avatarId,
+        queuedAt: queuedAt ?? this.queuedAt,
+        retryCount: retryCount ?? this.retryCount,
+      );
+  PendingSyncRecord copyWithCompanion(PendingSyncsCompanion data) {
+    return PendingSyncRecord(
+      messageId: data.messageId.present ? data.messageId.value : this.messageId,
+      avatarId: data.avatarId.present ? data.avatarId.value : this.avatarId,
+      queuedAt: data.queuedAt.present ? data.queuedAt.value : this.queuedAt,
+      retryCount:
+          data.retryCount.present ? data.retryCount.value : this.retryCount,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PendingSyncRecord(')
+          ..write('messageId: $messageId, ')
+          ..write('avatarId: $avatarId, ')
+          ..write('queuedAt: $queuedAt, ')
+          ..write('retryCount: $retryCount')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(messageId, avatarId, queuedAt, retryCount);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PendingSyncRecord &&
+          other.messageId == this.messageId &&
+          other.avatarId == this.avatarId &&
+          other.queuedAt == this.queuedAt &&
+          other.retryCount == this.retryCount);
+}
+
+class PendingSyncsCompanion extends UpdateCompanion<PendingSyncRecord> {
+  final Value<String> messageId;
+  final Value<String> avatarId;
+  final Value<DateTime> queuedAt;
+  final Value<int> retryCount;
+  final Value<int> rowid;
+  const PendingSyncsCompanion({
+    this.messageId = const Value.absent(),
+    this.avatarId = const Value.absent(),
+    this.queuedAt = const Value.absent(),
+    this.retryCount = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  PendingSyncsCompanion.insert({
+    required String messageId,
+    required String avatarId,
+    required DateTime queuedAt,
+    this.retryCount = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : messageId = Value(messageId),
+        avatarId = Value(avatarId),
+        queuedAt = Value(queuedAt);
+  static Insertable<PendingSyncRecord> custom({
+    Expression<String>? messageId,
+    Expression<String>? avatarId,
+    Expression<DateTime>? queuedAt,
+    Expression<int>? retryCount,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (messageId != null) 'message_id': messageId,
+      if (avatarId != null) 'avatar_id': avatarId,
+      if (queuedAt != null) 'queued_at': queuedAt,
+      if (retryCount != null) 'retry_count': retryCount,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  PendingSyncsCompanion copyWith(
+      {Value<String>? messageId,
+      Value<String>? avatarId,
+      Value<DateTime>? queuedAt,
+      Value<int>? retryCount,
+      Value<int>? rowid}) {
+    return PendingSyncsCompanion(
+      messageId: messageId ?? this.messageId,
+      avatarId: avatarId ?? this.avatarId,
+      queuedAt: queuedAt ?? this.queuedAt,
+      retryCount: retryCount ?? this.retryCount,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (messageId.present) {
+      map['message_id'] = Variable<String>(messageId.value);
+    }
+    if (avatarId.present) {
+      map['avatar_id'] = Variable<String>(avatarId.value);
+    }
+    if (queuedAt.present) {
+      map['queued_at'] = Variable<DateTime>(queuedAt.value);
+    }
+    if (retryCount.present) {
+      map['retry_count'] = Variable<int>(retryCount.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PendingSyncsCompanion(')
+          ..write('messageId: $messageId, ')
+          ..write('avatarId: $avatarId, ')
+          ..write('queuedAt: $queuedAt, ')
+          ..write('retryCount: $retryCount, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$PallyDatabase extends GeneratedDatabase {
   _$PallyDatabase(QueryExecutor e) : super(e);
   $PallyDatabaseManager get managers => $PallyDatabaseManager(this);
@@ -1318,12 +1636,13 @@ abstract class _$PallyDatabase extends GeneratedDatabase {
   late final $SessionStatesTable sessionStates = $SessionStatesTable(this);
   late final $ChatScrollPositionsTable chatScrollPositions =
       $ChatScrollPositionsTable(this);
+  late final $PendingSyncsTable pendingSyncs = $PendingSyncsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [chatMessages, sessionStates, chatScrollPositions];
+      [chatMessages, sessionStates, chatScrollPositions, pendingSyncs];
 }
 
 typedef $$ChatMessagesTableCreateCompanionBuilder = ChatMessagesCompanion
@@ -1339,6 +1658,7 @@ typedef $$ChatMessagesTableCreateCompanionBuilder = ChatMessagesCompanion
   Value<bool> isPhotoMessage,
   Value<String?> photoPath,
   required DateTime createdAt,
+  Value<String> syncStatus,
   Value<int> rowid,
 });
 typedef $$ChatMessagesTableUpdateCompanionBuilder = ChatMessagesCompanion
@@ -1354,6 +1674,7 @@ typedef $$ChatMessagesTableUpdateCompanionBuilder = ChatMessagesCompanion
   Value<bool> isPhotoMessage,
   Value<String?> photoPath,
   Value<DateTime> createdAt,
+  Value<String> syncStatus,
   Value<int> rowid,
 });
 
@@ -1400,6 +1721,9 @@ class $$ChatMessagesTableFilterComposer
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get syncStatus => $composableBuilder(
+      column: $table.syncStatus, builder: (column) => ColumnFilters(column));
 }
 
 class $$ChatMessagesTableOrderingComposer
@@ -1447,6 +1771,9 @@ class $$ChatMessagesTableOrderingComposer
 
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get syncStatus => $composableBuilder(
+      column: $table.syncStatus, builder: (column) => ColumnOrderings(column));
 }
 
 class $$ChatMessagesTableAnnotationComposer
@@ -1490,6 +1817,9 @@ class $$ChatMessagesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get syncStatus => $composableBuilder(
+      column: $table.syncStatus, builder: (column) => column);
 }
 
 class $$ChatMessagesTableTableManager extends RootTableManager<
@@ -1529,6 +1859,7 @@ class $$ChatMessagesTableTableManager extends RootTableManager<
             Value<bool> isPhotoMessage = const Value.absent(),
             Value<String?> photoPath = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
+            Value<String> syncStatus = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               ChatMessagesCompanion(
@@ -1543,6 +1874,7 @@ class $$ChatMessagesTableTableManager extends RootTableManager<
             isPhotoMessage: isPhotoMessage,
             photoPath: photoPath,
             createdAt: createdAt,
+            syncStatus: syncStatus,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -1557,6 +1889,7 @@ class $$ChatMessagesTableTableManager extends RootTableManager<
             Value<bool> isPhotoMessage = const Value.absent(),
             Value<String?> photoPath = const Value.absent(),
             required DateTime createdAt,
+            Value<String> syncStatus = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               ChatMessagesCompanion.insert(
@@ -1571,6 +1904,7 @@ class $$ChatMessagesTableTableManager extends RootTableManager<
             isPhotoMessage: isPhotoMessage,
             photoPath: photoPath,
             createdAt: createdAt,
+            syncStatus: syncStatus,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
@@ -1985,6 +2319,164 @@ typedef $$ChatScrollPositionsTableProcessedTableManager = ProcessedTableManager<
     ),
     ChatScrollRecord,
     PrefetchHooks Function()>;
+typedef $$PendingSyncsTableCreateCompanionBuilder = PendingSyncsCompanion
+    Function({
+  required String messageId,
+  required String avatarId,
+  required DateTime queuedAt,
+  Value<int> retryCount,
+  Value<int> rowid,
+});
+typedef $$PendingSyncsTableUpdateCompanionBuilder = PendingSyncsCompanion
+    Function({
+  Value<String> messageId,
+  Value<String> avatarId,
+  Value<DateTime> queuedAt,
+  Value<int> retryCount,
+  Value<int> rowid,
+});
+
+class $$PendingSyncsTableFilterComposer
+    extends Composer<_$PallyDatabase, $PendingSyncsTable> {
+  $$PendingSyncsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get messageId => $composableBuilder(
+      column: $table.messageId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get avatarId => $composableBuilder(
+      column: $table.avatarId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get queuedAt => $composableBuilder(
+      column: $table.queuedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get retryCount => $composableBuilder(
+      column: $table.retryCount, builder: (column) => ColumnFilters(column));
+}
+
+class $$PendingSyncsTableOrderingComposer
+    extends Composer<_$PallyDatabase, $PendingSyncsTable> {
+  $$PendingSyncsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get messageId => $composableBuilder(
+      column: $table.messageId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get avatarId => $composableBuilder(
+      column: $table.avatarId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get queuedAt => $composableBuilder(
+      column: $table.queuedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get retryCount => $composableBuilder(
+      column: $table.retryCount, builder: (column) => ColumnOrderings(column));
+}
+
+class $$PendingSyncsTableAnnotationComposer
+    extends Composer<_$PallyDatabase, $PendingSyncsTable> {
+  $$PendingSyncsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get messageId =>
+      $composableBuilder(column: $table.messageId, builder: (column) => column);
+
+  GeneratedColumn<String> get avatarId =>
+      $composableBuilder(column: $table.avatarId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get queuedAt =>
+      $composableBuilder(column: $table.queuedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get retryCount => $composableBuilder(
+      column: $table.retryCount, builder: (column) => column);
+}
+
+class $$PendingSyncsTableTableManager extends RootTableManager<
+    _$PallyDatabase,
+    $PendingSyncsTable,
+    PendingSyncRecord,
+    $$PendingSyncsTableFilterComposer,
+    $$PendingSyncsTableOrderingComposer,
+    $$PendingSyncsTableAnnotationComposer,
+    $$PendingSyncsTableCreateCompanionBuilder,
+    $$PendingSyncsTableUpdateCompanionBuilder,
+    (
+      PendingSyncRecord,
+      BaseReferences<_$PallyDatabase, $PendingSyncsTable, PendingSyncRecord>
+    ),
+    PendingSyncRecord,
+    PrefetchHooks Function()> {
+  $$PendingSyncsTableTableManager(_$PallyDatabase db, $PendingSyncsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PendingSyncsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PendingSyncsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PendingSyncsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> messageId = const Value.absent(),
+            Value<String> avatarId = const Value.absent(),
+            Value<DateTime> queuedAt = const Value.absent(),
+            Value<int> retryCount = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              PendingSyncsCompanion(
+            messageId: messageId,
+            avatarId: avatarId,
+            queuedAt: queuedAt,
+            retryCount: retryCount,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String messageId,
+            required String avatarId,
+            required DateTime queuedAt,
+            Value<int> retryCount = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              PendingSyncsCompanion.insert(
+            messageId: messageId,
+            avatarId: avatarId,
+            queuedAt: queuedAt,
+            retryCount: retryCount,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$PendingSyncsTableProcessedTableManager = ProcessedTableManager<
+    _$PallyDatabase,
+    $PendingSyncsTable,
+    PendingSyncRecord,
+    $$PendingSyncsTableFilterComposer,
+    $$PendingSyncsTableOrderingComposer,
+    $$PendingSyncsTableAnnotationComposer,
+    $$PendingSyncsTableCreateCompanionBuilder,
+    $$PendingSyncsTableUpdateCompanionBuilder,
+    (
+      PendingSyncRecord,
+      BaseReferences<_$PallyDatabase, $PendingSyncsTable, PendingSyncRecord>
+    ),
+    PendingSyncRecord,
+    PrefetchHooks Function()>;
 
 class $PallyDatabaseManager {
   final _$PallyDatabase _db;
@@ -1995,6 +2487,8 @@ class $PallyDatabaseManager {
       $$SessionStatesTableTableManager(_db, _db.sessionStates);
   $$ChatScrollPositionsTableTableManager get chatScrollPositions =>
       $$ChatScrollPositionsTableTableManager(_db, _db.chatScrollPositions);
+  $$PendingSyncsTableTableManager get pendingSyncs =>
+      $$PendingSyncsTableTableManager(_db, _db.pendingSyncs);
 }
 
 // **************************************************************************

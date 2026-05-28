@@ -116,4 +116,37 @@ class ChatLocalDataSource {
           ),
         );
   }
+
+  // ── Pending sync queue ────────────────────────────────────────────
+
+  Future<void> addPendingSync(String messageId, String avatarId) async {
+    await _db.into(_db.pendingSyncs).insertOnConflictUpdate(
+          PendingSyncsCompanion.insert(
+            messageId: messageId,
+            avatarId: avatarId,
+            queuedAt: DateTime.now(),
+          ),
+        );
+  }
+
+  Future<void> removePendingSync(String messageId) async {
+    await (_db.delete(_db.pendingSyncs)
+          ..where((t) => t.messageId.equals(messageId)))
+        .go();
+  }
+
+  Future<List<PendingSyncRecord>> getPendingSyncs(String avatarId) async {
+    return (_db.select(_db.pendingSyncs)
+          ..where((t) => t.avatarId.equals(avatarId))
+          ..orderBy([(t) => OrderingTerm.asc(t.queuedAt)]))
+        .get();
+  }
+
+  Future<ChatMessage?> getMessage(String messageId) async {
+    final row = await (_db.select(_db.chatMessages)
+          ..where((t) => t.id.equals(messageId))
+          ..limit(1))
+        .getSingleOrNull();
+    return row != null ? ChatMessageMapper.fromRecord(row) : null;
+  }
 }

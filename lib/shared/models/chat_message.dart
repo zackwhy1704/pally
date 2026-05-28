@@ -24,6 +24,19 @@ enum MessageType { text, photo, homeworkResult }
 
 enum FeedbackType { helpful, wrong, confused, saveToBrain }
 
+enum SyncStatus { pending, synced, failed }
+
+SyncStatus _syncStatusFromJson(dynamic value) {
+  final s = (value as String? ?? '').toLowerCase();
+  return switch (s) {
+    'synced' => SyncStatus.synced,
+    'failed' => SyncStatus.failed,
+    _ => SyncStatus.pending,
+  };
+}
+
+String _syncStatusToJson(SyncStatus s) => s.name;
+
 @freezed
 class ChatMessage with _$ChatMessage {
   const factory ChatMessage({
@@ -43,6 +56,9 @@ class ChatMessage with _$ChatMessage {
     // Persistence / feedback fields
     FeedbackType? feedbackType,
     @Default(false) bool savedToBrain,
+    @JsonKey(fromJson: _syncStatusFromJson, toJson: _syncStatusToJson)
+    @Default(SyncStatus.synced)
+    SyncStatus syncStatus,
   }) = _ChatMessage;
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) =>

@@ -26,6 +26,8 @@ class ChatMessages extends Table {
       boolean().withDefault(const Constant(false))();
   TextColumn get photoPath => text().nullable()();
   DateTimeColumn get createdAt => dateTime()();
+  TextColumn get syncStatus =>
+      text().withDefault(const Constant('synced'))(); // pending|synced|failed
 
   @override
   Set<Column> get primaryKey => {id};
@@ -65,16 +67,41 @@ class ChatScrollPositions extends Table {
   Set<Column> get primaryKey => {avatarId};
 }
 
+// ── Pending syncs ─────────────────────────────────────────────────────────────
+
+@DataClassName('PendingSyncRecord')
+class PendingSyncs extends Table {
+  TextColumn get messageId => text()();
+  TextColumn get avatarId => text()();
+  DateTimeColumn get queuedAt => dateTime()();
+  IntColumn get retryCount => integer().withDefault(const Constant(0))();
+
+  @override
+  Set<Column> get primaryKey => {messageId};
+}
+
 // ── Database ──────────────────────────────────────────────────────────────────
 
 @DriftDatabase(
-    tables: [ChatMessages, SessionStates, ChatScrollPositions])
+    tables: [ChatMessages, SessionStates, ChatScrollPositions, PendingSyncs])
 class PallyDatabase extends _$PallyDatabase {
   PallyDatabase() : super(_openConnection());
   PallyDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 3;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onUpgrade: (m, from, to) async {
+          if (from < 2) {
+            await m.createTable(pendingSyncs);
+          }
+          if (from < 3) {
+            await m.addColumn(chatMessages, chatMessages.syncStatus);
+          }
+        },
+      );
 }
 
 LazyDatabase _openConnection() {

@@ -16,6 +16,7 @@ extension ChatMessagePersistence on ChatMessage {
         isPhotoMessage: messageType == MessageType.photo,
         photoPath: imagePath,
         createdAt: createdAt ?? DateTime.now(),
+        syncStatus: syncStatus.name,
       );
 
   String _serialiseContent() {
@@ -58,6 +59,13 @@ class ChatMessageMapper {
       imagePath: r.photoPath,
       scanResult: scanResult,
       createdAt: r.createdAt,
+      syncStatus: _parseSyncStatus(r.syncStatus),
     );
   }
 }
+
+SyncStatus _parseSyncStatus(String s) => switch (s.toLowerCase()) {
+      'pending' => SyncStatus.pending,
+      'failed' => SyncStatus.failed,
+      _ => SyncStatus.synced,
+    };

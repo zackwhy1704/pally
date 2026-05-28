@@ -130,6 +130,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 onTap: () => FocusScope.of(context).unfocus(),
                 behavior: HitTestBehavior.opaque,
                 child: _MessageList(
+                  avatarId: widget.avatarId,
                   messages: state.sortedMessages,
                   isTyping: state.isTyping,
                   isProcessingPhoto: state.isProcessingPhoto,
@@ -249,6 +250,7 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
 class _MessageList extends StatelessWidget {
   const _MessageList({
+    required this.avatarId,
     required this.messages,
     required this.isTyping,
     required this.isProcessingPhoto,
@@ -256,6 +258,7 @@ class _MessageList extends StatelessWidget {
     required this.scrollController,
   });
 
+  final String avatarId;
   final List<ChatMessage> messages;
   final bool isTyping;
   final bool isProcessingPhoto;
@@ -299,7 +302,7 @@ class _MessageList extends StatelessWidget {
           );
         }
 
-        return _MessageBubble(message: messages[index]);
+        return _MessageBubble(message: messages[index], avatarId: avatarId);
       },
     );
   }
@@ -308,9 +311,10 @@ class _MessageList extends StatelessWidget {
 // ── Message bubble router ─────────────────────────────────────────────────────
 
 class _MessageBubble extends StatelessWidget {
-  const _MessageBubble({required this.message});
+  const _MessageBubble({required this.message, required this.avatarId});
 
   final ChatMessage message;
+  final String avatarId;
 
   @override
   Widget build(BuildContext context) {
@@ -320,21 +324,22 @@ class _MessageBubble extends StatelessWidget {
         MessageType.photo => PhotoMessageBubble(message: message),
         MessageType.homeworkResult when message.scanResult != null =>
           HomeworkScanResultBubble(result: message.scanResult!),
-        _ => _TextBubble(message: message),
+        _ => _TextBubble(message: message, avatarId: avatarId),
       },
     );
   }
 }
 
-class _TextBubble extends StatelessWidget {
-  const _TextBubble({required this.message});
+class _TextBubble extends ConsumerWidget {
+  const _TextBubble({required this.message, required this.avatarId});
 
   final ChatMessage message;
+  final String avatarId;
 
   bool get _isUser => message.role == MessageRole.user;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       crossAxisAlignment:
           _isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -408,6 +413,51 @@ class _TextBubble extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
+            ),
+          ),
+        if (message.syncStatus == SyncStatus.failed)
+          Padding(
+            padding: const EdgeInsets.only(top: 2, right: 4, left: 4),
+            child: GestureDetector(
+              onTap: () => ref
+                  .read(chatViewModelProvider(avatarId).notifier)
+                  .retryMessage(message.id),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.error_outline,
+                      size: 12, color: AppColors.coral),
+                  const SizedBox(width: 3),
+                  Text(
+                    'Not synced — tap to retry',
+                    style: AppTextStyles.caption
+                        .copyWith(color: AppColors.coral),
+                  ),
+                ],
+              ),
+            ),
+          )
+        else if (message.syncStatus == SyncStatus.pending)
+          Padding(
+            padding: const EdgeInsets.only(top: 2, right: 4, left: 4),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(
+                  width: 10,
+                  height: 10,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 1.5,
+                    color: AppColors.text3,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'Sending…',
+                  style: AppTextStyles.caption
+                      .copyWith(color: AppColors.text3),
+                ),
+              ],
             ),
           ),
       ],

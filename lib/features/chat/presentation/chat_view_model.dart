@@ -189,9 +189,31 @@ class ChatViewModel extends _$ChatViewModel {
       // If local was empty, the merge will populate the UI.
       // If local had data, the merge will pick up any messages added on other devices.
       unawaited(_fetchHistoryFromBackend());
+
+      // Retry any previously-failed syncs from a prior session.
+      unawaited(_retryPendingSyncs());
     } catch (e, st) {
       appLog.w('[Chat] Local DB load failed', error: e, stackTrace: st);
       unawaited(_fetchHistoryFromBackend());
+      unawaited(_retryPendingSyncs());
+    }
+  }
+
+  Future<void> _retryPendingSyncs() async {
+    try {
+      final pending = await _localDb.getPendingSyncs(_avatarId);
+      if (pending.isEmpty) return;
+      final messages = <ChatMessage>[];
+      for (final p in pending) {
+        final msg = await _localDb.getMessage(p.messageId);
+        if (msg != null) messages.add(msg);
+      }
+      if (messages.isNotEmpty) {
+        appLog.i('[Chat] Retrying ${messages.length} pending syncs');
+        await _syncMessagesToBackend(messages);
+      }
+    } catch (e) {
+      appLog.w('[Chat] Pending sync retry failed: $e');
     }
   }
 
@@ -262,6 +284,7 @@ class ChatViewModel extends _$ChatViewModel {
       role: MessageRole.user,
       content: text.trim(),
       createdAt: now,
+      syncStatus: SyncStatus.pending,
     );
 
     // Save user message BEFORE API call
@@ -284,6 +307,7 @@ class ChatViewModel extends _$ChatViewModel {
       content: '',
       isStreaming: true,
       createdAt: tutorTimestamp,
+      syncStatus: SyncStatus.pending,
     );
     state = state.copyWith(
       messages: [...state.messages, streamingMessage],
@@ -534,9 +558,42 @@ class ChatViewModel extends _$ChatViewModel {
         data: {'messages': syncDtos},
       );
       appLog.d('[Chat] Synced ${messages.length} messages to backend');
+
+      // Mark synced + clear from retry queue
+      for (final m in messages) {
+        await _localDb.removePendingSync(m.id);
+        final updated = m.copyWith(syncStatus: SyncStatus.synced);
+        await _localDb.saveMessage(updated.toRecord());
+      }
+      _updateMessageStatuses(messages.map((m) => m.id).toSet(), SyncStatus.synced);
     } catch (e) {
-      appLog.w('[Chat] Backend sync failed, will retry on next open: $e');
+      appLog.w('[Chat] Backend sync failed, queuing for retry: $e');
+      for (final m in messages) {
+        await _localDb.addPendingSync(m.id, _avatarId);
+        final updated = m.copyWith(syncStatus: SyncStatus.failed);
+        await _localDb.saveMessage(updated.toRecord());
+      }
+      _updateMessageStatuses(messages.map((m) => m.id).toSet(), SyncStatus.failed);
     }
+  }
+
+  void _updateMessageStatuses(Set<String> ids, SyncStatus status) {
+    final updated = state.messages.map((m) {
+      if (ids.contains(m.id)) return m.copyWith(syncStatus: status);
+      return m;
+    }).toList();
+    state = state.copyWith(messages: updated);
+  }
+
+  /// Manually retry sync for a single failed message (called from UI).
+  Future<void> retryMessage(String messageId) async {
+    final msg = state.messages.firstWhere(
+      (m) => m.id == messageId,
+      orElse: () => streamingMessageStub('', _avatarId),
+    );
+    if (msg.id.isEmpty) return;
+    _updateMessageStatuses({messageId}, SyncStatus.pending);
+    await _syncMessagesToBackend([msg]);
   }
 
   Future<void> _syncFeedbackToBackend(
