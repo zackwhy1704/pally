@@ -52,7 +52,49 @@ class QuizScreen extends ConsumerWidget {
         title: Text('Daily Quiz', style: AppTextStyles.title),
         centerTitle: true,
         actions: [
-          if (!quizState.isLoading && !quizState.isComplete)
+          if (!quizState.isLoading && !quizState.isComplete) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+              child: Center(
+                child: GestureDetector(
+                  onTap: () => ref
+                      .read(quizViewModelProvider(avatarId).notifier)
+                      .toggleConfidenceMode(!quizState.confidenceMode),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: quizState.confidenceMode
+                          ? AppColors.purpleL
+                          : AppColors.surf2,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                          color: quizState.confidenceMode
+                              ? AppColors.purple
+                              : AppColors.outline),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.psychology_outlined,
+                            size: 14,
+                            color: quizState.confidenceMode
+                                ? AppColors.purple
+                                : AppColors.text2),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Confidence',
+                          style: AppTextStyles.label.copyWith(
+                              color: quizState.confidenceMode
+                                  ? AppColors.purple
+                                  : AppColors.text2),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.only(right: AppSpacing.md),
               child: Center(
@@ -62,6 +104,7 @@ class QuizScreen extends ConsumerWidget {
                 ),
               ),
             ),
+          ],
         ],
       ),
       body: quizState.isLoading
@@ -78,6 +121,7 @@ class QuizScreen extends ConsumerWidget {
                       total: quizState.totalQuestions,
                       xpEarned: quizState.xpEarned,
                       avatarId: avatarId,
+                      matrix: quizState.masteryMatrix,
                     )
                   : _QuizBody(
                       avatarId: avatarId,
@@ -88,6 +132,9 @@ class QuizScreen extends ConsumerWidget {
                       onNext: () => ref
                           .read(quizViewModelProvider(avatarId).notifier)
                           .nextQuestion(),
+                      onConfidence: (c) => ref
+                          .read(quizViewModelProvider(avatarId).notifier)
+                          .setConfidence(c),
                     ),
     );
   }
@@ -98,12 +145,14 @@ class _QuizBody extends StatelessWidget {
     required this.quizState,
     required this.onAnswer,
     required this.onNext,
+    required this.onConfidence,
     required this.avatarId,
   });
 
   final QuizState quizState;
   final ValueChanged<int> onAnswer;
   final VoidCallback onNext;
+  final ValueChanged<Confidence> onConfidence;
   final String avatarId;
 
   @override
@@ -122,6 +171,13 @@ class _QuizBody extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.lg),
           _QuestionCard(question: question),
+          if (quizState.confidenceMode && !quizState.isAnswered) ...[
+            const SizedBox(height: AppSpacing.md),
+            _ConfidencePicker(
+              selected: quizState.selectedConfidence,
+              onSelect: onConfidence,
+            ),
+          ],
           const SizedBox(height: AppSpacing.lg),
           ...List.generate(question.options.length, (index) {
             return Padding(
@@ -132,6 +188,8 @@ class _QuizBody extends StatelessWidget {
                 isSelected: quizState.selectedAnswer == index,
                 isAnswered: quizState.isAnswered,
                 isCorrect: index == question.correctIndex,
+                disabled: quizState.confidenceMode &&
+                    quizState.selectedConfidence == null,
                 onTap: () => onAnswer(index),
               ),
             );
@@ -237,6 +295,7 @@ class _OptionButton extends StatelessWidget {
     required this.isAnswered,
     required this.isCorrect,
     required this.onTap,
+    this.disabled = false,
   });
 
   final String label;
@@ -245,6 +304,7 @@ class _OptionButton extends StatelessWidget {
   final bool isAnswered;
   final bool isCorrect;
   final VoidCallback onTap;
+  final bool disabled;
 
   Color get _bgColor {
     if (!isAnswered) {
@@ -276,16 +336,18 @@ class _OptionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final labels = ['A', 'B', 'C', 'D'];
-    return GestureDetector(
-      onTap: isAnswered ? null : onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: AppSpacing.card,
-        decoration: BoxDecoration(
-          color: _bgColor,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: _borderColor, width: 2),
-        ),
+    return Opacity(
+      opacity: disabled && !isAnswered ? 0.45 : 1.0,
+      child: GestureDetector(
+        onTap: (isAnswered || disabled) ? null : onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: AppSpacing.card,
+          decoration: BoxDecoration(
+            color: _bgColor,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: _borderColor, width: 2),
+          ),
         child: Row(
           children: [
             Container(
@@ -319,6 +381,7 @@ class _OptionButton extends StatelessWidget {
               const Icon(Icons.cancel_rounded,
                   color: AppColors.coral, size: 20),
           ],
+        ),
         ),
       ),
     );
@@ -449,17 +512,19 @@ class _CompletionView extends StatelessWidget {
     required this.total,
     required this.xpEarned,
     required this.avatarId,
+    this.matrix,
   });
 
   final int score;
   final int total;
   final int xpEarned;
   final String avatarId;
+  final MasteryMatrix? matrix;
 
   @override
   Widget build(BuildContext context) {
     final percentage = total > 0 ? (score / total * 100).round() : 0;
-    return Center(
+    return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
@@ -513,6 +578,10 @@ class _CompletionView extends StatelessWidget {
                 ],
               ),
             ),
+            if (matrix != null && matrix!.hasAny) ...[
+              const SizedBox(height: AppSpacing.xl),
+              _MasteryMatrixCard(matrix: matrix!),
+            ],
             const SizedBox(height: AppSpacing.xl),
             SizedBox(
               width: double.infinity,
@@ -551,6 +620,273 @@ class _ErrorView extends StatelessWidget {
           Text('Could not load quiz', style: AppTextStyles.title),
           const SizedBox(height: AppSpacing.lg),
           FilledButton(onPressed: onRetry, child: const Text('Try Again')),
+        ],
+      ),
+    );
+  }
+}
+
+/// Three-button row asking the student to self-rate how sure they are BEFORE
+/// they answer. Drives the mastery-matrix classification shown on completion.
+class _ConfidencePicker extends StatelessWidget {
+  const _ConfidencePicker({required this.selected, required this.onSelect});
+
+  final Confidence? selected;
+  final ValueChanged<Confidence> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'How sure are you?',
+          style: AppTextStyles.label.copyWith(color: AppColors.text2),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Row(
+          children: [
+            Expanded(
+                child: _ConfidenceChip(
+                    emoji: '😬',
+                    label: 'Not sure',
+                    value: Confidence.low,
+                    selected: selected,
+                    onSelect: onSelect)),
+            const SizedBox(width: AppSpacing.xs),
+            Expanded(
+                child: _ConfidenceChip(
+                    emoji: '🤔',
+                    label: 'Kinda',
+                    value: Confidence.medium,
+                    selected: selected,
+                    onSelect: onSelect)),
+            const SizedBox(width: AppSpacing.xs),
+            Expanded(
+                child: _ConfidenceChip(
+                    emoji: '😎',
+                    label: 'Very sure',
+                    value: Confidence.high,
+                    selected: selected,
+                    onSelect: onSelect)),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _ConfidenceChip extends StatelessWidget {
+  const _ConfidenceChip({
+    required this.emoji,
+    required this.label,
+    required this.value,
+    required this.selected,
+    required this.onSelect,
+  });
+
+  final String emoji;
+  final String label;
+  final Confidence value;
+  final Confidence? selected;
+  final ValueChanged<Confidence> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final isOn = selected == value;
+    return GestureDetector(
+      onTap: () => onSelect(value),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: isOn ? AppColors.purpleL : AppColors.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+              color: isOn ? AppColors.purple : AppColors.outline,
+              width: isOn ? 2 : 1),
+        ),
+        child: Column(
+          children: [
+            Text(emoji, style: const TextStyle(fontSize: 22)),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.caption.copyWith(
+                color: isOn ? AppColors.purple : AppColors.text2,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 2×2 mastery matrix — mastered / misconception / luckyGuess / knownGap.
+/// Misconceptions get a high-contrast warning treatment because they're the
+/// most dangerous category (confidently wrong knowledge that compounds).
+class _MasteryMatrixCard extends StatelessWidget {
+  const _MasteryMatrixCard({required this.matrix});
+
+  final MasteryMatrix matrix;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text('Mastery breakdown', style: AppTextStyles.title),
+        const SizedBox(height: AppSpacing.sm),
+        Row(
+          children: [
+            Expanded(
+              child: _MasteryQuadrant(
+                title: 'Mastered',
+                emoji: '✅',
+                items: matrix.mastered,
+                color: AppColors.green,
+                bgColor: AppColors.greenL,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: _MasteryQuadrant(
+                title: 'Misconception',
+                emoji: '⚠️',
+                items: matrix.misconception,
+                color: AppColors.coral,
+                bgColor: AppColors.coralL,
+                emphasis: true,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Row(
+          children: [
+            Expanded(
+              child: _MasteryQuadrant(
+                title: 'Lucky guess',
+                emoji: '🍀',
+                items: matrix.luckyGuess,
+                color: AppColors.amber,
+                bgColor: AppColors.amberL,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: _MasteryQuadrant(
+                title: 'Known gap',
+                emoji: '📚',
+                items: matrix.knownGap,
+                color: AppColors.purple,
+                bgColor: AppColors.purpleL,
+              ),
+            ),
+          ],
+        ),
+        if (matrix.priorityReview != null) ...[
+          const SizedBox(height: AppSpacing.md),
+          Container(
+            padding: AppSpacing.card,
+            decoration: BoxDecoration(
+              color: AppColors.coralL,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.coral, width: 1),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.priority_high_rounded,
+                    color: AppColors.coral, size: 20),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    'Focus next: ${matrix.priorityReview}',
+                    style: AppTextStyles.body.copyWith(
+                      color: AppColors.text1,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _MasteryQuadrant extends StatelessWidget {
+  const _MasteryQuadrant({
+    required this.title,
+    required this.emoji,
+    required this.items,
+    required this.color,
+    required this.bgColor,
+    this.emphasis = false,
+  });
+
+  final String title;
+  final String emoji;
+  final List<String> items;
+  final Color color;
+  final Color bgColor;
+  final bool emphasis;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: AppSpacing.card,
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12),
+        border: emphasis ? Border.all(color: color, width: 2) : null,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(emoji, style: const TextStyle(fontSize: 16)),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.label.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+              Text('${items.length}',
+                  style: AppTextStyles.body.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.w800,
+                  )),
+            ],
+          ),
+          if (items.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            for (final item in items.take(3))
+              Text(
+                '· $item',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.text2,
+                ),
+              ),
+            if (items.length > 3)
+              Text('+${items.length - 3} more',
+                  style: AppTextStyles.caption.copyWith(color: color)),
+          ],
         ],
       ),
     );

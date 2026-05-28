@@ -8,12 +8,38 @@ import 'package:pally/shared/models/quiz_question.dart';
 
 part 'quiz_view_model.g.dart';
 
+enum Confidence { low, medium, high }
+
+@immutable
+class MasteryMatrix {
+  const MasteryMatrix({
+    this.mastered = const [],
+    this.misconception = const [],
+    this.luckyGuess = const [],
+    this.knownGap = const [],
+    this.priorityReview,
+  });
+  final List<String> mastered;
+  final List<String> misconception;
+  final List<String> luckyGuess;
+  final List<String> knownGap;
+  final String? priorityReview;
+
+  bool get hasAny =>
+      mastered.isNotEmpty ||
+      misconception.isNotEmpty ||
+      luckyGuess.isNotEmpty ||
+      knownGap.isNotEmpty;
+}
+
 @immutable
 class QuizState {
   const QuizState({
     this.questions = const [],
     this.currentIndex = 0,
     this.selectedAnswer,
+    this.selectedConfidence,
+    this.confidenceMode = true,
     this.isAnswered = false,
     this.score = 0,
     this.xpEarned = 0,
@@ -22,12 +48,15 @@ class QuizState {
     this.isComplete = false,
     this.levelledUp = false,
     this.newLevel = 0,
+    this.masteryMatrix,
     this.error,
   });
 
   final List<QuizQuestion> questions;
   final int currentIndex;
   final int? selectedAnswer;
+  final Confidence? selectedConfidence;
+  final bool confidenceMode;
   final bool isAnswered;
   final int score;
   final int xpEarned;
@@ -36,7 +65,12 @@ class QuizState {
   final bool isComplete;
   final bool levelledUp;
   final int newLevel;
+  final MasteryMatrix? masteryMatrix;
   final String? error;
+
+  /// True when the student can lock in their answer this turn — they must
+  /// have picked an answer AND (if confidenceMode is on) a confidence rating.
+  bool get canAnswer => confidenceMode ? selectedConfidence != null : true;
 
   QuizQuestion? get currentQuestion =>
       questions.isEmpty ? null : questions[currentIndex];
@@ -48,6 +82,8 @@ class QuizState {
     List<QuizQuestion>? questions,
     int? currentIndex,
     Object? selectedAnswer = _sentinel,
+    Object? selectedConfidence = _sentinel,
+    bool? confidenceMode,
     bool? isAnswered,
     int? score,
     int? xpEarned,
@@ -56,6 +92,7 @@ class QuizState {
     bool? isComplete,
     bool? levelledUp,
     int? newLevel,
+    Object? masteryMatrix = _sentinel,
     Object? error = _sentinel,
   }) {
     return QuizState(
@@ -64,6 +101,10 @@ class QuizState {
       selectedAnswer: selectedAnswer == _sentinel
           ? this.selectedAnswer
           : selectedAnswer as int?,
+      selectedConfidence: selectedConfidence == _sentinel
+          ? this.selectedConfidence
+          : selectedConfidence as Confidence?,
+      confidenceMode: confidenceMode ?? this.confidenceMode,
       isAnswered: isAnswered ?? this.isAnswered,
       score: score ?? this.score,
       xpEarned: xpEarned ?? this.xpEarned,
@@ -72,6 +113,9 @@ class QuizState {
       isComplete: isComplete ?? this.isComplete,
       levelledUp: levelledUp ?? this.levelledUp,
       newLevel: newLevel ?? this.newLevel,
+      masteryMatrix: masteryMatrix == _sentinel
+          ? this.masteryMatrix
+          : masteryMatrix as MasteryMatrix?,
       error: error == _sentinel ? this.error : error as String?,
     );
   }
@@ -118,16 +162,37 @@ class QuizViewModel extends _$QuizViewModel {
   final Map<String, int> _correctMap = {};
   // Captures questionId -> topic slug so the backend can group weak topics.
   final Map<String, String> _topicMap = {};
+  // Captures questionId -> LOW/MEDIUM/HIGH for the mastery matrix.
+  final Map<String, String> _confidenceMap = {};
+
+  void setConfidence(Confidence c) {
+    if (state.isAnswered) return;
+    state = state.copyWith(selectedConfidence: c);
+  }
+
+  void toggleConfidenceMode(bool enabled) {
+    state = state.copyWith(
+      confidenceMode: enabled,
+      selectedConfidence: null,
+    );
+  }
 
   void answerQuestion(int answerIndex) {
     if (state.isAnswered) return;
     final question = state.currentQuestion;
     if (question == null) return;
+    // Confidence mode forces the student to pick a rating before locking in
+    // their answer — that's the whole point of the metacognitive check.
+    if (state.confidenceMode && state.selectedConfidence == null) return;
 
     _answers[question.id] = answerIndex;
     _correctMap[question.id] = question.correctIndex;
     if (question.sourcePage.isNotEmpty) {
       _topicMap[question.id] = question.sourcePage;
+    }
+    if (state.confidenceMode && state.selectedConfidence != null) {
+      _confidenceMap[question.id] =
+          state.selectedConfidence!.name.toUpperCase();
     }
 
     final isCorrect = answerIndex == question.correctIndex;
@@ -147,6 +212,7 @@ class QuizViewModel extends _$QuizViewModel {
     state = state.copyWith(
       currentIndex: state.currentIndex + 1,
       selectedAnswer: null,
+      selectedConfidence: null,
       isAnswered: false,
     );
   }
@@ -161,6 +227,7 @@ class QuizViewModel extends _$QuizViewModel {
           'answers': _answers,
           'correctMap': _correctMap,
           'topicMap': _topicMap,
+          if (_confidenceMap.isNotEmpty) 'confidenceMap': _confidenceMap,
         },
       );
 
@@ -172,8 +239,20 @@ class QuizViewModel extends _$QuizViewModel {
       final backendXp = (data['xpEarned'] as num?)?.toInt() ?? state.xpEarned;
       final levelledUp = data['levelledUp'] == true;
       final newLevel = (data['newLevel'] as num?)?.toInt() ?? 0;
+      final matrixJson = data['masteryMatrix'] as Map<String, dynamic>?;
+      final matrix = matrixJson == null
+          ? null
+          : MasteryMatrix(
+              mastered: _asStringList(matrixJson['mastered']),
+              misconception: _asStringList(matrixJson['misconception']),
+              luckyGuess: _asStringList(matrixJson['luckyGuess']),
+              knownGap: _asStringList(matrixJson['knownGap']),
+              priorityReview: matrixJson['priorityReview'] as String?,
+            );
+
       appLog.i('[Quiz] submitted answers=${_answers.length} correct=${state.score} '
-          'backendXp=$backendXp levelledUp=$levelledUp newLevel=$newLevel');
+          'backendXp=$backendXp levelledUp=$levelledUp newLevel=$newLevel '
+          'matrix=${matrix?.hasAny ?? false}');
 
       // Make the home/progress screen pick up the new XP on next view.
       ref.invalidate(progressViewModelProvider);
@@ -182,6 +261,7 @@ class QuizViewModel extends _$QuizViewModel {
         xpEarned: backendXp,
         levelledUp: levelledUp,
         newLevel: newLevel,
+        masteryMatrix: matrix,
       );
     } catch (e, st) {
       appLog.w('[Quiz] submit failed — XP shown is local estimate only',
@@ -194,9 +274,13 @@ class QuizViewModel extends _$QuizViewModel {
     _answers.clear();
     _correctMap.clear();
     _topicMap.clear();
+    _confidenceMap.clear();
     state = const QuizState(isLoading: true);
     await _loadQuestions();
   }
+
+  List<String> _asStringList(Object? v) =>
+      v is List ? v.whereType<String>().toList() : const <String>[];
 }
 
 const _stubQuestions = [
