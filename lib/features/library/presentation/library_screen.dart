@@ -69,28 +69,33 @@ class LibraryScreen extends ConsumerWidget {
                           ],
                         ),
                       ),
+                      // Delete in confirmDismiss so the data is gone BEFORE
+                      // the dismiss animation completes — prevents the
+                      // "A dismissed Dismissible widget is still part of
+                      // the tree" Flutter crash on next rebuild.
                       confirmDismiss: (_) async {
-                        return await PallyDeleteTutorDialog.show(
+                        final confirmed =
+                            await PallyDeleteTutorDialog.show(
                           context: context,
                           avatar: avatar,
                         );
-                      },
-                      onDismissed: (_) async {
+                        if (confirmed != true) return false;
+
                         final ok = await ref
                             .read(homeViewModelProvider.notifier)
                             .deleteAvatar(avatar.id);
-                        if (context.mounted) {
-                          if (ok) {
-                            HapticFeedback.heavyImpact();
-                            PallyToast.success(
-                                context, '${avatar.name} deleted');
-                          } else {
-                            PallyToast.error(
-                                context, 'Delete failed. Try again.');
-                          }
+                        if (!context.mounted) return ok;
+
+                        if (ok) {
+                          HapticFeedback.heavyImpact();
+                          PallyToast.success(
+                              context, '${avatar.name} deleted');
+                          ref.invalidate(libraryViewModelProvider);
+                          return true;
                         }
-                        // Refresh library too
-                        ref.invalidate(libraryViewModelProvider);
+                        PallyToast.error(
+                            context, 'Delete failed. Try again.');
+                        return false;
                       },
                       child: _AvatarRow(avatar: avatar),
                     );

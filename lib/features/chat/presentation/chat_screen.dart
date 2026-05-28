@@ -258,15 +258,20 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   final ok = await ref
                       .read(homeViewModelProvider.notifier)
                       .deleteAvatar(avatar.id);
-                  if (context.mounted) {
-                    if (ok) {
-                      HapticFeedback.heavyImpact();
-                      const HomeRoute().go(context);
-                      PallyToast.success(
-                          context, '${avatar.name} deleted');
+                  if (!context.mounted) return;
+                  if (ok) {
+                    HapticFeedback.heavyImpact();
+                    // Pop the chat screen to return to whatever pushed it.
+                    // Using .pop() instead of HomeRoute().go() avoids a stack
+                    // reset that races with the popup menu's own pop.
+                    if (Navigator.of(context).canPop()) {
+                      Navigator.of(context).pop();
                     } else {
-                      PallyToast.error(context, 'Delete failed. Try again.');
+                      const HomeRoute().go(context);
                     }
+                    PallyToast.success(context, '${avatar.name} deleted');
+                  } else {
+                    PallyToast.error(context, 'Delete failed. Try again.');
                   }
                 }
               }
