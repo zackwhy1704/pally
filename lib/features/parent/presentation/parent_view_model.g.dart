@@ -6,7 +6,7 @@ part of 'parent_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$parentViewModelHash() => r'27e135ff47b466406cd1f9525e3c168027a65eb1';
+String _$parentViewModelHash() => r'83115c22c44de671a47ce0f5c4d329edfcf399fa';
 
 /// See also [ParentViewModel].
 @ProviderFor(ParentViewModel)

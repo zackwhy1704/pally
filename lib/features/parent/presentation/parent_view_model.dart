@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/utils/logger.dart';
 
 part 'parent_view_model.g.dart';
 
@@ -13,12 +14,23 @@ class SubjectStat {
 }
 
 @immutable
+class WeakArea {
+  const WeakArea({required this.topic, required this.mastery});
+  final String topic;
+  final double mastery;
+}
+
+@immutable
 class ParentStats {
   const ParentStats({
     this.sessionsThisWeek = 0,
     this.minutesThisWeek = 0,
     this.xpThisWeek = 0,
+    this.level = 1,
+    this.streakDays = 0,
     this.subjects = const [],
+    this.weekMinutes = const [],
+    this.weakAreas = const [],
     this.screenTimeLimitEnabled = false,
     this.screenTimeLimitMinutes = 60,
   });
@@ -26,7 +38,11 @@ class ParentStats {
   final int sessionsThisWeek;
   final int minutesThisWeek;
   final int xpThisWeek;
+  final int level;
+  final int streakDays;
   final List<SubjectStat> subjects;
+  final List<int> weekMinutes;
+  final List<WeakArea> weakAreas;
   final bool screenTimeLimitEnabled;
   final int screenTimeLimitMinutes;
 
@@ -34,7 +50,11 @@ class ParentStats {
     int? sessionsThisWeek,
     int? minutesThisWeek,
     int? xpThisWeek,
+    int? level,
+    int? streakDays,
     List<SubjectStat>? subjects,
+    List<int>? weekMinutes,
+    List<WeakArea>? weakAreas,
     bool? screenTimeLimitEnabled,
     int? screenTimeLimitMinutes,
   }) {
@@ -42,7 +62,11 @@ class ParentStats {
       sessionsThisWeek: sessionsThisWeek ?? this.sessionsThisWeek,
       minutesThisWeek: minutesThisWeek ?? this.minutesThisWeek,
       xpThisWeek: xpThisWeek ?? this.xpThisWeek,
+      level: level ?? this.level,
+      streakDays: streakDays ?? this.streakDays,
       subjects: subjects ?? this.subjects,
+      weekMinutes: weekMinutes ?? this.weekMinutes,
+      weakAreas: weakAreas ?? this.weakAreas,
       screenTimeLimitEnabled:
           screenTimeLimitEnabled ?? this.screenTimeLimitEnabled,
       screenTimeLimitMinutes:
@@ -58,32 +82,33 @@ class ParentState {
     this.pinError,
     this.stats,
     this.isLoading = false,
+    this.firstTimeSetup = false,
   });
 
   final bool isPinVerified;
   final String? pinError;
   final ParentStats? stats;
   final bool isLoading;
+  final bool firstTimeSetup;
 
   ParentState copyWith({
     bool? isPinVerified,
     Object? pinError = _sentinel,
     ParentStats? stats,
     bool? isLoading,
+    bool? firstTimeSetup,
   }) {
     return ParentState(
       isPinVerified: isPinVerified ?? this.isPinVerified,
       pinError: pinError == _sentinel ? this.pinError : pinError as String?,
       stats: stats ?? this.stats,
       isLoading: isLoading ?? this.isLoading,
+      firstTimeSetup: firstTimeSetup ?? this.firstTimeSetup,
     );
   }
 }
 
 const _sentinel = Object();
-
-// MVP: hardcoded PIN "1234"
-const _correctPin = '1234';
 
 @riverpod
 class ParentViewModel extends _$ParentViewModel {
@@ -92,12 +117,42 @@ class ParentViewModel extends _$ParentViewModel {
     return const ParentState();
   }
 
-  void verifyPin(String pin) {
-    if (pin == _correctPin) {
-      state = state.copyWith(isPinVerified: true, pinError: null);
-      _loadStats();
-    } else {
-      state = state.copyWith(pinError: 'Incorrect PIN. Try again.');
+  /// Verifies the PIN against the backend. On first ever use (no PIN
+  /// stored), the backend stores whatever the user enters as the new PIN
+  /// and reports firstTimeSetup=true.
+  Future<void> verifyPin(String pin) async {
+    state = state.copyWith(isLoading: true, pinError: null);
+    try {
+      final dio = ref.read(dioProvider);
+      final response = await dio.post<Map<String, dynamic>>(
+        '/api/v1/parent/pin/verify',
+        data: {'pin': pin},
+      );
+      final data = (response.data?['data'] is Map
+              ? response.data!['data']
+              : response.data) as Map<String, dynamic>;
+      final verified = data['verified'] == true;
+      final firstTime = data['firstTimeSetup'] == true;
+
+      if (verified) {
+        state = state.copyWith(
+          isPinVerified: true,
+          firstTimeSetup: firstTime,
+          isLoading: false,
+        );
+        await _loadStats();
+      } else {
+        state = state.copyWith(
+          pinError: 'Incorrect PIN. Try again.',
+          isLoading: false,
+        );
+      }
+    } on DioException catch (e, st) {
+      appLog.w('[Parent] PIN verify failed', error: e, stackTrace: st);
+      state = state.copyWith(
+        pinError: 'Could not verify PIN. Check your connection.',
+        isLoading: false,
+      );
     }
   }
 
@@ -105,42 +160,94 @@ class ParentViewModel extends _$ParentViewModel {
     state = state.copyWith(isLoading: true);
     try {
       final dio = ref.read(dioProvider);
-      final response = await dio.get<Map<String, dynamic>>('/api/v1/progress');
-      final data = response.data ?? {};
+      final response = await dio.get<Map<String, dynamic>>(
+        '/api/v1/parent/dashboard',
+      );
+      final data = (response.data?['data'] is Map
+              ? response.data!['data']
+              : response.data) as Map<String, dynamic>;
+
+      final subjects = ((data['subjects'] as List?) ?? [])
+          .whereType<Map<String, dynamic>>()
+          .map((s) => SubjectStat(
+                subject: (s['subject'] as String?) ?? '',
+                mastery: ((s['mastery'] as num?) ?? 0).toDouble(),
+              ))
+          .toList();
+      final weekMinutes = ((data['weekMinutes'] as List?) ?? [])
+          .map((e) => (e as num).toInt())
+          .toList();
+      final weakAreas = ((data['weakAreas'] as List?) ?? [])
+          .whereType<Map<String, dynamic>>()
+          .map((w) => WeakArea(
+                topic: (w['topic'] as String?) ?? '',
+                mastery: ((w['mastery'] as num?) ?? 0).toDouble(),
+              ))
+          .toList();
+
       state = state.copyWith(
         stats: ParentStats(
-          sessionsThisWeek: (data['sessionsThisWeek'] as int?) ?? 0,
-          minutesThisWeek: (data['minutesThisWeek'] as int?) ?? 0,
-          xpThisWeek: (data['xpThisWeek'] as int?) ?? 0,
-          subjects: _stubStats.subjects,
+          sessionsThisWeek: (data['sessionsThisWeek'] as num?)?.toInt() ?? 0,
+          minutesThisWeek: (data['minutesThisWeek'] as num?)?.toInt() ?? 0,
+          xpThisWeek: (data['xpThisWeek'] as num?)?.toInt() ?? 0,
+          level: (data['level'] as num?)?.toInt() ?? 1,
+          streakDays: (data['streakDays'] as num?)?.toInt() ?? 0,
+          subjects: subjects,
+          weekMinutes: weekMinutes,
+          weakAreas: weakAreas,
+          screenTimeLimitEnabled: data['screenTimeEnabled'] == true,
+          screenTimeLimitMinutes:
+              (data['screenTimeMinutes'] as num?)?.toInt() ?? 60,
         ),
         isLoading: false,
       );
-    } on DioException catch (_) {
-      state = state.copyWith(stats: _stubStats, isLoading: false);
+    } on DioException catch (e, st) {
+      appLog.w('[Parent] dashboard load failed', error: e, stackTrace: st);
+      // Empty stats, not stub data, so the user sees real (zero) state.
+      state = state.copyWith(
+        stats: const ParentStats(),
+        isLoading: false,
+      );
     }
   }
 
-  void toggleScreenTimeLimit(bool enabled) {
-    state = state.copyWith(
-      stats: state.stats?.copyWith(screenTimeLimitEnabled: enabled),
-    );
+  Future<void> toggleScreenTimeLimit(bool enabled) async {
+    final next = state.stats?.copyWith(screenTimeLimitEnabled: enabled);
+    if (next != null) state = state.copyWith(stats: next);
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.post<void>(
+        '/api/v1/parent/screen-time',
+        data: {
+          'enabled': enabled,
+          'minutes': state.stats?.screenTimeLimitMinutes ?? 60,
+        },
+      );
+    } catch (e) {
+      appLog.w('[Parent] screen-time persist failed: $e');
+    }
+  }
+
+  /// Resets PIN. Requires the account password — prevents children from
+  /// changing the gate.
+  Future<bool> changePin({
+    required String password,
+    required String newPin,
+  }) async {
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.post<void>(
+        '/api/v1/parent/pin/reset',
+        data: {'password': password, 'newPin': newPin},
+      );
+      return true;
+    } on DioException catch (e) {
+      appLog.w('[Parent] PIN reset failed: ${e.response?.statusCode}');
+      return false;
+    }
   }
 
   void lock() {
     state = const ParentState();
   }
 }
-
-const _stubStats = ParentStats(
-  sessionsThisWeek: 12,
-  minutesThisWeek: 87,
-  xpThisWeek: 320,
-  subjects: [
-    SubjectStat(subject: 'Science', mastery: 0.72),
-    SubjectStat(subject: 'Maths', mastery: 0.58),
-    SubjectStat(subject: 'English', mastery: 0.84),
-  ],
-  screenTimeLimitEnabled: true,
-  screenTimeLimitMinutes: 60,
-);

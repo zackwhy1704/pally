@@ -4,6 +4,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
+import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/parent/presentation/parent_view_model.dart';
 
 class ParentScreen extends ConsumerWidget {
@@ -205,13 +206,13 @@ class _NumberPad extends StatelessWidget {
   }
 }
 
-class _Dashboard extends StatelessWidget {
+class _Dashboard extends ConsumerWidget {
   const _Dashboard({required this.state});
 
   final ParentState state;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final stats = state.stats;
     if (stats == null) return const PallyLoadingSpinner();
 
@@ -222,11 +223,83 @@ class _Dashboard extends StatelessWidget {
         children: [
           _WeekStatsRow(stats: stats),
           const SizedBox(height: AppSpacing.md),
-          _SubjectBreakdown(subjects: stats.subjects),
-          const SizedBox(height: AppSpacing.md),
+          if (stats.subjects.isNotEmpty)
+            _SubjectBreakdown(subjects: stats.subjects),
+          if (stats.subjects.isNotEmpty)
+            const SizedBox(height: AppSpacing.md),
+          if (stats.weakAreas.isNotEmpty) _WeakAreasCard(areas: stats.weakAreas),
+          if (stats.weakAreas.isNotEmpty)
+            const SizedBox(height: AppSpacing.md),
           _ScreenTimeCard(state: state),
           const SizedBox(height: AppSpacing.md),
+          _SettingsCard(
+            onChangePin: () => _showChangePinDialog(context, ref),
+          ),
+          const SizedBox(height: AppSpacing.md),
           _AlertsCard(),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showChangePinDialog(
+      BuildContext context, WidgetRef ref) async {
+    final passCtrl = TextEditingController();
+    final pinCtrl = TextEditingController();
+    await showDialog<void>(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text('Change Parent PIN', style: AppTextStyles.title),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Enter your account password to verify:',
+                style: AppTextStyles.bodySmall),
+            const SizedBox(height: 12),
+            TextField(
+              controller: passCtrl,
+              obscureText: true,
+              decoration:
+                  const InputDecoration(labelText: 'Account password'),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: pinCtrl,
+              keyboardType: TextInputType.number,
+              maxLength: 6,
+              decoration:
+                  const InputDecoration(labelText: 'New PIN (4-6 digits)'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogCtx).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              final pass = passCtrl.text;
+              final pin = pinCtrl.text;
+              if (!RegExp(r'^\d{4,6}$').hasMatch(pin)) {
+                PallyToast.error(context, 'PIN must be 4-6 digits');
+                return;
+              }
+              final ok = await ref
+                  .read(parentViewModelProvider.notifier)
+                  .changePin(password: pass, newPin: pin);
+              if (!context.mounted) return;
+              Navigator.of(dialogCtx).pop();
+              if (ok) {
+                PallyToast.success(context, 'PIN updated');
+              } else {
+                PallyToast.error(context, 'Incorrect password');
+              }
+            },
+            child: const Text('Update PIN'),
+          ),
         ],
       ),
     );
@@ -494,6 +567,101 @@ class _AlertTile extends StatelessWidget {
             child: Text(text, style: AppTextStyles.bodySmall),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _WeakAreasCard extends StatelessWidget {
+  const _WeakAreasCard({required this.areas});
+  final List<WeakArea> areas;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: AppSpacing.card,
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.outline),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Weak Areas', style: AppTextStyles.title),
+          const SizedBox(height: AppSpacing.md),
+          ...areas.map((a) {
+            final pct = (a.mastery * 100).round();
+            return Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(a.topic,
+                            style: AppTextStyles.bodySmall,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis),
+                      ),
+                      const SizedBox(width: 8),
+                      Text('$pct%',
+                          style: AppTextStyles.label
+                              .copyWith(color: AppColors.coral)),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: a.mastery.clamp(0.0, 1.0),
+                      backgroundColor: AppColors.outline,
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                          AppColors.coral),
+                      minHeight: 6,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+}
+
+class _SettingsCard extends StatelessWidget {
+  const _SettingsCard({required this.onChangePin});
+  final VoidCallback onChangePin;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.outline),
+      ),
+      child: ListTile(
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: AppColors.purple.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: const Icon(Icons.lock_reset_rounded,
+              color: AppColors.purple, size: 20),
+        ),
+        title: Text('Change Parent PIN',
+            style:
+                AppTextStyles.body.copyWith(fontWeight: FontWeight.w500)),
+        trailing: const Icon(Icons.chevron_right_rounded,
+            size: 20, color: AppColors.text3),
+        onTap: onChangePin,
       ),
     );
   }
