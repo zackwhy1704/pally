@@ -426,7 +426,7 @@ class _TipsSheet extends StatelessWidget {
               height: 1,
               color: Colors.white.withValues(alpha: 0.12)),
           const SizedBox(height: 12),
-          Text('What Zap reads:',
+          Text('What Mochi reads:',
               style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.55),
                   fontSize: 10,

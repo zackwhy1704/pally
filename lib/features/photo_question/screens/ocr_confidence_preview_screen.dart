@@ -117,7 +117,7 @@ class _OcrConfidencePreviewScreenState
                   ),
                   const Expanded(
                     child: Text(
-                      "Zap's Reading Report",
+                      "Mochi's Reading Report",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           color: Colors.white,
@@ -144,7 +144,7 @@ class _OcrConfidencePreviewScreenState
 
                   // Section title
                   const Text(
-                    "Here's what Zap found in your photo:",
+                    "Here's what Mochi found in your photo:",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 12,
@@ -590,7 +590,7 @@ class _BottomButtons extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12)),
               ),
               child: Text(
-                'Send anyway (Zap will do its best)',
+                'Send anyway (Mochi will do its best)',
                 style: AppTextStyles.bodySmall.copyWith(
                   color: Colors.white.withValues(alpha: 0.8),
                 ),
