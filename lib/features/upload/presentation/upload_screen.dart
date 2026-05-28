@@ -98,6 +98,7 @@ class UploadScreen extends ConsumerWidget {
               isCheckingRelevance: state.isCheckingRelevance,
               onCamera: vm.pickFromCamera,
               onPdf: vm.pickPdf,
+              onPasteText: vm.pasteText,
             ),
             if (state.hasFiles) ...[
               const SizedBox(height: AppSpacing.md),
@@ -221,12 +222,14 @@ class _UploadOptions extends StatelessWidget {
     required this.isCheckingRelevance,
     required this.onCamera,
     required this.onPdf,
+    required this.onPasteText,
   });
 
   final bool isUploading;
   final bool isCheckingRelevance;
   final VoidCallback onCamera;
   final VoidCallback onPdf;
+  final ValueChanged<String> onPasteText;
 
   bool get _busy => isUploading || isCheckingRelevance;
 
@@ -270,11 +273,14 @@ class _UploadOptions extends StatelessWidget {
     );
   }
 
-  void _showPasteDialog(BuildContext context) {
-    showDialog<void>(
+  void _showPasteDialog(BuildContext context) async {
+    final result = await showDialog<String>(
       context: context,
       builder: (ctx) => const _PasteTextDialog(),
     );
+    if (result != null && result.trim().isNotEmpty) {
+      onPasteText(result);
+    }
   }
 }
 
@@ -423,9 +429,22 @@ class _PasteTextDialog extends StatefulWidget {
 
 class _PasteTextDialogState extends State<_PasteTextDialog> {
   final _controller = TextEditingController();
+  bool _hasText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_onChanged);
+  }
+
+  void _onChanged() {
+    final has = _controller.text.trim().isNotEmpty;
+    if (has != _hasText) setState(() => _hasText = has);
+  }
 
   @override
   void dispose() {
+    _controller.removeListener(_onChanged);
     _controller.dispose();
     super.dispose();
   }
@@ -441,6 +460,7 @@ class _PasteTextDialogState extends State<_PasteTextDialog> {
       content: TextField(
         controller: _controller,
         maxLines: 8,
+        autofocus: true,
         decoration: InputDecoration(
           hintText: 'Paste or type your notes here…',
           hintStyle: AppTextStyles.body.copyWith(color: AppColors.text3),
@@ -453,8 +473,8 @@ class _PasteTextDialogState extends State<_PasteTextDialog> {
               style: AppTextStyles.body.copyWith(color: AppColors.text2)),
         ),
         FilledButton(
-          onPressed: _controller.text.trim().isNotEmpty
-              ? () => Navigator.of(context).pop(_controller.text)
+          onPressed: _hasText
+              ? () => Navigator.of(context).pop(_controller.text.trim())
               : null,
           child: const Text('Add'),
         ),

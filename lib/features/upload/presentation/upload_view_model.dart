@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/upload_result.dart';
@@ -134,6 +135,32 @@ class UploadViewModel extends _$UploadViewModel {
 
     for (final file in result.files) {
       await _checkRelevanceAndUpload(file);
+    }
+  }
+
+  /// Save pasted text to a temporary .txt file and run it through the same
+  /// relevance-check + upload pipeline as PDFs.
+  Future<void> pasteText(String text) async {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return;
+    appLog.i('[Upload] Paste text received: ${trimmed.length} chars');
+
+    try {
+      final dir = await getTemporaryDirectory();
+      final ts = DateTime.now().millisecondsSinceEpoch;
+      final fileName = 'notes-$ts.txt';
+      final file = File('${dir.path}/$fileName');
+      await file.writeAsString(trimmed);
+
+      final platformFile = PlatformFile(
+        name: fileName,
+        path: file.path,
+        size: await file.length(),
+      );
+      await _checkRelevanceAndUpload(platformFile);
+    } catch (e, st) {
+      appLog.e('[Upload] Paste-text upload failed', error: e, stackTrace: st);
+      state = state.copyWith(error: 'Could not save your notes. Try again.');
     }
   }
 
