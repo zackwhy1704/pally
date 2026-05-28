@@ -7,6 +7,7 @@ import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/features/quiz/presentation/quiz_view_model.dart';
+import 'package:pally/features/progress/presentation/level_up_overlay.dart';
 import 'package:pally/shared/models/quiz_question.dart';
 
 class QuizScreen extends ConsumerWidget {
@@ -17,6 +18,21 @@ class QuizScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final quizState = ref.watch(quizViewModelProvider(avatarId));
+
+    // Fire the level-up overlay exactly once when the backend reports a
+    // crossing on quiz completion.
+    ref.listen<QuizState>(quizViewModelProvider(avatarId), (prev, next) {
+      final justLevelledUp = next.levelledUp &&
+          next.isComplete &&
+          (prev == null || !prev.isComplete);
+      if (justLevelledUp && next.newLevel > 0) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (context.mounted) {
+            LevelUpOverlay.show(context, next.newLevel);
+          }
+        });
+      }
+    });
 
     return Scaffold(
       backgroundColor: AppColors.bg,

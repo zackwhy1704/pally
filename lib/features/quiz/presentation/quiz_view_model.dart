@@ -20,6 +20,8 @@ class QuizState {
     this.isLoading = false,
     this.isSubmitting = false,
     this.isComplete = false,
+    this.levelledUp = false,
+    this.newLevel = 0,
     this.error,
   });
 
@@ -32,6 +34,8 @@ class QuizState {
   final bool isLoading;
   final bool isSubmitting;
   final bool isComplete;
+  final bool levelledUp;
+  final int newLevel;
   final String? error;
 
   QuizQuestion? get currentQuestion =>
@@ -50,6 +54,8 @@ class QuizState {
     bool? isLoading,
     bool? isSubmitting,
     bool? isComplete,
+    bool? levelledUp,
+    int? newLevel,
     Object? error = _sentinel,
   }) {
     return QuizState(
@@ -64,6 +70,8 @@ class QuizState {
       isLoading: isLoading ?? this.isLoading,
       isSubmitting: isSubmitting ?? this.isSubmitting,
       isComplete: isComplete ?? this.isComplete,
+      levelledUp: levelledUp ?? this.levelledUp,
+      newLevel: newLevel ?? this.newLevel,
       error: error == _sentinel ? this.error : error as String?,
     );
   }
@@ -151,16 +159,24 @@ class QuizViewModel extends _$QuizViewModel {
       );
 
       // Backend returns the authoritative XP/stars earned. Trust the backend
-      // value over the local client estimate.
-      final data = response.data ?? const <String, dynamic>{};
+      // value over the local client estimate. Some wrappers nest under "data".
+      final body = response.data ?? const <String, dynamic>{};
+      final data = (body['data'] is Map ? body['data'] : body)
+          as Map<String, dynamic>;
       final backendXp = (data['xpEarned'] as num?)?.toInt() ?? state.xpEarned;
+      final levelledUp = data['levelledUp'] == true;
+      final newLevel = (data['newLevel'] as num?)?.toInt() ?? 0;
       appLog.i('[Quiz] submitted answers=${_answers.length} correct=${state.score} '
-          'backendXp=$backendXp');
+          'backendXp=$backendXp levelledUp=$levelledUp newLevel=$newLevel');
 
       // Make the home/progress screen pick up the new XP on next view.
       ref.invalidate(progressViewModelProvider);
 
-      state = state.copyWith(xpEarned: backendXp);
+      state = state.copyWith(
+        xpEarned: backendXp,
+        levelledUp: levelledUp,
+        newLevel: newLevel,
+      );
     } catch (e, st) {
       appLog.w('[Quiz] submit failed — XP shown is local estimate only',
           error: e, stackTrace: st);
