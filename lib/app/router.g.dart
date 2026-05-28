@@ -18,6 +18,7 @@ List<RouteBase> get $appRoutes => [
       $parentRoute,
       $parentReportsRoute,
       $parentReportDetailRoute,
+      $teachMochiRoute,
       $studyPlanRoute,
       $settingsRoute,
       $homeworkScanDetailRoute,
@@ -412,6 +413,30 @@ extension $ParentReportDetailRouteExtension on ParentReportDetailRoute {
 
   String get location => GoRouteData.$location(
         '/parent/reports/${Uri.encodeComponent(weekId)}',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $teachMochiRoute => GoRouteData.$route(
+      path: '/avatar/:avatarId/teach',
+      factory: $TeachMochiRouteExtension._fromState,
+    );
+
+extension $TeachMochiRouteExtension on TeachMochiRoute {
+  static TeachMochiRoute _fromState(GoRouterState state) => TeachMochiRoute(
+        avatarId: state.pathParameters['avatarId']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/avatar/${Uri.encodeComponent(avatarId)}/teach',
       );
 
   void go(BuildContext context) => context.go(location);

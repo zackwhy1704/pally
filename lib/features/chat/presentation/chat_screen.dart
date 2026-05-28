@@ -238,6 +238,12 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
           ),
           const SizedBox(width: AppSpacing.xs),
           IconButton(
+            icon: const Icon(Icons.school_outlined,
+                color: AppColors.purple),
+            onPressed: () => TeachMochiRoute(avatarId: avatarId).push(context),
+            tooltip: 'Teach Mochi (Feynman)',
+          ),
+          IconButton(
             icon:
                 const Icon(Icons.upload_file_outlined, color: AppColors.text2),
             onPressed: () => UploadRoute(avatarId: avatarId).push(context),
