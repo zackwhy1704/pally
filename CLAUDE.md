@@ -1898,6 +1898,49 @@ Row(
 
 ---
 
+## Rule 9 — Container pill/badge/chip inside a Row needs maxWidth
+
+A `Container` with a dynamic `Text` child inside a `Row` will expand to fit the text. If the text is user input, an API response, or any unknown value, it WILL overflow on long inputs.
+
+```dart
+// ❌ OVERFLOW — pill expands with long answer, pushes Row past screen edge
+Row(children: [
+  Expanded(child: Text(title)),
+  Container(
+    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+    child: Text(dynamicText),  // "= Sunlight, water, carbon dioxide…"
+  ),
+])
+
+// ✅ SAFE — pill bounded, text ellipses
+Row(children: [
+  Expanded(child: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis)),
+  Flexible(
+    flex: 0,
+    child: Container(
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      constraints: BoxConstraints(maxWidth: 140), // ← REQUIRED
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+      child: Text(
+        dynamicText,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis, // ← REQUIRED
+      ),
+    ),
+  ),
+])
+```
+
+**Reasonable maxWidth values:**
+- Answer/result pill: `140`
+- Subject badge: `120`
+- File name pill: `160`
+- Status badge (1–2 words): `80`
+- XP/score pill: `100`
+
+---
+
 ## Quick grep audit — run before every PR
 
 ```bash

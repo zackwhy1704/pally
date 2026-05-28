@@ -42,7 +42,7 @@ class _HomeworkScanResultBubbleState extends State<HomeworkScanResultBubble> {
 
     return Padding(
       padding: const EdgeInsets.only(
-          left: AppSpacing.md, right: 60, bottom: AppSpacing.sm),
+          left: AppSpacing.md, right: AppSpacing.md, bottom: AppSpacing.sm),
       child: GestureDetector(
         onTap: () => HomeworkScanDetailRoute($extra: widget.result)
             .push<void>(context),

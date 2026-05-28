@@ -80,21 +80,28 @@ class AnswerCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 6),
-                  // Answer pill
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: isExpanded ? color : color.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      isExpanded ? '= ${answer.answer}' : 'Show →',
-                      style: TextStyle(
-                        color: isExpanded ? Colors.white : color,
-                        fontSize: 9,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: 'Nunito',
+                  // Answer pill — bounded so long answers don't push the Row past the edge
+                  Flexible(
+                    flex: 0,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      constraints: const BoxConstraints(maxWidth: 140),
+                      decoration: BoxDecoration(
+                        color:
+                            isExpanded ? color : color.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        isExpanded ? '= ${answer.answer}' : 'Show →',
+                        style: TextStyle(
+                          color: isExpanded ? Colors.white : color,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'Nunito',
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
@@ -157,8 +164,9 @@ class AnswerCard extends StatelessWidget {
                     const SizedBox(height: 8),
                   ],
 
-                  // Answer badge
+                  // Answer badge — wrap to multiple lines for long answers
                   Container(
+                    width: double.infinity,
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
