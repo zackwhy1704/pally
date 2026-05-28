@@ -100,6 +100,15 @@ class ChatState {
 const _sentinel = Object();
 const _uuid = Uuid();
 
+ChatMessage streamingMessageStub(String id, String avatarId) => ChatMessage(
+      id: id,
+      avatarId: avatarId,
+      role: MessageRole.tutor,
+      content: '',
+      isStreaming: true,
+      createdAt: DateTime.now(),
+    );
+
 @riverpod
 class ChatViewModel extends _$ChatViewModel {
   late String _avatarId;
@@ -176,13 +185,13 @@ class ChatViewModel extends _$ChatViewModel {
         savedScrollOffset: scrollOffset,
       );
 
-      // If local DB is empty (fresh install / re-install), pull from backend
-      if (localMessages.isEmpty) {
-        await _fetchHistoryFromBackend();
-      }
+      // Always fetch backend history in background — non-blocking.
+      // If local was empty, the merge will populate the UI.
+      // If local had data, the merge will pick up any messages added on other devices.
+      unawaited(_fetchHistoryFromBackend());
     } catch (e, st) {
       appLog.w('[Chat] Local DB load failed', error: e, stackTrace: st);
-      await _fetchHistoryFromBackend();
+      unawaited(_fetchHistoryFromBackend());
     }
   }
 
@@ -215,7 +224,13 @@ class ChatViewModel extends _$ChatViewModel {
         }
       }
 
-      messages.sort((a, b) {
+      // Merge: keep local messages, add backend ones not already present (by id).
+      final existingIds = state.messages.map((m) => m.id).toSet();
+      final merged = [...state.messages];
+      for (final m in messages) {
+        if (!existingIds.contains(m.id)) merged.add(m);
+      }
+      merged.sort((a, b) {
         final cmp = (a.createdAt ?? DateTime(0))
             .compareTo(b.createdAt ?? DateTime(0));
         if (cmp != 0) return cmp;
@@ -223,8 +238,8 @@ class ChatViewModel extends _$ChatViewModel {
         final bOrder = b.role == MessageRole.user ? 0 : 1;
         return aOrder.compareTo(bOrder);
       });
-      appLog.i('[Chat] Loaded ${messages.length} history messages from backend');
-      state = state.copyWith(messages: messages);
+      appLog.i('[Chat] Merged ${messages.length} backend messages into state (total ${merged.length})');
+      state = state.copyWith(messages: merged);
 
       for (final msg in messages) {
         await _localDb.saveMessage(msg.toRecord());
@@ -548,12 +563,15 @@ class ChatViewModel extends _$ChatViewModel {
         options: Options(
           responseType: ResponseType.stream,
           headers: {'Accept': 'text/event-stream'},
+          // Stream timeout: if no chunk for 30s, treat connection as dead.
+          receiveTimeout: const Duration(seconds: 30),
         ),
       );
 
       final stream = response.data!.stream;
       final buffer = StringBuffer();
       final sources = <String>[];
+      int tokenCount = 0;
 
       String currentEvent = '';
       final dataLines = <String>[];
@@ -585,6 +603,19 @@ class ChatViewModel extends _$ChatViewModel {
                 buffer.write(fullData);
               }
               _updateStreamingMessage(streamId, buffer.toString());
+
+              // Periodically persist partial response so it survives
+              // app crashes / network drops mid-stream.
+              tokenCount++;
+              if (tokenCount % 20 == 0) {
+                final current = state.messages.firstWhere(
+                  (m) => m.id == streamId,
+                  orElse: () => streamingMessageStub(streamId, _avatarId),
+                );
+                unawaited(_localDb.saveMessage(
+                  current.copyWith(content: buffer.toString()).toRecord(),
+                ));
+              }
             }
             currentEvent = '';
           }
