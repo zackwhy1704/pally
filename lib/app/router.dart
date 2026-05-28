@@ -21,6 +21,8 @@ import 'package:pally/features/flashcards/presentation/flashcard_screen.dart';
 import 'package:pally/features/progress/presentation/progress_screen.dart';
 import 'package:pally/features/shop/presentation/shop_screen.dart';
 import 'package:pally/features/parent/presentation/parent_screen.dart';
+import 'package:pally/features/parent/presentation/report_list_screen.dart';
+import 'package:pally/features/parent/presentation/report_detail_screen.dart';
 import 'package:pally/features/study_plan/presentation/study_plan_screen.dart';
 import 'package:pally/features/settings/presentation/settings_screen.dart';
 import 'package:pally/features/photo_question/presentation/camera_screen.dart';
@@ -211,6 +213,25 @@ class ParentRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const ParentScreen();
+}
+
+@TypedGoRoute<ParentReportsRoute>(path: '/parent/reports')
+class ParentReportsRoute extends GoRouteData {
+  const ParentReportsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ReportListScreen();
+}
+
+@TypedGoRoute<ParentReportDetailRoute>(path: '/parent/reports/:weekId')
+class ParentReportDetailRoute extends GoRouteData {
+  const ParentReportDetailRoute({required this.weekId});
+  final String weekId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      ReportDetailScreen(weekId: weekId);
 }
 
 @TypedGoRoute<StudyPlanRoute>(path: '/avatar/:avatarId/study-plan')

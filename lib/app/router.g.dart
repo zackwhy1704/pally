@@ -16,6 +16,8 @@ List<RouteBase> get $appRoutes => [
       $flashcardRoute,
       $shopRoute,
       $parentRoute,
+      $parentReportsRoute,
+      $parentReportDetailRoute,
       $studyPlanRoute,
       $settingsRoute,
       $homeworkScanDetailRoute,
@@ -362,6 +364,54 @@ extension $ParentRouteExtension on ParentRoute {
 
   String get location => GoRouteData.$location(
         '/parent',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $parentReportsRoute => GoRouteData.$route(
+      path: '/parent/reports',
+      factory: $ParentReportsRouteExtension._fromState,
+    );
+
+extension $ParentReportsRouteExtension on ParentReportsRoute {
+  static ParentReportsRoute _fromState(GoRouterState state) =>
+      const ParentReportsRoute();
+
+  String get location => GoRouteData.$location(
+        '/parent/reports',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $parentReportDetailRoute => GoRouteData.$route(
+      path: '/parent/reports/:weekId',
+      factory: $ParentReportDetailRouteExtension._fromState,
+    );
+
+extension $ParentReportDetailRouteExtension on ParentReportDetailRoute {
+  static ParentReportDetailRoute _fromState(GoRouterState state) =>
+      ParentReportDetailRoute(
+        weekId: state.pathParameters['weekId']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/parent/reports/${Uri.encodeComponent(weekId)}',
       );
 
   void go(BuildContext context) => context.go(location);

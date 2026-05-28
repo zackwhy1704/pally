@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -265,6 +266,8 @@ class _Dashboard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _WeekStatsRow(stats: stats),
+          const SizedBox(height: AppSpacing.md),
+          const _WeeklyReportsCard(),
           const SizedBox(height: AppSpacing.md),
           if (stats.subjects.isNotEmpty)
             _SubjectBreakdown(subjects: stats.subjects),
@@ -539,6 +542,61 @@ class _ScreenTimeCard extends ConsumerWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _WeeklyReportsCard extends StatelessWidget {
+  const _WeeklyReportsCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.surface,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => const ParentReportsRoute().go(context),
+        child: Container(
+          padding: AppSpacing.card,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.outline),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: const BoxDecoration(
+                  color: AppColors.tealL,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.assessment_rounded,
+                    color: AppColors.teal, size: 22),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Weekly Reports',
+                        style: AppTextStyles.body
+                            .copyWith(fontWeight: FontWeight.w700)),
+                    Text(
+                      "Mastery, focus areas, and what's next.",
+                      style: AppTextStyles.bodySmall
+                          .copyWith(color: AppColors.text2),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded,
+                  color: AppColors.text2),
+            ],
+          ),
+        ),
       ),
     );
   }
