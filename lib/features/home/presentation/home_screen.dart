@@ -14,6 +14,7 @@ import 'package:pally/core/ui/pally_delete_tutor_dialog.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/features/auth/auth_state.dart';
+import 'package:pally/features/home/widgets/due_cards_banner.dart';
 import 'package:pally/features/home/widgets/empty_home_state.dart';
 import 'package:pally/features/progress/presentation/progress_view_model.dart';
 
@@ -52,6 +53,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               xp: xp,
               xpToNext: xpToNext,
             ),
+            const DueCardsBanner(),
             const _NudgeCardsRow(),
             Expanded(
               child: avatarsAsync.when(

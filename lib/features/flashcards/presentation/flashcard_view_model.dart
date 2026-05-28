@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/services/notification_service.dart';
+import 'package:pally/core/utils/logger.dart';
 import 'package:pally/shared/models/flash_card.dart';
 
 part 'flashcard_view_model.g.dart';
@@ -96,6 +100,7 @@ class FlashCardViewModel extends _$FlashCardViewModel {
           .map((e) => FlashCard.fromJson(e as Map<String, dynamic>))
           .toList();
       state = state.copyWith(cards: cards, isLoading: false);
+      unawaited(_rescheduleSrs());
     } on DioException catch (e) {
       if (e.response?.statusCode == 404 || e.response?.statusCode == 500) {
         state = state.copyWith(cards: [], isLoading: false);
@@ -106,6 +111,62 @@ class FlashCardViewModel extends _$FlashCardViewModel {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
+
+  /// Recomputes and re-arms the per-avatar SRS notification slot based on the
+  /// current deck's `nextReview` dates. Best-effort — failures don't propagate.
+  Future<void> _rescheduleSrs() async {
+    try {
+      final now = DateTime.now();
+      final due = state.cards
+          .where((c) => c.nextReview != null && !c.nextReview!.isAfter(now))
+          .toList();
+      final upcoming = state.cards
+          .where((c) => c.nextReview != null && c.nextReview!.isAfter(now))
+          .toList()
+        ..sort((a, b) => a.nextReview!.compareTo(b.nextReview!));
+
+      if (due.isEmpty && upcoming.isEmpty) {
+        await NotificationService.cancelSrsReminder(_avatarId);
+        return;
+      }
+
+      final earliest = due.isNotEmpty ? now : upcoming.first.nextReview!;
+      // For a future-scheduled reminder we want to count cards due on that
+      // same calendar day, not the whole future deck.
+      final count = due.isNotEmpty
+          ? due.length
+          : upcoming
+              .where((c) => _isSameDay(c.nextReview!, earliest))
+              .length;
+
+      final name = await _fetchAvatarName();
+      await NotificationService.scheduleSrsReminder(
+        avatarId: _avatarId,
+        avatarName: name,
+        dueCount: count,
+        earliestDue: earliest,
+      );
+    } catch (e) {
+      appLog.w('[Flashcards] SRS reschedule failed: $e');
+    }
+  }
+
+  Future<String> _fetchAvatarName() async {
+    try {
+      final dio = ref.read(dioProvider);
+      final response = await dio
+          .get<Map<String, dynamic>>('/api/v1/avatars/$_avatarId');
+      final data = (response.data?['data'] is Map
+              ? response.data!['data']
+              : response.data) as Map<String, dynamic>;
+      return (data['name'] as String?) ?? 'your tutor';
+    } catch (_) {
+      return 'your tutor';
+    }
+  }
+
+  bool _isSameDay(DateTime a, DateTime b) =>
+      a.year == b.year && a.month == b.month && a.day == b.day;
 
   void flip() {
     state = state.copyWith(isFlipped: !state.isFlipped);
@@ -142,6 +203,9 @@ class FlashCardViewModel extends _$FlashCardViewModel {
       isFlipped: false,
       isRating: false,
     );
+    // A rating shifts nextReview via SM-2 server-side; refetch so the local
+    // schedule reflects the new dates, then re-arm the notification.
+    unawaited(refresh());
   }
 
   Future<void> refresh() async {
