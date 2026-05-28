@@ -203,7 +203,17 @@ class UploadViewModel extends _$UploadViewModel {
         '/api/v1/avatars/$_avatarId/files',
         data: formData,
       );
-      final result = UploadResult.fromJson(response.data!);
+      final data = response.data ?? const {};
+      // Backend Success: { fileId, pageCount }
+      // Backend RelevanceWarning: { fileId, score, reason }
+      final result = UploadResult(
+        id: (data['fileId'] ?? data['id'] ?? '') as String,
+        avatarId: _avatarId,
+        fileName: file.name,
+        status: UploadStatus.ready,
+        pageCount: (data['pageCount'] as num?)?.toInt() ?? 0,
+        uploadedAt: DateTime.now(),
+      );
       appLog.i('[Upload] Upload success: fileId=${result.id} pages=${result.pageCount}');
       state = state.copyWith(
         isUploading: false,
