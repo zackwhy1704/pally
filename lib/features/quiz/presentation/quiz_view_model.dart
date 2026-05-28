@@ -116,6 +116,8 @@ class QuizViewModel extends _$QuizViewModel {
   final Map<String, int> _answers = {};
   // Captures questionId -> correctIndex so the backend can score authoritatively.
   final Map<String, int> _correctMap = {};
+  // Captures questionId -> topic slug so the backend can group weak topics.
+  final Map<String, String> _topicMap = {};
 
   void answerQuestion(int answerIndex) {
     if (state.isAnswered) return;
@@ -124,6 +126,9 @@ class QuizViewModel extends _$QuizViewModel {
 
     _answers[question.id] = answerIndex;
     _correctMap[question.id] = question.correctIndex;
+    if (question.sourcePage.isNotEmpty) {
+      _topicMap[question.id] = question.sourcePage;
+    }
 
     final isCorrect = answerIndex == question.correctIndex;
     state = state.copyWith(
@@ -155,6 +160,7 @@ class QuizViewModel extends _$QuizViewModel {
         data: {
           'answers': _answers,
           'correctMap': _correctMap,
+          'topicMap': _topicMap,
         },
       );
 
@@ -187,6 +193,7 @@ class QuizViewModel extends _$QuizViewModel {
   Future<void> restart() async {
     _answers.clear();
     _correctMap.clear();
+    _topicMap.clear();
     state = const QuizState(isLoading: true);
     await _loadQuestions();
   }
