@@ -522,7 +522,10 @@ class ChatViewModel extends _$ChatViewModel {
       final response = await dio.post<ResponseBody>(
         '/api/v1/avatars/$_avatarId/chat',
         data: ChatRequest(message: text).toJson(),
-        options: Options(responseType: ResponseType.stream),
+        options: Options(
+          responseType: ResponseType.stream,
+          validateStatus: (status) => status != null && status < 600,
+        ),
       );
 
       final stream = response.data!.stream;
@@ -547,6 +550,16 @@ class ChatViewModel extends _$ChatViewModel {
 
             if (fullData == '[DONE]' || currentEvent == 'done') {
               _finaliseStreamingMessage(streamId, buffer.toString(), sources);
+              state = state.copyWith(isTyping: false);
+              return;
+            }
+            if (currentEvent == 'error') {
+              appLog.e('[Chat] SSE error event: $fullData');
+              final errorMsg = fullData.isNotEmpty
+                  ? fullData
+                  : 'Something went wrong. Please try again!';
+              _finaliseStreamingMessage(streamId,
+                  buffer.isEmpty ? errorMsg : buffer.toString(), sources);
               state = state.copyWith(isTyping: false);
               return;
             }
