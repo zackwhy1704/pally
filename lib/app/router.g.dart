@@ -18,6 +18,8 @@ List<RouteBase> get $appRoutes => [
       $parentRoute,
       $parentReportsRoute,
       $parentReportDetailRoute,
+      $createGroupRoute,
+      $studyGroupDetailRoute,
       $brainMapRoute,
       $teachMochiRoute,
       $studyPlanRoute,
@@ -72,6 +74,14 @@ RouteBase get $appShellRouteData => StatefulShellRouteData.$route(
             GoRouteData.$route(
               path: '/progress',
               factory: $ProgressRouteExtension._fromState,
+            ),
+          ],
+        ),
+        StatefulShellBranchData.$branch(
+          routes: [
+            GoRouteData.$route(
+              path: '/groups',
+              factory: $GroupsTabRouteExtension._fromState,
             ),
           ],
         ),
@@ -157,6 +167,24 @@ extension $ProgressRouteExtension on ProgressRoute {
 
   String get location => GoRouteData.$location(
         '/progress',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+extension $GroupsTabRouteExtension on GroupsTabRoute {
+  static GroupsTabRoute _fromState(GoRouterState state) =>
+      const GroupsTabRoute();
+
+  String get location => GoRouteData.$location(
+        '/groups',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -414,6 +442,54 @@ extension $ParentReportDetailRouteExtension on ParentReportDetailRoute {
 
   String get location => GoRouteData.$location(
         '/parent/reports/${Uri.encodeComponent(weekId)}',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $createGroupRoute => GoRouteData.$route(
+      path: '/groups/create',
+      factory: $CreateGroupRouteExtension._fromState,
+    );
+
+extension $CreateGroupRouteExtension on CreateGroupRoute {
+  static CreateGroupRoute _fromState(GoRouterState state) =>
+      const CreateGroupRoute();
+
+  String get location => GoRouteData.$location(
+        '/groups/create',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $studyGroupDetailRoute => GoRouteData.$route(
+      path: '/groups/detail/:groupId',
+      factory: $StudyGroupDetailRouteExtension._fromState,
+    );
+
+extension $StudyGroupDetailRouteExtension on StudyGroupDetailRoute {
+  static StudyGroupDetailRoute _fromState(GoRouterState state) =>
+      StudyGroupDetailRoute(
+        groupId: state.pathParameters['groupId']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/groups/detail/${Uri.encodeComponent(groupId)}',
       );
 
   void go(BuildContext context) => context.go(location);

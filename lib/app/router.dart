@@ -30,6 +30,9 @@ import 'package:pally/features/photo_question/presentation/photo_preview_screen.
 import 'package:pally/features/photo_question/presentation/homework_scan_detail_screen.dart';
 import 'package:pally/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:pally/features/brain_map/presentation/brain_map_screen.dart';
+import 'package:pally/features/groups/presentation/create_group_screen.dart';
+import 'package:pally/features/groups/presentation/group_detail_screen.dart';
+import 'package:pally/features/groups/presentation/group_list_screen.dart';
 import 'package:pally/features/teach_mochi/presentation/teach_mochi_screen.dart';
 import 'package:pally/features/brain_health/presentation/brain_health_screen.dart';
 import 'package:pally/shared/models/photo_question.dart';
@@ -65,6 +68,14 @@ part 'router.g.dart';
         TypedGoRoute<ProgressRoute>(path: '/progress'),
       ],
     ),
+    // 5th branch — must stay at index 4 to match TabSpec.branchIndex in
+    // scaffold_shell.dart. Hidden from the bar when the groups_enabled
+    // feature flag is off, but still routable so deep links keep working.
+    TypedStatefulShellBranch<GroupsBranchData>(
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<GroupsTabRoute>(path: '/groups'),
+      ],
+    ),
   ],
 )
 class AppShellRouteData extends StatefulShellRouteData {
@@ -93,6 +104,10 @@ class ChatBranchData extends StatefulShellBranchData {
 
 class MeBranchData extends StatefulShellBranchData {
   const MeBranchData();
+}
+
+class GroupsBranchData extends StatefulShellBranchData {
+  const GroupsBranchData();
 }
 
 // ─── Tab root screens ────────────────────────────────────────────────────────
@@ -126,6 +141,14 @@ class ChatTabRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const ChatTabScreen();
+}
+
+class GroupsTabRoute extends GoRouteData {
+  const GroupsTabRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const GroupListScreen();
 }
 
 class ProgressRoute extends GoRouteData {
@@ -234,6 +257,25 @@ class ParentReportDetailRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       ReportDetailScreen(weekId: weekId);
+}
+
+@TypedGoRoute<CreateGroupRoute>(path: '/groups/create')
+class CreateGroupRoute extends GoRouteData {
+  const CreateGroupRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const CreateGroupScreen();
+}
+
+@TypedGoRoute<StudyGroupDetailRoute>(path: '/groups/detail/:groupId')
+class StudyGroupDetailRoute extends GoRouteData {
+  const StudyGroupDetailRoute({required this.groupId});
+  final String groupId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      GroupDetailScreen(groupId: groupId);
 }
 
 @TypedGoRoute<BrainMapRoute>(path: '/avatar/:avatarId/brain-map')
