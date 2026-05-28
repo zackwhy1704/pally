@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/app/router.dart';
@@ -9,6 +10,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/core/ui/pally_delete_tutor_dialog.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/features/auth/auth_state.dart';
@@ -247,7 +249,7 @@ class _AvatarGrid extends ConsumerWidget {
   }
 }
 
-class _AvatarCard extends StatelessWidget {
+class _AvatarCard extends ConsumerWidget {
   const _AvatarCard({required this.avatar});
   final Avatar avatar;
 
@@ -256,9 +258,10 @@ class _AvatarCard extends StatelessWidget {
   Color get _primaryColor => avatar.character.primaryColor;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       onTap: () => ChatRoute(avatarId: avatar.id).push(context),
+      onLongPress: () => _showTutorOptions(context, ref, avatar),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.surface,
@@ -349,6 +352,147 @@ class _AvatarCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ── Tutor long-press options sheet ────────────────────────────────────────────
+
+void _showTutorOptions(BuildContext context, WidgetRef ref, Avatar avatar) {
+  showModalBottomSheet<void>(
+    context: context,
+    backgroundColor: Colors.transparent,
+    builder: (sheetCtx) => Container(
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppColors.outline,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: avatar.character.bgColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Image.asset(avatar.character.assetPath,
+                      width: 40, height: 40, fit: BoxFit.contain),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(avatar.name,
+                        style: AppTextStyles.title.copyWith(fontSize: 16),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis),
+                    Text(avatar.subject,
+                        style: AppTextStyles.caption
+                            .copyWith(color: AppColors.text2),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          _OptionTile(
+            icon: Icons.library_books_outlined,
+            label: 'Manage knowledge',
+            color: AppColors.teal,
+            onTap: () {
+              Navigator.pop(sheetCtx);
+              UploadRoute(avatarId: avatar.id).push(context);
+            },
+          ),
+          _OptionTile(
+            icon: Icons.delete_outline_rounded,
+            label: 'Delete tutor',
+            color: AppColors.coral,
+            onTap: () async {
+              Navigator.pop(sheetCtx);
+              final confirmed = await PallyDeleteTutorDialog.show(
+                context: context,
+                avatar: avatar,
+              );
+              if (confirmed == true) {
+                final ok = await ref
+                    .read(homeViewModelProvider.notifier)
+                    .deleteAvatar(avatar.id);
+                if (context.mounted) {
+                  if (ok) {
+                    HapticFeedback.heavyImpact();
+                    PallyToast.success(context, '${avatar.name} deleted');
+                  } else {
+                    PallyToast.error(context, 'Delete failed. Try again.');
+                  }
+                }
+              }
+            },
+          ),
+          SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
+        ],
+      ),
+    ),
+  );
+}
+
+class _OptionTile extends StatelessWidget {
+  const _OptionTile({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(icon, color: color, size: 20),
+      ),
+      title: Text(
+        label,
+        style: AppTextStyles.body.copyWith(
+          color:
+              color == AppColors.coral ? AppColors.coral : AppColors.text1,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      trailing: const Icon(Icons.chevron_right,
+          color: AppColors.text3, size: 20),
+      onTap: onTap,
+      contentPadding: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     );
   }
 }

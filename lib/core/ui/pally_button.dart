@@ -3,7 +3,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 
-enum PallyButtonVariant { filled, outlined, ghost }
+enum PallyButtonVariant { filled, outlined, ghost, destructive }
 
 class PallyButton extends StatelessWidget {
   const PallyButton({
@@ -69,6 +69,15 @@ class PallyButton extends StatelessWidget {
             textStyle: AppTextStyles.body.copyWith(
               fontWeight: FontWeight.w600,
             ),
+          ),
+          child: child,
+        );
+      case PallyButtonVariant.destructive:
+        button = FilledButton(
+          onPressed: effectiveCallback,
+          style: FilledButton.styleFrom(
+            backgroundColor: AppColors.coral,
+            foregroundColor: Colors.white,
           ),
           child: child,
         );

@@ -1,16 +1,19 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
+import 'package:pally/core/ui/pally_delete_tutor_dialog.dart';
 import 'package:pally/core/ui/typing_indicator.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/chat_message.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/chat/presentation/chat_view_model.dart';
+import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/features/chat/presentation/widgets/photo_message_bubble.dart';
 import 'package:pally/features/chat/presentation/widgets/photo_processing_bubble.dart';
 import 'package:pally/features/chat/presentation/widgets/homework_scan_result_bubble.dart';
@@ -239,6 +242,50 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
                 const Icon(Icons.upload_file_outlined, color: AppColors.text2),
             onPressed: () => UploadRoute(avatarId: avatarId).push(context),
             tooltip: 'Add Knowledge',
+          ),
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert, color: AppColors.text2),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)),
+            onSelected: (value) async {
+              if (value == 'delete' && chatState.avatar != null) {
+                final avatar = chatState.avatar!;
+                final confirmed = await PallyDeleteTutorDialog.show(
+                  context: context,
+                  avatar: avatar,
+                );
+                if (confirmed == true && context.mounted) {
+                  final ok = await ref
+                      .read(homeViewModelProvider.notifier)
+                      .deleteAvatar(avatar.id);
+                  if (context.mounted) {
+                    if (ok) {
+                      HapticFeedback.heavyImpact();
+                      const HomeRoute().go(context);
+                      PallyToast.success(
+                          context, '${avatar.name} deleted');
+                    } else {
+                      PallyToast.error(context, 'Delete failed. Try again.');
+                    }
+                  }
+                }
+              }
+            },
+            itemBuilder: (_) => [
+              PopupMenuItem(
+                value: 'delete',
+                child: Row(
+                  children: [
+                    const Icon(Icons.delete_outline_rounded,
+                        color: AppColors.coral, size: 18),
+                    const SizedBox(width: 10),
+                    Text('Delete tutor',
+                        style: AppTextStyles.body.copyWith(
+                            fontSize: 13, color: AppColors.coral)),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),

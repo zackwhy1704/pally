@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
+import 'package:pally/core/ui/pally_delete_tutor_dialog.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
+import 'package:pally/core/ui/pally_toast.dart';
+import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/shared/models/avatar.dart';
 
@@ -38,8 +42,59 @@ class LibraryScreen extends ConsumerWidget {
                 child: ListView.builder(
                   padding: const EdgeInsets.all(AppSpacing.md),
                   itemCount: avatars.length,
-                  itemBuilder: (context, index) =>
-                      _AvatarRow(avatar: avatars[index]),
+                  itemBuilder: (context, index) {
+                    final avatar = avatars[index];
+                    return Dismissible(
+                      key: ValueKey(avatar.id),
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.only(right: 24),
+                        decoration: BoxDecoration(
+                          color: AppColors.coral,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.delete_outline_rounded,
+                                color: Colors.white, size: 24),
+                            SizedBox(height: 2),
+                            Text('Delete',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                      ),
+                      confirmDismiss: (_) async {
+                        return await PallyDeleteTutorDialog.show(
+                          context: context,
+                          avatar: avatar,
+                        );
+                      },
+                      onDismissed: (_) async {
+                        final ok = await ref
+                            .read(homeViewModelProvider.notifier)
+                            .deleteAvatar(avatar.id);
+                        if (context.mounted) {
+                          if (ok) {
+                            HapticFeedback.heavyImpact();
+                            PallyToast.success(
+                                context, '${avatar.name} deleted');
+                          } else {
+                            PallyToast.error(
+                                context, 'Delete failed. Try again.');
+                          }
+                        }
+                        // Refresh library too
+                        ref.invalidate(libraryViewModelProvider);
+                      },
+                      child: _AvatarRow(avatar: avatar),
+                    );
+                  },
                 ),
               ),
       ),

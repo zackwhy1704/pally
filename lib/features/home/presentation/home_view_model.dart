@@ -3,7 +3,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/mochi_character.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/local_db/pally_database.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/features/chat/data/local/chat_local_data_source.dart';
 
 part 'home_view_model.g.dart';
 
@@ -41,10 +43,26 @@ class HomeViewModel extends _$HomeViewModel {
     state = await AsyncValue.guard(_fetchAvatars);
   }
 
-  Future<void> deleteAvatar(String avatarId) async {
-    final dio = ref.read(dioProvider);
-    await dio.delete('/api/v1/avatars/$avatarId');
-    await refresh();
+  Future<bool> deleteAvatar(String avatarId) async {
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.delete('/api/v1/avatars/$avatarId');
+      appLog.i('[Home] Avatar deleted: $avatarId');
+
+      // Local-DB cleanup (best-effort — backend already cascades)
+      try {
+        final localDb = ChatLocalDataSource(ref.read(pallyDatabaseProvider));
+        await localDb.deleteAllForAvatar(avatarId);
+      } catch (e) {
+        appLog.w('[Home] Local chat cleanup failed: $e');
+      }
+
+      await refresh();
+      return true;
+    } on DioException catch (e, st) {
+      appLog.e('[Home] Delete avatar failed', error: e, stackTrace: st);
+      return false;
+    }
   }
 
   // Computed getters used by UI — no logic in build()

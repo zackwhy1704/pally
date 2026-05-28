@@ -149,4 +149,23 @@ class ChatLocalDataSource {
         .getSingleOrNull();
     return row != null ? ChatMessageMapper.fromRecord(row) : null;
   }
+
+  // ── Avatar deletion cleanup ───────────────────────────────────────
+
+  /// Removes all local rows belonging to [avatarId]: messages, session
+  /// state, scroll position, and pending sync queue entries.
+  Future<void> deleteAllForAvatar(String avatarId) async {
+    await (_db.delete(_db.chatMessages)
+          ..where((t) => t.avatarId.equals(avatarId)))
+        .go();
+    await (_db.delete(_db.sessionStates)
+          ..where((t) => t.avatarId.equals(avatarId)))
+        .go();
+    await (_db.delete(_db.chatScrollPositions)
+          ..where((t) => t.avatarId.equals(avatarId)))
+        .go();
+    await (_db.delete(_db.pendingSyncs)
+          ..where((t) => t.avatarId.equals(avatarId)))
+        .go();
+  }
 }
