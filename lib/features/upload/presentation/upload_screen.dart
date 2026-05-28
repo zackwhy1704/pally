@@ -41,7 +41,7 @@ class UploadScreen extends ConsumerWidget {
           reason: next.pendingRelevance!.reason,
         );
         if (addAnyway == true && next.pendingFile != null) {
-          await vm.uploadFile(next.pendingFile!);
+          await vm.uploadFile(next.pendingFile!, skipRelevance: true);
         } else {
           vm.clearPendingRelevance();
         }

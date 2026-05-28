@@ -211,12 +211,13 @@ class UploadViewModel extends _$UploadViewModel {
     }
   }
 
-  Future<void> uploadFile(PlatformFile file) async {
-    appLog.i('[Upload] Uploading file: ${file.name} (${file.size} bytes)');
+  Future<void> uploadFile(PlatformFile file, {bool skipRelevance = false}) async {
+    appLog.i('[Upload] Uploading file: ${file.name} (${file.size} bytes) skipRelevance=$skipRelevance');
     state = state.copyWith(
       isUploading: true,
       pendingFile: null,
       pendingRelevance: null,
+      error: null,
     );
 
     try {
@@ -225,6 +226,7 @@ class UploadViewModel extends _$UploadViewModel {
         'file': await MultipartFile.fromFile(file.path!, filename: file.name),
         if (state.topicTag != null) 'topicTag': state.topicTag,
         if (state.sourceType != null) 'sourceType': state.sourceType,
+        if (skipRelevance) 'skipRelevance': 'true',
       });
       final response = await dio.post<Map<String, dynamic>>(
         '/api/v1/avatars/$_avatarId/files',
@@ -247,18 +249,30 @@ class UploadViewModel extends _$UploadViewModel {
         files: [...state.files, result],
       );
     } on DioException catch (e, st) {
-      appLog.w('[Upload] Upload failed, using stub result', error: e, stackTrace: st);
-      final stubResult = UploadResult(
-        id: 'stub-file-${DateTime.now().millisecondsSinceEpoch}',
-        avatarId: _avatarId,
-        fileName: file.name,
-        status: UploadStatus.ready,
-        pageCount: 1,
-        uploadedAt: DateTime.now(),
-      );
+      appLog.e('[Upload] Upload failed', error: e, stackTrace: st);
+
+      // Surface the actual error instead of silently faking a successful stub.
+      // Faking ready stubs made the UI show "uploaded" when nothing was compiled.
+      String errorMessage = 'Upload failed. Please try again.';
+      final body = e.response?.data;
+      if (body is Map) {
+        final reason = body['reason'] as String?;
+        final score = body['score'] as num?;
+        final err = body['error'] as String?;
+        if (reason != null) {
+          errorMessage = reason;
+        } else if (err != null) {
+          errorMessage = err;
+        }
+        if (score != null && score < 0.3) {
+          errorMessage =
+              'This doesn\'t look like ${state.topicTag ?? "this subject"}. $reason';
+        }
+      }
+
       state = state.copyWith(
         isUploading: false,
-        files: [...state.files, stubResult],
+        error: errorMessage,
       );
     }
   }
