@@ -286,14 +286,14 @@ class _AvatarCard extends ConsumerWidget {
                     ),
                   ),
                 ),
-                // Info area
+                // Info area — centered horizontally
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.sm,
                     vertical: AppSpacing.xs,
                   ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -310,6 +310,7 @@ class _AvatarCard extends ConsumerWidget {
                             color: _primaryColor,
                             fontWeight: FontWeight.w600,
                           ),
+                          textAlign: TextAlign.center,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -321,6 +322,7 @@ class _AvatarCard extends ConsumerWidget {
                           color: AppColors.text1,
                           fontWeight: FontWeight.w700,
                         ),
+                        textAlign: TextAlign.center,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
