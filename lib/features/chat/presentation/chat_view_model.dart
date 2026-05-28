@@ -52,7 +52,18 @@ class ChatState {
 
   bool get canSend => !isSending && !isTyping && !isProcessingPhoto;
 
-  List<ChatMessage> get sortedMessages => messages;
+  List<ChatMessage> get sortedMessages {
+    final sorted = List<ChatMessage>.from(messages);
+    sorted.sort((a, b) {
+      final cmp = (a.createdAt ?? DateTime(0))
+          .compareTo(b.createdAt ?? DateTime(0));
+      if (cmp != 0) return cmp;
+      final aOrder = a.role == MessageRole.user ? 0 : 1;
+      final bOrder = b.role == MessageRole.user ? 0 : 1;
+      return aOrder.compareTo(bOrder);
+    });
+    return sorted;
+  }
 
   ChatState copyWith({
     Avatar? avatar,
@@ -204,8 +215,14 @@ class ChatViewModel extends _$ChatViewModel {
         }
       }
 
-      messages.sort((a, b) =>
-          (a.createdAt ?? DateTime(0)).compareTo(b.createdAt ?? DateTime(0)));
+      messages.sort((a, b) {
+        final cmp = (a.createdAt ?? DateTime(0))
+            .compareTo(b.createdAt ?? DateTime(0));
+        if (cmp != 0) return cmp;
+        final aOrder = a.role == MessageRole.user ? 0 : 1;
+        final bOrder = b.role == MessageRole.user ? 0 : 1;
+        return aOrder.compareTo(bOrder);
+      });
       appLog.i('[Chat] Loaded ${messages.length} history messages from backend');
       state = state.copyWith(messages: messages);
 
@@ -222,12 +239,14 @@ class ChatViewModel extends _$ChatViewModel {
     if (text.trim().isEmpty || !state.canSend) return;
     appLog.i('[Chat] Sending message to avatar $_avatarId: "${text.substring(0, text.length.clamp(0, 60))}"');
 
+    final now = DateTime.now();
+
     final userMessage = ChatMessage(
-      id: 'user-${DateTime.now().millisecondsSinceEpoch}',
+      id: 'user-${now.millisecondsSinceEpoch}',
       avatarId: _avatarId,
       role: MessageRole.user,
       content: text.trim(),
-      createdAt: DateTime.now(),
+      createdAt: now,
     );
 
     // Save user message BEFORE API call
@@ -240,14 +259,16 @@ class ChatViewModel extends _$ChatViewModel {
       error: null,
     );
 
-    final streamId = 'tutor-${DateTime.now().millisecondsSinceEpoch}';
+    // Tutor message must be strictly AFTER user message so sort order is stable
+    final tutorTimestamp = now.add(const Duration(seconds: 1));
+    final streamId = 'tutor-${tutorTimestamp.millisecondsSinceEpoch}';
     final streamingMessage = ChatMessage(
       id: streamId,
       avatarId: _avatarId,
       role: MessageRole.tutor,
       content: '',
       isStreaming: true,
-      createdAt: DateTime.now(),
+      createdAt: tutorTimestamp,
     );
     state = state.copyWith(
       messages: [...state.messages, streamingMessage],
