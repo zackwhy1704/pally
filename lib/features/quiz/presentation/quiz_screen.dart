@@ -475,7 +475,10 @@ class _CompletionView extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed: () => ChatRoute(avatarId: avatarId).push(context),
+                // Use .go() to replace the route stack (home → quiz → chat
+                // would loop back to quiz on back press). Now back from chat
+                // returns to home, as expected.
+                onPressed: () => ChatRoute(avatarId: avatarId).go(context),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.purple,
                   padding: const EdgeInsets.symmetric(vertical: 14),
