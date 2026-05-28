@@ -204,6 +204,8 @@ class ChatViewModel extends _$ChatViewModel {
         }
       }
 
+      messages.sort((a, b) =>
+          (a.createdAt ?? DateTime(0)).compareTo(b.createdAt ?? DateTime(0)));
       appLog.i('[Chat] Loaded ${messages.length} history messages from backend');
       state = state.copyWith(messages: messages);
 
@@ -522,7 +524,10 @@ class ChatViewModel extends _$ChatViewModel {
       final response = await dio.post<ResponseBody>(
         '/api/v1/avatars/$_avatarId/chat',
         data: ChatRequest(message: text).toJson(),
-        options: Options(responseType: ResponseType.stream),
+        options: Options(
+          responseType: ResponseType.stream,
+          headers: {'Accept': 'text/event-stream'},
+        ),
       );
 
       final stream = response.data!.stream;
