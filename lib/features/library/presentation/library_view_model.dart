@@ -42,7 +42,7 @@ const _stubAvatars = [
     name: 'Pencil Mochi',
     character: MochiCharacter.pencil,
     subject: 'English',
-    hasKnowledge: true,
+    wikiPageCount: 3,
     fileCount: 3,
   ),
   Avatar(
@@ -50,7 +50,7 @@ const _stubAvatars = [
     name: 'Science Mochi',
     character: MochiCharacter.science,
     subject: 'Science',
-    hasKnowledge: false,
+    wikiPageCount: 0,
     fileCount: 0,
   ),
 ];

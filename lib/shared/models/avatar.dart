@@ -39,7 +39,7 @@ String _subjectFromJson(Object? json) {
 
 String _subjectToJson(String s) => s.toUpperCase().replaceAll(' ', '_');
 
-bool _hasKnowledgeFromJson(Object? count) => ((count as int?) ?? 0) > 0;
+int _wikiPageCountFromJson(Object? count) => (count as int?) ?? 0;
 
 // ── Pedagogy mode ─────────────────────────────────────────────────────────────
 
@@ -63,9 +63,9 @@ class Avatar with _$Avatar {
     required MochiCharacter character,
     @JsonKey(fromJson: _subjectFromJson, toJson: _subjectToJson)
     required String subject,
-    @JsonKey(name: 'wikiPageCount', fromJson: _hasKnowledgeFromJson)
-    @Default(false)
-    bool hasKnowledge,
+    @JsonKey(name: 'wikiPageCount', fromJson: _wikiPageCountFromJson)
+    @Default(0)
+    int wikiPageCount,
     @Default(0) int fileCount,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -77,6 +77,10 @@ class Avatar with _$Avatar {
   }) = _Avatar;
 
   factory Avatar.fromJson(Map<String, dynamic> json) => _$AvatarFromJson(json);
+}
+
+extension AvatarKnowledge on Avatar {
+  bool get hasKnowledge => wikiPageCount > 0;
 }
 
 @freezed

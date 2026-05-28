@@ -29,8 +29,8 @@ mixin _$Avatar {
   MochiCharacter get character => throw _privateConstructorUsedError;
   @JsonKey(fromJson: _subjectFromJson, toJson: _subjectToJson)
   String get subject => throw _privateConstructorUsedError;
-  @JsonKey(name: 'wikiPageCount', fromJson: _hasKnowledgeFromJson)
-  bool get hasKnowledge => throw _privateConstructorUsedError;
+  @JsonKey(name: 'wikiPageCount', fromJson: _wikiPageCountFromJson)
+  int get wikiPageCount => throw _privateConstructorUsedError;
   int get fileCount => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
   DateTime? get updatedAt => throw _privateConstructorUsedError;
@@ -63,8 +63,8 @@ abstract class $AvatarCopyWith<$Res> {
       MochiCharacter character,
       @JsonKey(fromJson: _subjectFromJson, toJson: _subjectToJson)
       String subject,
-      @JsonKey(name: 'wikiPageCount', fromJson: _hasKnowledgeFromJson)
-      bool hasKnowledge,
+      @JsonKey(name: 'wikiPageCount', fromJson: _wikiPageCountFromJson)
+      int wikiPageCount,
       int fileCount,
       DateTime? createdAt,
       DateTime? updatedAt,
@@ -93,7 +93,7 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
     Object? name = null,
     Object? character = null,
     Object? subject = null,
-    Object? hasKnowledge = null,
+    Object? wikiPageCount = null,
     Object? fileCount = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
@@ -118,10 +118,10 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
           ? _value.subject
           : subject // ignore: cast_nullable_to_non_nullable
               as String,
-      hasKnowledge: null == hasKnowledge
-          ? _value.hasKnowledge
-          : hasKnowledge // ignore: cast_nullable_to_non_nullable
-              as bool,
+      wikiPageCount: null == wikiPageCount
+          ? _value.wikiPageCount
+          : wikiPageCount // ignore: cast_nullable_to_non_nullable
+              as int,
       fileCount: null == fileCount
           ? _value.fileCount
           : fileCount // ignore: cast_nullable_to_non_nullable
@@ -167,8 +167,8 @@ abstract class _$$AvatarImplCopyWith<$Res> implements $AvatarCopyWith<$Res> {
       MochiCharacter character,
       @JsonKey(fromJson: _subjectFromJson, toJson: _subjectToJson)
       String subject,
-      @JsonKey(name: 'wikiPageCount', fromJson: _hasKnowledgeFromJson)
-      bool hasKnowledge,
+      @JsonKey(name: 'wikiPageCount', fromJson: _wikiPageCountFromJson)
+      int wikiPageCount,
       int fileCount,
       DateTime? createdAt,
       DateTime? updatedAt,
@@ -195,7 +195,7 @@ class __$$AvatarImplCopyWithImpl<$Res>
     Object? name = null,
     Object? character = null,
     Object? subject = null,
-    Object? hasKnowledge = null,
+    Object? wikiPageCount = null,
     Object? fileCount = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
@@ -220,10 +220,10 @@ class __$$AvatarImplCopyWithImpl<$Res>
           ? _value.subject
           : subject // ignore: cast_nullable_to_non_nullable
               as String,
-      hasKnowledge: null == hasKnowledge
-          ? _value.hasKnowledge
-          : hasKnowledge // ignore: cast_nullable_to_non_nullable
-              as bool,
+      wikiPageCount: null == wikiPageCount
+          ? _value.wikiPageCount
+          : wikiPageCount // ignore: cast_nullable_to_non_nullable
+              as int,
       fileCount: null == fileCount
           ? _value.fileCount
           : fileCount // ignore: cast_nullable_to_non_nullable
@@ -265,8 +265,8 @@ class _$AvatarImpl implements _Avatar {
       required this.character,
       @JsonKey(fromJson: _subjectFromJson, toJson: _subjectToJson)
       required this.subject,
-      @JsonKey(name: 'wikiPageCount', fromJson: _hasKnowledgeFromJson)
-      this.hasKnowledge = false,
+      @JsonKey(name: 'wikiPageCount', fromJson: _wikiPageCountFromJson)
+      this.wikiPageCount = 0,
       this.fileCount = 0,
       this.createdAt,
       this.updatedAt,
@@ -292,8 +292,8 @@ class _$AvatarImpl implements _Avatar {
   @JsonKey(fromJson: _subjectFromJson, toJson: _subjectToJson)
   final String subject;
   @override
-  @JsonKey(name: 'wikiPageCount', fromJson: _hasKnowledgeFromJson)
-  final bool hasKnowledge;
+  @JsonKey(name: 'wikiPageCount', fromJson: _wikiPageCountFromJson)
+  final int wikiPageCount;
   @override
   @JsonKey()
   final int fileCount;
@@ -311,7 +311,7 @@ class _$AvatarImpl implements _Avatar {
 
   @override
   String toString() {
-    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, hasKnowledge: $hasKnowledge, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType)';
+    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType)';
   }
 
   @override
@@ -324,8 +324,8 @@ class _$AvatarImpl implements _Avatar {
             (identical(other.character, character) ||
                 other.character == character) &&
             (identical(other.subject, subject) || other.subject == subject) &&
-            (identical(other.hasKnowledge, hasKnowledge) ||
-                other.hasKnowledge == hasKnowledge) &&
+            (identical(other.wikiPageCount, wikiPageCount) ||
+                other.wikiPageCount == wikiPageCount) &&
             (identical(other.fileCount, fileCount) ||
                 other.fileCount == fileCount) &&
             (identical(other.createdAt, createdAt) ||
@@ -348,7 +348,7 @@ class _$AvatarImpl implements _Avatar {
       name,
       character,
       subject,
-      hasKnowledge,
+      wikiPageCount,
       fileCount,
       createdAt,
       updatedAt,
@@ -383,8 +383,8 @@ abstract class _Avatar implements Avatar {
       required final MochiCharacter character,
       @JsonKey(fromJson: _subjectFromJson, toJson: _subjectToJson)
       required final String subject,
-      @JsonKey(name: 'wikiPageCount', fromJson: _hasKnowledgeFromJson)
-      final bool hasKnowledge,
+      @JsonKey(name: 'wikiPageCount', fromJson: _wikiPageCountFromJson)
+      final int wikiPageCount,
       final int fileCount,
       final DateTime? createdAt,
       final DateTime? updatedAt,
@@ -409,8 +409,8 @@ abstract class _Avatar implements Avatar {
   @JsonKey(fromJson: _subjectFromJson, toJson: _subjectToJson)
   String get subject;
   @override
-  @JsonKey(name: 'wikiPageCount', fromJson: _hasKnowledgeFromJson)
-  bool get hasKnowledge;
+  @JsonKey(name: 'wikiPageCount', fromJson: _wikiPageCountFromJson)
+  int get wikiPageCount;
   @override
   int get fileCount;
   @override

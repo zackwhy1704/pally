@@ -11,9 +11,9 @@ _$AvatarImpl _$$AvatarImplFromJson(Map<String, dynamic> json) => _$AvatarImpl(
       name: json['name'] as String,
       character: _characterFromJson(json['characterType']),
       subject: _subjectFromJson(json['subject']),
-      hasKnowledge: json['wikiPageCount'] == null
-          ? false
-          : _hasKnowledgeFromJson(json['wikiPageCount']),
+      wikiPageCount: json['wikiPageCount'] == null
+          ? 0
+          : _wikiPageCountFromJson(json['wikiPageCount']),
       fileCount: (json['fileCount'] as num?)?.toInt() ?? 0,
       createdAt: json['createdAt'] == null
           ? null
@@ -34,7 +34,7 @@ Map<String, dynamic> _$$AvatarImplToJson(_$AvatarImpl instance) =>
       'name': instance.name,
       'characterType': _characterToJson(instance.character),
       'subject': _subjectToJson(instance.subject),
-      'wikiPageCount': instance.hasKnowledge,
+      'wikiPageCount': instance.wikiPageCount,
       'fileCount': instance.fileCount,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),

@@ -106,7 +106,7 @@ class _AvatarRow extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     avatar.hasKnowledge
-                        ? '${avatar.fileCount} file${avatar.fileCount == 1 ? '' : 's'} uploaded'
+                        ? '${avatar.wikiPageCount} page${avatar.wikiPageCount == 1 ? '' : 's'} learned'
                         : 'No content yet',
                     style: AppTextStyles.caption,
                   ),
