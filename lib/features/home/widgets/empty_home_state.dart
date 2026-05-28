@@ -3,6 +3,7 @@ import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/ui/adaptive_layout.dart';
 
 class EmptyHomeState extends StatefulWidget {
   const EmptyHomeState({super.key, required this.childName});
@@ -66,26 +67,30 @@ class _EmptyHomeStateState extends State<EmptyHomeState>
                 ),
               ),
               const Spacer(),
-              SizedBox(
-                width: 240,
-                height: 240,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    ScaleTransition(
-                      scale: _scaleAnim,
-                      child: Image.asset('assets/images/mochi.png',
-                          width: 180, height: 180, fit: BoxFit.contain),
-                    ),
+              Builder(builder: (context) {
+                final outer = Adaptive.width(context, 0.62, max: 240);
+                final mochi = Adaptive.width(context, 0.46, max: 180);
+                return SizedBox(
+                  width: outer,
+                  height: outer,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      ScaleTransition(
+                        scale: _scaleAnim,
+                        child: Image.asset('assets/images/mochi.png',
+                            width: mochi, height: mochi, fit: BoxFit.contain),
+                      ),
                     const Positioned(top: 20, left: 20,
-                        child: Text('✨', style: TextStyle(fontSize: 22))),
-                    const Positioned(top: 16, right: 24,
-                        child: Text('⭐', style: TextStyle(fontSize: 18))),
-                    const Positioned(bottom: 24, left: 28,
-                        child: Text('✦', style: TextStyle(fontSize: 20))),
-                  ],
-                ),
-              ),
+                          child: Text('✨', style: TextStyle(fontSize: 22))),
+                      const Positioned(top: 16, right: 24,
+                          child: Text('⭐', style: TextStyle(fontSize: 18))),
+                      const Positioned(bottom: 24, left: 28,
+                          child: Text('✦', style: TextStyle(fontSize: 20))),
+                    ],
+                  ),
+                );
+              }),
               const Spacer(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),

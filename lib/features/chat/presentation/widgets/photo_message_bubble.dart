@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/ui/adaptive_layout.dart';
 import 'package:pally/shared/models/chat_message.dart';
 
 class PhotoMessageBubble extends StatelessWidget {
@@ -46,12 +47,14 @@ class PhotoMessageBubble extends StatelessWidget {
     final imagePath = message.imagePath;
     final questionCount = message.photoQuestions.length;
 
+    final bubbleWidth = Adaptive.width(context, 0.72, max: 274);
+
     return Align(
       alignment: Alignment.centerRight,
       child: GestureDetector(
         onTap: () => _showFullScreen(context),
         child: Container(
-          width: 274,
+          width: bubbleWidth,
           decoration: BoxDecoration(
             color: AppColors.surface,
             borderRadius: const BorderRadius.only(
@@ -81,7 +84,7 @@ class PhotoMessageBubble extends StatelessWidget {
                     children: [
                       Image.file(
                         File(imagePath),
-                        width: 274,
+                        width: bubbleWidth,
                         height: 92,
                         fit: BoxFit.cover,
                       ),

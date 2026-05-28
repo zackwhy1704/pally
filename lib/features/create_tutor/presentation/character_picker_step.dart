@@ -49,8 +49,8 @@ class CharacterPickerStep extends ConsumerWidget {
             data: (unlocked) => GridView.builder(
               padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
                 childAspectRatio: 181 / 178,

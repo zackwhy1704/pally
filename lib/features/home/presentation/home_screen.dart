@@ -232,8 +232,8 @@ class _AvatarGrid extends ConsumerWidget {
       onRefresh: () => ref.read(homeViewModelProvider.notifier).refresh(),
       child: GridView.builder(
         padding: const EdgeInsets.all(AppSpacing.md),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 220,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
           childAspectRatio: 178 / 160,

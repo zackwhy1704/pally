@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/ui/adaptive_layout.dart';
 import 'package:pally/features/auth/auth_state.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -164,30 +165,36 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     child: Column(
                       children: [
                         const Spacer(),
-                        Container(
-                          width: 230,
-                          height: 230,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(40),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFFFFB81A)
-                                    .withValues(alpha: 0.20),
-                                offset: const Offset(0, 12),
-                                blurRadius: 40,
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: Image.asset(
-                              'assets/images/mochi.png',
-                              width: 200,
-                              height: 200,
-                              fit: BoxFit.contain,
+                        Builder(builder: (context) {
+                          final cardSize =
+                              Adaptive.width(context, 0.62, max: 230);
+                          final mochiSize =
+                              Adaptive.width(context, 0.54, max: 200);
+                          return Container(
+                            width: cardSize,
+                            height: cardSize,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(40),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(0xFFFFB81A)
+                                      .withValues(alpha: 0.20),
+                                  offset: const Offset(0, 12),
+                                  blurRadius: 40,
+                                ),
+                              ],
                             ),
-                          ),
-                        ),
+                            child: Center(
+                              child: Image.asset(
+                                'assets/images/mochi.png',
+                                width: mochiSize,
+                                height: mochiSize,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          );
+                        }),
                         const SizedBox(height: 24),
                         const Text(
                           'Mochi',

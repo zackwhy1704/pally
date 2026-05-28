@@ -150,6 +150,7 @@ class _PhotoReviewScreenState extends ConsumerState<PhotoReviewScreen> {
     final selectedCount = _questions.where((q) => q.selected).length;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false, // Full-bleed photo background; bottom panel uses SafeArea
       backgroundColor: Colors.black,
       body: Stack(
         fit: StackFit.expand,

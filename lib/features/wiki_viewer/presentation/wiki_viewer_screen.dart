@@ -40,6 +40,7 @@ class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen> {
     });
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.bg,
       body: Column(
         children: [

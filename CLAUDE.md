@@ -1995,6 +1995,61 @@ PallyDialog(
 
 ---
 
+## Rule 11 — No fixed pixel widths > 150px — use Adaptive helpers
+
+Kotlin's ConstraintLayout uses percentage constraints. Flutter has no direct equivalent — you must use `MediaQuery`, `Expanded`/`Flexible`, `LayoutBuilder`, or the `Adaptive` helper in `lib/core/ui/adaptive_layout.dart`.
+
+```dart
+// ❌ Kotlin thinking — fixed dp value, breaks on 360px phones, wastes space on tablets
+Container(width: 274)
+
+// ✅ Adaptive — percentage of screen with optional cap
+Container(width: Adaptive.width(context, 0.7, max: 274))
+// = 252px on 360px phone, 274px on 393px phone, 274px on tablet (capped)
+```
+
+Exceptions: decorative elements (background circles in Stack with negative offsets), and PIN-pad-like layouts that must keep exact column counts.
+
+---
+
+## Rule 12 — GridView must use maxCrossAxisExtent, not fixed crossAxisCount
+
+```dart
+// ❌ Fixed 2 columns — cramped on small phones, wasted on tablets
+GridView.builder(
+  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+)
+
+// ✅ Adaptive columns — items ≤ 200px wide, columns auto-calculate
+GridView.builder(
+  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 200),
+)
+```
+
+On a 360px phone this gives 1–2 columns. On a tablet it gives 3–4 columns. Automatically.
+
+Exception: PIN pads or number pads where exact column count is part of the design.
+
+---
+
+## Rule 13 — Image.file must always be bounded
+
+```dart
+// ❌ Image fills whatever space is available — unpredictable on different devices
+Image.file(file, fit: BoxFit.cover)
+
+// ✅ Inside a Stack(fit: StackFit.expand) — fine, intentional full-bleed
+Stack(fit: StackFit.expand, children: [Image.file(file, fit: BoxFit.cover), ...])
+
+// ✅ Bounded by AspectRatio
+AspectRatio(aspectRatio: 3/4, child: Image.file(file, fit: BoxFit.cover))
+
+// ✅ Bounded by SizedBox / ConstrainedBox
+SizedBox(height: 180, child: Image.file(file, fit: BoxFit.cover))
+```
+
+---
+
 ## Quick grep audit — run before every PR
 
 ```bash

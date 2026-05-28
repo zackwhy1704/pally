@@ -362,8 +362,8 @@ class _AvatarGridState extends State<_AvatarGrid>
   Widget build(BuildContext context) {
     return GridView.builder(
       padding: const EdgeInsets.all(AppSpacing.md),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 140,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
         childAspectRatio: 110 / 142,

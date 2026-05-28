@@ -49,6 +49,7 @@ class UploadScreen extends ConsumerWidget {
     });
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.bg,
       appBar: AppBar(
         leading: IconButton(
