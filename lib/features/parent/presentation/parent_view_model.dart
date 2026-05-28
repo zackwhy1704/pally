@@ -83,6 +83,7 @@ class ParentState {
     this.stats,
     this.isLoading = false,
     this.firstTimeSetup = false,
+    this.hasExistingPin,
   });
 
   final bool isPinVerified;
@@ -90,6 +91,8 @@ class ParentState {
   final ParentStats? stats;
   final bool isLoading;
   final bool firstTimeSetup;
+  // null = unknown (still checking), false = first-time setup, true = returning user
+  final bool? hasExistingPin;
 
   ParentState copyWith({
     bool? isPinVerified,
@@ -97,6 +100,7 @@ class ParentState {
     ParentStats? stats,
     bool? isLoading,
     bool? firstTimeSetup,
+    Object? hasExistingPin = _sentinel,
   }) {
     return ParentState(
       isPinVerified: isPinVerified ?? this.isPinVerified,
@@ -104,6 +108,9 @@ class ParentState {
       stats: stats ?? this.stats,
       isLoading: isLoading ?? this.isLoading,
       firstTimeSetup: firstTimeSetup ?? this.firstTimeSetup,
+      hasExistingPin: hasExistingPin == _sentinel
+          ? this.hasExistingPin
+          : hasExistingPin as bool?,
     );
   }
 }
@@ -114,7 +121,26 @@ const _sentinel = Object();
 class ParentViewModel extends _$ParentViewModel {
   @override
   ParentState build() {
+    // Kick off a PIN status check so the gate can show the correct copy
+    // ("Create a Parent PIN" vs "Enter your Parent PIN"). Non-blocking.
+    Future.microtask(_loadPinStatus);
     return const ParentState();
+  }
+
+  Future<void> _loadPinStatus() async {
+    try {
+      final dio = ref.read(dioProvider);
+      final response = await dio.get<Map<String, dynamic>>(
+        '/api/v1/parent/pin/status',
+      );
+      final data = (response.data?['data'] is Map
+              ? response.data!['data']
+              : response.data) as Map<String, dynamic>;
+      state = state.copyWith(hasExistingPin: data['hasPin'] == true);
+    } catch (e) {
+      appLog.w('[Parent] pin/status failed: $e');
+      // Leave hasExistingPin null so the UI shows a neutral message
+    }
   }
 
   /// Verifies the PIN against the backend. On first ever use (no PIN
@@ -138,6 +164,10 @@ class ParentViewModel extends _$ParentViewModel {
         state = state.copyWith(
           isPinVerified: true,
           firstTimeSetup: firstTime,
+          // After a successful set, future verifications must match an
+          // existing PIN — flip the flag so the gate copy is correct on
+          // re-entry.
+          hasExistingPin: true,
           isLoading: false,
         );
         await _loadStats();

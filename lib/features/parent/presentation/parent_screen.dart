@@ -36,6 +36,7 @@ class ParentScreen extends ConsumerWidget {
               : _Dashboard(state: parentState)
           : _PinGate(
               error: parentState.pinError,
+              hasExistingPin: parentState.hasExistingPin,
               onSubmit: (pin) =>
                   ref.read(parentViewModelProvider.notifier).verifyPin(pin),
             ),
@@ -44,10 +45,16 @@ class ParentScreen extends ConsumerWidget {
 }
 
 class _PinGate extends StatefulWidget {
-  const _PinGate({required this.error, required this.onSubmit});
+  const _PinGate({
+    required this.error,
+    required this.onSubmit,
+    required this.hasExistingPin,
+  });
 
   final String? error;
   final ValueChanged<String> onSubmit;
+  // null = unknown; false = first-time; true = returning
+  final bool? hasExistingPin;
 
   @override
   State<_PinGate> createState() => _PinGateState();
@@ -95,13 +102,49 @@ class _PinGateState extends State<_PinGate> {
                   color: AppColors.purple, size: 36),
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('Enter Parent PIN', style: AppTextStyles.heading1),
+            Text(
+              widget.hasExistingPin == false
+                  ? 'Create a Parent PIN'
+                  : 'Enter Parent PIN',
+              style: AppTextStyles.heading1,
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Enter your 4-digit PIN to access parent mode.',
+              widget.hasExistingPin == false
+                  ? 'Choose a 4-digit PIN to protect parent mode.'
+                  : 'Enter your 4-digit PIN to access parent mode.',
               style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),
+            if (widget.hasExistingPin == false) ...[
+              const SizedBox(height: AppSpacing.md),
+              Container(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: AppColors.amberL,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.amber, width: 1),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.info_outline_rounded,
+                        color: AppColors.amber, size: 20),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        'First time? The 4 digits you enter now will become your '
+                        "Parent PIN going forward. Write it down — you'll need it "
+                        'every time you open parent mode.',
+                        style: AppTextStyles.bodySmall
+                            .copyWith(color: AppColors.text1),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             const SizedBox(height: AppSpacing.lg),
             // PIN dots
             Row(
