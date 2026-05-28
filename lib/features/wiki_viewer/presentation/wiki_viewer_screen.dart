@@ -584,7 +584,14 @@ class _ConflictBadge extends StatelessWidget {
             const Icon(Icons.warning_amber_rounded,
                 color: AppColors.amber, size: 22),
             const SizedBox(width: AppSpacing.xs),
-            Text('Conflicting Info', style: AppTextStyles.title),
+            Flexible(
+              child: Text(
+                'Conflicting Info',
+                style: AppTextStyles.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         content: Text(

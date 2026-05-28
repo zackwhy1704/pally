@@ -1941,6 +1941,60 @@ Row(children: [
 
 ---
 
+## Rule 10 — Never use raw `Dialog()` with a button Row — use `PallyDialog` or `AlertDialog`
+
+Flutter's `Dialog` has `insetPadding: EdgeInsets.symmetric(horizontal: 40)` by default — 40px per side, NOT 24px. A `Row` with two buttons inside a `Dialog` with `Padding(24)` leaves only `360 - 80 - 48 = 232px` on a 360px phone, which overflows by sub-pixel amounts (the infamous 0.451px error).
+
+```dart
+// ❌ OVERFLOWS on 360px phones — Dialog default insetPadding is 40px
+Dialog(
+  child: Padding(
+    padding: EdgeInsets.all(24),
+    child: Row(
+      children: [
+        Expanded(child: OutlinedButton(child: Text('Cancel'))),
+        SizedBox(width: 8),
+        Expanded(child: FilledButton(child: Text('Confirm'))),
+      ],
+    ),
+  ),
+)
+
+// ✅ OPTION A — AlertDialog (handles button overflow via OverflowBar)
+AlertDialog(
+  title: Text('Title'),
+  content: Text('Body'),
+  actions: [
+    TextButton(onPressed: ..., child: Text('Cancel')),
+    FilledButton(onPressed: ..., child: Text('Confirm')),
+  ],
+)
+
+// ✅ OPTION B — PallyDialog wrapper (explicit insetPadding + LayoutBuilder)
+PallyDialog(
+  child: Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text('Title'),
+      Text('Body'),
+      PallyDialog.buttonRow(
+        secondary: PallyButton(label: 'Cancel', ...),
+        primary: PallyButton(label: 'Confirm', ...),
+      ),
+    ],
+  ),
+)
+```
+
+**Rules:**
+1. For `title` + `content` + `actions` → use `AlertDialog` (built-in overflow handling via `OverflowBar`)
+2. For custom layouts → use `PallyDialog` (not raw `Dialog`)
+3. If you must use raw `Dialog`, ALWAYS set `insetPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 24)`
+4. Two-button rows must use `PallyDialog.buttonRow` (stacks vertically below 280px)
+5. `AlertDialog.title` Rows must wrap text in `Flexible` to handle long titles
+
+---
+
 ## Quick grep audit — run before every PR
 
 ```bash
