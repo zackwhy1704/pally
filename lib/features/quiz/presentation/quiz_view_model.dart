@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/utils/logger.dart';
+import 'package:pally/features/progress/presentation/progress_view_model.dart';
 import 'package:pally/shared/models/quiz_question.dart';
 
 part 'quiz_view_model.g.dart';
@@ -102,10 +104,18 @@ class QuizViewModel extends _$QuizViewModel {
     }
   }
 
+  // Captures answers as questionId -> selectedIndex for the backend submission.
+  final Map<String, int> _answers = {};
+  // Captures questionId -> correctIndex so the backend can score authoritatively.
+  final Map<String, int> _correctMap = {};
+
   void answerQuestion(int answerIndex) {
     if (state.isAnswered) return;
     final question = state.currentQuestion;
     if (question == null) return;
+
+    _answers[question.id] = answerIndex;
+    _correctMap[question.id] = question.correctIndex;
 
     final isCorrect = answerIndex == question.correctIndex;
     state = state.copyWith(
@@ -132,21 +142,35 @@ class QuizViewModel extends _$QuizViewModel {
     state = state.copyWith(isSubmitting: true);
     try {
       final dio = ref.read(dioProvider);
-      await dio.post(
+      final response = await dio.post<Map<String, dynamic>>(
         '/api/v1/avatars/$_avatarId/quiz/answers',
         data: {
-          'score': state.score,
-          'total': state.totalQuestions,
-          'xpEarned': state.xpEarned,
+          'answers': _answers,
+          'correctMap': _correctMap,
         },
       );
-    } catch (_) {
-      // Ignore submission errors — still show completion
+
+      // Backend returns the authoritative XP/stars earned. Trust the backend
+      // value over the local client estimate.
+      final data = response.data ?? const <String, dynamic>{};
+      final backendXp = (data['xpEarned'] as num?)?.toInt() ?? state.xpEarned;
+      appLog.i('[Quiz] submitted answers=${_answers.length} correct=${state.score} '
+          'backendXp=$backendXp');
+
+      // Make the home/progress screen pick up the new XP on next view.
+      ref.invalidate(progressViewModelProvider);
+
+      state = state.copyWith(xpEarned: backendXp);
+    } catch (e, st) {
+      appLog.w('[Quiz] submit failed — XP shown is local estimate only',
+          error: e, stackTrace: st);
     }
     state = state.copyWith(isSubmitting: false, isComplete: true);
   }
 
   Future<void> restart() async {
+    _answers.clear();
+    _correctMap.clear();
     state = const QuizState(isLoading: true);
     await _loadQuestions();
   }
