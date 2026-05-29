@@ -4,7 +4,7 @@ import 'package:pally/app/pally_app.dart';
 
 void main() {
   testWidgets('app smoke test', (WidgetTester tester) async {
-    await tester.pumpWidget(const ProviderScope(child: PallyApp()));
+    await tester.pumpWidget(ProviderScope(child: PallyApp()));
     expect(find.byType(ProviderScope), findsOneWidget);
   });
 }
