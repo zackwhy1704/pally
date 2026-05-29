@@ -32,8 +32,26 @@ String _subjectFromJson(Object? json) {
       return 'Languages';
     case 'MUSIC':
       return 'Music';
+    // Title-case the remaining backend enums so they don't leak as raw
+    // SHOUTING_CASE strings (the "PHYSICAL EDUCATION" bug).
+    case 'PHYSICAL_EDUCATION':
+      return 'Physical Education';
+    case 'HEALTH':
+      return 'Health';
+    case 'LITERATURE':
+      return 'Literature';
+    case 'GENERAL':
+      return 'General';
     default:
-      return s;
+      // Defensive fallback for any future enum: lower-case then capitalise
+      // each word so the UI never shows raw SHOUTING_CASE.
+      return s
+          .toLowerCase()
+          .replaceAll('_', ' ')
+          .split(' ')
+          .where((w) => w.isNotEmpty)
+          .map((w) => w[0].toUpperCase() + w.substring(1))
+          .join(' ');
   }
 }
 
