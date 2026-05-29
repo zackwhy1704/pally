@@ -21,6 +21,9 @@ import 'package:pally/features/flashcards/presentation/flashcard_screen.dart';
 import 'package:pally/features/progress/presentation/achievements_screen.dart';
 import 'package:pally/features/progress/presentation/level_roadmap_screen.dart';
 import 'package:pally/features/progress/presentation/progress_screen.dart';
+import 'package:pally/features/family/presentation/family_claim_screen.dart';
+import 'package:pally/features/family/presentation/family_dashboard_screen.dart';
+import 'package:pally/features/family/presentation/family_link_code_screen.dart';
 import 'package:pally/features/subscription/presentation/paywall_screen.dart';
 import 'package:pally/features/subscription/presentation/subscription_plans_screen.dart';
 import 'package:pally/features/subscription/presentation/subscription_return_screen.dart';
@@ -373,6 +376,33 @@ class SubscriptionPlansRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const SubscriptionPlansScreen();
+}
+
+@TypedGoRoute<FamilyLinkCodeRoute>(path: '/family/link-code')
+class FamilyLinkCodeRoute extends GoRouteData {
+  const FamilyLinkCodeRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const FamilyLinkCodeScreen();
+}
+
+@TypedGoRoute<FamilyClaimRoute>(path: '/family/claim')
+class FamilyClaimRoute extends GoRouteData {
+  const FamilyClaimRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const FamilyClaimScreen();
+}
+
+@TypedGoRoute<FamilyDashboardRoute>(path: '/family')
+class FamilyDashboardRoute extends GoRouteData {
+  const FamilyDashboardRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const FamilyDashboardScreen();
 }
 
 @TypedGoRoute<HomeworkScanDetailRoute>(path: '/homework-scan')

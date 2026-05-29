@@ -102,6 +102,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                   ),
                 const _AchievementsPreview(),
                 const SizedBox(height: AppSpacing.md),
+                const _LinkGrownUpRow(),
+                const SizedBox(height: AppSpacing.md),
                 const _GoPremiumBanner(),
                 const SizedBox(height: AppSpacing.md),
                 _NavButtons(),
@@ -827,6 +829,46 @@ class _GoPremiumBanner extends ConsumerWidget {
               ),
               const Icon(Icons.arrow_forward_ios_rounded,
                   color: Colors.white70, size: 14),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// "Link a grown-up" entry — opens the FamilyLinkCode screen so the
+/// child can generate a one-shot code for a parent to claim.
+class _LinkGrownUpRow extends StatelessWidget {
+  const _LinkGrownUpRow();
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => const FamilyLinkCodeRoute().push(context),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.outline),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.family_restroom_rounded,
+                  color: AppColors.teal),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text('Link a grown-up',
+                    style: AppTextStyles.body
+                        .copyWith(fontWeight: FontWeight.w700)),
+              ),
+              const Icon(Icons.chevron_right_rounded,
+                  color: AppColors.text3),
             ],
           ),
         ),

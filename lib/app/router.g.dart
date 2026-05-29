@@ -29,6 +29,9 @@ List<RouteBase> get $appRoutes => [
       $subscriptionReturnRoute,
       $paywallRoute,
       $subscriptionPlansRoute,
+      $familyLinkCodeRoute,
+      $familyClaimRoute,
+      $familyDashboardRoute,
       $homeworkScanDetailRoute,
       $brainHealthRoute,
       $splashRoute,
@@ -713,6 +716,75 @@ extension $SubscriptionPlansRouteExtension on SubscriptionPlansRoute {
 
   String get location => GoRouteData.$location(
         '/subscription/plans',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $familyLinkCodeRoute => GoRouteData.$route(
+      path: '/family/link-code',
+      factory: $FamilyLinkCodeRouteExtension._fromState,
+    );
+
+extension $FamilyLinkCodeRouteExtension on FamilyLinkCodeRoute {
+  static FamilyLinkCodeRoute _fromState(GoRouterState state) =>
+      const FamilyLinkCodeRoute();
+
+  String get location => GoRouteData.$location(
+        '/family/link-code',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $familyClaimRoute => GoRouteData.$route(
+      path: '/family/claim',
+      factory: $FamilyClaimRouteExtension._fromState,
+    );
+
+extension $FamilyClaimRouteExtension on FamilyClaimRoute {
+  static FamilyClaimRoute _fromState(GoRouterState state) =>
+      const FamilyClaimRoute();
+
+  String get location => GoRouteData.$location(
+        '/family/claim',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $familyDashboardRoute => GoRouteData.$route(
+      path: '/family',
+      factory: $FamilyDashboardRouteExtension._fromState,
+    );
+
+extension $FamilyDashboardRouteExtension on FamilyDashboardRoute {
+  static FamilyDashboardRoute _fromState(GoRouterState state) =>
+      const FamilyDashboardRoute();
+
+  String get location => GoRouteData.$location(
+        '/family',
       );
 
   void go(BuildContext context) => context.go(location);
