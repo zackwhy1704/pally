@@ -5,6 +5,7 @@ import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/features/chat/presentation/widgets/answer_card.dart';
 import 'package:pally/shared/models/photo_question.dart';
+import 'package:share_plus/share_plus.dart' as share_plus;
 
 class HomeworkScanDetailScreen extends StatefulWidget {
   const HomeworkScanDetailScreen({super.key, required this.result});
@@ -110,10 +111,31 @@ class _HomeworkScanDetailScreenState extends State<HomeworkScanDetailScreen> {
   }
 
   void _share() {
-    // TODO: wire up share_plus once added to pubspec
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Share coming soon!')),
-    );
+    final answers = widget.result.answers;
+    if (answers.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Nothing to share yet.')),
+      );
+      return;
+    }
+    // Render as plain text — share sheet sends to messaging apps that
+    // don't render Markdown nicely. Number each Q so parents can follow
+    // along with the photo they're sharing alongside.
+    final buf = StringBuffer('My Pally homework results:\n');
+    for (var i = 0; i < answers.length; i++) {
+      final a = answers[i];
+      buf
+        ..writeln()
+        ..writeln('Q${i + 1}: ${a.questionText}')
+        ..writeln('A: ${a.answer}');
+      if (a.steps.isNotEmpty) {
+        for (var s = 0; s < a.steps.length; s++) {
+          buf.writeln('  ${s + 1}. ${a.steps[s]}');
+        }
+      }
+    }
+    share_plus.Share.share(buf.toString(),
+        subject: 'My Pally homework results');
   }
 }
 
