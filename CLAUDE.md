@@ -9,8 +9,38 @@
 After **every** code change, before marking a task complete:
 1. Run `dart analyze lib/` — must show zero errors and zero warnings.
 2. Run `flutter build apk --debug` — must complete without errors.
-3. If either fails: fix all issues, then re-run both commands until clean.
-4. Only report the task as done after both commands pass.
+3. **Write unit tests for every new piece of code** (see the testing rule below).
+4. Run `flutter test` — all tests must pass.
+5. If any of the above fails: fix all issues, then re-run from the beginning.
+6. Only report the task as done after every command passes.
+
+## TESTING IS NOT OPTIONAL — for every new piece of code, both apps
+
+Every new piece of code ships with tests. **No exceptions**, no "I'll add tests later",
+no "the existing tests cover it". This rule applies to BOTH the Flutter app and the
+Spring Boot backend.
+
+- **New domain logic** (Java service, Dart view model, pure functions) → unit test.
+- **New widget / screen / component** → widget test, even if it's just rendering the
+  three primary states (loading / loaded / error). For purely visual components a
+  golden test is also encouraged.
+- **New API endpoint** → controller test or integration test that proves the happy path
+  plus at least one failure path (401/403/404/429 as relevant).
+- **New atomic balance / concurrency-sensitive code** → include a concurrency harness
+  test (parallel threads / `Future.wait`) that proves the invariant under contention.
+- **New shop / money / XP-credit path** → atomicity + race-loss test mandatory.
+- Aim for the new code itself to be ≥90% covered. The overall repo coverage doesn't
+  need to jump 90% in one PR, but the *new* lines you add should be.
+- If a piece of code is genuinely untestable (e.g. a native platform call), make it
+  thin enough that the untestable surface is trivial, and test the wrapper.
+
+When you add a Riverpod provider, write a state test (the pure `state` transitions);
+the provider itself can stay an integration concern. When you add a new screen, render
+it inside a `ProviderScope` with overridden providers and assert the visible widgets.
+
+**Definition of "done" for any feature change:** code + tests + analyze + test suite
+all clean, and the test names describe the invariants in plain English a reviewer can
+read and agree with.
 
 ---
 
