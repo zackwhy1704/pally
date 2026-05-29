@@ -25,6 +25,7 @@ List<RouteBase> get $appRoutes => [
       $studyPlanRoute,
       $settingsRoute,
       $levelRoadmapRoute,
+      $achievementsRoute,
       $homeworkScanDetailRoute,
       $brainHealthRoute,
       $splashRoute,
@@ -608,6 +609,29 @@ extension $LevelRoadmapRouteExtension on LevelRoadmapRoute {
 
   String get location => GoRouteData.$location(
         '/progress/level-roadmap',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $achievementsRoute => GoRouteData.$route(
+      path: '/progress/achievements',
+      factory: $AchievementsRouteExtension._fromState,
+    );
+
+extension $AchievementsRouteExtension on AchievementsRoute {
+  static AchievementsRoute _fromState(GoRouterState state) =>
+      const AchievementsRoute();
+
+  String get location => GoRouteData.$location(
+        '/progress/achievements',
       );
 
   void go(BuildContext context) => context.go(location);

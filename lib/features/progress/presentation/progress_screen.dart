@@ -8,12 +8,14 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
+import 'package:pally/features/progress/presentation/achievements_provider.dart';
 import 'package:pally/features/progress/presentation/daily_goal_provider.dart';
 import 'package:pally/features/progress/presentation/daily_goal_ring.dart';
 import 'package:pally/features/progress/presentation/progress_view_model.dart';
 import 'package:pally/features/progress/presentation/streak_card.dart';
 import 'package:pally/features/progress/presentation/streak_milestone_controller.dart';
 import 'package:pally/features/progress/presentation/streak_status_provider.dart';
+import 'package:pally/shared/models/achievement.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/progress_summary.dart';
 
@@ -89,8 +91,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                     weakTopics: progress.weakTopics,
                     onPractice: () => context.push('/avatar/all/quiz'),
                   ),
-                if (progress.badges.isNotEmpty)
-                  _BadgesCard(badges: progress.badges),
+                const _AchievementsPreview(),
                 const SizedBox(height: AppSpacing.md),
                 _NavButtons(),
               ],
@@ -435,56 +436,139 @@ class _TopicBar extends StatelessWidget {
   }
 }
 
-class _BadgesCard extends StatelessWidget {
-  const _BadgesCard({required this.badges});
-
-  final List<String> badges;
+/// 3 closest-to-earning achievements + "See all". Replaces the old
+/// emoji-only _BadgesCard.
+class _AchievementsPreview extends ConsumerWidget {
+  const _AchievementsPreview();
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: AppSpacing.card,
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.outline),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Badges', style: AppTextStyles.title),
-          const SizedBox(height: AppSpacing.md),
-          Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: badges.map((badge) => _BadgeItem(emoji: badge)).toList(),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final async = ref.watch(achievementsProvider);
+    return async.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (list) {
+        // Pick the 3 unearned achievements closest to completion (highest
+        // progress ratio) — Duolingo-style "you're nearly there".
+        final unearned = list.achievements.where((a) => !a.earned).toList()
+          ..sort((a, b) {
+            final aR = a.target == 0 ? 0 : a.progress / a.target;
+            final bR = b.target == 0 ? 0 : b.progress / b.target;
+            return bR.compareTo(aR);
+          });
+        final preview = unearned.take(3).toList();
+        // If everything is earned, surface the newest earned ones instead.
+        final fallback = list.achievements.where((a) => a.earned).toList()
+          ..sort((a, b) => (b.earnedAt ?? '').compareTo(a.earnedAt ?? ''));
+        final tiles =
+            preview.isEmpty ? fallback.take(3).toList() : preview;
+        return Container(
+          padding: AppSpacing.card,
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.outline),
           ),
-        ],
-      ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Achievements', style: AppTextStyles.title),
+                  TextButton(
+                    onPressed: () =>
+                        const AchievementsRoute().push(context),
+                    style: TextButton.styleFrom(
+                        foregroundColor: AppColors.purple,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4)),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('${list.earnedCount}/${list.totalCount}',
+                            style: AppTextStyles.label
+                                .copyWith(color: AppColors.purple)),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.arrow_forward_ios_rounded,
+                            size: 12, color: AppColors.purple),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              if (tiles.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text(
+                    'Complete actions to earn your first achievement.',
+                    style: AppTextStyles.bodySmall
+                        .copyWith(color: AppColors.text2),
+                  ),
+                )
+              else
+                Column(
+                  children: tiles.map((a) => _AchievementPreviewRow(a: a)).toList(),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
 
-class _BadgeItem extends StatelessWidget {
-  const _BadgeItem({required this.emoji});
-
-  final String emoji;
+class _AchievementPreviewRow extends StatelessWidget {
+  const _AchievementPreviewRow({required this.a});
+  final Achievement a;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 52,
-      height: 52,
-      decoration: BoxDecoration(
-        color: AppColors.goldL,
-        shape: BoxShape.circle,
-        border: Border.all(color: AppColors.gold.withValues(alpha: 0.4)),
-      ),
-      child: Center(
-        child: Text(
-          emoji,
-          style: const TextStyle(fontSize: 24),
-        ),
+    final pct =
+        a.target == 0 ? 0.0 : (a.progress / a.target).clamp(0.0, 1.0);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: const BoxDecoration(
+              color: AppColors.purpleL,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.workspace_premium_rounded,
+                color: AppColors.purple, size: 18),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(a.name,
+                    style: AppTextStyles.bodySmall
+                        .copyWith(fontWeight: FontWeight.w700),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis),
+                const SizedBox(height: 2),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(
+                    value: pct,
+                    backgroundColor: AppColors.outline,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        a.earned ? AppColors.green : AppColors.purple),
+                    minHeight: 5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Text('${a.progress}/${a.target}',
+              style: AppTextStyles.caption),
+        ],
       ),
     );
   }
