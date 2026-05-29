@@ -52,28 +52,32 @@ class BrainMapViewModel extends _$BrainMapViewModel {
     try {
       final dio = ref.read(dioProvider);
       // Topics from wiki pages + mastery from quiz results + avatar subject
-      // in parallel — keeps the screen snappy.
+      // in parallel — keeps the screen snappy. Use dynamic since
+      // /topic-mastery returns a List, not a Map, and the global
+      // _ApiResponseInterceptor already unwraps the {data:…} envelope.
       final results = await Future.wait([
-        dio.get<Map<String, dynamic>>('/api/v1/avatars/$avatarId/wiki/pages'),
-        dio.get<Map<String, dynamic>>(
-            '/api/v1/avatars/$avatarId/topic-mastery'),
-        dio.get<Map<String, dynamic>>('/api/v1/avatars/$avatarId'),
+        dio.get<dynamic>('/api/v1/avatars/$avatarId/wiki/pages'),
+        dio.get<dynamic>('/api/v1/avatars/$avatarId/topic-mastery'),
+        dio.get<dynamic>('/api/v1/avatars/$avatarId'),
       ]);
 
-      final pagesData = (results[0].data?['data'] is Map
-              ? results[0].data!['data']
-              : results[0].data) as Map<String, dynamic>;
+      // The global interceptor strips the {data: X} envelope, so
+      // results[N].data IS already X. The `_unwrap` helper is robust to
+      // either form (in case the interceptor is disabled in tests).
+      final pagesData = _unwrapMap(results[0].data) ?? const {};
       final pageList = (pagesData['pages'] as List?) ?? const [];
       final pages = pageList
           .whereType<Map<String, dynamic>>()
           .map(WikiPage.fromJson)
           .toList();
 
-      final masteryData = (results[1].data?['data'] is List
-              ? results[1].data!['data']
-              : results[1].data) as List?;
+      // PREVIOUS BUG: this did `results[1].data?['data']` which threw
+      // NoSuchMethodError when the interceptor had already unwrapped to a
+      // List (calling `[]` on List with a String key blows up). Caught
+      // silently → "No topics yet" even with pages and quiz history.
+      final masteryData = _unwrapList(results[1].data) ?? const [];
       final masteryBySlug = <String, _MasteryRow>{};
-      for (final row in (masteryData ?? const []).whereType<Map<String, dynamic>>()) {
+      for (final row in masteryData.whereType<Map<String, dynamic>>()) {
         final slug = row['topicSlug'] as String?;
         if (slug == null) continue;
         masteryBySlug[slug] = _MasteryRow(
@@ -83,10 +87,11 @@ class BrainMapViewModel extends _$BrainMapViewModel {
         );
       }
 
-      final avatarData = (results[2].data?['data'] is Map
-              ? results[2].data!['data']
-              : results[2].data) as Map<String, dynamic>;
+      final avatarData = _unwrapMap(results[2].data) ?? const {};
       final subject = (avatarData['subject'] as String?) ?? '';
+
+      appLog.i('[BrainMap] avatar=$avatarId pages=${pages.length} '
+          'mastery=${masteryBySlug.length} subject=$subject');
 
       final nodes = pages.map((p) {
         final m = masteryBySlug[p.slug];
@@ -117,6 +122,29 @@ class BrainMapViewModel extends _$BrainMapViewModel {
   Future<void> refresh(String avatarId) async {
     state = const AsyncLoading();
     state = AsyncValue.data(await _fetch(avatarId));
+  }
+
+  /// Returns the inner Map whether the response is `{data: {...}}` or
+  /// already-unwrapped `{...}`. Never indexes into a non-Map (the bug
+  /// that previously blanked the brain map).
+  static Map<String, dynamic>? _unwrapMap(Object? raw) {
+    if (raw is Map<String, dynamic>) {
+      final inner = raw['data'];
+      if (inner is Map<String, dynamic>) return inner;
+      return raw;
+    }
+    return null;
+  }
+
+  /// Returns the inner List whether the response is `{data: [...]}` or
+  /// already-unwrapped `[...]`.
+  static List<dynamic>? _unwrapList(Object? raw) {
+    if (raw is List) return raw;
+    if (raw is Map<String, dynamic>) {
+      final inner = raw['data'];
+      if (inner is List) return inner;
+    }
+    return null;
   }
 }
 

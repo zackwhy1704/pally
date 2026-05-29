@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/utils/logger.dart';
 import 'package:pally/shared/models/avatar.dart';
-import 'package:pally/shared/models/mochi_character.dart';
 
 part 'library_view_model.g.dart';
 
@@ -21,11 +21,11 @@ class LibraryViewModel extends _$LibraryViewModel {
       return list
           .map((e) => Avatar.fromJson(e as Map<String, dynamic>))
           .toList();
-    } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionError ||
-          e.type == DioExceptionType.unknown) {
-        return _stubAvatars;
-      }
+    } on DioException catch (e, st) {
+      // Never fabricate Pencil/Science Mochi tutors on a network blip —
+      // the user would see "tutors" they never made. Surface the error
+      // through AsyncError so the screen can render its empty / retry UI.
+      appLog.w('[Library] fetchAvatars failed', error: e, stackTrace: st);
       rethrow;
     }
   }
@@ -35,22 +35,3 @@ class LibraryViewModel extends _$LibraryViewModel {
     state = await AsyncValue.guard(_fetchAvatars);
   }
 }
-
-const _stubAvatars = [
-  Avatar(
-    id: 'stub-1',
-    name: 'Pencil Mochi',
-    character: MochiCharacter.pencil,
-    subject: 'English',
-    wikiPageCount: 3,
-    fileCount: 3,
-  ),
-  Avatar(
-    id: 'stub-2',
-    name: 'Science Mochi',
-    character: MochiCharacter.science,
-    subject: 'Science',
-    wikiPageCount: 0,
-    fileCount: 0,
-  ),
-];

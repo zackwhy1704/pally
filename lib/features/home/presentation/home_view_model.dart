@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/shared/models/avatar.dart';
-import 'package:pally/shared/models/mochi_character.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/local_db/pally_database.dart';
 import 'package:pally/core/utils/logger.dart';
@@ -28,12 +27,10 @@ class HomeViewModel extends _$HomeViewModel {
       appLog.i('[Home] Loaded ${avatars.length} avatars');
       return avatars;
     } on DioException catch (e, st) {
-      if (e.type == DioExceptionType.connectionError ||
-          e.type == DioExceptionType.unknown) {
-        appLog.w('[Home] Backend unreachable, using stub avatars', error: e, stackTrace: st);
-        return _stubAvatars;
-      }
-      appLog.e('[Home] fetchAvatars failed', error: e, stackTrace: st);
+      // Never fabricate Pencil/Science/Art Mochi tutors on a network blip —
+      // users would see avatars they never created. Surface the failure
+      // through AsyncError so the screen can render its empty / retry UI.
+      appLog.w('[Home] fetchAvatars failed', error: e, stackTrace: st);
       rethrow;
     }
   }
@@ -77,30 +74,3 @@ class HomeViewModel extends _$HomeViewModel {
   }
 }
 
-// Stub data for offline / pre-backend development
-const _stubAvatars = [
-  Avatar(
-    id: 'stub-1',
-    name: 'Pencil Mochi',
-    character: MochiCharacter.pencil,
-    subject: 'English',
-    wikiPageCount: 3,
-    fileCount: 3,
-  ),
-  Avatar(
-    id: 'stub-2',
-    name: 'Science Mochi',
-    character: MochiCharacter.science,
-    subject: 'Science',
-    wikiPageCount: 0,
-    fileCount: 0,
-  ),
-  Avatar(
-    id: 'stub-3',
-    name: 'Art Mochi',
-    character: MochiCharacter.art,
-    subject: 'Art',
-    wikiPageCount: 5,
-    fileCount: 5,
-  ),
-];
