@@ -9,8 +9,10 @@ import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/features/progress/presentation/achievements_provider.dart';
+import 'package:pally/features/progress/presentation/coverage_provider.dart';
 import 'package:pally/features/progress/presentation/daily_goal_provider.dart';
 import 'package:pally/features/progress/presentation/daily_goal_ring.dart';
+import 'package:pally/features/progress/presentation/mastery_card.dart';
 import 'package:pally/features/progress/presentation/progress_view_model.dart';
 import 'package:pally/features/progress/presentation/streak_card.dart';
 import 'package:pally/features/progress/presentation/streak_milestone_controller.dart';
@@ -66,6 +68,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
           onRefresh: () async {
             ref.invalidate(streakStatusVmProvider);
             ref.invalidate(dailyGoalVmProvider);
+            ref.invalidate(coverageProvider);
+            ref.invalidate(achievementsProvider);
             await ref.read(progressViewModelProvider.notifier).refresh();
           },
           child: SingleChildScrollView(
@@ -79,6 +83,10 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                 const DailyGoalRing(),
                 const SizedBox(height: AppSpacing.md),
                 const StreakCard(),
+                const SizedBox(height: AppSpacing.md),
+                MasteryCard(
+                  onOpenBrainMap: () => _BrainMapCard.openFor(context, ref),
+                ),
                 const SizedBox(height: AppSpacing.md),
                 const _BrainMapCard(),
                 const SizedBox(height: AppSpacing.md),
@@ -640,6 +648,21 @@ class _ErrorView extends StatelessWidget {
 class _BrainMapCard extends ConsumerWidget {
   const _BrainMapCard();
 
+  /// Shared entry point so other cards (MasteryCard) can route through the
+  /// same avatar-pick flow without duplicating the bottom-sheet logic.
+  static void openFor(BuildContext context, WidgetRef ref) {
+    final avatars = ref.read(libraryViewModelProvider).maybeWhen(
+          data: (list) => list,
+          orElse: () => const <Avatar>[],
+        );
+    if (avatars.isEmpty) return;
+    if (avatars.length == 1) {
+      BrainMapRoute(avatarId: avatars.first.id).push(context);
+      return;
+    }
+    _pickAvatarStatic(context, avatars);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final avatarsAsync = ref.watch(libraryViewModelProvider);
@@ -707,8 +730,12 @@ class _BrainMapCard extends ConsumerWidget {
     );
   }
 
-  void _pickAvatar(BuildContext context, List<Avatar> avatars) {
-    showModalBottomSheet<void>(
+  void _pickAvatar(BuildContext context, List<Avatar> avatars) =>
+      _pickAvatarStatic(context, avatars);
+}
+
+void _pickAvatarStatic(BuildContext context, List<Avatar> avatars) {
+  showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (_) => SafeArea(
@@ -745,6 +772,5 @@ class _BrainMapCard extends ConsumerWidget {
           ),
         ),
       ),
-    );
-  }
+  );
 }
