@@ -33,6 +33,7 @@ List<RouteBase> get $appRoutes => [
       $familyClaimRoute,
       $familyDashboardRoute,
       $referralRoute,
+      $centreJoinRoute,
       $homeworkScanDetailRoute,
       $brainHealthRoute,
       $splashRoute,
@@ -808,6 +809,29 @@ extension $ReferralRouteExtension on ReferralRoute {
 
   String get location => GoRouteData.$location(
         '/referral',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $centreJoinRoute => GoRouteData.$route(
+      path: '/centre/join',
+      factory: $CentreJoinRouteExtension._fromState,
+    );
+
+extension $CentreJoinRouteExtension on CentreJoinRoute {
+  static CentreJoinRoute _fromState(GoRouterState state) =>
+      const CentreJoinRoute();
+
+  String get location => GoRouteData.$location(
+        '/centre/join',
       );
 
   void go(BuildContext context) => context.go(location);
