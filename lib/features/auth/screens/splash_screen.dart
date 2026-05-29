@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/ui/adaptive_layout.dart';
+import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/auth/auth_state.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -81,8 +82,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         if (!mounted) return;
         auth = ref.read(authStateProvider);
       }
-    } on DioException {
-      // ignore
+    } on DioException catch (e) {
+      // Network errors at startup are acceptable — the app falls back to
+      // cached auth state and functions offline. 401/403 are handled by
+      // the SessionExpiredInterceptor (forces sign-out), so anything we
+      // reach here is purely connectivity / 5xx noise.
+      appLog.w('[Splash] Profile refresh failed (continuing with cached state): ${e.type}');
     }
 
     if (!mounted) return;

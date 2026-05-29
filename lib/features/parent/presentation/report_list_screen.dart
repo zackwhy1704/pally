@@ -32,8 +32,8 @@ class ReportListScreen extends ConsumerWidget {
       ),
       body: reportsAsync.when(
         loading: () => const PallyLoadingSpinner(),
-        error: (_, __) => _EmptyState(
-          message: 'Could not load reports — pull to retry',
+        error: (e, _) => _EmptyState(
+          message: e.toString().replaceAll('Exception:', '').trim(),
           onRetry: () => ref
               .read(weeklyReportListViewModelProvider.notifier)
               .refresh(),

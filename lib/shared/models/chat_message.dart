@@ -59,6 +59,10 @@ class ChatMessage with _$ChatMessage {
     @JsonKey(fromJson: _syncStatusFromJson, toJson: _syncStatusToJson)
     @Default(SyncStatus.synced)
     SyncStatus syncStatus,
+    // Error rendering — when true, the bubble shows a coral retry pill
+    // instead of normal text. `error` is the user-facing message.
+    @Default(false) bool isError,
+    String? error,
   }) = _ChatMessage;
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) =>

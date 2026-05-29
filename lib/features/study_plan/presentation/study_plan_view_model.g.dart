@@ -7,7 +7,7 @@ part of 'study_plan_view_model.dart';
 // **************************************************************************
 
 String _$studyPlanViewModelHash() =>
-    r'57514c43a4bea544f089471a953bb1508b70e3ef';
+    r'f6817540f0e796351dba2cbbdaa3498537f932b9';
 
 /// See also [StudyPlanViewModel].
 @ProviderFor(StudyPlanViewModel)

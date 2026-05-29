@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/utils/logger.dart';
 import 'package:pally/shared/models/study_plan_item.dart';
 
 part 'study_plan_view_model.g.dart';
@@ -23,11 +24,11 @@ class StudyPlanViewModel extends _$StudyPlanViewModel {
           .map((e) => StudyPlanItem.fromJson(e as Map<String, dynamic>))
           .toList();
     } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionError ||
-          e.type == DioExceptionType.unknown) {
-        return _stubPlan;
-      }
-      rethrow;
+      // Never fabricate study-plan items on failure. Empty list lets the
+      // screen render the real "all done" / offline empty state instead
+      // of pretending the user has photosynthesis homework they don't.
+      appLog.w('[StudyPlan] load failed: ${e.message}');
+      return const [];
     }
   }
 
@@ -46,43 +47,3 @@ class StudyPlanViewModel extends _$StudyPlanViewModel {
     });
   }
 }
-
-final _now = DateTime.now();
-
-final _stubPlan = [
-  StudyPlanItem(
-    id: 'sp-1',
-    title: 'Review Photosynthesis flashcards',
-    type: StudyPlanItemType.flashcard,
-    isDone: true,
-    scheduledDate: _now,
-  ),
-  StudyPlanItem(
-    id: 'sp-2',
-    title: 'Daily quiz — Science',
-    type: StudyPlanItemType.quiz,
-    isDone: false,
-    scheduledDate: _now,
-  ),
-  StudyPlanItem(
-    id: 'sp-3',
-    title: 'Read Cell Division notes',
-    type: StudyPlanItemType.reading,
-    isDone: false,
-    scheduledDate: _now,
-  ),
-  StudyPlanItem(
-    id: 'sp-4',
-    title: 'Practice Ecosystems quiz',
-    type: StudyPlanItemType.practice,
-    isDone: false,
-    scheduledDate: _now.add(const Duration(days: 1)),
-  ),
-  StudyPlanItem(
-    id: 'sp-5',
-    title: 'Review Chemical Bonds',
-    type: StudyPlanItemType.flashcard,
-    isDone: false,
-    scheduledDate: _now.add(const Duration(days: 2)),
-  ),
-];

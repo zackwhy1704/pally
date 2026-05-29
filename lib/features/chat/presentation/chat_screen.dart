@@ -398,6 +398,45 @@ class _TextBubble extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Failed-stream pill: tap to retry the last user message.
+    if (message.isError) {
+      return Align(
+        alignment: Alignment.centerLeft,
+        child: GestureDetector(
+          onTap: () => ref
+              .read(chatViewModelProvider(avatarId).notifier)
+              .retryLastMessage(),
+          child: Container(
+            margin: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+            decoration: BoxDecoration(
+              color: AppColors.coralL,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.coral, width: 1),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.error_outline_rounded,
+                    color: AppColors.coral, size: 16),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    message.error ?? message.content,
+                    style: AppTextStyles.body.copyWith(color: AppColors.coral),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                const Icon(Icons.refresh_rounded,
+                    color: AppColors.coral, size: 16),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
     return Column(
       crossAxisAlignment:
           _isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,

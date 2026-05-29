@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pally/app/api_client.dart';
 import 'package:pally/app/pally_app.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/local_db/pally_database.dart';
@@ -19,7 +20,11 @@ void main() async {
   await NotificationService.init();
 
   final prefs = await SharedPreferences.getInstance();
-  final router = buildAppRouter();
+
+  // Shared NavigatorState key so the global server-error interceptor can
+  // reach a BuildContext for toasts when no screen owns the failed call.
+  final navigatorKey = GlobalKey<NavigatorState>();
+  final router = buildAppRouter(navigatorKey: navigatorKey);
 
   final db = PallyDatabase();
   _runDailyMaintenanceIfNeeded(db, prefs);
@@ -28,6 +33,7 @@ void main() async {
     ProviderScope(
       overrides: [
         pallyDatabaseProvider.overrideWithValue(db),
+        globalNavigatorKeyProvider.overrideWithValue(navigatorKey),
       ],
       child: PallyApp(router: router),
     ),

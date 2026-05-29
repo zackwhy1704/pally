@@ -132,15 +132,16 @@ class CreateTutorViewModel extends _$CreateTutorViewModel {
       state = state.copyWith(isLoading: false);
       return avatar.id;
     } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionError ||
-          e.type == DioExceptionType.unknown) {
-        state = state.copyWith(isLoading: false);
-        return 'stub-new-${DateTime.now().millisecondsSinceEpoch}';
-      }
-      state = state.copyWith(
-        isLoading: false,
-        error: e.message ?? 'Failed to create tutor',
-      );
+      // Never fabricate a stub-new-{ts} id on network failure. Returning
+      // a fake id makes creation LOOK successful but subsequent chat /
+      // upload / quiz calls all 404 because no avatar exists. Surface a
+      // real error and let the user stay on this screen to retry.
+      final isNetwork = e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.unknown;
+      final message = isNetwork
+          ? 'No internet connection. Check your WiFi and try again.'
+          : (e.message ?? 'Could not create tutor. Please try again.');
+      state = state.copyWith(isLoading: false, error: message);
       return null;
     }
   }

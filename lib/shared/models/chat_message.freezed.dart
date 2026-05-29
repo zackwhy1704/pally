@@ -37,7 +37,11 @@ mixin _$ChatMessage {
   FeedbackType? get feedbackType => throw _privateConstructorUsedError;
   bool get savedToBrain => throw _privateConstructorUsedError;
   @JsonKey(fromJson: _syncStatusFromJson, toJson: _syncStatusToJson)
-  SyncStatus get syncStatus => throw _privateConstructorUsedError;
+  SyncStatus get syncStatus =>
+      throw _privateConstructorUsedError; // Error rendering — when true, the bubble shows a coral retry pill
+// instead of normal text. `error` is the user-facing message.
+  bool get isError => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
 
   /// Serializes this ChatMessage to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -71,7 +75,9 @@ abstract class $ChatMessageCopyWith<$Res> {
       FeedbackType? feedbackType,
       bool savedToBrain,
       @JsonKey(fromJson: _syncStatusFromJson, toJson: _syncStatusToJson)
-      SyncStatus syncStatus});
+      SyncStatus syncStatus,
+      bool isError,
+      String? error});
 
   $HomeworkScanResultCopyWith<$Res>? get scanResult;
 }
@@ -105,6 +111,8 @@ class _$ChatMessageCopyWithImpl<$Res, $Val extends ChatMessage>
     Object? feedbackType = freezed,
     Object? savedToBrain = null,
     Object? syncStatus = null,
+    Object? isError = null,
+    Object? error = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -163,6 +171,14 @@ class _$ChatMessageCopyWithImpl<$Res, $Val extends ChatMessage>
           ? _value.syncStatus
           : syncStatus // ignore: cast_nullable_to_non_nullable
               as SyncStatus,
+      isError: null == isError
+          ? _value.isError
+          : isError // ignore: cast_nullable_to_non_nullable
+              as bool,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 
@@ -205,7 +221,9 @@ abstract class _$$ChatMessageImplCopyWith<$Res>
       FeedbackType? feedbackType,
       bool savedToBrain,
       @JsonKey(fromJson: _syncStatusFromJson, toJson: _syncStatusToJson)
-      SyncStatus syncStatus});
+      SyncStatus syncStatus,
+      bool isError,
+      String? error});
 
   @override
   $HomeworkScanResultCopyWith<$Res>? get scanResult;
@@ -238,6 +256,8 @@ class __$$ChatMessageImplCopyWithImpl<$Res>
     Object? feedbackType = freezed,
     Object? savedToBrain = null,
     Object? syncStatus = null,
+    Object? isError = null,
+    Object? error = freezed,
   }) {
     return _then(_$ChatMessageImpl(
       id: null == id
@@ -296,6 +316,14 @@ class __$$ChatMessageImplCopyWithImpl<$Res>
           ? _value.syncStatus
           : syncStatus // ignore: cast_nullable_to_non_nullable
               as SyncStatus,
+      isError: null == isError
+          ? _value.isError
+          : isError // ignore: cast_nullable_to_non_nullable
+              as bool,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -319,7 +347,9 @@ class _$ChatMessageImpl implements _ChatMessage {
       this.feedbackType,
       this.savedToBrain = false,
       @JsonKey(fromJson: _syncStatusFromJson, toJson: _syncStatusToJson)
-      this.syncStatus = SyncStatus.synced})
+      this.syncStatus = SyncStatus.synced,
+      this.isError = false,
+      this.error})
       : _sources = sources,
         _photoQuestions = photoQuestions;
 
@@ -375,10 +405,17 @@ class _$ChatMessageImpl implements _ChatMessage {
   @override
   @JsonKey(fromJson: _syncStatusFromJson, toJson: _syncStatusToJson)
   final SyncStatus syncStatus;
+// Error rendering — when true, the bubble shows a coral retry pill
+// instead of normal text. `error` is the user-facing message.
+  @override
+  @JsonKey()
+  final bool isError;
+  @override
+  final String? error;
 
   @override
   String toString() {
-    return 'ChatMessage(id: $id, avatarId: $avatarId, role: $role, content: $content, sources: $sources, isStreaming: $isStreaming, createdAt: $createdAt, messageType: $messageType, imagePath: $imagePath, photoQuestions: $photoQuestions, scanResult: $scanResult, feedbackType: $feedbackType, savedToBrain: $savedToBrain, syncStatus: $syncStatus)';
+    return 'ChatMessage(id: $id, avatarId: $avatarId, role: $role, content: $content, sources: $sources, isStreaming: $isStreaming, createdAt: $createdAt, messageType: $messageType, imagePath: $imagePath, photoQuestions: $photoQuestions, scanResult: $scanResult, feedbackType: $feedbackType, savedToBrain: $savedToBrain, syncStatus: $syncStatus, isError: $isError, error: $error)';
   }
 
   @override
@@ -409,7 +446,9 @@ class _$ChatMessageImpl implements _ChatMessage {
             (identical(other.savedToBrain, savedToBrain) ||
                 other.savedToBrain == savedToBrain) &&
             (identical(other.syncStatus, syncStatus) ||
-                other.syncStatus == syncStatus));
+                other.syncStatus == syncStatus) &&
+            (identical(other.isError, isError) || other.isError == isError) &&
+            (identical(other.error, error) || other.error == error));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -429,7 +468,9 @@ class _$ChatMessageImpl implements _ChatMessage {
       scanResult,
       feedbackType,
       savedToBrain,
-      syncStatus);
+      syncStatus,
+      isError,
+      error);
 
   /// Create a copy of ChatMessage
   /// with the given fields replaced by the non-null parameter values.
@@ -464,7 +505,9 @@ abstract class _ChatMessage implements ChatMessage {
       final FeedbackType? feedbackType,
       final bool savedToBrain,
       @JsonKey(fromJson: _syncStatusFromJson, toJson: _syncStatusToJson)
-      final SyncStatus syncStatus}) = _$ChatMessageImpl;
+      final SyncStatus syncStatus,
+      final bool isError,
+      final String? error}) = _$ChatMessageImpl;
 
   factory _ChatMessage.fromJson(Map<String, dynamic> json) =
       _$ChatMessageImpl.fromJson;
@@ -498,7 +541,13 @@ abstract class _ChatMessage implements ChatMessage {
   bool get savedToBrain;
   @override
   @JsonKey(fromJson: _syncStatusFromJson, toJson: _syncStatusToJson)
-  SyncStatus get syncStatus;
+  SyncStatus
+      get syncStatus; // Error rendering — when true, the bubble shows a coral retry pill
+// instead of normal text. `error` is the user-facing message.
+  @override
+  bool get isError;
+  @override
+  String? get error;
 
   /// Create a copy of ChatMessage
   /// with the given fields replaced by the non-null parameter values.

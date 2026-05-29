@@ -101,14 +101,29 @@ class FlashCardViewModel extends _$FlashCardViewModel {
           .toList();
       state = state.copyWith(cards: cards, isLoading: false);
       unawaited(_rescheduleSrs());
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 404 || e.response?.statusCode == 500) {
-        state = state.copyWith(cards: [], isLoading: false);
+    } on DioException catch (e, st) {
+      appLog.w('[Flashcards] load failed', error: e, stackTrace: st);
+      if (e.response?.statusCode == 404) {
+        // Avatar has no deck yet — that's an empty state, not an error.
+        state = state.copyWith(cards: const [], isLoading: false);
         return;
       }
-      state = state.copyWith(cards: _stubCards, isLoading: false);
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      final errorMsg = e.type == DioExceptionType.connectionError ||
+              e.type == DioExceptionType.unknown
+          ? 'No internet connection.'
+          : 'Could not load flashcards.';
+      state = state.copyWith(
+        cards: const [],
+        isLoading: false,
+        error: errorMsg,
+      );
+    } catch (e, st) {
+      appLog.e('[Flashcards] unexpected error', error: e, stackTrace: st);
+      state = state.copyWith(
+        cards: const [],
+        isLoading: false,
+        error: 'Something went wrong.',
+      );
     }
   }
 
@@ -214,25 +229,3 @@ class FlashCardViewModel extends _$FlashCardViewModel {
   }
 }
 
-const _stubCards = [
-  FlashCard(
-    id: 'fc-1',
-    front: 'What is photosynthesis?',
-    back:
-        'The process by which plants use sunlight, water and CO₂ to produce glucose and oxygen.',
-    sourceFile: 'Biology Notes.pdf',
-  ),
-  FlashCard(
-    id: 'fc-2',
-    front: 'What is the powerhouse of the cell?',
-    back: 'The mitochondria — it produces ATP through cellular respiration.',
-    sourceFile: 'Cell Biology.pdf',
-  ),
-  FlashCard(
-    id: 'fc-3',
-    front: 'Define an ecosystem',
-    back:
-        'All living organisms in an area together with their non-living environment, interacting as a system.',
-    sourceFile: 'Ecosystems.pdf',
-  ),
-];

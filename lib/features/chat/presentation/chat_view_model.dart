@@ -272,6 +272,25 @@ class ChatViewModel extends _$ChatViewModel {
     }
   }
 
+  /// Re-sends the most recent user message after the previous attempt
+  /// failed. Strips any error-bubble messages before retrying so the
+  /// retry pill disappears as soon as a new attempt is in flight.
+  Future<void> retryLastMessage() async {
+    ChatMessage? lastUser;
+    for (final m in state.messages.reversed) {
+      if (m.role == MessageRole.user && !m.isError) {
+        lastUser = m;
+        break;
+      }
+    }
+    if (lastUser == null) return;
+    // Drop error bubbles so the user doesn't see two of them.
+    state = state.copyWith(
+      messages: state.messages.where((m) => !m.isError).toList(),
+    );
+    await sendMessage(lastUser.content);
+  }
+
   Future<void> sendMessage(String text) async {
     if (text.trim().isEmpty || !state.canSend) return;
     appLog.i('[Chat] Sending message to avatar $_avatarId: "${text.substring(0, text.length.clamp(0, 60))}"');
@@ -423,51 +442,30 @@ class ChatViewModel extends _$ChatViewModel {
         isProcessingPhoto: false,
         processingPhotoQuestions: const [],
       );
-    } on DioException catch (_) {
-      final stubAnswers = questions.where((q) => q.isSelected).map((q) {
-        return QuestionAnswer(
-          questionId: q.id,
-          questionText: q.rawText,
-          answer: 'x = 5 (example)',
-          steps: ['Step 1: Rearrange', 'Step 2: Solve', 'Step 3: Check'],
-          explanation: "Great question! Here's how we solve it step by step.",
-        );
-      }).toList();
-
-      final stubResult = HomeworkScanResult(
-        messageId: messageId,
-        imageLocalPath: imagePath,
-        questions: questions,
-        answers: stubAnswers,
-        xpEarned: 5,
-        status: HomeworkScanStatus.complete,
-      );
-
-      final stubMessage = ChatMessage(
-        id: messageId,
-        avatarId: _avatarId,
-        role: MessageRole.tutor,
-        content: '',
-        messageType: MessageType.homeworkResult,
-        scanResult: stubResult,
-        createdAt: DateTime.now(),
-      );
-
-      await _localDb.saveMessage(stubMessage.toRecord());
-
-      state = state.copyWith(
-        messages: state.messages.map((m) {
-          if (m.id == messageId) return stubMessage;
-          return m;
-        }).toList(),
-        isProcessingPhoto: false,
-        processingPhotoQuestions: const [],
-      );
-    } catch (e) {
+    } on DioException catch (e, st) {
+      appLog.e('[Chat] Photo question solve failed',
+          error: e, stackTrace: st);
+      final isNetwork = e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.unknown;
+      final userFacingError = isNetwork
+          ? 'No internet — reconnect and try again.'
+          : "Mochi couldn't solve these questions. Try again!";
+      // Remove the in-flight processing placeholder so the chat doesn't
+      // get stuck showing a spinner, and surface the error via toast.
       state = state.copyWith(
         isProcessingPhoto: false,
         processingPhotoQuestions: const [],
-        error: e.toString(),
+        error: userFacingError,
+        messages: state.messages.where((m) => m.id != messageId).toList(),
+      );
+    } catch (e, st) {
+      appLog.e('[Chat] Photo question unexpected error',
+          error: e, stackTrace: st);
+      state = state.copyWith(
+        isProcessingPhoto: false,
+        processingPhotoQuestions: const [],
+        error: 'Something went wrong. Try again.',
+        messages: state.messages.where((m) => m.id != messageId).toList(),
       );
     }
   }
@@ -712,28 +710,35 @@ class ChatViewModel extends _$ChatViewModel {
           streamId, _stripSourceTrailer(buffer.toString()), sources);
       state = state.copyWith(isTyping: false);
     } on DioException catch (e, st) {
-      appLog.w('[Chat] SSE request failed, falling back to stub',
-          error: e, stackTrace: st);
-      await _simulateStubResponse(streamId);
+      appLog.w('[Chat] SSE stream failed', error: e, stackTrace: st);
+      _markStreamingMessageAsError(streamId, e);
+    } catch (e, st) {
+      appLog.e('[Chat] SSE unexpected error', error: e, stackTrace: st);
+      _markStreamingMessageAsError(streamId, null);
     }
   }
 
-  Future<void> _simulateStubResponse(String streamId) async {
-    final stubWords = [
-      'Great', ' question!', ' Let', ' me', ' think',
-      ' about', ' that', '...', ' Based', ' on',
-      ' your', ' notes,', ' here\'s', ' what', ' I',
-      ' know!', ' 🎉',
-    ];
-
-    final buffer = StringBuffer();
-    for (final word in stubWords) {
-      await Future<void>.delayed(const Duration(milliseconds: 60));
-      buffer.write(word);
-      _updateStreamingMessage(streamId, buffer.toString());
-    }
-    _finaliseStreamingMessage(streamId, buffer.toString(), ['stub-source.pdf']);
-    state = state.copyWith(isTyping: false);
+  /// Converts the in-flight streaming placeholder into an inline retry pill.
+  /// Replaces the previous behaviour of streaming a hardcoded
+  /// "Great question!" stub when the backend was unreachable — which
+  /// silently deceived users into thinking the AI responded.
+  void _markStreamingMessageAsError(String streamId, DioException? e) {
+    final isNetwork = e != null &&
+        (e.type == DioExceptionType.connectionError ||
+            e.type == DioExceptionType.unknown);
+    final msg = isNetwork
+        ? 'No internet connection. Tap to retry.'
+        : 'Something went wrong. Tap to retry.';
+    final updated = state.messages.map((m) {
+      if (m.id != streamId) return m;
+      return m.copyWith(
+        content: msg,
+        isStreaming: false,
+        isError: true,
+        error: msg,
+      );
+    }).toList();
+    state = state.copyWith(messages: updated, isTyping: false);
   }
 
   void _updateStreamingMessage(String id, String content) {

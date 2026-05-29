@@ -125,15 +125,20 @@ class WeeklyReportListViewModel extends _$WeeklyReportListViewModel {
           .whereType<Map<String, dynamic>>()
           .map(WeeklyReportSummary.fromJson)
           .toList();
-    } on DioException catch (e) {
-      appLog.w('[Parent] /reports failed: ${e.message}');
-      return const [];
+    } on DioException catch (e, st) {
+      appLog.w('[Parent] /reports failed', error: e, stackTrace: st);
+      final isNetwork = e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.unknown;
+      // Propagate so the screen renders a retry UI instead of an
+      // empty-looking list that's actually broken.
+      throw Exception(
+          isNetwork ? 'No internet connection' : 'Could not load reports');
     }
   }
 
   Future<void> refresh() async {
     state = const AsyncLoading();
-    state = AsyncValue.data(await _fetch());
+    state = await AsyncValue.guard(_fetch);
   }
 }
 

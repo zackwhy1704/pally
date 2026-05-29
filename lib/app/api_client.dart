@@ -1,10 +1,18 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'api_client.g.dart';
+
+/// Set by `main.dart` so Dio interceptors can reach a `BuildContext` for
+/// global toasts (e.g. unhandled 5xx errors). Defaults to no-op if not
+/// overridden, so unit tests still work.
+final globalNavigatorKeyProvider =
+    Provider<GlobalKey<NavigatorState>?>((ref) => null);
 
 const _baseUrl = String.fromEnvironment(
   'API_BASE_URL',
@@ -34,6 +42,7 @@ Dio dio(Ref ref) {
 
   client.interceptors.addAll([
     _PallyLoggingInterceptor(),
+    _ServerErrorInterceptor(ref),
     _ApiResponseInterceptor(),
     _SessionExpiredInterceptor(),
   ]);
@@ -139,6 +148,40 @@ class _ApiResponseInterceptor extends Interceptor {
       response.data = body['data'];
     }
     handler.next(response);
+  }
+}
+
+/// Shows a toast for any 5xx error that individual view-models don't handle.
+/// Users see "something is wrong" instead of a silent blank screen — much
+/// better than failing silently while the UI keeps spinning.
+///
+/// Suppressed for auth endpoints so we don't double-toast on the dedicated
+/// sign-in error screen, and rate-limited to one toast per 3 seconds to
+/// avoid spam from a refresh storm.
+class _ServerErrorInterceptor extends Interceptor {
+  _ServerErrorInterceptor(this._ref);
+  final Ref _ref;
+  static DateTime? _lastShown;
+
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    final status = err.response?.statusCode;
+    final path = err.requestOptions.path;
+    if (status != null &&
+        status >= 500 &&
+        !path.contains('/auth/')) {
+      final now = DateTime.now();
+      if (_lastShown == null ||
+          now.difference(_lastShown!) > const Duration(seconds: 3)) {
+        _lastShown = now;
+        final ctx = _ref.read(globalNavigatorKeyProvider)?.currentContext;
+        if (ctx != null && ctx.mounted) {
+          PallyToast.error(
+              ctx, 'Server error ($status) — please try again');
+        }
+      }
+    }
+    handler.next(err);
   }
 }
 

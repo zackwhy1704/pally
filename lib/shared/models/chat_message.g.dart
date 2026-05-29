@@ -38,6 +38,8 @@ _$ChatMessageImpl _$$ChatMessageImplFromJson(Map<String, dynamic> json) =>
       syncStatus: json['syncStatus'] == null
           ? SyncStatus.synced
           : _syncStatusFromJson(json['syncStatus']),
+      isError: json['isError'] as bool? ?? false,
+      error: json['error'] as String?,
     );
 
 Map<String, dynamic> _$$ChatMessageImplToJson(_$ChatMessageImpl instance) =>
@@ -56,6 +58,8 @@ Map<String, dynamic> _$$ChatMessageImplToJson(_$ChatMessageImpl instance) =>
       'feedbackType': _$FeedbackTypeEnumMap[instance.feedbackType],
       'savedToBrain': instance.savedToBrain,
       'syncStatus': _syncStatusToJson(instance.syncStatus),
+      'isError': instance.isError,
+      'error': instance.error,
     };
 
 const _$MessageTypeEnumMap = {

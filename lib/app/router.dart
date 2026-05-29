@@ -432,12 +432,16 @@ const _publicPaths = {
   '/onboarding',
 };
 
-GoRouter buildAppRouter({ProviderContainer? container}) {
+GoRouter buildAppRouter({
+  ProviderContainer? container,
+  GlobalKey<NavigatorState>? navigatorKey,
+}) {
   final authNotifier = AuthNotifier.instance;
 
   return GoRouter(
     initialLocation: '/',
     debugLogDiagnostics: true,
+    navigatorKey: navigatorKey,
     refreshListenable: authNotifier,
     redirect: (context, state) {
       final auth = authNotifier.state;
