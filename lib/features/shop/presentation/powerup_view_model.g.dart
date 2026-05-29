@@ -6,7 +6,7 @@ part of 'powerup_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$powerupViewModelHash() => r'e4df2cdb087fb62f7608642339a6716c1fab7bfe';
+String _$powerupViewModelHash() => r'5a034f76ff0493a55f63ef128315bc172674a65d';
 
 /// See also [PowerupViewModel].
 @ProviderFor(PowerupViewModel)
