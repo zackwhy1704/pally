@@ -8,6 +8,8 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
+import 'package:pally/features/progress/presentation/daily_goal_provider.dart';
+import 'package:pally/features/progress/presentation/daily_goal_ring.dart';
 import 'package:pally/features/progress/presentation/progress_view_model.dart';
 import 'package:pally/features/progress/presentation/streak_card.dart';
 import 'package:pally/features/progress/presentation/streak_milestone_controller.dart';
@@ -22,21 +24,7 @@ class ProgressScreen extends ConsumerStatefulWidget {
   ConsumerState<ProgressScreen> createState() => _ProgressScreenState();
 }
 
-class _ProgressScreenState extends ConsumerState<ProgressScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+class _ProgressScreenState extends ConsumerState<ProgressScreen> {
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +63,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen>
           color: AppColors.purple,
           onRefresh: () async {
             ref.invalidate(streakStatusVmProvider);
+            ref.invalidate(dailyGoalVmProvider);
             await ref.read(progressViewModelProvider.notifier).refresh();
           },
           child: SingleChildScrollView(
@@ -85,16 +74,15 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen>
               children: [
                 _LevelCard(progress: progress),
                 const SizedBox(height: AppSpacing.md),
+                const DailyGoalRing(),
+                const SizedBox(height: AppSpacing.md),
                 const StreakCard(),
                 const SizedBox(height: AppSpacing.md),
                 const _BrainMapCard(),
                 const SizedBox(height: AppSpacing.md),
                 _StatsRow(progress: progress),
                 const SizedBox(height: AppSpacing.md),
-                _ActivityChart(
-                  tabController: _tabController,
-                  weekMinutes: progress.weekMinutes,
-                ),
+                _WeekMinutesStat(weekMinutes: progress.weekMinutes),
                 const SizedBox(height: AppSpacing.md),
                 if (progress.weakTopics.isNotEmpty)
                   _WeakTopicsCard(
@@ -280,114 +268,31 @@ class _StatCard extends StatelessWidget {
   }
 }
 
-class _ActivityChart extends StatelessWidget {
-  const _ActivityChart({
-    required this.tabController,
-    required this.weekMinutes,
-  });
-
-  final TabController tabController;
+/// Tiny secondary stat — "you studied X min this week". The bar chart
+/// got demoted to make room for the daily goal ring; parents who want
+/// detail can still read the headline.
+class _WeekMinutesStat extends StatelessWidget {
+  const _WeekMinutesStat({required this.weekMinutes});
   final List<int> weekMinutes;
 
   @override
   Widget build(BuildContext context) {
-    const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-    final maxMinutes =
-        weekMinutes.isEmpty ? 1 : weekMinutes.reduce((a, b) => a > b ? a : b);
-
+    final total = weekMinutes.fold<int>(0, (a, b) => a + b);
     return Container(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.outline),
+        color: AppColors.surf2,
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Padding(
-            padding: AppSpacing.card,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Activity', style: AppTextStyles.title),
-                const SizedBox(height: AppSpacing.xs),
-                TabBar(
-                  controller: tabController,
-                  isScrollable: false,
-                  labelStyle: AppTextStyles.label.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                  unselectedLabelStyle: AppTextStyles.label,
-                  indicatorColor: AppColors.purple,
-                  labelColor: AppColors.purple,
-                  unselectedLabelColor: AppColors.text3,
-                  tabs: const [
-                    Tab(text: 'Week'),
-                    Tab(text: 'Month'),
-                    Tab(text: 'All Time'),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1, color: AppColors.outline),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.md,
-              AppSpacing.md,
-              AppSpacing.sm,
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(
-                days.length,
-                (i) {
-                  final minutes = i < weekMinutes.length ? weekMinutes[i] : 0;
-                  final heightFraction =
-                      maxMinutes > 0 ? minutes / maxMinutes : 0.0;
-                  final isToday = i == DateTime.now().weekday - 1;
-
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        '$minutes',
-                        style: AppTextStyles.caption.copyWith(
-                          color: isToday ? AppColors.purple : AppColors.text3,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 600),
-                        width: 28,
-                        height: (80 * heightFraction).clamp(4.0, 80.0),
-                        decoration: BoxDecoration(
-                          color: isToday ? AppColors.purple : AppColors.purpleL,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        days[i],
-                        style: AppTextStyles.caption.copyWith(
-                          color: isToday ? AppColors.purple : AppColors.text3,
-                          fontWeight:
-                              isToday ? FontWeight.w700 : FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-                bottom: AppSpacing.sm, left: AppSpacing.md),
-            child: Text('minutes per day', style: AppTextStyles.caption),
-          ),
+          const Icon(Icons.timer_outlined,
+              color: AppColors.text2, size: 18),
+          const SizedBox(width: 6),
+          Text('$total min studied this week',
+              style: AppTextStyles.bodySmall
+                  .copyWith(color: AppColors.text2)),
         ],
       ),
     );
