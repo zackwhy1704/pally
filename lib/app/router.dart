@@ -21,6 +21,8 @@ import 'package:pally/features/flashcards/presentation/flashcard_screen.dart';
 import 'package:pally/features/progress/presentation/achievements_screen.dart';
 import 'package:pally/features/progress/presentation/level_roadmap_screen.dart';
 import 'package:pally/features/progress/presentation/progress_screen.dart';
+import 'package:pally/features/subscription/presentation/paywall_screen.dart';
+import 'package:pally/features/subscription/presentation/subscription_plans_screen.dart';
 import 'package:pally/features/subscription/presentation/subscription_return_screen.dart';
 import 'package:pally/features/shop/presentation/shop_screen.dart';
 import 'package:pally/features/parent/presentation/parent_screen.dart';
@@ -349,6 +351,28 @@ class SubscriptionReturnRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       SubscriptionReturnScreen(status: status);
+}
+
+/// Reactive paywall — pushed by the Dio interceptor on UPGRADE_REQUIRED,
+/// also reachable from the Settings "Subscription" row and the Progress
+/// "Go Premium" banner.
+@TypedGoRoute<PaywallRoute>(path: '/paywall')
+class PaywallRoute extends GoRouteData {
+  const PaywallRoute({this.feature});
+  final String? feature;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      PaywallScreen(feature: feature);
+}
+
+@TypedGoRoute<SubscriptionPlansRoute>(path: '/subscription/plans')
+class SubscriptionPlansRoute extends GoRouteData {
+  const SubscriptionPlansRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const SubscriptionPlansScreen();
 }
 
 @TypedGoRoute<HomeworkScanDetailRoute>(path: '/homework-scan')

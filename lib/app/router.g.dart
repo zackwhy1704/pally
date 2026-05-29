@@ -27,6 +27,8 @@ List<RouteBase> get $appRoutes => [
       $levelRoadmapRoute,
       $achievementsRoute,
       $subscriptionReturnRoute,
+      $paywallRoute,
+      $subscriptionPlansRoute,
       $homeworkScanDetailRoute,
       $brainHealthRoute,
       $splashRoute,
@@ -661,6 +663,56 @@ extension $SubscriptionReturnRouteExtension on SubscriptionReturnRoute {
         queryParams: {
           if (status != null) 'status': status,
         },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $paywallRoute => GoRouteData.$route(
+      path: '/paywall',
+      factory: $PaywallRouteExtension._fromState,
+    );
+
+extension $PaywallRouteExtension on PaywallRoute {
+  static PaywallRoute _fromState(GoRouterState state) => PaywallRoute(
+        feature: state.uri.queryParameters['feature'],
+      );
+
+  String get location => GoRouteData.$location(
+        '/paywall',
+        queryParams: {
+          if (feature != null) 'feature': feature,
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $subscriptionPlansRoute => GoRouteData.$route(
+      path: '/subscription/plans',
+      factory: $SubscriptionPlansRouteExtension._fromState,
+    );
+
+extension $SubscriptionPlansRouteExtension on SubscriptionPlansRoute {
+  static SubscriptionPlansRoute _fromState(GoRouterState state) =>
+      const SubscriptionPlansRoute();
+
+  String get location => GoRouteData.$location(
+        '/subscription/plans',
       );
 
   void go(BuildContext context) => context.go(location);

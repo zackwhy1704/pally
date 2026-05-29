@@ -14,6 +14,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/auth/services/auth_service.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
+import 'package:pally/features/subscription/entitlement_provider.dart';
+import 'package:pally/features/subscription/subscription_service.dart';
+import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/shared/models/avatar.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -277,6 +280,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
+          const _SectionHeader(title: 'Subscription'),
+          const _SubscriptionTile(),
+          const SizedBox(height: AppSpacing.md),
           const _SectionHeader(title: 'Profile'),
           _SettingsCard(
             children: [
@@ -783,5 +789,81 @@ class _InfoTile extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// Subscription tile shown at the top of Settings. Reads entitlement and
+/// either offers an Upgrade CTA (free user) or a Manage button that opens
+/// the Stripe Billing Portal (premium user).
+class _SubscriptionTile extends ConsumerWidget {
+  const _SubscriptionTile();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final entAsync = ref.watch(entitlementVmProvider);
+    return entAsync.when(
+      loading: () => const _SettingsCard(
+        children: [
+          ListTile(
+            leading: Icon(Icons.workspace_premium_rounded,
+                color: AppColors.purple),
+            title: Text('Subscription'),
+            subtitle: Text('Loading…'),
+          ),
+        ],
+      ),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (ent) {
+        final isPremium = ent.isPremium;
+        final planLabel = isPremium
+            ? (ent.source == 'PARENT'
+                ? 'Family plan — managed by parent'
+                : (ent.plan ?? 'Premium'))
+            : 'Free';
+        return _SettingsCard(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.workspace_premium_rounded,
+                  color: AppColors.purple),
+              title: Text(planLabel),
+              subtitle: Text(isPremium
+                  ? 'Tap Manage to update billing or cancel.'
+                  : 'Unlock unlimited tutors, chat, and family sharing.'),
+              trailing: FilledButton(
+                onPressed: () => _onTap(context, ref, ent.isPremium,
+                    ent.source == 'PARENT'),
+                style: FilledButton.styleFrom(
+                  backgroundColor:
+                      isPremium ? AppColors.text2 : AppColors.purple,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 8),
+                ),
+                child: Text(isPremium ? 'Manage' : 'Upgrade'),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _onTap(BuildContext context, WidgetRef ref,
+      bool isPremium, bool inheritedFromParent) async {
+    if (!isPremium) {
+      context.push('/subscription/plans');
+      return;
+    }
+    if (inheritedFromParent) {
+      PallyToast.success(context,
+          'Your subscription is managed by the parent account.');
+      return;
+    }
+    try {
+      final svc = ref.read(subscriptionServiceProvider);
+      final url = await svc.openPortal();
+      await svc.launchExternal(url);
+    } on SubscriptionError catch (e) {
+      if (context.mounted) PallyToast.error(context, e.message);
+    }
   }
 }

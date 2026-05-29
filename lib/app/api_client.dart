@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/auth/auth_state.dart';
@@ -162,11 +163,49 @@ class _ServerErrorInterceptor extends Interceptor {
   _ServerErrorInterceptor(this._ref);
   final Ref _ref;
   static DateTime? _lastShown;
+  static DateTime? _lastPaywallRoute;
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     final status = err.response?.statusCode;
     final path = err.requestOptions.path;
+
+    // 402 UPGRADE_REQUIRED → route to /paywall once per second to avoid
+    // a refresh loop stacking N paywalls on top of each other.
+    if (status == 402) {
+      final body = err.response?.data;
+      String? code;
+      String? feature;
+      if (body is Map) {
+        final dataNode = body['data'];
+        if (dataNode is Map) {
+          code = dataNode['code']?.toString();
+          feature = dataNode['feature']?.toString();
+        }
+      }
+      if (code == 'UPGRADE_REQUIRED') {
+        final now = DateTime.now();
+        final allowed = _lastPaywallRoute == null ||
+            now.difference(_lastPaywallRoute!) > const Duration(seconds: 1);
+        if (allowed) {
+          _lastPaywallRoute = now;
+          final ctx = _ref.read(globalNavigatorKeyProvider)?.currentContext;
+          if (ctx != null && ctx.mounted) {
+            // Use go_router string nav so this file doesn't depend on the
+            // generated typed-route classes.
+            final qs = feature == null || feature.isEmpty
+                ? ''
+                : '?feature=$feature';
+            try {
+              ctx.go('/paywall$qs');
+            } catch (_) {
+              // Fall through; the view model will surface the error.
+            }
+          }
+        }
+      }
+    }
+
     if (status != null &&
         status >= 500 &&
         !path.contains('/auth/')) {

@@ -17,6 +17,7 @@ import 'package:pally/features/progress/presentation/progress_view_model.dart';
 import 'package:pally/features/progress/presentation/streak_card.dart';
 import 'package:pally/features/progress/presentation/streak_milestone_controller.dart';
 import 'package:pally/features/progress/presentation/streak_status_provider.dart';
+import 'package:pally/features/subscription/entitlement_provider.dart';
 import 'package:pally/shared/models/achievement.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/progress_summary.dart';
@@ -100,6 +101,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                     onPractice: () => context.push('/avatar/all/quiz'),
                   ),
                 const _AchievementsPreview(),
+                const SizedBox(height: AppSpacing.md),
+                const _GoPremiumBanner(),
                 const SizedBox(height: AppSpacing.md),
                 _NavButtons(),
               ],
@@ -773,4 +776,61 @@ void _pickAvatarStatic(BuildContext context, List<Avatar> avatars) {
         ),
       ),
   );
+}
+
+/// "⭐ Go Premium" banner above _NavButtons. Hidden when premium so the
+/// Me tab stays clean for paying users.
+class _GoPremiumBanner extends ConsumerWidget {
+  const _GoPremiumBanner();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ent = ref.watch(entitlementVmProvider).valueOrNull;
+    if (ent == null || ent.isPremium) return const SizedBox.shrink();
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => const PaywallRoute().push(context),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [AppColors.purple, AppColors.purpleC],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: [
+              const Text('⭐', style: TextStyle(fontSize: 22)),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Go Premium',
+                        style: AppTextStyles.body.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w800)),
+                    Text(
+                      'Unlimited tutors, chat & family sharing — 7-day free trial',
+                      style: AppTextStyles.caption
+                          .copyWith(color: Colors.white70),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.arrow_forward_ios_rounded,
+                  color: Colors.white70, size: 14),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
