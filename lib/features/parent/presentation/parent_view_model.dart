@@ -178,8 +178,19 @@ class ParentViewModel extends _$ParentViewModel {
         );
         await _loadStats();
       } else {
+        // Surface lockout messaging from the backend throttle so the user
+        // knows to wait instead of mashing keys harder.
+        final locked = data['lockedOut'] == true;
+        final retryAfter = (data['retryAfterSeconds'] as num?)?.toInt() ?? 0;
+        final attemptsLeft = (data['attemptsRemaining'] as num?)?.toInt();
+        final msg = locked
+            ? 'Too many wrong PINs. Try again in $retryAfter seconds.'
+            : attemptsLeft != null && attemptsLeft <= 2
+                ? 'Incorrect PIN. $attemptsLeft attempt'
+                    '${attemptsLeft == 1 ? '' : 's'} left.'
+                : 'Incorrect PIN. Try again.';
         state = state.copyWith(
-          pinError: 'Incorrect PIN. Try again.',
+          pinError: msg,
           isLoading: false,
         );
       }

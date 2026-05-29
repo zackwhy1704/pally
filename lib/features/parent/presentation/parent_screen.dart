@@ -40,9 +40,79 @@ class ParentScreen extends ConsumerWidget {
               hasExistingPin: parentState.hasExistingPin,
               onSubmit: (pin) =>
                   ref.read(parentViewModelProvider.notifier).verifyPin(pin),
+              onForgot: () => _showResetPinDialog(context, ref),
             ),
     );
   }
+}
+
+/// Top-level "reset your PIN with your account password" dialog reused by
+/// (a) the Forgot-PIN link on the gate and (b) the Change-PIN tile on the
+/// dashboard. Same wire under the hood — both call ParentViewModel.changePin.
+Future<void> _showResetPinDialog(
+    BuildContext context, WidgetRef ref) async {
+  final passCtrl = TextEditingController();
+  final pinCtrl = TextEditingController();
+  await showDialog<void>(
+    context: context,
+    builder: (dialogCtx) => AlertDialog(
+      shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Text('Reset Parent PIN', style: AppTextStyles.title),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Enter your account password to set a new PIN. '
+            'This prevents children from bypassing the gate.',
+            style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: passCtrl,
+            obscureText: true,
+            decoration:
+                const InputDecoration(labelText: 'Account password'),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: pinCtrl,
+            keyboardType: TextInputType.number,
+            maxLength: 6,
+            decoration:
+                const InputDecoration(labelText: 'New PIN (4-6 digits)'),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(dialogCtx).pop(),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: () async {
+            final pass = passCtrl.text;
+            final pin = pinCtrl.text;
+            if (!RegExp(r'^\d{4,6}$').hasMatch(pin)) {
+              PallyToast.error(context, 'PIN must be 4-6 digits');
+              return;
+            }
+            final ok = await ref
+                .read(parentViewModelProvider.notifier)
+                .changePin(password: pass, newPin: pin);
+            if (!context.mounted) return;
+            Navigator.of(dialogCtx).pop();
+            if (ok) {
+              PallyToast.success(context, 'PIN updated');
+            } else {
+              PallyToast.error(context, 'Incorrect password');
+            }
+          },
+          child: const Text('Update PIN'),
+        ),
+      ],
+    ),
+  );
 }
 
 class _PinGate extends StatefulWidget {
@@ -50,12 +120,15 @@ class _PinGate extends StatefulWidget {
     required this.error,
     required this.onSubmit,
     required this.hasExistingPin,
+    required this.onForgot,
   });
 
   final String? error;
   final ValueChanged<String> onSubmit;
   // null = unknown; false = first-time; true = returning
   final bool? hasExistingPin;
+  // Opens the "verify account password to reset PIN" flow.
+  final VoidCallback onForgot;
 
   @override
   State<_PinGate> createState() => _PinGateState();
@@ -63,16 +136,48 @@ class _PinGate extends StatefulWidget {
 
 class _PinGateState extends State<_PinGate> {
   final _pin = StringBuffer();
+  // First-time setup is two-step: capture once, ask again to confirm,
+  // only submit when both match. Prevents a typo from silently becoming
+  // a permanent (recoverable only via password reset) PIN.
+  String? _firstEntry;
+  String? _mismatchMessage;
+
+  bool get _isFirstTime => widget.hasExistingPin == false;
 
   void _onDigit(String digit) {
     if (_pin.length >= 4) return;
-    setState(() => _pin.write(digit));
-    if (_pin.length == 4) {
-      widget.onSubmit(_pin.toString());
-      Future.delayed(const Duration(milliseconds: 300), () {
-        if (mounted) setState(() => _pin.clear());
+    setState(() {
+      _mismatchMessage = null;
+      _pin.write(digit);
+    });
+    if (_pin.length == 4) _handleComplete();
+  }
+
+  void _handleComplete() {
+    final entered = _pin.toString();
+    if (_isFirstTime && _firstEntry == null) {
+      // Stage 1 — capture, prompt confirm.
+      setState(() {
+        _firstEntry = entered;
+        _pin.clear();
       });
+      return;
     }
+    if (_isFirstTime && _firstEntry != null) {
+      // Stage 2 — must match.
+      if (entered != _firstEntry) {
+        setState(() {
+          _mismatchMessage = "Those PINs didn't match. Try again.";
+          _firstEntry = null;
+          _pin.clear();
+        });
+        return;
+      }
+    }
+    widget.onSubmit(entered);
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) setState(() => _pin.clear());
+    });
   }
 
   void _onDelete() {
@@ -104,16 +209,20 @@ class _PinGateState extends State<_PinGate> {
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
-              widget.hasExistingPin == false
-                  ? 'Create a Parent PIN'
+              _isFirstTime
+                  ? (_firstEntry == null
+                      ? 'Create a Parent PIN'
+                      : 'Confirm your PIN')
                   : 'Enter Parent PIN',
               style: AppTextStyles.heading1,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              widget.hasExistingPin == false
-                  ? 'Choose a 4-digit PIN to protect parent mode.'
+              _isFirstTime
+                  ? (_firstEntry == null
+                      ? 'Choose a 4-digit PIN to protect parent mode.'
+                      : 'Type the same PIN again to lock it in.')
                   : 'Enter your 4-digit PIN to access parent mode.',
               style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
@@ -167,6 +276,13 @@ class _PinGateState extends State<_PinGate> {
                 );
               }),
             ),
+            if (_mismatchMessage != null) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                _mismatchMessage!,
+                style: AppTextStyles.bodySmall.copyWith(color: AppColors.coral),
+              ),
+            ],
             if (widget.error != null) ...[
               const SizedBox(height: AppSpacing.sm),
               Text(
@@ -177,6 +293,15 @@ class _PinGateState extends State<_PinGate> {
             const SizedBox(height: AppSpacing.xl),
             // Number pad
             _NumberPad(onDigit: _onDigit, onDelete: _onDelete),
+            if (widget.hasExistingPin == true) ...[
+              const SizedBox(height: AppSpacing.lg),
+              TextButton(
+                onPressed: widget.onForgot,
+                child: Text('Forgot PIN?',
+                    style: AppTextStyles.bodySmall
+                        .copyWith(color: AppColors.purple)),
+              ),
+            ],
           ],
         ),
       ),
@@ -293,67 +418,8 @@ class _Dashboard extends ConsumerWidget {
   }
 
   Future<void> _showChangePinDialog(
-      BuildContext context, WidgetRef ref) async {
-    final passCtrl = TextEditingController();
-    final pinCtrl = TextEditingController();
-    await showDialog<void>(
-      context: context,
-      builder: (dialogCtx) => AlertDialog(
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text('Change Parent PIN', style: AppTextStyles.title),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Enter your account password to verify:',
-                style: AppTextStyles.bodySmall),
-            const SizedBox(height: 12),
-            TextField(
-              controller: passCtrl,
-              obscureText: true,
-              decoration:
-                  const InputDecoration(labelText: 'Account password'),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: pinCtrl,
-              keyboardType: TextInputType.number,
-              maxLength: 6,
-              decoration:
-                  const InputDecoration(labelText: 'New PIN (4-6 digits)'),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogCtx).pop(),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () async {
-              final pass = passCtrl.text;
-              final pin = pinCtrl.text;
-              if (!RegExp(r'^\d{4,6}$').hasMatch(pin)) {
-                PallyToast.error(context, 'PIN must be 4-6 digits');
-                return;
-              }
-              final ok = await ref
-                  .read(parentViewModelProvider.notifier)
-                  .changePin(password: pass, newPin: pin);
-              if (!context.mounted) return;
-              Navigator.of(dialogCtx).pop();
-              if (ok) {
-                PallyToast.success(context, 'PIN updated');
-              } else {
-                PallyToast.error(context, 'Incorrect password');
-              }
-            },
-            child: const Text('Update PIN'),
-          ),
-        ],
-      ),
-    );
-  }
+          BuildContext context, WidgetRef ref) =>
+      _showResetPinDialog(context, ref);
 }
 
 class _WeekStatsRow extends StatelessWidget {
