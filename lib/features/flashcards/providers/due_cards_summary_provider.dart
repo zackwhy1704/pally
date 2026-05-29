@@ -44,15 +44,23 @@ final dueCardsSummaryProvider =
 
   await Future.wait(avatars.map((avatar) async {
     try {
-      final response = await dio.get<Map<String, dynamic>>(
+      // Use <dynamic> not <Map<...>>: the backend returns a bare List
+      // (ApiResponse<List<FlashcardResponse>>) and the interceptor
+      // unwraps the data field, so the body is List<dynamic> at this
+      // point. Forcing a Map type parameter throws inside Dio before
+      // our parsing code ever runs.
+      final response = await dio.get<dynamic>(
         '/api/v1/avatars/${avatar.id}/flashcards',
       );
-      final list = (response.data?['cards'] as List<dynamic>?) ??
-          (response.data is List
-              ? response.data as List<dynamic>
+      final data = response.data;
+      final List<dynamic> list = data is List
+          ? data
+          : (data is Map && data['cards'] is List
+              ? data['cards'] as List<dynamic>
               : const <dynamic>[]);
       final dueCount = list
-          .map((e) => FlashCard.fromJson(e as Map<String, dynamic>))
+          .map((e) => FlashCard.fromJson(
+              Map<String, dynamic>.from(e as Map)))
           .where((c) =>
               c.nextReview != null && !c.nextReview!.isAfter(now))
           .length;
