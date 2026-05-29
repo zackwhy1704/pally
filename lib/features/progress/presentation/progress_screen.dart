@@ -103,6 +103,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                 const _AchievementsPreview(),
                 const SizedBox(height: AppSpacing.md),
                 const _LinkGrownUpRow(),
+                const SizedBox(height: AppSpacing.sm),
+                const _InviteFriendsRow(),
                 const SizedBox(height: AppSpacing.md),
                 const _GoPremiumBanner(),
                 const SizedBox(height: AppSpacing.md),
@@ -866,6 +868,50 @@ class _LinkGrownUpRow extends StatelessWidget {
                 child: Text('Link a grown-up',
                     style: AppTextStyles.body
                         .copyWith(fontWeight: FontWeight.w700)),
+              ),
+              const Icon(Icons.chevron_right_rounded,
+                  color: AppColors.text3),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _InviteFriendsRow extends StatelessWidget {
+  const _InviteFriendsRow();
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => const ReferralRoute().push(context),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.outline),
+          ),
+          child: Row(
+            children: [
+              const Text('🎁', style: TextStyle(fontSize: 22)),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Invite friends',
+                        style: AppTextStyles.body
+                            .copyWith(fontWeight: FontWeight.w700)),
+                    Text('Earn bonus stars when they take their first quiz',
+                        style: AppTextStyles.caption),
+                  ],
+                ),
               ),
               const Icon(Icons.chevron_right_rounded,
                   color: AppColors.text3),

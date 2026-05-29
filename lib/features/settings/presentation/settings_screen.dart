@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/auth/services/auth_service.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
+import 'package:pally/features/referral/referral_service.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
 import 'package:pally/features/subscription/subscription_service.dart';
 import 'package:pally/core/ui/pally_toast.dart';
@@ -282,6 +283,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         children: [
           const _SectionHeader(title: 'Subscription'),
           const _SubscriptionTile(),
+          const SizedBox(height: AppSpacing.md),
+          const _SectionHeader(title: 'Referral'),
+          const _ReferralTile(),
           const SizedBox(height: AppSpacing.md),
           const _SectionHeader(title: 'Profile'),
           _SettingsCard(
@@ -865,5 +869,123 @@ class _SubscriptionTile extends ConsumerWidget {
     } on SubscriptionError catch (e) {
       if (context.mounted) PallyToast.error(context, e.message);
     }
+  }
+}
+
+/// Settings → Referral section. Two actions: open your own referral page
+/// (P-ref) and a prompt to enter someone else's code.
+class _ReferralTile extends ConsumerWidget {
+  const _ReferralTile();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return _SettingsCard(
+      children: [
+        ListTile(
+          leading: const Icon(Icons.card_giftcard_rounded,
+              color: AppColors.purple),
+          title: const Text('Invite friends'),
+          subtitle: const Text('See your code, share it, track who joined.'),
+          trailing: const Icon(Icons.chevron_right_rounded,
+              color: AppColors.text3),
+          onTap: () => context.push('/referral'),
+        ),
+        const Divider(height: 1, color: AppColors.outline),
+        ListTile(
+          leading: const Icon(Icons.redeem_rounded,
+              color: AppColors.teal),
+          title: const Text('Have a referral code?'),
+          subtitle: const Text('Enter it to reward you and the friend who sent it.'),
+          trailing: const Icon(Icons.chevron_right_rounded,
+              color: AppColors.text3),
+          onTap: () => _showRedeemSheet(context, ref),
+        ),
+      ],
+    );
+  }
+
+  void _showRedeemSheet(BuildContext context, WidgetRef ref) {
+    final controller = TextEditingController();
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) => Padding(
+        padding: EdgeInsets.only(
+            bottom: MediaQuery.of(sheetCtx).viewInsets.bottom),
+        child: SafeArea(
+          child: Container(
+            decoration: const BoxDecoration(
+              color: AppColors.surface,
+              borderRadius:
+                  BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.lg),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Enter referral code', style: AppTextStyles.title),
+                const SizedBox(height: 4),
+                Text('Share the reward with the friend who invited you.',
+                    style: AppTextStyles.bodySmall
+                        .copyWith(color: AppColors.text2)),
+                const SizedBox(height: AppSpacing.md),
+                TextField(
+                  controller: controller,
+                  textCapitalization: TextCapitalization.characters,
+                  style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 6),
+                  decoration: InputDecoration(
+                    hintText: 'ABCDEF',
+                    filled: true,
+                    fillColor: AppColors.surf2,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: () async {
+                      final code = controller.text.trim();
+                      if (code.length != 6) {
+                        PallyToast.error(
+                            sheetCtx, 'Codes are 6 characters');
+                        return;
+                      }
+                      final err = await ref
+                          .read(referralServiceProvider)
+                          .redeem(code);
+                      if (!sheetCtx.mounted) return;
+                      if (err == null) {
+                        Navigator.of(sheetCtx).pop();
+                        PallyToast.success(context,
+                            'Code applied! Take a quiz to activate the reward.');
+                      } else {
+                        PallyToast.error(sheetCtx, err);
+                      }
+                    },
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.purple,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
+                    ),
+                    child: const Text('Apply code'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

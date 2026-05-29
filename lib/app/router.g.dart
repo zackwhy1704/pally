@@ -32,6 +32,7 @@ List<RouteBase> get $appRoutes => [
       $familyLinkCodeRoute,
       $familyClaimRoute,
       $familyDashboardRoute,
+      $referralRoute,
       $homeworkScanDetailRoute,
       $brainHealthRoute,
       $splashRoute,
@@ -785,6 +786,28 @@ extension $FamilyDashboardRouteExtension on FamilyDashboardRoute {
 
   String get location => GoRouteData.$location(
         '/family',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $referralRoute => GoRouteData.$route(
+      path: '/referral',
+      factory: $ReferralRouteExtension._fromState,
+    );
+
+extension $ReferralRouteExtension on ReferralRoute {
+  static ReferralRoute _fromState(GoRouterState state) => const ReferralRoute();
+
+  String get location => GoRouteData.$location(
+        '/referral',
       );
 
   void go(BuildContext context) => context.go(location);

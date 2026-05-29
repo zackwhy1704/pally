@@ -6,6 +6,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/auth/services/auth_service.dart';
+import 'package:pally/features/referral/referral_service.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
@@ -20,6 +21,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
   final _confirmCtrl = TextEditingController();
+  final _referralCtrl = TextEditingController();
   bool _obscurePass = true;
   bool _obscureConfirm = true;
   bool _agreed = false;
@@ -31,6 +33,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     _emailCtrl.dispose();
     _passCtrl.dispose();
     _confirmCtrl.dispose();
+    _referralCtrl.dispose();
     super.dispose();
   }
 
@@ -55,6 +58,17 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         token: result.token,
         setupComplete: false,
       );
+      // Optional referral redeem — best-effort, never blocks signup.
+      // Backend rejects self-referral and double-redeem, so a quiet error
+      // is fine here; the user can also redeem later from Settings.
+      final referral = _referralCtrl.text.trim();
+      if (referral.isNotEmpty) {
+        try {
+          await ref.read(referralServiceProvider).redeem(referral);
+        } catch (_) {
+          // ignore — see comment above
+        }
+      }
       if (mounted) context.go('/auth/setup');
     } on AuthException catch (e) {
       if (mounted) _showError(e.message);
@@ -191,6 +205,19 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         return null;
                       },
                     ),
+                    const SizedBox(height: AppSpacing.md),
+                    _FormField(
+                      label: 'Referral code (optional)',
+                      hint: 'ABCDEF',
+                      controller: _referralCtrl,
+                      obscure: false,
+                      textCapitalization: TextCapitalization.characters,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return null;
+                        if (v.length != 6) return 'Codes are 6 characters';
+                        return null;
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -306,6 +333,7 @@ class _FormField extends StatelessWidget {
     this.textInputAction,
     this.validator,
     this.suffix,
+    this.textCapitalization,
   });
 
   final String label;
@@ -316,6 +344,7 @@ class _FormField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final FormFieldValidator<String>? validator;
   final Widget? suffix;
+  final TextCapitalization? textCapitalization;
 
   @override
   Widget build(BuildContext context) {
@@ -333,6 +362,8 @@ class _FormField extends StatelessWidget {
           obscureText: obscure,
           keyboardType: keyboardType,
           textInputAction: textInputAction,
+          textCapitalization:
+              textCapitalization ?? TextCapitalization.none,
           validator: validator,
           style: AppTextStyles.body,
           decoration: InputDecoration(

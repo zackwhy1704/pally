@@ -24,6 +24,7 @@ import 'package:pally/features/progress/presentation/progress_screen.dart';
 import 'package:pally/features/family/presentation/family_claim_screen.dart';
 import 'package:pally/features/family/presentation/family_dashboard_screen.dart';
 import 'package:pally/features/family/presentation/family_link_code_screen.dart';
+import 'package:pally/features/referral/presentation/referral_screen.dart';
 import 'package:pally/features/subscription/presentation/paywall_screen.dart';
 import 'package:pally/features/subscription/presentation/subscription_plans_screen.dart';
 import 'package:pally/features/subscription/presentation/subscription_return_screen.dart';
@@ -403,6 +404,15 @@ class FamilyDashboardRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const FamilyDashboardScreen();
+}
+
+@TypedGoRoute<ReferralRoute>(path: '/referral')
+class ReferralRoute extends GoRouteData {
+  const ReferralRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ReferralScreen();
 }
 
 @TypedGoRoute<HomeworkScanDetailRoute>(path: '/homework-scan')
