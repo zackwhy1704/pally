@@ -36,7 +36,7 @@ Widget _wrap(GroupDetail detail) {
   );
 }
 
-final _baseGroup = const StudyGroup(
+const _baseGroup = StudyGroup(
   id: 'g1',
   name: 'Science Squad',
   subject: 'Science',
@@ -44,7 +44,7 @@ final _baseGroup = const StudyGroup(
   memberCount: 1,
 );
 
-final _member = const GroupMember(
+const _member = GroupMember(
   userId: 'u1',
   displayName: 'Alex',
   role: 'OWNER',
@@ -54,10 +54,10 @@ final _member = const GroupMember(
 
 void main() {
   testWidgets('shows back button in AppBar', (tester) async {
-    await tester.pumpWidget(_wrap(GroupDetail(
+    await tester.pumpWidget(_wrap(const GroupDetail(
       group: _baseGroup,
       members: [_member],
-      sharedNotes: const [],
+      sharedNotes: [],
     )));
     await tester.pump();
     // BackButton is present — G2 fix
@@ -65,10 +65,10 @@ void main() {
   });
 
   testWidgets('shows invite code and copy affordance', (tester) async {
-    await tester.pumpWidget(_wrap(GroupDetail(
+    await tester.pumpWidget(_wrap(const GroupDetail(
       group: _baseGroup,
       members: [_member],
-      sharedNotes: const [],
+      sharedNotes: [],
     )));
     await tester.pump();
     expect(find.text('AB12CD'), findsOneWidget);
@@ -76,10 +76,10 @@ void main() {
   });
 
   testWidgets('empty notes shows guidance + library button', (tester) async {
-    await tester.pumpWidget(_wrap(GroupDetail(
+    await tester.pumpWidget(_wrap(const GroupDetail(
       group: _baseGroup,
       members: [_member],
-      sharedNotes: const [],
+      sharedNotes: [],
     )));
     await tester.pump();
     expect(find.text('No notes shared yet'), findsOneWidget);
@@ -97,7 +97,7 @@ void main() {
     );
     await tester.pumpWidget(_wrap(GroupDetail(
       group: _baseGroup,
-      members: [_member],
+      members: const [_member],
       sharedNotes: [note],
     )));
     await tester.pump();
@@ -118,7 +118,7 @@ void main() {
     );
     await tester.pumpWidget(_wrap(GroupDetail(
       group: _baseGroup,
-      members: [_member],
+      members: const [_member],
       sharedNotes: [note],
     )));
     await tester.pump();
@@ -129,10 +129,10 @@ void main() {
   });
 
   testWidgets('purpose line is visible', (tester) async {
-    await tester.pumpWidget(_wrap(GroupDetail(
+    await tester.pumpWidget(_wrap(const GroupDetail(
       group: _baseGroup,
       members: [_member],
-      sharedNotes: const [],
+      sharedNotes: [],
     )));
     await tester.pump();
     expect(
