@@ -39,18 +39,18 @@ void main() {
   });
 
   testWidgets('shows progress banner with owned/total + percent', (tester) async {
-    final state = CollectionState(entries: [
-      const CollectionEntry(
+    const state = CollectionState(entries: [
+      CollectionEntry(
           id: 'MOCHI',
           character: MochiCharacter.mochi,
           rarity: 'COMMON',
           unlocked: true),
-      const CollectionEntry(
+      CollectionEntry(
           id: 'PENCIL',
           character: MochiCharacter.pencil,
           rarity: 'COMMON',
           unlocked: false),
-      const CollectionEntry(
+      CollectionEntry(
           id: 'GOLDSTAR',
           character: MochiCharacter.goldstar,
           rarity: 'SECRET',
@@ -66,8 +66,8 @@ void main() {
   });
 
   testWidgets('renders SECRET badge for secret-rarity entries', (tester) async {
-    final state = CollectionState(entries: [
-      const CollectionEntry(
+    const state = CollectionState(entries: [
+      CollectionEntry(
           id: 'GOLDSTAR',
           character: MochiCharacter.goldstar,
           rarity: 'SECRET',
@@ -79,8 +79,8 @@ void main() {
   });
 
   testWidgets('renders "Complete!" copy when fully owned', (tester) async {
-    final state = CollectionState(entries: [
-      const CollectionEntry(
+    const state = CollectionState(entries: [
+      CollectionEntry(
           id: 'MOCHI',
           character: MochiCharacter.mochi,
           rarity: 'COMMON',

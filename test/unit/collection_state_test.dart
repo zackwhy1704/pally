@@ -14,18 +14,18 @@ void main() {
     });
 
     test('owned/total counts reflect entries', () {
-      final s = CollectionState(entries: [
-        const CollectionEntry(
+      const s = CollectionState(entries: [
+        CollectionEntry(
             id: 'MOCHI',
             character: MochiCharacter.mochi,
             rarity: 'COMMON',
             unlocked: true),
-        const CollectionEntry(
+        CollectionEntry(
             id: 'PENCIL',
             character: MochiCharacter.pencil,
             rarity: 'COMMON',
             unlocked: true),
-        const CollectionEntry(
+        CollectionEntry(
             id: 'GOLDSTAR',
             character: MochiCharacter.goldstar,
             rarity: 'SECRET',
@@ -37,8 +37,8 @@ void main() {
     });
 
     test('entries with unknown character (future seasonal) survive', () {
-      final s = CollectionState(entries: [
-        const CollectionEntry(
+      const s = CollectionState(entries: [
+        CollectionEntry(
             id: 'FUTURE_MOCHI',
             character: null,
             rarity: 'RARE',
@@ -50,8 +50,8 @@ void main() {
     });
 
     test('copyWith preserves entries when only error toggles', () {
-      final s = CollectionState(
-        entries: const [
+      const s = CollectionState(
+        entries: [
           CollectionEntry(
               id: 'MOCHI',
               character: MochiCharacter.mochi,
