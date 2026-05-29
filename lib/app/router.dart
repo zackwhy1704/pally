@@ -21,6 +21,7 @@ import 'package:pally/features/flashcards/presentation/flashcard_screen.dart';
 import 'package:pally/features/progress/presentation/achievements_screen.dart';
 import 'package:pally/features/progress/presentation/level_roadmap_screen.dart';
 import 'package:pally/features/progress/presentation/progress_screen.dart';
+import 'package:pally/features/subscription/presentation/subscription_return_screen.dart';
 import 'package:pally/features/shop/presentation/shop_screen.dart';
 import 'package:pally/features/parent/presentation/parent_screen.dart';
 import 'package:pally/features/parent/presentation/report_list_screen.dart';
@@ -335,6 +336,19 @@ class AchievementsRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const AchievementsScreen();
+}
+
+/// Landing route after returning from Stripe Checkout. The Manifest's
+/// pally:// intent filter relaunches the app; this screen polls
+/// /subscription/entitlement until isPremium flips (or times out).
+@TypedGoRoute<SubscriptionReturnRoute>(path: '/subscription/return')
+class SubscriptionReturnRoute extends GoRouteData {
+  const SubscriptionReturnRoute({this.status});
+  final String? status;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      SubscriptionReturnScreen(status: status);
 }
 
 @TypedGoRoute<HomeworkScanDetailRoute>(path: '/homework-scan')

@@ -26,6 +26,7 @@ List<RouteBase> get $appRoutes => [
       $settingsRoute,
       $levelRoadmapRoute,
       $achievementsRoute,
+      $subscriptionReturnRoute,
       $homeworkScanDetailRoute,
       $brainHealthRoute,
       $splashRoute,
@@ -632,6 +633,34 @@ extension $AchievementsRouteExtension on AchievementsRoute {
 
   String get location => GoRouteData.$location(
         '/progress/achievements',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $subscriptionReturnRoute => GoRouteData.$route(
+      path: '/subscription/return',
+      factory: $SubscriptionReturnRouteExtension._fromState,
+    );
+
+extension $SubscriptionReturnRouteExtension on SubscriptionReturnRoute {
+  static SubscriptionReturnRoute _fromState(GoRouterState state) =>
+      SubscriptionReturnRoute(
+        status: state.uri.queryParameters['status'],
+      );
+
+  String get location => GoRouteData.$location(
+        '/subscription/return',
+        queryParams: {
+          if (status != null) 'status': status,
+        },
       );
 
   void go(BuildContext context) => context.go(location);
