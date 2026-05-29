@@ -42,9 +42,9 @@ class CreateTutorState {
   String get trimmedName => name.trim();
 
   CreateTutorState copyWith({
-    MochiCharacter? selectedCharacter,
+    Object? selectedCharacter = _sentinel,
     String? name,
-    String? subject,
+    Object? subject = _sentinel,
     Object? gradeLevel = _sentinel,
     Object? curriculumType = _sentinel,
     CreateTutorStep? step,
@@ -52,9 +52,11 @@ class CreateTutorState {
     Object? error = _sentinel,
   }) {
     return CreateTutorState(
-      selectedCharacter: selectedCharacter ?? this.selectedCharacter,
+      selectedCharacter: selectedCharacter == _sentinel
+          ? this.selectedCharacter
+          : selectedCharacter as MochiCharacter?,
       name: name ?? this.name,
-      subject: subject ?? this.subject,
+      subject: subject == _sentinel ? this.subject : subject as String?,
       gradeLevel: gradeLevel == _sentinel ? this.gradeLevel : gradeLevel as String?,
       curriculumType: curriculumType == _sentinel ? this.curriculumType : curriculumType as String?,
       step: step ?? this.step,
@@ -71,10 +73,10 @@ class CreateTutorViewModel extends _$CreateTutorViewModel {
   @override
   CreateTutorState build() => const CreateTutorState();
 
-  void selectCharacter(MochiCharacter character) {
+  void selectCharacter(MochiCharacter? character) {
     state = state.copyWith(
       selectedCharacter: character,
-      subject: character.defaultSubject,
+      subject: character?.defaultSubject,
     );
   }
 

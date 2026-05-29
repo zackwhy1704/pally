@@ -216,8 +216,7 @@ class _AlbumTile extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                 ),
-                if (entry.rarity != 'COMMON' &&
-                    entry.rarity != 'STANDARD') ...[
+                ...[
                   const SizedBox(height: 4),
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -258,6 +257,6 @@ class _AlbumTile extends StatelessWidget {
   Color _rarityColor(String r) => switch (r) {
         'SECRET' => const Color(0xFF1A1A2E),
         'RARE' => const Color(0xFF7042ED),
-        _ => AppColors.text3,
+        _ => AppColors.teal, // COMMON + STANDARD → teal
       };
 }

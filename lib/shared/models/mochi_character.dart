@@ -96,13 +96,13 @@ enum MochiRarity { standard, rare, secret }
 
 extension MochiRarityDisplay on MochiRarity {
   String get label => switch (this) {
-    MochiRarity.standard => '',
+    MochiRarity.standard => 'COMMON',
     MochiRarity.rare => 'RARE',
     MochiRarity.secret => 'SECRET',
   };
 
   Color get badgeColor => switch (this) {
-    MochiRarity.standard => Colors.transparent,
+    MochiRarity.standard => const Color(0xFF00BBA4), // teal for COMMON
     MochiRarity.rare => const Color(0xFF7042ED),
     MochiRarity.secret => const Color(0xFF1A1A2E),
   };

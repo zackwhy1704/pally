@@ -17,7 +17,7 @@ class CharacterPickerStep extends ConsumerWidget {
   });
 
   final MochiCharacter? selectedCharacter;
-  final ValueChanged<MochiCharacter> onSelect;
+  final ValueChanged<MochiCharacter?> onSelect;
   final VoidCallback onNext;
 
   @override
@@ -60,12 +60,14 @@ class CharacterPickerStep extends ConsumerWidget {
                 final character = MochiCharacter.values[index];
                 final isUnlocked = unlocked.contains(character) ||
                     !character.isLockedByDefault;
+                final isSelected = character == selectedCharacter;
                 return _MochiCard(
                   character: character,
-                  isSelected: character == selectedCharacter,
+                  isSelected: isSelected,
                   isUnlocked: isUnlocked,
                   onTap: isUnlocked
-                      ? () => onSelect(character)
+                      // Second tap on the same card deselects it
+                      ? () => onSelect(isSelected ? null : character)
                       : () => context.push('/shop'),
                 );
               },
@@ -147,8 +149,7 @@ class _MochiCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  if (character.rarity != MochiRarity.standard)
-                    Padding(
+                  Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -188,12 +189,12 @@ class _MochiCard extends StatelessWidget {
                   ),
                 ),
               ),
+              // Lock sits in the top-left corner — above the Mochi face so
+              // the full character is visible and desirable.
               const Positioned(
-                top: 28,
-                left: 0,
-                right: 0,
-                child:
-                    Center(child: Text('🔒', style: TextStyle(fontSize: 28))),
+                top: 6,
+                left: 8,
+                child: Text('🔒', style: TextStyle(fontSize: 18)),
               ),
             ],
             if (isSelected)
