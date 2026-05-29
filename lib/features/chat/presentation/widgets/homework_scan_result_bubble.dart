@@ -40,6 +40,38 @@ class _HomeworkScanResultBubbleState extends State<HomeworkScanResultBubble> {
   Widget build(BuildContext context) {
     final answers = widget.result.answers;
 
+    // Backend error sentinel: when Claude couldn't parse the photo, we get
+    // back a single answer with questionText == '__ERROR__'. Render a
+    // warning bubble instead of pretending we have real answers.
+    if (answers.any((a) => a.questionText == '__ERROR__')) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+        child: Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: AppColors.coralL,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.coral, width: 1),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.warning_amber_rounded,
+                  color: AppColors.coral, size: 20),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  'Could not solve these questions. Please try again with a clearer photo.',
+                  style: AppTextStyles.body
+                      .copyWith(color: AppColors.coral),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.only(
           left: AppSpacing.md, right: AppSpacing.md, bottom: AppSpacing.sm),

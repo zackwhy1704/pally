@@ -6,7 +6,10 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
+import 'package:pally/core/ui/painters/character_painter.dart';
+import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/features/progress/presentation/progress_view_model.dart';
+import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/progress_summary.dart';
 
 class ProgressScreen extends ConsumerStatefulWidget {
@@ -66,6 +69,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen>
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _LevelCard(progress: progress),
+                const SizedBox(height: AppSpacing.md),
+                const _BrainMapCard(),
                 const SizedBox(height: AppSpacing.md),
                 _StatsRow(progress: progress),
                 const SizedBox(height: AppSpacing.md),
@@ -687,6 +692,121 @@ class _ErrorView extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
           FilledButton(onPressed: onRetry, child: const Text('Retry')),
         ],
+      ),
+    );
+  }
+}
+
+/// Gradient entry card to the Brain Map. Hidden when the user has no
+/// avatars yet (nothing to map). With one avatar, tap goes straight in;
+/// with several, a bottom-sheet picker lets the user choose which tutor.
+class _BrainMapCard extends ConsumerWidget {
+  const _BrainMapCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final avatarsAsync = ref.watch(libraryViewModelProvider);
+    final avatars = avatarsAsync.maybeWhen(
+      data: (list) => list,
+      orElse: () => const <Avatar>[],
+    );
+    if (avatars.isEmpty) return const SizedBox.shrink();
+
+    return Material(
+      color: Colors.transparent,
+      child: Ink(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF7042ED), Color(0xFF8F66FA)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () {
+            if (avatars.length == 1) {
+              BrainMapRoute(avatarId: avatars.first.id).push(context);
+            } else {
+              _pickAvatar(context, avatars);
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.sm + 4),
+            child: Row(
+              children: [
+                const Text('🧠', style: TextStyle(fontSize: 28)),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Brain Map',
+                          style: AppTextStyles.body.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700)),
+                      Text(
+                        avatars.length == 1
+                            ? 'See ${avatars.first.name}\'s knowledge as a visual map'
+                            : 'See your tutors\' knowledge as a visual map',
+                        style: AppTextStyles.caption
+                            .copyWith(color: Colors.white70),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.arrow_forward_ios_rounded,
+                    color: Colors.white70, size: 16),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _pickAvatar(BuildContext context, List<Avatar> avatars) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => SafeArea(
+        child: Container(
+          decoration: const BoxDecoration(
+            color: AppColors.surface,
+            borderRadius:
+                BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Choose tutor', style: AppTextStyles.title),
+              const SizedBox(height: AppSpacing.md),
+              for (final a in avatars)
+                ListTile(
+                  leading: CharacterWidget(
+                      character: a.character, size: 36),
+                  title: Text(a.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
+                  subtitle: Text(a.subject,
+                      style: AppTextStyles.caption
+                          .copyWith(color: AppColors.text2),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
+                  onTap: () {
+                    Navigator.pop(context);
+                    BrainMapRoute(avatarId: a.id).push(context);
+                  },
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:pally/app/api_client.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
+import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/parent/presentation/weekly_report_view_model.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -28,7 +30,7 @@ class ReportDetailScreen extends ConsumerWidget {
           reportAsync.maybeWhen(
             data: (r) => IconButton(
               icon: const Icon(Icons.share_rounded),
-              onPressed: () => _share(context, r),
+              onPressed: () => _share(context, ref, r),
             ),
             orElse: () => const SizedBox.shrink(),
           ),
@@ -69,18 +71,39 @@ class ReportDetailScreen extends ConsumerWidget {
     );
   }
 
-  void _share(BuildContext context, WeeklyReportDetail r) {
-    final fmt = DateFormat('MMM d');
-    final text = StringBuffer()
-      ..writeln('Pally weekly report (${fmt.format(r.startDate)} – '
-          '${fmt.format(r.endDate)})')
-      ..writeln()
-      ..writeln('• ${r.sessions} session${r.sessions == 1 ? '' : 's'}')
-      ..writeln('• ${r.minutes} min studied')
-      ..writeln('• +${r.xpEarned} XP earned')
-      ..writeln()
-      ..writeln(r.narrative);
-    Share.share(text.toString());
+  Future<void> _share(
+      BuildContext context, WidgetRef ref, WeeklyReportDetail r) async {
+    // Prefer the backend-generated share text (richer + includes
+    // streak/badges). Fall back to a local string if the call fails so
+    // the share sheet still opens.
+    String text;
+    String subject = 'Pally Weekly Report';
+    try {
+      final dio = ref.read(dioProvider);
+      final res = await dio.get<Map<String, dynamic>>(
+        '/api/v1/parent/reports/${r.weekId}/share-text',
+      );
+      final data = (res.data?['data'] is Map
+              ? res.data!['data']
+              : res.data) as Map<String, dynamic>;
+      text = (data['text'] as String?) ?? '';
+      subject = (data['subject'] as String?) ?? subject;
+    } catch (e) {
+      appLog.w('[Report] share-text failed: $e — using local fallback');
+      final fmt = DateFormat('MMM d');
+      final sb = StringBuffer()
+        ..writeln('Pally weekly report (${fmt.format(r.startDate)} – '
+            '${fmt.format(r.endDate)})')
+        ..writeln()
+        ..writeln('• ${r.sessions} session${r.sessions == 1 ? '' : 's'}')
+        ..writeln('• ${r.minutes} min studied')
+        ..writeln('• +${r.xpEarned} XP earned')
+        ..writeln()
+        ..writeln(r.narrative);
+      text = sb.toString();
+    }
+    if (text.isEmpty) return;
+    await Share.share(text, subject: subject);
   }
 }
 
