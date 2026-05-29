@@ -137,22 +137,49 @@ class QuizViewModel extends _$QuizViewModel {
   Future<void> _loadQuestions() async {
     try {
       final dio = ref.read(dioProvider);
+      // /quiz/daily returns ApiResponse<List<QuizQuestionResponse>> — after
+      // _ApiResponseInterceptor strips the envelope, response.data is a bare
+      // List. Typing the call <Map> would crash at Dio's transport layer
+      // before parsing. Use <dynamic> and branch on the runtime shape.
       final response = await dio
-          .get<Map<String, dynamic>>('/api/v1/avatars/$_avatarId/quiz/daily');
-      final list = (response.data?['questions'] as List<dynamic>?) ??
-          (response.data is List ? response.data as List<dynamic> : []);
+          .get<dynamic>('/api/v1/avatars/$_avatarId/quiz/daily');
+      final data = response.data;
+      final List<dynamic> list = data is List
+          ? data
+          : (data is Map && data['questions'] is List
+              ? data['questions'] as List<dynamic>
+              : const <dynamic>[]);
       final questions = list
-          .map((e) => QuizQuestion.fromJson(e as Map<String, dynamic>))
+          .map((e) => QuizQuestion.fromJson(
+              Map<String, dynamic>.from(e as Map)))
           .toList();
       state = state.copyWith(questions: questions, isLoading: false);
     } on DioException catch (e) {
-      if (e.response?.statusCode == 404 || e.response?.statusCode == 500) {
-        state = state.copyWith(questions: [], isLoading: false);
+      // 404 = "no quiz yet" (genuinely empty); everything else is an
+      // error worth surfacing rather than masking with stub data.
+      if (e.response?.statusCode == 404) {
+        state = state.copyWith(questions: const [], isLoading: false);
         return;
       }
-      state = state.copyWith(questions: _stubQuestions, isLoading: false);
+      state = state.copyWith(
+          isLoading: false, error: _friendlyMessage(e));
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      state = state.copyWith(
+          isLoading: false,
+          error: "Mochi's having trouble right now. Try again in a moment.");
+    }
+  }
+
+  String _friendlyMessage(DioException e) {
+    switch (e.type) {
+      case DioExceptionType.connectionError:
+      case DioExceptionType.connectionTimeout:
+        return "You're offline — check your WiFi and try again.";
+      case DioExceptionType.receiveTimeout:
+      case DioExceptionType.sendTimeout:
+        return "Mochi's taking a while — try again in a moment.";
+      default:
+        return "Mochi's having trouble right now. Try again.";
     }
   }
 
@@ -283,37 +310,3 @@ class QuizViewModel extends _$QuizViewModel {
       v is List ? v.whereType<String>().toList() : const <String>[];
 }
 
-const _stubQuestions = [
-  QuizQuestion(
-    id: 'q1',
-    question: 'What process do plants use to make food from sunlight?',
-    options: [
-      'Respiration',
-      'Photosynthesis',
-      'Digestion',
-      'Transpiration',
-    ],
-    correctIndex: 1,
-    sourcePage: 'photosynthesis',
-    explanation:
-        'Photosynthesis is the process by which plants use sunlight, water and carbon dioxide to produce oxygen and energy in the form of sugar.',
-  ),
-  QuizQuestion(
-    id: 'q2',
-    question: 'What is the basic unit of life?',
-    options: ['Atom', 'Molecule', 'Cell', 'Organ'],
-    correctIndex: 2,
-    sourcePage: 'cell-structure',
-    explanation:
-        'The cell is the basic structural and functional unit of all living organisms.',
-  ),
-  QuizQuestion(
-    id: 'q3',
-    question: 'Which gas do plants absorb during photosynthesis?',
-    options: ['Oxygen', 'Nitrogen', 'Carbon Dioxide', 'Hydrogen'],
-    correctIndex: 2,
-    sourcePage: 'photosynthesis',
-    explanation:
-        'Plants absorb carbon dioxide (CO₂) from the air and convert it into glucose using energy from sunlight.',
-  ),
-];

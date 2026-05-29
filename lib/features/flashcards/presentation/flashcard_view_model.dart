@@ -92,12 +92,20 @@ class FlashCardViewModel extends _$FlashCardViewModel {
   Future<void> _loadCards() async {
     try {
       final dio = ref.read(dioProvider);
+      // /flashcards returns ApiResponse<List<FlashcardResponse>> — after
+      // _ApiResponseInterceptor strips the envelope, the body is a bare
+      // List. Typing the call <Map> crashes at Dio's transport layer
+      // before parsing. Use <dynamic> and branch on the runtime shape.
       final response = await dio
-          .get<Map<String, dynamic>>('/api/v1/avatars/$_avatarId/flashcards');
-      final list = (response.data?['cards'] as List<dynamic>?) ??
-          (response.data is List ? response.data as List<dynamic> : []);
+          .get<dynamic>('/api/v1/avatars/$_avatarId/flashcards');
+      final data = response.data;
+      final List<dynamic> list = data is List
+          ? data
+          : (data is Map && data['cards'] is List
+              ? data['cards'] as List<dynamic>
+              : const <dynamic>[]);
       final cards = list
-          .map((e) => FlashCard.fromJson(e as Map<String, dynamic>))
+          .map((e) => FlashCard.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList();
       state = state.copyWith(cards: cards, isLoading: false);
       unawaited(_rescheduleSrs());
