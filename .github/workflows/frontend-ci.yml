@@ -40,8 +40,11 @@ jobs:
         run: flutter analyze
 
       - name: Test
-        # Unit + widget + golden tests.
-        run: flutter test
+        # Unit + widget tests. Golden tests are excluded from CI because they
+        # were generated on macOS and Linux renders fonts differently, causing
+        # pixel-exact comparisons to fail. Run golden tests locally before
+        # pushing if you change any visual widget.
+        run: flutter test test/unit/ test/widget/ test/widget_test.dart
 
       - name: Upload test results
         if: always()
