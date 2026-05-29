@@ -5,6 +5,7 @@ import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/features/quiz/presentation/quiz_view_model.dart';
 import 'package:pally/features/progress/presentation/level_up_controller.dart';
@@ -113,7 +114,8 @@ class QuizScreen extends ConsumerWidget {
       body: quizState.isLoading
           ? const PallyLoadingSpinner()
           : quizState.error != null
-              ? _ErrorView(
+              ? PallyErrorCard(
+                  message: quizState.error!.userMessage,
                   onRetry: () => ref
                       .read(quizViewModelProvider(avatarId).notifier)
                       .restart(),
@@ -607,27 +609,6 @@ class _CompletionView extends StatelessWidget {
   }
 }
 
-class _ErrorView extends StatelessWidget {
-  const _ErrorView({required this.onRetry});
-
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.bolt_rounded, size: 64, color: AppColors.text3),
-          const SizedBox(height: AppSpacing.md),
-          Text('Could not load quiz', style: AppTextStyles.title),
-          const SizedBox(height: AppSpacing.lg),
-          FilledButton(onPressed: onRetry, child: const Text('Try Again')),
-        ],
-      ),
-    );
-  }
-}
 
 /// Three-button row asking the student to self-rate how sure they are BEFORE
 /// they answer. Drives the mastery-matrix classification shown on completion.

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/progress/presentation/progress_view_model.dart';
 import 'package:pally/shared/models/quiz_question.dart';
@@ -66,7 +67,7 @@ class QuizState {
   final bool levelledUp;
   final int newLevel;
   final MasteryMatrix? masteryMatrix;
-  final String? error;
+  final PallyError? error;
 
   /// True when the student can lock in their answer this turn — they must
   /// have picked an answer AND (if confidenceMode is on) a confidence rating.
@@ -116,7 +117,7 @@ class QuizState {
       masteryMatrix: masteryMatrix == _sentinel
           ? this.masteryMatrix
           : masteryMatrix as MasteryMatrix?,
-      error: error == _sentinel ? this.error : error as String?,
+      error: error == _sentinel ? this.error : error as PallyError?,
     );
   }
 }
@@ -155,31 +156,17 @@ class QuizViewModel extends _$QuizViewModel {
           .toList();
       state = state.copyWith(questions: questions, isLoading: false);
     } on DioException catch (e) {
-      // 404 = "no quiz yet" (genuinely empty); everything else is an
-      // error worth surfacing rather than masking with stub data.
+      // 404 = "no quiz yet" (genuinely empty); everything else routes
+      // through PallyError so the UI gets a uniform message + retry.
       if (e.response?.statusCode == 404) {
         state = state.copyWith(questions: const [], isLoading: false);
         return;
       }
       state = state.copyWith(
-          isLoading: false, error: _friendlyMessage(e));
+          isLoading: false, error: PallyError.from(e));
     } catch (e) {
       state = state.copyWith(
-          isLoading: false,
-          error: "Mochi's having trouble right now. Try again in a moment.");
-    }
-  }
-
-  String _friendlyMessage(DioException e) {
-    switch (e.type) {
-      case DioExceptionType.connectionError:
-      case DioExceptionType.connectionTimeout:
-        return "You're offline — check your WiFi and try again.";
-      case DioExceptionType.receiveTimeout:
-      case DioExceptionType.sendTimeout:
-        return "Mochi's taking a while — try again in a moment.";
-      default:
-        return "Mochi's having trouble right now. Try again.";
+          isLoading: false, error: PallyError.from(e));
     }
   }
 

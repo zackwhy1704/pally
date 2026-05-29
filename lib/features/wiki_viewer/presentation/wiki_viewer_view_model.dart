@@ -1,7 +1,7 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/wiki_page.dart';
 
@@ -20,7 +20,7 @@ class WikiViewerState {
   final List<WikiPage> pages;
   final String searchQuery;
   final bool isLoading;
-  final String? error;
+  final PallyError? error;
   final Avatar? avatar;
 
   List<WikiPage> get filteredPages {
@@ -46,7 +46,7 @@ class WikiViewerState {
       pages: pages ?? this.pages,
       searchQuery: searchQuery ?? this.searchQuery,
       isLoading: isLoading ?? this.isLoading,
-      error: error == _sentinel ? this.error : error as String?,
+      error: error == _sentinel ? this.error : error as PallyError?,
       avatar: avatar == _sentinel ? this.avatar : avatar as Avatar?,
     );
   }
@@ -69,27 +69,42 @@ class WikiViewerViewModel extends _$WikiViewerViewModel {
     try {
       final dio = ref.read(dioProvider);
       final results = await Future.wait([
-        dio.get<Map<String, dynamic>>('/api/v1/avatars/$_avatarId'),
-        dio.get<Map<String, dynamic>>('/api/v1/avatars/$_avatarId/wiki/pages'),
+        dio.get<dynamic>('/api/v1/avatars/$_avatarId'),
+        // /wiki/pages returns ApiResponse<List<WikiPageResponse>> — bare
+        // List post-interceptor. <dynamic> + runtime branch (same pattern
+        // as quiz/flashcards). The /avatars/{id} endpoint is Map-shaped
+        // but we use <dynamic> consistently here so future shape changes
+        // don't crash the load.
+        dio.get<dynamic>('/api/v1/avatars/$_avatarId/wiki/pages'),
       ]);
 
       final avatarData = results[0].data;
-      final Avatar? avatar =
-          avatarData != null ? Avatar.fromJson(avatarData) : null;
+      final Avatar? avatar = avatarData is Map<String, dynamic>
+          ? Avatar.fromJson(avatarData)
+          : (avatarData is Map
+              ? Avatar.fromJson(Map<String, dynamic>.from(avatarData))
+              : null);
 
       final pagesData = results[1].data;
-      final list = (pagesData?['pages'] as List<dynamic>?) ??
-          (pagesData?['items'] as List<dynamic>?) ??
-          (pagesData is List ? pagesData as List<dynamic> : []);
+      final List<dynamic> list = pagesData is List
+          ? pagesData
+          : (pagesData is Map
+              ? (pagesData['pages'] is List
+                  ? pagesData['pages'] as List<dynamic>
+                  : (pagesData['items'] is List
+                      ? pagesData['items'] as List<dynamic>
+                      : const <dynamic>[]))
+              : const <dynamic>[]);
       final pages = list
-          .map((e) => WikiPage.fromJson(e as Map<String, dynamic>))
+          .map((e) => WikiPage.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList();
       state = state.copyWith(
           pages: pages, avatar: avatar, isLoading: false, error: null);
-    } on DioException catch (_) {
-      state = state.copyWith(pages: _stubPages, isLoading: false, error: null);
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      // Never fall back to fabricated wiki pages — a child must never
+      // study invented notes. Surface a real error + retry instead.
+      state = state.copyWith(
+          pages: const [], isLoading: false, error: PallyError.from(e));
     }
   }
 
@@ -122,29 +137,3 @@ class WikiViewerViewModel extends _$WikiViewerViewModel {
   }
 }
 
-const _stubPages = [
-  WikiPage(
-    id: 'wp-1',
-    avatarId: 'stub',
-    title: 'Photosynthesis',
-    content:
-        'Plants convert light energy into chemical energy stored as glucose.',
-    sourceFileIds: [],
-  ),
-  WikiPage(
-    id: 'wp-2',
-    avatarId: 'stub',
-    title: 'Cell Structure',
-    content:
-        'Cells are the basic unit of life. Plant cells have a cell wall, vacuole, and chloroplasts.',
-    sourceFileIds: [],
-  ),
-  WikiPage(
-    id: 'wp-3',
-    avatarId: 'stub',
-    title: 'Ecosystems',
-    content:
-        'An ecosystem consists of all the living organisms in an area together with the non-living environment.',
-    sourceFileIds: [],
-  ),
-];
