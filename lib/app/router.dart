@@ -29,6 +29,7 @@ import 'package:pally/features/centre/presentation/centre_join_screen.dart';
 import 'package:pally/features/subscription/presentation/paywall_screen.dart';
 import 'package:pally/features/subscription/presentation/subscription_plans_screen.dart';
 import 'package:pally/features/subscription/presentation/subscription_return_screen.dart';
+import 'package:pally/features/collection/presentation/collection_screen.dart';
 import 'package:pally/features/shop/presentation/shop_screen.dart';
 import 'package:pally/features/parent/presentation/parent_screen.dart';
 import 'package:pally/features/parent/presentation/report_list_screen.dart';
@@ -239,6 +240,15 @@ class ShopRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) => const ShopScreen();
+}
+
+@TypedGoRoute<CollectionRoute>(path: '/collection')
+class CollectionRoute extends GoRouteData {
+  const CollectionRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const CollectionScreen();
 }
 
 @TypedGoRoute<ParentRoute>(path: '/parent')

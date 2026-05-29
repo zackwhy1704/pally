@@ -15,6 +15,7 @@ List<RouteBase> get $appRoutes => [
       $quizRoute,
       $flashcardRoute,
       $shopRoute,
+      $collectionRoute,
       $parentRoute,
       $parentReportsRoute,
       $parentReportDetailRoute,
@@ -382,6 +383,29 @@ extension $ShopRouteExtension on ShopRoute {
 
   String get location => GoRouteData.$location(
         '/shop',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $collectionRoute => GoRouteData.$route(
+      path: '/collection',
+      factory: $CollectionRouteExtension._fromState,
+    );
+
+extension $CollectionRouteExtension on CollectionRoute {
+  static CollectionRoute _fromState(GoRouterState state) =>
+      const CollectionRoute();
+
+  String get location => GoRouteData.$location(
+        '/collection',
       );
 
   void go(BuildContext context) => context.go(location);

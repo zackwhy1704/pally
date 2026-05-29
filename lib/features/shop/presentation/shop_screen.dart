@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
+import 'package:pally/features/shop/presentation/powerup_view_model.dart';
 import 'package:pally/features/shop/presentation/shop_view_model.dart';
+import 'package:pally/features/shop/providers/mystery_box_odds_provider.dart';
 import 'package:pally/shared/models/mochi_character.dart';
 
 class ShopScreen extends ConsumerWidget {
@@ -87,6 +90,8 @@ class ShopScreen extends ConsumerWidget {
                     isBuyingFreeze: shopState.isBuyingFreeze,
                     onBuyFreeze: notifier.buyFreeze,
                   ),
+                  const SizedBox(height: AppSpacing.md),
+                  _PowerupShopCard(stars: shopState.stars),
                   const SizedBox(height: AppSpacing.lg),
                   _EarnMethodsCard(),
                   const SizedBox(height: AppSpacing.md),
@@ -280,35 +285,7 @@ class _MysteryBoxCardState extends State<_MysteryBoxCard>
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.md),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
-            decoration: BoxDecoration(
-              color: AppColors.amberL,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppColors.amber.withValues(alpha: 0.4)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '💡 FYI — Probability:',
-                  style: AppTextStyles.label.copyWith(
-                    color: const Color(0xFFB8860B),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'Secret (Gold Star) = 1/24  ·  Rare (Headmaster) = 23/24',
-                  style: AppTextStyles.caption.copyWith(
-                    color: AppColors.text2,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          const _MysteryOddsPanel(),
           const SizedBox(height: AppSpacing.md),
           SizedBox(
             width: double.infinity,
@@ -353,6 +330,316 @@ class _MysteryBoxCardState extends State<_MysteryBoxCard>
         ],
       ),
     );
+  }
+}
+
+/// Hint / Double-XP / Bonus-quiz buy panel. Reads inventory + catalog
+/// from `/shop/powerups*` via PowerupViewModel; each row shows the
+/// current owned count and a single "buy 1" tap. Wires snackbar
+/// confirmation + error surfacing into the parent screen's existing
+/// listener so a child can never spam-purchase past their balance
+/// without a kid-friendly error message.
+class _PowerupShopCard extends ConsumerWidget {
+  const _PowerupShopCard({required this.stars});
+  final int stars;
+
+  static const _items = [
+    _PowerupItem(
+        type: 'HINT_TOKEN',
+        emoji: '💡',
+        title: 'Hint token',
+        sub: 'Reveal one wrong option in a quiz.'),
+    _PowerupItem(
+        type: 'DOUBLE_XP',
+        emoji: '⚡',
+        title: 'Double-XP boost',
+        sub: 'Doubles XP on your next quiz (within the daily cap).'),
+    _PowerupItem(
+        type: 'BONUS_QUIZ',
+        emoji: '🎯',
+        title: 'Bonus practice quiz',
+        sub: 'Unlock an extra full-XP quiz today.'),
+  ];
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(powerupViewModelProvider);
+    final notifier = ref.read(powerupViewModelProvider.notifier);
+
+    ref.listen<PowerupState>(powerupViewModelProvider, (_, next) {
+      if (next.lastPurchase != null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: const Duration(seconds: 3),
+          backgroundColor: AppColors.text1,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12)),
+          content: Text(
+            'Bought ${_labelFor(next.lastPurchase!.type)} — '
+            'you now have ${next.lastPurchase!.count}',
+          ),
+        ));
+        notifier.clearPurchase();
+      }
+      if (next.error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: const Duration(seconds: 3),
+          backgroundColor: AppColors.coral,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12)),
+          content: Text(next.error!),
+        ));
+        notifier.clearError();
+      }
+    });
+
+    return Container(
+      padding: AppSpacing.card,
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.outline),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Quiz Power-ups', style: AppTextStyles.title),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            'Spend stars to study smarter.',
+            style: AppTextStyles.bodySmall,
+          ),
+          const SizedBox(height: AppSpacing.md),
+          if (state.isLoading)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: SizedBox(
+                height: 16,
+                child: LinearProgressIndicator(minHeight: 2),
+              ),
+            )
+          else
+            ..._items.map((it) => _PowerupRow(
+                  item: it,
+                  count: state.counts[it.type] ?? 0,
+                  cost: state.catalog[it.type]?.cost ?? 0,
+                  stars: stars,
+                  isBuying: state.isBuying,
+                  onBuy: () => notifier.buy(it.type),
+                )),
+        ],
+      ),
+    );
+  }
+
+  static String _labelFor(String type) => switch (type) {
+        'HINT_TOKEN' => 'a hint token',
+        'DOUBLE_XP' => 'a double-XP boost',
+        'BONUS_QUIZ' => 'a bonus quiz',
+        _ => 'a powerup',
+      };
+}
+
+@immutable
+class _PowerupItem {
+  const _PowerupItem({
+    required this.type,
+    required this.emoji,
+    required this.title,
+    required this.sub,
+  });
+  final String type;
+  final String emoji;
+  final String title;
+  final String sub;
+}
+
+class _PowerupRow extends StatelessWidget {
+  const _PowerupRow({
+    required this.item,
+    required this.count,
+    required this.cost,
+    required this.stars,
+    required this.isBuying,
+    required this.onBuy,
+  });
+
+  final _PowerupItem item;
+  final int count;
+  final int cost;
+  final int stars;
+  final bool isBuying;
+  final VoidCallback onBuy;
+
+  @override
+  Widget build(BuildContext context) {
+    final canAfford = cost > 0 && stars >= cost;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.sm),
+        decoration: BoxDecoration(
+          color: AppColors.surf2,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              alignment: Alignment.center,
+              child: Text(item.emoji, style: const TextStyle(fontSize: 22)),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          item.title,
+                          style: AppTextStyles.body
+                              .copyWith(fontWeight: FontWeight.w700),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (count > 0) ...[
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 1),
+                          constraints: const BoxConstraints(maxWidth: 60),
+                          decoration: BoxDecoration(
+                            color: AppColors.tealL,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '× $count',
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.teal,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  Text(item.sub,
+                      style: AppTextStyles.caption,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            FilledButton(
+              onPressed: (canAfford && !isBuying) ? onBuy : null,
+              style: FilledButton.styleFrom(
+                backgroundColor:
+                    canAfford ? AppColors.purple : AppColors.outline,
+                foregroundColor:
+                    canAfford ? Colors.white : AppColors.text3,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    cost == 0 ? '…' : '$cost',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontFamily: 'Nunito'),
+                  ),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.star_rounded, size: 14),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Live odds list rendered from /shop/open-box/odds. Falls back to the
+/// spec defaults (6×15% / 8% / 2%) on error, so the card never goes
+/// blank. Grouping by rarity keeps the text scannable at small sizes.
+class _MysteryOddsPanel extends ConsumerWidget {
+  const _MysteryOddsPanel();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncOdds = ref.watch(mysteryBoxOddsNotifierProvider);
+    final odds = asyncOdds.valueOrNull;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: AppColors.amberL,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.amber.withValues(alpha: 0.4)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '💡 FYI — Probability:',
+            style: AppTextStyles.label.copyWith(
+              color: const Color(0xFFB8860B),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 2),
+          if (odds == null || odds.isEmpty)
+            Text(
+              'Loading odds…',
+              style: AppTextStyles.caption
+                  .copyWith(color: AppColors.text2),
+            )
+          else
+            Text(
+              _formatOdds(odds),
+              style: AppTextStyles.caption.copyWith(
+                color: AppColors.text2,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  String _formatOdds(List<MysteryBoxOdds> odds) {
+    final commons = odds.where((o) => o.rarity == 'COMMON').toList();
+    final rares = odds.where((o) => o.rarity == 'RARE').toList();
+    final secrets = odds.where((o) => o.rarity == 'SECRET').toList();
+    final parts = <String>[];
+    if (commons.isNotEmpty) {
+      final pct = commons.first.percent;
+      parts.add('${commons.length} commons = $pct% each');
+    }
+    for (final r in rares) {
+      parts.add('Rare (${r.name}) = ${r.percent}%');
+    }
+    for (final s in secrets) {
+      parts.add('Secret (${s.name}) = ${s.percent}%');
+    }
+    return parts.join('  ·  ');
   }
 }
 
@@ -550,31 +837,42 @@ class _CollectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: AppSpacing.card,
-      decoration: BoxDecoration(
-        color: AppColors.purpleL,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.collections_rounded,
-              color: AppColors.purple, size: 28),
-          const SizedBox(width: AppSpacing.md),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'My Collection',
-                style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: () => const CollectionRoute().push<void>(context),
+      child: Container(
+        padding: AppSpacing.card,
+        decoration: BoxDecoration(
+          color: AppColors.purpleL,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.collections_rounded,
+                color: AppColors.purple, size: 28),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'My Collection',
+                    style: AppTextStyles.body
+                        .copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  Text(
+                    '$count / ${MochiCharacter.values.length} characters unlocked',
+                    style: AppTextStyles.bodySmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
-              Text(
-                '$count / ${MochiCharacter.values.length} characters unlocked',
-                style: AppTextStyles.bodySmall,
-              ),
-            ],
-          ),
-        ],
+            ),
+            const Icon(Icons.chevron_right_rounded,
+                color: AppColors.purple),
+          ],
+        ),
       ),
     );
   }

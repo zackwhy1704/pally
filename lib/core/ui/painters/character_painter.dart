@@ -11,6 +11,11 @@ import 'package:pally/core/ui/painters/lumis_painter.dart';
 
 CustomPainter characterPainterFor(MochiCharacter character, double size) {
   switch (character) {
+    case MochiCharacter.mochi:
+      // The starter Mochi renders from base.png everywhere; the painter
+      // fallback is only hit if the asset somehow fails to load. Reuse
+      // the round-bear MochiPainter as a visually-on-brand fallback.
+      return MochiPainter(size);
     case MochiCharacter.pencil:
       return MochiPainter(size);
     case MochiCharacter.science:
