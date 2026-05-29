@@ -1,7 +1,7 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/features/shop/providers/unlocked_characters_provider.dart';
 import 'package:pally/shared/models/mochi_character.dart';
 
@@ -68,10 +68,12 @@ class ShopViewModel extends _$ShopViewModel {
       final s = (response.data?['stars'] as int?) ?? 0;
       final c = (response.data?['collectionCount'] as int?) ?? 0;
       state = state.copyWith(stars: s, collectionCount: c, isLoading: false);
-    } on DioException catch (_) {
-      state = state.copyWith(stars: 1240, collectionCount: 3, isLoading: false);
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      // Stars are a real currency. Never fabricate a balance — show a
+      // real error + retry instead, so a kid can't think they have 1240
+      // stars when the server says otherwise.
+      state = state.copyWith(
+          isLoading: false, error: PallyError.from(e).userMessage);
     }
   }
 
@@ -85,12 +87,12 @@ class ShopViewModel extends _$ShopViewModel {
       final charStr = (response.data?['character'] as String?) ?? 'PENCIL';
       final char = MochiCharacter.fromJson(charStr);
       await _handlePull(char);
-    } on DioException catch (_) {
-      const chars = MochiCharacter.values;
-      final char = chars[DateTime.now().millisecondsSinceEpoch % chars.length];
-      await _handlePull(char);
     } catch (e) {
-      state = state.copyWith(isOpening: false, error: e.toString());
+      // Never fabricate a pull — picking a random character locally
+      // means the user celebrates an unlock that doesn't exist on the
+      // backend (and their stars weren't deducted). Surface the failure.
+      state = state.copyWith(
+          isOpening: false, error: PallyError.from(e).userMessage);
     }
   }
 

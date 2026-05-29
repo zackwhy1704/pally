@@ -390,7 +390,12 @@ class ChatViewModel extends _$ChatViewModel {
         'Sorry, I had trouble answering that. Please try again!',
         [],
       );
-      state = state.copyWith(isTyping: false, error: e.toString());
+      // Keep the friendly bubble already inserted; never store raw
+      // exception text in state. (Nothing reads `error` today, but
+      // dropping `e.toString()` guards against accidental future leaks.)
+      state = state.copyWith(
+          isTyping: false,
+          error: "Mochi couldn't reply. Please try again.");
     }
   }
 

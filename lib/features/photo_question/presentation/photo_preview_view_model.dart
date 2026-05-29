@@ -59,8 +59,11 @@ class PhotoPreviewViewModel extends _$PhotoPreviewViewModel {
 
       final questions = _parseQuestions(recognised.text);
       state = PhotoPreviewDetected(questions: questions, photoPath: photoPath);
-    } catch (e) {
-      state = PhotoPreviewError(e.toString());
+    } catch (_) {
+      // Never leak raw exception text — on-device OCR errors are mostly
+      // model-internal noise the user can't act on.
+      state = const PhotoPreviewError(
+          "Couldn't read text from this photo. Try a clearer shot.");
     }
   }
 
