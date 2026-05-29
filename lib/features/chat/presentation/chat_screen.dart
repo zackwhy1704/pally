@@ -20,6 +20,7 @@ import 'package:pally/features/chat/presentation/widgets/photo_processing_bubble
 import 'package:pally/features/chat/presentation/widgets/homework_scan_result_bubble.dart';
 import 'package:pally/features/chat/widgets/mochi_tip_coach.dart';
 import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
+import 'package:pally/features/chat/providers/chat_usage_provider.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key, required this.avatarId});
@@ -82,6 +83,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     if (text.trim().isEmpty) return;
     _textController.clear();
     ref.read(chatViewModelProvider(widget.avatarId).notifier).sendMessage(text);
+    // Optimistic counter bump so "N left today" updates in the same frame
+    // as the send — server /usage/today reconciles on next refresh.
+    ref.read(chatUsageNotifierProvider.notifier).recordSent();
     _scrollToBottom();
   }
 
@@ -173,12 +177,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     bottom: bottomInset > 0 ? bottomInset : bottomPadding,
                   ),
                   color: AppColors.bg,
-                  child: _InputBar(
-                    controller: _textController,
-                    focusNode: _focusNode,
-                    canSend: state.canSend,
-                    onSend: _sendMessage,
-                    onCameraPressed: _onCameraPressed,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const DailyChatHint(),
+                      _InputBar(
+                        controller: _textController,
+                        focusNode: _focusNode,
+                        canSend: state.canSend,
+                        onSend: _sendMessage,
+                        onCameraPressed: _onCameraPressed,
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -595,6 +605,59 @@ class _TextBubble extends ConsumerWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+// ── Daily chat hint ───────────────────────────────────────────────────────────
+
+/// Shows "{N} chats left today" when a free user is within 5 of the cap.
+/// Hidden for premium users (no cap). Hidden when remaining is null
+/// (loading / failed-fetch) so the chat input doesn't shift unexpectedly.
+///
+/// Exposed at library level (not private) so the widget test can render
+/// it with overridden providers — kept const and stateless for clarity.
+class DailyChatHint extends ConsumerWidget {
+  const DailyChatHint({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final usage = ref.watch(chatUsageNotifierProvider);
+    if (usage == null || !usage.shouldWarn) {
+      return const SizedBox.shrink();
+    }
+    final remaining = usage.remaining!;
+    final emoji = remaining == 0
+        ? '🌙'
+        : remaining <= 2
+            ? '⚡'
+            : '✨';
+    final copy = remaining == 0
+        ? 'Daily chats done — come back tomorrow or go Premium.'
+        : '$remaining message${remaining == 1 ? '' : 's'} left today';
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: 6),
+      color: AppColors.amberL,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 14)),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              copy,
+              style: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.text1,
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

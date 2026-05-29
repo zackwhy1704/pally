@@ -25,6 +25,34 @@ class ShopScreen extends ConsumerWidget {
           notifier,
         );
       }
+      if (next.lastFreezePurchase != null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: const Duration(seconds: 3),
+          backgroundColor: AppColors.text1,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12)),
+          content: Text(
+            '❄️ Freeze added — you now have '
+            '${next.lastFreezePurchase!.freezes}/'
+            '${next.lastFreezePurchase!.freezeCap}',
+          ),
+        ));
+        notifier.clearFreezePurchase();
+      }
+      if (next.error != null) {
+        // Surfaces "Not enough stars" / "Freezes are full" verbatim from
+        // the backend. We deliberately don't celebrate failure (no
+        // confetti) so the kid understands nothing was charged.
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: const Duration(seconds: 3),
+          backgroundColor: AppColors.coral,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12)),
+          content: Text(next.error!),
+        ));
+      }
     });
 
     return Scaffold(
@@ -52,6 +80,12 @@ class ShopScreen extends ConsumerWidget {
                     stars: shopState.stars,
                     isOpening: shopState.isOpening,
                     onOpen: notifier.openMysteryBox,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  _PowerUpsCard(
+                    stars: shopState.stars,
+                    isBuyingFreeze: shopState.isBuyingFreeze,
+                    onBuyFreeze: notifier.buyFreeze,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   _EarnMethodsCard(),
@@ -314,6 +348,119 @@ class _MysteryBoxCardState extends State<_MysteryBoxCard>
                         ),
                       ],
                     ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PowerUpsCard extends StatelessWidget {
+  const _PowerUpsCard({
+    required this.stars,
+    required this.isBuyingFreeze,
+    required this.onBuyFreeze,
+  });
+
+  final int stars;
+  final bool isBuyingFreeze;
+  final VoidCallback onBuyFreeze;
+
+  @override
+  Widget build(BuildContext context) {
+    final canAfford = stars >= 150;
+    return Container(
+      padding: AppSpacing.card,
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.outline),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Power-ups', style: AppTextStyles.title),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            'Spend stars to protect your streak.',
+            style: AppTextStyles.bodySmall,
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            decoration: BoxDecoration(
+              color: AppColors.tealL,
+              borderRadius: BorderRadius.circular(12),
+              border:
+                  Border.all(color: AppColors.teal.withValues(alpha: 0.25)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text('❄️', style: TextStyle(fontSize: 24)),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Streak Freeze',
+                        style: AppTextStyles.body
+                            .copyWith(fontWeight: FontWeight.w700),
+                      ),
+                      Text(
+                        'Save your streak if you miss a day.',
+                        style: AppTextStyles.bodySmall,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                FilledButton(
+                  onPressed:
+                      (canAfford && !isBuyingFreeze) ? onBuyFreeze : null,
+                  style: FilledButton.styleFrom(
+                    backgroundColor:
+                        canAfford ? AppColors.teal : AppColors.outline,
+                    foregroundColor:
+                        canAfford ? Colors.white : AppColors.text3,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: isBuyingFreeze
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white),
+                        )
+                      : const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('150',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w800,
+                                    fontFamily: 'Nunito')),
+                            SizedBox(width: 4),
+                            Icon(Icons.star_rounded, size: 14),
+                          ],
+                        ),
+                ),
+              ],
             ),
           ),
         ],
