@@ -9,6 +9,9 @@ import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/features/progress/presentation/progress_view_model.dart';
+import 'package:pally/features/progress/presentation/streak_card.dart';
+import 'package:pally/features/progress/presentation/streak_milestone_controller.dart';
+import 'package:pally/features/progress/presentation/streak_status_provider.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/progress_summary.dart';
 
@@ -39,6 +42,16 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen>
   Widget build(BuildContext context) {
     final progressAsync = ref.watch(progressViewModelProvider);
 
+    // Fire the milestone overlay once per newly-celebrated milestone. The
+    // controller persists "seen" in SharedPreferences so revisiting the
+    // tab doesn't re-celebrate the same one.
+    ref.listen(streakStatusVmProvider, (_, next) {
+      next.whenData((s) {
+        StreakMilestoneController.maybeCelebrate(context,
+            milestonesReached: s.milestonesReached);
+      });
+    });
+
     return Scaffold(
       backgroundColor: AppColors.bg,
       appBar: AppBar(
@@ -60,8 +73,10 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen>
         ),
         data: (progress) => RefreshIndicator(
           color: AppColors.purple,
-          onRefresh: () =>
-              ref.read(progressViewModelProvider.notifier).refresh(),
+          onRefresh: () async {
+            ref.invalidate(streakStatusVmProvider);
+            await ref.read(progressViewModelProvider.notifier).refresh();
+          },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(AppSpacing.md),
@@ -69,6 +84,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen>
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _LevelCard(progress: progress),
+                const SizedBox(height: AppSpacing.md),
+                const StreakCard(),
                 const SizedBox(height: AppSpacing.md),
                 const _BrainMapCard(),
                 const SizedBox(height: AppSpacing.md),
@@ -199,18 +216,10 @@ class _StatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The streak stat moved to its own StreakCard; this row keeps the
+    // secondary numbers (total XP + badge count).
     return Row(
       children: [
-        Expanded(
-          child: _StatCard(
-            icon: Icons.local_fire_department_rounded,
-            value: '${progress.streakDays}',
-            label: 'Day Streak',
-            color: AppColors.coral,
-            bgColor: AppColors.coralL,
-          ),
-        ),
-        const SizedBox(width: AppSpacing.sm),
         Expanded(
           child: _StatCard(
             icon: Icons.star_rounded,
