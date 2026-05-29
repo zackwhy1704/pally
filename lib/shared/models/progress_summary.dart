@@ -30,6 +30,8 @@ class ProgressSummary with _$ProgressSummary {
     @Default([]) List<int> weekMinutes,
     @Default([]) List<WeakTopic> weakTopics,
     @Default([]) List<String> badges,
+    int? nextUnlockLevel,
+    String? nextUnlockLabel,
   }) = _ProgressSummary;
 
   factory ProgressSummary.fromJson(Map<String, dynamic> json) =>

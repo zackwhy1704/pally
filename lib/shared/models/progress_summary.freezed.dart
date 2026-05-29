@@ -199,6 +199,8 @@ mixin _$ProgressSummary {
   List<int> get weekMinutes => throw _privateConstructorUsedError;
   List<WeakTopic> get weakTopics => throw _privateConstructorUsedError;
   List<String> get badges => throw _privateConstructorUsedError;
+  int? get nextUnlockLevel => throw _privateConstructorUsedError;
+  String? get nextUnlockLabel => throw _privateConstructorUsedError;
 
   /// Serializes this ProgressSummary to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -226,7 +228,9 @@ abstract class $ProgressSummaryCopyWith<$Res> {
       int streakDays,
       List<int> weekMinutes,
       List<WeakTopic> weakTopics,
-      List<String> badges});
+      List<String> badges,
+      int? nextUnlockLevel,
+      String? nextUnlockLabel});
 }
 
 /// @nodoc
@@ -254,6 +258,8 @@ class _$ProgressSummaryCopyWithImpl<$Res, $Val extends ProgressSummary>
     Object? weekMinutes = null,
     Object? weakTopics = null,
     Object? badges = null,
+    Object? nextUnlockLevel = freezed,
+    Object? nextUnlockLabel = freezed,
   }) {
     return _then(_value.copyWith(
       level: null == level
@@ -296,6 +302,14 @@ class _$ProgressSummaryCopyWithImpl<$Res, $Val extends ProgressSummary>
           ? _value.badges
           : badges // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      nextUnlockLevel: freezed == nextUnlockLevel
+          ? _value.nextUnlockLevel
+          : nextUnlockLevel // ignore: cast_nullable_to_non_nullable
+              as int?,
+      nextUnlockLabel: freezed == nextUnlockLabel
+          ? _value.nextUnlockLabel
+          : nextUnlockLabel // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -318,7 +332,9 @@ abstract class _$$ProgressSummaryImplCopyWith<$Res>
       int streakDays,
       List<int> weekMinutes,
       List<WeakTopic> weakTopics,
-      List<String> badges});
+      List<String> badges,
+      int? nextUnlockLevel,
+      String? nextUnlockLabel});
 }
 
 /// @nodoc
@@ -344,6 +360,8 @@ class __$$ProgressSummaryImplCopyWithImpl<$Res>
     Object? weekMinutes = null,
     Object? weakTopics = null,
     Object? badges = null,
+    Object? nextUnlockLevel = freezed,
+    Object? nextUnlockLabel = freezed,
   }) {
     return _then(_$ProgressSummaryImpl(
       level: null == level
@@ -386,6 +404,14 @@ class __$$ProgressSummaryImplCopyWithImpl<$Res>
           ? _value._badges
           : badges // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      nextUnlockLevel: freezed == nextUnlockLevel
+          ? _value.nextUnlockLevel
+          : nextUnlockLevel // ignore: cast_nullable_to_non_nullable
+              as int?,
+      nextUnlockLabel: freezed == nextUnlockLabel
+          ? _value.nextUnlockLabel
+          : nextUnlockLabel // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -403,7 +429,9 @@ class _$ProgressSummaryImpl implements _ProgressSummary {
       this.streakDays = 0,
       final List<int> weekMinutes = const [],
       final List<WeakTopic> weakTopics = const [],
-      final List<String> badges = const []})
+      final List<String> badges = const [],
+      this.nextUnlockLevel,
+      this.nextUnlockLabel})
       : _weekMinutes = weekMinutes,
         _weakTopics = weakTopics,
         _badges = badges;
@@ -460,8 +488,13 @@ class _$ProgressSummaryImpl implements _ProgressSummary {
   }
 
   @override
+  final int? nextUnlockLevel;
+  @override
+  final String? nextUnlockLabel;
+
+  @override
   String toString() {
-    return 'ProgressSummary(level: $level, xp: $xp, xpToNextLevel: $xpToNextLevel, xpIntoLevel: $xpIntoLevel, xpSpanForLevel: $xpSpanForLevel, maxLevel: $maxLevel, streakDays: $streakDays, weekMinutes: $weekMinutes, weakTopics: $weakTopics, badges: $badges)';
+    return 'ProgressSummary(level: $level, xp: $xp, xpToNextLevel: $xpToNextLevel, xpIntoLevel: $xpIntoLevel, xpSpanForLevel: $xpSpanForLevel, maxLevel: $maxLevel, streakDays: $streakDays, weekMinutes: $weekMinutes, weakTopics: $weakTopics, badges: $badges, nextUnlockLevel: $nextUnlockLevel, nextUnlockLabel: $nextUnlockLabel)';
   }
 
   @override
@@ -485,7 +518,11 @@ class _$ProgressSummaryImpl implements _ProgressSummary {
                 .equals(other._weekMinutes, _weekMinutes) &&
             const DeepCollectionEquality()
                 .equals(other._weakTopics, _weakTopics) &&
-            const DeepCollectionEquality().equals(other._badges, _badges));
+            const DeepCollectionEquality().equals(other._badges, _badges) &&
+            (identical(other.nextUnlockLevel, nextUnlockLevel) ||
+                other.nextUnlockLevel == nextUnlockLevel) &&
+            (identical(other.nextUnlockLabel, nextUnlockLabel) ||
+                other.nextUnlockLabel == nextUnlockLabel));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -501,7 +538,9 @@ class _$ProgressSummaryImpl implements _ProgressSummary {
       streakDays,
       const DeepCollectionEquality().hash(_weekMinutes),
       const DeepCollectionEquality().hash(_weakTopics),
-      const DeepCollectionEquality().hash(_badges));
+      const DeepCollectionEquality().hash(_badges),
+      nextUnlockLevel,
+      nextUnlockLabel);
 
   /// Create a copy of ProgressSummary
   /// with the given fields replaced by the non-null parameter values.
@@ -531,7 +570,9 @@ abstract class _ProgressSummary implements ProgressSummary {
       final int streakDays,
       final List<int> weekMinutes,
       final List<WeakTopic> weakTopics,
-      final List<String> badges}) = _$ProgressSummaryImpl;
+      final List<String> badges,
+      final int? nextUnlockLevel,
+      final String? nextUnlockLabel}) = _$ProgressSummaryImpl;
 
   factory _ProgressSummary.fromJson(Map<String, dynamic> json) =
       _$ProgressSummaryImpl.fromJson;
@@ -558,6 +599,10 @@ abstract class _ProgressSummary implements ProgressSummary {
   List<WeakTopic> get weakTopics;
   @override
   List<String> get badges;
+  @override
+  int? get nextUnlockLevel;
+  @override
+  String? get nextUnlockLabel;
 
   /// Create a copy of ProgressSummary
   /// with the given fields replaced by the non-null parameter values.

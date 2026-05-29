@@ -120,79 +120,120 @@ class _LevelCard extends StatelessWidget {
             ? progress.xpIntoLevel / progress.xpSpanForLevel
             : 0.0);
 
-    return Container(
-      padding: AppSpacing.card,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.purple, AppColors.purpleC],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
         borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: [
-          // Level circle
-          Container(
-            width: 72,
-            height: 72,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              shape: BoxShape.circle,
-              border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.4), width: 3),
+        onTap: () => const LevelRoadmapRoute().push(context),
+        child: Ink(
+          padding: AppSpacing.card,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [AppColors.purple, AppColors.purpleC],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            child: Center(
-              child: Text(
-                '${progress.level}',
-                style: AppTextStyles.heading1.copyWith(
-                  color: Colors.white,
-                  fontSize: 28,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.4), width: 3),
+                ),
+                child: Center(
+                  child: Text(
+                    '${progress.level}',
+                    style: AppTextStyles.heading1
+                        .copyWith(color: Colors.white, fontSize: 28),
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Level ${progress.level}',
+                      style:
+                          AppTextStyles.title.copyWith(color: Colors.white),
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      isMaxLevel
+                          ? 'MAX LEVEL ⭐'
+                          : '${progress.xpIntoLevel} / ${progress.xpSpanForLevel} XP',
+                      style: AppTextStyles.bodySmall
+                          .copyWith(color: Colors.white70),
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: xpProgress.clamp(0.0, 1.0),
+                        backgroundColor: Colors.white24,
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                            Colors.white),
+                        minHeight: 8,
+                      ),
+                    ),
+                    if (!isMaxLevel) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        '${progress.xpToNextLevel} XP to Level ${progress.level + 1}',
+                        style: AppTextStyles.caption
+                            .copyWith(color: Colors.white60),
+                      ),
+                    ],
+                    const SizedBox(height: 6),
+                    _NextUnlockLine(
+                      isMaxLevel: isMaxLevel,
+                      level: progress.nextUnlockLevel,
+                      label: progress.nextUnlockLabel,
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.arrow_forward_ios_rounded,
+                  color: Colors.white60, size: 14),
+            ],
           ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Level ${progress.level}',
-                  style: AppTextStyles.title.copyWith(color: Colors.white),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  isMaxLevel
-                      ? 'MAX LEVEL ⭐'
-                      : '${progress.xpIntoLevel} / ${progress.xpSpanForLevel} XP',
-                  style:
-                      AppTextStyles.bodySmall.copyWith(color: Colors.white70),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: xpProgress.clamp(0.0, 1.0),
-                    backgroundColor: Colors.white24,
-                    valueColor:
-                        const AlwaysStoppedAnimation<Color>(Colors.white),
-                    minHeight: 8,
-                  ),
-                ),
-                if (!isMaxLevel) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    '${progress.xpToNextLevel} XP to Level ${progress.level + 1}',
-                    style: AppTextStyles.caption
-                        .copyWith(color: Colors.white60),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
+    );
+  }
+}
+
+class _NextUnlockLine extends StatelessWidget {
+  const _NextUnlockLine({
+    required this.isMaxLevel,
+    required this.level,
+    required this.label,
+  });
+
+  final bool isMaxLevel;
+  final int? level;
+  final String? label;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = isMaxLevel
+        ? '⭐ Max level reached — legendary!'
+        : (level != null && label != null
+            ? '🎁 Next unlock at L$level: $label'
+            : '');
+    if (text.isEmpty) return const SizedBox.shrink();
+    return Text(
+      text,
+      style: AppTextStyles.caption.copyWith(color: Colors.white),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }

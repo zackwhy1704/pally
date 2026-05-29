@@ -40,6 +40,8 @@ _$ProgressSummaryImpl _$$ProgressSummaryImplFromJson(
               ?.map((e) => e as String)
               .toList() ??
           const [],
+      nextUnlockLevel: (json['nextUnlockLevel'] as num?)?.toInt(),
+      nextUnlockLabel: json['nextUnlockLabel'] as String?,
     );
 
 Map<String, dynamic> _$$ProgressSummaryImplToJson(
@@ -55,4 +57,6 @@ Map<String, dynamic> _$$ProgressSummaryImplToJson(
       'weekMinutes': instance.weekMinutes,
       'weakTopics': instance.weakTopics,
       'badges': instance.badges,
+      'nextUnlockLevel': instance.nextUnlockLevel,
+      'nextUnlockLabel': instance.nextUnlockLabel,
     };

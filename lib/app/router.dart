@@ -18,6 +18,7 @@ import 'package:pally/features/wiki_compiled/presentation/wiki_compiled_screen.d
 import 'package:pally/features/library/presentation/library_screen.dart';
 import 'package:pally/features/quiz/presentation/quiz_screen.dart';
 import 'package:pally/features/flashcards/presentation/flashcard_screen.dart';
+import 'package:pally/features/progress/presentation/level_roadmap_screen.dart';
 import 'package:pally/features/progress/presentation/progress_screen.dart';
 import 'package:pally/features/shop/presentation/shop_screen.dart';
 import 'package:pally/features/parent/presentation/parent_screen.dart';
@@ -315,6 +316,15 @@ class SettingsRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const SettingsScreen();
+}
+
+@TypedGoRoute<LevelRoadmapRoute>(path: '/progress/level-roadmap')
+class LevelRoadmapRoute extends GoRouteData {
+  const LevelRoadmapRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const LevelRoadmapScreen();
 }
 
 @TypedGoRoute<HomeworkScanDetailRoute>(path: '/homework-scan')
