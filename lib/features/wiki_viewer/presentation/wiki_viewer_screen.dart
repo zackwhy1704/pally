@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/core/ui/pally_toast.dart';
+import 'package:pally/features/groups/presentation/groups_view_model.dart';
 import 'package:pally/features/wiki_viewer/presentation/wiki_viewer_view_model.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/wiki_page.dart';
@@ -289,6 +292,7 @@ class _PageTile extends ConsumerStatefulWidget {
 class _PageTileState extends ConsumerState<_PageTile> {
   bool _isEditing = false;
   bool _isSaving = false;
+  bool _isSharing = false;
   late final TextEditingController _editController;
 
   @override
@@ -315,6 +319,116 @@ class _PageTileState extends ConsumerState<_PageTile> {
         .read(wikiViewerViewModelProvider(widget.avatarId).notifier)
         .patchCorrection(_slug, newContent);
     if (mounted) setState(() { _isSaving = false; _isEditing = false; });
+  }
+
+  Future<void> _shareToGroup(BuildContext context) async {
+    // Capture before any async gap.
+    final scaffold = ScaffoldMessenger.of(context);
+    final groups = ref.read(groupListViewModelProvider).valueOrNull ?? [];
+    if (groups.isEmpty) {
+      final goToGroups = await showDialog<bool>(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Join a group first'),
+          content: const Text(
+              "You're not in any study groups yet. Join or create one, then you can share notes!"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              style:
+                  FilledButton.styleFrom(backgroundColor: AppColors.purple),
+              child: const Text('Go to Groups'),
+            ),
+          ],
+        ),
+      );
+      if (goToGroups == true && context.mounted) {
+        context.go('/groups');
+      }
+      return;
+    }
+
+    // Pick a group
+    StudyGroup? picked;
+    if (groups.length == 1) {
+      picked = groups.first;
+    } else {
+      picked = await showModalBottomSheet<StudyGroup>(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (ctx) => SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.md, AppSpacing.md, AppSpacing.md, 0),
+                child: Text('Share to which group?',
+                    style: AppTextStyles.title),
+              ),
+              ...groups.map((g) => ListTile(
+                    leading: const CircleAvatar(
+                      backgroundColor: AppColors.purpleL,
+                      child: Icon(Icons.groups_rounded,
+                          color: AppColors.purple, size: 20),
+                    ),
+                    title: Text(g.name,
+                        maxLines: 1, overflow: TextOverflow.ellipsis),
+                    subtitle: g.subject != null
+                        ? Text(g.subject!,
+                            style: AppTextStyles.caption)
+                        : null,
+                    onTap: () => Navigator.of(ctx).pop(g),
+                  )),
+              const SizedBox(height: AppSpacing.sm),
+            ],
+          ),
+        ),
+      );
+    }
+    if (picked == null) return;
+
+    setState(() => _isSharing = true);
+    final groupName = picked.name;
+    String? successMsg;
+    String? errorMsg;
+    try {
+      final result = await ref
+          .read(groupListViewModelProvider.notifier)
+          .shareToGroup(
+            groupId: picked.id,
+            wikiPageId: widget.page.id,
+            title: widget.page.title,
+          );
+      successMsg = result.earnedReward
+          ? 'Shared to $groupName! ⭐ +${result.starsGranted}'
+          : 'Shared to $groupName!';
+    } catch (_) {
+      errorMsg = "That note doesn't match the group's subject";
+    } finally {
+      if (mounted) setState(() => _isSharing = false);
+    }
+    if (successMsg != null) {
+      scaffold.showSnackBar(SnackBar(
+        content: Text(successMsg),
+        backgroundColor: AppColors.green,
+        behavior: SnackBarBehavior.floating,
+      ));
+    }
+    if (errorMsg != null) {
+      scaffold.showSnackBar(SnackBar(
+        content: Text(errorMsg),
+        backgroundColor: AppColors.coral,
+        behavior: SnackBarBehavior.floating,
+      ));
+    }
   }
 
   @override
@@ -397,6 +511,11 @@ class _PageTileState extends ConsumerState<_PageTile> {
                             ),
                           ),
                         ),
+                      ),
+                      // Share to group — only shown when groups feature is enabled
+                      _ShareToGroupButton(
+                        isBusy: _isSharing,
+                        onTap: () => _shareToGroup(context),
                       ),
                     ],
                   ),
@@ -615,6 +734,45 @@ class _ConflictBadge extends StatelessWidget {
             child: const Text('Fix Now'),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ShareToGroupButton extends ConsumerWidget {
+  const _ShareToGroupButton({required this.isBusy, required this.onTap});
+  final bool isBusy;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final flagsAsync = ref.watch(featureFlagsProvider);
+    final groupsEnabled =
+        flagsAsync.valueOrNull?[FeatureFlags.groupsEnabled] == true;
+    if (!groupsEnabled) return const SizedBox.shrink();
+    return GestureDetector(
+      onTap: isBusy ? null : onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+        decoration: BoxDecoration(
+          color: AppColors.tealL,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.teal.withValues(alpha: 0.4)),
+        ),
+        child: isBusy
+            ? const SizedBox(
+                width: 10,
+                height: 10,
+                child: CircularProgressIndicator(
+                    strokeWidth: 1.5, color: AppColors.teal),
+              )
+            : Text(
+                '↗ Share',
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.teal,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
       ),
     );
   }

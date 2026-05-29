@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -18,20 +19,41 @@ class GroupDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final detailAsync =
-        ref.watch(groupDetailViewModelProvider(groupId));
+    final detailAsync = ref.watch(groupDetailViewModelProvider(groupId));
     return Scaffold(
       backgroundColor: AppColors.bg,
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Group', style: AppTextStyles.title),
+        // G2 — real back button so user can always return to the list
+        leading: const BackButton(),
+        title: detailAsync.whenOrNull(
+              data: (d) =>
+                  Text(d.group.name, style: AppTextStyles.title),
+            ) ??
+            Text('Study Group', style: AppTextStyles.title),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout_rounded, color: AppColors.coral),
-            tooltip: 'Leave group',
-            onPressed: () => _confirmLeave(context, ref),
+          PopupMenuButton<_MenuAction>(
+            onSelected: (action) {
+              if (action == _MenuAction.leave) {
+                _confirmLeave(context, ref);
+              }
+            },
+            itemBuilder: (_) => const [
+              PopupMenuItem(
+                value: _MenuAction.leave,
+                child: Row(
+                  children: [
+                    Icon(Icons.logout_rounded,
+                        color: AppColors.coral, size: 18),
+                    SizedBox(width: 8),
+                    Text('Leave group',
+                        style: TextStyle(color: AppColors.coral)),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -42,33 +64,70 @@ class GroupDetailScreen extends ConsumerWidget {
           onRetry: () =>
               ref.invalidate(groupDetailViewModelProvider(groupId)),
         ),
-        data: (detail) => SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _HeaderCard(group: detail.group),
-              const SizedBox(height: AppSpacing.md),
-              _SectionHeader('Members (${detail.members.length})'),
-              const SizedBox(height: AppSpacing.xs),
-              for (final m in detail.members)
-                _MemberTile(member: m),
-              const SizedBox(height: AppSpacing.md),
-              const _SectionHeader('Shared notes'),
-              const SizedBox(height: AppSpacing.xs),
-              if (detail.sharedNotes.isEmpty)
-                Padding(
-                  padding: AppSpacing.card,
-                  child: Text(
-                    'No notes shared yet. Open a wiki page and tap "Share to group".',
-                    style: AppTextStyles.body
-                        .copyWith(color: AppColors.text2),
+        data: (detail) => RefreshIndicator(
+          color: AppColors.purple,
+          onRefresh: () async =>
+              ref.invalidate(groupDetailViewModelProvider(groupId)),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md, AppSpacing.sm, AppSpacing.md, 32),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Purpose line
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+                  decoration: BoxDecoration(
+                    color: AppColors.purpleL,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                )
-              else
-                for (final n in detail.sharedNotes)
-                  _NoteTile(note: n),
-            ],
+                  child: Row(
+                    children: [
+                      const Text('📚', style: TextStyle(fontSize: 18)),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Text(
+                          'Share your best notes — learn from each other',
+                          style: AppTextStyles.bodySmall
+                              .copyWith(color: AppColors.purple),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+
+                // Invite card
+                _InviteCard(group: detail.group),
+                const SizedBox(height: AppSpacing.md),
+
+                // Members
+                _SectionHeader(
+                    'Members (${detail.members.length})'),
+                const SizedBox(height: AppSpacing.xs),
+                ...detail.members.map((m) => _MemberTile(
+                      member: m,
+                      groupId: groupId,
+                      ref: ref,
+                    )),
+                const SizedBox(height: AppSpacing.md),
+
+                // Shared notes feed
+                _SectionHeader(
+                    'Shared notes (${detail.sharedNotes.length})'),
+                const SizedBox(height: AppSpacing.xs),
+                if (detail.sharedNotes.isEmpty)
+                  _EmptyNotesState(groupId: groupId)
+                else ...[
+                  ...detail.sharedNotes.map((n) => _NoteTile(note: n)),
+                  const SizedBox(height: AppSpacing.sm),
+                  // Always show the "share a note" nudge at the bottom
+                  _ShareNudge(groupId: groupId),
+                ],
+              ],
+            ),
           ),
         ),
       ),
@@ -80,14 +139,16 @@ class GroupDetailScreen extends ConsumerWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Leave this group?'),
-        content: const Text("You'll need a new invite code to re-join."),
+        content:
+            const Text("You'll need a new invite code to re-join."),
         actions: [
           TextButton(
               onPressed: () => Navigator.of(ctx).pop(false),
               child: const Text('Cancel')),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.coral),
+            style:
+                TextButton.styleFrom(foregroundColor: AppColors.coral),
             child: const Text('Leave'),
           ),
         ],
@@ -99,8 +160,12 @@ class GroupDetailScreen extends ConsumerWidget {
   }
 }
 
-class _HeaderCard extends StatelessWidget {
-  const _HeaderCard({required this.group});
+enum _MenuAction { leave }
+
+// ── Invite card ──────────────────────────────────────────────────────────────
+
+class _InviteCard extends StatelessWidget {
+  const _InviteCard({required this.group});
   final StudyGroup group;
 
   @override
@@ -108,40 +173,59 @@ class _HeaderCard extends StatelessWidget {
     return Container(
       padding: AppSpacing.card,
       decoration: BoxDecoration(
-        color: AppColors.purpleL,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(group.name, style: AppTextStyles.heading1),
-          if (group.subject != null) ...[
-            const SizedBox(height: 4),
-            Text(group.subject!,
-                style: AppTextStyles.bodySmall
-                    .copyWith(color: AppColors.purple)),
-          ],
+          Row(
+            children: [
+              const Icon(Icons.group_add_rounded,
+                  size: 18, color: AppColors.purple),
+              const SizedBox(width: 6),
+              Text('Invite a friend',
+                  style: AppTextStyles.body
+                      .copyWith(fontWeight: FontWeight.w700)),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text('Share this code with a friend to invite them',
+              style:
+                  AppTextStyles.bodySmall.copyWith(color: AppColors.text2)),
           const SizedBox(height: AppSpacing.sm),
           Row(
             children: [
-              const Icon(Icons.tag_rounded,
-                  size: 16, color: AppColors.text2),
-              const SizedBox(width: 4),
-              Expanded(
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppColors.purpleL,
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: Text(
                   group.inviteCode,
-                  style: AppTextStyles.body
-                      .copyWith(fontFamily: 'monospace'),
+                  style: AppTextStyles.title.copyWith(
+                      letterSpacing: 4, color: AppColors.purple),
                 ),
               ),
-              TextButton.icon(
-                icon: const Icon(Icons.copy_rounded, size: 16),
-                label: const Text('Copy'),
-                onPressed: () {
-                  Clipboard.setData(
-                      ClipboardData(text: group.inviteCode));
-                  PallyToast.success(context, 'Code copied');
-                },
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: () {
+                    Clipboard.setData(
+                        ClipboardData(text: group.inviteCode));
+                    PallyToast.success(context, 'Code copied!');
+                  },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.purple,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  icon: const Icon(Icons.copy_rounded, size: 16),
+                  label: const Text('Copy'),
+                ),
               ),
             ],
           ),
@@ -151,23 +235,37 @@ class _HeaderCard extends StatelessWidget {
   }
 }
 
+// ── Section header ────────────────────────────────────────────────────────────
+
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader(this.text);
   final String text;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 4, top: 8),
-      child: Text(text.toUpperCase(),
-          style: AppTextStyles.label
-              .copyWith(letterSpacing: 1.2, color: AppColors.text3)),
+      padding: const EdgeInsets.only(left: 4, top: 4),
+      child: Text(
+        text.toUpperCase(),
+        style: AppTextStyles.label
+            .copyWith(letterSpacing: 1.2, color: AppColors.text3),
+      ),
     );
   }
 }
 
+// ── Member tile ───────────────────────────────────────────────────────────────
+
 class _MemberTile extends StatelessWidget {
-  const _MemberTile({required this.member});
+  const _MemberTile({
+    required this.member,
+    required this.groupId,
+    required this.ref,
+  });
   final GroupMember member;
+  final String groupId;
+  final WidgetRef ref;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -193,21 +291,31 @@ class _MemberTile extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
-              child: Text(member.displayName,
-                  maxLines: 1, overflow: TextOverflow.ellipsis),
+              child: Text(
+                member.displayName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.body,
+              ),
             ),
             if (member.role == 'OWNER')
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 8, vertical: 2),
+                constraints: const BoxConstraints(maxWidth: 80),
                 decoration: BoxDecoration(
                   color: AppColors.gold.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Text('OWNER',
-                    style: AppTextStyles.caption.copyWith(
-                        color: AppColors.gold,
-                        fontWeight: FontWeight.w800)),
+                child: Text(
+                  'OWNER',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.gold,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
               ),
           ],
         ),
@@ -216,33 +324,176 @@ class _MemberTile extends StatelessWidget {
   }
 }
 
+// ── Note tile ─────────────────────────────────────────────────────────────────
+
 class _NoteTile extends StatelessWidget {
   const _NoteTile({required this.note});
   final SharedNote note;
+
+  String _timeAgo(DateTime dt) {
+    final diff = DateTime.now().difference(dt);
+    if (diff.inMinutes < 1) return 'just now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    return '${diff.inDays}d ago';
+  }
+
   @override
   Widget build(BuildContext context) {
+    final canNavigate =
+        note.avatarId.isNotEmpty;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
-      child: Container(
-        padding: AppSpacing.card,
-        decoration: BoxDecoration(
-          color: AppColors.surface,
+      child: Material(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.outline),
+          onTap: canNavigate
+              ? () => WikiViewerRoute(avatarId: note.avatarId).push(context)
+              : null,
+          child: Container(
+            padding: AppSpacing.card,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.outline),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.menu_book_rounded,
+                    color: AppColors.purple, size: 20),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        note.title.isEmpty ? 'Shared note' : note.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.body
+                            .copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'by ${note.sharedBy} · ${_timeAgo(note.sharedAt)}',
+                        style: AppTextStyles.caption,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                if (note.relevanceStatus == 'WARNING')
+                  Container(
+                    margin: const EdgeInsets.only(left: 4),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 6, vertical: 2),
+                    constraints: const BoxConstraints(maxWidth: 80),
+                    decoration: BoxDecoration(
+                      color: AppColors.amberL,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'Off topic?',
+                      style: AppTextStyles.caption
+                          .copyWith(color: AppColors.amber),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                if (canNavigate) ...[
+                  const SizedBox(width: 4),
+                  const Icon(Icons.chevron_right_rounded,
+                      size: 18, color: AppColors.text3),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+
+class _EmptyNotesState extends StatelessWidget {
+  const _EmptyNotesState({required this.groupId});
+  final String groupId;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+            color: AppColors.outline, style: BorderStyle.solid),
+      ),
+      child: Column(
+        children: [
+          const Text('📖', style: TextStyle(fontSize: 40)),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            'No notes shared yet',
+            style: AppTextStyles.title,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            'Open a wiki page from your Library and tap "Share to group" to add the first note!',
+            style: AppTextStyles.body.copyWith(color: AppColors.text2),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppSpacing.md),
+          FilledButton.icon(
+            onPressed: () => context.go('/library'),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.purple,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+            ),
+            icon: const Icon(Icons.auto_stories_rounded, size: 18),
+            label: const Text('Go to Library'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ShareNudge extends StatelessWidget {
+  const _ShareNudge({required this.groupId});
+  final String groupId;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => context.go('/library'),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+        decoration: BoxDecoration(
+          color: AppColors.tealL,
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           children: [
-            const Icon(Icons.menu_book_rounded,
-                color: AppColors.purple, size: 20),
+            const Icon(Icons.add_circle_outline_rounded,
+                color: AppColors.teal, size: 18),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Text(
-                note.title.isEmpty ? 'Shared note' : note.title,
-                maxLines: 1, overflow: TextOverflow.ellipsis,
-                style: AppTextStyles.body
-                    .copyWith(fontWeight: FontWeight.w600),
+                'Share another note from Library',
+                style: AppTextStyles.bodySmall
+                    .copyWith(color: AppColors.teal),
               ),
             ),
+            const Icon(Icons.chevron_right_rounded,
+                size: 16, color: AppColors.teal),
           ],
         ),
       ),

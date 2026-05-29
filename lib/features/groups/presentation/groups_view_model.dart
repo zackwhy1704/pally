@@ -44,13 +44,36 @@ class SharedNote {
   const SharedNote({
     required this.id,
     required this.wikiPageId,
+    required this.avatarId,
     required this.title,
     required this.sharedBy,
+    required this.sharedAt,
+    this.relevanceStatus = 'OK',
   });
   final String id;
   final String wikiPageId;
+  final String avatarId;
   final String title;
   final String sharedBy;
+  final DateTime sharedAt;
+  final String relevanceStatus;
+}
+
+@immutable
+class ShareResult {
+  const ShareResult({
+    required this.id,
+    required this.relevanceStatus,
+    required this.xpGranted,
+    required this.starsGranted,
+  });
+  final String id;
+  final String relevanceStatus;
+  final int xpGranted;
+  final int starsGranted;
+
+  bool get wasBlocked => relevanceStatus == 'BLOCKED';
+  bool get earnedReward => xpGranted > 0;
 }
 
 @immutable
@@ -142,6 +165,34 @@ class GroupListViewModel extends _$GroupListViewModel {
       appLog.w('[Groups] leave failed: ${e.message}');
     }
   }
+
+  /// Share a wiki page to a specific group. Returns a [ShareResult] so the
+  /// caller can toast the reward and handle the BLOCKED case gracefully.
+  Future<ShareResult> shareToGroup({
+    required String groupId,
+    required String wikiPageId,
+    required String title,
+  }) async {
+    try {
+      final dio = ref.read(dioProvider);
+      final response = await dio.post<Map<String, dynamic>>(
+        '/api/v1/groups/$groupId/share',
+        data: {'wikiPageId': wikiPageId, 'title': title},
+      );
+      final data = (response.data?['data'] is Map
+              ? response.data!['data']
+              : response.data) as Map<String, dynamic>;
+      return ShareResult(
+        id: (data['id'] as String?) ?? '',
+        relevanceStatus: (data['relevanceStatus'] as String?) ?? 'OK',
+        xpGranted: (data['xpGranted'] as num?)?.toInt() ?? 0,
+        starsGranted: (data['starsGranted'] as num?)?.toInt() ?? 0,
+      );
+    } on DioException catch (e) {
+      appLog.w('[Groups] shareToGroup failed: ${e.message}');
+      rethrow;
+    }
+  }
 }
 
 @riverpod
@@ -168,10 +219,33 @@ class GroupDetailViewModel extends _$GroupDetailViewModel {
         .map((n) => SharedNote(
               id: (n['id'] as String?) ?? '',
               wikiPageId: (n['wikiPageId'] as String?) ?? '',
+              avatarId: (n['avatarId'] as String?) ?? '',
               title: (n['title'] as String?) ?? '',
               sharedBy: (n['sharedBy'] as String?) ?? '',
+              sharedAt: n['sharedAt'] != null
+                  ? DateTime.tryParse(n['sharedAt'] as String) ??
+                      DateTime.now()
+                  : DateTime.now(),
+              relevanceStatus: (n['relevanceStatus'] as String?) ?? 'OK',
             ))
         .toList();
     return GroupDetail(group: group, members: members, sharedNotes: notes);
+  }
+
+  Future<void> shareWikiPage({
+    required String wikiPageId,
+    required String title,
+  }) async {
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.post<Map<String, dynamic>>(
+        '/api/v1/groups/$groupId/share',
+        data: {'wikiPageId': wikiPageId, 'title': title},
+      );
+      ref.invalidateSelf();
+    } on DioException catch (e) {
+      appLog.w('[Groups] share failed: ${e.message}');
+      rethrow;
+    }
   }
 }

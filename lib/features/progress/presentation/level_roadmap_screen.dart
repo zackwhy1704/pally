@@ -29,35 +29,37 @@ class LevelRoadmapScreen extends ConsumerWidget {
           message: PallyError.from(e).userMessage,
           onRetry: () => ref.invalidate(levelRoadmapProvider),
         ),
-        data: (roadmap) => RefreshIndicator(
-          color: AppColors.purple,
-          onRefresh: () async => ref.invalidate(levelRoadmapProvider),
-          child: ListView.separated(
-            padding: const EdgeInsets.all(AppSpacing.md),
-            itemCount: roadmap.rewards.length + 1,
-            separatorBuilder: (_, __) =>
-                const SizedBox(height: AppSpacing.sm),
-            itemBuilder: (context, i) {
-              if (i == 0) return _Header(roadmap: roadmap);
-              return _RewardRow(
-                reward: roadmap.rewards[i - 1],
-                isCurrent:
-                    roadmap.rewards[i - 1].level == roadmap.currentLevel + 1
-                        ? false
-                        : _isNext(roadmap, i - 1),
-              );
-            },
-          ),
-        ),
+        data: (roadmap) {
+          // Sort level 1 → N ascending (top = lowest level, bottom = highest).
+          final sorted = [...roadmap.rewards]
+            ..sort((a, b) => a.level.compareTo(b.level));
+          return RefreshIndicator(
+            color: AppColors.purple,
+            onRefresh: () async => ref.invalidate(levelRoadmapProvider),
+            child: ListView.separated(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              itemCount: sorted.length + 1,
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: AppSpacing.sm),
+              itemBuilder: (context, i) {
+                if (i == 0) return _Header(roadmap: roadmap);
+                return _RewardRow(
+                  reward: sorted[i - 1],
+                  isCurrent: _isNext(sorted, i - 1),
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }
 
   /// Highlight the first unearned reward as the "current target".
-  bool _isNext(LevelRoadmap roadmap, int idx) {
-    if (roadmap.rewards[idx].unlocked) return false;
+  bool _isNext(List<LevelReward> rewards, int idx) {
+    if (rewards[idx].unlocked) return false;
     for (var j = 0; j < idx; j++) {
-      if (!roadmap.rewards[j].unlocked) return false;
+      if (!rewards[j].unlocked) return false;
     }
     return true;
   }

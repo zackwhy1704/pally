@@ -46,7 +46,7 @@ class GroupListScreen extends ConsumerWidget {
         icon: const Icon(Icons.add, color: Colors.white),
         label: const Text('New Group',
             style: TextStyle(color: Colors.white)),
-        onPressed: () => const CreateGroupRoute().go(context),
+        onPressed: () => const CreateGroupRoute().push(context),
       ),
       body: groupsAsync.when(
         loading: () => const PallyLoadingSpinner(),
@@ -113,7 +113,10 @@ class _JoinByCodeCardState extends State<_JoinByCodeCard> {
     setState(() => _busy = false);
     if (joined != null) {
       _controller.clear();
-      PallyToast.success(context, 'Joined ${joined.name}');
+      PallyToast.success(context, 'Joined ${joined.name}!');
+      if (context.mounted) {
+        StudyGroupDetailRoute(groupId: joined.id).push(context);
+      }
     } else {
       PallyToast.error(context, "Couldn't join — check the code");
     }
@@ -195,7 +198,7 @@ class _GroupTile extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () =>
-            StudyGroupDetailRoute(groupId: group.id).go(context),
+            StudyGroupDetailRoute(groupId: group.id).push(context),
         child: Container(
           padding: AppSpacing.card,
           decoration: BoxDecoration(

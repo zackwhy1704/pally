@@ -50,8 +50,9 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
     if (!mounted) return;
     setState(() => _busy = false);
     if (group != null) {
-      PallyToast.success(context, 'Group created — code: ${group.inviteCode}');
-      context.pop();
+      PallyToast.success(context, 'Group created!');
+      // pushReplacement so back from the room returns to the list, not here.
+      context.pushReplacement('/groups/detail/${group.id}');
     } else {
       PallyToast.error(context, 'Could not create group');
     }
