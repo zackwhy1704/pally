@@ -18,6 +18,7 @@ import 'package:pally/features/progress/presentation/level_up_controller.dart';
 import 'package:pally/features/chat/presentation/widgets/photo_message_bubble.dart';
 import 'package:pally/features/chat/presentation/widgets/photo_processing_bubble.dart';
 import 'package:pally/features/chat/presentation/widgets/homework_scan_result_bubble.dart';
+import 'package:pally/features/chat/widgets/mochi_tip_coach.dart';
 import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
@@ -145,37 +146,53 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       body: SafeArea(
         // We manage bottom padding ourselves via AnimatedContainer below.
         bottom: false,
-        child: Column(
+        child: Stack(
           children: [
-            // Message list — tapping it dismisses the keyboard
-            Expanded(
-              child: GestureDetector(
-                onTap: () => FocusScope.of(context).unfocus(),
-                behavior: HitTestBehavior.opaque,
-                child: _MessageList(
-                  avatarId: widget.avatarId,
-                  messages: state.sortedMessages,
-                  isTyping: state.isTyping,
-                  isProcessingPhoto: state.isProcessingPhoto,
-                  processingPhotoQuestions: state.processingPhotoQuestions,
-                  scrollController: _scrollController,
+            Column(
+              children: [
+                // Message list — tapping it dismisses the keyboard
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => FocusScope.of(context).unfocus(),
+                    behavior: HitTestBehavior.opaque,
+                    child: _MessageList(
+                      avatarId: widget.avatarId,
+                      messages: state.sortedMessages,
+                      isTyping: state.isTyping,
+                      isProcessingPhoto: state.isProcessingPhoto,
+                      processingPhotoQuestions: state.processingPhotoQuestions,
+                      scrollController: _scrollController,
+                    ),
+                  ),
                 ),
-              ),
+                // Input bar slides up with the keyboard; drops back when it closes.
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  curve: Curves.easeOut,
+                  padding: EdgeInsets.only(
+                    bottom: bottomInset > 0 ? bottomInset : bottomPadding,
+                  ),
+                  color: AppColors.bg,
+                  child: _InputBar(
+                    controller: _textController,
+                    focusNode: _focusNode,
+                    canSend: state.canSend,
+                    onSend: _sendMessage,
+                    onCameraPressed: _onCameraPressed,
+                  ),
+                ),
+              ],
             ),
-            // Input bar slides up with the keyboard; drops back when it closes.
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 150),
-              curve: Curves.easeOut,
-              padding: EdgeInsets.only(
-                bottom: bottomInset > 0 ? bottomInset : bottomPadding,
-              ),
-              color: AppColors.bg,
-              child: _InputBar(
-                controller: _textController,
-                focusNode: _focusNode,
-                canSend: state.canSend,
-                onSend: _sendMessage,
-                onCameraPressed: _onCameraPressed,
+            // Floating coach — sits just above the input bar, never
+            // covers the message list's tap region for keyboard dismiss
+            // because it has its own hit zone and is small. Hides itself
+            // while the keyboard is open (composing wins).
+            Positioned(
+              right: 12,
+              bottom: 76 + bottomPadding,
+              child: MochiTipCoach(
+                avatarId: widget.avatarId,
+                keyboardOpen: bottomInset > 0,
               ),
             ),
           ],
