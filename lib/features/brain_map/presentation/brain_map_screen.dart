@@ -201,6 +201,18 @@ class _BrainMapPainter extends CustomPainter {
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12);
       canvas.drawCircle(pos, 28, glow);
       canvas.drawCircle(pos, 18, Paint()..color = color);
+
+      // R8 — pulsing review ring for pages the harness flagged after a
+      // wrong quiz answer. Drawn as a coral stroke at 24px radius so it
+      // sits just outside the node body but inside the glow.
+      if (node.reviewRequired) {
+        final ringPaint = Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5
+          ..color = const Color(0xFFFF6660);
+        canvas.drawCircle(pos, 24, ringPaint);
+      }
+
       // Title under the node.
       final title = node.title.length > 14
           ? '${node.title.substring(0, 14)}…'

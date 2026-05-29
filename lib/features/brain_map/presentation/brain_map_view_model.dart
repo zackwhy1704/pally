@@ -13,11 +13,16 @@ class TopicNode {
     required this.title,
     required this.mastery,
     required this.attempts,
+    this.reviewRequired = false,
   });
   final String slug;
   final String title;
   final double mastery; // 0.0–1.0; -1 = no data
   final int attempts;
+  // R8 — true when the backend's quiz feedback loop flagged this page
+  // for review. The painter draws a pulsing outline so the user can see
+  // which topics the system thinks they got wrong.
+  final bool reviewRequired;
 
   bool get isUntouched => attempts == 0;
 }
@@ -74,6 +79,7 @@ class BrainMapViewModel extends _$BrainMapViewModel {
         masteryBySlug[slug] = _MasteryRow(
           ((row['mastery'] as num?) ?? 0).toDouble(),
           ((row['attempts'] as num?) ?? 0).toInt(),
+          row['reviewRequired'] == true,
         );
       }
 
@@ -89,6 +95,7 @@ class BrainMapViewModel extends _$BrainMapViewModel {
           title: p.title,
           mastery: m?.ratio ?? 0,
           attempts: m?.attempts ?? 0,
+          reviewRequired: m?.reviewRequired ?? false,
         );
       }).toList();
 
@@ -114,7 +121,8 @@ class BrainMapViewModel extends _$BrainMapViewModel {
 }
 
 class _MasteryRow {
-  const _MasteryRow(this.ratio, this.attempts);
+  const _MasteryRow(this.ratio, this.attempts, this.reviewRequired);
   final double ratio;
   final int attempts;
+  final bool reviewRequired;
 }

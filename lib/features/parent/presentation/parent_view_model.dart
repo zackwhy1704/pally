@@ -33,6 +33,7 @@ class ParentStats {
     this.weakAreas = const [],
     this.screenTimeLimitEnabled = false,
     this.screenTimeLimitMinutes = 60,
+    this.reviewTopics = const [],
   });
 
   final int sessionsThisWeek;
@@ -45,6 +46,9 @@ class ParentStats {
   final List<WeakArea> weakAreas;
   final bool screenTimeLimitEnabled;
   final int screenTimeLimitMinutes;
+  // R8 — page titles the quiz feedback loop flagged for review, aggregated
+  // across the user's avatars. Surfaced on the parent dashboard.
+  final List<String> reviewTopics;
 
   ParentStats copyWith({
     int? sessionsThisWeek,
@@ -57,6 +61,7 @@ class ParentStats {
     List<WeakArea>? weakAreas,
     bool? screenTimeLimitEnabled,
     int? screenTimeLimitMinutes,
+    List<String>? reviewTopics,
   }) {
     return ParentStats(
       sessionsThisWeek: sessionsThisWeek ?? this.sessionsThisWeek,
@@ -71,6 +76,7 @@ class ParentStats {
           screenTimeLimitEnabled ?? this.screenTimeLimitEnabled,
       screenTimeLimitMinutes:
           screenTimeLimitMinutes ?? this.screenTimeLimitMinutes,
+      reviewTopics: reviewTopics ?? this.reviewTopics,
     );
   }
 }
@@ -215,6 +221,10 @@ class ParentViewModel extends _$ParentViewModel {
               ))
           .toList();
 
+      final reviewTopics = ((data['reviewTopics'] as List?) ?? const [])
+          .whereType<String>()
+          .toList();
+
       state = state.copyWith(
         stats: ParentStats(
           sessionsThisWeek: (data['sessionsThisWeek'] as num?)?.toInt() ?? 0,
@@ -228,6 +238,7 @@ class ParentViewModel extends _$ParentViewModel {
           screenTimeLimitEnabled: data['screenTimeEnabled'] == true,
           screenTimeLimitMinutes:
               (data['screenTimeMinutes'] as num?)?.toInt() ?? 60,
+          reviewTopics: reviewTopics,
         ),
         isLoading: false,
       );

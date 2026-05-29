@@ -276,6 +276,10 @@ class _Dashboard extends ConsumerWidget {
           if (stats.weakAreas.isNotEmpty) _WeakAreasCard(areas: stats.weakAreas),
           if (stats.weakAreas.isNotEmpty)
             const SizedBox(height: AppSpacing.md),
+          if (stats.reviewTopics.isNotEmpty) ...[
+            _ReviewTopicsCard(topics: stats.reviewTopics),
+            const SizedBox(height: AppSpacing.md),
+          ],
           _ScreenTimeCard(state: state),
           const SizedBox(height: AppSpacing.md),
           _SettingsCard(
@@ -667,6 +671,54 @@ class _AlertTile extends StatelessWidget {
           Expanded(
             child: Text(text, style: AppTextStyles.bodySmall),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// R8 — "Topics to revisit" panel populated from the quiz feedback loop.
+/// Shows the page titles the backend flagged after wrong answers so a
+/// parent knows exactly what to sit down and recap with their child.
+class _ReviewTopicsCard extends StatelessWidget {
+  const _ReviewTopicsCard({required this.topics});
+  final List<String> topics;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: AppSpacing.card,
+      decoration: BoxDecoration(
+        color: AppColors.amberL,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.amber, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Topics to revisit 📌', style: AppTextStyles.title),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            'Mochi flagged these after wrong quiz answers — worth a quick recap.',
+            style:
+                AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          for (final t in topics)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('• '),
+                  Expanded(
+                    child: Text(t,
+                        style: AppTextStyles.body
+                            .copyWith(color: AppColors.text1)),
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );
