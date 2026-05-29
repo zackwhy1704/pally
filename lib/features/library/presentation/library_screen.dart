@@ -11,6 +11,7 @@ import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
+import 'package:pally/features/quiz/providers/quiz_status_provider.dart';
 import 'package:pally/shared/models/avatar.dart';
 
 class LibraryScreen extends ConsumerWidget {
@@ -200,25 +201,7 @@ class _AvatarRow extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _ActionChip(
-                      label: 'Quiz',
-                      icon: Icons.bolt_rounded,
-                      color: avatar.hasKnowledge
-                          ? AppColors.amber
-                          : AppColors.text3,
-                      onTap: avatar.hasKnowledge
-                          ? () => QuizRoute(avatarId: avatar.id).push(context)
-                          : () => ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Text(
-                                      'Upload notes first to unlock quizzes'),
-                                  backgroundColor: AppColors.amber,
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12)),
-                                ),
-                              ),
-                    ),
+                    _QuizChipForAvatar(avatar: avatar),
                     const SizedBox(width: AppSpacing.xs),
                     _ActionChip(
                       label: 'Map',
@@ -363,6 +346,50 @@ class _ErrorView extends StatelessWidget {
           FilledButton(onPressed: onRetry, child: const Text('Retry')),
         ],
       ),
+    );
+  }
+}
+
+/// Quiz chip with daily-journey state baked in.
+///  • Knowledge empty → grey, "upload first" snackbar (legacy behaviour).
+///  • Already taken today → green tick, "Done today" label, tap reopens
+///    the quiz screen anyway (free-play) but the chip telegraphs that
+///    the streak is already locked in.
+///  • Available → amber lightning, label shows "X/Y" coverage when the
+///    avatar has any quiz history.
+class _QuizChipForAvatar extends ConsumerWidget {
+  const _QuizChipForAvatar({required this.avatar});
+  final Avatar avatar;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!avatar.hasKnowledge) {
+      return _ActionChip(
+        label: 'Quiz',
+        icon: Icons.bolt_rounded,
+        color: AppColors.text3,
+        onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Upload notes first to unlock quizzes'),
+            backgroundColor: AppColors.amber,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)),
+          ),
+        ),
+      );
+    }
+    final statusAsync = ref.watch(quizStatusProvider(avatar.id));
+    final status = statusAsync.valueOrNull;
+    final takenToday = status?.takenToday ?? false;
+    final coverageLabel = (status != null && status.totalTopics > 0)
+        ? ' ${status.masteredTopics}/${status.totalTopics}'
+        : '';
+    return _ActionChip(
+      label: takenToday ? 'Done today' : 'Quiz$coverageLabel',
+      icon: takenToday ? Icons.check_circle_rounded : Icons.bolt_rounded,
+      color: takenToday ? AppColors.green : AppColors.amber,
+      onTap: () => QuizRoute(avatarId: avatar.id).push(context),
     );
   }
 }
