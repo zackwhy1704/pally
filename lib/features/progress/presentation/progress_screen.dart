@@ -19,9 +19,11 @@ import 'package:pally/features/progress/presentation/progress_view_model.dart';
 import 'package:pally/features/progress/presentation/streak_card.dart';
 import 'package:pally/features/progress/presentation/streak_milestone_controller.dart';
 import 'package:pally/features/progress/presentation/streak_status_provider.dart';
+import 'package:pally/features/shop/providers/unlocked_characters_provider.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
 import 'package:pally/shared/models/achievement.dart';
 import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/shared/models/mochi_character.dart';
 import 'package:pally/shared/models/progress_summary.dart';
 
 class ProgressScreen extends ConsumerStatefulWidget {
@@ -121,23 +123,28 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
   }
 }
 
-class _LevelCard extends StatelessWidget {
+class _LevelCard extends ConsumerWidget {
   const _LevelCard({required this.progress});
 
   final ProgressSummary progress;
 
   @override
-  Widget build(BuildContext context) {
-    // Show progress WITHIN the current level (numerator/denominator come
-    // straight from the backend so we never re-derive the curve and drift).
-    // Previously this rendered total XP / "remaining to next level" — a
-    // nonsense ratio that always read 1.0 once you had any XP at all.
+  Widget build(BuildContext context, WidgetRef ref) {
     final isMaxLevel = progress.level >= progress.maxLevel;
     final xpProgress = isMaxLevel
         ? 1.0
         : (progress.xpSpanForLevel > 0
             ? progress.xpIntoLevel / progress.xpSpanForLevel
             : 0.0);
+
+    // Use the first unlocked Mochi as the profile avatar.
+    // mochi is always unlocked by default so there's always a fallback.
+    final unlockedAsync = ref.watch(unlockedCharactersProvider);
+    final unlocked = unlockedAsync.valueOrNull ?? {};
+    final profileChar = unlocked.isNotEmpty ? unlocked.first : null;
+
+    final isPremium = ref.watch(entitlementVmProvider).valueOrNull?.isPremium
+        ?? false;
 
     return Material(
       color: Colors.transparent,
@@ -156,23 +163,7 @@ class _LevelCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Container(
-                width: 72,
-                height: 72,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.4), width: 3),
-                ),
-                child: Center(
-                  child: Text(
-                    '${progress.level}',
-                    style: AppTextStyles.heading1
-                        .copyWith(color: Colors.white, fontSize: 28),
-                  ),
-                ),
-              ),
+              _MochiStatusPill(character: profileChar, isPremium: isPremium),
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
@@ -223,6 +214,111 @@ class _LevelCard extends StatelessWidget {
                   color: Colors.white60, size: 14),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Circular pill showing the user's Mochi avatar with a PREMIUM / FREE
+/// status badge floating above it.
+class _MochiStatusPill extends StatelessWidget {
+  const _MochiStatusPill({
+    required this.character,
+    required this.isPremium,
+  });
+
+  final MochiCharacter? character;
+  final bool isPremium;
+
+  @override
+  Widget build(BuildContext context) {
+    final char = character ?? MochiCharacter.mochi;
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        // Avatar circle
+        Container(
+          width: 72,
+          height: 72,
+          decoration: BoxDecoration(
+            color: char.bgColor.withValues(alpha: 0.9),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.5),
+              width: 2.5,
+            ),
+          ),
+          child: ClipOval(
+            child: Padding(
+              padding: const EdgeInsets.all(6),
+              child: Image.asset(
+                char.assetPath,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ),
+        // Status badge floats above the circle
+        Positioned(
+          top: -10,
+          child: _StatusBadge(isPremium: isPremium),
+        ),
+      ],
+    );
+  }
+}
+
+class _StatusBadge extends StatelessWidget {
+  const _StatusBadge({required this.isPremium});
+  final bool isPremium;
+
+  @override
+  Widget build(BuildContext context) {
+    if (isPremium) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFFFD700).withValues(alpha: 0.5),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: const Text(
+          'PREMIUM',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 8,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 0.8,
+          ),
+        ),
+      );
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Text(
+        'FREE',
+        style: TextStyle(
+          color: Colors.white.withValues(alpha: 0.7),
+          fontSize: 8,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.8,
         ),
       ),
     );

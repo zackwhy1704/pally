@@ -68,7 +68,7 @@ class CharacterPickerStep extends ConsumerWidget {
                   onTap: isUnlocked
                       // Second tap on the same card deselects it
                       ? () => onSelect(isSelected ? null : character)
-                      : () => context.push('/shop'),
+                      : null,
                 );
               },
             ),
@@ -98,12 +98,63 @@ class _MochiCard extends StatelessWidget {
   final MochiCharacter character;
   final bool isSelected;
   final bool isUnlocked;
-  final VoidCallback onTap;
+  // null for locked cards — the card handles the locked dialog internally
+  final VoidCallback? onTap;
+
+  void _showLockedDialog(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: true, // tap outside to dismiss
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: AppColors.surface,
+        title: Row(
+          children: [
+            const Text('🔒', style: TextStyle(fontSize: 22)),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                'Character Locked',
+                style: AppTextStyles.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          'Earn XP to open a mystery box and unlock ${character.displayName}!',
+          style: AppTextStyles.body.copyWith(color: AppColors.text2),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              'Dismiss',
+              style: AppTextStyles.body.copyWith(color: AppColors.text2),
+            ),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              context.push('/shop');
+            },
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.purple,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+            ),
+            child: const Text('Open Mystery Box'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: onTap ?? () => _showLockedDialog(context),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         decoration: BoxDecoration(
