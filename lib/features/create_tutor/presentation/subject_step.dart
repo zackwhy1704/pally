@@ -5,12 +5,18 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/pally_button.dart';
 import 'package:pally/shared/models/mochi_character.dart';
 
+// Order reflects the most-used picks for Singapore O/A-level kids first
+// (Maths / Science / English / Literature) and falls back to the broader
+// "General" catch-all so a child who isn't picking a syllabus subject
+// still has a one-tap path forward.
 const _suggestions = [
   'Maths',
   'Science',
   'English',
+  'Literature',
   'History',
   'Geography',
+  'General',
   'Art',
   'Music',
   'Coding',

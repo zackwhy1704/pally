@@ -9,10 +9,14 @@ const _ages = [
   '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '18+',
 ];
 
+// Ordered by where the user base actually is: Singapore O/A-level first,
+// then PSLE, then IB, then everything else. CAMBRIDGE id is kept as-is
+// so existing avatars + curriculum mappings don't need a migration —
+// only the user-facing label and icon change.
 const _examSystems = [
-  ('📐', 'Cambridge (IGCSE / O-Level / A-Level)', 'CAMBRIDGE'),
-  ('🌍', 'IB (PYP / MYP / Diploma)', 'IB'),
+  ('🇸🇬', 'Singapore / Cambridge (O-Level / A-Level)', 'CAMBRIDGE'),
   ('🇸🇬', 'Singapore PSLE', 'SG_PSLE'),
+  ('🌍', 'IB (PYP / MYP / Diploma)', 'IB'),
   ('🇲🇾', 'Malaysia SPM / KSSM', 'MY_SPM'),
   ('🇬🇧', 'UK GCSE / A-Level', 'UK_GCSE'),
   ('🇺🇸', 'US Common Core / AP', 'US_AP'),
