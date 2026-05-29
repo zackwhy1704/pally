@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/features/flashcards/presentation/flashcard_view_model.dart';
 import 'package:pally/shared/models/flash_card.dart';
@@ -34,7 +35,10 @@ class FlashcardScreen extends ConsumerWidget {
       body: state.isLoading
           ? const PallyLoadingSpinner()
           : state.error != null
-              ? _ErrorView(onRetry: notifier.refresh)
+              ? PallyErrorCard(
+                  message: state.error!,
+                  onRetry: notifier.refresh,
+                )
               : Column(
                   children: [
                     _FilterChips(
@@ -384,25 +388,3 @@ class _EmptyFilterView extends StatelessWidget {
   }
 }
 
-class _ErrorView extends StatelessWidget {
-  const _ErrorView({required this.onRetry});
-
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline_rounded,
-              size: 60, color: AppColors.coral),
-          const SizedBox(height: AppSpacing.md),
-          Text('Could not load flashcards', style: AppTextStyles.title),
-          const SizedBox(height: AppSpacing.lg),
-          FilledButton(onPressed: onRetry, child: const Text('Retry')),
-        ],
-      ),
-    );
-  }
-}

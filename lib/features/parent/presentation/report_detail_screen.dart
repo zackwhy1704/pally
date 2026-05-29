@@ -5,6 +5,8 @@ import 'package:pally/app/api_client.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/error/pally_error.dart';
+import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/parent/presentation/weekly_report_view_model.dart';
@@ -38,13 +40,10 @@ class ReportDetailScreen extends ConsumerWidget {
       ),
       body: reportAsync.when(
         loading: () => const PallyLoadingSpinner(),
-        error: (e, _) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            child: Text('Could not load report\n$e',
-                textAlign: TextAlign.center,
-                style: AppTextStyles.body),
-          ),
+        error: (e, _) => PallyErrorCard(
+          message: PallyError.from(e).userMessage,
+          onRetry: () =>
+              ref.invalidate(weeklyReportDetailViewModelProvider(weekId)),
         ),
         data: (r) => SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.md),

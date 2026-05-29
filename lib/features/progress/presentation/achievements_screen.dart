@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/error/pally_error.dart';
+import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/features/progress/presentation/achievements_provider.dart';
 import 'package:pally/shared/models/achievement.dart';
@@ -23,9 +25,9 @@ class AchievementsScreen extends ConsumerWidget {
       ),
       body: async.when(
         loading: () => const PallyLoadingSpinner(),
-        error: (_, __) => Center(
-          child: Text('Could not load achievements',
-              style: AppTextStyles.body),
+        error: (e, _) => PallyErrorCard(
+          message: PallyError.from(e).userMessage,
+          onRetry: () => ref.invalidate(achievementsProvider),
         ),
         data: (list) => RefreshIndicator(
           color: AppColors.purple,

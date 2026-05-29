@@ -6,6 +6,8 @@ import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/error/pally_error.dart';
+import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/features/brain_map/presentation/brain_map_view_model.dart';
 
@@ -51,8 +53,11 @@ class _BrainMapScreenState extends ConsumerState<BrainMapScreen> {
       ),
       body: asyncState.when(
         loading: () => const PallyLoadingSpinner(),
-        error: (e, _) => Center(
-          child: Text('$e', style: const TextStyle(color: Colors.white)),
+        error: (e, _) => PallyErrorCard(
+          message: PallyError.from(e).userMessage,
+          onRetry: () => ref
+              .read(brainMapViewModelProvider(widget.avatarId).notifier)
+              .refresh(widget.avatarId),
         ),
         data: (state) {
           if (state.nodes.isEmpty) {

@@ -5,6 +5,8 @@ import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/error/pally_error.dart';
+import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
@@ -61,7 +63,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
       ),
       body: progressAsync.when(
         loading: () => const PallyLoadingSpinner(),
-        error: (e, _) => _ErrorView(
+        error: (e, _) => PallyErrorCard(
+          message: PallyError.from(e).userMessage,
           onRetry: () => ref.read(progressViewModelProvider.notifier).refresh(),
         ),
         data: (progress) => RefreshIndicator(
@@ -620,31 +623,6 @@ class _NavButtons extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-// ── Screen error state ────────────────────────────────────────────────────────
-
-class _ErrorView extends StatelessWidget {
-  const _ErrorView({required this.onRetry});
-
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline_rounded,
-              size: 60, color: AppColors.coral),
-          const SizedBox(height: AppSpacing.md),
-          Text('Could not load progress', style: AppTextStyles.title),
-          const SizedBox(height: AppSpacing.lg),
-          FilledButton(onPressed: onRetry, child: const Text('Retry')),
-        ],
-      ),
     );
   }
 }

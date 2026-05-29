@@ -6,6 +6,8 @@ import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/error/pally_error.dart';
+import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/groups/presentation/groups_view_model.dart';
@@ -48,7 +50,11 @@ class GroupListScreen extends ConsumerWidget {
       ),
       body: groupsAsync.when(
         loading: () => const PallyLoadingSpinner(),
-        error: (e, _) => Center(child: Text('$e')),
+        error: (e, _) => PallyErrorCard(
+          message: PallyError.from(e).userMessage,
+          onRetry: () =>
+              ref.read(groupListViewModelProvider.notifier).refresh(),
+        ),
         data: (groups) {
           return RefreshIndicator(
             color: AppColors.purple,

@@ -5,7 +5,9 @@ import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
+import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_delete_tutor_dialog.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/core/ui/pally_toast.dart';
@@ -31,7 +33,8 @@ class LibraryScreen extends ConsumerWidget {
       ),
       body: avatarsAsync.when(
         loading: () => const PallyLoadingSpinner(),
-        error: (e, _) => _ErrorView(
+        error: (e, _) => PallyErrorCard(
+          message: PallyError.from(e).userMessage,
           onRetry: () => ref.read(libraryViewModelProvider.notifier).refresh(),
         ),
         data: (avatars) => avatars.isEmpty
@@ -327,28 +330,6 @@ class _EmptyLibraryView extends StatelessWidget {
   }
 }
 
-class _ErrorView extends StatelessWidget {
-  const _ErrorView({required this.onRetry});
-
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline_rounded,
-              size: 64, color: AppColors.coral),
-          const SizedBox(height: AppSpacing.md),
-          Text('Could not load library', style: AppTextStyles.title),
-          const SizedBox(height: AppSpacing.lg),
-          FilledButton(onPressed: onRetry, child: const Text('Retry')),
-        ],
-      ),
-    );
-  }
-}
 
 /// Quiz chip with daily-journey state baked in.
 ///  • Knowledge empty → grey, "upload first" snackbar (legacy behaviour).

@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/error/pally_error.dart';
+import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/features/study_plan/presentation/study_plan_view_model.dart';
@@ -37,7 +39,10 @@ class StudyPlanScreen extends ConsumerWidget {
       ),
       body: planAsync.when(
         loading: () => const PallyLoadingSpinner(),
-        error: (e, _) => _ErrorView(onRetry: notifier.refresh),
+        error: (e, _) => PallyErrorCard(
+          message: PallyError.from(e).userMessage,
+          onRetry: notifier.refresh,
+        ),
         data: (items) {
           final today = DateTime.now();
           final todayItems = items
@@ -458,25 +463,3 @@ class _NoTestDateCard extends StatelessWidget {
   }
 }
 
-class _ErrorView extends StatelessWidget {
-  const _ErrorView({required this.onRetry});
-
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.calendar_today_rounded,
-              size: 60, color: AppColors.text3),
-          const SizedBox(height: AppSpacing.md),
-          Text('Could not load study plan', style: AppTextStyles.title),
-          const SizedBox(height: AppSpacing.lg),
-          FilledButton(onPressed: onRetry, child: const Text('Retry')),
-        ],
-      ),
-    );
-  }
-}
