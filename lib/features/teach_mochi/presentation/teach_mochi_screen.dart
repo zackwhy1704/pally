@@ -5,6 +5,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
+import 'package:pally/features/progress/presentation/level_up_controller.dart';
 import 'package:pally/features/teach_mochi/presentation/teach_mochi_view_model.dart';
 import 'package:pally/shared/models/wiki_page.dart';
 
@@ -22,6 +23,23 @@ class TeachMochiScreen extends ConsumerWidget {
     final state = ref.watch(teachMochiViewModelProvider(avatarId));
     final notifier =
         ref.read(teachMochiViewModelProvider(avatarId).notifier);
+
+    // Fire the level-up celebration the first frame a fresh evaluation
+    // arrives with levelledUp = true.
+    ref.listen<TeachState>(teachMochiViewModelProvider(avatarId),
+        (prev, next) {
+      final justArrived = next.evaluation != null &&
+          (prev?.evaluation == null);
+      if (justArrived && next.evaluation!.levelledUp) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          LevelUpController.maybeCelebrate(
+            context,
+            levelledUp: true,
+            newLevel: next.evaluation!.newLevel,
+          );
+        });
+      }
+    });
 
     Widget body;
     if (state.isLoadingTopics) {

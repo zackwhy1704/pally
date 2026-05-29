@@ -104,8 +104,16 @@ class _LevelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final xpProgress =
-        progress.xpToNextLevel > 0 ? progress.xp / progress.xpToNextLevel : 1.0;
+    // Show progress WITHIN the current level (numerator/denominator come
+    // straight from the backend so we never re-derive the curve and drift).
+    // Previously this rendered total XP / "remaining to next level" — a
+    // nonsense ratio that always read 1.0 once you had any XP at all.
+    final isMaxLevel = progress.level >= progress.maxLevel;
+    final xpProgress = isMaxLevel
+        ? 1.0
+        : (progress.xpSpanForLevel > 0
+            ? progress.xpIntoLevel / progress.xpSpanForLevel
+            : 0.0);
 
     return Container(
       padding: AppSpacing.card,
@@ -150,7 +158,9 @@ class _LevelCard extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  '${progress.xp} / ${progress.xpToNextLevel} XP',
+                  isMaxLevel
+                      ? 'MAX LEVEL ⭐'
+                      : '${progress.xpIntoLevel} / ${progress.xpSpanForLevel} XP',
                   style:
                       AppTextStyles.bodySmall.copyWith(color: Colors.white70),
                 ),
@@ -165,6 +175,14 @@ class _LevelCard extends StatelessWidget {
                     minHeight: 8,
                   ),
                 ),
+                if (!isMaxLevel) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    '${progress.xpToNextLevel} XP to Level ${progress.level + 1}',
+                    style: AppTextStyles.caption
+                        .copyWith(color: Colors.white60),
+                  ),
+                ],
               ],
             ),
           ),

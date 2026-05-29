@@ -35,6 +35,7 @@ class ChatState {
     this.socraticAttempts = 0,
     this.showEscapeHatch = false,
     this.error,
+    this.pendingLevelUp = 0,
   });
 
   final Avatar? avatar;
@@ -49,6 +50,10 @@ class ChatState {
   final int socraticAttempts;
   final bool showEscapeHatch;
   final String? error;
+  // When the backend reports a level-up from photo solve or session-end,
+  // this carries the new level so the screen can fire LevelUpController.
+  // 0 = nothing to celebrate. Cleared by the screen after the overlay shows.
+  final int pendingLevelUp;
 
   bool get canSend => !isSending && !isTyping && !isProcessingPhoto;
 
@@ -78,6 +83,7 @@ class ChatState {
     int? socraticAttempts,
     bool? showEscapeHatch,
     Object? error = _sentinel,
+    int? pendingLevelUp,
   }) {
     return ChatState(
       avatar: avatar ?? this.avatar,
@@ -93,6 +99,7 @@ class ChatState {
       socraticAttempts: socraticAttempts ?? this.socraticAttempts,
       showEscapeHatch: showEscapeHatch ?? this.showEscapeHatch,
       error: error == _sentinel ? this.error : error as String?,
+      pendingLevelUp: pendingLevelUp ?? this.pendingLevelUp,
     );
   }
 }
@@ -139,11 +146,31 @@ class ChatViewModel extends _$ChatViewModel {
 
   Future<void> _endSession() async {
     try {
-      await ref.read(dioProvider).post('/api/v1/avatars/$_avatarId/chat/session-end');
-      appLog.d('[Cache] Session ended for avatar=$_avatarId');
+      final response = await ref.read(dioProvider).post<Map<String, dynamic>>(
+            '/api/v1/avatars/$_avatarId/chat/session-end',
+          );
+      // Pick up any level-up the +5 XP for closing this session triggered.
+      // ref is auto-disposed once the screen pops; reading state safely
+      // means guarding against the notifier being torn down.
+      final data = response.data ?? const <String, dynamic>{};
+      final levelledUp = data['levelledUp'] == true;
+      final newLevel = (data['newLevel'] as num?)?.toInt() ?? 0;
+      if (levelledUp && newLevel > 0) {
+        try {
+          state = state.copyWith(pendingLevelUp: newLevel);
+        } catch (_) {/* notifier disposed — overlay will fire next entry */}
+      }
+      appLog.d('[Cache] Session ended for avatar=$_avatarId levelledUp=$levelledUp');
     } catch (e) {
       appLog.w('[Cache] session-end failed (non-critical): $e');
     }
+  }
+
+  /// Called by the screen after it shows the level-up overlay so the
+  /// celebration only fires once per crossing.
+  void clearPendingLevelUp() {
+    if (state.pendingLevelUp == 0) return;
+    state = state.copyWith(pendingLevelUp: 0);
   }
 
   Future<void> _loadAvatar() async {
@@ -434,6 +461,9 @@ class ChatViewModel extends _$ChatViewModel {
       // Save result message
       await _localDb.saveMessage(resultMessage.toRecord());
 
+      final pendingLevel = (data['levelledUp'] == true)
+          ? ((data['newLevel'] as num?)?.toInt() ?? 0)
+          : 0;
       state = state.copyWith(
         messages: state.messages.map((m) {
           if (m.id == messageId) return resultMessage;
@@ -441,6 +471,8 @@ class ChatViewModel extends _$ChatViewModel {
         }).toList(),
         isProcessingPhoto: false,
         processingPhotoQuestions: const [],
+        pendingLevelUp:
+            pendingLevel > 0 ? pendingLevel : state.pendingLevelUp,
       );
     } on DioException catch (e, st) {
       appLog.e('[Chat] Photo question solve failed',

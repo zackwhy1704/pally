@@ -6,7 +6,7 @@ part of 'progress_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$progressViewModelHash() => r'06ed5109ce129aead192215f91308be0545d093d';
+String _$progressViewModelHash() => r'eba243983fbc2655b14ca909a0290499ad6af230';
 
 /// See also [ProgressViewModel].
 @ProviderFor(ProgressViewModel)

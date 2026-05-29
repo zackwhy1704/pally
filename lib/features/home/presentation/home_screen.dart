@@ -39,8 +39,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
 
     final level = progressAsync.valueOrNull?.level ?? 0;
-    final xp = progressAsync.valueOrNull?.xp ?? 0;
-    final xpToNext = progressAsync.valueOrNull?.xpToNextLevel ?? 100;
+    // Use in-level numerator/denominator from the backend so the bar
+    // shows real progress within the current level instead of the old
+    // nonsense (lifetime xp / "remaining to next level").
+    final xpInto = progressAsync.valueOrNull?.xpIntoLevel ?? 0;
+    final xpSpan = progressAsync.valueOrNull?.xpSpanForLevel ?? 100;
+    final maxLevel = progressAsync.valueOrNull?.maxLevel ?? 30;
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -50,8 +54,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             _HomeHeader(
               onNewTutor: () => const CreateTutorRoute().go(context),
               level: level,
-              xp: xp,
-              xpToNext: xpToNext,
+              xpInto: xpInto,
+              xpSpan: xpSpan,
+              maxLevel: maxLevel,
             ),
             const DueCardsBanner(),
             const _NudgeCardsRow(),
@@ -77,18 +82,23 @@ class _HomeHeader extends StatelessWidget {
   const _HomeHeader({
     required this.onNewTutor,
     required this.level,
-    required this.xp,
-    required this.xpToNext,
+    required this.xpInto,
+    required this.xpSpan,
+    required this.maxLevel,
   });
 
   final VoidCallback onNewTutor;
   final int level;
-  final int xp;
-  final int xpToNext;
+  final int xpInto;
+  final int xpSpan;
+  final int maxLevel;
 
   @override
   Widget build(BuildContext context) {
-    final xpFraction = xpToNext > 0 ? (xp / xpToNext).clamp(0.0, 1.0) : 0.0;
+    final isMax = level >= maxLevel;
+    final xpFraction = isMax
+        ? 1.0
+        : (xpSpan > 0 ? (xpInto / xpSpan).clamp(0.0, 1.0) : 0.0);
 
     return Container(
       decoration: const BoxDecoration(color: AppColors.purpleL),
@@ -156,7 +166,7 @@ class _HomeHeader extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              '$xp / $xpToNext XP',
+                              isMax ? 'MAX LEVEL ⭐' : '$xpInto / $xpSpan XP',
                               style: AppTextStyles.caption.copyWith(
                                   color: AppColors.text2),
                             ),

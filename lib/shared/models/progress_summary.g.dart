@@ -24,6 +24,9 @@ _$ProgressSummaryImpl _$$ProgressSummaryImplFromJson(
       level: (json['level'] as num).toInt(),
       xp: (json['xp'] as num).toInt(),
       xpToNextLevel: (json['xpToNextLevel'] as num).toInt(),
+      xpIntoLevel: (json['xpIntoLevel'] as num?)?.toInt() ?? 0,
+      xpSpanForLevel: (json['xpSpanForLevel'] as num?)?.toInt() ?? 100,
+      maxLevel: (json['maxLevel'] as num?)?.toInt() ?? 30,
       streakDays: (json['streakDays'] as num?)?.toInt() ?? 0,
       weekMinutes: (json['weekMinutes'] as List<dynamic>?)
               ?.map((e) => (e as num).toInt())
@@ -45,6 +48,9 @@ Map<String, dynamic> _$$ProgressSummaryImplToJson(
       'level': instance.level,
       'xp': instance.xp,
       'xpToNextLevel': instance.xpToNextLevel,
+      'xpIntoLevel': instance.xpIntoLevel,
+      'xpSpanForLevel': instance.xpSpanForLevel,
+      'maxLevel': instance.maxLevel,
       'streakDays': instance.streakDays,
       'weekMinutes': instance.weekMinutes,
       'weakTopics': instance.weakTopics,

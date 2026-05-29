@@ -14,6 +14,7 @@ import 'package:pally/shared/models/chat_message.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/chat/presentation/chat_view_model.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
+import 'package:pally/features/progress/presentation/level_up_controller.dart';
 import 'package:pally/features/chat/presentation/widgets/photo_message_bubble.dart';
 import 'package:pally/features/chat/presentation/widgets/photo_processing_bubble.dart';
 import 'package:pally/features/chat/presentation/widgets/homework_scan_result_bubble.dart';
@@ -110,6 +111,25 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       _scrollToBottom();
       if (next.error != null && prev?.error != next.error) {
         PallyToast.error(context, next.error!);
+      }
+      // Level-up from photo solve (or stamped before this screen rebuilt
+      // from a session-end credit). Fire once then clear so it doesn't
+      // re-trigger on rebuild.
+      if (next.pendingLevelUp > 0 &&
+          next.pendingLevelUp != prev?.pendingLevelUp) {
+        final newLevel = next.pendingLevelUp;
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          await LevelUpController.maybeCelebrate(
+            context,
+            levelledUp: true,
+            newLevel: newLevel,
+          );
+          if (context.mounted) {
+            ref
+                .read(chatViewModelProvider(widget.avatarId).notifier)
+                .clearPendingLevelUp();
+          }
+        });
       }
     });
 

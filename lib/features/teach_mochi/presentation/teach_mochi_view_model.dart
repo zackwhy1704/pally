@@ -18,6 +18,8 @@ class TeachEvaluation {
     required this.missedConcepts,
     required this.followUpQuestion,
     required this.feedback,
+    this.levelledUp = false,
+    this.newLevel = 0,
   });
 
   final int score;
@@ -27,6 +29,8 @@ class TeachEvaluation {
   final List<String> missedConcepts;
   final String? followUpQuestion;
   final String feedback;
+  final bool levelledUp;
+  final int newLevel;
 
   bool get isPerfect =>
       totalConcepts > 0 && score == totalConcepts;
@@ -44,6 +48,8 @@ class TeachEvaluation {
             .toList(),
         followUpQuestion: json['followUpQuestion'] as String?,
         feedback: (json['feedback'] as String?) ?? '',
+        levelledUp: json['levelledUp'] == true,
+        newLevel: (json['newLevel'] as num?)?.toInt() ?? 0,
       );
 }
 

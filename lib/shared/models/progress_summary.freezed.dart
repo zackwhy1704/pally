@@ -188,7 +188,13 @@ ProgressSummary _$ProgressSummaryFromJson(Map<String, dynamic> json) {
 mixin _$ProgressSummary {
   int get level => throw _privateConstructorUsedError;
   int get xp => throw _privateConstructorUsedError;
-  int get xpToNextLevel => throw _privateConstructorUsedError;
+  int get xpToNextLevel =>
+      throw _privateConstructorUsedError; // Numerator / denominator for the in-level bar. Backend ships these
+// so the client never has to re-derive the leveling curve and stay
+// in sync with the server's MAX_LEVEL cap.
+  int get xpIntoLevel => throw _privateConstructorUsedError;
+  int get xpSpanForLevel => throw _privateConstructorUsedError;
+  int get maxLevel => throw _privateConstructorUsedError;
   int get streakDays => throw _privateConstructorUsedError;
   List<int> get weekMinutes => throw _privateConstructorUsedError;
   List<WeakTopic> get weakTopics => throw _privateConstructorUsedError;
@@ -214,6 +220,9 @@ abstract class $ProgressSummaryCopyWith<$Res> {
       {int level,
       int xp,
       int xpToNextLevel,
+      int xpIntoLevel,
+      int xpSpanForLevel,
+      int maxLevel,
       int streakDays,
       List<int> weekMinutes,
       List<WeakTopic> weakTopics,
@@ -238,6 +247,9 @@ class _$ProgressSummaryCopyWithImpl<$Res, $Val extends ProgressSummary>
     Object? level = null,
     Object? xp = null,
     Object? xpToNextLevel = null,
+    Object? xpIntoLevel = null,
+    Object? xpSpanForLevel = null,
+    Object? maxLevel = null,
     Object? streakDays = null,
     Object? weekMinutes = null,
     Object? weakTopics = null,
@@ -255,6 +267,18 @@ class _$ProgressSummaryCopyWithImpl<$Res, $Val extends ProgressSummary>
       xpToNextLevel: null == xpToNextLevel
           ? _value.xpToNextLevel
           : xpToNextLevel // ignore: cast_nullable_to_non_nullable
+              as int,
+      xpIntoLevel: null == xpIntoLevel
+          ? _value.xpIntoLevel
+          : xpIntoLevel // ignore: cast_nullable_to_non_nullable
+              as int,
+      xpSpanForLevel: null == xpSpanForLevel
+          ? _value.xpSpanForLevel
+          : xpSpanForLevel // ignore: cast_nullable_to_non_nullable
+              as int,
+      maxLevel: null == maxLevel
+          ? _value.maxLevel
+          : maxLevel // ignore: cast_nullable_to_non_nullable
               as int,
       streakDays: null == streakDays
           ? _value.streakDays
@@ -288,6 +312,9 @@ abstract class _$$ProgressSummaryImplCopyWith<$Res>
       {int level,
       int xp,
       int xpToNextLevel,
+      int xpIntoLevel,
+      int xpSpanForLevel,
+      int maxLevel,
       int streakDays,
       List<int> weekMinutes,
       List<WeakTopic> weakTopics,
@@ -310,6 +337,9 @@ class __$$ProgressSummaryImplCopyWithImpl<$Res>
     Object? level = null,
     Object? xp = null,
     Object? xpToNextLevel = null,
+    Object? xpIntoLevel = null,
+    Object? xpSpanForLevel = null,
+    Object? maxLevel = null,
     Object? streakDays = null,
     Object? weekMinutes = null,
     Object? weakTopics = null,
@@ -327,6 +357,18 @@ class __$$ProgressSummaryImplCopyWithImpl<$Res>
       xpToNextLevel: null == xpToNextLevel
           ? _value.xpToNextLevel
           : xpToNextLevel // ignore: cast_nullable_to_non_nullable
+              as int,
+      xpIntoLevel: null == xpIntoLevel
+          ? _value.xpIntoLevel
+          : xpIntoLevel // ignore: cast_nullable_to_non_nullable
+              as int,
+      xpSpanForLevel: null == xpSpanForLevel
+          ? _value.xpSpanForLevel
+          : xpSpanForLevel // ignore: cast_nullable_to_non_nullable
+              as int,
+      maxLevel: null == maxLevel
+          ? _value.maxLevel
+          : maxLevel // ignore: cast_nullable_to_non_nullable
               as int,
       streakDays: null == streakDays
           ? _value.streakDays
@@ -355,6 +397,9 @@ class _$ProgressSummaryImpl implements _ProgressSummary {
       {required this.level,
       required this.xp,
       required this.xpToNextLevel,
+      this.xpIntoLevel = 0,
+      this.xpSpanForLevel = 100,
+      this.maxLevel = 30,
       this.streakDays = 0,
       final List<int> weekMinutes = const [],
       final List<WeakTopic> weakTopics = const [],
@@ -372,6 +417,18 @@ class _$ProgressSummaryImpl implements _ProgressSummary {
   final int xp;
   @override
   final int xpToNextLevel;
+// Numerator / denominator for the in-level bar. Backend ships these
+// so the client never has to re-derive the leveling curve and stay
+// in sync with the server's MAX_LEVEL cap.
+  @override
+  @JsonKey()
+  final int xpIntoLevel;
+  @override
+  @JsonKey()
+  final int xpSpanForLevel;
+  @override
+  @JsonKey()
+  final int maxLevel;
   @override
   @JsonKey()
   final int streakDays;
@@ -404,7 +461,7 @@ class _$ProgressSummaryImpl implements _ProgressSummary {
 
   @override
   String toString() {
-    return 'ProgressSummary(level: $level, xp: $xp, xpToNextLevel: $xpToNextLevel, streakDays: $streakDays, weekMinutes: $weekMinutes, weakTopics: $weakTopics, badges: $badges)';
+    return 'ProgressSummary(level: $level, xp: $xp, xpToNextLevel: $xpToNextLevel, xpIntoLevel: $xpIntoLevel, xpSpanForLevel: $xpSpanForLevel, maxLevel: $maxLevel, streakDays: $streakDays, weekMinutes: $weekMinutes, weakTopics: $weakTopics, badges: $badges)';
   }
 
   @override
@@ -416,6 +473,12 @@ class _$ProgressSummaryImpl implements _ProgressSummary {
             (identical(other.xp, xp) || other.xp == xp) &&
             (identical(other.xpToNextLevel, xpToNextLevel) ||
                 other.xpToNextLevel == xpToNextLevel) &&
+            (identical(other.xpIntoLevel, xpIntoLevel) ||
+                other.xpIntoLevel == xpIntoLevel) &&
+            (identical(other.xpSpanForLevel, xpSpanForLevel) ||
+                other.xpSpanForLevel == xpSpanForLevel) &&
+            (identical(other.maxLevel, maxLevel) ||
+                other.maxLevel == maxLevel) &&
             (identical(other.streakDays, streakDays) ||
                 other.streakDays == streakDays) &&
             const DeepCollectionEquality()
@@ -432,6 +495,9 @@ class _$ProgressSummaryImpl implements _ProgressSummary {
       level,
       xp,
       xpToNextLevel,
+      xpIntoLevel,
+      xpSpanForLevel,
+      maxLevel,
       streakDays,
       const DeepCollectionEquality().hash(_weekMinutes),
       const DeepCollectionEquality().hash(_weakTopics),
@@ -459,6 +525,9 @@ abstract class _ProgressSummary implements ProgressSummary {
       {required final int level,
       required final int xp,
       required final int xpToNextLevel,
+      final int xpIntoLevel,
+      final int xpSpanForLevel,
+      final int maxLevel,
       final int streakDays,
       final List<int> weekMinutes,
       final List<WeakTopic> weakTopics,
@@ -472,7 +541,15 @@ abstract class _ProgressSummary implements ProgressSummary {
   @override
   int get xp;
   @override
-  int get xpToNextLevel;
+  int get xpToNextLevel; // Numerator / denominator for the in-level bar. Backend ships these
+// so the client never has to re-derive the leveling curve and stay
+// in sync with the server's MAX_LEVEL cap.
+  @override
+  int get xpIntoLevel;
+  @override
+  int get xpSpanForLevel;
+  @override
+  int get maxLevel;
   @override
   int get streakDays;
   @override

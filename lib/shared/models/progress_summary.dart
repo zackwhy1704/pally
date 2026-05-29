@@ -20,6 +20,12 @@ class ProgressSummary with _$ProgressSummary {
     required int level,
     required int xp,
     required int xpToNextLevel,
+    // Numerator / denominator for the in-level bar. Backend ships these
+    // so the client never has to re-derive the leveling curve and stay
+    // in sync with the server's MAX_LEVEL cap.
+    @Default(0) int xpIntoLevel,
+    @Default(100) int xpSpanForLevel,
+    @Default(30) int maxLevel,
     @Default(0) int streakDays,
     @Default([]) List<int> weekMinutes,
     @Default([]) List<WeakTopic> weakTopics,
