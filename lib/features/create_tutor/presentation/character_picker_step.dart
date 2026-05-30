@@ -200,7 +200,11 @@ class _MochiCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  Padding(
+                  // Hide the COMMON badge for the free base Mochi —
+                  // all other characters (including other COMMON ones) show it.
+                  if (character != MochiCharacter.mochi ||
+                      character.rarity != MochiRarity.standard)
+                    Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Container(
                         padding: const EdgeInsets.symmetric(

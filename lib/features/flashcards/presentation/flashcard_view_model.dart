@@ -99,11 +99,14 @@ class FlashCardViewModel extends _$FlashCardViewModel {
       final response = await dio
           .get<dynamic>('/api/v1/avatars/$_avatarId/flashcards');
       final data = response.data;
-      final List<dynamic> list = data is List
-          ? data
-          : (data is Map && data['cards'] is List
-              ? data['cards'] as List<dynamic>
-              : const <dynamic>[]);
+      // Backend returns ApiResponse<List> → { "data": [...] }
+      // Unwrap defensively: handle bare List, data['data'], data['cards']
+      final List<dynamic> list = switch (data) {
+        List<dynamic> l => l,
+        Map m when m['data'] is List => m['data'] as List<dynamic>,
+        Map m when m['cards'] is List => m['cards'] as List<dynamic>,
+        _ => const <dynamic>[],
+      };
       final cards = list
           .map((e) => FlashCard.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList();

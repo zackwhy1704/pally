@@ -946,7 +946,7 @@ class _LinkGrownUpRow extends StatelessWidget {
                   color: AppColors.teal),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
-                child: Text('Link a grown-up',
+                child: Text('Link parents',
                     style: AppTextStyles.body
                         .copyWith(fontWeight: FontWeight.w700)),
               ),
