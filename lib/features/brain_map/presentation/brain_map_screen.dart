@@ -318,7 +318,7 @@ class _TopicSheet extends StatelessWidget {
                     label: 'Quick quiz',
                     onTap: () {
                       Navigator.of(context).pop();
-                      QuizRoute(avatarId: avatarId).go(context);
+                      QuizRoute(avatarId: avatarId).push(context);
                     },
                   ),
                 ),
@@ -329,7 +329,7 @@ class _TopicSheet extends StatelessWidget {
                     label: 'Open wiki',
                     onTap: () {
                       Navigator.of(context).pop();
-                      WikiViewerRoute(avatarId: avatarId).go(context);
+                      WikiViewerRoute(avatarId: avatarId).push(context);
                     },
                   ),
                 ),

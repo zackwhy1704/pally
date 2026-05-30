@@ -31,7 +31,7 @@ class DueCardsBanner extends ConsumerWidget {
             child: InkWell(
               borderRadius: BorderRadius.circular(16),
               onTap: () =>
-                  FlashcardRoute(avatarId: avatar.id).go(context),
+                  FlashcardRoute(avatarId: avatar.id).push(context),
               child: Padding(
                 padding: AppSpacing.card,
                 child: Row(

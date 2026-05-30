@@ -9,25 +9,27 @@ part 'study_plan_view_model.g.dart';
 @riverpod
 class StudyPlanViewModel extends _$StudyPlanViewModel {
   @override
-  Future<List<StudyPlanItem>> build() async {
-    return _fetchPlan();
-  }
+  Future<List<StudyPlanItem>> build() async => _fetchPlan();
 
   Future<List<StudyPlanItem>> _fetchPlan() async {
     try {
       final dio = ref.read(dioProvider);
       final response =
           await dio.get<Map<String, dynamic>>('/api/v1/progress/study-plan');
-      final list = (response.data?['items'] as List<dynamic>?) ??
-          (response.data is List ? response.data as List<dynamic> : []);
+
+      // Unwrap ApiResponse envelope: { "data": { "items": [...] } }
+      final body = response.data ?? {};
+      final data = (body['data'] is Map)
+          ? Map<String, dynamic>.from(body['data'] as Map)
+          : body;
+
+      final list = (data['items'] as List<dynamic>?) ?? const [];
       return list
-          .map((e) => StudyPlanItem.fromJson(e as Map<String, dynamic>))
+          .whereType<Map<String, dynamic>>()
+          .map(StudyPlanItem.fromJson)
           .toList();
-    } on DioException catch (e) {
-      // Never fabricate study-plan items on failure. Empty list lets the
-      // screen render the real "all done" / offline empty state instead
-      // of pretending the user has photosynthesis homework they don't.
-      appLog.w('[StudyPlan] load failed: ${e.message}');
+    } catch (e) {
+      appLog.w('[StudyPlan] load failed: $e');
       return const [];
     }
   }
@@ -37,13 +39,36 @@ class StudyPlanViewModel extends _$StudyPlanViewModel {
     state = await AsyncValue.guard(_fetchPlan);
   }
 
-  void markDone(String itemId) {
-    state.whenData((items) {
-      state = AsyncData(
-        items
-            .map((i) => i.id == itemId ? i.copyWith(isDone: true) : i)
-            .toList(),
-      );
-    });
+  /// Optimistically mark a task done, then persist to the backend.
+  /// Reverts on failure so the UI never lies about completion state.
+  Future<void> markDone(String itemId) async {
+    final previous = state.valueOrNull ?? [];
+    // Optimistic update
+    state = AsyncData(
+      previous
+          .map((i) => i.id == itemId ? i.copyWith(isDone: true) : i)
+          .toList(),
+    );
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.post<void>('/api/v1/progress/study-plan/$itemId/done');
+      appLog.d('[StudyPlan] task $itemId marked done');
+    } on DioException catch (e) {
+      appLog.w('[StudyPlan] mark-done failed, reverting: ${e.message}');
+      // Revert to previous state
+      state = AsyncData(previous);
+      rethrow;
+    }
   }
+
+  bool get isAllDone {
+    final items = state.valueOrNull;
+    if (items == null || items.isEmpty) return false;
+    final todayItems = items.where((i) => i.scheduledDate == null ||
+        _isSameDay(i.scheduledDate!, DateTime.now())).toList();
+    return todayItems.isNotEmpty && todayItems.every((i) => i.isDone);
+  }
+
+  static bool _isSameDay(DateTime a, DateTime b) =>
+      a.year == b.year && a.month == b.month && a.day == b.day;
 }

@@ -24,6 +24,7 @@ class StudyPlanItem with _$StudyPlanItem {
     required StudyPlanItemType type,
     @Default(false) bool isDone,
     @Default('') String avatarId,
+    @Default('') String reason,
     DateTime? scheduledDate,
   }) = _StudyPlanItem;
 

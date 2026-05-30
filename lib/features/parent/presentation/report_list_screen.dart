@@ -82,7 +82,7 @@ class _ReportTile extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () =>
-            ParentReportDetailRoute(weekId: report.weekId).go(context),
+            ParentReportDetailRoute(weekId: report.weekId).push(context),
         child: Container(
           padding: AppSpacing.card,
           decoration: BoxDecoration(

@@ -19,10 +19,10 @@ import 'package:pally/features/progress/presentation/progress_view_model.dart';
 import 'package:pally/features/progress/presentation/streak_card.dart';
 import 'package:pally/features/progress/presentation/streak_milestone_controller.dart';
 import 'package:pally/features/progress/presentation/streak_status_provider.dart';
-import 'package:pally/features/shop/providers/unlocked_characters_provider.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
 import 'package:pally/shared/models/achievement.dart';
 import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/shared/models/entitlement.dart';
 import 'package:pally/shared/models/mochi_character.dart';
 import 'package:pally/shared/models/progress_summary.dart';
 
@@ -137,14 +137,9 @@ class _LevelCard extends ConsumerWidget {
             ? progress.xpIntoLevel / progress.xpSpanForLevel
             : 0.0);
 
-    // Use the first unlocked Mochi as the profile avatar.
-    // mochi is always unlocked by default so there's always a fallback.
-    final unlockedAsync = ref.watch(unlockedCharactersProvider);
-    final unlocked = unlockedAsync.valueOrNull ?? {};
-    final profileChar = unlocked.isNotEmpty ? unlocked.first : null;
-
-    final isPremium = ref.watch(entitlementVmProvider).valueOrNull?.isPremium
-        ?? false;
+    // Entitlement state — explicitly handle loading and error so the badge
+    // never silently lies about premium status.
+    final entitlementAsync = ref.watch(entitlementVmProvider);
 
     return Material(
       color: Colors.transparent,
@@ -163,7 +158,7 @@ class _LevelCard extends ConsumerWidget {
           ),
           child: Row(
             children: [
-              _MochiStatusPill(character: profileChar, isPremium: isPremium),
+              _MochiStatusPill(entitlementAsync: entitlementAsync),
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
@@ -220,28 +215,26 @@ class _LevelCard extends ConsumerWidget {
   }
 }
 
-/// Circular pill showing the user's Mochi avatar with a PREMIUM / FREE
-/// status badge floating above it.
+/// Mochi avatar pill with a status badge placed ABOVE the circle (no overlap).
+/// Always shows the base Mochi (base.png) — the user's default character.
 class _MochiStatusPill extends StatelessWidget {
-  const _MochiStatusPill({
-    required this.character,
-    required this.isPremium,
-  });
+  const _MochiStatusPill({required this.entitlementAsync});
 
-  final MochiCharacter? character;
-  final bool isPremium;
+  final AsyncValue<Entitlement> entitlementAsync;
 
   @override
   Widget build(BuildContext context) {
-    final char = character ?? MochiCharacter.mochi;
-    return Stack(
-      clipBehavior: Clip.none,
-      alignment: Alignment.center,
+    // Always use the base Mochi character for the profile pill.
+    const char = MochiCharacter.mochi;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        // Avatar circle
+        // Status badge sits entirely ABOVE the avatar — no overlap.
+        _StatusBadge(entitlementAsync: entitlementAsync),
+        const SizedBox(height: 4),
         Container(
-          width: 72,
-          height: 72,
+          width: 64,
+          height: 64,
           decoration: BoxDecoration(
             color: char.bgColor.withValues(alpha: 0.9),
             shape: BoxShape.circle,
@@ -253,17 +246,9 @@ class _MochiStatusPill extends StatelessWidget {
           child: ClipOval(
             child: Padding(
               padding: const EdgeInsets.all(6),
-              child: Image.asset(
-                char.assetPath,
-                fit: BoxFit.contain,
-              ),
+              child: Image.asset(char.assetPath, fit: BoxFit.contain),
             ),
           ),
-        ),
-        // Status badge floats above the circle
-        Positioned(
-          top: -10,
-          child: _StatusBadge(isPremium: isPremium),
         ),
       ],
     );
@@ -271,53 +256,75 @@ class _MochiStatusPill extends StatelessWidget {
 }
 
 class _StatusBadge extends StatelessWidget {
-  const _StatusBadge({required this.isPremium});
-  final bool isPremium;
+  const _StatusBadge({required this.entitlementAsync});
+  final AsyncValue<Entitlement> entitlementAsync;
 
   @override
   Widget build(BuildContext context) {
-    if (isPremium) {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
-          ),
+    return entitlementAsync.when(
+      loading: () => _badge(
+        label: '···',
+        textColor: Colors.white.withValues(alpha: 0.5),
+        bgDecoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFFFFD700).withValues(alpha: 0.5),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: const Text(
-          'PREMIUM',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 8,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 0.8,
-          ),
-        ),
-      );
-    }
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.18),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.3),
         ),
       ),
+      error: (_, __) => _badge(
+        label: 'FREE',
+        textColor: Colors.white.withValues(alpha: 0.55),
+        bgDecoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.14),
+          borderRadius: BorderRadius.circular(20),
+          border:
+              Border.all(color: Colors.white.withValues(alpha: 0.2)),
+        ),
+      ),
+      data: (e) => e.isPremium
+          ? _badge(
+              label: 'PREMIUM',
+              textColor: Colors.white,
+              bgDecoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+                ),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFFFD700).withValues(alpha: 0.5),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+            )
+          : _badge(
+              label: 'FREE',
+              textColor: Colors.white.withValues(alpha: 0.7),
+              bgDecoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.18),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.3)),
+              ),
+            ),
+    );
+  }
+
+  Widget _badge({
+    required String label,
+    required Color textColor,
+    required BoxDecoration bgDecoration,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: bgDecoration,
       child: Text(
-        'FREE',
+        label,
         style: TextStyle(
-          color: Colors.white.withValues(alpha: 0.7),
+          color: textColor,
           fontSize: 8,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w900,
           letterSpacing: 0.8,
         ),
       ),

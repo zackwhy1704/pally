@@ -219,6 +219,35 @@ class _AvatarRow extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: AppSpacing.xs),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _ActionChip(
+                      label: 'Cards',
+                      icon: Icons.style_rounded,
+                      color: avatar.hasKnowledge
+                          ? AppColors.amber
+                          : AppColors.text3,
+                      onTap: avatar.hasKnowledge
+                          ? () => FlashcardRoute(avatarId: avatar.id)
+                              .push(context)
+                          : null,
+                    ),
+                    const SizedBox(width: AppSpacing.xs),
+                    _ActionChip(
+                      label: 'Teach',
+                      icon: Icons.school_rounded,
+                      color: avatar.hasKnowledge
+                          ? AppColors.pink
+                          : AppColors.text3,
+                      onTap: avatar.hasKnowledge
+                          ? () => TeachMochiRoute(avatarId: avatar.id)
+                              .push(context)
+                          : null,
+                    ),
+                  ],
+                ),
               ],
             ),
           ],

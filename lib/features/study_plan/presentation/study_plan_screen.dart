@@ -8,6 +8,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
+import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/features/study_plan/presentation/study_plan_view_model.dart';
 import 'package:pally/shared/models/avatar.dart';
@@ -74,7 +75,26 @@ class StudyPlanScreen extends ConsumerWidget {
                     ...todayItems.map((item) => _TaskTile(
                           item: item,
                           onStart: () => _handleStart(context, item),
-                          onMarkDone: () => notifier.markDone(item.id),
+                          onMarkDone: () async {
+                            try {
+                              await notifier.markDone(item.id);
+                              // Check completion after the state update
+                              if (context.mounted &&
+                                  notifier.isAllDone) {
+                                PallyToast.success(
+                                  context,
+                                  "Today's plan done! 🎉 Keep it up!",
+                                );
+                              }
+                            } catch (_) {
+                              if (context.mounted) {
+                                PallyToast.error(
+                                  context,
+                                  'Could not save — check your connection',
+                                );
+                              }
+                            }
+                          },
                         )),
                     const SizedBox(height: AppSpacing.lg),
                   ],
@@ -97,9 +117,9 @@ class StudyPlanScreen extends ConsumerWidget {
   void _handleStart(BuildContext context, StudyPlanItem item) {
     final aid = item.avatarId.isNotEmpty ? item.avatarId : 'all';
     if (item.type == StudyPlanItemType.quiz) {
-      context.go('/avatar/$aid/quiz');
+      context.push('/avatar/$aid/quiz');
     } else if (item.type == StudyPlanItemType.flashcard) {
-      context.go('/avatar/$aid/flashcards');
+      context.push('/avatar/$aid/flashcards');
     }
   }
 
@@ -223,12 +243,29 @@ class _TaskTile extends StatelessWidget {
           ),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
-            child: Text(
-              item.title,
-              style: AppTextStyles.body.copyWith(
-                decoration: item.isDone ? TextDecoration.lineThrough : null,
-                color: item.isDone ? AppColors.text3 : AppColors.text1,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  item.title,
+                  style: AppTextStyles.body.copyWith(
+                    decoration:
+                        item.isDone ? TextDecoration.lineThrough : null,
+                    color: item.isDone ? AppColors.text3 : AppColors.text1,
+                  ),
+                ),
+                if (item.reason.isNotEmpty && !item.isDone) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    item.reason,
+                    style: AppTextStyles.caption
+                        .copyWith(color: AppColors.text2),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ],
             ),
           ),
           const SizedBox(width: AppSpacing.sm),

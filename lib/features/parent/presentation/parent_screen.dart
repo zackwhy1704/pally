@@ -627,7 +627,7 @@ class _WeeklyReportsCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () => const ParentReportsRoute().go(context),
+        onTap: () => const ParentReportsRoute().push(context),
         child: Container(
           padding: AppSpacing.card,
           decoration: BoxDecoration(

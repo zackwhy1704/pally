@@ -441,7 +441,7 @@ class _ExplanationCard extends StatelessWidget {
           if (question.sourcePage.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.xs),
             InkWell(
-              onTap: () => WikiViewerRoute(avatarId: avatarId).go(context),
+              onTap: () => WikiViewerRoute(avatarId: avatarId).push(context),
               borderRadius: BorderRadius.circular(6),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 2),

@@ -26,6 +26,7 @@ mixin _$StudyPlanItem {
   StudyPlanItemType get type => throw _privateConstructorUsedError;
   bool get isDone => throw _privateConstructorUsedError;
   String get avatarId => throw _privateConstructorUsedError;
+  String get reason => throw _privateConstructorUsedError;
   DateTime? get scheduledDate => throw _privateConstructorUsedError;
 
   /// Serializes this StudyPlanItem to a JSON map.
@@ -51,6 +52,7 @@ abstract class $StudyPlanItemCopyWith<$Res> {
       StudyPlanItemType type,
       bool isDone,
       String avatarId,
+      String reason,
       DateTime? scheduledDate});
 }
 
@@ -74,6 +76,7 @@ class _$StudyPlanItemCopyWithImpl<$Res, $Val extends StudyPlanItem>
     Object? type = null,
     Object? isDone = null,
     Object? avatarId = null,
+    Object? reason = null,
     Object? scheduledDate = freezed,
   }) {
     return _then(_value.copyWith(
@@ -96,6 +99,10 @@ class _$StudyPlanItemCopyWithImpl<$Res, $Val extends StudyPlanItem>
       avatarId: null == avatarId
           ? _value.avatarId
           : avatarId // ignore: cast_nullable_to_non_nullable
+              as String,
+      reason: null == reason
+          ? _value.reason
+          : reason // ignore: cast_nullable_to_non_nullable
               as String,
       scheduledDate: freezed == scheduledDate
           ? _value.scheduledDate
@@ -120,6 +127,7 @@ abstract class _$$StudyPlanItemImplCopyWith<$Res>
       StudyPlanItemType type,
       bool isDone,
       String avatarId,
+      String reason,
       DateTime? scheduledDate});
 }
 
@@ -141,6 +149,7 @@ class __$$StudyPlanItemImplCopyWithImpl<$Res>
     Object? type = null,
     Object? isDone = null,
     Object? avatarId = null,
+    Object? reason = null,
     Object? scheduledDate = freezed,
   }) {
     return _then(_$StudyPlanItemImpl(
@@ -164,6 +173,10 @@ class __$$StudyPlanItemImplCopyWithImpl<$Res>
           ? _value.avatarId
           : avatarId // ignore: cast_nullable_to_non_nullable
               as String,
+      reason: null == reason
+          ? _value.reason
+          : reason // ignore: cast_nullable_to_non_nullable
+              as String,
       scheduledDate: freezed == scheduledDate
           ? _value.scheduledDate
           : scheduledDate // ignore: cast_nullable_to_non_nullable
@@ -181,6 +194,7 @@ class _$StudyPlanItemImpl implements _StudyPlanItem {
       @JsonKey(fromJson: _typeFromJson, toJson: _typeToJson) required this.type,
       this.isDone = false,
       this.avatarId = '',
+      this.reason = '',
       this.scheduledDate});
 
   factory _$StudyPlanItemImpl.fromJson(Map<String, dynamic> json) =>
@@ -200,11 +214,14 @@ class _$StudyPlanItemImpl implements _StudyPlanItem {
   @JsonKey()
   final String avatarId;
   @override
+  @JsonKey()
+  final String reason;
+  @override
   final DateTime? scheduledDate;
 
   @override
   String toString() {
-    return 'StudyPlanItem(id: $id, title: $title, type: $type, isDone: $isDone, avatarId: $avatarId, scheduledDate: $scheduledDate)';
+    return 'StudyPlanItem(id: $id, title: $title, type: $type, isDone: $isDone, avatarId: $avatarId, reason: $reason, scheduledDate: $scheduledDate)';
   }
 
   @override
@@ -218,6 +235,7 @@ class _$StudyPlanItemImpl implements _StudyPlanItem {
             (identical(other.isDone, isDone) || other.isDone == isDone) &&
             (identical(other.avatarId, avatarId) ||
                 other.avatarId == avatarId) &&
+            (identical(other.reason, reason) || other.reason == reason) &&
             (identical(other.scheduledDate, scheduledDate) ||
                 other.scheduledDate == scheduledDate));
   }
@@ -225,7 +243,7 @@ class _$StudyPlanItemImpl implements _StudyPlanItem {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, id, title, type, isDone, avatarId, scheduledDate);
+      runtimeType, id, title, type, isDone, avatarId, reason, scheduledDate);
 
   /// Create a copy of StudyPlanItem
   /// with the given fields replaced by the non-null parameter values.
@@ -251,6 +269,7 @@ abstract class _StudyPlanItem implements StudyPlanItem {
       required final StudyPlanItemType type,
       final bool isDone,
       final String avatarId,
+      final String reason,
       final DateTime? scheduledDate}) = _$StudyPlanItemImpl;
 
   factory _StudyPlanItem.fromJson(Map<String, dynamic> json) =
@@ -267,6 +286,8 @@ abstract class _StudyPlanItem implements StudyPlanItem {
   bool get isDone;
   @override
   String get avatarId;
+  @override
+  String get reason;
   @override
   DateTime? get scheduledDate;
 
