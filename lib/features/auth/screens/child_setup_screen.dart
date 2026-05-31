@@ -17,11 +17,23 @@ class ChildSetupScreen extends ConsumerStatefulWidget {
 
 class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
   final _nameCtrl = TextEditingController();
-  int? _selectedAge;
+  int? _selectedAge; // yearLevel value 7–18
   String? _selectedExamSystem;
   bool _loading = false;
 
-  static const _ages = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+  // School-year → yearLevel mapping (neutral phrasing, not "how old are you?")
+  static const _yearGroups = [
+    // Primary
+    ('Primary 1', 7), ('Primary 2', 8), ('Primary 3', 9),
+    ('Primary 4', 10), ('Primary 5', 11), ('Primary 6', 12),
+    // Secondary
+    ('Secondary 1', 13), ('Secondary 2', 14),
+    ('Secondary 3', 15), ('Secondary 4', 16),
+    // JC / Pre-U
+    ('JC / Year 12', 17), ('JC / Year 13+', 18),
+  ];
+
+  bool get _isUnder13 => (_selectedAge ?? 99) <= 12;
 
   static const _examSystems = [
     ('📐', 'Cambridge (IGCSE / O-Level / A-Level)', 'CAMBRIDGE', 'SG, MY, SEA, 145+ countries'),
@@ -59,7 +71,13 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
       );
       await AuthNotifier.instance.setChildName(_nameCtrl.text.trim());
       await AuthNotifier.instance.markSetupComplete();
-      if (mounted) context.go('/onboarding');
+      if (!mounted) return;
+      // Route based on age: under-13 needs parental consent; 13+ self-consents.
+      if (_isUnder13) {
+        context.go('/consent/parent-email');
+      } else {
+        context.go('/consent/self');
+      }
     } on DioException {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -123,20 +141,25 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
               ),
               const SizedBox(height: AppSpacing.lg),
 
-              const _SectionLabel('How old are they?'),
+              const _SectionLabel('What year are they in school?'),
+              const SizedBox(height: 4),
+              Text(
+                'This helps Mochi pick the right level — and helps keep younger learners safe.',
+                style: AppTextStyles.caption.copyWith(color: AppColors.text3),
+              ),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: _ages.map((age) {
-                  final selected = _selectedAge == age;
+                children: _yearGroups.map((entry) {
+                  final (label, yearValue) = entry;
+                  final selected = _selectedAge == yearValue;
                   return GestureDetector(
-                    onTap: () => setState(() => _selectedAge = age),
+                    onTap: () => setState(() => _selectedAge = yearValue),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 150),
-                      width: age == 19 ? 50 : 44,
-                      height: 40,
-                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 8),
                       decoration: BoxDecoration(
                         color: selected
                             ? AppColors.purple
@@ -147,12 +170,12 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
                             : Border.all(color: AppColors.outline),
                       ),
                       child: Text(
-                        age == 19 ? '18+' : '$age',
-                        style: AppTextStyles.label.copyWith(
+                        label,
+                        style: AppTextStyles.caption.copyWith(
                           color: selected ? Colors.white : AppColors.text2,
                           fontWeight:
-                              selected ? FontWeight.w700 : FontWeight.w400,
-                          fontSize: 13,
+                              selected ? FontWeight.w700 : FontWeight.w500,
+                          fontSize: 11,
                         ),
                       ),
                     ),

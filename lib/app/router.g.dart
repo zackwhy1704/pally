@@ -44,6 +44,10 @@ List<RouteBase> get $appRoutes => [
       $avatarPickerRoute,
       $onboardingRoute,
       $cameraRoute,
+      $ocrGuideRoute,
+      $parentConsentRoute,
+      $consentWaitingRoute,
+      $selfConsentRoute,
       $photoPreviewRoute,
     ];
 
@@ -1090,6 +1094,97 @@ extension $CameraRouteExtension on CameraRoute {
 
   String get location => GoRouteData.$location(
         '/camera',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $ocrGuideRoute => GoRouteData.$route(
+      path: '/ocr-guide',
+      factory: $OcrGuideRouteExtension._fromState,
+    );
+
+extension $OcrGuideRouteExtension on OcrGuideRoute {
+  static OcrGuideRoute _fromState(GoRouterState state) => const OcrGuideRoute();
+
+  String get location => GoRouteData.$location(
+        '/ocr-guide',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $parentConsentRoute => GoRouteData.$route(
+      path: '/consent/parent-email',
+      factory: $ParentConsentRouteExtension._fromState,
+    );
+
+extension $ParentConsentRouteExtension on ParentConsentRoute {
+  static ParentConsentRoute _fromState(GoRouterState state) =>
+      const ParentConsentRoute();
+
+  String get location => GoRouteData.$location(
+        '/consent/parent-email',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $consentWaitingRoute => GoRouteData.$route(
+      path: '/consent/waiting',
+      factory: $ConsentWaitingRouteExtension._fromState,
+    );
+
+extension $ConsentWaitingRouteExtension on ConsentWaitingRoute {
+  static ConsentWaitingRoute _fromState(GoRouterState state) =>
+      const ConsentWaitingRoute();
+
+  String get location => GoRouteData.$location(
+        '/consent/waiting',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $selfConsentRoute => GoRouteData.$route(
+      path: '/consent/self',
+      factory: $SelfConsentRouteExtension._fromState,
+    );
+
+extension $SelfConsentRouteExtension on SelfConsentRoute {
+  static SelfConsentRoute _fromState(GoRouterState state) =>
+      const SelfConsentRoute();
+
+  String get location => GoRouteData.$location(
+        '/consent/self',
       );
 
   void go(BuildContext context) => context.go(location);

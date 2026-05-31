@@ -46,6 +46,9 @@ import 'package:pally/features/groups/presentation/group_detail_screen.dart';
 import 'package:pally/features/groups/presentation/group_list_screen.dart';
 import 'package:pally/features/teach_mochi/presentation/teach_mochi_screen.dart';
 import 'package:pally/features/brain_health/presentation/brain_health_screen.dart';
+import 'package:pally/features/auth/screens/consent_waiting_screen.dart';
+import 'package:pally/features/auth/screens/parent_consent_screen.dart';
+import 'package:pally/features/auth/screens/self_consent_screen.dart';
 import 'package:pally/features/ocr_awareness/screens/ocr_what_can_read.dart';
 import 'package:pally/shared/models/photo_question.dart';
 
@@ -536,6 +539,33 @@ class OcrGuideRoute extends GoRouteData {
       const OcrWhatCanReadScreen();
 }
 
+@TypedGoRoute<ParentConsentRoute>(path: '/consent/parent-email')
+class ParentConsentRoute extends GoRouteData {
+  const ParentConsentRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ParentConsentScreen();
+}
+
+@TypedGoRoute<ConsentWaitingRoute>(path: '/consent/waiting')
+class ConsentWaitingRoute extends GoRouteData {
+  const ConsentWaitingRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ConsentWaitingScreen();
+}
+
+@TypedGoRoute<SelfConsentRoute>(path: '/consent/self')
+class SelfConsentRoute extends GoRouteData {
+  const SelfConsentRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const SelfConsentScreen();
+}
+
 @TypedGoRoute<PhotoPreviewRoute>(path: '/avatar/:avatarId/photo-preview')
 class PhotoPreviewRoute extends GoRouteData {
   const PhotoPreviewRoute({required this.avatarId, this.$extra});
@@ -558,6 +588,7 @@ const _publicPaths = {
   '/auth/setup',
   '/auth/avatar',
   '/onboarding',
+  '/consent/', // all consent sub-paths are accessible after login (auth token present)
 };
 
 GoRouter buildAppRouter({

@@ -1,7 +1,10 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/auth/auth_state.dart';
@@ -206,6 +209,34 @@ class _ServerErrorInterceptor extends Interceptor {
       }
     }
 
+    // 403 CONSENT_REQUIRED → show the consent-gate sheet / remind-grown-up flow.
+    if (status == 403) {
+      final body = err.response?.data;
+      String? code;
+      String? reason;
+      if (body is Map) {
+        final dataNode = body['data'];
+        if (dataNode is Map) {
+          code = dataNode['code']?.toString();
+          reason = dataNode['reason']?.toString();
+        }
+      }
+      if (code == 'CONSENT_REQUIRED') {
+        final ctx = _ref.read(globalNavigatorKeyProvider)?.currentContext;
+        if (ctx != null && ctx.mounted) {
+          try {
+            // Show a friendly bottom sheet instead of a raw error
+            showModalBottomSheet<void>(
+              context: ctx,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (_) => _ConsentGateSheet(reason: reason ?? 'general'),
+            );
+          } catch (_) {}
+        }
+      }
+    }
+
     if (status != null &&
         status >= 500 &&
         !path.contains('/auth/')) {
@@ -232,5 +263,80 @@ class _SessionExpiredInterceptor extends Interceptor {
       AuthNotifier.instance.signOut();
     }
     handler.next(err);
+  }
+}
+
+// ── Consent gate sheet ────────────────────────────────────────────────────────
+// Shown instead of a raw 403 error when a PENDING account attempts a gated action.
+
+class _ConsentGateSheet extends StatelessWidget {
+  const _ConsentGateSheet({required this.reason});
+  final String reason;
+
+  String get _title => switch (reason) {
+        'UPLOAD' => 'Upload notes',
+        'CREATE_TUTOR' => 'Create your own tutor',
+        'SHARE_NOTE' => 'Share notes',
+        'PERSIST_CHAT' => 'Save conversations',
+        'EARN_XP' => 'Earn rewards',
+        _ => 'This feature',
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.md,
+        AppSpacing.lg,
+        AppSpacing.lg + MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Center(
+            child: Container(
+              width: 40, height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.outline,
+                borderRadius: BorderRadius.circular(2)),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          const Text('⏳', style: TextStyle(fontSize: 40)),
+          const SizedBox(height: AppSpacing.sm),
+          Text('Almost there!', style: AppTextStyles.heading1.copyWith(fontSize: 20)),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            '$_title unlocks once a grown-up approves your account. '
+            "We've already sent them an email — or tap below to send a reminder.",
+            style: AppTextStyles.body.copyWith(color: AppColors.text2),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              context.go('/consent/waiting');
+            },
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.purple,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              padding: const EdgeInsets.symmetric(vertical: 14),
+            ),
+            child: const Text('Remind my grown-up'),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Got it', style: AppTextStyles.body.copyWith(color: AppColors.text2)),
+          ),
+        ],
+      ),
+    );
   }
 }
