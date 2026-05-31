@@ -275,7 +275,7 @@ class _ConsentGateSheet extends StatelessWidget {
 
   String get _title => switch (reason) {
         'UPLOAD' => 'Upload notes',
-        'CREATE_TUTOR' => 'Create your own tutor',
+        'CREATE_TUTOR' => 'Create your own Mochi',
         'SHARE_NOTE' => 'Share notes',
         'PERSIST_CHAT' => 'Save conversations',
         'EARN_XP' => 'Earn rewards',

@@ -7,7 +7,7 @@ part of 'create_tutor_view_model.dart';
 // **************************************************************************
 
 String _$createTutorViewModelHash() =>
-    r'68d17433858f327a730b33031e018c53213b961e';
+    r'ae5fddc74ab4af8e7570e697c61d403ccf91e367';
 
 /// See also [CreateTutorViewModel].
 @ProviderFor(CreateTutorViewModel)

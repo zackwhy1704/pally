@@ -121,7 +121,7 @@ class _OcrConfidencePreviewState extends State<OcrConfidencePreview>
                       Text('Reading confidence',
                           style: AppTextStyles.title.copyWith(fontSize: 15)),
                       const SizedBox(height: 2),
-                      Text('How well your tutor can read each question',
+                      Text('How well Mochi can read each question',
                           style: AppTextStyles.bodySmall),
                     ],
                   ),

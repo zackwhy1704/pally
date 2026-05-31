@@ -88,7 +88,7 @@ class _SubscriptionReturnScreenState
                 Text('You are premium!', style: AppTextStyles.heading1),
                 const SizedBox(height: AppSpacing.md),
                 Text(
-                  'Everything just unlocked — unlimited tutors, family '
+                  'Everything just unlocked — unlimited Mochis, family '
                   'sharing, parent dashboard, and more.',
                   style: AppTextStyles.body.copyWith(color: AppColors.text2),
                   textAlign: TextAlign.center,

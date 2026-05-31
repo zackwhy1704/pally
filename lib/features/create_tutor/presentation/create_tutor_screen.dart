@@ -38,7 +38,7 @@ class CreateTutorScreen extends ConsumerWidget {
             }
           },
         ),
-        title: const Text('Create Tutor'),
+        title: const Text('Create Mochi'),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4),
           child: _StepIndicator(

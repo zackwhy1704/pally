@@ -234,7 +234,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       builder: (ctx) => AlertDialog(
         title: const Text('Delete Account?'),
         content: const Text(
-          'This will permanently delete your account and all your tutors. This cannot be undone.',
+          'This will permanently delete your account and all your Mochis. This cannot be undone.',
         ),
         actions: [
           TextButton(
@@ -741,7 +741,7 @@ class _TestDatesSection extends ConsumerWidget {
                     strokeWidth: 2, color: AppColors.purple),
               ),
               SizedBox(width: AppSpacing.sm),
-              Text('Loading tutors…'),
+              Text('Loading Mochis…'),
             ],
           ),
         ),
@@ -749,7 +749,7 @@ class _TestDatesSection extends ConsumerWidget {
       error: (_, __) => _SettingsCard(children: [
         Padding(
           padding: AppSpacing.card,
-          child: Text('Could not load tutors',
+          child: Text('Could not load Mochis',
               style: AppTextStyles.bodySmall
                   .copyWith(color: AppColors.text2)),
         ),
@@ -760,7 +760,7 @@ class _TestDatesSection extends ConsumerWidget {
             Padding(
               padding: AppSpacing.card,
               child: Text(
-                'Create a tutor first, then set a test date here.',
+                'Create a Mochi first, then set a test date here.',
                 style: AppTextStyles.bodySmall
                     .copyWith(color: AppColors.text2),
               ),
@@ -857,7 +857,7 @@ class _SubscriptionTile extends ConsumerWidget {
               title: Text(planLabel),
               subtitle: Text(isPremium
                   ? 'Tap Manage to update billing or cancel.'
-                  : 'Unlock unlimited tutors, chat, and family sharing.'),
+                  : 'Unlock unlimited Mochis, chat, and family sharing.'),
               trailing: FilledButton(
                 onPressed: () => _onTap(context, ref, ent.isPremium,
                     ent.source == 'PARENT'),

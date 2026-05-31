@@ -70,11 +70,11 @@ class _NameStepState extends State<NameStep> {
                       ),
                     ),
                   const SizedBox(height: AppSpacing.lg),
-                  Text('Give your tutor a name',
+                  Text('Give your Mochi a name',
                       style: AppTextStyles.heading1),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    'What would you like to call your tutor?',
+                    'What would you like to call your Mochi?',
                     style:
                         AppTextStyles.body.copyWith(color: AppColors.text2),
                   ),

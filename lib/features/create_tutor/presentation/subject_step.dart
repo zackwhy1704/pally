@@ -86,7 +86,7 @@ class _SubjectStepState extends State<SubjectStep> {
 
   @override
   Widget build(BuildContext context) {
-    final name = widget.tutorName.isEmpty ? 'your tutor' : widget.tutorName;
+    final name = widget.tutorName.isEmpty ? 'your Mochi' : widget.tutorName;
     final accentColor =
         widget.selectedCharacter?.primaryColor ?? AppColors.purple;
 

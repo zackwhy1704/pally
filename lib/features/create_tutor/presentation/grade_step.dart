@@ -58,7 +58,7 @@ class GradeStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final name = tutorName.isEmpty ? 'your tutor' : tutorName;
+    final name = tutorName.isEmpty ? 'your Mochi' : tutorName;
     final accentColor = selectedCharacter?.primaryColor ?? AppColors.purple;
 
     return Padding(
@@ -188,7 +188,7 @@ class GradeStep extends StatelessWidget {
                 bottom:
                     AppSpacing.md + MediaQuery.of(context).padding.bottom),
             child: PallyButton(
-                label: 'Done — Create $name! 🎉',
+                label: 'Create $name! 🎉',
                 onPressed: onCreate,
                 loading: isLoading,
                 fullWidth: true),

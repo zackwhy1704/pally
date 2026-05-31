@@ -92,7 +92,7 @@ class _EditQuestionsSheetState extends State<EditQuestionsSheet> {
                           style: AppTextStyles.title.copyWith(fontSize: 16)),
                       const SizedBox(height: 2),
                       Text(
-                        'Fix any text your tutor misread',
+                        'Fix any text Mochi misread',
                         style: AppTextStyles.bodySmall
                             .copyWith(color: AppColors.text2),
                       ),

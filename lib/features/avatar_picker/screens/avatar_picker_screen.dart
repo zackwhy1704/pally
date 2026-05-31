@@ -204,7 +204,7 @@ class _AvatarPickerScreenState extends ConsumerState<AvatarPickerScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Could not create tutor — ${e.message}',
+            content: Text('Could not create Mochi — ${e.message}',
                 style: AppTextStyles.bodySmall.copyWith(color: Colors.white)),
             backgroundColor: AppColors.coral,
             behavior: SnackBarBehavior.floating,
@@ -273,7 +273,7 @@ class _AvatarPickerScreenState extends ConsumerState<AvatarPickerScreen> {
                       : Text(
                           av != null
                               ? 'Choose ${av.name}! ${av.emoji}'
-                              : 'Pick a tutor first',
+                              : 'Pick a Mochi first',
                           style: AppTextStyles.body.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w700),

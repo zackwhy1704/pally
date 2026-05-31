@@ -33,7 +33,7 @@ class WikiCompiledScreen extends StatelessWidget {
                   style: AppTextStyles.heading1, textAlign: TextAlign.center),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                'Your tutor brain has been updated with ${newPageTitles.length} new ${newPageTitles.length == 1 ? 'page' : 'pages'}.',
+                'Your Mochi brain has been updated with ${newPageTitles.length} new ${newPageTitles.length == 1 ? 'page' : 'pages'}.',
                 style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 textAlign: TextAlign.center,
               ),
@@ -264,7 +264,7 @@ class _ActionButtons extends StatelessWidget {
         FilledButton.icon(
           onPressed: () => ChatRoute(avatarId: avatarId).push(context),
           icon: const Icon(Icons.chat_bubble_rounded),
-          label: const Text('Ask Tutor Now'),
+          label: const Text('Ask Mochi Now'),
           style: FilledButton.styleFrom(
             backgroundColor: AppColors.purple,
             padding: const EdgeInsets.symmetric(vertical: 14),

@@ -413,7 +413,7 @@ class _TipsSheet extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                   fontFamily: 'Nunito')),
           const SizedBox(height: 4),
-          Text('Better photo = better answers from your tutor',
+          Text('Better photo = better answers from Mochi',
               style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.55),
                   fontSize: 10,

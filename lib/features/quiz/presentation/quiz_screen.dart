@@ -612,7 +612,7 @@ class _CompletionView extends StatelessWidget {
                   backgroundColor: AppColors.purple,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                child: const Text('Back to Tutor'),
+                child: const Text('Back to Mochi'),
               ),
             ),
           ],

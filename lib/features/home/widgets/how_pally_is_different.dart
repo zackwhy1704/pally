@@ -79,7 +79,7 @@ class _ExplainerSheet extends StatelessWidget {
             const _DifferentiatorCard(
               emoji: '📚',
               title: 'Built from your notes',
-              body: 'Your tutor learns your material — your textbook, your class notes, your syllabus. So every answer matches what your teacher actually taught, not a generic textbook.',
+              body: 'Your Mochi learns your material — your textbook, your class notes, your syllabus. So every answer matches what your teacher actually taught, not a generic textbook.',
               color: AppColors.purpleL,
               border: AppColors.purple,
             ),
@@ -95,7 +95,7 @@ class _ExplainerSheet extends StatelessWidget {
             const _DifferentiatorCard(
               emoji: '🎯',
               title: 'Made for real studying',
-              body: 'Subject-specialist tutors, spaced-repetition flashcards, daily quizzes, mastery tracking, curriculum-aligned — depth designed for serious learners.',
+              body: 'Mochis for every subject — flashcards, daily quizzes, mastery tracking, curriculum-aligned — depth designed for serious learners.',
               color: AppColors.tealL,
               border: AppColors.teal,
             ),
@@ -109,7 +109,7 @@ class _ExplainerSheet extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                '"Not a tutor that knows the textbook. A tutor that knows yours."',
+                '"Not a generic tutor. A Mochi that knows yours."',
                 style: AppTextStyles.body.copyWith(
                     color: AppColors.purple,
                     fontStyle: FontStyle.italic,

@@ -351,10 +351,10 @@ class _EmptyLibraryView extends StatelessWidget {
             const Icon(Icons.menu_book_outlined,
                 size: 64, color: AppColors.text3),
             const SizedBox(height: AppSpacing.md),
-            Text('No tutors yet', style: AppTextStyles.title),
+            Text('No Mochis yet', style: AppTextStyles.title),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'Create a tutor from the Home tab to see it here.',
+              'Create a Mochi from the Home tab to see it here.',
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),

@@ -221,9 +221,9 @@ class FlashCardViewModel extends _$FlashCardViewModel {
       final data = (response.data?['data'] is Map
               ? response.data!['data']
               : response.data) as Map<String, dynamic>;
-      return (data['name'] as String?) ?? 'your tutor';
+      return (data['name'] as String?) ?? 'your Mochi';
     } catch (_) {
-      return 'your tutor';
+      return 'your Mochi';
     }
   }
 

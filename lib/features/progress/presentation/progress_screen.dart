@@ -810,7 +810,7 @@ class _BrainMapCard extends ConsumerWidget {
                       Text(
                         avatars.length == 1
                             ? 'See ${avatars.first.name}\'s knowledge as a visual map'
-                            : 'See your tutors\' knowledge as a visual map',
+                            : 'See your Mochis\' knowledge as a visual map',
                         style: AppTextStyles.caption
                             .copyWith(color: Colors.white70),
                         maxLines: 1,
@@ -848,7 +848,7 @@ void _pickAvatarStatic(BuildContext context, List<Avatar> avatars) {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Choose tutor', style: AppTextStyles.title),
+              Text('Choose Mochi', style: AppTextStyles.title),
               const SizedBox(height: AppSpacing.md),
               for (final a in avatars)
                 ListTile(
@@ -912,7 +912,7 @@ class _GoPremiumBanner extends ConsumerWidget {
                             color: Colors.white,
                             fontWeight: FontWeight.w800)),
                     Text(
-                      'Unlimited tutors, chat & family sharing — 7-day free trial',
+                      'Unlimited Mochis, chat & family sharing — 7-day free trial',
                       style: AppTextStyles.caption
                           .copyWith(color: Colors.white70),
                       maxLines: 1,

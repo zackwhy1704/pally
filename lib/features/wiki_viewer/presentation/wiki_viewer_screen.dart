@@ -121,7 +121,7 @@ class _BrainHeader extends StatelessWidget {
                   child: Text(
                     avatar != null
                         ? "${avatar!.name}'s Brain 🧠"
-                        : 'Tutor Brain 🧠',
+                        : 'Mochi Brain 🧠',
                     style: AppTextStyles.title,
                     textAlign: TextAlign.center,
                   ),

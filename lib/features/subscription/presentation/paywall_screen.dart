@@ -16,7 +16,7 @@ class PaywallScreen extends ConsumerWidget {
   final String? feature;
 
   String get _headline => switch (feature) {
-        'CREATE_TUTOR' => 'Want more tutors?',
+        'CREATE_TUTOR' => 'Want more Mochis?',
         'UPLOAD_DOC' => 'Need more uploads?',
         'CHAT_DAILY' => 'Out of chats for today',
         'PARENT_DASHBOARD' => 'Parent dashboard is premium',
@@ -27,14 +27,14 @@ class PaywallScreen extends ConsumerWidget {
 
   String get _subhead => switch (feature) {
         'CREATE_TUTOR' =>
-            'Free Pally gives you 1 tutor. Premium gives unlimited tutors so '
+            'Free Pally gives you 1 Mochi. Premium gives unlimited Mochis so '
                 'every subject gets its own buddy.',
         'UPLOAD_DOC' =>
-            'You can upload 3 documents per tutor on free. Premium has no '
+            'You can upload 3 documents per Mochi on free. Premium has no '
                 'upload cap — keep filling that brain.',
         'CHAT_DAILY' =>
             'Free chat resets tomorrow. Premium chats are unlimited so the '
-                'tutor never sleeps.',
+                'Mochi never sleeps.',
         'PARENT_DASHBOARD' =>
             'Parents track progress, set goals, and read weekly reports.',
         'CURRICULUM' =>
@@ -43,7 +43,7 @@ class PaywallScreen extends ConsumerWidget {
             'Premium lets you stack up to 3 streak freezes so a missed day '
                 'never costs your streak.',
         _ =>
-            'Get everything Pally has to offer — unlimited tutors, family '
+            'Get everything Pally has to offer — unlimited Mochis, family '
                 'sharing, premium analytics.',
       };
 
@@ -140,7 +140,7 @@ class _PremiumPerks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const perks = [
-      ('🧠', 'Unlimited tutors + uploads'),
+      ('🧠', 'Unlimited Mochis + uploads'),
       ('💬', 'Unlimited daily chats'),
       ('👨‍👩‍👧', 'Family sharing — up to 4 kids'),
       ('📊', 'Parent dashboard + weekly reports'),

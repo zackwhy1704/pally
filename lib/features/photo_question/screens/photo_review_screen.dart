@@ -263,7 +263,7 @@ class _PhotoReviewScreenState extends ConsumerState<PhotoReviewScreen> {
                         ),
                         child: Text(
                           selectedCount > 0
-                              ? 'Send $selectedCount question${selectedCount == 1 ? '' : 's'} to Tutor ✨'
+                              ? 'Send $selectedCount question${selectedCount == 1 ? '' : 's'} to Mochi ✨'
                               : 'Select at least 1 question',
                           style: AppTextStyles.body.copyWith(
                             color: Colors.white,

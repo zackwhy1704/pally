@@ -338,7 +338,7 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     const Icon(Icons.delete_outline_rounded,
                         color: AppColors.coral, size: 18),
                     const SizedBox(width: 10),
-                    Text('Delete tutor',
+                    Text('Delete Mochi',
                         style: AppTextStyles.body.copyWith(
                             fontSize: 13, color: AppColors.coral)),
                   ],
@@ -808,7 +808,7 @@ class _WelcomePrompt extends StatelessWidget {
                 style: AppTextStyles.title, textAlign: TextAlign.center),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'Ask your tutor anything, or tap 📷 to snap a homework question!',
+              'Ask your Mochi anything, or tap 📷 to snap a homework question!',
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),

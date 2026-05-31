@@ -34,7 +34,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     ref.listen<AsyncValue<List<Avatar>>>(homeViewModelProvider, (_, next) {
       if (next is AsyncError) {
-        PallyToast.error(context, 'Could not load tutors. Pull down to retry.');
+        PallyToast.error(context, 'Could not load Mochis. Pull down to retry.');
       }
     });
 
@@ -135,7 +135,7 @@ class _HomeHeader extends StatelessWidget {
                 Text('👋 Hey, there!', style: AppTextStyles.heading1),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  'Which tutor do you want to chat with today?',
+                  'Which Mochi do you want to chat with today?',
                   style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 ),
 
@@ -193,7 +193,7 @@ class _HomeHeader extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'MY TUTORS',
+                      'MY MOCHIS',
                       style: AppTextStyles.label.copyWith(
                         letterSpacing: 1.2,
                         color: AppColors.text2,
@@ -439,7 +439,7 @@ void _showTutorOptions(BuildContext context, WidgetRef ref, Avatar avatar) {
           ),
           _OptionTile(
             icon: Icons.delete_outline_rounded,
-            label: 'Delete tutor',
+            label: 'Delete Mochi',
             color: AppColors.coral,
             onTap: () async {
               Navigator.pop(sheetCtx);

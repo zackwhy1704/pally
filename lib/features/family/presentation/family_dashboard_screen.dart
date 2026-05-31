@@ -132,7 +132,7 @@ class _SubBanner extends StatelessWidget {
             child: Text(
               isPremium
                   ? 'Family plan active — all premium features unlocked.'
-                  : 'On free — upgrade to share unlimited tutors with up to 4 kids.',
+                  : 'On free — upgrade to share unlimited Mochis with up to 4 kids.',
               style: AppTextStyles.body
                   .copyWith(color: Colors.white, fontWeight: FontWeight.w700),
             ),

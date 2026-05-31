@@ -487,7 +487,7 @@ class _EmptyState extends StatelessWidget {
                   style: AppTextStyles.title, textAlign: TextAlign.center),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                'Upload notes or a document for this tutor and cards will be made automatically.',
+                'Upload notes or a document for this Mochi and cards will be made automatically.',
                 style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 textAlign: TextAlign.center,
               ),
@@ -523,7 +523,7 @@ class _EmptyState extends StatelessWidget {
                 style: AppTextStyles.title, textAlign: TextAlign.center),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Your tutor has notes but no cards yet.\nTap the button below to generate them.',
+              'Your Mochi has notes but no cards yet.\nTap the button below to generate them.',
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),

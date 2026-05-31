@@ -927,7 +927,7 @@ class _UnlockedDialog extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              '${character.defaultSubject} tutor',
+              character.displayName,
               style: AppTextStyles.bodySmall,
             ),
             if (character.rarity != MochiRarity.standard) ...[
@@ -950,7 +950,7 @@ class _UnlockedDialog extends StatelessWidget {
             ],
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'You can now select this Mochi when creating a tutor!',
+              'You can now use this Mochi for studying!',
               style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),

@@ -22,7 +22,7 @@ class _SelfConsentScreenState extends ConsumerState<SelfConsentScreen> {
 
   static const _disclosures = [
     ('📝', 'Your notes stay yours',
-        'We keep notes and flashcards you upload to power your tutor. You can delete them anytime.'),
+        'We keep notes and flashcards you upload to power your Mochi. You can delete them anytime.'),
     ('💬', 'We remember chats & quizzes',
         'Your conversations and quiz results help Mochi get smarter. A linked parent can see these to keep you safe.'),
     ('🚫', 'Never sold, never trained on',
