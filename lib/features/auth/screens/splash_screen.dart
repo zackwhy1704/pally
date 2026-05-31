@@ -210,12 +210,23 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                             color: Color(0xFF1F1733),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 10),
                         const Text(
-                          'Your study buddy',
+                          'Learn with Mochi.',
                           style: TextStyle(
                             fontFamily: 'Nunito',
-                            fontSize: 14,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF7042ED),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Looking it up is so last season.',
+                          style: TextStyle(
+                            fontFamily: 'Nunito',
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
                             color: Color(0xFF6B618A),
                           ),
                         ),
