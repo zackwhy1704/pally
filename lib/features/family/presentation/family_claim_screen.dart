@@ -7,6 +7,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/family/family_service.dart';
+import 'package:pally/features/family/family_status_provider.dart';
 
 /// P4 — parent enters the 6-character code their child generated.
 class FamilyClaimScreen extends ConsumerStatefulWidget {
@@ -34,7 +35,10 @@ class _FamilyClaimScreenState extends ConsumerState<FamilyClaimScreen> {
     try {
       await ref.read(familyServiceProvider).claim(_code);
       if (!mounted) return;
-      PallyToast.success(context, 'Linked! 🎉');
+      // Refresh family status so Parent Mode becomes visible immediately.
+      ref.invalidate(familyStatusProvider);
+      if (!mounted) return;
+      PallyToast.success(context, 'Linked! 🎉 Parent Mode is now enabled.');
       context.go('/family');
     } on FamilyError catch (e) {
       if (mounted) PallyToast.error(context, e.message);
