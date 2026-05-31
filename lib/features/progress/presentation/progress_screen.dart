@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/router.dart';
+import 'package:pally/core/widgets/loading/pally_skeleton.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
-import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/features/progress/presentation/achievements_provider.dart';
@@ -65,7 +65,16 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
         ],
       ),
       body: progressAsync.when(
-        loading: () => const PallyLoadingSpinner(),
+        loading: () => const Padding(
+          padding: EdgeInsets.all(AppSpacing.md),
+          child: Column(children: [
+            PallyBlockSkeleton(height: 100),
+            SizedBox(height: AppSpacing.sm),
+            PallyBlockSkeleton(height: 80),
+            SizedBox(height: AppSpacing.sm),
+            PallyAvatarListSkeleton(count: 2),
+          ]),
+        ),
         error: (e, _) => PallyErrorCard(
           message: PallyError.from(e).userMessage,
           onRetry: () => ref.read(progressViewModelProvider.notifier).refresh(),

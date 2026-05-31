@@ -24,9 +24,11 @@ Widget _wrap(CollectionState s) {
 }
 
 void main() {
-  testWidgets('shows loading spinner while loading', (tester) async {
+  testWidgets('shows loading skeleton while loading', (tester) async {
     await tester.pumpWidget(_wrap(const CollectionState(isLoading: true)));
-    expect(find.byType(CircularProgressIndicator), findsAtLeastNWidgets(1));
+    // Loading now renders a shimmer skeleton (no CircularProgressIndicator).
+    // Verify the skeleton's grid structure is present.
+    expect(find.byType(GridView), findsAtLeastNWidgets(1));
   });
 
   testWidgets('shows error card with retry on failure', (tester) async {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
+import 'package:pally/core/widgets/loading/pally_skeleton.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
-import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/shared/models/avatar.dart';
@@ -32,7 +32,10 @@ class ChatTabScreen extends ConsumerWidget {
         centerTitle: true,
       ),
       body: avatarsAsync.when(
-        loading: () => const PallyLoadingSpinner(),
+        loading: () => const Padding(
+          padding: EdgeInsets.all(AppSpacing.md),
+          child: PallyAvatarListSkeleton(count: 3),
+        ),
         error: (_, __) => _EmptyView(),
         data: (avatars) => avatars.isEmpty
             ? _EmptyView()

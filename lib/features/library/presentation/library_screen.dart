@@ -9,7 +9,7 @@ import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_delete_tutor_dialog.dart';
-import 'package:pally/core/ui/pally_loading_spinner.dart';
+import 'package:pally/core/widgets/loading/pally_skeleton.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
@@ -32,7 +32,10 @@ class LibraryScreen extends ConsumerWidget {
         centerTitle: true,
       ),
       body: avatarsAsync.when(
-        loading: () => const PallyLoadingSpinner(),
+        loading: () => const Padding(
+          padding: EdgeInsets.all(AppSpacing.md),
+          child: PallyAvatarListSkeleton(),
+        ),
         error: (e, _) => PallyErrorCard(
           message: PallyError.from(e).userMessage,
           onRetry: () => ref.read(libraryViewModelProvider.notifier).refresh(),

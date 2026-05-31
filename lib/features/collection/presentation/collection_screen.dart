@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/widgets/loading/pally_skeleton.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
-import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/features/collection/presentation/collection_view_model.dart';
 
 /// Mochi Album — the "collect them all" screen. Owned characters show
@@ -28,7 +28,10 @@ class CollectionScreen extends ConsumerWidget {
         centerTitle: true,
       ),
       body: state.isLoading
-          ? const PallyLoadingSpinner()
+          ? const Padding(
+            padding: EdgeInsets.all(AppSpacing.md),
+            child: PallyGridSkeleton(),
+          )
           : state.error != null
               ? Padding(
                   padding: const EdgeInsets.all(AppSpacing.md),

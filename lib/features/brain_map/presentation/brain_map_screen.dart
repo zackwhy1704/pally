@@ -3,12 +3,12 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
+import 'package:pally/core/widgets/loading/pally_skeleton.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
-import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/features/brain_map/presentation/brain_map_view_model.dart';
 
 /// Dark-themed canvas that lays out every wiki page as a glowing topic node
@@ -52,7 +52,10 @@ class _BrainMapScreenState extends ConsumerState<BrainMapScreen> {
         ],
       ),
       body: asyncState.when(
-        loading: () => const PallyLoadingSpinner(),
+        loading: () => const Padding(
+          padding: EdgeInsets.all(AppSpacing.md),
+          child: PallyAvatarListSkeleton(count: 2),
+        ),
         error: (e, _) => PallyErrorCard(
           message: PallyError.from(e).userMessage,
           onRetry: () => ref
