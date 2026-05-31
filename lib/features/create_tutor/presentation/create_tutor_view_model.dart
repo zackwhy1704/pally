@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:pally/features/home/presentation/home_view_model.dart';
+import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/mochi_character.dart';
 import 'package:pally/app/api_client.dart';
@@ -132,6 +134,10 @@ class CreateTutorViewModel extends _$CreateTutorViewModel {
       );
       final avatar = Avatar.fromJson(response.data!);
       state = state.copyWith(isLoading: false);
+      // Invalidate the home and library lists so they re-fetch immediately
+      // when the user lands back on those screens — no manual pull-to-refresh needed.
+      ref.invalidate(homeViewModelProvider);
+      ref.invalidate(libraryViewModelProvider);
       return avatar.id;
     } on DioException catch (e) {
       // Never fabricate a stub-new-{ts} id on network failure. Returning
