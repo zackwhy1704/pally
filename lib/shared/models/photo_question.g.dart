@@ -31,6 +31,8 @@ _$QuestionAnswerImpl _$$QuestionAnswerImplFromJson(Map<String, dynamic> json) =>
           (json['steps'] as List<dynamic>?)?.map((e) => e as String).toList() ??
               const [],
       explanation: json['explanation'] as String? ?? '',
+      visualType: json['visualType'] as String? ?? 'NONE',
+      calculatorVerified: json['calculatorVerified'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$QuestionAnswerImplToJson(
@@ -41,6 +43,8 @@ Map<String, dynamic> _$$QuestionAnswerImplToJson(
       'answer': instance.answer,
       'steps': instance.steps,
       'explanation': instance.explanation,
+      'visualType': instance.visualType,
+      'calculatorVerified': instance.calculatorVerified,
     };
 
 _$HomeworkScanResultImpl _$$HomeworkScanResultImplFromJson(

@@ -6,6 +6,7 @@ import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/ui/pally_delete_tutor_dialog.dart';
 import 'package:pally/core/ui/typing_indicator.dart';
@@ -378,7 +379,8 @@ class _MessageList extends StatelessWidget {
 
     // Count trailing indicator slots
     final trailingCount = (isTyping ? 1 : 0) + (isProcessingPhoto ? 1 : 0);
-    final itemCount = messages.length + trailingCount;
+    // +1 for the session disclaimer at index 0
+    final itemCount = messages.length + trailingCount + 1;
 
     return ListView.builder(
       controller: scrollController,
@@ -386,8 +388,11 @@ class _MessageList extends StatelessWidget {
           horizontal: AppSpacing.md, vertical: AppSpacing.sm),
       itemCount: itemCount,
       itemBuilder: (context, index) {
-        // Trailing typing indicator
-        if (isTyping && index == messages.length) {
+        // Item 0 — once-per-session safety disclaimer
+        if (index == 0) return const _SessionDisclaimer();
+        final adjusted = index - 1;
+        // Trailing typing indicator (adjusted for disclaimer slot)
+        if (isTyping && adjusted == messages.length) {
           return const Padding(
             padding: EdgeInsets.only(bottom: AppSpacing.sm),
             child: Align(
@@ -398,7 +403,7 @@ class _MessageList extends StatelessWidget {
         }
         // Trailing photo processing bubble
         if (isProcessingPhoto &&
-            index == messages.length + (isTyping ? 1 : 0)) {
+            adjusted == messages.length + (isTyping ? 1 : 0)) {
           return Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: PhotoProcessingBubble(
@@ -407,7 +412,7 @@ class _MessageList extends StatelessWidget {
           );
         }
 
-        return _MessageBubble(message: messages[index], avatarId: avatarId);
+        return _MessageBubble(message: messages[adjusted], avatarId: avatarId);
       },
     );
   }
@@ -809,6 +814,142 @@ class _WelcomePrompt extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ── Session disclaimer (D1) ───────────────────────────────────────────────────
+// Shown once per session at the top of the message list. Uses SharedPreferences
+// keyed by today's date so it re-appears the next day. Dismisses on tap.
+
+class _SessionDisclaimer extends StatefulWidget {
+  const _SessionDisclaimer();
+
+  @override
+  State<_SessionDisclaimer> createState() => _SessionDisclaimerState();
+}
+
+class _SessionDisclaimerState extends State<_SessionDisclaimer> {
+  bool _dismissed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkDismissed();
+  }
+
+  Future<void> _checkDismissed() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'chat_disclaimer_${DateTime.now().toIso8601String().substring(0, 10)}';
+    if (mounted) setState(() => _dismissed = prefs.getBool(key) ?? false);
+  }
+
+  Future<void> _dismiss() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'chat_disclaimer_${DateTime.now().toIso8601String().substring(0, 10)}';
+    await prefs.setBool(key, true);
+    if (mounted) setState(() => _dismissed = true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_dismissed) return const SizedBox.shrink();
+    return GestureDetector(
+      onTap: _dismiss,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+        decoration: BoxDecoration(
+          color: AppColors.surf2,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: AppColors.outline),
+        ),
+        child: Row(
+          children: [
+            const Text('💡', style: TextStyle(fontSize: 14)),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Text(
+                'Mochi can make mistakes — always double-check your work!',
+                style:
+                    AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
+              ),
+            ),
+            const Icon(Icons.close_rounded,
+                size: 14, color: AppColors.text3),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Inline amber strip shown under a tutor message that contains a
+/// calculation or a visual disclaimer (D2).
+class DoubleCheckStrip extends StatelessWidget {
+  const DoubleCheckStrip({
+    super.key,
+    this.calculatorVerified = false,
+  });
+
+  final bool calculatorVerified;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(
+          left: AppSpacing.md, right: AppSpacing.md, bottom: AppSpacing.xs),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(
+              color: AppColors.amberL,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                  color: AppColors.amber.withValues(alpha: 0.4)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.warning_amber_rounded,
+                    size: 12, color: AppColors.amber),
+                const SizedBox(width: 4),
+                Text(
+                  'Double-check the numbers against your worksheet',
+                  style: AppTextStyles.caption
+                      .copyWith(color: AppColors.amber),
+                ),
+              ],
+            ),
+          ),
+          if (calculatorVerified) ...[
+            const SizedBox(width: AppSpacing.xs),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: AppColors.greenL,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.check_circle_rounded,
+                      size: 12, color: AppColors.green),
+                  const SizedBox(width: 4),
+                  Text(
+                    'checked with calculator',
+                    style: AppTextStyles.caption
+                        .copyWith(color: AppColors.green),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }

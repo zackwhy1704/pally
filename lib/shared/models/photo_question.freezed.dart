@@ -233,7 +233,10 @@ mixin _$QuestionAnswer {
   String get questionText => throw _privateConstructorUsedError;
   String get answer => throw _privateConstructorUsedError;
   List<String> get steps => throw _privateConstructorUsedError;
-  String get explanation => throw _privateConstructorUsedError;
+  String get explanation =>
+      throw _privateConstructorUsedError; // Tier 0/2 fields from the backend visual classifier
+  String get visualType => throw _privateConstructorUsedError;
+  bool get calculatorVerified => throw _privateConstructorUsedError;
 
   /// Serializes this QuestionAnswer to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -256,7 +259,9 @@ abstract class $QuestionAnswerCopyWith<$Res> {
       String questionText,
       String answer,
       List<String> steps,
-      String explanation});
+      String explanation,
+      String visualType,
+      bool calculatorVerified});
 }
 
 /// @nodoc
@@ -279,6 +284,8 @@ class _$QuestionAnswerCopyWithImpl<$Res, $Val extends QuestionAnswer>
     Object? answer = null,
     Object? steps = null,
     Object? explanation = null,
+    Object? visualType = null,
+    Object? calculatorVerified = null,
   }) {
     return _then(_value.copyWith(
       questionId: null == questionId
@@ -301,6 +308,14 @@ class _$QuestionAnswerCopyWithImpl<$Res, $Val extends QuestionAnswer>
           ? _value.explanation
           : explanation // ignore: cast_nullable_to_non_nullable
               as String,
+      visualType: null == visualType
+          ? _value.visualType
+          : visualType // ignore: cast_nullable_to_non_nullable
+              as String,
+      calculatorVerified: null == calculatorVerified
+          ? _value.calculatorVerified
+          : calculatorVerified // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -318,7 +333,9 @@ abstract class _$$QuestionAnswerImplCopyWith<$Res>
       String questionText,
       String answer,
       List<String> steps,
-      String explanation});
+      String explanation,
+      String visualType,
+      bool calculatorVerified});
 }
 
 /// @nodoc
@@ -339,6 +356,8 @@ class __$$QuestionAnswerImplCopyWithImpl<$Res>
     Object? answer = null,
     Object? steps = null,
     Object? explanation = null,
+    Object? visualType = null,
+    Object? calculatorVerified = null,
   }) {
     return _then(_$QuestionAnswerImpl(
       questionId: null == questionId
@@ -361,6 +380,14 @@ class __$$QuestionAnswerImplCopyWithImpl<$Res>
           ? _value.explanation
           : explanation // ignore: cast_nullable_to_non_nullable
               as String,
+      visualType: null == visualType
+          ? _value.visualType
+          : visualType // ignore: cast_nullable_to_non_nullable
+              as String,
+      calculatorVerified: null == calculatorVerified
+          ? _value.calculatorVerified
+          : calculatorVerified // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -373,7 +400,9 @@ class _$QuestionAnswerImpl implements _QuestionAnswer {
       required this.questionText,
       required this.answer,
       final List<String> steps = const [],
-      this.explanation = ''})
+      this.explanation = '',
+      this.visualType = 'NONE',
+      this.calculatorVerified = false})
       : _steps = steps;
 
   factory _$QuestionAnswerImpl.fromJson(Map<String, dynamic> json) =>
@@ -397,10 +426,17 @@ class _$QuestionAnswerImpl implements _QuestionAnswer {
   @override
   @JsonKey()
   final String explanation;
+// Tier 0/2 fields from the backend visual classifier
+  @override
+  @JsonKey()
+  final String visualType;
+  @override
+  @JsonKey()
+  final bool calculatorVerified;
 
   @override
   String toString() {
-    return 'QuestionAnswer(questionId: $questionId, questionText: $questionText, answer: $answer, steps: $steps, explanation: $explanation)';
+    return 'QuestionAnswer(questionId: $questionId, questionText: $questionText, answer: $answer, steps: $steps, explanation: $explanation, visualType: $visualType, calculatorVerified: $calculatorVerified)';
   }
 
   @override
@@ -415,13 +451,24 @@ class _$QuestionAnswerImpl implements _QuestionAnswer {
             (identical(other.answer, answer) || other.answer == answer) &&
             const DeepCollectionEquality().equals(other._steps, _steps) &&
             (identical(other.explanation, explanation) ||
-                other.explanation == explanation));
+                other.explanation == explanation) &&
+            (identical(other.visualType, visualType) ||
+                other.visualType == visualType) &&
+            (identical(other.calculatorVerified, calculatorVerified) ||
+                other.calculatorVerified == calculatorVerified));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, questionId, questionText, answer,
-      const DeepCollectionEquality().hash(_steps), explanation);
+  int get hashCode => Object.hash(
+      runtimeType,
+      questionId,
+      questionText,
+      answer,
+      const DeepCollectionEquality().hash(_steps),
+      explanation,
+      visualType,
+      calculatorVerified);
 
   /// Create a copy of QuestionAnswer
   /// with the given fields replaced by the non-null parameter values.
@@ -446,7 +493,9 @@ abstract class _QuestionAnswer implements QuestionAnswer {
       required final String questionText,
       required final String answer,
       final List<String> steps,
-      final String explanation}) = _$QuestionAnswerImpl;
+      final String explanation,
+      final String visualType,
+      final bool calculatorVerified}) = _$QuestionAnswerImpl;
 
   factory _QuestionAnswer.fromJson(Map<String, dynamic> json) =
       _$QuestionAnswerImpl.fromJson;
@@ -460,7 +509,11 @@ abstract class _QuestionAnswer implements QuestionAnswer {
   @override
   List<String> get steps;
   @override
-  String get explanation;
+  String get explanation; // Tier 0/2 fields from the backend visual classifier
+  @override
+  String get visualType;
+  @override
+  bool get calculatorVerified;
 
   /// Create a copy of QuestionAnswer
   /// with the given fields replaced by the non-null parameter values.

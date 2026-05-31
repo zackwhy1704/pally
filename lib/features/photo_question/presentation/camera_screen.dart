@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 
 const _kDark = Color(0xFF0F0A1A);
@@ -191,8 +192,21 @@ class _CameraScreenState extends State<CameraScreen>
               ),
             ),
 
-            // ── LAYER 4: Instruction banner ───────────────────────────────
-            // Positioned direct Stack child; IgnorePointer wraps the content.
+            // ── LAYER 4a: Graph/chart warning strip ───────────────────────
+            // Always visible (not hidden by tips). Tapping "What can I read?"
+            // opens the guidance screen; "Type instead" pops with null result.
+            if (!_showTips)
+              Positioned(
+                top: MediaQuery.of(context).padding.top + 56,
+                left: 0,
+                right: 0,
+                child: _GraphWarningStrip(
+                  onLearnMore: () => context.push('/ocr-guide'),
+                  onTypeInstead: () => context.pop(null),
+                ),
+              ),
+
+            // ── LAYER 4b: Instruction banner ─────────────────────────────
             if (!_showTips)
               Positioned(
                 bottom: screenH * 0.27,
@@ -716,6 +730,88 @@ class _BottomControls extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ── Graph warning strip ───────────────────────────────────────────────────────
+
+class _GraphWarningStrip extends StatelessWidget {
+  const _GraphWarningStrip({
+    required this.onLearnMore,
+    required this.onTypeInstead,
+  });
+
+  final VoidCallback onLearnMore;
+  final VoidCallback onTypeInstead;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+        decoration: BoxDecoration(
+          color: AppColors.amber.withValues(alpha: 0.92),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          children: [
+            const Text('⚠️', style: TextStyle(fontSize: 13)),
+            const SizedBox(width: 6),
+            const Expanded(
+              child: Text(
+                'Graphs, charts & shapes don\'t scan well. Type those values yourself.',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Nunito',
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(width: 4),
+            GestureDetector(
+              onTap: onLearnMore,
+              child: Text(
+                'What can I read? ›',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.85),
+                  fontSize: 9,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: 'Nunito',
+                  decoration: TextDecoration.underline,
+                  decorationColor: Colors.white.withValues(alpha: 0.6),
+                ),
+              ),
+            ),
+            const SizedBox(width: 6),
+            GestureDetector(
+              onTap: onTypeInstead,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 6, vertical: 3),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Text(
+                  'Type instead',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 9,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: 'Nunito',
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

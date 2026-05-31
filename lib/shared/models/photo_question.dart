@@ -32,6 +32,9 @@ class QuestionAnswer with _$QuestionAnswer {
     required String answer,
     @Default([]) List<String> steps,
     @Default('') String explanation,
+    // Tier 0/2 fields from the backend visual classifier
+    @Default('NONE') String visualType,
+    @Default(false) bool calculatorVerified,
   }) = _QuestionAnswer;
 
   factory QuestionAnswer.fromJson(Map<String, dynamic> json) =>

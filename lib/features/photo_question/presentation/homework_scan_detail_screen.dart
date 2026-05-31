@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/features/chat/presentation/chat_screen.dart';
 import 'package:pally/features/chat/presentation/widgets/answer_card.dart';
 import 'package:pally/shared/models/photo_question.dart';
 import 'package:share_plus/share_plus.dart' as share_plus;
@@ -78,7 +79,13 @@ class _HomeworkScanDetailScreenState extends State<HomeworkScanDetailScreen> {
 
           // Header banner
           _ResultBanner(count: answers.length),
-          const SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: AppSpacing.xs),
+
+          // Double-check reminder (D3)
+          DoubleCheckStrip(
+            calculatorVerified: answers.any((a) => a.calculatorVerified),
+          ),
+          const SizedBox(height: AppSpacing.xs),
 
           // Answer cards — all individually expandable
           ...answers.asMap().entries.map((entry) {

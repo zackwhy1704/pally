@@ -46,6 +46,7 @@ import 'package:pally/features/groups/presentation/group_detail_screen.dart';
 import 'package:pally/features/groups/presentation/group_list_screen.dart';
 import 'package:pally/features/teach_mochi/presentation/teach_mochi_screen.dart';
 import 'package:pally/features/brain_health/presentation/brain_health_screen.dart';
+import 'package:pally/features/ocr_awareness/screens/ocr_what_can_read.dart';
 import 'package:pally/shared/models/photo_question.dart';
 
 part 'router.g.dart';
@@ -524,6 +525,15 @@ class CameraRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const CameraScreen();
+}
+
+@TypedGoRoute<OcrGuideRoute>(path: '/ocr-guide')
+class OcrGuideRoute extends GoRouteData {
+  const OcrGuideRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const OcrWhatCanReadScreen();
 }
 
 @TypedGoRoute<PhotoPreviewRoute>(path: '/avatar/:avatarId/photo-preview')
