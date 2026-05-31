@@ -20,7 +20,9 @@ class FlashCardState {
     this.isFlipped = false,
     this.filter = FlashCardFilter.all,
     this.isLoading = false,
+    this.isGenerating = false,
     this.isRating = false,
+    this.hasWikiPages,
     this.error,
   });
 
@@ -29,7 +31,12 @@ class FlashCardState {
   final bool isFlipped;
   final FlashCardFilter filter;
   final bool isLoading;
+  /// True while the on-demand generate call is running.
+  final bool isGenerating;
   final bool isRating;
+  /// null = unknown (not yet checked); true = avatar has wiki pages;
+  /// false = no notes uploaded yet.
+  final bool? hasWikiPages;
   final String? error;
 
   List<FlashCard> get filteredCards {
@@ -61,7 +68,9 @@ class FlashCardState {
     bool? isFlipped,
     FlashCardFilter? filter,
     bool? isLoading,
+    bool? isGenerating,
     bool? isRating,
+    Object? hasWikiPages = _sentinel,
     Object? error = _sentinel,
   }) {
     return FlashCardState(
@@ -70,7 +79,11 @@ class FlashCardState {
       isFlipped: isFlipped ?? this.isFlipped,
       filter: filter ?? this.filter,
       isLoading: isLoading ?? this.isLoading,
+      isGenerating: isGenerating ?? this.isGenerating,
       isRating: isRating ?? this.isRating,
+      hasWikiPages: hasWikiPages == _sentinel
+          ? this.hasWikiPages
+          : hasWikiPages as bool?,
       error: error == _sentinel ? this.error : error as String?,
     );
   }
@@ -89,18 +102,13 @@ class FlashCardViewModel extends _$FlashCardViewModel {
     return const FlashCardState(isLoading: true);
   }
 
-  Future<void> _loadCards() async {
+  Future<void> _loadCards({bool autoGenerate = true}) async {
     try {
       final dio = ref.read(dioProvider);
-      // /flashcards returns ApiResponse<List<FlashcardResponse>> — after
-      // _ApiResponseInterceptor strips the envelope, the body is a bare
-      // List. Typing the call <Map> crashes at Dio's transport layer
-      // before parsing. Use <dynamic> and branch on the runtime shape.
       final response = await dio
           .get<dynamic>('/api/v1/avatars/$_avatarId/flashcards');
       final data = response.data;
       // Backend returns ApiResponse<List> → { "data": [...] }
-      // Unwrap defensively: handle bare List, data['data'], data['cards']
       final List<dynamic> list = switch (data) {
         List<dynamic> l => l,
         Map m when m['data'] is List => m['data'] as List<dynamic>,
@@ -111,11 +119,18 @@ class FlashCardViewModel extends _$FlashCardViewModel {
           .map((e) => FlashCard.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList();
       state = state.copyWith(cards: cards, isLoading: false);
+
+      // Auto-backfill: if the deck is empty on first load, try generating.
+      // The generate endpoint returns hasWikiPages so we know which empty
+      // state to show even when generation produces 0 cards.
+      if (cards.isEmpty && autoGenerate) {
+        await _generateCards(fromAutoBackfill: true);
+        return;
+      }
       unawaited(_rescheduleSrs());
     } on DioException catch (e, st) {
       appLog.w('[Flashcards] load failed', error: e, stackTrace: st);
       if (e.response?.statusCode == 404) {
-        // Avatar has no deck yet — that's an empty state, not an error.
         state = state.copyWith(cards: const [], isLoading: false);
         return;
       }
@@ -124,19 +139,40 @@ class FlashCardViewModel extends _$FlashCardViewModel {
           ? 'No internet connection.'
           : 'Could not load flashcards.';
       state = state.copyWith(
-        cards: const [],
-        isLoading: false,
-        error: errorMsg,
-      );
+          cards: const [], isLoading: false, error: errorMsg);
     } catch (e, st) {
       appLog.e('[Flashcards] unexpected error', error: e, stackTrace: st);
       state = state.copyWith(
-        cards: const [],
-        isLoading: false,
-        error: 'Something went wrong.',
-      );
+          cards: const [], isLoading: false, error: 'Something went wrong.');
     }
   }
+
+  /// Calls POST /flashcards/generate, updates hasWikiPages, then reloads.
+  /// [fromAutoBackfill] prevents re-triggering generate after reload.
+  Future<void> _generateCards({bool fromAutoBackfill = false}) async {
+    state = state.copyWith(isGenerating: true);
+    try {
+      final dio = ref.read(dioProvider);
+      final res = await dio.post<dynamic>(
+          '/api/v1/avatars/$_avatarId/flashcards/generate');
+      final body = res.data is Map ? res.data as Map : {};
+      final inner = body['data'] is Map ? body['data'] as Map : body;
+      final generated = (inner['generated'] as num?)?.toInt() ?? 0;
+      final hasPages = (inner['hasWikiPages'] as bool?) ?? false;
+      appLog.i('[Flashcards] generate result: $generated cards, hasPages=$hasPages');
+      state = state.copyWith(hasWikiPages: hasPages, isGenerating: false);
+      if (generated > 0) {
+        // Real cards were created — reload to show them.
+        state = state.copyWith(isLoading: true);
+        await _loadCards(autoGenerate: false);
+      }
+    } catch (e) {
+      appLog.w('[Flashcards] generate failed: $e');
+      state = state.copyWith(isGenerating: false);
+    }
+  }
+
+  Future<void> generateCards() => _generateCards();
 
   /// Recomputes and re-arms the per-avatar SRS notification slot based on the
   /// current deck's `nextReview` dates. Best-effort — failures don't propagate.

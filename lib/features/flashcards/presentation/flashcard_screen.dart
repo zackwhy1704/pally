@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
-import 'package:pally/core/ui/pally_loading_spinner.dart';
+// pally_loading_spinner removed — replaced by _GeneratingView inline
 import 'package:pally/features/flashcards/presentation/flashcard_view_model.dart';
 import 'package:pally/shared/models/flash_card.dart';
 
@@ -26,14 +27,21 @@ class FlashcardScreen extends ConsumerWidget {
         title: Text('Flashcards', style: AppTextStyles.title),
         centerTitle: true,
         actions: [
+          // Regenerate action — visible when cards exist or pages exist
+          if (!state.isGenerating && !state.isLoading)
+            IconButton(
+              icon: const Icon(Icons.auto_fix_high_rounded),
+              tooltip: 'Regenerate cards',
+              onPressed: notifier.generateCards,
+            ),
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
             onPressed: notifier.refresh,
           ),
         ],
       ),
-      body: state.isLoading
-          ? const PallyLoadingSpinner()
+      body: state.isLoading || state.isGenerating
+          ? _GeneratingView(isGenerating: state.isGenerating)
           : state.error != null
               ? PallyErrorCard(
                   message: state.error!,
@@ -41,13 +49,24 @@ class FlashcardScreen extends ConsumerWidget {
                 )
               : Column(
                   children: [
-                    _FilterChips(
-                      selected: state.filter,
-                      onSelect: notifier.setFilter,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
+                    // Only show filters when there are cards to filter
+                    if (state.cards.isNotEmpty)
+                      _FilterChips(
+                        selected: state.filter,
+                        onSelect: notifier.setFilter,
+                      ),
+                    if (state.cards.isNotEmpty)
+                      const SizedBox(height: AppSpacing.md),
                     if (!state.hasCards)
-                      const Expanded(child: _EmptyFilterView())
+                      Expanded(
+                        child: _EmptyState(
+                          avatarId: avatarId,
+                          hasWikiPages: state.hasWikiPages,
+                          filter: state.filter,
+                          totalCards: state.cards.length,
+                          onGenerate: notifier.generateCards,
+                        ),
+                      )
                     else ...[
                       _CardCounter(
                         current: state.currentIndex + 1,
@@ -370,19 +389,157 @@ class _RateButton extends StatelessWidget {
   }
 }
 
-class _EmptyFilterView extends StatelessWidget {
-  const _EmptyFilterView();
+/// Shown while the auto-generate or manual generate call is in progress.
+class _GeneratingView extends StatelessWidget {
+  const _GeneratingView({required this.isGenerating});
+  final bool isGenerating;
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.style_rounded, size: 60, color: AppColors.text3),
-          const SizedBox(height: AppSpacing.md),
-          Text('No cards in this filter', style: AppTextStyles.body),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const CircularProgressIndicator(color: AppColors.purple),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              isGenerating
+                  ? 'Making flashcards from your notes...'
+                  : 'Loading...',
+              style:
+                  AppTextStyles.body.copyWith(color: AppColors.text2),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Context-aware empty state — explains WHY it's empty and what to do.
+class _EmptyState extends StatelessWidget {
+  const _EmptyState({
+    required this.avatarId,
+    required this.hasWikiPages,
+    required this.filter,
+    required this.totalCards,
+    required this.onGenerate,
+  });
+
+  final String avatarId;
+  final bool? hasWikiPages;
+  final FlashCardFilter filter;
+  final int totalCards;
+  final VoidCallback onGenerate;
+
+  @override
+  Widget build(BuildContext context) {
+    // Case 1: Cards exist but none match the active filter.
+    if (totalCards > 0) {
+      final (icon, message) = switch (filter) {
+        FlashCardFilter.due => (
+            Icons.check_circle_outline_rounded,
+            'All caught up! No cards due right now.\nCome back later or switch to All.',
+          ),
+        FlashCardFilter.weak => (
+            Icons.thumb_up_rounded,
+            'No weak cards yet.\nRate some cards hard to see them here.',
+          ),
+        FlashCardFilter.done => (
+            Icons.hourglass_empty_rounded,
+            'No easy cards yet.\nRate some cards easy to see them here.',
+          ),
+        _ => (Icons.style_rounded, 'No cards in this filter.'),
+      };
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 56, color: AppColors.text3),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                message,
+                style: AppTextStyles.body.copyWith(color: AppColors.text2),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Case 2: No cards at all AND no wiki pages — needs an upload first.
+    if (hasWikiPages == false) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('📚', style: TextStyle(fontSize: 56)),
+              const SizedBox(height: AppSpacing.md),
+              Text('No flashcards yet',
+                  style: AppTextStyles.title, textAlign: TextAlign.center),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                'Upload notes or a document for this tutor and cards will be made automatically.',
+                style: AppTextStyles.body.copyWith(color: AppColors.text2),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              FilledButton.icon(
+                onPressed: () =>
+                    UploadRoute(avatarId: avatarId).push(context),
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.purple,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                ),
+                icon: const Icon(Icons.upload_file_rounded, size: 18),
+                label: const Text('Upload notes'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Case 3: Has wiki pages but 0 cards — silent generation failure.
+    // hasWikiPages == true OR null (still unknown / checking).
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('✨', style: TextStyle(fontSize: 56)),
+            const SizedBox(height: AppSpacing.md),
+            Text('Ready to make cards',
+                style: AppTextStyles.title, textAlign: TextAlign.center),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              'Your tutor has notes but no cards yet.\nTap the button below to generate them.',
+              style: AppTextStyles.body.copyWith(color: AppColors.text2),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            FilledButton.icon(
+              onPressed: onGenerate,
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.purple,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14)),
+              ),
+              icon: const Icon(Icons.auto_fix_high_rounded, size: 18),
+              label: const Text('Generate flashcards'),
+            ),
+          ],
+        ),
       ),
     );
   }
