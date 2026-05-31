@@ -583,8 +583,21 @@ class _CompletionView extends StatelessWidget {
                 ],
               ),
             ),
+            // Part 3 — Show the adaptation signal honestly, only when the
+            // harness actually fired on a tricky topic.
+            if (matrix?.priorityReview != null ||
+                (matrix?.misconception.isNotEmpty ?? false) ||
+                (matrix?.knownGap.isNotEmpty ?? false)) ...[
+              const SizedBox(height: AppSpacing.md),
+              _MemoryNoticeCard(
+                topicSlug: matrix?.priorityReview
+                    ?? matrix?.misconception.firstOrNull
+                    ?? matrix?.knownGap.firstOrNull
+                    ?? '',
+              ),
+            ],
             if (matrix != null && matrix!.hasAny) ...[
-              const SizedBox(height: AppSpacing.xl),
+              const SizedBox(height: AppSpacing.md),
               _MasteryMatrixCard(matrix: matrix!),
             ],
             const SizedBox(height: AppSpacing.xl),
@@ -871,6 +884,49 @@ class _MasteryQuadrant extends StatelessWidget {
               Text('+${items.length - 3} more',
                   style: AppTextStyles.caption.copyWith(color: color)),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Shown after a quiz only when the harness actually detected a tricky topic.
+/// Maps to real state — never fabricated.
+class _MemoryNoticeCard extends StatelessWidget {
+  const _MemoryNoticeCard({required this.topicSlug});
+  final String topicSlug;
+
+  @override
+  Widget build(BuildContext context) {
+    // Convert a slug like "photosynthesis-chapter-3" to "Photosynthesis Chapter 3"
+    final display = topicSlug
+        .replaceAll('-', ' ')
+        .replaceAll('_', ' ')
+        .split(' ')
+        .map((w) => w.isEmpty ? '' : '${w[0].toUpperCase()}${w.substring(1)}')
+        .join(' ');
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: AppColors.amberL,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.amber.withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        children: [
+          const Text('🧠', style: TextStyle(fontSize: 18)),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Text(
+              display.isNotEmpty
+                  ? 'I noticed $display is tricky for you — I\'ll bring it back soon.'
+                  : "I noticed some topics were tricky — I'll bring them back soon.",
+              style: AppTextStyles.bodySmall
+                  .copyWith(color: AppColors.amber, fontWeight: FontWeight.w600),
+            ),
+          ),
         ],
       ),
     );

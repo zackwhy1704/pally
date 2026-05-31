@@ -9,6 +9,7 @@ import 'package:pally/features/create_tutor/presentation/grade_step.dart';
 import 'package:pally/features/create_tutor/presentation/subject_step.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/create_tutor/presentation/create_tutor_view_model.dart';
+import 'package:pally/features/home/widgets/how_pally_is_different.dart';
 
 class CreateTutorScreen extends ConsumerWidget {
   const CreateTutorScreen({super.key});
@@ -82,6 +83,8 @@ class CreateTutorScreen extends ConsumerWidget {
                       final id = await vm.createAvatar();
                       if (id != null && context.mounted) {
                         const HomeRoute().go(context);
+                        // Show "How Pally is different" once after first tutor creation.
+                        await HowPallyIsDifferent.maybeShow(context);
                       }
                     }
                   : null,

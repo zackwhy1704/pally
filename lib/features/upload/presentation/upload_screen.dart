@@ -146,8 +146,14 @@ class _HeroPanel extends StatelessWidget {
               children: [
                 _SpeechBubble(
                   text: avatar != null
-                      ? 'Upload your ${avatar!.subject} notes and I\'ll study them! 📚'
-                      : 'Upload your notes and I\'ll study them! 📚',
+                      ? 'Teach me your ${avatar!.subject} material — your notes become my brain! 🧠'
+                      : 'Teach me your material — I only learn from what you give me! 🧠',
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Your notes become my brain.',
+                  style: AppTextStyles.caption.copyWith(
+                      color: AppColors.text2),
                 ),
               ],
             ),

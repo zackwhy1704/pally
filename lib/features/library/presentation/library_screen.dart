@@ -170,9 +170,15 @@ class _AvatarRow extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     avatar.hasKnowledge
-                        ? '${avatar.wikiPageCount} page${avatar.wikiPageCount == 1 ? '' : 's'} learned'
-                        : 'No content yet',
-                    style: AppTextStyles.caption,
+                        ? '🧠 Trained on ${avatar.wikiPageCount} page${avatar.wikiPageCount == 1 ? '' : 's'} of your material'
+                        : '📂 No notes yet — teach me your material!',
+                    style: AppTextStyles.caption.copyWith(
+                      color: avatar.hasKnowledge
+                          ? AppColors.purple
+                          : AppColors.text3,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),

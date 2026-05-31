@@ -19,6 +19,7 @@ import 'package:pally/features/subscription/entitlement_provider.dart';
 import 'package:pally/features/subscription/subscription_service.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/features/home/widgets/how_pally_is_different.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -398,6 +399,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const _SectionHeader(title: 'About'),
           _SettingsCard(
             children: [
+              _TappableTile(
+                icon: Icons.lightbulb_outline_rounded,
+                label: 'Why Pally is different',
+                trailing: const Icon(Icons.chevron_right_rounded,
+                    size: 16, color: AppColors.text3),
+                onTap: () => HowPallyIsDifferent.show(context),
+              ),
+              const Divider(height: 1, color: AppColors.outline),
               const _InfoTile(
                 icon: Icons.info_outline_rounded,
                 label: 'Version',
