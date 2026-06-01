@@ -6,6 +6,8 @@ import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/theme/app_sizing.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/ui/pally_delete_tutor_dialog.dart';
@@ -261,22 +263,26 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
         // crossAxisAlignment centres children on the content-height axis.
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // ← Back — touch target set by IconButton (never hardcoded)
+          // ← Back — use GoRouter.of(context).pop() so the routing
+          // system pops the correct navigator entry regardless of whether
+          // the chat screen is on the root or a nested navigator.
+          // Navigator.of(context).pop() was finding the shell's inner
+          // navigator (which had no entries) and silently doing nothing.
           IconButton(
             icon: const Icon(Icons.arrow_back_ios_new_rounded),
             onPressed: () {
-              if (Navigator.of(context).canPop()) {
-                Navigator.of(context).pop();
+              final router = GoRouter.of(context);
+              if (router.canPop()) {
+                router.pop();
               } else {
                 const HomeRoute().go(context);
               }
             },
           ),
-          // Avatar circle — 36 dp is a DESIGN TOKEN (avatar badge size),
-          // not a layout hack. It's the same value used on every screen.
+          // Avatar circle — AppSizing.avatarMd (36) is a design token.
           SizedBox(
-            width: 36,
-            height: 36,
+            width: AppSizing.avatarMd,
+            height: AppSizing.avatarMd,
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: avatar != null
@@ -286,18 +292,22 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
               ),
               child: Center(
                 child: avatar != null
-                    ? CharacterWidget(character: avatar!.character, size: 28)
+                    ? CharacterWidget(
+                        character: avatar!.character, size: AppSizing.avatarSm)
                     : const Icon(Icons.smart_toy_outlined,
-                        color: AppColors.purple, size: 18),
+                        color: AppColors.purple, size: AppSizing.icon18),
               ),
             ),
           ),
           const SizedBox(width: AppSpacing.xs),
 
-          // Name text — Expanded(flex:1): takes ALL remaining space after
-          // the toggle and fixed widgets are measured. This is the
-          // "match_parent" / flex-1 equivalent from ConstraintLayout.
+          // Name text — Expanded(flex:1): takes 1 part of the remaining
+          // space after fixed-width items (back, avatar, gap, menu) are
+          // measured.  Using Expanded here (rather than a plain non-flex
+          // child) guarantees the Row can NEVER overflow: flex children
+          // fill exactly the leftover space and never exceed it.
           Expanded(
+            flex: 1,
             child: Text(
               avatar?.name ?? 'Loading…',
               style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w700),
@@ -306,26 +316,33 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
             ),
           ),
 
-          // Mode toggle — self-sizes to 42 % of screen width via
-          // LayoutBuilder inside TeachingModeToggle (see that file).
-          // No width is specified here; the Row measures it with unbounded
-          // constraints, the toggle reads MediaQuery, and the Expanded text
-          // above gets whatever is left — fully adaptive on every device.
-          Builder(builder: (ctx) {
-            if (ModalRoute.of(ctx)?.isCurrent == true) {
-              TourAnchors.modeToggleCtx = ctx;
-            }
-            return TeachingModeToggle(
-              mode: chatState.teachingMode,
-              onToggle: () {
-                ref.read(chatViewModelProvider(avatarId).notifier).toggleMode();
-                if (chatState.teachingMode == TeachingMode.direct) {
-                  resetAnswerOnlyStreak();
-                }
-              },
-              enabled: chatState.canSend,
-            );
-          }),
+          // Toggle — Expanded(flex:2): takes 2 parts of remaining space.
+          // With both name and toggle inside Expanded, the Row always
+          // distributes the remaining space proportionally — overflow is
+          // mathematically impossible on any screen size.
+          // The toggle's internal LayoutBuilder now receives a FINITE
+          // maxWidth (its flex share), so the sliding-indicator half-width
+          // is computed from actual available space, not MediaQuery.
+          Expanded(
+            flex: 2,
+            child: Builder(builder: (ctx) {
+              if (ModalRoute.of(ctx)?.isCurrent == true) {
+                TourAnchors.modeToggleCtx = ctx;
+              }
+              return TeachingModeToggle(
+                mode: chatState.teachingMode,
+                onToggle: () {
+                  ref
+                      .read(chatViewModelProvider(avatarId).notifier)
+                      .toggleMode();
+                  if (chatState.teachingMode == TeachingMode.direct) {
+                    resetAnswerOnlyStreak();
+                  }
+                },
+                enabled: chatState.canSend,
+              );
+            }),
+          ),
           // ⋮ overflow menu — school + upload moved here to keep the bar
           // within screen width on 360dp phones.
           PopupMenuButton<String>(
