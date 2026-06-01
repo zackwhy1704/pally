@@ -6,10 +6,10 @@ part 'quiz_question.g.dart';
 @freezed
 class QuizQuestion with _$QuizQuestion {
   const factory QuizQuestion({
-    required String id,
-    required String question,
-    required List<String> options,
-    required int correctIndex,
+    @Default('') String id,
+    @Default('') String question,
+    @Default([]) List<String> options,
+    @Default(0) int correctIndex,
     @Default('') String sourcePage,
     @Default('') String explanation,
   }) = _QuizQuestion;

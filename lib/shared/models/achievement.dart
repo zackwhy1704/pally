@@ -6,14 +6,14 @@ part 'achievement.g.dart';
 @freezed
 class Achievement with _$Achievement {
   const factory Achievement({
-    required String id,
-    required String name,
-    required String description,
-    required String category, // STREAK | MASTERY | CURIOSITY | MILESTONE
-    required String rarity,   // COMMON | RARE | EPIC | LEGENDARY
-    required int target,
-    required int progress,
-    required bool earned,
+    @Default('') String id,
+    @Default('') String name,
+    @Default('') String description,
+    @Default('MILESTONE') String category, // STREAK | MASTERY | CURIOSITY | MILESTONE
+    @Default('COMMON') String rarity,      // COMMON | RARE | EPIC | LEGENDARY
+    @Default(0) int target,
+    @Default(0) int progress,
+    @Default(false) bool earned,
     String? earnedAt,
   }) = _Achievement;
 
@@ -24,9 +24,9 @@ class Achievement with _$Achievement {
 @freezed
 class AchievementList with _$AchievementList {
   const factory AchievementList({
-    required List<Achievement> achievements,
-    required int earnedCount,
-    required int totalCount,
+    @Default([]) List<Achievement> achievements,
+    @Default(0) int earnedCount,
+    @Default(0) int totalCount,
   }) = _AchievementList;
 
   factory AchievementList.fromJson(Map<String, dynamic> json) =>

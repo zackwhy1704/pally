@@ -8,10 +8,10 @@ part of 'daily_goal.dart';
 
 _$DailyGoalImpl _$$DailyGoalImplFromJson(Map<String, dynamic> json) =>
     _$DailyGoalImpl(
-      goalType: json['goalType'] as String,
-      goalTarget: (json['goalTarget'] as num).toInt(),
-      goalProgress: (json['goalProgress'] as num).toInt(),
-      met: json['met'] as bool,
+      goalType: json['goalType'] as String? ?? 'QUIZ',
+      goalTarget: (json['goalTarget'] as num?)?.toInt() ?? 0,
+      goalProgress: (json['goalProgress'] as num?)?.toInt() ?? 0,
+      met: json['met'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$DailyGoalImplToJson(_$DailyGoalImpl instance) =>

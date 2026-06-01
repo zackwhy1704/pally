@@ -8,11 +8,13 @@ part of 'quiz_question.dart';
 
 _$QuizQuestionImpl _$$QuizQuestionImplFromJson(Map<String, dynamic> json) =>
     _$QuizQuestionImpl(
-      id: json['id'] as String,
-      question: json['question'] as String,
-      options:
-          (json['options'] as List<dynamic>).map((e) => e as String).toList(),
-      correctIndex: (json['correctIndex'] as num).toInt(),
+      id: json['id'] as String? ?? '',
+      question: json['question'] as String? ?? '',
+      options: (json['options'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      correctIndex: (json['correctIndex'] as num?)?.toInt() ?? 0,
       sourcePage: json['sourcePage'] as String? ?? '',
       explanation: json['explanation'] as String? ?? '',
     );

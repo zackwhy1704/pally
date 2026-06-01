@@ -199,10 +199,10 @@ class __$$UploadResultImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$UploadResultImpl implements _UploadResult {
   const _$UploadResultImpl(
-      {required this.id,
-      required this.avatarId,
-      required this.fileName,
-      required this.status,
+      {this.id = '',
+      this.avatarId = '',
+      this.fileName = '',
+      this.status = UploadStatus.processing,
       this.pageCount = 0,
       final List<String> wikiPageTitles = const <String>[],
       this.errorMessage,
@@ -213,12 +213,16 @@ class _$UploadResultImpl implements _UploadResult {
       _$$UploadResultImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String avatarId;
   @override
+  @JsonKey()
   final String fileName;
   @override
+  @JsonKey()
   final UploadStatus status;
   @override
   @JsonKey()
@@ -294,10 +298,10 @@ class _$UploadResultImpl implements _UploadResult {
 
 abstract class _UploadResult implements UploadResult {
   const factory _UploadResult(
-      {required final String id,
-      required final String avatarId,
-      required final String fileName,
-      required final UploadStatus status,
+      {final String id,
+      final String avatarId,
+      final String fileName,
+      final UploadStatus status,
       final int pageCount,
       final List<String> wikiPageTitles,
       final String? errorMessage,
@@ -450,14 +454,16 @@ class __$$RelevanceCheckResponseImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$RelevanceCheckResponseImpl implements _RelevanceCheckResponse {
   const _$RelevanceCheckResponseImpl(
-      {required this.isRelevant, required this.score, this.reason});
+      {this.isRelevant = true, this.score = 1.0, this.reason});
 
   factory _$RelevanceCheckResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$RelevanceCheckResponseImplFromJson(json);
 
   @override
+  @JsonKey()
   final bool isRelevant;
   @override
+  @JsonKey()
   final double score;
   @override
   final String? reason;
@@ -501,8 +507,8 @@ class _$RelevanceCheckResponseImpl implements _RelevanceCheckResponse {
 
 abstract class _RelevanceCheckResponse implements RelevanceCheckResponse {
   const factory _RelevanceCheckResponse(
-      {required final bool isRelevant,
-      required final double score,
+      {final bool isRelevant,
+      final double score,
       final String? reason}) = _$RelevanceCheckResponseImpl;
 
   factory _RelevanceCheckResponse.fromJson(Map<String, dynamic> json) =

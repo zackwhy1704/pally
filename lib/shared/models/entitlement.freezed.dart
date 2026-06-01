@@ -161,8 +161,8 @@ class __$$EntitlementImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$EntitlementImpl implements _Entitlement {
   const _$EntitlementImpl(
-      {required this.isPremium,
-      required this.source,
+      {this.isPremium = false,
+      this.source = 'NONE',
       this.plan,
       this.status,
       this.trialEndsAt});
@@ -171,8 +171,10 @@ class _$EntitlementImpl implements _Entitlement {
       _$$EntitlementImplFromJson(json);
 
   @override
+  @JsonKey()
   final bool isPremium;
   @override
+  @JsonKey()
   final String source;
 // SELF | PARENT | CENTRE | NONE
   @override
@@ -224,8 +226,8 @@ class _$EntitlementImpl implements _Entitlement {
 
 abstract class _Entitlement implements Entitlement {
   const factory _Entitlement(
-      {required final bool isPremium,
-      required final String source,
+      {final bool isPremium,
+      final String source,
       final String? plan,
       final String? status,
       final String? trialEndsAt}) = _$EntitlementImpl;

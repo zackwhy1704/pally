@@ -19,9 +19,9 @@ CardRating? _cardRatingFromJson(Object? json) {
 @freezed
 class FlashCard with _$FlashCard {
   const factory FlashCard({
-    required String id,
-    required String front,
-    required String back,
+    @Default('') String id,
+    @Default('') String front,
+    @Default('') String back,
     @Default('') String sourceFile,
     @JsonKey(fromJson: _cardRatingFromJson, toJson: _cardRatingToJson)
     CardRating? lastRating,

@@ -18,8 +18,8 @@ String _typeToJson(StudyPlanItemType t) => t.name.toUpperCase();
 @freezed
 class StudyPlanItem with _$StudyPlanItem {
   const factory StudyPlanItem({
-    required String id,
-    required String title,
+    @Default('') String id,
+    @Default('') String title,
     @JsonKey(fromJson: _typeFromJson, toJson: _typeToJson)
     required StudyPlanItemType type,
     @Default(false) bool isDone,

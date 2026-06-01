@@ -263,10 +263,10 @@ class __$$WikiPageImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$WikiPageImpl implements _WikiPage {
   const _$WikiPageImpl(
-      {required this.id,
+      {this.id = '',
       this.avatarId = '',
-      required this.title,
-      required this.content,
+      this.title = '',
+      this.content = '',
       this.certainty = 'inferred',
       this.hasConflict = false,
       final List<String> sourceFileIds = const [],
@@ -282,13 +282,16 @@ class _$WikiPageImpl implements _WikiPage {
       _$$WikiPageImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
   @JsonKey()
   final String avatarId;
   @override
+  @JsonKey()
   final String title;
   @override
+  @JsonKey()
   final String content;
   @override
   @JsonKey()
@@ -390,10 +393,10 @@ class _$WikiPageImpl implements _WikiPage {
 
 abstract class _WikiPage implements WikiPage {
   const factory _WikiPage(
-      {required final String id,
+      {final String id,
       final String avatarId,
-      required final String title,
-      required final String content,
+      final String title,
+      final String content,
       final String certainty,
       final bool hasConflict,
       final List<String> sourceFileIds,

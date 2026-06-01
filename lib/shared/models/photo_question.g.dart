@@ -8,9 +8,9 @@ part of 'photo_question.dart';
 
 _$PhotoQuestionImpl _$$PhotoQuestionImplFromJson(Map<String, dynamic> json) =>
     _$PhotoQuestionImpl(
-      id: json['id'] as String,
-      rawText: json['rawText'] as String,
-      questionIndex: (json['questionIndex'] as num).toInt(),
+      id: json['id'] as String? ?? '',
+      rawText: json['rawText'] as String? ?? '',
+      questionIndex: (json['questionIndex'] as num?)?.toInt() ?? 0,
       isSelected: json['isSelected'] as bool? ?? true,
     );
 
@@ -24,9 +24,9 @@ Map<String, dynamic> _$$PhotoQuestionImplToJson(_$PhotoQuestionImpl instance) =>
 
 _$QuestionAnswerImpl _$$QuestionAnswerImplFromJson(Map<String, dynamic> json) =>
     _$QuestionAnswerImpl(
-      questionId: json['questionId'] as String,
-      questionText: json['questionText'] as String,
-      answer: json['answer'] as String,
+      questionId: json['questionId'] as String? ?? '',
+      questionText: json['questionText'] as String? ?? '',
+      answer: json['answer'] as String? ?? '',
       steps:
           (json['steps'] as List<dynamic>?)?.map((e) => e as String).toList() ??
               const [],
@@ -50,11 +50,12 @@ Map<String, dynamic> _$$QuestionAnswerImplToJson(
 _$HomeworkScanResultImpl _$$HomeworkScanResultImplFromJson(
         Map<String, dynamic> json) =>
     _$HomeworkScanResultImpl(
-      messageId: json['messageId'] as String,
-      imageLocalPath: json['imageLocalPath'] as String,
-      questions: (json['questions'] as List<dynamic>)
-          .map((e) => PhotoQuestion.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      messageId: json['messageId'] as String? ?? '',
+      imageLocalPath: json['imageLocalPath'] as String? ?? '',
+      questions: (json['questions'] as List<dynamic>?)
+              ?.map((e) => PhotoQuestion.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
       answers: (json['answers'] as List<dynamic>?)
               ?.map((e) => QuestionAnswer.fromJson(e as Map<String, dynamic>))
               .toList() ??

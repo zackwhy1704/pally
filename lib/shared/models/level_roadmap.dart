@@ -6,10 +6,10 @@ part 'level_roadmap.g.dart';
 @freezed
 class LevelReward with _$LevelReward {
   const factory LevelReward({
-    required int level,
-    required String label,
-    required String kind, // COSMETIC | FUNCTIONAL | BADGE | MYSTERY
-    required bool unlocked,
+    @Default(0) int level,
+    @Default('') String label,
+    @Default('COSMETIC') String kind, // COSMETIC | FUNCTIONAL | BADGE | MYSTERY
+    @Default(false) bool unlocked,
   }) = _LevelReward;
 
   factory LevelReward.fromJson(Map<String, dynamic> json) =>
@@ -19,9 +19,9 @@ class LevelReward with _$LevelReward {
 @freezed
 class LevelRoadmap with _$LevelRoadmap {
   const factory LevelRoadmap({
-    required int currentLevel,
-    required int maxLevel,
-    required List<LevelReward> rewards,
+    @Default(1) int currentLevel,
+    @Default(30) int maxLevel,
+    @Default([]) List<LevelReward> rewards,
   }) = _LevelRoadmap;
 
   factory LevelRoadmap.fromJson(Map<String, dynamic> json) =>

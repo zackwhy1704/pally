@@ -8,8 +8,8 @@ part of 'study_plan_item.dart';
 
 _$StudyPlanItemImpl _$$StudyPlanItemImplFromJson(Map<String, dynamic> json) =>
     _$StudyPlanItemImpl(
-      id: json['id'] as String,
-      title: json['title'] as String,
+      id: json['id'] as String? ?? '',
+      title: json['title'] as String? ?? '',
       type: _typeFromJson(json['type']),
       isDone: json['isDone'] as bool? ?? false,
       avatarId: json['avatarId'] as String? ?? '',

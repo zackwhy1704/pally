@@ -6,8 +6,8 @@ part 'coverage_summary.g.dart';
 @freezed
 class CoverageBucket with _$CoverageBucket {
   const factory CoverageBucket({
-    required int mastered,
-    required int total,
+    @Default(0) int mastered,
+    @Default(0) int total,
   }) = _CoverageBucket;
 
   factory CoverageBucket.fromJson(Map<String, dynamic> json) =>
@@ -17,9 +17,9 @@ class CoverageBucket with _$CoverageBucket {
 @freezed
 class SubjectCoverage with _$SubjectCoverage {
   const factory SubjectCoverage({
-    required String subject,
-    required int mastered,
-    required int total,
+    @Default('') String subject,
+    @Default(0) int mastered,
+    @Default(0) int total,
   }) = _SubjectCoverage;
 
   factory SubjectCoverage.fromJson(Map<String, dynamic> json) =>
@@ -29,8 +29,8 @@ class SubjectCoverage with _$SubjectCoverage {
 @freezed
 class CoverageSummary with _$CoverageSummary {
   const factory CoverageSummary({
-    required CoverageBucket overall,
-    required List<SubjectCoverage> bySubject,
+    @Default(CoverageBucket()) CoverageBucket overall,
+    @Default([]) List<SubjectCoverage> bySubject,
   }) = _CoverageSummary;
 
   factory CoverageSummary.fromJson(Map<String, dynamic> json) =>

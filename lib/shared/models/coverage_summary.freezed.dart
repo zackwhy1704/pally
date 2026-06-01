@@ -116,14 +116,16 @@ class __$$CoverageBucketImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$CoverageBucketImpl implements _CoverageBucket {
-  const _$CoverageBucketImpl({required this.mastered, required this.total});
+  const _$CoverageBucketImpl({this.mastered = 0, this.total = 0});
 
   factory _$CoverageBucketImpl.fromJson(Map<String, dynamic> json) =>
       _$$CoverageBucketImplFromJson(json);
 
   @override
+  @JsonKey()
   final int mastered;
   @override
+  @JsonKey()
   final int total;
 
   @override
@@ -163,9 +165,8 @@ class _$CoverageBucketImpl implements _CoverageBucket {
 }
 
 abstract class _CoverageBucket implements CoverageBucket {
-  const factory _CoverageBucket(
-      {required final int mastered,
-      required final int total}) = _$CoverageBucketImpl;
+  const factory _CoverageBucket({final int mastered, final int total}) =
+      _$CoverageBucketImpl;
 
   factory _CoverageBucket.fromJson(Map<String, dynamic> json) =
       _$CoverageBucketImpl.fromJson;
@@ -297,16 +298,19 @@ class __$$SubjectCoverageImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SubjectCoverageImpl implements _SubjectCoverage {
   const _$SubjectCoverageImpl(
-      {required this.subject, required this.mastered, required this.total});
+      {this.subject = '', this.mastered = 0, this.total = 0});
 
   factory _$SubjectCoverageImpl.fromJson(Map<String, dynamic> json) =>
       _$$SubjectCoverageImplFromJson(json);
 
   @override
+  @JsonKey()
   final String subject;
   @override
+  @JsonKey()
   final int mastered;
   @override
+  @JsonKey()
   final int total;
 
   @override
@@ -348,9 +352,9 @@ class _$SubjectCoverageImpl implements _SubjectCoverage {
 
 abstract class _SubjectCoverage implements SubjectCoverage {
   const factory _SubjectCoverage(
-      {required final String subject,
-      required final int mastered,
-      required final int total}) = _$SubjectCoverageImpl;
+      {final String subject,
+      final int mastered,
+      final int total}) = _$SubjectCoverageImpl;
 
   factory _SubjectCoverage.fromJson(Map<String, dynamic> json) =
       _$SubjectCoverageImpl.fromJson;
@@ -488,16 +492,19 @@ class __$$CoverageSummaryImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CoverageSummaryImpl implements _CoverageSummary {
   const _$CoverageSummaryImpl(
-      {required this.overall, required final List<SubjectCoverage> bySubject})
+      {this.overall = const CoverageBucket(),
+      final List<SubjectCoverage> bySubject = const []})
       : _bySubject = bySubject;
 
   factory _$CoverageSummaryImpl.fromJson(Map<String, dynamic> json) =>
       _$$CoverageSummaryImplFromJson(json);
 
   @override
+  @JsonKey()
   final CoverageBucket overall;
   final List<SubjectCoverage> _bySubject;
   @override
+  @JsonKey()
   List<SubjectCoverage> get bySubject {
     if (_bySubject is EqualUnmodifiableListView) return _bySubject;
     // ignore: implicit_dynamic_type
@@ -543,8 +550,8 @@ class _$CoverageSummaryImpl implements _CoverageSummary {
 
 abstract class _CoverageSummary implements CoverageSummary {
   const factory _CoverageSummary(
-      {required final CoverageBucket overall,
-      required final List<SubjectCoverage> bySubject}) = _$CoverageSummaryImpl;
+      {final CoverageBucket overall,
+      final List<SubjectCoverage> bySubject}) = _$CoverageSummaryImpl;
 
   factory _CoverageSummary.fromJson(Map<String, dynamic> json) =
       _$CoverageSummaryImpl.fromJson;

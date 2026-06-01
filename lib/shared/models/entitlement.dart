@@ -6,8 +6,8 @@ part 'entitlement.g.dart';
 @freezed
 class Entitlement with _$Entitlement {
   const factory Entitlement({
-    required bool isPremium,
-    required String source, // SELF | PARENT | CENTRE | NONE
+    @Default(false) bool isPremium,
+    @Default('NONE') String source, // SELF | PARENT | CENTRE | NONE
     String? plan,
     String? status,
     String? trialEndsAt,

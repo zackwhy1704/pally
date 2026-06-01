@@ -14,9 +14,9 @@ enum HomeworkScanStatus {
 @freezed
 class PhotoQuestion with _$PhotoQuestion {
   const factory PhotoQuestion({
-    required String id,
-    required String rawText,
-    required int questionIndex,
+    @Default('') String id,
+    @Default('') String rawText,
+    @Default(0) int questionIndex,
     @Default(true) bool isSelected,
   }) = _PhotoQuestion;
 
@@ -27,9 +27,9 @@ class PhotoQuestion with _$PhotoQuestion {
 @freezed
 class QuestionAnswer with _$QuestionAnswer {
   const factory QuestionAnswer({
-    required String questionId,
-    required String questionText,
-    required String answer,
+    @Default('') String questionId,
+    @Default('') String questionText,
+    @Default('') String answer,
     @Default([]) List<String> steps,
     @Default('') String explanation,
     // Tier 0/2 fields from the backend visual classifier
@@ -44,9 +44,9 @@ class QuestionAnswer with _$QuestionAnswer {
 @freezed
 class HomeworkScanResult with _$HomeworkScanResult {
   const factory HomeworkScanResult({
-    required String messageId,
-    required String imageLocalPath,
-    required List<PhotoQuestion> questions,
+    @Default('') String messageId,
+    @Default('') String imageLocalPath,
+    @Default([]) List<PhotoQuestion> questions,
     @Default([]) List<QuestionAnswer> answers,
     @Default(5) int xpEarned,
     String? sourceWikiPage,

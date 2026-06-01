@@ -8,9 +8,9 @@ part of 'flash_card.dart';
 
 _$FlashCardImpl _$$FlashCardImplFromJson(Map<String, dynamic> json) =>
     _$FlashCardImpl(
-      id: json['id'] as String,
-      front: json['front'] as String,
-      back: json['back'] as String,
+      id: json['id'] as String? ?? '',
+      front: json['front'] as String? ?? '',
+      back: json['back'] as String? ?? '',
       sourceFile: json['sourceFile'] as String? ?? '',
       lastRating: _cardRatingFromJson(json['lastRating']),
       nextReview: json['nextReview'] == null

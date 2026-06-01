@@ -8,8 +8,8 @@ part of 'entitlement.dart';
 
 _$EntitlementImpl _$$EntitlementImplFromJson(Map<String, dynamic> json) =>
     _$EntitlementImpl(
-      isPremium: json['isPremium'] as bool,
-      source: json['source'] as String,
+      isPremium: json['isPremium'] as bool? ?? false,
+      source: json['source'] as String? ?? 'NONE',
       plan: json['plan'] as String?,
       status: json['status'] as String?,
       trialEndsAt: json['trialEndsAt'] as String?,

@@ -175,9 +175,9 @@ class __$$FlashCardImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$FlashCardImpl implements _FlashCard {
   const _$FlashCardImpl(
-      {required this.id,
-      required this.front,
-      required this.back,
+      {this.id = '',
+      this.front = '',
+      this.back = '',
       this.sourceFile = '',
       @JsonKey(fromJson: _cardRatingFromJson, toJson: _cardRatingToJson)
       this.lastRating,
@@ -187,10 +187,13 @@ class _$FlashCardImpl implements _FlashCard {
       _$$FlashCardImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String front;
   @override
+  @JsonKey()
   final String back;
   @override
   @JsonKey()
@@ -245,9 +248,9 @@ class _$FlashCardImpl implements _FlashCard {
 
 abstract class _FlashCard implements FlashCard {
   const factory _FlashCard(
-      {required final String id,
-      required final String front,
-      required final String back,
+      {final String id,
+      final String front,
+      final String back,
       final String sourceFile,
       @JsonKey(fromJson: _cardRatingFromJson, toJson: _cardRatingToJson)
       final CardRating? lastRating,

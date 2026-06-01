@@ -6,10 +6,10 @@ part 'wiki_page.g.dart';
 @freezed
 class WikiPage with _$WikiPage {
   const factory WikiPage({
-    required String id,
+    @Default('') String id,
     @Default('') String avatarId,
-    required String title,
-    required String content,
+    @Default('') String title,
+    @Default('') String content,
     @Default('inferred') String certainty,
     @Default(false) bool hasConflict,
     @Default([]) List<String> sourceFileIds,

@@ -140,22 +140,26 @@ class __$$LevelRewardImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$LevelRewardImpl implements _LevelReward {
   const _$LevelRewardImpl(
-      {required this.level,
-      required this.label,
-      required this.kind,
-      required this.unlocked});
+      {this.level = 0,
+      this.label = '',
+      this.kind = 'COSMETIC',
+      this.unlocked = false});
 
   factory _$LevelRewardImpl.fromJson(Map<String, dynamic> json) =>
       _$$LevelRewardImplFromJson(json);
 
   @override
+  @JsonKey()
   final int level;
   @override
+  @JsonKey()
   final String label;
   @override
+  @JsonKey()
   final String kind;
 // COSMETIC | FUNCTIONAL | BADGE | MYSTERY
   @override
+  @JsonKey()
   final bool unlocked;
 
   @override
@@ -197,10 +201,10 @@ class _$LevelRewardImpl implements _LevelReward {
 
 abstract class _LevelReward implements LevelReward {
   const factory _LevelReward(
-      {required final int level,
-      required final String label,
-      required final String kind,
-      required final bool unlocked}) = _$LevelRewardImpl;
+      {final int level,
+      final String label,
+      final String kind,
+      final bool unlocked}) = _$LevelRewardImpl;
 
   factory _LevelReward.fromJson(Map<String, dynamic> json) =
       _$LevelRewardImpl.fromJson;
@@ -336,20 +340,23 @@ class __$$LevelRoadmapImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$LevelRoadmapImpl implements _LevelRoadmap {
   const _$LevelRoadmapImpl(
-      {required this.currentLevel,
-      required this.maxLevel,
-      required final List<LevelReward> rewards})
+      {this.currentLevel = 1,
+      this.maxLevel = 30,
+      final List<LevelReward> rewards = const []})
       : _rewards = rewards;
 
   factory _$LevelRoadmapImpl.fromJson(Map<String, dynamic> json) =>
       _$$LevelRoadmapImplFromJson(json);
 
   @override
+  @JsonKey()
   final int currentLevel;
   @override
+  @JsonKey()
   final int maxLevel;
   final List<LevelReward> _rewards;
   @override
+  @JsonKey()
   List<LevelReward> get rewards {
     if (_rewards is EqualUnmodifiableListView) return _rewards;
     // ignore: implicit_dynamic_type
@@ -396,9 +403,9 @@ class _$LevelRoadmapImpl implements _LevelRoadmap {
 
 abstract class _LevelRoadmap implements LevelRoadmap {
   const factory _LevelRoadmap(
-      {required final int currentLevel,
-      required final int maxLevel,
-      required final List<LevelReward> rewards}) = _$LevelRoadmapImpl;
+      {final int currentLevel,
+      final int maxLevel,
+      final List<LevelReward> rewards}) = _$LevelRoadmapImpl;
 
   factory _LevelRoadmap.fromJson(Map<String, dynamic> json) =
       _$LevelRoadmapImpl.fromJson;

@@ -36,6 +36,7 @@ class ChatState {
     this.showEscapeHatch = false,
     this.error,
     this.pendingLevelUp = 0,
+    this.historyParseWarning,
   });
 
   final Avatar? avatar;
@@ -54,6 +55,9 @@ class ChatState {
   // this carries the new level so the screen can fire LevelUpController.
   // 0 = nothing to celebrate. Cleared by the screen after the overlay shows.
   final int pendingLevelUp;
+  // Non-null when ≥1 history message failed to parse (P3: non-silent drops).
+  // Displayed as a soft banner — not a crash, not lost silently.
+  final String? historyParseWarning;
 
   bool get canSend => !isSending && !isTyping && !isProcessingPhoto;
 
@@ -84,6 +88,7 @@ class ChatState {
     bool? showEscapeHatch,
     Object? error = _sentinel,
     int? pendingLevelUp,
+    Object? historyParseWarning = _sentinel,
   }) {
     return ChatState(
       avatar: avatar ?? this.avatar,
@@ -100,6 +105,9 @@ class ChatState {
       showEscapeHatch: showEscapeHatch ?? this.showEscapeHatch,
       error: error == _sentinel ? this.error : error as String?,
       pendingLevelUp: pendingLevelUp ?? this.pendingLevelUp,
+      historyParseWarning: historyParseWarning == _sentinel
+          ? this.historyParseWarning
+          : historyParseWarning as String?,
     );
   }
 }
@@ -264,16 +272,40 @@ class ChatViewModel extends _$ChatViewModel {
       }
 
       final messages = <ChatMessage>[];
+      int parseFailures = 0;
       for (final e in raw) {
         try {
           // Backend history rows don't include avatarId per-row — inject it.
+          // sourceFile (old field name) → sources (List<String>) normalization:
+          // The backend now sends `sources: List`, but old persisted rows may
+          // still have `sourceFile: String`. Handle both forms.
           final map = Map<String, dynamic>.from(e as Map<String, dynamic>);
           map.putIfAbsent('avatarId', () => _avatarId);
+          map.putIfAbsent('content', () => '');
+          if (!map.containsKey('sources') || map['sources'] == null) {
+            final sf = map['sourceFile'];
+            map['sources'] = (sf != null && (sf as String).isNotEmpty)
+                ? [sf]
+                : <String>[];
+          }
           messages.add(ChatMessage.fromJson(map));
         } catch (parseErr, st) {
-          appLog.e('[Chat] Failed to parse history message: $e',
-              error: parseErr, stackTrace: st);
+          parseFailures++;
+          appLog.e(
+              '[Chat] Failed to parse history message (raw=$e)',
+              error: parseErr,
+              stackTrace: st);
         }
+      }
+
+      // Surface a soft warning if any messages failed — non-blocking.
+      if (parseFailures > 0) {
+        appLog.w('[Chat] $parseFailures/${raw.length} history messages could not be parsed');
+        state = state.copyWith(
+          historyParseWarning:
+              'Could not load $parseFailures message${parseFailures > 1 ? 's' : ''} — '
+              'they may have been saved in an older format.',
+        );
       }
 
       // Merge: keep local messages, add backend ones not already present (by id).

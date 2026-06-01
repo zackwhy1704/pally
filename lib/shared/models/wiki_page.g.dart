@@ -8,10 +8,10 @@ part of 'wiki_page.dart';
 
 _$WikiPageImpl _$$WikiPageImplFromJson(Map<String, dynamic> json) =>
     _$WikiPageImpl(
-      id: json['id'] as String,
+      id: json['id'] as String? ?? '',
       avatarId: json['avatarId'] as String? ?? '',
-      title: json['title'] as String,
-      content: json['content'] as String,
+      title: json['title'] as String? ?? '',
+      content: json['content'] as String? ?? '',
       certainty: json['certainty'] as String? ?? 'inferred',
       hasConflict: json['hasConflict'] as bool? ?? false,
       sourceFileIds: (json['sourceFileIds'] as List<dynamic>?)

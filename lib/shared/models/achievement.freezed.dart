@@ -214,36 +214,44 @@ class __$$AchievementImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AchievementImpl implements _Achievement {
   const _$AchievementImpl(
-      {required this.id,
-      required this.name,
-      required this.description,
-      required this.category,
-      required this.rarity,
-      required this.target,
-      required this.progress,
-      required this.earned,
+      {this.id = '',
+      this.name = '',
+      this.description = '',
+      this.category = 'MILESTONE',
+      this.rarity = 'COMMON',
+      this.target = 0,
+      this.progress = 0,
+      this.earned = false,
       this.earnedAt});
 
   factory _$AchievementImpl.fromJson(Map<String, dynamic> json) =>
       _$$AchievementImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String name;
   @override
+  @JsonKey()
   final String description;
   @override
+  @JsonKey()
   final String category;
 // STREAK | MASTERY | CURIOSITY | MILESTONE
   @override
+  @JsonKey()
   final String rarity;
 // COMMON | RARE | EPIC | LEGENDARY
   @override
+  @JsonKey()
   final int target;
   @override
+  @JsonKey()
   final int progress;
   @override
+  @JsonKey()
   final bool earned;
   @override
   final String? earnedAt;
@@ -296,14 +304,14 @@ class _$AchievementImpl implements _Achievement {
 
 abstract class _Achievement implements Achievement {
   const factory _Achievement(
-      {required final String id,
-      required final String name,
-      required final String description,
-      required final String category,
-      required final String rarity,
-      required final int target,
-      required final int progress,
-      required final bool earned,
+      {final String id,
+      final String name,
+      final String description,
+      final String category,
+      final String rarity,
+      final int target,
+      final int progress,
+      final bool earned,
       final String? earnedAt}) = _$AchievementImpl;
 
   factory _Achievement.fromJson(Map<String, dynamic> json) =
@@ -450,9 +458,9 @@ class __$$AchievementListImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AchievementListImpl implements _AchievementList {
   const _$AchievementListImpl(
-      {required final List<Achievement> achievements,
-      required this.earnedCount,
-      required this.totalCount})
+      {final List<Achievement> achievements = const [],
+      this.earnedCount = 0,
+      this.totalCount = 0})
       : _achievements = achievements;
 
   factory _$AchievementListImpl.fromJson(Map<String, dynamic> json) =>
@@ -460,6 +468,7 @@ class _$AchievementListImpl implements _AchievementList {
 
   final List<Achievement> _achievements;
   @override
+  @JsonKey()
   List<Achievement> get achievements {
     if (_achievements is EqualUnmodifiableListView) return _achievements;
     // ignore: implicit_dynamic_type
@@ -467,8 +476,10 @@ class _$AchievementListImpl implements _AchievementList {
   }
 
   @override
+  @JsonKey()
   final int earnedCount;
   @override
+  @JsonKey()
   final int totalCount;
 
   @override
@@ -516,9 +527,9 @@ class _$AchievementListImpl implements _AchievementList {
 
 abstract class _AchievementList implements AchievementList {
   const factory _AchievementList(
-      {required final List<Achievement> achievements,
-      required final int earnedCount,
-      required final int totalCount}) = _$AchievementListImpl;
+      {final List<Achievement> achievements,
+      final int earnedCount,
+      final int totalCount}) = _$AchievementListImpl;
 
   factory _AchievementList.fromJson(Map<String, dynamic> json) =
       _$AchievementListImpl.fromJson;

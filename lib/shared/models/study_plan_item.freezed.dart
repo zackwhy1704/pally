@@ -189,8 +189,8 @@ class __$$StudyPlanItemImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$StudyPlanItemImpl implements _StudyPlanItem {
   const _$StudyPlanItemImpl(
-      {required this.id,
-      required this.title,
+      {this.id = '',
+      this.title = '',
       @JsonKey(fromJson: _typeFromJson, toJson: _typeToJson) required this.type,
       this.isDone = false,
       this.avatarId = '',
@@ -201,8 +201,10 @@ class _$StudyPlanItemImpl implements _StudyPlanItem {
       _$$StudyPlanItemImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String title;
   @override
   @JsonKey(fromJson: _typeFromJson, toJson: _typeToJson)
@@ -263,8 +265,8 @@ class _$StudyPlanItemImpl implements _StudyPlanItem {
 
 abstract class _StudyPlanItem implements StudyPlanItem {
   const factory _StudyPlanItem(
-      {required final String id,
-      required final String title,
+      {final String id,
+      final String title,
       @JsonKey(fromJson: _typeFromJson, toJson: _typeToJson)
       required final StudyPlanItemType type,
       final bool isDone,

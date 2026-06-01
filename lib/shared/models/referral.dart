@@ -6,11 +6,11 @@ part 'referral.g.dart';
 @freezed
 class ReferralSummary with _$ReferralSummary {
   const factory ReferralSummary({
-    required String code,
-    required int totalReferred,
-    required int activatedCount,
-    required int rewardsEarned,
-    required int nextTierAt,
+    @Default('') String code,
+    @Default(0) int totalReferred,
+    @Default(0) int activatedCount,
+    @Default(0) int rewardsEarned,
+    @Default(0) int nextTierAt,
   }) = _ReferralSummary;
 
   factory ReferralSummary.fromJson(Map<String, dynamic> json) =>
@@ -20,9 +20,9 @@ class ReferralSummary with _$ReferralSummary {
 @freezed
 class ReferralRedemption with _$ReferralRedemption {
   const factory ReferralRedemption({
-    required String displayName,
-    required String status, // pending | activated
-    required String joinedAt,
+    @Default('') String displayName,
+    @Default('pending') String status, // pending | activated
+    @Default('') String joinedAt,
     String? activatedAt,
   }) = _ReferralRedemption;
 

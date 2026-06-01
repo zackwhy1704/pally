@@ -8,10 +8,10 @@ part of 'level_roadmap.dart';
 
 _$LevelRewardImpl _$$LevelRewardImplFromJson(Map<String, dynamic> json) =>
     _$LevelRewardImpl(
-      level: (json['level'] as num).toInt(),
-      label: json['label'] as String,
-      kind: json['kind'] as String,
-      unlocked: json['unlocked'] as bool,
+      level: (json['level'] as num?)?.toInt() ?? 0,
+      label: json['label'] as String? ?? '',
+      kind: json['kind'] as String? ?? 'COSMETIC',
+      unlocked: json['unlocked'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$LevelRewardImplToJson(_$LevelRewardImpl instance) =>
@@ -24,11 +24,12 @@ Map<String, dynamic> _$$LevelRewardImplToJson(_$LevelRewardImpl instance) =>
 
 _$LevelRoadmapImpl _$$LevelRoadmapImplFromJson(Map<String, dynamic> json) =>
     _$LevelRoadmapImpl(
-      currentLevel: (json['currentLevel'] as num).toInt(),
-      maxLevel: (json['maxLevel'] as num).toInt(),
-      rewards: (json['rewards'] as List<dynamic>)
-          .map((e) => LevelReward.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      currentLevel: (json['currentLevel'] as num?)?.toInt() ?? 1,
+      maxLevel: (json['maxLevel'] as num?)?.toInt() ?? 30,
+      rewards: (json['rewards'] as List<dynamic>?)
+              ?.map((e) => LevelReward.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$$LevelRoadmapImplToJson(_$LevelRoadmapImpl instance) =>

@@ -8,10 +8,10 @@ enum UploadStatus { pending, processing, ready, failed }
 @freezed
 class UploadResult with _$UploadResult {
   const factory UploadResult({
-    required String id,
-    required String avatarId,
-    required String fileName,
-    required UploadStatus status,
+    @Default('') String id,
+    @Default('') String avatarId,
+    @Default('') String fileName,
+    @Default(UploadStatus.processing) UploadStatus status,
     @Default(0) int pageCount,
     @Default(<String>[]) List<String> wikiPageTitles,
     String? errorMessage,
@@ -25,8 +25,8 @@ class UploadResult with _$UploadResult {
 @freezed
 class RelevanceCheckResponse with _$RelevanceCheckResponse {
   const factory RelevanceCheckResponse({
-    required bool isRelevant,
-    required double score,
+    @Default(true) bool isRelevant,
+    @Default(1.0) double score,
     String? reason,
   }) = _RelevanceCheckResponse;
 

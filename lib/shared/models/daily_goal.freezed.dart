@@ -138,21 +138,25 @@ class __$$DailyGoalImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$DailyGoalImpl implements _DailyGoal {
   const _$DailyGoalImpl(
-      {required this.goalType,
-      required this.goalTarget,
-      required this.goalProgress,
-      required this.met});
+      {this.goalType = 'QUIZ',
+      this.goalTarget = 0,
+      this.goalProgress = 0,
+      this.met = false});
 
   factory _$DailyGoalImpl.fromJson(Map<String, dynamic> json) =>
       _$$DailyGoalImplFromJson(json);
 
   @override
+  @JsonKey()
   final String goalType;
   @override
+  @JsonKey()
   final int goalTarget;
   @override
+  @JsonKey()
   final int goalProgress;
   @override
+  @JsonKey()
   final bool met;
 
   @override
@@ -197,10 +201,10 @@ class _$DailyGoalImpl implements _DailyGoal {
 
 abstract class _DailyGoal implements DailyGoal {
   const factory _DailyGoal(
-      {required final String goalType,
-      required final int goalTarget,
-      required final int goalProgress,
-      required final bool met}) = _$DailyGoalImpl;
+      {final String goalType,
+      final int goalTarget,
+      final int goalProgress,
+      final bool met}) = _$DailyGoalImpl;
 
   factory _DailyGoal.fromJson(Map<String, dynamic> json) =
       _$DailyGoalImpl.fromJson;

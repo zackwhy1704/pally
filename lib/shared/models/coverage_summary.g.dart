@@ -8,8 +8,8 @@ part of 'coverage_summary.dart';
 
 _$CoverageBucketImpl _$$CoverageBucketImplFromJson(Map<String, dynamic> json) =>
     _$CoverageBucketImpl(
-      mastered: (json['mastered'] as num).toInt(),
-      total: (json['total'] as num).toInt(),
+      mastered: (json['mastered'] as num?)?.toInt() ?? 0,
+      total: (json['total'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$$CoverageBucketImplToJson(
@@ -22,9 +22,9 @@ Map<String, dynamic> _$$CoverageBucketImplToJson(
 _$SubjectCoverageImpl _$$SubjectCoverageImplFromJson(
         Map<String, dynamic> json) =>
     _$SubjectCoverageImpl(
-      subject: json['subject'] as String,
-      mastered: (json['mastered'] as num).toInt(),
-      total: (json['total'] as num).toInt(),
+      subject: json['subject'] as String? ?? '',
+      mastered: (json['mastered'] as num?)?.toInt() ?? 0,
+      total: (json['total'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$$SubjectCoverageImplToJson(
@@ -38,10 +38,13 @@ Map<String, dynamic> _$$SubjectCoverageImplToJson(
 _$CoverageSummaryImpl _$$CoverageSummaryImplFromJson(
         Map<String, dynamic> json) =>
     _$CoverageSummaryImpl(
-      overall: CoverageBucket.fromJson(json['overall'] as Map<String, dynamic>),
-      bySubject: (json['bySubject'] as List<dynamic>)
-          .map((e) => SubjectCoverage.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      overall: json['overall'] == null
+          ? const CoverageBucket()
+          : CoverageBucket.fromJson(json['overall'] as Map<String, dynamic>),
+      bySubject: (json['bySubject'] as List<dynamic>?)
+              ?.map((e) => SubjectCoverage.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$$CoverageSummaryImplToJson(

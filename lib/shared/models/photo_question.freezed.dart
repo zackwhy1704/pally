@@ -139,19 +139,22 @@ class __$$PhotoQuestionImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PhotoQuestionImpl implements _PhotoQuestion {
   const _$PhotoQuestionImpl(
-      {required this.id,
-      required this.rawText,
-      required this.questionIndex,
+      {this.id = '',
+      this.rawText = '',
+      this.questionIndex = 0,
       this.isSelected = true});
 
   factory _$PhotoQuestionImpl.fromJson(Map<String, dynamic> json) =>
       _$$PhotoQuestionImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String rawText;
   @override
+  @JsonKey()
   final int questionIndex;
   @override
   @JsonKey()
@@ -198,9 +201,9 @@ class _$PhotoQuestionImpl implements _PhotoQuestion {
 
 abstract class _PhotoQuestion implements PhotoQuestion {
   const factory _PhotoQuestion(
-      {required final String id,
-      required final String rawText,
-      required final int questionIndex,
+      {final String id,
+      final String rawText,
+      final int questionIndex,
       final bool isSelected}) = _$PhotoQuestionImpl;
 
   factory _PhotoQuestion.fromJson(Map<String, dynamic> json) =
@@ -396,9 +399,9 @@ class __$$QuestionAnswerImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$QuestionAnswerImpl implements _QuestionAnswer {
   const _$QuestionAnswerImpl(
-      {required this.questionId,
-      required this.questionText,
-      required this.answer,
+      {this.questionId = '',
+      this.questionText = '',
+      this.answer = '',
       final List<String> steps = const [],
       this.explanation = '',
       this.visualType = 'NONE',
@@ -409,10 +412,13 @@ class _$QuestionAnswerImpl implements _QuestionAnswer {
       _$$QuestionAnswerImplFromJson(json);
 
   @override
+  @JsonKey()
   final String questionId;
   @override
+  @JsonKey()
   final String questionText;
   @override
+  @JsonKey()
   final String answer;
   final List<String> _steps;
   @override
@@ -489,9 +495,9 @@ class _$QuestionAnswerImpl implements _QuestionAnswer {
 
 abstract class _QuestionAnswer implements QuestionAnswer {
   const factory _QuestionAnswer(
-      {required final String questionId,
-      required final String questionText,
-      required final String answer,
+      {final String questionId,
+      final String questionText,
+      final String answer,
       final List<String> steps,
       final String explanation,
       final String visualType,
@@ -695,9 +701,9 @@ class __$$HomeworkScanResultImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$HomeworkScanResultImpl implements _HomeworkScanResult {
   const _$HomeworkScanResultImpl(
-      {required this.messageId,
-      required this.imageLocalPath,
-      required final List<PhotoQuestion> questions,
+      {this.messageId = '',
+      this.imageLocalPath = '',
+      final List<PhotoQuestion> questions = const [],
       final List<QuestionAnswer> answers = const [],
       this.xpEarned = 5,
       this.sourceWikiPage,
@@ -709,11 +715,14 @@ class _$HomeworkScanResultImpl implements _HomeworkScanResult {
       _$$HomeworkScanResultImplFromJson(json);
 
   @override
+  @JsonKey()
   final String messageId;
   @override
+  @JsonKey()
   final String imageLocalPath;
   final List<PhotoQuestion> _questions;
   @override
+  @JsonKey()
   List<PhotoQuestion> get questions {
     if (_questions is EqualUnmodifiableListView) return _questions;
     // ignore: implicit_dynamic_type
@@ -793,9 +802,9 @@ class _$HomeworkScanResultImpl implements _HomeworkScanResult {
 
 abstract class _HomeworkScanResult implements HomeworkScanResult {
   const factory _HomeworkScanResult(
-      {required final String messageId,
-      required final String imageLocalPath,
-      required final List<PhotoQuestion> questions,
+      {final String messageId,
+      final String imageLocalPath,
+      final List<PhotoQuestion> questions,
       final List<QuestionAnswer> answers,
       final int xpEarned,
       final String? sourceWikiPage,

@@ -160,24 +160,29 @@ class __$$ReferralSummaryImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ReferralSummaryImpl implements _ReferralSummary {
   const _$ReferralSummaryImpl(
-      {required this.code,
-      required this.totalReferred,
-      required this.activatedCount,
-      required this.rewardsEarned,
-      required this.nextTierAt});
+      {this.code = '',
+      this.totalReferred = 0,
+      this.activatedCount = 0,
+      this.rewardsEarned = 0,
+      this.nextTierAt = 0});
 
   factory _$ReferralSummaryImpl.fromJson(Map<String, dynamic> json) =>
       _$$ReferralSummaryImplFromJson(json);
 
   @override
+  @JsonKey()
   final String code;
   @override
+  @JsonKey()
   final int totalReferred;
   @override
+  @JsonKey()
   final int activatedCount;
   @override
+  @JsonKey()
   final int rewardsEarned;
   @override
+  @JsonKey()
   final int nextTierAt;
 
   @override
@@ -225,11 +230,11 @@ class _$ReferralSummaryImpl implements _ReferralSummary {
 
 abstract class _ReferralSummary implements ReferralSummary {
   const factory _ReferralSummary(
-      {required final String code,
-      required final int totalReferred,
-      required final int activatedCount,
-      required final int rewardsEarned,
-      required final int nextTierAt}) = _$ReferralSummaryImpl;
+      {final String code,
+      final int totalReferred,
+      final int activatedCount,
+      final int rewardsEarned,
+      final int nextTierAt}) = _$ReferralSummaryImpl;
 
   factory _ReferralSummary.fromJson(Map<String, dynamic> json) =
       _$ReferralSummaryImpl.fromJson;
@@ -387,20 +392,23 @@ class __$$ReferralRedemptionImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ReferralRedemptionImpl implements _ReferralRedemption {
   const _$ReferralRedemptionImpl(
-      {required this.displayName,
-      required this.status,
-      required this.joinedAt,
+      {this.displayName = '',
+      this.status = 'pending',
+      this.joinedAt = '',
       this.activatedAt});
 
   factory _$ReferralRedemptionImpl.fromJson(Map<String, dynamic> json) =>
       _$$ReferralRedemptionImplFromJson(json);
 
   @override
+  @JsonKey()
   final String displayName;
   @override
+  @JsonKey()
   final String status;
 // pending | activated
   @override
+  @JsonKey()
   final String joinedAt;
   @override
   final String? activatedAt;
@@ -448,9 +456,9 @@ class _$ReferralRedemptionImpl implements _ReferralRedemption {
 
 abstract class _ReferralRedemption implements ReferralRedemption {
   const factory _ReferralRedemption(
-      {required final String displayName,
-      required final String status,
-      required final String joinedAt,
+      {final String displayName,
+      final String status,
+      final String joinedAt,
       final String? activatedAt}) = _$ReferralRedemptionImpl;
 
   factory _ReferralRedemption.fromJson(Map<String, dynamic> json) =

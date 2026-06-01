@@ -2090,3 +2090,153 @@ grep -rn "Spacer()\|ClipRRect\|height: [3-9][0-9][0-9]\b" lib/ \
 ```
 
 Inspect every match. If a `Spacer()` is in a `Column` without bounded constraints, fix it. If a `ClipRRect` wraps a fixed-height container in a scroll view, refactor it. If a `height: NNN` is a hardcoded bottom sheet or dialog size, make it responsive.
+
+---
+
+# PART 16 — BACKEND↔FRONTEND CONTRACT RULES (prevent silent data loss)
+
+> **Learned from production:** The chat history was silently dropping ALL messages because the
+> backend `ChatMessageResponse` didn't include `avatarId`, causing every `fromJson` to throw a
+> hard null-cast that the per-item catch swallowed. Users saw an empty chat. No crash report.
+> This class of bug is invisible in crash analytics and happens at the seam between two repos.
+
+---
+
+## Rule 1 — Every `@freezed` model field from the network must be null-tolerant
+
+A Java `@RestController` can return `null` for any `String?` / `Integer?` Java field,
+or can omit a field entirely if the DTO doesn't include it. The Dart generated code does:
+
+```dart
+// Generated from `required String foo` — CRASHES on null/missing field:
+foo: json['foo'] as String,   // throws: type 'Null' is not a subtype of type 'String'
+```
+
+**Rule:** Every `@freezed` class that is deserialized from a network response MUST use
+`@Default(...)` or `String?` for all scalar fields:
+
+```dart
+// ✅ CORRECT — safe even if backend omits the field:
+@Default('') String foo,
+@Default(false) bool bar,
+@Default(0) int count,
+@Default([]) List<String> items,
+
+// ❌ NEVER for network-sourced fields:
+required String foo,    // crashes on null
+required bool bar,      // crashes if Java field is Boolean (nullable boxed type)
+```
+
+**Exception:** `required` is only safe for fields you construct locally (IDs generated
+client-side, enums from `@JsonKey(fromJson: ...)` with a default branch, etc.).
+
+**Audit command — run before every PR touching models:**
+
+```bash
+grep -rn "required String\|required bool\|required int\|required double\|required List" \
+  lib/shared/models/ --include="*.dart" | grep -v ".g.dart\|.freezed.dart"
+# Any match on a model that is parsed from a backend JSON response is a bug.
+```
+
+---
+
+## Rule 2 — Never let a parse failure be invisible
+
+The pattern below converts a contract bug into "missing data" with no user signal:
+
+```dart
+// ❌ SILENT LOSS — one bad field drops the entire item
+for (final e in raw) {
+  try { items.add(Model.fromJson(e)); }
+  catch (err, st) { appLog.e('parse error', error: err); }  // item just vanishes
+}
+```
+
+**Rule:** When parsing a list from the backend, count failures and surface a soft warning:
+
+```dart
+// ✅ CORRECT — soft signal, never silent
+int parseFailures = 0;
+for (final e in raw) {
+  try { items.add(Model.fromJson(e)); }
+  catch (err, st) {
+    parseFailures++;
+    appLog.e('Failed to parse item (raw=$e)', error: err, stackTrace: st);
+  }
+}
+if (parseFailures > 0) {
+  state = state.copyWith(
+    parseWarning: 'Could not load $parseFailures item(s) — may be an older format.',
+  );
+}
+```
+
+---
+
+## Rule 3 — Field names must match exactly between the backend DTO and the Dart model
+
+Name drift causes silent null-field bugs that don't crash but show empty data.
+Always cross-check before shipping:
+
+| Backend DTO field | Dart model field | Risk |
+|---|---|---|
+| `sourceFile: String` | `sources: List<String>` | **Different name AND type** — sources always empty |
+| `avatarId` (missing) | `avatarId: required String` | **Missing field** — crashes every parse |
+| `role: "USER"/"ASSISTANT"` | `role: MessageRole` | OK — custom `fromJson` handles both |
+
+**Rule:** When adding a backend DTO field, search both repos for the corresponding Dart model
+field and confirm: (a) same JSON key name, (b) same nullability/type, (c) same array-vs-scalar.
+When in doubt, test with `curl | jq '.fieldName'` against the live endpoint.
+
+---
+
+## Rule 4 — Inject context the backend already knows from the URL path
+
+When the backend returns a list of child items (e.g. chat messages under `/avatars/{id}/chat/history`),
+it often omits the parent-scope identifier (`avatarId`) because the controller knows it from the path.
+The Flutter client must inject it from its own context before calling `fromJson`:
+
+```dart
+// ✅ Inject avatarId (and any other known context) before parsing
+final map = Map<String, dynamic>.from(e as Map<String, dynamic>);
+map.putIfAbsent('avatarId', () => _avatarId);
+map.putIfAbsent('content', () => '');
+Model.fromJson(map);
+```
+
+---
+
+## Rule 5 — `PallyError.from(e)` is the only path from exception to user-visible string
+
+No `catch` block may call `.toString()`, `.message`, or `e.runtimeType` to build a user-facing
+string. All catch blocks must route through `PallyError.from(e).userMessage`.
+
+```dart
+// ❌ LEAKS TECHNICAL STRINGS:
+state = state.copyWith(error: e.toString());
+state = state.copyWith(error: (e as DioException).message);
+
+// ✅ CORRECT:
+state = state.copyWith(error: PallyError.from(e).userMessage);
+```
+
+`PallyError` is in `lib/core/error/pally_error.dart`. It:
+- Maps every `DioExceptionType` to a friendly string
+- Strips Java class names, stack traces, and HTTP status codes
+- Adopts the backend's error message only when it's short, kid-safe, and clearly not internal
+
+---
+
+## Rule 6 — Smoke-test the contract after every backend DTO change
+
+After any change to a Java response record/DTO, run the pally smoke test against Railway:
+
+```bash
+BASE_URL="https://pallybackend-production.up.railway.app" \
+TOKEN="$(cat /tmp/pally_token)" \
+bash pally-smoke-test.sh
+```
+
+The smoke test verifies that required Dart model fields (`id`, `avatarId`, `content`, etc.)
+are present and non-null in every live API response. A DTO change that passes Gradle tests but
+fails the smoke test means the Flutter app will have a null-cast crash or silent data loss.

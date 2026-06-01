@@ -173,10 +173,10 @@ class __$$QuizQuestionImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$QuizQuestionImpl implements _QuizQuestion {
   const _$QuizQuestionImpl(
-      {required this.id,
-      required this.question,
-      required final List<String> options,
-      required this.correctIndex,
+      {this.id = '',
+      this.question = '',
+      final List<String> options = const [],
+      this.correctIndex = 0,
       this.sourcePage = '',
       this.explanation = ''})
       : _options = options;
@@ -185,11 +185,14 @@ class _$QuizQuestionImpl implements _QuizQuestion {
       _$$QuizQuestionImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String question;
   final List<String> _options;
   @override
+  @JsonKey()
   List<String> get options {
     if (_options is EqualUnmodifiableListView) return _options;
     // ignore: implicit_dynamic_type
@@ -197,6 +200,7 @@ class _$QuizQuestionImpl implements _QuizQuestion {
   }
 
   @override
+  @JsonKey()
   final int correctIndex;
   @override
   @JsonKey()
@@ -256,10 +260,10 @@ class _$QuizQuestionImpl implements _QuizQuestion {
 
 abstract class _QuizQuestion implements QuizQuestion {
   const factory _QuizQuestion(
-      {required final String id,
-      required final String question,
-      required final List<String> options,
-      required final int correctIndex,
+      {final String id,
+      final String question,
+      final List<String> options,
+      final int correctIndex,
       final String sourcePage,
       final String explanation}) = _$QuizQuestionImpl;
 

@@ -8,10 +8,11 @@ part of 'upload_result.dart';
 
 _$UploadResultImpl _$$UploadResultImplFromJson(Map<String, dynamic> json) =>
     _$UploadResultImpl(
-      id: json['id'] as String,
-      avatarId: json['avatarId'] as String,
-      fileName: json['fileName'] as String,
-      status: $enumDecode(_$UploadStatusEnumMap, json['status']),
+      id: json['id'] as String? ?? '',
+      avatarId: json['avatarId'] as String? ?? '',
+      fileName: json['fileName'] as String? ?? '',
+      status: $enumDecodeNullable(_$UploadStatusEnumMap, json['status']) ??
+          UploadStatus.processing,
       pageCount: (json['pageCount'] as num?)?.toInt() ?? 0,
       wikiPageTitles: (json['wikiPageTitles'] as List<dynamic>?)
               ?.map((e) => e as String)
@@ -45,8 +46,8 @@ const _$UploadStatusEnumMap = {
 _$RelevanceCheckResponseImpl _$$RelevanceCheckResponseImplFromJson(
         Map<String, dynamic> json) =>
     _$RelevanceCheckResponseImpl(
-      isRelevant: json['isRelevant'] as bool,
-      score: (json['score'] as num).toDouble(),
+      isRelevant: json['isRelevant'] as bool? ?? true,
+      score: (json['score'] as num?)?.toDouble() ?? 1.0,
       reason: json['reason'] as String?,
     );
 

@@ -9,11 +9,11 @@ part of 'referral.dart';
 _$ReferralSummaryImpl _$$ReferralSummaryImplFromJson(
         Map<String, dynamic> json) =>
     _$ReferralSummaryImpl(
-      code: json['code'] as String,
-      totalReferred: (json['totalReferred'] as num).toInt(),
-      activatedCount: (json['activatedCount'] as num).toInt(),
-      rewardsEarned: (json['rewardsEarned'] as num).toInt(),
-      nextTierAt: (json['nextTierAt'] as num).toInt(),
+      code: json['code'] as String? ?? '',
+      totalReferred: (json['totalReferred'] as num?)?.toInt() ?? 0,
+      activatedCount: (json['activatedCount'] as num?)?.toInt() ?? 0,
+      rewardsEarned: (json['rewardsEarned'] as num?)?.toInt() ?? 0,
+      nextTierAt: (json['nextTierAt'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$$ReferralSummaryImplToJson(
@@ -29,9 +29,9 @@ Map<String, dynamic> _$$ReferralSummaryImplToJson(
 _$ReferralRedemptionImpl _$$ReferralRedemptionImplFromJson(
         Map<String, dynamic> json) =>
     _$ReferralRedemptionImpl(
-      displayName: json['displayName'] as String,
-      status: json['status'] as String,
-      joinedAt: json['joinedAt'] as String,
+      displayName: json['displayName'] as String? ?? '',
+      status: json['status'] as String? ?? 'pending',
+      joinedAt: json['joinedAt'] as String? ?? '',
       activatedAt: json['activatedAt'] as String?,
     );
 
