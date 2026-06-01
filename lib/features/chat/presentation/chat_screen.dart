@@ -203,10 +203,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 ),
               ],
             ),
-            // Floating coach — sits just above the input bar, never
-            // covers the message list's tap region for keyboard dismiss
-            // because it has its own hit zone and is small. Hides itself
-            // while the keyboard is open (composing wins).
+            // GM2 — Mode coach-mark: floats at the TOP of the body so it
+            // can render outside the AppBar's 64px height constraint. Shown
+            // once, auto-dismissed on tap or mode switch. Positioned here
+            // (in the body Stack) rather than in the AppBar Row so it never
+            // causes a vertical RenderFlex overflow.
+            const Positioned(
+              top: 0,
+              right: 0,
+              left: 0,
+              child: ModeCoachMark(child: SizedBox.shrink()),
+            ),
+            // Floating tip coach — sits just above the input bar.
             Positioned(
               right: 12,
               bottom: 76 + bottomPadding,
@@ -286,49 +294,36 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          // GM2: Coach-mark wraps the toggle; shows once then disappears.
-          // The toggle uses TourAnchors.modeToggleCtx (not a GlobalKey) so
-          // that two ChatScreens briefly co-mounted during a .push() route
-          // transition don't compete for the same GlobalKey and crash.
-          ModeCoachMark(
-            child: Builder(builder: (ctx) {
-              // Register only while this route is at the top of the stack so
-              // at most one ChatScreen is the tour anchor at any time.
-              if (ModalRoute.of(ctx)?.isCurrent == true) {
-                TourAnchors.modeToggleCtx = ctx;
-              }
-              return TeachingModeToggle(
-                mode: chatState.teachingMode,
-                onToggle: () {
-                  ref.read(chatViewModelProvider(avatarId).notifier).toggleMode();
-                  // Reset answer-only streak when user switches to Guide Me
-                  if (chatState.teachingMode == TeachingMode.direct) {
-                    resetAnswerOnlyStreak();
-                  }
-                },
-                enabled: chatState.canSend,
-              );
-            }),
-          ),
-          const SizedBox(width: AppSpacing.xs),
-          IconButton(
-            icon: const Icon(Icons.school_outlined,
-                color: AppColors.purple),
-            onPressed: () => TeachMochiRoute(avatarId: avatarId).push(context),
-            tooltip: 'Teach Mochi (Feynman)',
-          ),
-          IconButton(
-            icon:
-                const Icon(Icons.upload_file_outlined, color: AppColors.text2),
-            onPressed: () => UploadRoute(avatarId: avatarId).push(context),
-            tooltip: 'Add Knowledge',
-          ),
+          // Toggle — plain widget (no ModeCoachMark wrapper).
+          // The coach-mark is shown in the chat body Stack so it can float
+          // below the AppBar without causing a vertical overflow in the Row.
+          Builder(builder: (ctx) {
+            if (ModalRoute.of(ctx)?.isCurrent == true) {
+              TourAnchors.modeToggleCtx = ctx;
+            }
+            return TeachingModeToggle(
+              mode: chatState.teachingMode,
+              onToggle: () {
+                ref.read(chatViewModelProvider(avatarId).notifier).toggleMode();
+                if (chatState.teachingMode == TeachingMode.direct) {
+                  resetAnswerOnlyStreak();
+                }
+              },
+              enabled: chatState.canSend,
+            );
+          }),
+          // ⋮ overflow menu — school + upload moved here to keep the bar
+          // within screen width on 360dp phones.
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert, color: AppColors.text2),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12)),
             onSelected: (value) async {
-              if (value == 'delete' && chatState.avatar != null) {
+              if (value == 'teach') {
+                TeachMochiRoute(avatarId: avatarId).push(context);
+              } else if (value == 'upload') {
+                UploadRoute(avatarId: avatarId).push(context);
+              } else if (value == 'delete' && chatState.avatar != null) {
                 final avatar = chatState.avatar!;
                 final confirmed = await PallyDeleteTutorDialog.show(
                   context: context,
@@ -341,9 +336,6 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   if (!context.mounted) return;
                   if (ok) {
                     HapticFeedback.heavyImpact();
-                    // Pop the chat screen to return to whatever pushed it.
-                    // Using .pop() instead of HomeRoute().go() avoids a stack
-                    // reset that races with the popup menu's own pop.
                     if (Navigator.of(context).canPop()) {
                       Navigator.of(context).pop();
                     } else {
@@ -358,17 +350,36 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
             },
             itemBuilder: (_) => [
               PopupMenuItem(
+                value: 'teach',
+                child: Row(children: [
+                  const Icon(Icons.school_outlined,
+                      color: AppColors.purple, size: 18),
+                  const SizedBox(width: 10),
+                  Text('Teach Mochi',
+                      style: AppTextStyles.body.copyWith(fontSize: 13)),
+                ]),
+              ),
+              PopupMenuItem(
+                value: 'upload',
+                child: Row(children: [
+                  const Icon(Icons.upload_file_outlined,
+                      color: AppColors.text2, size: 18),
+                  const SizedBox(width: 10),
+                  Text('Add knowledge',
+                      style: AppTextStyles.body.copyWith(fontSize: 13)),
+                ]),
+              ),
+              const PopupMenuDivider(),
+              PopupMenuItem(
                 value: 'delete',
-                child: Row(
-                  children: [
-                    const Icon(Icons.delete_outline_rounded,
-                        color: AppColors.coral, size: 18),
-                    const SizedBox(width: 10),
-                    Text('Delete Mochi',
-                        style: AppTextStyles.body.copyWith(
-                            fontSize: 13, color: AppColors.coral)),
-                  ],
-                ),
+                child: Row(children: [
+                  const Icon(Icons.delete_outline_rounded,
+                      color: AppColors.coral, size: 18),
+                  const SizedBox(width: 10),
+                  Text('Delete Mochi',
+                      style: AppTextStyles.body.copyWith(
+                          fontSize: 13, color: AppColors.coral)),
+                ]),
               ),
             ],
           ),

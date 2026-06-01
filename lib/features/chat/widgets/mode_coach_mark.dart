@@ -42,13 +42,18 @@ class _ModeCoachMarkState extends State<ModeCoachMark> {
   @override
   Widget build(BuildContext context) {
     if (!_show) return widget.child;
+    // Coach mark is now positioned in the body Stack (not the AppBar Row),
+    // so it can render at full height without causing a vertical overflow.
+    // The bubble floats at the top of the chat body, directly below the AppBar.
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         GestureDetector(
           onTap: _dismiss,
           child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+            margin: const EdgeInsets.only(
+                right: AppSpacing.sm, left: AppSpacing.md, top: AppSpacing.xs),
             padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.md, vertical: AppSpacing.sm),
             decoration: BoxDecoration(
@@ -57,56 +62,34 @@ class _ModeCoachMarkState extends State<ModeCoachMark> {
               boxShadow: [
                 BoxShadow(
                   color: AppColors.purple.withValues(alpha: 0.3),
-                  blurRadius: 8, offset: const Offset(0, 3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const Text('✨', style: TextStyle(fontSize: 16)),
                 const SizedBox(width: AppSpacing.sm),
-                Expanded(
+                Flexible(
                   child: Text(
-                    'New! Choose how Mochi helps — '
-                    'Guide Me makes you remember more.',
-                    style: AppTextStyles.bodySmall
-                        .copyWith(color: Colors.white, fontWeight: FontWeight.w600),
+                    'Tap the toggle to switch how Mochi helps you.',
+                    style: AppTextStyles.bodySmall.copyWith(
+                        color: Colors.white, fontWeight: FontWeight.w600),
                   ),
                 ),
+                const SizedBox(width: AppSpacing.xs),
                 const Icon(Icons.close_rounded, size: 14, color: Colors.white70),
               ],
             ),
           ),
         ),
-        // Triangle pointer pointing down
-        Align(
-          alignment: Alignment.center,
-          child: CustomPaint(
-            size: const Size(16, 8),
-            painter: _TrianglePainter(),
-          ),
-        ),
-        widget.child,
       ],
     );
   }
 }
 
-class _TrianglePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = AppColors.purple;
-    final path = Path()
-      ..moveTo(0, 0)
-      ..lineTo(size.width / 2, size.height)
-      ..lineTo(size.width, 0)
-      ..close();
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(_) => false;
-}
 
 /// GM4 — Gentle once-per-session nudge when ANSWER mode is active.
 /// Shows the first time ANSWER mode is used in a session; never again that session.
