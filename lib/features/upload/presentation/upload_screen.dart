@@ -6,6 +6,7 @@ import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/ui/pally_relevance_warning_dialog.dart';
+import 'package:pally/core/widgets/loading/mochi_generating.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/upload_result.dart';
 import 'package:pally/core/ui/pally_toast.dart';
@@ -47,6 +48,17 @@ class UploadScreen extends ConsumerWidget {
         }
       }
     });
+
+    // Full-screen Mochi generating overlay while upload is in progress.
+    // Covers the entire screen (Pattern E) with rotating tips + step labels.
+    final bool uploading = state.isUploading || state.isCheckingRelevance;
+    if (uploading) {
+      return MochiGenerating(
+        stepLabels: state.isCheckingRelevance
+            ? const ['Checking relevance…', 'Reviewing your notes…']
+            : kUploadStepLabels,
+      );
+    }
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -246,13 +258,10 @@ class _UploadOptions extends StatelessWidget {
       children: [
         Text('Add files', style: AppTextStyles.title),
         const SizedBox(height: AppSpacing.sm),
+        // MochiGenerating overlay is shown at the UploadScreen level —
+        // this fallback should never be visible, but kept for safety.
         if (_busy)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
-            child: Center(
-              child: CircularProgressIndicator(color: AppColors.purple),
-            ),
-          )
+          const SizedBox.shrink()
         else ...[
           _UploadTile(
             icon: Icons.camera_alt_outlined,

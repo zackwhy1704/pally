@@ -201,3 +201,11 @@ const kFlashcardGenStepLabels = [
   'Making flashcards…',
   'Almost done…',
 ];
+
+/// Convenience step labels shown while a file is being uploaded and processed.
+const kUploadStepLabels = [
+  'Uploading your notes…',
+  'Reading the content…',
+  'Checking relevance…',
+  'Teaching your Mochi…',
+];
