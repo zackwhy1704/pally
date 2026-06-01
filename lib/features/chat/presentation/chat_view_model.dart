@@ -32,7 +32,7 @@ class ChatState {
     this.isProcessingPhoto = false,
     this.processingPhotoQuestions = const [],
     this.teachingMode = TeachingMode.teaching,
-    this.socraticAttempts = 0,
+    this.guideAttempts = 0,
     this.showEscapeHatch = false,
     this.error,
     this.pendingLevelUp = 0,
@@ -47,7 +47,7 @@ class ChatState {
   final bool isProcessingPhoto;
   final List<PhotoQuestion> processingPhotoQuestions;
   final TeachingMode teachingMode;
-  final int socraticAttempts;
+  final int guideAttempts;
   final bool showEscapeHatch;
   final String? error;
   // When the backend reports a level-up from photo solve or session-end,
@@ -80,7 +80,7 @@ class ChatState {
     bool? isProcessingPhoto,
     List<PhotoQuestion>? processingPhotoQuestions,
     TeachingMode? teachingMode,
-    int? socraticAttempts,
+    int? guideAttempts,
     bool? showEscapeHatch,
     Object? error = _sentinel,
     int? pendingLevelUp,
@@ -96,7 +96,7 @@ class ChatState {
       processingPhotoQuestions:
           processingPhotoQuestions ?? this.processingPhotoQuestions,
       teachingMode: teachingMode ?? this.teachingMode,
-      socraticAttempts: socraticAttempts ?? this.socraticAttempts,
+      guideAttempts: guideAttempts ?? this.guideAttempts,
       showEscapeHatch: showEscapeHatch ?? this.showEscapeHatch,
       error: error == _sentinel ? this.error : error as String?,
       pendingLevelUp: pendingLevelUp ?? this.pendingLevelUp,
@@ -370,9 +370,9 @@ class ChatViewModel extends _$ChatViewModel {
       );
       await _localDb.saveMessage(finalMsg.toRecord());
 
-      // Track socratic attempts (count how many turns user has tried)
+      // Track Guide Me attempts (count how many turns user has tried)
       if (state.teachingMode == TeachingMode.teaching) {
-        _trackSocraticAttempt();
+        _trackGuideAttempt();
       }
 
       // Update session state
@@ -526,7 +526,7 @@ class ChatViewModel extends _$ChatViewModel {
         : TeachingMode.teaching;
     state = state.copyWith(
       teachingMode: next,
-      socraticAttempts: 0,
+      guideAttempts: 0,
       showEscapeHatch: false,
     );
     appLog.i('[Chat] Teaching mode toggled → ${next.name}');
@@ -548,12 +548,12 @@ class ChatViewModel extends _$ChatViewModel {
     }
   }
 
-  // Updates socratic attempt counter and triggers escape hatch after 3 attempts
-  void _trackSocraticAttempt() {
-    final attempts = state.socraticAttempts + 1;
+  // Updates Guide Me attempt counter and triggers hint ladder escape after 3 attempts
+  void _trackGuideAttempt() {
+    final attempts = state.guideAttempts + 1;
     final showEscape = attempts >= 3 && state.teachingMode == TeachingMode.teaching;
     state = state.copyWith(
-      socraticAttempts: attempts,
+      guideAttempts: attempts,
       showEscapeHatch: showEscape,
     );
   }

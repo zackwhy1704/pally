@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 
-/// Shows how many Socratic attempts have been made (pip indicators).
+/// Shows how many Guide Me attempts have been made (pip indicators).
 /// After [maxAttempts] attempts an escape hatch becomes available.
-class SocraticAttemptIndicator extends StatelessWidget {
-  const SocraticAttemptIndicator({
+class GuideAttemptIndicator extends StatelessWidget {
+  const GuideAttemptIndicator({
     super.key,
     required this.attempts,
     this.maxAttempts = 3,

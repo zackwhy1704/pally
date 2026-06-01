@@ -54,7 +54,7 @@ List<_TourStep> _buildSteps() => [
   _TourStep(
     emoji: '🧭',
     title: 'Pick how I help',
-    body: 'Guide Me walks you through the answer Socratically — '
+    body: 'Guide Me walks you step by step toward the answer — '
         'you figure it out, you remember more.\n'
         'Just answer gives you the worked solution for checking your work.',
     anchorKey: featureTourModeToggleKey,

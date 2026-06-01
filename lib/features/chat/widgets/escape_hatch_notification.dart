@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 
-/// Shown when the Socratic escape hatch fires (after N attempts).
+/// Shown when the Guide Me hint ladder max fires (after N attempts).
 /// Auto-dismisses after [autoDismissSeconds] seconds.
 class EscapeHatchNotification extends StatefulWidget {
   const EscapeHatchNotification({

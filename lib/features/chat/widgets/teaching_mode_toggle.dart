@@ -13,7 +13,7 @@ extension TeachingModeX on TeachingMode {
 
 /// Segmented pill toggle: 🧭 Guide Me / 💡 Just answer.
 ///
-/// Guide Me (TEACHING) = Socratic — Mochi never hands over the answer, leads
+/// Guide Me (TEACHING) — Mochi never hands over the answer, leads
 /// the student to figure it out. Builds long-term retention.
 /// Just answer (DIRECT) = worked solution, framed as "for checking your work."
 class TeachingModeToggle extends StatelessWidget {
