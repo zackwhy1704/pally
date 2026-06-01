@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/widgets/loading/pally_skeleton.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -113,7 +112,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                 if (progress.weakTopics.isNotEmpty)
                   _WeakTopicsCard(
                     weakTopics: progress.weakTopics,
-                    onPractice: () => context.push('/avatar/all/quiz'),
+                    onPractice: () => _launchQuiz(context, ref),
                   ),
                 const _AchievementsPreview(),
                 const SizedBox(height: AppSpacing.md),
@@ -840,6 +839,62 @@ class _BrainMapCard extends ConsumerWidget {
 
   void _pickAvatar(BuildContext context, List<Avatar> avatars) =>
       _pickAvatarStatic(context, avatars);
+}
+
+/// Routes to the daily quiz for the correct Mochi.
+/// Single avatar → goes straight in.
+/// Multiple avatars → shows the same bottom-sheet picker used by the brain map.
+/// Never uses the literal string "all" as an avatarId — the backend has no
+/// such route and would return an empty quiz.
+void _launchQuiz(BuildContext context, WidgetRef ref) {
+  final avatars = ref.read(libraryViewModelProvider).maybeWhen(
+        data: (list) => list,
+        orElse: () => const <Avatar>[],
+      );
+  if (avatars.isEmpty) return;
+  if (avatars.length == 1) {
+    QuizRoute(avatarId: avatars.first.id).push(context);
+    return;
+  }
+  _pickAvatarForQuiz(context, avatars);
+}
+
+void _pickAvatarForQuiz(BuildContext context, List<Avatar> avatars) {
+  showModalBottomSheet<void>(
+    context: context,
+    backgroundColor: Colors.transparent,
+    builder: (_) => SafeArea(
+      child: Container(
+        decoration: const BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Which Mochi to quiz?', style: AppTextStyles.title),
+            const SizedBox(height: AppSpacing.md),
+            for (final a in avatars)
+              ListTile(
+                leading: CharacterWidget(character: a.character, size: 36),
+                title: Text(a.name,
+                    maxLines: 1, overflow: TextOverflow.ellipsis),
+                subtitle: Text(a.subject,
+                    style:
+                        AppTextStyles.caption.copyWith(color: AppColors.text2),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis),
+                onTap: () {
+                  Navigator.pop(context);
+                  QuizRoute(avatarId: a.id).push(context);
+                },
+              ),
+          ],
+        ),
+      ),
+    ),
+  );
 }
 
 void _pickAvatarStatic(BuildContext context, List<Avatar> avatars) {

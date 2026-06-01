@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:pally/app/router.dart';
 import 'package:intl/intl.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -115,11 +115,15 @@ class StudyPlanScreen extends ConsumerWidget {
   }
 
   void _handleStart(BuildContext context, StudyPlanItem item) {
-    final aid = item.avatarId.isNotEmpty ? item.avatarId : 'all';
+    // If no avatarId on the study plan item, skip silently — pushing
+    // '/avatar/all/quiz' sends a literal "all" to the backend which has
+    // no such route and returns an empty quiz.  The item should always
+    // carry a real avatarId from the server; if it doesn't, do nothing.
+    if (item.avatarId.isEmpty) return;
     if (item.type == StudyPlanItemType.quiz) {
-      context.push('/avatar/$aid/quiz');
+      QuizRoute(avatarId: item.avatarId).push(context);
     } else if (item.type == StudyPlanItemType.flashcard) {
-      context.push('/avatar/$aid/flashcards');
+      FlashcardRoute(avatarId: item.avatarId).push(context);
     }
   }
 
