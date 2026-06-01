@@ -21,6 +21,7 @@ import 'package:pally/features/subscription/subscription_service.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/features/home/widgets/how_pally_is_different.dart';
+import 'package:pally/features/settings/presentation/learning_style_screen.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -393,6 +394,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     : 'Not available on this device',
                 value: _biometricEnabled,
                 onChanged: _biometricSupported ? _toggleBiometric : null,
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          const _SectionHeader(title: 'Learning'),
+          _SettingsCard(
+            children: [
+              _TappableTile(
+                icon: Icons.school_rounded,
+                label: 'Learning style',
+                trailing: const Icon(Icons.chevron_right_rounded,
+                    size: 16, color: AppColors.text3),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => const LearningStyleScreen())),
               ),
             ],
           ),

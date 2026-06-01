@@ -4,6 +4,18 @@ import 'package:pally/core/theme/app_text_styles.dart';
 
 enum TeachingMode { teaching, direct }
 
+extension TeachingModeX on TeachingMode {
+  bool get isGuide => this == TeachingMode.teaching;
+  String get label => isGuide ? 'Guide Me' : 'Just answer';
+  String get emoji => isGuide ? '🧭' : '💡';
+  String get apiValue => isGuide ? 'TEACHING' : 'DIRECT';
+}
+
+/// Segmented pill toggle: 🧭 Guide Me / 💡 Just answer.
+///
+/// Guide Me (TEACHING) = Socratic — Mochi never hands over the answer, leads
+/// the student to figure it out. Builds long-term retention.
+/// Just answer (DIRECT) = worked solution, framed as "for checking your work."
 class TeachingModeToggle extends StatelessWidget {
   const TeachingModeToggle({
     super.key,
@@ -18,40 +30,95 @@ class TeachingModeToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isSocratic = mode == TeachingMode.teaching;
+    final isGuide = mode.isGuide;
 
-    return GestureDetector(
-      onTap: enabled ? onToggle : null,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          color: isSocratic
-              ? AppColors.purpleL
-              : AppColors.surf2,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSocratic ? AppColors.purple : AppColors.outline,
-            width: 1.5,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              isSocratic ? '🧠' : '⚡',
-              style: const TextStyle(fontSize: 13),
-            ),
-            const SizedBox(width: 5),
-            Text(
-              isSocratic ? 'Guide me' : 'Just tell me',
-              style: AppTextStyles.label.copyWith(
-                color: isSocratic ? AppColors.purple : AppColors.text2,
-                fontWeight: FontWeight.w700,
-                fontSize: 11,
+    return Container(
+      height: 40,
+      decoration: BoxDecoration(
+        color: AppColors.surf2,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.outline),
+      ),
+      child: Stack(
+        children: [
+          // Sliding selection indicator
+          AnimatedAlign(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+            alignment: isGuide ? Alignment.centerLeft : Alignment.centerRight,
+            child: FractionallySizedBox(
+              widthFactor: 0.5,
+              child: Container(
+                margin: const EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  color: isGuide ? AppColors.purple : AppColors.amber,
+                  borderRadius: BorderRadius.circular(17),
+                ),
               ),
             ),
-          ],
+          ),
+          // Labels row
+          Row(
+            children: [
+              _Segment(
+                emoji: '🧭',
+                label: 'Guide Me',
+                selected: isGuide,
+                onTap: enabled && !isGuide ? onToggle : null,
+              ),
+              _Segment(
+                emoji: '💡',
+                label: 'Just answer',
+                selected: !isGuide,
+                onTap: enabled && isGuide ? onToggle : null,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Segment extends StatelessWidget {
+  const _Segment({
+    required this.emoji,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String emoji;
+  final String label;
+  final bool selected;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(emoji, style: const TextStyle(fontSize: 13)),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.caption.copyWith(
+                    color: selected ? Colors.white : AppColors.text2,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 11,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

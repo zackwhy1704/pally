@@ -21,6 +21,8 @@ import 'package:pally/features/chat/presentation/widgets/photo_processing_bubble
 import 'package:pally/features/chat/presentation/widgets/homework_scan_result_bubble.dart';
 import 'package:pally/features/chat/widgets/mochi_tip_coach.dart';
 import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
+import 'package:pally/features/chat/widgets/mode_education_overlay.dart';
+import 'package:pally/features/chat/widgets/mode_coach_mark.dart';
 import 'package:pally/features/chat/providers/chat_usage_provider.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
@@ -43,8 +45,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    // Restore scroll position once messages are loaded
-    WidgetsBinding.instance.addPostFrameCallback((_) => _restoreScroll());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _restoreScroll();
+      // GM1: show the mode-education overlay once before the first chat.
+      if (mounted) ModeEducationOverlay.maybeShow(context);
+    });
   }
 
   void _restoreScroll() {
@@ -181,6 +186,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // GM4: Gentle once-per-session nudge when ANSWER mode active
+                      if (state.teachingMode == TeachingMode.direct)
+                        const AnswerModeNudge(),
                       const DailyChatHint(),
                       _InputBar(
                         controller: _textController,
@@ -277,12 +285,19 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          // Teaching mode toggle
-          TeachingModeToggle(
-            mode: chatState.teachingMode,
-            onToggle: () =>
-                ref.read(chatViewModelProvider(avatarId).notifier).toggleMode(),
-            enabled: chatState.canSend,
+          // GM2: Coach-mark wraps the toggle; shows once then disappears.
+          ModeCoachMark(
+            child: TeachingModeToggle(
+              mode: chatState.teachingMode,
+              onToggle: () {
+                ref.read(chatViewModelProvider(avatarId).notifier).toggleMode();
+                // Reset answer-only streak when user switches to Guide Me
+                if (chatState.teachingMode == TeachingMode.direct) {
+                  resetAnswerOnlyStreak();
+                }
+              },
+              enabled: chatState.canSend,
+            ),
           ),
           const SizedBox(width: AppSpacing.xs),
           IconButton(
