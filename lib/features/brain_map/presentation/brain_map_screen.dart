@@ -330,7 +330,7 @@ class _TopicSheet extends StatelessWidget {
                 Expanded(
                   child: _SheetButton(
                     icon: Icons.menu_book_rounded,
-                    label: 'Open wiki',
+                    label: 'Open in brain',
                     onTap: () {
                       Navigator.of(context).pop();
                       WikiViewerRoute(avatarId: avatarId).push(context);

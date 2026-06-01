@@ -22,9 +22,8 @@ import 'package:pally/features/chat/presentation/widgets/photo_message_bubble.da
 import 'package:pally/features/chat/presentation/widgets/photo_processing_bubble.dart';
 import 'package:pally/features/chat/presentation/widgets/homework_scan_result_bubble.dart';
 import 'package:pally/features/chat/widgets/mochi_tip_coach.dart';
-import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
-import 'package:pally/features/chat/widgets/mode_education_overlay.dart';
 import 'package:pally/features/chat/widgets/mode_coach_mark.dart';
+import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
 import 'package:pally/features/onboarding/presentation/feature_tour.dart';
 import 'package:pally/features/chat/providers/chat_usage_provider.dart';
 
@@ -50,8 +49,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _restoreScroll();
-      // GM1: show the mode-education overlay once before the first chat.
-      if (mounted) ModeEducationOverlay.maybeShow(context);
     });
   }
 
@@ -204,17 +201,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ),
                 ),
               ],
-            ),
-            // GM2 — Mode coach-mark: floats at the TOP of the body so it
-            // can render outside the AppBar's 64px height constraint. Shown
-            // once, auto-dismissed on tap or mode switch. Positioned here
-            // (in the body Stack) rather than in the AppBar Row so it never
-            // causes a vertical RenderFlex overflow.
-            const Positioned(
-              top: 0,
-              right: 0,
-              left: 0,
-              child: ModeCoachMark(child: SizedBox.shrink()),
             ),
             // Floating tip coach — sits just above the input bar.
             Positioned(

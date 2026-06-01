@@ -416,8 +416,17 @@ class ChatViewModel extends _$ChatViewModel {
       await _localDb.saveSessionState(updatedSession.toRecord());
       state = state.copyWith(sessionState: updatedSession);
 
-      // Non-blocking backend sync
-      unawaited(_syncMessagesToBackend([userMessage, finalMsg]));
+      // Only sync completed, non-error messages. When the SSE stream fails
+      // internally, _markStreamingMessageAsError sets isError=true without
+      // rethrowing, so execution reaches here with an error-state finalMsg.
+      // Syncing that to the backend would persist empty or error content.
+      if (!finalMsg.isError && finalMsg.content.isNotEmpty) {
+        unawaited(_syncMessagesToBackend([userMessage, finalMsg]));
+      } else if (finalMsg.isError) {
+        appLog.w('[Chat] Skipping sync — stream ended in error state');
+      } else {
+        appLog.w('[Chat] Skipping sync — tutor message has no content');
+      }
     } catch (e, st) {
       appLog.e('[Chat] sendMessage failed', error: e, stackTrace: st);
       _finaliseStreamingMessage(

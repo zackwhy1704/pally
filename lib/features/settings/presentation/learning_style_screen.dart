@@ -6,7 +6,6 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_toast.dart';
-import 'package:pally/features/chat/widgets/mode_education_overlay.dart';
 import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -103,18 +102,6 @@ class _LearningStyleScreenState extends ConsumerState<LearningStyleScreen> {
             ),
             const SizedBox(height: AppSpacing.xl),
 
-            OutlinedButton.icon(
-              onPressed: () => ModeEducationOverlay.show(context),
-              icon: const Icon(Icons.info_outline_rounded, size: 16),
-              label: const Text('Review "Two ways to learn"'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.purple,
-                side: const BorderSide(color: AppColors.purple),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-            ),
           ],
         ),
       ),
