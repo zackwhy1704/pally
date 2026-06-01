@@ -23,6 +23,7 @@ import 'package:pally/features/chat/widgets/mochi_tip_coach.dart';
 import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
 import 'package:pally/features/chat/widgets/mode_education_overlay.dart';
 import 'package:pally/features/chat/widgets/mode_coach_mark.dart';
+import 'package:pally/features/onboarding/presentation/feature_tour.dart';
 import 'package:pally/features/chat/providers/chat_usage_provider.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
@@ -288,6 +289,7 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
           // GM2: Coach-mark wraps the toggle; shows once then disappears.
           ModeCoachMark(
             child: TeachingModeToggle(
+              key: featureTourModeToggleKey,
               mode: chatState.teachingMode,
               onToggle: () {
                 ref.read(chatViewModelProvider(avatarId).notifier).toggleMode();

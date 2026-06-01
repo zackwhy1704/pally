@@ -22,6 +22,7 @@ import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/features/home/widgets/how_pally_is_different.dart';
 import 'package:pally/features/settings/presentation/learning_style_screen.dart';
+import 'package:pally/features/onboarding/presentation/feature_tour.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -415,6 +416,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const _SectionHeader(title: 'About'),
           _SettingsCard(
             children: [
+              _TappableTile(
+                icon: Icons.map_outlined,
+                label: 'Replay feature tour',
+                trailing: const Icon(Icons.chevron_right_rounded,
+                    size: 16, color: AppColors.text3),
+                onTap: () => FeatureTour.show(context),
+              ),
+              const Divider(height: 1, color: AppColors.outline),
               _TappableTile(
                 icon: Icons.lightbulb_outline_rounded,
                 label: 'Why Pally is different',

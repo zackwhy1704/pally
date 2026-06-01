@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/features/onboarding/presentation/feature_tour.dart';
 
 /// A single tab in the bottom navigation. {@code branchIndex} is the index in
 /// the {@code StatefulShellRoute}'s branches array — it stays stable even when
@@ -90,6 +91,7 @@ class ScaffoldShell extends ConsumerWidget {
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: NavigationBar(
+        key: featureTourLibraryTabKey,
         backgroundColor: AppColors.surface,
         indicatorColor: AppColors.purpleL,
         // Labels shrink fine down to 5 tabs on a 360px phone; force-show keeps

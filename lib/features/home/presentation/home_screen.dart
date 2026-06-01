@@ -20,6 +20,7 @@ import 'package:pally/features/progress/presentation/progress_view_model.dart';
 import 'package:pally/features/subscription/presentation/trial_countdown_banner.dart';
 import 'package:pally/features/subscription/presentation/trial_welcome_screen.dart';
 import 'package:pally/features/subscription/trial_status_provider.dart';
+import 'package:pally/features/onboarding/presentation/feature_tour.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -33,12 +34,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     // Show the trial welcome once on first launch after a trial is granted.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       final trial = ref.read(trialStatusProvider).valueOrNull;
       if (trial?.isOnTrial == true) {
         TrialWelcomeScreen.maybeShow(context);
       }
+      // Show the 5-step feature tour once after the first home render.
+      // Slight delay so all anchor widgets are laid out.
+      await Future.delayed(const Duration(milliseconds: 600));
+      if (mounted) FeatureTour.maybeShow(context);
     });
   }
 
@@ -217,6 +222,7 @@ class _HomeHeader extends StatelessWidget {
                       ),
                     ),
                     TextButton.icon(
+                      key: featureTourCreateMochiKey,
                       onPressed: onNewTutor,
                       icon: const Icon(Icons.add, size: 16),
                       label: const Text('New'),
