@@ -162,11 +162,30 @@ class UploadViewModel extends _$UploadViewModel {
         ? (body['error'] as String?)?.trim()
         : null;
 
+    // Extract structured 409 payload for duplicate/similar content
+    String? dupCode;
+    String? dupExisting;
+    if (status == 409 && body is Map) {
+      final data = body['data'] is Map
+          ? body['data'] as Map
+          : body;
+      dupCode     = data['code'] as String?;
+      dupExisting = data['existingFileName'] as String?;
+    }
+
     return switch (status) {
       400 => '"$fileName" couldn\'t be read — it may be empty or corrupted.',
       401 => 'Session expired. Please sign in again.',
       402 => 'You\'ve hit the upload limit. Upgrade for unlimited uploads.',
       403 => 'You don\'t have permission to upload here.',
+      409 when dupCode == 'DUPLICATE_FILE' =>
+            '"$fileName" is identical to '
+            '"${dupExisting ?? 'an existing file'}" already in your Mochi\'s brain. '
+            'No need to upload it again!',
+      409 when dupCode == 'SIMILAR_CONTENT' =>
+            '"$fileName" is very similar to '
+            '"${dupExisting ?? 'existing notes'}" already in your Mochi\'s brain. '
+            'Uploading it again won\'t teach Mochi anything new.',
       413 => '"$fileName" is too large (max 25MB). '
             'Try splitting it into smaller sections.',
       415 => '"$fileName" isn\'t a supported file type. '
