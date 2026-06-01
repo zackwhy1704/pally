@@ -18,6 +18,8 @@ import 'package:pally/features/chat/data/local/chat_local_data_source.dart';
 import 'package:pally/features/chat/data/local/chat_message_mapper.dart';
 import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
 
+import 'package:pally/core/observability/observability_providers.dart';
+
 part 'chat_view_model.g.dart';
 
 @immutable
@@ -468,6 +470,11 @@ class ChatViewModel extends _$ChatViewModel {
       error: null,
     );
 
+    final photoSpan = ref.read(perfMonitorProvider).startSpan(
+        'ai.photo.solve',
+        operation: 'ai',
+        description: 'POST /photo-question');
+    photoSpan.setTag('route', 'photo.solve');
     try {
       final dio = ref.read(dioProvider);
       final response = await dio.post<Map<String, dynamic>>(
@@ -523,7 +530,10 @@ class ChatViewModel extends _$ChatViewModel {
         pendingLevelUp:
             pendingLevel > 0 ? pendingLevel : state.pendingLevelUp,
       );
+      photoSpan.setData('questions_answered', answers.length);
+      photoSpan.finish(statusCode: 200);
     } on DioException catch (e, st) {
+      photoSpan.finish(statusCode: 500);
       appLog.e('[Chat] Photo question solve failed',
           error: e, stackTrace: st);
       final isNetwork = e.type == DioExceptionType.connectionError ||
@@ -540,6 +550,7 @@ class ChatViewModel extends _$ChatViewModel {
         messages: state.messages.where((m) => m.id != messageId).toList(),
       );
     } catch (e, st) {
+      photoSpan.finish(statusCode: 500);
       appLog.e('[Chat] Photo question unexpected error',
           error: e, stackTrace: st);
       state = state.copyWith(
@@ -692,6 +703,17 @@ class ChatViewModel extends _$ChatViewModel {
     final dio = ref.read(dioProvider);
     appLog.d('[Chat] Starting SSE stream for avatar $_avatarId');
 
+    // ai.chat.send span: measures end-to-end Claude latency for this chat
+    // route. Finished on EVERY exit (done / error event / empty / exception)
+    // so it never leaks. Low-cardinality tags only — PDPA.
+    final perf = ref.read(perfMonitorProvider);
+    final span = perf.startSpan('ai.chat.send',
+        operation: 'ai', description: 'POST /chat SSE');
+    span.setTag('route', 'chat.send');
+    span.setTag('mode', state.teachingMode == TeachingMode.teaching
+        ? 'guide'
+        : 'answer');
+
     try {
       final response = await dio.post<ResponseBody>(
         '/api/v1/avatars/$_avatarId/chat',
@@ -735,6 +757,8 @@ class ChatViewModel extends _$ChatViewModel {
               _finaliseStreamingMessage(
                   streamId, _stripSourceTrailer(buffer.toString()), sources);
               state = state.copyWith(isTyping: false);
+              span.setData('chars_out', buffer.length);
+              span.finish(statusCode: 200);
               return;
             }
             // Handle server-sent error events (e.g. moderation block,
@@ -743,6 +767,7 @@ class ChatViewModel extends _$ChatViewModel {
               appLog.w('[Chat] Server sent error event: $fullData');
               _markStreamingMessageAsError(streamId, null);
               state = state.copyWith(isTyping: false);
+              span.finish(statusCode: 500);
               return;
             }
             // SSE comment lines (": connected") — skip silently.
@@ -801,25 +826,26 @@ class ChatViewModel extends _$ChatViewModel {
 
       appLog.i('[Chat] Stream ended, chars=${buffer.length}');
       // If the stream closed without ANY content, treat it as a failure.
-      // This happens when the backend's synchronous pre-processing (moderation,
-      // context assembly) crashes AFTER flushing the HTTP 200 header but
-      // before writing any delta events.  Showing an empty bubble is worse
-      // than showing an explicit retry affordance.
       if (buffer.isEmpty) {
         appLog.w('[Chat] Stream ended with 0 chars — treating as server error');
         _markStreamingMessageAsError(streamId, null);
         state = state.copyWith(isTyping: false);
+        span.finish(statusCode: 500);
         return;
       }
       _finaliseStreamingMessage(
           streamId, _stripSourceTrailer(buffer.toString()), sources);
       state = state.copyWith(isTyping: false);
+      span.setData('chars_out', buffer.length);
+      span.finish(statusCode: 200);
     } on DioException catch (e, st) {
       appLog.w('[Chat] SSE stream failed', error: e, stackTrace: st);
       _markStreamingMessageAsError(streamId, e);
+      span.finish(statusCode: e.type == DioExceptionType.receiveTimeout ? 408 : 500);
     } catch (e, st) {
       appLog.e('[Chat] SSE unexpected error', error: e, stackTrace: st);
       _markStreamingMessageAsError(streamId, null);
+      span.finish(statusCode: 500);
     }
   }
 

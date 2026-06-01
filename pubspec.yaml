@@ -70,6 +70,7 @@ dev_dependencies:
   json_serializable: ^6.8.0
   go_router_builder: ^2.7.1
   drift_dev: ^2.20.3
+  sentry_dart_plugin: ^3.4.0
 
 flutter:
   uses-material-design: true
@@ -81,3 +82,23 @@ flutter:
     - family: Nunito
       fonts:
         - asset: test/fonts/Nunito-Regular.ttf
+
+# ── Sentry debug symbols ───────────────────────────────────────────────────────
+# Reads org / project / auth_token from env vars — NEVER hardcode the token.
+# Set before running `dart run sentry_dart_plugin`:
+#   SENTRY_ORG          = <your-sentry-org-slug>     (e.g. "my-company")
+#   SENTRY_PROJECT      = memoly-flutter-prod         (or memoly-flutter-dev)
+#   SENTRY_AUTH_TOKEN   = <secret — CI secret or local shell only>
+#
+# Build + upload (production):
+#   flutter build apk --release \
+#     --dart-define=APP_ENV=production \
+#     --obfuscate --split-debug-info=build/symbols
+#   SENTRY_ORG=<slug> SENTRY_PROJECT=memoly-flutter-prod \
+#   SENTRY_AUTH_TOKEN=<token> dart run sentry_dart_plugin
+sentry:
+  upload_debug_symbols: true
+  upload_source_maps: false   # mobile app, not web
+  # project / org / auth_token are read from the env vars above.
+  # If your sentry_dart_plugin version requires them inline,
+  # use CI substitution — never commit the auth token.

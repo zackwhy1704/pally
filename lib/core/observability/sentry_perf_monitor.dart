@@ -1,9 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:pally/core/observability/observability.dart';
 import 'package:pally/core/observability/noop_observability.dart';
-
-const _sentryDsn = String.fromEnvironment('SENTRY_DSN');
+import 'package:pally/core/observability/sentry_observability.dart';
 
 class _SentrySpan implements PerfSpan {
   _SentrySpan(this._span);
@@ -27,7 +25,10 @@ class _SentrySpan implements PerfSpan {
 class SentryPerfMonitor implements PerfMonitor {
   const SentryPerfMonitor();
 
-  static bool get _active => _sentryDsn.isNotEmpty && kReleaseMode;
+  /// Use SentryObservability.isActive (resolves embedded DSNs by APP_ENV).
+  /// Removed the stale `const _sentryDsn = String.fromEnvironment('SENTRY_DSN')`
+  /// gate that would silently no-op even in prod builds with baked-in DSNs.
+  static bool get _active => SentryObservability.isActive;
 
   @override
   PerfSpan startSpan(String name,

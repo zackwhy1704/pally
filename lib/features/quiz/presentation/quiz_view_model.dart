@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/error/pally_error.dart';
+
+import 'package:pally/core/observability/observability_providers.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/progress/presentation/progress_view_model.dart';
 import 'package:pally/shared/models/quiz_question.dart';
@@ -136,6 +138,11 @@ class QuizViewModel extends _$QuizViewModel {
   }
 
   Future<void> _loadQuestions() async {
+    final span = ref.read(perfMonitorProvider).startSpan(
+        'ai.quiz.daily',
+        operation: 'ai',
+        description: 'GET /quiz/daily');
+    span.setTag('route', 'quiz.daily');
     try {
       final dio = ref.read(dioProvider);
       // /quiz/daily returns ApiResponse<List<QuizQuestionResponse>> — after
@@ -155,18 +162,23 @@ class QuizViewModel extends _$QuizViewModel {
               Map<String, dynamic>.from(e as Map)))
           .toList();
       state = state.copyWith(questions: questions, isLoading: false);
+      span.setData('questions_count', questions.length);
+      span.finish(statusCode: 200);
     } on DioException catch (e) {
       // 404 = "no quiz yet" (genuinely empty); everything else routes
       // through PallyError so the UI gets a uniform message + retry.
       if (e.response?.statusCode == 404) {
         state = state.copyWith(questions: const [], isLoading: false);
+        span.finish(statusCode: 404);
         return;
       }
       state = state.copyWith(
           isLoading: false, error: PallyError.from(e));
+      span.finish(statusCode: e.response?.statusCode ?? 500);
     } catch (e) {
       state = state.copyWith(
           isLoading: false, error: PallyError.from(e));
+      span.finish(statusCode: 500);
     }
   }
 
@@ -233,6 +245,11 @@ class QuizViewModel extends _$QuizViewModel {
 
   Future<void> _submitAnswers() async {
     state = state.copyWith(isSubmitting: true);
+    final span = ref.read(perfMonitorProvider).startSpan(
+        'ai.quiz.submit',
+        operation: 'ai',
+        description: 'POST /quiz/answers');
+    span.setTag('route', 'quiz.submit');
     try {
       final dio = ref.read(dioProvider);
       final response = await dio.post<Map<String, dynamic>>(
@@ -277,7 +294,10 @@ class QuizViewModel extends _$QuizViewModel {
         newLevel: newLevel,
         masteryMatrix: matrix,
       );
+      span.setData('xp_earned', backendXp);
+      span.finish(statusCode: 200);
     } catch (e, st) {
+      span.finish(statusCode: 500);
       appLog.w('[Quiz] submit failed — XP shown is local estimate only',
           error: e, stackTrace: st);
     }

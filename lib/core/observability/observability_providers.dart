@@ -1,25 +1,21 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/observability/observability.dart';
 import 'package:pally/core/observability/noop_observability.dart';
 import 'package:pally/core/observability/sentry_perf_monitor.dart';
 import 'package:pally/core/observability/sentry_observability.dart';
 
-const _sentryDsn = String.fromEnvironment('SENTRY_DSN');
-
-/// Active in release when DSN is set; noop otherwise.
+/// Active in release when APP_ENV=production|development (DSN is now embedded
+/// in sentry_observability.dart; the stale SENTRY_DSN env-var gate is gone).
 final perfMonitorProvider = Provider<PerfMonitor>((_) {
-  if (_sentryDsn.isNotEmpty && kReleaseMode) {
-    return const SentryPerfMonitor();
-  }
-  return const NoopPerfMonitor();
+  return SentryObservability.isActive
+      ? const SentryPerfMonitor()
+      : const NoopPerfMonitor();
 });
 
 /// Phase 6: swap [NoopAnalytics] for PostHog / Firebase implementation.
 /// Until then: zero network calls, zero PII risk.
 final analyticsProvider = Provider<Analytics>((_) {
-  if (_sentryDsn.isNotEmpty && kReleaseMode) {
-    return const SentryAnalytics();
-  }
-  return const NoopAnalytics();
+  return SentryObservability.isActive
+      ? const SentryAnalytics()
+      : const NoopAnalytics();
 });
