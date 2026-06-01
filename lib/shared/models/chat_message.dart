@@ -41,7 +41,7 @@ String _syncStatusToJson(SyncStatus s) => s.name;
 class ChatMessage with _$ChatMessage {
   const factory ChatMessage({
     required String id,
-    required String avatarId,
+    @Default('') String avatarId,
     @JsonKey(fromJson: _messageRoleFromJson, toJson: _messageRoleToJson)
     required MessageRole role,
     required String content,

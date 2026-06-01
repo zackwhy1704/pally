@@ -333,7 +333,7 @@ class __$$ChatMessageImplCopyWithImpl<$Res>
 class _$ChatMessageImpl implements _ChatMessage {
   const _$ChatMessageImpl(
       {required this.id,
-      required this.avatarId,
+      this.avatarId = '',
       @JsonKey(fromJson: _messageRoleFromJson, toJson: _messageRoleToJson)
       required this.role,
       required this.content,
@@ -359,6 +359,7 @@ class _$ChatMessageImpl implements _ChatMessage {
   @override
   final String id;
   @override
+  @JsonKey()
   final String avatarId;
   @override
   @JsonKey(fromJson: _messageRoleFromJson, toJson: _messageRoleToJson)
@@ -491,7 +492,7 @@ class _$ChatMessageImpl implements _ChatMessage {
 abstract class _ChatMessage implements ChatMessage {
   const factory _ChatMessage(
       {required final String id,
-      required final String avatarId,
+      final String avatarId,
       @JsonKey(fromJson: _messageRoleFromJson, toJson: _messageRoleToJson)
       required final MessageRole role,
       required final String content,

@@ -266,7 +266,10 @@ class ChatViewModel extends _$ChatViewModel {
       final messages = <ChatMessage>[];
       for (final e in raw) {
         try {
-          messages.add(ChatMessage.fromJson(e as Map<String, dynamic>));
+          // Backend history rows don't include avatarId per-row — inject it.
+          final map = Map<String, dynamic>.from(e as Map<String, dynamic>);
+          map.putIfAbsent('avatarId', () => _avatarId);
+          messages.add(ChatMessage.fromJson(map));
         } catch (parseErr, st) {
           appLog.e('[Chat] Failed to parse history message: $e',
               error: parseErr, stackTrace: st);
