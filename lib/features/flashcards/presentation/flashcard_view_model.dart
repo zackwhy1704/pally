@@ -192,7 +192,10 @@ class FlashCardViewModel extends _$FlashCardViewModel {
         return;
       }
 
-      final earliest = due.isNotEmpty ? now : upcoming.first.nextReview!;
+      // Guard: upcoming is non-empty here because we checked both empty above
+      final earliest = due.isNotEmpty
+          ? now
+          : (upcoming.first.nextReview ?? now);
       // For a future-scheduled reminder we want to count cards due on that
       // same calendar day, not the whole future deck.
       final count = due.isNotEmpty

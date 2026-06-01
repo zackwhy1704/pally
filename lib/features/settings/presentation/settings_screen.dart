@@ -866,7 +866,13 @@ class _SubscriptionTile extends ConsumerWidget {
           ),
         ],
       ),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (_, __) => const _SettingsCard(children: [
+          ListTile(
+            leading: Icon(Icons.workspace_premium_rounded, color: AppColors.text3),
+            title: Text('Subscription'),
+            subtitle: Text('Could not load — tap to retry'),
+          ),
+        ]),
       data: (ent) {
         final isPremium = ent.isPremium;
         final isOnTrial = ent.source == 'TRIAL';
@@ -977,9 +983,30 @@ class _SubscriptionTile extends ConsumerWidget {
       final url = await svc.openPortal();
       await svc.launchExternal(url);
     } on SubscriptionError catch (e) {
-      if (context.mounted) PallyToast.error(context, e.message);
+      if (context.mounted) PallyToast.error(context, _sanitizeError(e.message));
     }
   }
+}
+
+/// Sanitises error messages before showing them to the user.
+/// Strips technical prefixes; returns a friendly fallback for anything
+/// that looks like a raw exception or status code.
+String _sanitizeError(String? raw) {
+  if (raw == null || raw.isEmpty) return 'Something went wrong. Try again.';
+  // Strip common technical prefixes
+  var msg = raw
+      .replaceAll('DioException:', '')
+      .replaceAll('Exception:', '')
+      .replaceAll('Error:', '')
+      .trim();
+  // If it still looks like a class name or stack frame, use fallback
+  if (msg.contains('at com.') ||
+      msg.contains('SocketException') ||
+      msg.contains('HandshakeException') ||
+      RegExp(r'^\d{3}\b').hasMatch(msg)) {
+    return 'Something went wrong. Check your connection and try again.';
+  }
+  return msg.isNotEmpty ? msg : 'Something went wrong. Try again.';
 }
 
 /// Settings → Referral section. Two actions: open your own referral page

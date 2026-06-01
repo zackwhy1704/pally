@@ -122,7 +122,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     ref.listen<ChatState>(chatViewModelProvider(widget.avatarId), (prev, next) {
       _scrollToBottom();
       if (next.error != null && prev?.error != next.error) {
-        PallyToast.error(context, next.error!);
+        PallyToast.error(context, next.error ?? 'Something went wrong.');
       }
       // Level-up from photo solve (or stamped before this screen rebuilt
       // from a session-end credit). Fire once then clear so it doesn't

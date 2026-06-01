@@ -21,7 +21,7 @@ class CreateTutorScreen extends ConsumerWidget {
 
     ref.listen<CreateTutorState>(createTutorViewModelProvider, (_, next) {
       if (next.error != null) {
-        PallyToast.error(context, next.error!);
+        PallyToast.error(context, next.error ?? 'Something went wrong — try again.');
       }
     });
 

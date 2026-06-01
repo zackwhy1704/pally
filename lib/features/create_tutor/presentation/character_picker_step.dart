@@ -45,7 +45,15 @@ class CharacterPickerStep extends ConsumerWidget {
         Expanded(
           child: unlockedAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => const SizedBox(),
+            error: (_, __) => const Center(
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(
+                  'Could not load Mochis — pull down to retry.',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
             data: (unlocked) => GridView.builder(
               padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.sm, vertical: AppSpacing.sm),

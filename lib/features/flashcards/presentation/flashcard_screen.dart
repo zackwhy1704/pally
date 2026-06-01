@@ -44,7 +44,7 @@ class FlashcardScreen extends ConsumerWidget {
           ? _GeneratingView(isGenerating: state.isGenerating)
           : state.error != null
               ? PallyErrorCard(
-                  message: state.error!,
+                  message: state.error ?? 'Something went wrong — try again.',
                   onRetry: notifier.refresh,
                 )
               : Column(

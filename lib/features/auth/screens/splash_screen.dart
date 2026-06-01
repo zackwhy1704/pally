@@ -40,8 +40,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     ]);
 
     if (!mounted) return;
-    final line = results[0] as SplashLine;
-    final route = results[1] as String;
+    // Defensive casts — Future.wait preserves order so [0] is pickSplashLine
+    // and [1] is _resolveRoute(); both always return their typed values.
+    final line = results[0] is SplashLine
+        ? results[0] as SplashLine
+        : kSplashLines[1]; // fallback to product-truth line
+    final route = results[1] is String ? results[1] as String : '/';
 
     setState(() => _line = line);
     await _fadeCtrl.forward();

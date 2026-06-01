@@ -36,7 +36,7 @@ class CollectionScreen extends ConsumerWidget {
               ? Padding(
                   padding: const EdgeInsets.all(AppSpacing.md),
                   child: PallyErrorCard(
-                    message: state.error!,
+                    message: state.error ?? 'Something went wrong — try again.',
                     onRetry: notifier.refresh,
                   ),
                 )

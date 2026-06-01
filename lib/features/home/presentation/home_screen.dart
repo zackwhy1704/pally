@@ -87,7 +87,36 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 loading: () => const Center(
                   child: CircularProgressIndicator(color: AppColors.purple),
                 ),
-                error: (e, _) => EmptyHomeState(childName: childName),
+                error: (e, _) => Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.xl),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.wifi_off_rounded,
+                            size: 48, color: AppColors.text3),
+                        const SizedBox(height: AppSpacing.md),
+                        Text('Could not load your Mochis.',
+                            style: AppTextStyles.title,
+                            textAlign: TextAlign.center),
+                        const SizedBox(height: AppSpacing.xs),
+                        Text('Check your connection and pull down to retry.',
+                            style: AppTextStyles.body
+                                .copyWith(color: AppColors.text2),
+                            textAlign: TextAlign.center),
+                        const SizedBox(height: AppSpacing.lg),
+                        FilledButton(
+                          onPressed: () => ref
+                              .read(homeViewModelProvider.notifier)
+                              .refresh(),
+                          style: FilledButton.styleFrom(
+                              backgroundColor: AppColors.purple),
+                          child: const Text('Try again'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 data: (avatars) => avatars.isEmpty
                     ? EmptyHomeState(childName: childName)
                     : _AvatarGrid(avatars: avatars),

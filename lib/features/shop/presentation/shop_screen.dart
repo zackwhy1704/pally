@@ -53,7 +53,7 @@ class ShopScreen extends ConsumerWidget {
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)),
-          content: Text(next.error!),
+          content: Text(next.error ?? 'Something went wrong.'),
         ));
       }
     });
@@ -388,7 +388,7 @@ class _PowerupShopCard extends ConsumerWidget {
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)),
-          content: Text(next.error!),
+          content: Text(next.error ?? 'Something went wrong.'),
         ));
         notifier.clearError();
       }

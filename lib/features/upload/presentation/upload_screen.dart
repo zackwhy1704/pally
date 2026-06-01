@@ -30,7 +30,7 @@ class UploadScreen extends ConsumerWidget {
       // Only toast if there's a single error (no per-file errors list yet).
       // When there are per-file errors the UI card is more informative.
       if (next.fileErrors.length <= 1) {
-        PallyToast.error(context, next.error!);
+        PallyToast.error(context, next.error ?? 'Upload failed — try again.');
       }
     });
 

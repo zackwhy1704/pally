@@ -38,7 +38,7 @@ class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen> {
     ref.listen<WikiViewerState>(wikiViewerViewModelProvider(widget.avatarId),
         (_, next) {
       if (next.error != null) {
-        PallyToast.error(context, next.error!.userMessage);
+        PallyToast.error(context, next.error?.userMessage ?? 'Something went wrong.');
       }
     });
 

@@ -115,7 +115,7 @@ class QuizScreen extends ConsumerWidget {
           ? const PallyLoadingSpinner()
           : quizState.error != null
               ? PallyErrorCard(
-                  message: quizState.error!.userMessage,
+                  message: quizState.error?.userMessage ?? 'Something went wrong — try again.',
                   onRetry: () => ref
                       .read(quizViewModelProvider(avatarId).notifier)
                       .restart(),
