@@ -27,8 +27,9 @@ class PaywallScreen extends ConsumerWidget {
 
   String get _subhead => switch (feature) {
         'CREATE_TUTOR' =>
-            'Free Pally gives you 1 Mochi. Premium gives unlimited Mochis so '
-                'every subject gets its own buddy.',
+            'Free users get 1 Mochi. Sign up for premium for unlimited Mochis '
+                'so each subject gets its own Mochi. Or, level up to level 5 '
+                'to unlock your next Mochi slot!',
         'UPLOAD_DOC' =>
             'You can upload 3 documents per Mochi on free. Premium has no '
                 'upload cap — keep filling that brain.',
@@ -72,25 +73,29 @@ class PaywallScreen extends ConsumerWidget {
           child: Column(
             children: [
               const SizedBox(height: AppSpacing.md),
-              Container(
-                width: 88,
-                height: 88,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [AppColors.purple, AppColors.purpleC],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+              if (feature == 'CREATE_TUTOR')
+                Image.asset('assets/images/mochi.png',
+                    width: 110, height: 110, fit: BoxFit.contain)
+              else
+                Container(
+                  width: 88,
+                  height: 88,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [AppColors.purple, AppColors.purpleC],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                          color: AppColors.purple.withValues(alpha: 0.35),
+                          blurRadius: 24),
+                    ],
                   ),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                        color: AppColors.purple.withValues(alpha: 0.35),
-                        blurRadius: 24),
-                  ],
+                  child: const Center(
+                      child: Text('⭐', style: TextStyle(fontSize: 44))),
                 ),
-                child: const Center(
-                    child: Text('⭐', style: TextStyle(fontSize: 44))),
-              ),
               const SizedBox(height: AppSpacing.lg),
               Text(_headline,
                   style: AppTextStyles.heading1, textAlign: TextAlign.center),
