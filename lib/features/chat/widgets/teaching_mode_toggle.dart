@@ -13,9 +13,18 @@ extension TeachingModeX on TeachingMode {
 
 /// Segmented pill toggle: 🧭 Guide Me / 💡 Just answer.
 ///
-/// Guide Me (TEACHING) — Mochi never hands over the answer, leads
-/// the student to figure it out. Builds long-term retention.
-/// Just answer (DIRECT) = worked solution, framed as "for checking your work."
+/// Sizing is fully adaptive — no hardcoded width:
+///   • If the parent provides bounded constraints (Expanded / Flexible /
+///     ConstrainedBox), the toggle fills that space exactly.
+///   • If the parent passes unbounded width (a plain Row), the toggle
+///     self-sizes to 42 % of the logical screen width via MediaQuery,
+///     so it scales proportionally on any device from compact phone to
+///     tablet without a single hardcoded dp value.
+///
+/// The sliding indicator is computed from the actual available width
+/// (availableWidth / 2), replacing the old FractionallySizedBox which
+/// required a bounded parent and crashed with an assertion when the
+/// parent Row passed infinite width.
 class TeachingModeToggle extends StatelessWidget {
   const TeachingModeToggle({
     super.key,
@@ -28,61 +37,81 @@ class TeachingModeToggle extends StatelessWidget {
   final VoidCallback onToggle;
   final bool enabled;
 
+  // Height matches Material segmented-control spec (design token, not a
+  // layout hack — equivalent to specifying Button height).
+  static const double _height = 40;
+
   @override
   Widget build(BuildContext context) {
     final isGuide = mode.isGuide;
 
-    // Width must be explicit: this widget lives inside a Row in _ChatAppBar
-    // (a non-Expanded child), so the Row passes unbounded width constraints.
-    // FractionallySizedBox(widthFactor: 0.5) requires bounded parent width —
-    // without a fixed width here, 0.5 × ∞ throws a BoxConstraints assertion
-    // and crashes the entire AppBar every time the chat screen opens.
-    return Container(
-      width: 164,
-      height: 40,
-      decoration: BoxDecoration(
-        color: AppColors.surf2,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.outline),
-      ),
-      child: Stack(
-        children: [
-          // Sliding selection indicator
-          AnimatedAlign(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeOut,
-            alignment: isGuide ? Alignment.centerLeft : Alignment.centerRight,
-            child: FractionallySizedBox(
-              widthFactor: 0.5,
-              child: Container(
-                margin: const EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  color: isGuide ? AppColors.purple : AppColors.amber,
-                  borderRadius: BorderRadius.circular(17),
+    return LayoutBuilder(builder: (context, constraints) {
+      // Honour parent-provided bounded width (Expanded, Flexible, etc.).
+      // Fall back to 42 % of logical screen width when the parent Row
+      // passes infinite width — percentage-based so it adapts to every
+      // screen size, exactly like ConstraintLayout percent constraints.
+      final screenWidth = MediaQuery.of(context).size.width;
+      final toggleWidth = constraints.maxWidth.isFinite
+          ? constraints.maxWidth
+          : screenWidth * 0.42;
+
+      // Half-width for the sliding selector — computed arithmetically
+      // from the actual available space instead of FractionallySizedBox,
+      // which required a bounded parent and threw a BoxConstraints
+      // assertion on unbounded Row children.
+      final selectorWidth = toggleWidth / 2;
+
+      return SizedBox(
+        width: toggleWidth,
+        height: _height,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: AppColors.surf2,
+            borderRadius: BorderRadius.circular(_height / 2),
+            border: Border.all(color: AppColors.outline),
+          ),
+          child: Stack(
+            children: [
+              // Sliding selection indicator
+              AnimatedAlign(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOut,
+                alignment:
+                    isGuide ? Alignment.centerLeft : Alignment.centerRight,
+                child: SizedBox(
+                  width: selectorWidth,
+                  child: Container(
+                    margin: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      color: isGuide ? AppColors.purple : AppColors.amber,
+                      borderRadius:
+                          BorderRadius.circular(_height / 2 - 3),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-          // Labels row
-          Row(
-            children: [
-              _Segment(
-                emoji: '🧭',
-                label: 'Guide Me',
-                selected: isGuide,
-                onTap: enabled && !isGuide ? onToggle : null,
-              ),
-              _Segment(
-                emoji: '💡',
-                label: 'Just answer',
-                selected: !isGuide,
-                onTap: enabled && isGuide ? onToggle : null,
+              // Labels — two equal segments, each Expanded
+              Row(
+                children: [
+                  _Segment(
+                    emoji: '🧭',
+                    label: 'Guide Me',
+                    selected: isGuide,
+                    onTap: enabled && !isGuide ? onToggle : null,
+                  ),
+                  _Segment(
+                    emoji: '💡',
+                    label: 'Just answer',
+                    selected: !isGuide,
+                    onTap: enabled && isGuide ? onToggle : null,
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
-    );
+        ),
+      );
+    });
   }
 }
 

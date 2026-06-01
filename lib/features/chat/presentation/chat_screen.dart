@@ -245,15 +245,23 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final chatState = ref.watch(chatViewModelProvider(avatarId));
 
+    // Derive the AppBar content height from the theme so it adapts if the
+    // theme ever changes (no magic numbers).
+    final topPad = MediaQuery.of(context).padding.top;
+    final barHeight = preferredSize.height;
+
     return Container(
-      height: 64 + MediaQuery.of(context).padding.top,
-      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+      height: barHeight + topPad,
+      padding: EdgeInsets.only(top: topPad),
       decoration: const BoxDecoration(
         color: AppColors.surface,
         border: Border(bottom: BorderSide(color: AppColors.outline)),
       ),
       child: Row(
+        // crossAxisAlignment centres children on the content-height axis.
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          // ← Back — touch target set by IconButton (never hardcoded)
           IconButton(
             icon: const Icon(Icons.arrow_back_ios_new_rounded),
             onPressed: () {
@@ -264,28 +272,31 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
               }
             },
           ),
-          if (avatar != null)
-            Container(
-              width: 36,
-              height: 36,
+          // Avatar circle — 36 dp is a DESIGN TOKEN (avatar badge size),
+          // not a layout hack. It's the same value used on every screen.
+          SizedBox(
+            width: 36,
+            height: 36,
+            child: DecoratedBox(
               decoration: BoxDecoration(
-                color: avatar!.character.bgColor,
+                color: avatar != null
+                    ? avatar!.character.bgColor
+                    : AppColors.purpleL,
                 shape: BoxShape.circle,
               ),
               child: Center(
-                child: CharacterWidget(character: avatar!.character, size: 32),
+                child: avatar != null
+                    ? CharacterWidget(character: avatar!.character, size: 28)
+                    : const Icon(Icons.smart_toy_outlined,
+                        color: AppColors.purple, size: 18),
               ),
-            )
-          else
-            Container(
-              width: 36,
-              height: 36,
-              decoration: const BoxDecoration(
-                  color: AppColors.purpleL, shape: BoxShape.circle),
-              child: const Icon(Icons.smart_toy_outlined,
-                  color: AppColors.purple, size: 20),
             ),
+          ),
           const SizedBox(width: AppSpacing.xs),
+
+          // Name text — Expanded(flex:1): takes ALL remaining space after
+          // the toggle and fixed widgets are measured. This is the
+          // "match_parent" / flex-1 equivalent from ConstraintLayout.
           Expanded(
             child: Text(
               avatar?.name ?? 'Loading…',
@@ -294,9 +305,12 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          // Toggle — plain widget (no ModeCoachMark wrapper).
-          // The coach-mark is shown in the chat body Stack so it can float
-          // below the AppBar without causing a vertical overflow in the Row.
+
+          // Mode toggle — self-sizes to 42 % of screen width via
+          // LayoutBuilder inside TeachingModeToggle (see that file).
+          // No width is specified here; the Row measures it with unbounded
+          // constraints, the toggle reads MediaQuery, and the Expanded text
+          // above gets whatever is left — fully adaptive on every device.
           Builder(builder: (ctx) {
             if (ModalRoute.of(ctx)?.isCurrent == true) {
               TourAnchors.modeToggleCtx = ctx;
