@@ -12,17 +12,29 @@ class SplashLine {
 /// Line at index 1 is the FIRST-LAUNCH default (product truth, not a joke).
 const List<SplashLine> kSplashLines = [
   SplashLine(
-    hero: 'Learn with Mochi.',
-    sub: "Don't just look it up. That's so lame.",
+    hero: 'Learn it.',
+    sub: "Don't just look it up.",
   ),
   // index 1 — first-ever-launch default: product truth, not a joke
   SplashLine(
     hero: 'Trained on your notes.',
-    sub: 'Not the whole internet — so the answers are actually yours.',
+    sub: 'Not the whole internet.',
   ),
   SplashLine(
-    hero: 'One subject. One Mochi.',
-    sub: 'Each one goes deep, so nothing gets fuzzy.',
+    hero: 'A study buddy that did the reading.',
+    sub: "Knows your material. Not everyone else's.",
+  ),
+  SplashLine(
+    hero: 'Not a know-it-all.',
+    sub: 'A learn-it-with-you.',
+  ),
+  SplashLine(
+    hero: 'Your notes, now with a brain.',
+    sub: "Feed me a little, and I'll quiz you a lot.",
+  ),
+  SplashLine(
+    hero: 'Study with someone who gets your syllabus.',
+    sub: 'One Mochi, one subject — nothing gets fuzzy.',
   ),
   SplashLine(
     hero: 'I remember how you learn.',
@@ -31,10 +43,6 @@ const List<SplashLine> kSplashLines = [
   SplashLine(
     hero: 'Looking it up is so last season.',
     sub: 'Mochi saw nothing. 🫣',
-  ),
-  SplashLine(
-    hero: 'Your notes, now with a brain.',
-    sub: "Feed me a little, and I'll quiz you a lot.",
   ),
 ];
 

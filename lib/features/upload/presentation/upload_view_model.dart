@@ -392,9 +392,16 @@ class UploadViewModel extends _$UploadViewModel {
     } on DioException catch (e, st) {
       appLog.e('[Upload] Failed: ${file.name} status=${e.response?.statusCode}',
           error: e, stackTrace: st);
+
+      // 409 duplicate/similar: the content IS already in the brain.
+      // Invalidate library so the user sees the existing pages — then
+      // surface a friendly info message, not a red error.
+      if (e.response?.statusCode == 409) {
+        ref.invalidate(libraryViewModelProvider);
+        ref.invalidate(homeViewModelProvider);
+      }
+
       final msg = _friendlyUploadError(e, file.name);
-      // Append to per-file errors (so multiple files show individual problems)
-      // and also set the top-level error for single-file scenarios.
       _appendFileError(FileUploadError(fileName: file.name, message: msg));
       state = state.copyWith(isUploading: false, error: msg);
     } catch (e, st) {

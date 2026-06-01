@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,7 +7,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
-import 'package:pally/core/ui/pally_loading_spinner.dart';
+import 'package:pally/core/widgets/loading/splash_lines.dart';
 import 'package:pally/features/quiz/presentation/quiz_view_model.dart';
 import 'package:pally/features/progress/presentation/level_up_controller.dart';
 import 'package:pally/shared/models/quiz_question.dart';
@@ -112,7 +113,7 @@ class QuizScreen extends ConsumerWidget {
         ],
       ),
       body: quizState.isLoading
-          ? const PallyLoadingSpinner()
+          ? const _QuizLoadingView()
           : quizState.error != null
               ? PallyErrorCard(
                   message: quizState.error?.userMessage ?? 'Something went wrong — try again.',
@@ -120,7 +121,9 @@ class QuizScreen extends ConsumerWidget {
                       .read(quizViewModelProvider(avatarId).notifier)
                       .restart(),
                 )
-              : quizState.isComplete
+              : quizState.questions.isEmpty
+                  ? const _NoQuestionsView()
+                  : quizState.isComplete
                   ? _CompletionView(
                       score: quizState.score,
                       total: quizState.totalQuestions,
@@ -928,6 +931,129 @@ class _MemoryNoticeCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ── Quiz loading — rotating motivational lines ────────────────────────────────
+// Quiz generation calls Claude AI and takes 20-60 s. A plain spinner looks
+// frozen. Cycling through the splash quotes keeps the user informed and
+// aligned with the app's brand voice.
+
+class _QuizLoadingView extends StatefulWidget {
+  const _QuizLoadingView();
+
+  @override
+  State<_QuizLoadingView> createState() => _QuizLoadingViewState();
+}
+
+class _QuizLoadingViewState extends State<_QuizLoadingView> {
+  int _lineIndex = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (!mounted) return;
+      setState(() {
+        _lineIndex = (_lineIndex + 1) % kSplashLines.length;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final line = kSplashLines[_lineIndex];
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/images/mochi.png',
+              width: MediaQuery.of(context).size.shortestSide * 0.28,
+              height: MediaQuery.of(context).size.shortestSide * 0.28,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            const SizedBox(
+              width: AppSpacing.xl,
+              height: AppSpacing.xl,
+              child: CircularProgressIndicator(
+                strokeWidth: 3,
+                color: AppColors.purple,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 400),
+              child: Column(
+                key: ValueKey(_lineIndex),
+                children: [
+                  Text(
+                    line.hero,
+                    style: AppTextStyles.title
+                        .copyWith(color: AppColors.purple),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    line.sub,
+                    style: AppTextStyles.bodySmall
+                        .copyWith(color: AppColors.text2),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              'Building your quiz…',
+              style: AppTextStyles.caption.copyWith(color: AppColors.text3),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── No questions empty state ──────────────────────────────────────────────────
+class _NoQuestionsView extends StatelessWidget {
+  const _NoQuestionsView();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('🧠', style: TextStyle(fontSize: 56)),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              'No quiz today',
+              style: AppTextStyles.title,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              'Upload some notes so Mochi can build your first quiz!',
+              style: AppTextStyles.body.copyWith(color: AppColors.text2),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }
