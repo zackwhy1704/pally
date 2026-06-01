@@ -140,16 +140,19 @@ class CreateTutorViewModel extends _$CreateTutorViewModel {
       ref.invalidate(libraryViewModelProvider);
       return avatar.id;
     } on DioException catch (e) {
-      // Never fabricate a stub-new-{ts} id on network failure. Returning
-      // a fake id makes creation LOOK successful but subsequent chat /
-      // upload / quiz calls all 404 because no avatar exists. Surface a
-      // real error and let the user stay on this screen to retry.
+      state = state.copyWith(isLoading: false);
+      // 402 UPGRADE_REQUIRED: the global Dio interceptor already routes to
+      // the paywall — don't show an additional error toast here.
+      if (e.response?.statusCode == 402) return null;
+      // 403 CONSENT_REQUIRED: interceptor shows the consent-gate sheet.
+      if (e.response?.statusCode == 403) return null;
+      // Real failure: surface an actionable error so the user can retry.
       final isNetwork = e.type == DioExceptionType.connectionError ||
           e.type == DioExceptionType.unknown;
       final message = isNetwork
           ? 'No internet connection. Check your WiFi and try again.'
-          : (e.message ?? 'Could not create tutor. Please try again.');
-      state = state.copyWith(isLoading: false, error: message);
+          : (e.message ?? 'Could not create Mochi. Please try again.');
+      state = state.copyWith(error: message);
       return null;
     }
   }

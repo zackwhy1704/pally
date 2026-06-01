@@ -583,7 +583,6 @@ class PhotoPreviewRoute extends GoRouteData {
 
 // Public routes that never require authentication
 const _publicPaths = {
-  '/splash',   // Splash handles its own auth routing
   '/auth/signin',
   '/auth/signup',
   '/auth/setup',
@@ -599,7 +598,7 @@ GoRouter buildAppRouter({
   final authNotifier = AuthNotifier.instance;
 
   return GoRouter(
-    initialLocation: '/splash',
+    initialLocation: '/',
     debugLogDiagnostics: true,
     navigatorKey: navigatorKey,
     refreshListenable: authNotifier,
