@@ -31,11 +31,11 @@ class PaywallScreen extends ConsumerWidget {
                 'so each subject gets its own Mochi. Or, level up to level 5 '
                 'to unlock your next Mochi slot!',
         'UPLOAD_DOC' =>
-            'You can upload 3 documents per Mochi on free. Premium has no '
-                'upload cap — keep filling that brain.',
+            'Uploads are unlimited — free or premium. The gate is how many '
+                'Mochis you can have. Premium gives you one per subject.',
         'CHAT_DAILY' =>
-            'Free chat resets tomorrow. Premium chats are unlimited so the '
-                'Mochi never sleeps.',
+            'Free users get 80 chats a day — enough for real exam prep. '
+                'Premium removes the cap entirely.',
         'PARENT_DASHBOARD' =>
             'Parents track progress, set goals, and read weekly reports.',
         'CURRICULUM' =>

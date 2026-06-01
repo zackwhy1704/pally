@@ -179,8 +179,8 @@ class _WhatLocksCard extends StatelessWidget {
           const SizedBox(height: 4),
           ...[
             '🔒 Extra Mochis locked (you keep 1 free)',
-            '💬 Chat limited to 20/day',
-            '📊 Flashcards & brain map limited',
+            '💬 Chat capped at 80/day (was unlimited)',
+            '📊 Advanced quiz & study plan limited',
           ].map((s) => Padding(
                 padding: const EdgeInsets.only(bottom: 2),
                 child: Text(s,
