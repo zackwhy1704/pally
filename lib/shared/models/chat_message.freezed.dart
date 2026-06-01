@@ -336,7 +336,7 @@ class _$ChatMessageImpl implements _ChatMessage {
       this.avatarId = '',
       @JsonKey(fromJson: _messageRoleFromJson, toJson: _messageRoleToJson)
       required this.role,
-      required this.content,
+      this.content = '',
       final List<String> sources = const [],
       this.isStreaming = false,
       this.createdAt,
@@ -365,6 +365,7 @@ class _$ChatMessageImpl implements _ChatMessage {
   @JsonKey(fromJson: _messageRoleFromJson, toJson: _messageRoleToJson)
   final MessageRole role;
   @override
+  @JsonKey()
   final String content;
   final List<String> _sources;
   @override
@@ -495,7 +496,7 @@ abstract class _ChatMessage implements ChatMessage {
       final String avatarId,
       @JsonKey(fromJson: _messageRoleFromJson, toJson: _messageRoleToJson)
       required final MessageRole role,
-      required final String content,
+      final String content,
       final List<String> sources,
       final bool isStreaming,
       final DateTime? createdAt,

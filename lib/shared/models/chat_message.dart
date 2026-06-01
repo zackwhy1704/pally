@@ -44,7 +44,7 @@ class ChatMessage with _$ChatMessage {
     @Default('') String avatarId,
     @JsonKey(fromJson: _messageRoleFromJson, toJson: _messageRoleToJson)
     required MessageRole role,
-    required String content,
+    @Default('') String content,
     @Default([]) List<String> sources,
     @Default(false) bool isStreaming,
     DateTime? createdAt,

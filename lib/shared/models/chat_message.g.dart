@@ -11,7 +11,7 @@ _$ChatMessageImpl _$$ChatMessageImplFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       avatarId: json['avatarId'] as String? ?? '',
       role: _messageRoleFromJson(json['role']),
-      content: json['content'] as String,
+      content: json['content'] as String? ?? '',
       sources: (json['sources'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??

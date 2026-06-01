@@ -13,6 +13,26 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // ── Framework error visibility ────────────────────────────────────────────
+  // Flutter widget/render exceptions (e.g. "Multiple widgets used the same
+  // GlobalKey", "BoxConstraints forces infinite width") only print to raw
+  // logcat by default and are invisible to appLog. Hook them here so every
+  // framework error surfaces through the same tagged logger as API errors,
+  // making them greppable in production logs.
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details); // keep default red-screen / console
+    appLog.e(
+      '[FlutterError] ${details.exceptionAsString()}',
+      error: details.exception,
+      stackTrace: details.stack,
+    );
+  };
+  // Catches errors that escape the widget tree entirely (async, platform).
+  WidgetsBinding.instance.platformDispatcher.onError = (error, stack) {
+    appLog.e('[PlatformError] $error', error: error, stackTrace: stack);
+    return true; // handled — don't let the OS terminate the app
+  };
+
   // Load persisted auth credentials before first frame.
   await AuthNotifier.instance.load();
 

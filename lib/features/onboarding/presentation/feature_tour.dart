@@ -7,13 +7,24 @@ import 'package:pally/core/theme/app_text_styles.dart';
 
 const _kSeenKey = 'seen_feature_tour_v1';
 
-// ── Anchor GlobalKeys — add these to the real widgets in the app ─────────────
-// The tour reads widget positions via RenderBox; if a key's widget isn't
-// in the tree, the step defaults to a centered card (never crashes).
-
+// ── Anchor GlobalKeys (home + shell — single-instance, safe) ─────────────────
+// These are attached as widget keys only to widgets that are always
+// single-instance (the "+" home button and the bottom-nav tab). They
+// cannot cause duplicate-GlobalKey mount exceptions.
 final featureTourCreateMochiKey = GlobalKey(debugLabel: 'tour_create_mochi');
-final featureTourModeToggleKey  = GlobalKey(debugLabel: 'tour_mode_toggle');
 final featureTourLibraryTabKey  = GlobalKey(debugLabel: 'tour_library_tab');
+
+// ── Context registry for widgets that can have multiple live instances ────────
+// TeachingModeToggle lives inside ChatScreen, which is pushed with .push().
+// During a route transition two ChatScreens are briefly co-mounted, so a
+// shared GlobalKey attached as the toggle's `key:` causes a
+// "Multiple widgets used the same GlobalKey" mount exception → white screen.
+// Instead, each ChatScreen's Builder registers its BuildContext here only
+// when its route is the current one, so at most one context is live.
+class TourAnchors {
+  TourAnchors._();
+  static BuildContext? modeToggleCtx;
+}
 
 // ── Tour step data ────────────────────────────────────────────────────────────
 
@@ -24,6 +35,7 @@ class _TourStep {
     required this.body,
     this.cta,
     this.anchorKey,
+    this.anchorCtxGetter,
     this.anchorPosition = _AnchorPos.center,
   });
 
@@ -31,7 +43,12 @@ class _TourStep {
   final String title;
   final String body;
   final String? cta;
+  // GlobalKey anchor — safe for single-instance widgets (home, shell).
   final GlobalKey? anchorKey;
+  // Context-getter anchor — used for widgets that can have multiple live
+  // instances (e.g. TeachingModeToggle inside ChatScreen) where a shared
+  // GlobalKey would cause a duplicate-key mount exception.
+  final BuildContext? Function()? anchorCtxGetter;
   final _AnchorPos anchorPosition;
 }
 
@@ -57,7 +74,10 @@ List<_TourStep> _buildSteps() => [
     body: 'Guide Me walks you step by step toward the answer — '
         'you figure it out, you remember more.\n'
         'Just answer gives you the worked solution for checking your work.',
-    anchorKey: featureTourModeToggleKey,
+    // Use context registry instead of GlobalKey — toggle lives in ChatScreen
+    // which is pushed with .push(), so two instances can be co-mounted during
+    // route transition and a shared GlobalKey would cause a mount exception.
+    anchorCtxGetter: () => TourAnchors.modeToggleCtx,
     anchorPosition: _AnchorPos.above,
   ),
   _TourStep(
@@ -147,9 +167,15 @@ class _FeatureTourPageState extends State<_FeatureTourPage>
   }
 
   // Find the screen-space rect of an anchored widget, or null if not in tree.
-  Rect? _anchorRect(GlobalKey? key) {
-    if (key == null) return null;
-    final obj = key.currentContext?.findRenderObject();
+  // Supports both GlobalKey anchors (for single-instance widgets) and
+  // BuildContext-getter anchors (for widgets that can be multiply-mounted).
+  Rect? _anchorRect(_TourStep step) {
+    RenderObject? obj;
+    if (step.anchorKey != null) {
+      obj = step.anchorKey!.currentContext?.findRenderObject();
+    } else if (step.anchorCtxGetter != null) {
+      obj = step.anchorCtxGetter!()?.findRenderObject();
+    }
     if (obj is! RenderBox || !obj.hasSize) return null;
     final pos = obj.localToGlobal(Offset.zero);
     return pos & obj.size;
@@ -159,7 +185,7 @@ class _FeatureTourPageState extends State<_FeatureTourPage>
   Widget build(BuildContext context) {
     final step = _steps[_step];
     final size = MediaQuery.of(context).size;
-    final anchorRect = _anchorRect(step.anchorKey);
+    final anchorRect = _anchorRect(step);
 
     // Card vertical placement
     double cardTop;

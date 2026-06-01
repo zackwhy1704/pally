@@ -287,19 +287,28 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
             ),
           ),
           // GM2: Coach-mark wraps the toggle; shows once then disappears.
+          // The toggle uses TourAnchors.modeToggleCtx (not a GlobalKey) so
+          // that two ChatScreens briefly co-mounted during a .push() route
+          // transition don't compete for the same GlobalKey and crash.
           ModeCoachMark(
-            child: TeachingModeToggle(
-              key: featureTourModeToggleKey,
-              mode: chatState.teachingMode,
-              onToggle: () {
-                ref.read(chatViewModelProvider(avatarId).notifier).toggleMode();
-                // Reset answer-only streak when user switches to Guide Me
-                if (chatState.teachingMode == TeachingMode.direct) {
-                  resetAnswerOnlyStreak();
-                }
-              },
-              enabled: chatState.canSend,
-            ),
+            child: Builder(builder: (ctx) {
+              // Register only while this route is at the top of the stack so
+              // at most one ChatScreen is the tour anchor at any time.
+              if (ModalRoute.of(ctx)?.isCurrent == true) {
+                TourAnchors.modeToggleCtx = ctx;
+              }
+              return TeachingModeToggle(
+                mode: chatState.teachingMode,
+                onToggle: () {
+                  ref.read(chatViewModelProvider(avatarId).notifier).toggleMode();
+                  // Reset answer-only streak when user switches to Guide Me
+                  if (chatState.teachingMode == TeachingMode.direct) {
+                    resetAnswerOnlyStreak();
+                  }
+                },
+                enabled: chatState.canSend,
+              );
+            }),
           ),
           const SizedBox(width: AppSpacing.xs),
           IconButton(
