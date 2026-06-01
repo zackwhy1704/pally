@@ -737,6 +737,19 @@ class ChatViewModel extends _$ChatViewModel {
               state = state.copyWith(isTyping: false);
               return;
             }
+            // Handle server-sent error events (e.g. moderation block,
+            // internal server error after headers already flushed).
+            if (currentEvent == 'error') {
+              appLog.w('[Chat] Server sent error event: $fullData');
+              _markStreamingMessageAsError(streamId, null);
+              state = state.copyWith(isTyping: false);
+              return;
+            }
+            // SSE comment lines (": connected") — skip silently.
+            if (fullData.isEmpty) {
+              currentEvent = '';
+              continue;
+            }
             if (currentEvent == 'delta' || currentEvent.isEmpty) {
               try {
                 final json = jsonDecode(fullData) as Map<String, dynamic>;
@@ -787,6 +800,17 @@ class ChatViewModel extends _$ChatViewModel {
       }
 
       appLog.i('[Chat] Stream ended, chars=${buffer.length}');
+      // If the stream closed without ANY content, treat it as a failure.
+      // This happens when the backend's synchronous pre-processing (moderation,
+      // context assembly) crashes AFTER flushing the HTTP 200 header but
+      // before writing any delta events.  Showing an empty bubble is worse
+      // than showing an explicit retry affordance.
+      if (buffer.isEmpty) {
+        appLog.w('[Chat] Stream ended with 0 chars — treating as server error');
+        _markStreamingMessageAsError(streamId, null);
+        state = state.copyWith(isTyping: false);
+        return;
+      }
       _finaliseStreamingMessage(
           streamId, _stripSourceTrailer(buffer.toString()), sources);
       state = state.copyWith(isTyping: false);
