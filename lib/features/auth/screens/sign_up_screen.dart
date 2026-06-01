@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/features/auth/auth_state.dart';
@@ -108,8 +109,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   GestureDetector(
                     onTap: () => context.pop(),
                     child: Container(
-                      width: 36,
-                      height: 36,
+                      width: AppSizing.avatarMd,
+                      height: AppSizing.avatarMd,
                       decoration: const BoxDecoration(
                         color: AppColors.purpleL,
                         shape: BoxShape.circle,
@@ -260,7 +261,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               ),
               const SizedBox(height: AppSpacing.md),
               SizedBox(
-                height: 52,
+                height: AppSizing.buttonHeight,
                 child: ElevatedButton(
                   onPressed: (_canContinue && !_loading) ? _signUp : null,
                   style: ElevatedButton.styleFrom(
@@ -274,8 +275,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   ),
                   child: _loading
                       ? const SizedBox(
-                          width: 22,
-                          height: 22,
+                          width: AppSizing.checkboxSize,
+                          height: AppSizing.checkboxSize,
                           child: CircularProgressIndicator(
                               strokeWidth: 2, color: Colors.white),
                         )

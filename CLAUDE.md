@@ -2240,3 +2240,147 @@ bash pally-smoke-test.sh
 The smoke test verifies that required Dart model fields (`id`, `avatarId`, `content`, etc.)
 are present and non-null in every live API response. A DTO change that passes Gradle tests but
 fails the smoke test means the Flutter app will have a null-cast crash or silent data loss.
+
+---
+
+# PART 17 — ADAPTIVE LAYOUT: ZERO HARDCODED DP/PX VALUES
+
+> **This is a hard rule, no exceptions.** Every screen must work correctly
+> on a 200 dp phone, a 360 dp phone, a 393 dp phone, and a 1000 dp tablet.
+> A hardcoded `width: 164` or `height: 300` WILL overflow on some device
+> and has already caused production white screens in this app.
+
+---
+
+## The Golden Rule
+
+**There must be no raw numeric dp/px literals for layout dimensions anywhere
+in the widget tree.** Every size value must come from one of three sources:
+
+| Source | When to use | Example |
+|---|---|---|
+| `AppSizing.*` token | Design-constant that applies on every screen (button height, avatar circle, touch target) | `AppSizing.buttonHeight` |
+| `MediaQuery.of(context).size` fraction | Element that should scale with screen (image, modal, background circle) | `size.shortestSide * 0.45` |
+| `LayoutBuilder` constraints | Element that fills its parent's available space | `constraints.maxWidth / 2` |
+| `Expanded` / `Flexible` | Element that shares Row/Column space proportionally | `Expanded(child: ...)` |
+| `AppSpacing.*` token | Gap/padding between elements | `AppSpacing.md` |
+
+---
+
+## AppSizing — Design Tokens (lib/core/theme/app_sizing.dart)
+
+These ARE numeric values — but they live in one place and have semantic names.
+Do not inline these numbers in widget files. Import `AppSizing` and use the token.
+
+```dart
+AppSizing.touchTarget       // 48  — Material minimum tap area
+AppSizing.buttonHeight      // 52  — Primary CTA button
+AppSizing.buttonHeightSm    // 44  — Secondary / compact button
+AppSizing.avatarXs          // 28  — Chat AppBar character widget
+AppSizing.avatarSm          // 32  — Message bubble avatar
+AppSizing.avatarMd          // 36  — Card badge, nav, AppBar circle
+AppSizing.avatarLg          // 48  — Profile row, collection card
+AppSizing.avatarXl          // 56  — Floating tip-coach Mochi
+AppSizing.checkboxSize      // 22  — Checkbox / radio circle
+AppSizing.checkIconSize     // 18  — Checkmark inside selection circle
+AppSizing.handleBarWidth    // 40  — Bottom-sheet drag handle (width)
+AppSizing.handleBarHeight   //  4  — Bottom-sheet drag handle (height)
+AppSizing.spinnerSm         // 20  — In-button / small loading spinner
+AppSizing.typingDot         //  8  — Typing-indicator dot
+AppSizing.iconContainer     // 64  — Error card icon circle
+AppSizing.progressBarHeight //  6  — Progress / mastery bar
+AppSizing.ringSize          // 56  — Biometric animation outer ring
+AppSizing.brainMapNode      // 38  — Topic node on brain-map canvas
+```
+
+---
+
+## Adaptive Sizing Patterns (use these, never raw numbers)
+
+### ✅ Images / illustrations
+```dart
+// Mochi mascot: 45 % of shortest screen dimension so it fits phone AND tablet
+final mochiSize = MediaQuery.of(context).size.shortestSide * 0.45;
+Image.asset('assets/images/mochi.png',
+  width: mochiSize, height: mochiSize, fit: BoxFit.contain);
+```
+
+### ✅ Modals / dialogs
+```dart
+// Cap modal at 85 % of screen width so it never overflows on any device
+final modalW = MediaQuery.of(context).size.width * 0.85;
+Container(width: modalW, ...);
+```
+
+### ✅ Toggle / segmented controls (or any widget with FractionallySizedBox)
+```dart
+// Use LayoutBuilder to read actual available width instead of FractionallySizedBox
+LayoutBuilder(builder: (context, constraints) {
+  final available = constraints.maxWidth.isFinite
+      ? constraints.maxWidth
+      : MediaQuery.of(context).size.width * 0.42;
+  final half = available / 2;
+  return SizedBox(width: available, child: /* use half for indicator */);
+});
+```
+
+### ✅ Background decorative circles
+```dart
+// Always a percentage of screen width, never a fixed dp value
+final circleSize = MediaQuery.of(context).size.width * 0.65;
+Container(width: circleSize, height: circleSize, ...);
+```
+
+### ✅ Row / Column distribution (like ConstraintLayout weights)
+```dart
+Row(children: [
+  IconButton(...),                        // wrap_content (framework default)
+  SizedBox(width: AppSpacing.xs),         // spacing token
+  Expanded(flex: 1, child: title),        // match_constraint flex=1
+  Expanded(flex: 2, child: toggle),       // match_constraint flex=2
+  PopupMenuButton(...),                   // wrap_content
+]);
+```
+
+---
+
+## What IS acceptable (these are design constants, not layout hacks)
+
+- `AppSizing.*` — always OK; that's the whole point of the token file
+- `AppSpacing.*` — always OK; spacing tokens
+- Border radii in `BorderRadius.circular(N)` — these are curvature constants, not sizes
+- `BorderSide(width: 1.5)` — stroke width, not a layout dimension
+- `fontSize: N` via `AppTextStyles` — typography constants
+- Icon sizes that ARE Material standard (14, 16, 18, 20, 22, 24, 28, 32, 36, 40, 48)
+  when used inside `Icon(icon, size: N)` — always reference `AppSizing.icon*` tokens
+- `height: 1` dividers
+- `Canvas` / `CustomPainter` coordinates (these use a `scale` factor internally)
+- PIN-pad or number-pad layouts where exact column count IS the design intent
+
+---
+
+## Pre-commit audit command
+
+Run before every PR:
+
+```bash
+grep -rn "width: [0-9]\|height: [0-9]\|maxWidth: [0-9]\|minWidth: [0-9]" lib/ \
+  --include="*.dart" \
+  | grep -v ".g.dart\|.freezed.dart\|//\|fontSize\|blurRadius\|elevation\|strokeWidth\|circular\|iconSize\|Duration\|seconds\|milliseconds\|SliverGrid\|preferredSize\|letterSpacing\|painter\|Painter\|canvas\|Canvas\|Paint\|Rect\|Path\|Offset\|size\.width\|size\.height\|_height\|_kDot\|AppSizing\|AppSpacing"
+```
+
+Any line that appears in this output (that is NOT inside a `CustomPainter.paint` method)
+is a violation. Fix it before merging.
+
+---
+
+## Why this matters
+
+The first white-screen crash in production was caused by `FractionallySizedBox(widthFactor: 0.5)`
+receiving an infinite parent width because `TeachingModeToggle` had a hardcoded `width: 164` that
+failed on screen sizes other than ~360 dp. When a Row passes unbounded width to a non-Flexible
+child and that child contains `FractionallySizedBox`, Flutter throws `BoxConstraints forces an
+infinite width` and renders an ErrorWidget for the entire Scaffold — a white screen with working
+APIs and passing tests. This is exactly the kind of silent device-specific failure that never
+shows up in unit tests.
+

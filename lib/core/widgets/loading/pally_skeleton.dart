@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 
 /// Animated shimmer skeleton for content lists (Pattern B).
@@ -120,7 +121,7 @@ class PallyAvatarCardSkeleton extends StatelessWidget {
         ),
         child: Row(
           children: [
-            const _SkeletonBox(width: 52, height: 52, borderRadius: 12),
+            const _SkeletonBox(width: AppSizing.skeletonAvatar, height: AppSizing.skeletonAvatar, borderRadius: 12),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: Column(

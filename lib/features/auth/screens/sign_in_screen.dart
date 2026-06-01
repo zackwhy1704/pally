@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/utils/device_info.dart';
@@ -239,8 +240,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                       },
                 child: sending
                     ? const SizedBox(
-                        width: 16,
-                        height: 16,
+                        width: AppSizing.iconSm,
+                        height: AppSizing.iconSm,
                         child: CircularProgressIndicator(strokeWidth: 2))
                     : const Text('Send Reset Link'),
               ),
@@ -355,8 +356,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                       child: GestureDetector(
                         onTap: _biometricSignIn,
                         child: Container(
-                          width: 176,
-                          height: 54,
+                          width: double.infinity,
+                          height: AppSizing.buttonHeight,
                           decoration: BoxDecoration(
                             color: const Color(0xFFFAF7FF),
                             borderRadius: BorderRadius.circular(27),
@@ -448,13 +449,13 @@ class _BiometricIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 34,
-      height: 34,
+      width: AppSizing.ringMd,
+      height: AppSizing.ringMd,
       child: Stack(
         alignment: Alignment.center,
         children: [
           Container(
-            width: 34, height: 34,
+            width: AppSizing.ringMd, height: AppSizing.ringMd,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: AppColors.teal.withValues(alpha: 0.12),
@@ -463,7 +464,7 @@ class _BiometricIcon extends StatelessWidget {
             ),
           ),
           Container(
-            width: 22, height: 22,
+            width: AppSizing.checkboxSize, height: AppSizing.checkboxSize,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
@@ -516,7 +517,7 @@ class _HeaderBand extends StatelessWidget {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  Image.asset('assets/images/mochi.png', width: 150, height: 150, fit: BoxFit.contain),
+                  Image.asset('assets/images/mochi.png', width: MediaQuery.of(context).size.shortestSide * 0.38, height: MediaQuery.of(context).size.shortestSide * 0.38, fit: BoxFit.contain),
                   const Positioned(right: -20, top: 0, child: Text('👋', style: TextStyle(fontSize: 26))),
                 ],
               ),
@@ -602,7 +603,7 @@ class _PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 52,
+      height: AppSizing.buttonHeight,
       child: ElevatedButton(
         onPressed: loading ? null : onPressed,
         style: ElevatedButton.styleFrom(
@@ -614,8 +615,8 @@ class _PrimaryButton extends StatelessWidget {
         ),
         child: loading
             ? const SizedBox(
-                width: 22,
-                height: 22,
+                width: AppSizing.checkboxSize,
+                height: AppSizing.checkboxSize,
                 child: CircularProgressIndicator(
                     strokeWidth: 2, color: Colors.white))
             : Text(label,
@@ -666,26 +667,28 @@ class _BiometricSheet extends StatelessWidget {
       _BiometricState.success => AppColors.green,
       _BiometricState.failed => AppColors.coral,
     };
+    final double animSize = MediaQuery.of(context).size.shortestSide * 0.38;
 
     return Column(
       children: [
         const SizedBox(height: 12),
         Container(
-          width: 54, height: 5,
+          width: AppSizing.handleBarWidth,
+          height: AppSizing.handleBarHeight,
           decoration: BoxDecoration(
               color: AppColors.outline, borderRadius: BorderRadius.circular(3)),
         ),
         const SizedBox(height: 24),
         SizedBox(
-          width: 152, height: 152,
+          width: animSize, height: animSize,
           child: Stack(
             alignment: Alignment.center,
             children: [
-              _Ring(size: 152, color: ringColor, opacity: 0.1),
-              _Ring(size: 120, color: ringColor, opacity: 0.2),
-              _Ring(size: 88, color: ringColor, opacity: 0.35),
+              _Ring(size: animSize, color: ringColor, opacity: 0.1),
+              _Ring(size: animSize * 0.79, color: ringColor, opacity: 0.2),
+              _Ring(size: animSize * 0.58, color: ringColor, opacity: 0.35),
               Container(
-                width: 56, height: 56,
+                width: AppSizing.ringSize, height: AppSizing.ringSize,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: ringColor.withValues(alpha: 0.2),
@@ -744,7 +747,7 @@ class _BiometricSheet extends StatelessWidget {
             child: Column(
               children: [
                 SizedBox(
-                  width: double.infinity, height: 50,
+                  width: double.infinity, height: AppSizing.buttonHeight,
                   child: ElevatedButton(
                     onPressed: onRetry,
                     style: ElevatedButton.styleFrom(
@@ -760,7 +763,7 @@ class _BiometricSheet extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 SizedBox(
-                  width: double.infinity, height: 44,
+                  width: double.infinity, height: AppSizing.buttonHeightSm,
                   child: OutlinedButton(
                     onPressed: onUsePassword,
                     style: OutlinedButton.styleFrom(

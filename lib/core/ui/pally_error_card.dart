@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 
@@ -24,8 +25,8 @@ class PallyErrorCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 64,
-              height: 64,
+              width: AppSizing.iconContainer,
+              height: AppSizing.iconContainer,
               decoration: const BoxDecoration(
                 color: AppColors.coralL,
                 shape: BoxShape.circle,

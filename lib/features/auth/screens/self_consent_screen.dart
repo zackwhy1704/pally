@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 
@@ -111,8 +112,8 @@ class _SelfConsentScreenState extends ConsumerState<SelfConsentScreen> {
                   children: [
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 150),
-                      width: 22,
-                      height: 22,
+                      width: AppSizing.checkboxSize,
+                      height: AppSizing.checkboxSize,
                       decoration: BoxDecoration(
                         color: _agreed ? AppColors.purple : Colors.transparent,
                         borderRadius: BorderRadius.circular(6),
@@ -140,7 +141,7 @@ class _SelfConsentScreenState extends ConsumerState<SelfConsentScreen> {
               const SizedBox(height: AppSpacing.lg),
 
               SizedBox(
-                height: 52,
+                height: AppSizing.buttonHeight,
                 child: FilledButton(
                   onPressed: (_agreed && !_loading) ? _agree : null,
                   style: FilledButton.styleFrom(
@@ -150,8 +151,8 @@ class _SelfConsentScreenState extends ConsumerState<SelfConsentScreen> {
                   ),
                   child: _loading
                       ? const SizedBox(
-                          width: 22,
-                          height: 22,
+                          width: AppSizing.checkboxSize,
+                          height: AppSizing.checkboxSize,
                           child: CircularProgressIndicator(
                               color: Colors.white, strokeWidth: 2))
                       : const Text('Agree & start learning →'),

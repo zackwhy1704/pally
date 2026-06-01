@@ -127,12 +127,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               children: [
                 const Spacer(flex: 2),
                 // Mochi mascot
-                Image.asset(
-                  'assets/images/mochi.png',
-                  width: 180,
-                  height: 180,
-                  fit: BoxFit.contain,
-                ),
+                Builder(builder: (context) {
+                  final mochiSize = MediaQuery.of(context).size.shortestSide * 0.45;
+                  return Image.asset(
+                    'assets/images/mochi.png',
+                    width: mochiSize,
+                    height: mochiSize,
+                    fit: BoxFit.contain,
+                  );
+                }),
                 const SizedBox(height: 32),
                 // Catchphrase — fades in once _line is ready
                 FadeTransition(

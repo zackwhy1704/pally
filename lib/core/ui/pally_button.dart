@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 
@@ -31,8 +32,8 @@ class PallyButton extends StatelessWidget {
 
     Widget child = loading
         ? const SizedBox(
-            width: 20,
-            height: 20,
+            width: AppSizing.spinnerSm,
+            height: AppSizing.spinnerSm,
             child: CircularProgressIndicator(
               strokeWidth: 2,
               color: Colors.white,

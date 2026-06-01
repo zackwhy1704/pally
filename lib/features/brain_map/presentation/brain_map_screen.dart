@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/widgets/loading/pally_skeleton.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/error/pally_error.dart';
@@ -290,8 +291,8 @@ class _TopicSheet extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  width: 38,
-                  height: 38,
+                  width: AppSizing.brainMapNode,
+                  height: AppSizing.brainMapNode,
                   decoration: BoxDecoration(
                       color: _accent, shape: BoxShape.circle),
                 ),

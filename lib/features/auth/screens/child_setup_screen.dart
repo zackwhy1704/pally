@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/features/auth/auth_state.dart';
@@ -248,7 +249,7 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
               const SizedBox(height: AppSpacing.lg),
 
               SizedBox(
-                height: 52,
+                height: AppSizing.buttonHeight,
                 child: ElevatedButton(
                   onPressed: (_canContinue && !_loading) ? _continue : null,
                   style: ElevatedButton.styleFrom(
@@ -262,7 +263,8 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
                   ),
                   child: _loading
                       ? const SizedBox(
-                          width: 22, height: 22,
+                          width: AppSizing.checkboxSize,
+                          height: AppSizing.checkboxSize,
                           child: CircularProgressIndicator(
                               strokeWidth: 2, color: Colors.white))
                       : Text('Continue',

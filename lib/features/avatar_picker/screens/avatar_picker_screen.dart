@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/utils/logger.dart';
@@ -250,7 +251,7 @@ class _AvatarPickerScreenState extends ConsumerState<AvatarPickerScreen> {
             Padding(
               padding: const EdgeInsets.all(AppSpacing.md),
               child: SizedBox(
-                height: 52,
+                height: AppSizing.buttonHeight,
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: (av != null && !_loading) ? _choose : null,
@@ -265,8 +266,8 @@ class _AvatarPickerScreenState extends ConsumerState<AvatarPickerScreen> {
                   ),
                   child: _loading
                       ? const SizedBox(
-                          width: 22,
-                          height: 22,
+                          width: AppSizing.checkboxSize,
+                          height: AppSizing.checkboxSize,
                           child: CircularProgressIndicator(
                               strokeWidth: 2, color: Colors.white),
                         )
@@ -295,7 +296,7 @@ class _TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 56,
+      height: AppSizing.appBarHeight,
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
       child: Row(
@@ -472,8 +473,8 @@ class _AvatarCard extends StatelessWidget {
               top: -4,
               right: -4,
               child: Container(
-                width: 18,
-                height: 18,
+                width: AppSizing.avatarPickerBadge,
+                height: AppSizing.avatarPickerBadge,
                 decoration: BoxDecoration(
                   color: avatar.themeColor,
                   shape: BoxShape.circle,

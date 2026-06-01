@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_toast.dart';
@@ -164,8 +165,8 @@ class _ConsentWaitingScreenState extends ConsumerState<ConsentWaitingScreen> {
                 child: Row(
                   children: [
                     const SizedBox(
-                      width: 20,
-                      height: 20,
+                      width: AppSizing.spinnerSm,
+                      height: AppSizing.spinnerSm,
                       child: CircularProgressIndicator(
                           strokeWidth: 2, color: AppColors.amber),
                     ),
@@ -187,8 +188,8 @@ class _ConsentWaitingScreenState extends ConsumerState<ConsentWaitingScreen> {
                 onPressed: _resending ? null : _resend,
                 icon: _resending
                     ? const SizedBox(
-                        width: 16,
-                        height: 16,
+                        width: AppSizing.iconSm,
+                        height: AppSizing.iconSm,
                         child:
                             CircularProgressIndicator(strokeWidth: 2))
                     : const Icon(Icons.send_rounded, size: 16),

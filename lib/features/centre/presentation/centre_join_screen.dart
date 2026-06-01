@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_toast.dart';
@@ -127,8 +128,8 @@ class _CentreJoinScreenState extends ConsumerState<CentreJoinScreen> {
                   ),
                   child: _loading
                       ? const SizedBox(
-                          height: 20,
-                          width: 20,
+                          height: AppSizing.spinnerSm,
+                          width: AppSizing.spinnerSm,
                           child: CircularProgressIndicator(
                               color: Colors.white, strokeWidth: 2))
                       : const Text('Join class'),

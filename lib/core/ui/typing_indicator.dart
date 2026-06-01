@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_sizing.dart';
 
 class TypingIndicator extends StatefulWidget {
   const TypingIndicator({super.key});
@@ -54,8 +55,8 @@ class _TypingIndicatorState extends State<TypingIndicator>
                 child: Transform.scale(
                   scale: scale,
                   child: Container(
-                    width: 8,
-                    height: 8,
+                    width: AppSizing.typingDot,
+                    height: AppSizing.typingDot,
                     decoration: const BoxDecoration(
                       color: AppColors.purple,
                       shape: BoxShape.circle,

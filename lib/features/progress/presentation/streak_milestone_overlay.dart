@@ -63,7 +63,7 @@ class _Layer extends StatelessWidget {
             child: Material(
               color: Colors.transparent,
               child: Container(
-                width: 300,
+                width: (MediaQuery.of(context).size.width * 0.85).clamp(0.0, 340.0),
                 padding: const EdgeInsets.all(32),
                 decoration: BoxDecoration(
                   color: AppColors.surface,

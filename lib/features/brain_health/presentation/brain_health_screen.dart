@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/shared/models/wiki_page.dart';
@@ -225,8 +226,8 @@ class _PageHealthRow extends StatelessWidget {
                   style: AppTextStyles.bodySmall, overflow: TextOverflow.ellipsis)),
           const SizedBox(width: AppSpacing.sm),
           Container(
-            width: 40,
-            height: 6,
+            width: AppSizing.handleBarWidth,
+            height: AppSizing.progressBarHeight,
             decoration: BoxDecoration(
               color: AppColors.outline,
               borderRadius: BorderRadius.circular(3),

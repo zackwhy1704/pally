@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 
@@ -121,7 +122,7 @@ class _ParentConsentScreenState extends ConsumerState<ParentConsentScreen> {
               const SizedBox(height: AppSpacing.xl),
 
               SizedBox(
-                height: 52,
+                height: AppSizing.buttonHeight,
                 child: FilledButton(
                   onPressed: _canSubmit ? _submit : null,
                   style: FilledButton.styleFrom(
@@ -131,8 +132,8 @@ class _ParentConsentScreenState extends ConsumerState<ParentConsentScreen> {
                   ),
                   child: _loading
                       ? const SizedBox(
-                          width: 22,
-                          height: 22,
+                          width: AppSizing.checkboxSize,
+                          height: AppSizing.checkboxSize,
                           child: CircularProgressIndicator(
                               color: Colors.white, strokeWidth: 2))
                       : const Text('Send to my grown-up →'),
