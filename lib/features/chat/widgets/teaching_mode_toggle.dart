@@ -32,7 +32,13 @@ class TeachingModeToggle extends StatelessWidget {
   Widget build(BuildContext context) {
     final isGuide = mode.isGuide;
 
+    // Width must be explicit: this widget lives inside a Row in _ChatAppBar
+    // (a non-Expanded child), so the Row passes unbounded width constraints.
+    // FractionallySizedBox(widthFactor: 0.5) requires bounded parent width —
+    // without a fixed width here, 0.5 × ∞ throws a BoxConstraints assertion
+    // and crashes the entire AppBar every time the chat screen opens.
     return Container(
+      width: 164,
       height: 40,
       decoration: BoxDecoration(
         color: AppColors.surf2,
