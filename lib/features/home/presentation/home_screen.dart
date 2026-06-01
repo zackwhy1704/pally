@@ -17,6 +17,9 @@ import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/home/widgets/due_cards_banner.dart';
 import 'package:pally/features/home/widgets/empty_home_state.dart';
 import 'package:pally/features/progress/presentation/progress_view_model.dart';
+import 'package:pally/features/subscription/presentation/trial_countdown_banner.dart';
+import 'package:pally/features/subscription/presentation/trial_welcome_screen.dart';
+import 'package:pally/features/subscription/trial_status_provider.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -26,6 +29,19 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Show the trial welcome once on first launch after a trial is granted.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final trial = ref.read(trialStatusProvider).valueOrNull;
+      if (trial?.isOnTrial == true) {
+        TrialWelcomeScreen.maybeShow(context);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final avatarsAsync = ref.watch(homeViewModelProvider);
@@ -58,6 +74,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               xpSpan: xpSpan,
               maxLevel: maxLevel,
             ),
+            const TrialCountdownBanner(),
             const DueCardsBanner(),
             const _NudgeCardsRow(),
             Expanded(

@@ -16,6 +16,7 @@ import 'package:pally/features/auth/services/auth_service.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/features/referral/referral_service.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
+import 'package:pally/features/subscription/trial_status_provider.dart';
 import 'package:pally/features/subscription/subscription_service.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/shared/models/avatar.dart';
@@ -844,11 +845,71 @@ class _SubscriptionTile extends ConsumerWidget {
       error: (_, __) => const SizedBox.shrink(),
       data: (ent) {
         final isPremium = ent.isPremium;
+        final isOnTrial = ent.source == 'TRIAL';
+
+        // Trial card (PR5)
+        if (isOnTrial) {
+          final trialInfo = ref.watch(trialStatusProvider).valueOrNull;
+          final days = trialInfo?.trialDaysLeft ?? 0;
+          final endsAt = trialInfo?.trialEndsAt;
+          final endsLabel = endsAt != null
+              ? '${endsAt.day}/${endsAt.month}/${endsAt.year}'
+              : '—';
+          return _SettingsCard(children: [
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(children: [
+                    const Icon(Icons.workspace_premium_rounded,
+                        color: AppColors.purple, size: 20),
+                    const SizedBox(width: 8),
+                    Text('⭐ Premium Trial · $days day${days == 1 ? '' : 's'} left',
+                        style: AppTextStyles.body
+                            .copyWith(fontWeight: FontWeight.w700)),
+                  ]),
+                  const SizedBox(height: 4),
+                  Text('Ends $endsLabel',
+                      style: AppTextStyles.bodySmall
+                          .copyWith(color: AppColors.text2)),
+                  const SizedBox(height: AppSpacing.sm),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: days / 7,
+                      minHeight: 6,
+                      backgroundColor: AppColors.outline,
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                          AppColors.purple),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: () => context.push('/subscription/plans'),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: AppColors.purple,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 10),
+                      ),
+                      child: const Text('Keep Premium from S\$7.99/mo'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ]);
+        }
+
         final planLabel = isPremium
             ? (ent.source == 'PARENT'
                 ? 'Family plan — managed by parent'
                 : (ent.plan ?? 'Premium'))
-            : 'Free';
+            : 'Free plan';
         return _SettingsCard(
           children: [
             ListTile(
