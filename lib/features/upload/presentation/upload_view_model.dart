@@ -9,6 +9,8 @@ import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/upload_result.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/features/library/presentation/library_view_model.dart';
+import 'package:pally/features/home/presentation/home_view_model.dart';
 
 part 'upload_view_model.g.dart';
 
@@ -381,6 +383,12 @@ class UploadViewModel extends _$UploadViewModel {
         isUploading: false,
         files: [...state.files, result],
       );
+      // Invalidate library + home so they refetch from the API with the
+      // updated wikiPageCount once async compilation completes in the background.
+      // Both providers are autoDispose — invalidate is a no-op if they're not
+      // currently watched, but if the user navigates back they'll see fresh data.
+      ref.invalidate(libraryViewModelProvider);
+      ref.invalidate(homeViewModelProvider);
     } on DioException catch (e, st) {
       appLog.e('[Upload] Failed: ${file.name} status=${e.response?.statusCode}',
           error: e, stackTrace: st);

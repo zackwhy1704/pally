@@ -5,6 +5,7 @@ import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/core/ui/pally_toast.dart';
@@ -52,6 +53,35 @@ class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen> {
             avatar: vmState.avatar,
             pageCount: vmState.pageCount,
           ),
+          // Compiling banner: shown while async wiki compilation is in
+          // progress. Auto-disappears once all files leave PROCESSING state.
+          if (vmState.isCompiling)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+              color: AppColors.amberL,
+              child: Row(
+                children: [
+                  const SizedBox(
+                    width: AppSizing.spinnerSm,
+                    height: AppSizing.spinnerSm,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.amber,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      'Mochi is reading your notes — new pages will appear here automatically.',
+                      style: AppTextStyles.bodySmall
+                          .copyWith(color: AppColors.amber),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           _SearchBar(
             controller: _searchController,
             onChanged: (q) => ref
