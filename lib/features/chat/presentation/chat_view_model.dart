@@ -733,9 +733,15 @@ class ChatViewModel extends _$ChatViewModel {
 
       String currentEvent = '';
       final dataLines = <String>[];
-      await for (final chunk in stream) {
+      // 60s wall-clock cap: if the stream is silently half-open (no done,
+      // no error, no chunks for >30s receive-timeout AND no close), we
+      // resolve to the error+retry state rather than a permanent typing dot.
+      await for (final chunk in stream.timeout(const Duration(seconds: 60),
+          onTimeout: (sink) => sink.close())) {
         final raw = utf8.decode(chunk);
         for (final line in raw.split('\n')) {
+          // SSE spec: lines starting with ':' are comments — skip explicitly.
+          if (line.startsWith(':')) continue;
           if (line.startsWith('event: ')) {
             currentEvent = line.substring(7).trim();
           } else if (line.startsWith('data: ') || line.startsWith('data:')) {
