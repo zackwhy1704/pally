@@ -29,11 +29,15 @@ class WikiCompiledScreen extends StatelessWidget {
               const SizedBox(height: AppSpacing.xl),
               _SuccessHero(),
               const SizedBox(height: AppSpacing.lg),
-              Text('Knowledge Added!',
-                  style: AppTextStyles.heading1, textAlign: TextAlign.center),
+              Text(
+                newPageTitles.isEmpty ? 'Notes received! 🧠' : 'Knowledge Added!',
+                style: AppTextStyles.heading1, textAlign: TextAlign.center,
+              ),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                'Your Mochi brain has been updated with ${newPageTitles.length} new ${newPageTitles.length == 1 ? 'page' : 'pages'}.',
+                newPageTitles.isEmpty
+                    ? 'Mochi is reading your notes and building your brain in the background. Check back in a minute!'
+                    : 'Your Mochi brain has been updated with ${newPageTitles.length} new ${newPageTitles.length == 1 ? 'page' : 'pages'}.',
                 style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 textAlign: TextAlign.center,
               ),
