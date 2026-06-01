@@ -22,6 +22,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     if (mounted) context.go('/');
   }
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   void _next() => _controller.nextPage(
       duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
 

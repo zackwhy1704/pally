@@ -53,6 +53,7 @@ Future<void> _showResetPinDialog(
     BuildContext context, WidgetRef ref) async {
   final passCtrl = TextEditingController();
   final pinCtrl = TextEditingController();
+  try {
   await showDialog<void>(
     context: context,
     builder: (dialogCtx) => AlertDialog(
@@ -113,6 +114,10 @@ Future<void> _showResetPinDialog(
       ],
     ),
   );
+  } finally {
+    passCtrl.dispose();
+    pinCtrl.dispose();
+  }
 }
 
 class _PinGate extends StatefulWidget {

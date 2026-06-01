@@ -169,7 +169,7 @@ class _TopicSelectView extends StatelessWidget {
   }
 }
 
-class _ExplainView extends StatelessWidget {
+class _ExplainView extends StatefulWidget {
   const _ExplainView({
     required this.topic,
     required this.text,
@@ -186,8 +186,32 @@ class _ExplainView extends StatelessWidget {
   final VoidCallback onSubmit;
 
   @override
+  State<_ExplainView> createState() => _ExplainViewState();
+}
+
+class _ExplainViewState extends State<_ExplainView> {
+  late final TextEditingController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = TextEditingController.fromValue(
+      TextEditingValue(
+        text: widget.text,
+        selection: TextSelection.collapsed(offset: widget.text.length),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final canSubmit = text.trim().length >= 10 && !isSubmitting;
+    final canSubmit = widget.text.trim().length >= 10 && !widget.isSubmitting;
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(
@@ -206,20 +230,15 @@ class _ExplainView extends StatelessWidget {
                     style: AppTextStyles.label
                         .copyWith(color: AppColors.text2)),
                 const SizedBox(height: 2),
-                Text(topic.title, style: AppTextStyles.title),
+                Text(widget.topic.title, style: AppTextStyles.title),
               ],
             ),
           ),
           const SizedBox(height: AppSpacing.md),
           Expanded(
             child: TextField(
-              controller: TextEditingController.fromValue(
-                TextEditingValue(
-                  text: text,
-                  selection: TextSelection.collapsed(offset: text.length),
-                ),
-              ),
-              onChanged: onChanged,
+              controller: _ctrl,
+              onChanged: widget.onChanged,
               maxLines: null,
               expands: true,
               textAlignVertical: TextAlignVertical.top,
@@ -247,9 +266,9 @@ class _ExplainView extends StatelessWidget {
               ),
             ),
           ),
-          if (error != null) ...[
+          if (widget.error != null) ...[
             const SizedBox(height: AppSpacing.sm),
-            Text(error!,
+            Text(widget.error!,
                 style: AppTextStyles.bodySmall
                     .copyWith(color: AppColors.coral)),
           ],
@@ -257,14 +276,14 @@ class _ExplainView extends StatelessWidget {
           SizedBox(
             height: 52,
             child: FilledButton(
-              onPressed: canSubmit ? onSubmit : null,
+              onPressed: canSubmit ? widget.onSubmit : null,
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.purple,
                 disabledBackgroundColor: AppColors.outline,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14)),
               ),
-              child: isSubmitting
+              child: widget.isSubmitting
                   ? const SizedBox(
                       width: 22,
                       height: 22,

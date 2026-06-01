@@ -1041,9 +1041,10 @@ class _ReferralTile extends ConsumerWidget {
     );
   }
 
-  void _showRedeemSheet(BuildContext context, WidgetRef ref) {
+  Future<void> _showRedeemSheet(BuildContext context, WidgetRef ref) async {
     final controller = TextEditingController();
-    showModalBottomSheet<void>(
+    try {
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -1124,5 +1125,8 @@ class _ReferralTile extends ConsumerWidget {
         ),
       ),
     );
+    } finally {
+      controller.dispose();
+    }
   }
 }

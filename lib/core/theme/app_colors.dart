@@ -28,4 +28,8 @@ abstract final class AppColors {
   static const Color text1 = Color(0xFF1F1733);
   static const Color text2 = Color(0xFF6B618A);
   static const Color text3 = Color(0xFFA8A0BD);
+
+  // Semantic / derived
+  /// Amber text on amberL backgrounds (WCAG AA pass at 12sp+).
+  static const Color amberText = Color(0xFFB8860B);
 }

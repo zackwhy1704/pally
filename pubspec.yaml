@@ -55,6 +55,7 @@ dependencies:
   # Share weekly report
   share_plus: ^10.1.4
   url_launcher: ^6.3.2
+  sentry_flutter: ^9.21.0
 
 dev_dependencies:
   flutter_test:

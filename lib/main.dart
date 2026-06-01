@@ -4,6 +4,7 @@ import 'package:pally/app/api_client.dart';
 import 'package:pally/app/pally_app.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/local_db/pally_database.dart';
+import 'package:pally/core/observability/sentry_observability.dart';
 import 'package:pally/core/services/notification_service.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/auth/auth_state.dart';
@@ -13,26 +14,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ── Framework error visibility ────────────────────────────────────────────
-  // Flutter widget/render exceptions (e.g. "Multiple widgets used the same
-  // GlobalKey", "BoxConstraints forces infinite width") only print to raw
-  // logcat by default and are invisible to appLog. Hook them here so every
-  // framework error surfaces through the same tagged logger as API errors,
-  // making them greppable in production logs.
-  FlutterError.onError = (FlutterErrorDetails details) {
-    FlutterError.presentError(details); // keep default red-screen / console
-    appLog.e(
-      '[FlutterError] ${details.exceptionAsString()}',
-      error: details.exception,
-      stackTrace: details.stack,
-    );
-  };
-  // Catches errors that escape the widget tree entirely (async, platform).
-  WidgetsBinding.instance.platformDispatcher.onError = (error, stack) {
-    appLog.e('[PlatformError] $error', error: error, stackTrace: stack);
-    return true; // handled — don't let the OS terminate the app
-  };
+  // ── Framework error hooks ─────────────────────────────────────────────────
+  // Route Flutter widget/render exceptions AND escaped async errors through
+  // SentryObservability, which forwards to BOTH appLog (greppable in logcat)
+  // and Sentry (in release + DSN present). In debug/no-DSN: appLog only.
+  FlutterError.onError = SentryObservability.reportFlutterError;
+  WidgetsBinding.instance.platformDispatcher.onError =
+      SentryObservability.reportError;
 
+  // Wrap the entire bootstrap in Sentry + runZonedGuarded so escaped async
+  // errors reach appLog instead of vanishing silently.
+  await SentryObservability.run(_bootstrap);
+}
+
+Future<void> _bootstrap() async {
   // Load persisted auth credentials before first frame.
   await AuthNotifier.instance.load();
 
@@ -84,7 +79,8 @@ void _runDailyMaintenanceIfNeeded(
     }
 
     await prefs.setString(lastPruneKey, today);
-    appLog.i('[Prune] Daily maintenance complete — ${avatarIds.length} avatars cleaned');
+    appLog.i(
+        '[Prune] Daily maintenance complete — ${avatarIds.length} avatars cleaned');
   } catch (e, st) {
     appLog.w('[Prune] Daily maintenance failed', error: e, stackTrace: st);
   }

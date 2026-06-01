@@ -176,9 +176,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     );
   }
 
-  void _showForgotPasswordDialog() {
+  Future<void> _showForgotPasswordDialog() async {
     final emailCtrl = TextEditingController(text: _emailCtrl.text.trim());
-    showDialog<void>(
+    try {
+    await showDialog<void>(
       context: context,
       builder: (ctx) {
         var sending = false;
@@ -250,6 +251,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         );
       },
     );
+    } finally {
+      emailCtrl.dispose();
+    }
   }
 
   void _showError(String message) {
