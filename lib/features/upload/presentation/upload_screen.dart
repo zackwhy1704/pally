@@ -22,9 +22,14 @@ class UploadScreen extends ConsumerWidget {
     final state = ref.watch(uploadViewModelProvider(avatarId));
     final vm = ref.read(uploadViewModelProvider(avatarId).notifier);
 
-    // Show upload errors as toast
+    // Toast single-file errors; multi-file errors are shown inline via
+    // _FileErrorList so each file gets its own message.
     ref.listen<UploadState>(uploadViewModelProvider(avatarId), (prev, next) {
-      if (next.error != null && prev?.error != next.error && context.mounted) {
+      final newError = next.error != null && prev?.error != next.error;
+      if (!newError || !context.mounted) return;
+      // Only toast if there's a single error (no per-file errors list yet).
+      // When there are per-file errors the UI card is more informative.
+      if (next.fileErrors.length <= 1) {
         PallyToast.error(context, next.error!);
       }
     });
@@ -119,9 +124,86 @@ class UploadScreen extends ConsumerWidget {
                 onDelete: vm.deleteFile,
               ),
             ],
+            // Per-file error cards shown after upload batch completes
+            if (state.fileErrors.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.md),
+              _FileErrorList(
+                errors: state.fileErrors,
+                onDismiss: vm.clearErrors,
+              ),
+            ],
           ],
         ),
       ),
+    );
+  }
+}
+
+// ── Per-file error list ───────────────────────────────────────────────────────
+
+class _FileErrorList extends StatelessWidget {
+  const _FileErrorList({required this.errors, required this.onDismiss});
+  final List<FileUploadError> errors;
+  final VoidCallback onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.warning_amber_rounded,
+                size: 16, color: AppColors.amber),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                errors.length == 1
+                    ? '1 file couldn\'t be uploaded'
+                    : '${errors.length} files couldn\'t be uploaded',
+                style: AppTextStyles.body
+                    .copyWith(fontWeight: FontWeight.w700),
+              ),
+            ),
+            GestureDetector(
+              onTap: onDismiss,
+              child: const Icon(Icons.close_rounded,
+                  size: 16, color: AppColors.text3),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        ...errors.map((e) => Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+                decoration: BoxDecoration(
+                  color: AppColors.coralL,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                      color: AppColors.coral.withValues(alpha: 0.35)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      e.fileName,
+                      style: AppTextStyles.caption.copyWith(
+                          color: AppColors.coral,
+                          fontWeight: FontWeight.w700),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(e.message,
+                        style: AppTextStyles.bodySmall
+                            .copyWith(color: AppColors.coral)),
+                  ],
+                ),
+              ),
+            )),
+      ],
     );
   }
 }

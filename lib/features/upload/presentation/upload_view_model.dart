@@ -12,6 +12,14 @@ import 'package:pally/core/utils/logger.dart';
 
 part 'upload_view_model.g.dart';
 
+// ── Per-file upload error (shown alongside the file, not as a global toast) ──
+
+class FileUploadError {
+  const FileUploadError({required this.fileName, required this.message});
+  final String fileName;
+  final String message;
+}
+
 @immutable
 class UploadState {
   const UploadState({
@@ -20,6 +28,7 @@ class UploadState {
     this.isUploading = false,
     this.isCheckingRelevance = false,
     this.error,
+    this.fileErrors = const [],
     this.pendingFile,
     this.pendingRelevance,
     this.topicTag,
@@ -31,6 +40,9 @@ class UploadState {
   final bool isUploading;
   final bool isCheckingRelevance;
   final String? error;
+  /// Per-file errors for multi-upload: one entry per file that failed so
+  /// the user sees which file had which problem.
+  final List<FileUploadError> fileErrors;
   final PlatformFile? pendingFile;
   final RelevanceCheckResponse? pendingRelevance;
   final String? topicTag;
@@ -45,6 +57,7 @@ class UploadState {
     bool? isUploading,
     bool? isCheckingRelevance,
     Object? error = _sentinel,
+    List<FileUploadError>? fileErrors,
     Object? pendingFile = _sentinel,
     Object? pendingRelevance = _sentinel,
     Object? topicTag = _sentinel,
@@ -56,6 +69,7 @@ class UploadState {
       isUploading: isUploading ?? this.isUploading,
       isCheckingRelevance: isCheckingRelevance ?? this.isCheckingRelevance,
       error: error == _sentinel ? this.error : error as String?,
+      fileErrors: fileErrors ?? this.fileErrors,
       pendingFile: pendingFile == _sentinel
           ? this.pendingFile
           : pendingFile as PlatformFile?,
@@ -63,12 +77,16 @@ class UploadState {
           ? this.pendingRelevance
           : pendingRelevance as RelevanceCheckResponse?,
       topicTag: topicTag == _sentinel ? this.topicTag : topicTag as String?,
-      sourceType: sourceType == _sentinel ? this.sourceType : sourceType as String?,
+      sourceType:
+          sourceType == _sentinel ? this.sourceType : sourceType as String?,
     );
   }
 }
 
 const _sentinel = Object();
+
+// ── Max file size enforced client-side (matches backend 25MB cap) ──
+const _maxFileSizeBytes = 25 * 1024 * 1024;
 
 @riverpod
 class UploadViewModel extends _$UploadViewModel {
@@ -91,9 +109,8 @@ class UploadViewModel extends _$UploadViewModel {
       final response =
           await dio.get<Map<String, dynamic>>('/api/v1/avatars/$_avatarId');
       state = state.copyWith(avatar: Avatar.fromJson(response.data!));
-      appLog.d('[Upload] Avatar loaded: ${state.avatar?.name}');
     } catch (e, st) {
-      appLog.w('[Upload] Avatar load failed, continuing without it', error: e, stackTrace: st);
+      appLog.w('[Upload] Avatar load failed', error: e, stackTrace: st);
     }
   }
 
@@ -105,12 +122,76 @@ class UploadViewModel extends _$UploadViewModel {
       final files = (response.data ?? [])
           .map((e) => UploadResult.fromJson(e as Map<String, dynamic>))
           .toList();
-      appLog.d('[Upload] Loaded ${files.length} existing files');
       state = state.copyWith(files: files);
     } catch (e, st) {
       appLog.w('[Upload] File list load failed', error: e, stackTrace: st);
     }
   }
+
+  // ── Client-side file validation ────────────────────────────────────────────
+
+  /// Returns a user-friendly error string if the file is invalid, or null.
+  String? _validateFile(PlatformFile file) {
+    if (file.path == null) {
+      return 'Could not read "${file.name}" — try selecting it again.';
+    }
+    if (file.size == 0) {
+      return '"${file.name}" appears to be empty.';
+    }
+    if (file.size > _maxFileSizeBytes) {
+      final mb = (file.size / (1024 * 1024)).toStringAsFixed(1);
+      return '"${file.name}" is ${mb}MB — max is 25MB. '
+          'Try splitting it into smaller sections.';
+    }
+    final ext = file.name.split('.').last.toLowerCase();
+    const allowed = {'pdf', 'jpg', 'jpeg', 'png', 'heic', 'webp', 'txt'};
+    if (!allowed.contains(ext)) {
+      return '"${file.name}" is a .$ext file — only PDFs, images, and text '
+          'files are supported.';
+    }
+    return null;
+  }
+
+  // ── Specific server-error messages ─────────────────────────────────────────
+
+  /// Maps HTTP status codes + response bodies to actionable user messages.
+  String _friendlyUploadError(DioException e, String fileName) {
+    final status = e.response?.statusCode;
+    final body = e.response?.data;
+    final serverMsg = body is Map
+        ? (body['error'] as String?)?.trim()
+        : null;
+
+    return switch (status) {
+      400 => '"$fileName" couldn\'t be read — it may be empty or corrupted.',
+      401 => 'Session expired. Please sign in again.',
+      402 => 'You\'ve hit the upload limit. Upgrade for unlimited uploads.',
+      403 => 'You don\'t have permission to upload here.',
+      413 => '"$fileName" is too large (max 25MB). '
+            'Try splitting it into smaller sections.',
+      415 => '"$fileName" isn\'t a supported file type. '
+            'Use a PDF, image, or text file.',
+      429 => 'Too many uploads at once. Wait a moment and try again.',
+      500 => serverMsg?.isNotEmpty == true
+            ? serverMsg!
+            : '"$fileName" couldn\'t be processed — it may be '
+              'password-protected or corrupted. Try a different version.',
+      502 || 503 || 504 => 'The server is busy right now. '
+            'Wait a moment and try uploading "$fileName" again.',
+      _ when e.type == DioExceptionType.connectionTimeout ||
+             e.type == DioExceptionType.receiveTimeout ||
+             e.type == DioExceptionType.sendTimeout =>
+            'Upload of "$fileName" timed out. '
+            'Check your connection and try again.',
+      _ when e.type == DioExceptionType.connectionError =>
+            'No internet connection. Check your WiFi and try again.',
+      _ => serverMsg?.isNotEmpty == true
+            ? serverMsg!
+            : 'Upload of "$fileName" failed. Please try again.',
+    };
+  }
+
+  // ── Pick & upload flows ────────────────────────────────────────────────────
 
   Future<void> pickFromCamera() async {
     final picker = ImagePicker();
@@ -133,17 +214,35 @@ class UploadViewModel extends _$UploadViewModel {
     );
     if (result == null || result.files.isEmpty) return;
 
+    // Clear previous per-file errors before a new batch.
+    state = state.copyWith(fileErrors: []);
+
+    // Validate all files client-side first, collect invalid ones.
+    final valid = <PlatformFile>[];
+    final newErrors = <FileUploadError>[];
     for (final file in result.files) {
+      final err = _validateFile(file);
+      if (err != null) {
+        newErrors.add(FileUploadError(fileName: file.name, message: err));
+        appLog.w('[Upload] Client validation failed: ${file.name} — $err');
+      } else {
+        valid.add(file);
+      }
+    }
+    if (newErrors.isNotEmpty) {
+      state = state.copyWith(fileErrors: newErrors);
+    }
+
+    // Upload valid files sequentially; errors on one file don't stop the rest.
+    for (final file in valid) {
       await _checkRelevanceAndUpload(file);
     }
   }
 
-  /// Save pasted text to a temporary .txt file and run it through the same
-  /// relevance-check + upload pipeline as PDFs.
   Future<void> pasteText(String text) async {
     final trimmed = text.trim();
     if (trimmed.isEmpty) return;
-    appLog.i('[Upload] Paste text received: ${trimmed.length} chars');
+    appLog.i('[Upload] Paste text: ${trimmed.length} chars');
 
     try {
       final dir = await getTemporaryDirectory();
@@ -159,13 +258,14 @@ class UploadViewModel extends _$UploadViewModel {
       );
       await _checkRelevanceAndUpload(platformFile);
     } catch (e, st) {
-      appLog.e('[Upload] Paste-text upload failed', error: e, stackTrace: st);
-      state = state.copyWith(error: 'Could not save your notes. Try again.');
+      appLog.e('[Upload] Paste-text failed', error: e, stackTrace: st);
+      state = state.copyWith(
+          error: 'Could not save your notes. Try again.');
     }
   }
 
   Future<void> _checkRelevanceAndUpload(PlatformFile file) async {
-    appLog.i('[Upload] Starting relevance check for file: ${file.name}');
+    appLog.i('[Upload] Relevance check: ${file.name}');
     state = state.copyWith(
       isCheckingRelevance: true,
       pendingFile: file,
@@ -179,40 +279,51 @@ class UploadViewModel extends _$UploadViewModel {
           final content = await File(file.path!).readAsString();
           sample = content.substring(0, content.length.clamp(0, 500));
         } catch (_) {
-          // Binary file — use filename as sample
+          // Binary — fall back to filename as sample
         }
       }
 
-      appLog.d('[Upload] Sending relevance check, sampleChars=${sample.length}');
       final dio = ref.read(dioProvider);
       final response = await dio.post<Map<String, dynamic>>(
         '/api/v1/avatars/$_avatarId/relevance',
-        data: {'contentSample': sample},  // backend field name
+        data: {'contentSample': sample},
       );
       final relevance = RelevanceCheckResponse.fromJson(response.data!);
-      appLog.i('[Upload] Relevance score=${relevance.score} isRelevant=${relevance.isRelevant}');
+      appLog.i('[Upload] Relevance score=${relevance.score}');
 
       state = state.copyWith(
         isCheckingRelevance: false,
         pendingRelevance: relevance,
       );
 
-      if (relevance.isRelevant) {
-        await uploadFile(file);
-      }
-      // If not relevant, the UI will show the warning dialog
+      if (relevance.isRelevant) await uploadFile(file);
+      // Otherwise UI shows the warning dialog
     } on DioException catch (e, st) {
-      appLog.w('[Upload] Relevance check failed, skipping and uploading directly', error: e, stackTrace: st);
+      // Relevance check failing → upload anyway (fail-open: better to
+      // upload and let Claude judge than to silently block the user)
+      appLog.w('[Upload] Relevance check failed, uploading directly',
+          error: e, stackTrace: st);
       state = state.copyWith(
         isCheckingRelevance: false,
-        pendingRelevance: const RelevanceCheckResponse(isRelevant: true, score: 1.0),
+        pendingRelevance:
+            const RelevanceCheckResponse(isRelevant: true, score: 1.0),
       );
       await uploadFile(file);
     }
   }
 
-  Future<void> uploadFile(PlatformFile file, {bool skipRelevance = false}) async {
-    appLog.i('[Upload] Uploading file: ${file.name} (${file.size} bytes) skipRelevance=$skipRelevance');
+  Future<void> uploadFile(PlatformFile file,
+      {bool skipRelevance = false}) async {
+    // Guard: path must be present
+    if (file.path == null) {
+      final msg = 'Could not read "${file.name}" — try selecting it again.';
+      appLog.w('[Upload] Null path for file: ${file.name}');
+      _appendFileError(FileUploadError(fileName: file.name, message: msg));
+      state = state.copyWith(isUploading: false);
+      return;
+    }
+
+    appLog.i('[Upload] Uploading: ${file.name} (${file.size}B)');
     state = state.copyWith(
       isUploading: true,
       pendingFile: null,
@@ -232,9 +343,7 @@ class UploadViewModel extends _$UploadViewModel {
         '/api/v1/avatars/$_avatarId/files',
         data: formData,
       );
-      final data = response.data ?? const {};
-      // Backend Success: { fileId, pageCount }
-      // Backend RelevanceWarning: { fileId, score, reason }
+      final data = response.data ?? const <String, dynamic>{};
       final titlesRaw = data['wikiPageTitles'];
       final wikiPageTitles = titlesRaw is List
           ? titlesRaw.whereType<String>().toList()
@@ -248,58 +357,51 @@ class UploadViewModel extends _$UploadViewModel {
         wikiPageTitles: wikiPageTitles,
         uploadedAt: DateTime.now(),
       );
-      appLog.i('[Upload] Upload success: fileId=${result.id} '
-          'pages=${result.pageCount} wikiTitles=${wikiPageTitles.length}');
+      appLog.i('[Upload] Success: ${result.id} pages=${result.pageCount}');
       state = state.copyWith(
         isUploading: false,
         files: [...state.files, result],
       );
     } on DioException catch (e, st) {
-      appLog.e('[Upload] Upload failed', error: e, stackTrace: st);
-
-      // Surface the actual error instead of silently faking a successful stub.
-      // Faking ready stubs made the UI show "uploaded" when nothing was compiled.
-      String errorMessage = 'Upload failed. Please try again.';
-      final body = e.response?.data;
-      if (body is Map) {
-        final reason = body['reason'] as String?;
-        final score = body['score'] as num?;
-        final err = body['error'] as String?;
-        if (reason != null) {
-          errorMessage = reason;
-        } else if (err != null) {
-          errorMessage = err;
-        }
-        if (score != null && score < 0.3) {
-          errorMessage =
-              'This doesn\'t look like ${state.topicTag ?? "this subject"}. $reason';
-        }
-      }
-
-      state = state.copyWith(
-        isUploading: false,
-        error: errorMessage,
-      );
+      appLog.e('[Upload] Failed: ${file.name} status=${e.response?.statusCode}',
+          error: e, stackTrace: st);
+      final msg = _friendlyUploadError(e, file.name);
+      // Append to per-file errors (so multiple files show individual problems)
+      // and also set the top-level error for single-file scenarios.
+      _appendFileError(FileUploadError(fileName: file.name, message: msg));
+      state = state.copyWith(isUploading: false, error: msg);
+    } catch (e, st) {
+      appLog.e('[Upload] Unexpected error: ${file.name}', error: e, stackTrace: st);
+      final msg =
+          'Something unexpected went wrong uploading "${file.name}". Try again.';
+      _appendFileError(FileUploadError(fileName: file.name, message: msg));
+      state = state.copyWith(isUploading: false, error: msg);
     }
   }
 
+  void _appendFileError(FileUploadError err) {
+    state = state.copyWith(
+      fileErrors: [...state.fileErrors, err],
+    );
+  }
+
   Future<void> deleteFile(String fileId) async {
-    appLog.d('[Upload] Deleting file $fileId');
     try {
       final dio = ref.read(dioProvider);
       await dio.delete('/api/v1/avatars/$_avatarId/files/$fileId');
-      state = state.copyWith(
-        files: state.files.where((f) => f.id != fileId).toList(),
-      );
     } catch (e, st) {
       appLog.w('[Upload] Delete failed, removing locally', error: e, stackTrace: st);
-      state = state.copyWith(
-        files: state.files.where((f) => f.id != fileId).toList(),
-      );
     }
+    state = state.copyWith(
+      files: state.files.where((f) => f.id != fileId).toList(),
+    );
   }
 
   void clearPendingRelevance() {
     state = state.copyWith(pendingFile: null, pendingRelevance: null);
+  }
+
+  void clearErrors() {
+    state = state.copyWith(error: null, fileErrors: []);
   }
 }
