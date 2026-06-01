@@ -86,7 +86,7 @@ flutter:
 # ── Sentry debug symbols ───────────────────────────────────────────────────────
 # Reads org / project / auth_token from env vars — NEVER hardcode the token.
 # Set before running `dart run sentry_dart_plugin`:
-#   SENTRY_ORG          = <your-sentry-org-slug>     (e.g. "my-company")
+#   SENTRY_ORG          = memoly
 #   SENTRY_PROJECT      = memoly-flutter-prod         (or memoly-flutter-dev)
 #   SENTRY_AUTH_TOKEN   = <secret — CI secret or local shell only>
 #
@@ -94,7 +94,7 @@ flutter:
 #   flutter build apk --release \
 #     --dart-define=APP_ENV=production \
 #     --obfuscate --split-debug-info=build/symbols
-#   SENTRY_ORG=<slug> SENTRY_PROJECT=memoly-flutter-prod \
+#   SENTRY_ORG=memoly SENTRY_PROJECT=memoly-flutter-prod \
 #   SENTRY_AUTH_TOKEN=<token> dart run sentry_dart_plugin
 sentry:
   upload_debug_symbols: true

@@ -51,6 +51,7 @@ android {
 
     buildTypes {
         release {
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.debug
         }
     }
@@ -62,4 +63,12 @@ flutter {
 
 dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
+}
+
+// Force a newer kotlinx-metadata-jvm so R8 can process Kotlin 2.1.0 class
+// files. AGP 8.3 ships R8 with metadata support capped at 2.0.0; this
+// forces the version that understands 2.1.0 without requiring a full AGP
+// upgrade. Remove once AGP is updated to 8.5+.
+configurations.all {
+    resolutionStrategy.force 'org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.9.0'
 }
