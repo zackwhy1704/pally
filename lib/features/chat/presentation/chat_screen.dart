@@ -600,23 +600,7 @@ class _TextBubble extends ConsumerWidget {
         if (!_isUser && message.sources.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(top: 4, left: 4),
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm, vertical: 3),
-              decoration: BoxDecoration(
-                color: AppColors.tealL,
-                borderRadius: BorderRadius.circular(6),
-                border:
-                    Border.all(color: AppColors.teal.withValues(alpha: 0.4)),
-              ),
-              child: Text(
-                '📖 from your notes',
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.teal,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
+            child: _SourceBadge(sources: message.sources),
           ),
         if (message.syncStatus == SyncStatus.failed)
           Padding(
@@ -837,6 +821,54 @@ class _InputBar extends StatelessWidget {
             child: const Icon(Icons.send_rounded, color: Colors.white),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ── Source badge ──────────────────────────────────────────────────────────────
+
+class _SourceBadge extends StatelessWidget {
+  const _SourceBadge({required this.sources});
+  final List<String> sources;
+
+  bool get _isGeneralKnowledge =>
+      sources.length == 1 && sources.first == 'general-knowledge';
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isGeneralKnowledge) {
+      return Container(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm, vertical: 3),
+        decoration: BoxDecoration(
+          color: AppColors.amberL,
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: AppColors.amber.withValues(alpha: 0.4)),
+        ),
+        child: Text(
+          '🌐 general knowledge — upload notes for tailored answers',
+          style: AppTextStyles.caption.copyWith(
+            color: AppColors.amberText,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      );
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm, vertical: 3),
+      decoration: BoxDecoration(
+        color: AppColors.tealL,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: AppColors.teal.withValues(alpha: 0.4)),
+      ),
+      child: Text(
+        '📖 from your notes',
+        style: AppTextStyles.caption.copyWith(
+          color: AppColors.teal,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

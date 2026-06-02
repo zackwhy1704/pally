@@ -389,6 +389,11 @@ class UploadViewModel extends _$UploadViewModel {
       // currently watched, but if the user navigates back they'll see fresh data.
       ref.invalidate(libraryViewModelProvider);
       ref.invalidate(homeViewModelProvider);
+      // Trigger a recompile in the background to pick up any FAILED files
+      // from prior outages (e.g. Claude credit exhaustion). This is a
+      // best-effort fire-and-forget — it won't block the upload success UI.
+      // ignore: discarded_futures
+      _triggerRecompile();
     } on DioException catch (e, st) {
       appLog.e('[Upload] Failed: ${file.name} status=${e.response?.statusCode}',
           error: e, stackTrace: st);
@@ -417,6 +422,26 @@ class UploadViewModel extends _$UploadViewModel {
     state = state.copyWith(
       fileErrors: [...state.fileErrors, err],
     );
+  }
+
+  /// Calls POST /wiki/recompile to retry any FAILED files from prior outages.
+  /// Fire-and-forget — never blocks the upload response.
+  Future<void> _triggerRecompile() async {
+    try {
+      final dio = ref.read(dioProvider);
+      final result = await dio.post<Map<String, dynamic>>(
+        '/api/v1/avatars/$_avatarId/wiki/recompile',
+      );
+      final total = (result.data?['pagesCreated'] as num? ?? 0) +
+          (result.data?['pagesUpdated'] as num? ?? 0);
+      if (total > 0) {
+        appLog.i('[Upload] Recompile produced $total page(s) from previously failed files');
+        ref.invalidate(libraryViewModelProvider);
+        ref.invalidate(homeViewModelProvider);
+      }
+    } catch (e) {
+      appLog.d('[Upload] Recompile skipped or failed (non-fatal): $e');
+    }
   }
 
   Future<void> deleteFile(String fileId) async {
