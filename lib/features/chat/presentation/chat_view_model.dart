@@ -426,8 +426,14 @@ class ChatViewModel extends _$ChatViewModel {
         unawaited(_syncMessagesToBackend([userMessage, finalMsg]));
       } else if (finalMsg.isError) {
         appLog.w('[Chat] Skipping sync — stream ended in error state');
+        // Mark the user message as synced so its bubble clears the "pending"
+        // (clock) indicator. The user DID send their message — the failure
+        // was on the reply side, not the send side. Leaving it "pending"
+        // misleads the user into thinking their message wasn't delivered.
+        _clearPendingStatus(userMessage.id);
       } else {
         appLog.w('[Chat] Skipping sync — tutor message has no content');
+        _clearPendingStatus(userMessage.id);
       }
     } catch (e, st) {
       appLog.e('[Chat] sendMessage failed', error: e, stackTrace: st);
@@ -436,9 +442,8 @@ class ChatViewModel extends _$ChatViewModel {
         'Sorry, I had trouble answering that. Please try again!',
         [],
       );
-      // Keep the friendly bubble already inserted; never store raw
-      // exception text in state. (Nothing reads `error` today, but
-      // dropping `e.toString()` guards against accidental future leaks.)
+      // Clear "pending" clock on user message — it was sent.
+      _clearPendingStatus(userMessage.id);
       state = state.copyWith(
           isTyping: false,
           error: "Mochi couldn't reply. Please try again.");
@@ -665,6 +670,19 @@ class ChatViewModel extends _$ChatViewModel {
       }
       _updateMessageStatuses(messages.map((m) => m.id).toSet(), SyncStatus.failed);
     }
+  }
+
+  /// Clears the "pending" (clock) indicator on a user-sent message when the
+  /// stream fails. The user DID send their message — the failure is on the
+  /// reply side. Marking it synced removes the misleading "still sending" UI.
+  void _clearPendingStatus(String messageId) {
+    final updated = state.messages.map((m) {
+      if (m.id == messageId && m.syncStatus == SyncStatus.pending) {
+        return m.copyWith(syncStatus: SyncStatus.synced);
+      }
+      return m;
+    }).toList();
+    state = state.copyWith(messages: updated);
   }
 
   void _updateMessageStatuses(Set<String> ids, SyncStatus status) {
