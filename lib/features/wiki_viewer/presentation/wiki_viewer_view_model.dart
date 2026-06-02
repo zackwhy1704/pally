@@ -106,19 +106,20 @@ class WikiViewerViewModel extends _$WikiViewerViewModel {
           .map((e) => WikiPage.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList();
 
-      // Check if any file is still being compiled (PROCESSING status).
-      // The backend runs wiki compilation async, so pages may appear over
-      // the next 30–120 s after an upload.
+      // Check compilation state from avatar.brainState (READY / PENDING_RECOMPILE / COMPILING).
+      // Also check file PROCESSING status as a secondary signal for older backends.
       final filesData = results[2].data;
       final List<dynamic> fileList = filesData is List
           ? filesData
           : (filesData is Map
               ? (filesData['files'] as List<dynamic>? ?? [])
               : const <dynamic>[]);
-      final isCompiling = fileList.any((f) {
+      final fileProcessing = fileList.any((f) {
         final status = (f as Map)['status']?.toString().toUpperCase() ?? '';
         return status == 'PROCESSING';
       });
+      // Primary: use brainState from avatar DTO; fall back to file processing flag
+      final isCompiling = (avatar?.isBrainCompiling ?? false) || fileProcessing;
 
       state = state.copyWith(
         pages: pages,
@@ -146,7 +147,7 @@ class WikiViewerViewModel extends _$WikiViewerViewModel {
 
   void _startCompilationPoller() {
     _compilationPoller?.cancel();
-    _compilationPoller = Timer.periodic(const Duration(seconds: 5), (_) {
+    _compilationPoller = Timer.periodic(const Duration(seconds: 4), (_) {
       // Stop polling once the provider is disposed or compilation is done.
       if (!state.isCompiling) {
         _compilationPoller?.cancel();

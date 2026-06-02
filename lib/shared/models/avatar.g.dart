@@ -27,6 +27,7 @@ _$AvatarImpl _$$AvatarImplFromJson(Map<String, dynamic> json) => _$AvatarImpl(
       gradeLevel: json['gradeLevel'] as String?,
       curriculumType: json['curriculumType'] as String?,
       testDate: _testDateFromJson(json['testDate']),
+      brainState: json['brainState'] as String? ?? 'READY',
     );
 
 Map<String, dynamic> _$$AvatarImplToJson(_$AvatarImpl instance) =>
@@ -43,6 +44,7 @@ Map<String, dynamic> _$$AvatarImplToJson(_$AvatarImpl instance) =>
       'gradeLevel': instance.gradeLevel,
       'curriculumType': instance.curriculumType,
       'testDate': _testDateToJson(instance.testDate),
+      'brainState': instance.brainState,
     };
 
 _$CreateAvatarRequestImpl _$$CreateAvatarRequestImplFromJson(

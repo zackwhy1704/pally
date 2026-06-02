@@ -112,6 +112,8 @@ class Avatar with _$Avatar {
     String? curriculumType,
     @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
     DateTime? testDate,
+    /// Brain compilation state: READY | PENDING_RECOMPILE | COMPILING
+    @Default('READY') String brainState,
   }) = _Avatar;
 
   factory Avatar.fromJson(Map<String, dynamic> json) => _$AvatarFromJson(json);
@@ -119,6 +121,8 @@ class Avatar with _$Avatar {
 
 extension AvatarKnowledge on Avatar {
   bool get hasKnowledge => wikiPageCount > 0;
+  /// True while the brain is being compiled (debounced or in-flight).
+  bool get isBrainCompiling => brainState != 'READY';
 }
 
 @freezed

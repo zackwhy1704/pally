@@ -41,6 +41,9 @@ mixin _$Avatar {
   @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
   DateTime? get testDate => throw _privateConstructorUsedError;
 
+  /// Brain compilation state: READY | PENDING_RECOMPILE | COMPILING
+  String get brainState => throw _privateConstructorUsedError;
+
   /// Serializes this Avatar to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -75,7 +78,8 @@ abstract class $AvatarCopyWith<$Res> {
       String? gradeLevel,
       String? curriculumType,
       @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
-      DateTime? testDate});
+      DateTime? testDate,
+      String brainState});
 }
 
 /// @nodoc
@@ -105,6 +109,7 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
     Object? gradeLevel = freezed,
     Object? curriculumType = freezed,
     Object? testDate = freezed,
+    Object? brainState = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -155,6 +160,10 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
           ? _value.testDate
           : testDate // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      brainState: null == brainState
+          ? _value.brainState
+          : brainState // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -186,7 +195,8 @@ abstract class _$$AvatarImplCopyWith<$Res> implements $AvatarCopyWith<$Res> {
       String? gradeLevel,
       String? curriculumType,
       @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
-      DateTime? testDate});
+      DateTime? testDate,
+      String brainState});
 }
 
 /// @nodoc
@@ -214,6 +224,7 @@ class __$$AvatarImplCopyWithImpl<$Res>
     Object? gradeLevel = freezed,
     Object? curriculumType = freezed,
     Object? testDate = freezed,
+    Object? brainState = null,
   }) {
     return _then(_$AvatarImpl(
       id: null == id
@@ -264,6 +275,10 @@ class __$$AvatarImplCopyWithImpl<$Res>
           ? _value.testDate
           : testDate // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      brainState: null == brainState
+          ? _value.brainState
+          : brainState // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -291,7 +306,8 @@ class _$AvatarImpl implements _Avatar {
       this.gradeLevel,
       this.curriculumType,
       @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
-      this.testDate});
+      this.testDate,
+      this.brainState = 'READY'});
 
   factory _$AvatarImpl.fromJson(Map<String, dynamic> json) =>
       _$$AvatarImplFromJson(json);
@@ -330,9 +346,14 @@ class _$AvatarImpl implements _Avatar {
   @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
   final DateTime? testDate;
 
+  /// Brain compilation state: READY | PENDING_RECOMPILE | COMPILING
+  @override
+  @JsonKey()
+  final String brainState;
+
   @override
   String toString() {
-    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate)';
+    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate, brainState: $brainState)';
   }
 
   @override
@@ -360,7 +381,9 @@ class _$AvatarImpl implements _Avatar {
             (identical(other.curriculumType, curriculumType) ||
                 other.curriculumType == curriculumType) &&
             (identical(other.testDate, testDate) ||
-                other.testDate == testDate));
+                other.testDate == testDate) &&
+            (identical(other.brainState, brainState) ||
+                other.brainState == brainState));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -378,7 +401,8 @@ class _$AvatarImpl implements _Avatar {
       pedagogyMode,
       gradeLevel,
       curriculumType,
-      testDate);
+      testDate,
+      brainState);
 
   /// Create a copy of Avatar
   /// with the given fields replaced by the non-null parameter values.
@@ -417,7 +441,8 @@ abstract class _Avatar implements Avatar {
       final String? gradeLevel,
       final String? curriculumType,
       @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
-      final DateTime? testDate}) = _$AvatarImpl;
+      final DateTime? testDate,
+      final String brainState}) = _$AvatarImpl;
 
   factory _Avatar.fromJson(Map<String, dynamic> json) = _$AvatarImpl.fromJson;
 
@@ -453,6 +478,10 @@ abstract class _Avatar implements Avatar {
   @override
   @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
   DateTime? get testDate;
+
+  /// Brain compilation state: READY | PENDING_RECOMPILE | COMPILING
+  @override
+  String get brainState;
 
   /// Create a copy of Avatar
   /// with the given fields replaced by the non-null parameter values.
