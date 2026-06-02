@@ -448,12 +448,20 @@ class UploadViewModel extends _$UploadViewModel {
     try {
       final dio = ref.read(dioProvider);
       await dio.delete('/api/v1/avatars/$_avatarId/files/$fileId');
+      appLog.i('[Upload] Deleted file $fileId — triggering brain recompile');
+      // Recompile so wiki pages from the deleted file are removed from the brain.
+      // The backend DeleteFileUseCase also triggers async recompile server-side,
+      // but we call it explicitly here to get the updated page count sooner.
+      _triggerRecompile();
     } catch (e, st) {
       appLog.w('[Upload] Delete failed, removing locally', error: e, stackTrace: st);
     }
     state = state.copyWith(
       files: state.files.where((f) => f.id != fileId).toList(),
     );
+    // Refresh library so the brain page count reflects the deletion.
+    ref.invalidate(libraryViewModelProvider);
+    ref.invalidate(homeViewModelProvider);
   }
 
   void clearPendingRelevance() {
