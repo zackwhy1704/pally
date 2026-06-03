@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
+import 'package:pally/core/ui/math_text.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -588,11 +589,10 @@ class _TextBubble extends ConsumerWidget {
                             fontStyle: FontStyle.italic,
                           ),
                         )
-                      : Text(
-                          message.content,
-                          style: AppTextStyles.body.copyWith(
-                            color: _isUser ? Colors.white : AppColors.text1,
-                          ),
+                      : MathText(
+                          text: message.content,
+                          style: AppTextStyles.body,
+                          textColor: _isUser ? Colors.white : AppColors.text1,
                         ),
             ),
           ),
