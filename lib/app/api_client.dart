@@ -33,7 +33,11 @@ Dio dio(Ref ref) {
     BaseOptions(
       baseUrl: _baseUrl,
       connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 30),
+      // 90s: quiz generation (Haiku, 5 MCQs) takes 3-15s normally but can
+      // spike to 30-45s under Anthropic load. The old 30s killed every quiz
+      // request when the backend used Sonnet. SSE streaming uses its own
+      // per-chunk idle timeout so this ceiling doesn't affect chat.
+      receiveTimeout: const Duration(seconds: 90),
       sendTimeout: const Duration(seconds: 15),
       headers: {
         'Content-Type': 'application/json',
