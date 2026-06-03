@@ -100,17 +100,26 @@ const _sentinel = Object();
 class WikiViewerViewModel extends _$WikiViewerViewModel {
   late String _avatarId;
   Timer? _compilationPoller;
+  // Guard: prevents concurrent _loadPages() calls from racing each other.
+  // Without this, build() + the poller both fire _loadPages() and the
+  // one that finishes LAST wins — which may be an older in-flight request
+  // that returns stale or empty data, wiping out the pages the user sees.
+  bool _loadInFlight = false;
 
   @override
   WikiViewerState build(String avatarId) {
     _avatarId = avatarId;
     _loadPages();
-    // Cancel any active poller when the provider is disposed.
-    ref.onDispose(() => _compilationPoller?.cancel());
+    ref.onDispose(() {
+      _compilationPoller?.cancel();
+      _loadInFlight = false;
+    });
     return const WikiViewerState(isLoading: true);
   }
 
   Future<void> _loadPages() async {
+    if (_loadInFlight) return;
+    _loadInFlight = true;
     try {
       final dio = ref.read(dioProvider);
       final results = await Future.wait([
@@ -165,7 +174,7 @@ class WikiViewerViewModel extends _$WikiViewerViewModel {
         error: null,
       );
 
-      // While compilation is in progress, poll every 5 s so the brain
+      // While compilation is in progress, poll every 4 s so the brain
       // view populates automatically without requiring a manual refresh.
       if (isCompiling) {
         _startCompilationPoller();
@@ -174,10 +183,13 @@ class WikiViewerViewModel extends _$WikiViewerViewModel {
         _compilationPoller = null;
       }
     } catch (e) {
-      // Never fall back to fabricated wiki pages — a child must never
-      // study invented notes. Surface a real error + retry instead.
-      state = state.copyWith(
-          pages: const [], isLoading: false, error: PallyError.from(e));
+      // On error: preserve the last-loaded pages so the user doesn't see a
+      // blank brain every time the poller hits a transient network failure.
+      // Only clear isLoading so the spinner stops. The error toast fires via
+      // ref.listen in the screen so the user still sees the failure.
+      state = state.copyWith(isLoading: false, error: PallyError.from(e));
+    } finally {
+      _loadInFlight = false;
     }
   }
 
