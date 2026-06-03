@@ -167,12 +167,14 @@ class TeachMochiViewModel extends _$TeachMochiViewModel {
     state = state.copyWith(isSubmitting: true, error: null);
     try {
       final dio = ref.read(dioProvider);
+      // Teach evaluates the student explanation via Claude — allow 90s.
       final response = await dio.post<Map<String, dynamic>>(
         '/api/v1/avatars/$_avatarId/teach',
         data: {
           'topicSlug': topic.slug,
           'explanation': state.explanation,
         },
+        options: Options(receiveTimeout: const Duration(seconds: 90)),
       );
       final data = (response.data?['data'] is Map
               ? response.data!['data']

@@ -149,8 +149,14 @@ class QuizViewModel extends _$QuizViewModel {
       // _ApiResponseInterceptor strips the envelope, response.data is a bare
       // List. Typing the call <Map> would crash at Dio's transport layer
       // before parsing. Use <dynamic> and branch on the runtime shape.
-      final response = await dio
-          .get<dynamic>('/api/v1/avatars/$_avatarId/quiz/daily');
+      // Quiz generation (Haiku + 1200 tokens) typically takes 3-8s but can
+      // spike to 30s under Anthropic load. The global 90s Dio receiveTimeout
+      // covers this, but we document it explicitly here so it's obvious why
+      // this call tolerates a longer wait than normal CRUD endpoints.
+      final response = await dio.get<dynamic>(
+        '/api/v1/avatars/$_avatarId/quiz/daily',
+        options: Options(receiveTimeout: const Duration(seconds: 90)),
+      );
       final data = response.data;
       final List<dynamic> list = data is List
           ? data
