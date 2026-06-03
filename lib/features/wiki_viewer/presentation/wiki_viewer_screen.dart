@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -13,6 +14,7 @@ import 'package:pally/features/groups/presentation/groups_view_model.dart';
 import 'package:pally/features/wiki_viewer/presentation/wiki_viewer_view_model.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/wiki_page.dart';
+import 'package:pally/shared/widgets/app_error_view.dart';
 
 class WikiViewerScreen extends ConsumerStatefulWidget {
   const WikiViewerScreen({super.key, required this.avatarId});
@@ -106,26 +108,55 @@ class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen> {
                                   .notifier)
                               .deleteFile(fileId),
                         ),
-                      Expanded(
-                        child: RefreshIndicator(
-                          color: AppColors.purple,
-                          onRefresh: () => ref
-                              .read(wikiViewerViewModelProvider(widget.avatarId)
-                                  .notifier)
-                              .refresh(),
-                          child: vmState.filteredPages.isEmpty
-                              ? ListView(
-                                  children: const [
-                                    SizedBox(height: 80),
-                                    _EmptyView(),
-                                  ],
-                                )
-                              : _PagesList(
-                                  pages: vmState.filteredPages,
-                                  avatarId: widget.avatarId,
-                                ),
+                      // U4 — show a persistent error card when pages failed to
+                      // load and the error is not a transient poller hit.
+                      if (vmState.error != null && vmState.pages.isEmpty)
+                        Expanded(
+                          child: AppErrorView(
+                            message: vmState.error!.userMessage,
+                            onRetry: vmState.error!.kind ==
+                                    PallyErrorKind.slotLocked
+                                ? null
+                                : () => ref
+                                    .read(wikiViewerViewModelProvider(
+                                            widget.avatarId)
+                                        .notifier)
+                                    .refresh(),
+                            action: vmState.error!.kind ==
+                                    PallyErrorKind.slotLocked
+                                ? TextButton(
+                                    onPressed: () => context.go('/'),
+                                    child: const Text('Manage Mochis'),
+                                  )
+                                : null,
+                          ),
+                        )
+                      else
+                        Expanded(
+                          child: RefreshIndicator(
+                            color: AppColors.purple,
+                            onRefresh: () => ref
+                                .read(wikiViewerViewModelProvider(widget.avatarId)
+                                    .notifier)
+                                .refresh(),
+                            // U5 — context-aware empty state copy
+                            child: vmState.filteredPages.isEmpty
+                                ? ListView(
+                                    children: [
+                                      const SizedBox(height: 80),
+                                      _EmptyBrainView(
+                                        hasFiles: vmState.files.isNotEmpty,
+                                        isCompiling: vmState.isCompiling,
+                                        avatarName: vmState.avatar?.name,
+                                      ),
+                                    ],
+                                  )
+                                : _PagesList(
+                                    pages: vmState.filteredPages,
+                                    avatarId: widget.avatarId,
+                                  ),
+                          ),
                         ),
-                      ),
                     ],
                   ),
           ),
@@ -568,6 +599,19 @@ class _PageTileState extends ConsumerState<_PageTile> {
                       ),
                     ],
                   ),
+                  // U2 — provenance badge: shows which source files this page
+                  // was compiled from. Hidden when backend doesn't populate it.
+                  if (widget.page.sourceFileNames.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
+                        'from: ${widget.page.sourceFileNames.join(', ')}',
+                        style: AppTextStyles.caption
+                            .copyWith(color: AppColors.teal),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
                     widget.page.updatedAt != null
@@ -828,7 +872,9 @@ class _ShareToGroupButton extends ConsumerWidget {
 }
 
 class _EmptyView extends StatelessWidget {
-  const _EmptyView();
+  const _EmptyView({this.message});
+
+  final String? message;
 
   @override
   Widget build(BuildContext context) {
@@ -844,7 +890,8 @@ class _EmptyView extends StatelessWidget {
             Text('Brain is empty', style: AppTextStyles.title),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'Upload content from the Library tab to build the knowledge base.',
+              message ??
+                  'Upload content from the Library tab to build the knowledge base.',
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),
@@ -852,6 +899,31 @@ class _EmptyView extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// U5 — Context-aware empty state. Gives a different prompt depending on
+/// whether there are files uploaded (pending compile) vs. nothing uploaded yet.
+class _EmptyBrainView extends StatelessWidget {
+  const _EmptyBrainView({
+    this.hasFiles = false,
+    this.isCompiling = false,
+    this.avatarName,
+  });
+
+  final bool hasFiles;
+  final bool isCompiling;
+  final String? avatarName;
+
+  @override
+  Widget build(BuildContext context) {
+    // The amber banner above already covers the compiling case — stay silent.
+    if (isCompiling) return const SizedBox.shrink();
+    final name = avatarName ?? 'Mochi';
+    final msg = hasFiles
+        ? "No pages yet — add more notes to rebuild $name's brain."
+        : "Upload notes to start building $name's brain.";
+    return _EmptyView(message: msg);
   }
 }
 
@@ -874,7 +946,15 @@ class _SourceDocumentsSection extends StatefulWidget {
 }
 
 class _SourceDocumentsSectionState extends State<_SourceDocumentsSection> {
-  bool _expanded = true;
+  // U1 — default to collapsed when there are many files so the pages list
+  // always has room. Users with ≤4 files see them expanded by default.
+  late bool _expanded;
+
+  @override
+  void initState() {
+    super.initState();
+    _expanded = widget.files.length <= 4;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -930,26 +1010,30 @@ class _SourceDocumentsSectionState extends State<_SourceDocumentsSection> {
           ),
           if (_expanded) ...[
             const Divider(height: 1, color: AppColors.outline),
-            ...widget.files.asMap().entries.map((entry) {
-              final i = entry.key;
-              final file = entry.value;
-              final isLast = i == widget.files.length - 1;
-              return Column(
-                children: [
-                  _SourceFileRow(
+            // U1 — bounded scroll region so the section never pushes the
+            // pages list off-screen. 240 px fits ~4 rows comfortably.
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 240),
+              child: ListView.separated(
+                shrinkWrap: true,
+                physics: const ClampingScrollPhysics(),
+                itemCount: widget.files.length,
+                separatorBuilder: (_, __) => const Divider(
+                  height: 1,
+                  indent: AppSpacing.md,
+                  color: AppColors.outline,
+                ),
+                itemBuilder: (_, i) {
+                  final file = widget.files[i];
+                  return _SourceFileRow(
                     file: file,
                     onDelete: widget.isDeletingFile
                         ? null
                         : () => _confirmDelete(context, file),
-                  ),
-                  if (!isLast)
-                    const Divider(
-                        height: 1,
-                        indent: AppSpacing.md,
-                        color: AppColors.outline),
-                ],
-              );
-            }),
+                  );
+                },
+              ),
+            ),
           ],
         ],
       ),

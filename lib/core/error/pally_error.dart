@@ -14,6 +14,8 @@ enum PallyErrorKind {
   notFound,
   unauthorized,
   upgradeRequired,
+  slotLocked,
+  aiBusy,
   unknown,
 }
 
@@ -39,6 +41,12 @@ class PallyError {
   static const upgradeRequired = PallyError(
       PallyErrorKind.upgradeRequired,
       'This needs Pally Premium.');
+  static const slotLocked = PallyError(
+      PallyErrorKind.slotLocked,
+      'This Mochi is locked — activate a slot to use it.');
+  static const aiBusy = PallyError(
+      PallyErrorKind.aiBusy,
+      "Mochi's brain is busy right now. Try again in a moment.");
   static const unknown = PallyError(
       PallyErrorKind.unknown,
       'Something went wrong. Please try again.');
@@ -65,6 +73,8 @@ class PallyError {
         if (code == 404) return notFound;
         if (code == 401) return unauthorized;
         if (code == 402) return upgradeRequired;
+        if (code == 409) return slotLocked;
+        if (code == 503) return aiBusy;
         final backend = _safeBackendMessage(e.response?.data);
         if (backend != null) return PallyError(PallyErrorKind.server, backend);
         return server;

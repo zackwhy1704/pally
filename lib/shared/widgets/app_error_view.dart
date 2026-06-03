@@ -14,10 +14,17 @@ class AppErrorView extends StatelessWidget {
     super.key,
     required this.message,
     this.onRetry,
+    this.action,
   });
 
   final String message;
   final VoidCallback? onRetry;
+
+  /// Optional widget shown below the message in place of the retry button.
+  /// Use this for slot-locked errors or other cases where "Try again" is
+  /// not the right recovery path. When [action] is supplied, the default
+  /// retry button is hidden.
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +42,10 @@ class AppErrorView extends StatelessWidget {
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),
-            if (onRetry != null) ...[
+            if (action != null) ...[
+              const SizedBox(height: AppSpacing.lg),
+              action!,
+            ] else if (onRetry != null) ...[
               const SizedBox(height: AppSpacing.lg),
               AppButton(
                 label: 'Try again',
