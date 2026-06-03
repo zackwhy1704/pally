@@ -130,6 +130,7 @@ class QuizScreen extends ConsumerWidget {
                       xpEarned: quizState.xpEarned,
                       avatarId: avatarId,
                       matrix: quizState.masteryMatrix,
+                      questions: quizState.questions,
                     )
                   : _QuizBody(
                       avatarId: avatarId,
@@ -520,6 +521,7 @@ class _CompletionView extends StatelessWidget {
     required this.total,
     required this.xpEarned,
     required this.avatarId,
+    required this.questions,
     this.matrix,
   });
 
@@ -527,6 +529,7 @@ class _CompletionView extends StatelessWidget {
   final int total;
   final int xpEarned;
   final String avatarId;
+  final List<QuizQuestion> questions;
   final MasteryMatrix? matrix;
 
   @override
@@ -601,7 +604,7 @@ class _CompletionView extends StatelessWidget {
             ],
             if (matrix != null && matrix!.hasAny) ...[
               const SizedBox(height: AppSpacing.md),
-              _MasteryMatrixCard(matrix: matrix!),
+              _MasteryMatrixCard(matrix: matrix!, questions: questions),
             ],
             const SizedBox(height: AppSpacing.xl),
             SizedBox(
@@ -730,9 +733,30 @@ class _ConfidenceChip extends StatelessWidget {
 /// Misconceptions get a high-contrast warning treatment because they're the
 /// most dangerous category (confidently wrong knowledge that compounds).
 class _MasteryMatrixCard extends StatelessWidget {
-  const _MasteryMatrixCard({required this.matrix});
+  const _MasteryMatrixCard({required this.matrix, required this.questions});
 
   final MasteryMatrix matrix;
+  final List<QuizQuestion> questions;
+
+  /// Resolves a question ID to a short display label.
+  /// Falls back to a truncated version of the ID if the question isn't found
+  /// (shouldn't happen in practice — the matrix only contains IDs from this session).
+  String _label(String id) {
+    final q = questions.firstWhere(
+      (q) => q.id == id,
+      orElse: () => QuizQuestion(
+        id: id,
+        question: id,
+        options: const [],
+        correctIndex: 0,
+        sourcePage: '',
+        explanation: '',
+      ),
+    );
+    // Show the first ~60 chars of the question stem — enough to identify it
+    final text = q.question.trim();
+    return text.length > 60 ? '${text.substring(0, 57)}…' : text;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -747,7 +771,7 @@ class _MasteryMatrixCard extends StatelessWidget {
               child: _MasteryQuadrant(
                 title: 'Mastered',
                 emoji: '✅',
-                items: matrix.mastered,
+                items: matrix.mastered.map(_label).toList(),
                 color: AppColors.green,
                 bgColor: AppColors.greenL,
               ),
@@ -757,7 +781,7 @@ class _MasteryMatrixCard extends StatelessWidget {
               child: _MasteryQuadrant(
                 title: 'Misconception',
                 emoji: '⚠️',
-                items: matrix.misconception,
+                items: matrix.misconception.map(_label).toList(),
                 color: AppColors.coral,
                 bgColor: AppColors.coralL,
                 emphasis: true,
@@ -772,7 +796,7 @@ class _MasteryMatrixCard extends StatelessWidget {
               child: _MasteryQuadrant(
                 title: 'Lucky guess',
                 emoji: '🍀',
-                items: matrix.luckyGuess,
+                items: matrix.luckyGuess.map(_label).toList(),
                 color: AppColors.amber,
                 bgColor: AppColors.amberL,
               ),
@@ -782,7 +806,7 @@ class _MasteryMatrixCard extends StatelessWidget {
               child: _MasteryQuadrant(
                 title: 'Known gap',
                 emoji: '📚',
-                items: matrix.knownGap,
+                items: matrix.knownGap.map(_label).toList(),
                 color: AppColors.purple,
                 bgColor: AppColors.purpleL,
               ),
@@ -805,7 +829,7 @@ class _MasteryMatrixCard extends StatelessWidget {
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Text(
-                    'Focus next: ${matrix.priorityReview}',
+                    'Focus next: ${_label(matrix.priorityReview!)}',
                     style: AppTextStyles.body.copyWith(
                       color: AppColors.text1,
                       fontWeight: FontWeight.w700,
