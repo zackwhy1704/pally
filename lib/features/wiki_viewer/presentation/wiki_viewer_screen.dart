@@ -91,46 +91,42 @@ class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen> {
           Expanded(
             child: vmState.isLoading
                 ? const PallyLoadingSpinner()
-                : RefreshIndicator(
-                    color: AppColors.purple,
-                    onRefresh: () => ref
-                        .read(wikiViewerViewModelProvider(widget.avatarId)
-                            .notifier)
-                        .refresh(),
-                    child: CustomScrollView(
-                      slivers: [
-                        // Source documents section — shown when files exist
-                        if (vmState.files.isNotEmpty)
-                          SliverToBoxAdapter(
-                            child: _SourceDocumentsSection(
-                              files: vmState.files,
-                              isDeletingFile: vmState.isDeletingFile,
-                              onDelete: (fileId) => ref
-                                  .read(wikiViewerViewModelProvider(
-                                          widget.avatarId)
-                                      .notifier)
-                                  .deleteFile(fileId),
-                            ),
-                          ),
-                        // Brain pages
-                        if (vmState.filteredPages.isEmpty)
-                          const SliverToBoxAdapter(
-                            child: Column(
-                              children: [
-                                SizedBox(height: 80),
-                                _EmptyView(),
-                              ],
-                            ),
-                          )
-                        else
-                          SliverToBoxAdapter(
-                            child: _PagesList(
-                              pages: vmState.filteredPages,
-                              avatarId: widget.avatarId,
-                            ),
-                          ),
-                      ],
-                    ),
+                // Source documents section sits ABOVE the scrollable pages list
+                // in a Column so it has proper bounded constraints. Putting it
+                // inside SliverToBoxAdapter alongside a ListView child gave
+                // unbounded height to the ListView → "RenderBox was not laid out".
+                : Column(
+                    children: [
+                      if (vmState.files.isNotEmpty)
+                        _SourceDocumentsSection(
+                          files: vmState.files,
+                          isDeletingFile: vmState.isDeletingFile,
+                          onDelete: (fileId) => ref
+                              .read(wikiViewerViewModelProvider(widget.avatarId)
+                                  .notifier)
+                              .deleteFile(fileId),
+                        ),
+                      Expanded(
+                        child: RefreshIndicator(
+                          color: AppColors.purple,
+                          onRefresh: () => ref
+                              .read(wikiViewerViewModelProvider(widget.avatarId)
+                                  .notifier)
+                              .refresh(),
+                          child: vmState.filteredPages.isEmpty
+                              ? ListView(
+                                  children: const [
+                                    SizedBox(height: 80),
+                                    _EmptyView(),
+                                  ],
+                                )
+                              : _PagesList(
+                                  pages: vmState.filteredPages,
+                                  avatarId: widget.avatarId,
+                                ),
+                        ),
+                      ),
+                    ],
                   ),
           ),
         ],
