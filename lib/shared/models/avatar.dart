@@ -114,6 +114,9 @@ class Avatar with _$Avatar {
     DateTime? testDate,
     /// Brain compilation state: READY | PENDING_RECOMPILE | COMPILING
     @Default('READY') String brainState,
+    /// False when this avatar is outside the user's active slot cap.
+    /// Inactive avatars are visible but chat/quiz are blocked.
+    @Default(true) bool isActive,
   }) = _Avatar;
 
   factory Avatar.fromJson(Map<String, dynamic> json) => _$AvatarFromJson(json);

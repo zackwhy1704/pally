@@ -323,8 +323,11 @@ class _AvatarCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isLocked = !avatar.isActive;
     return GestureDetector(
-      onTap: () => ChatRoute(avatarId: avatar.id).push(context),
+      onTap: isLocked
+          ? () => _showSlotLockedSheet(context, ref, avatar)
+          : () => ChatRoute(avatarId: avatar.id).push(context),
       onLongPress: () => _showTutorOptions(context, ref, avatar),
       child: Container(
         decoration: BoxDecoration(
@@ -395,8 +398,22 @@ class _AvatarCard extends ConsumerWidget {
                 ),
               ],
             ),
+            // Lock overlay — shown when avatar is outside the user's slot cap
+            if (isLocked)
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withAlpha(120),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Center(
+                    child: Icon(Icons.lock_rounded,
+                        color: Colors.white, size: 32),
+                  ),
+                ),
+              ),
             // Active / knowledge badge
-            if (avatar.hasKnowledge)
+            if (avatar.hasKnowledge && !isLocked)
               Positioned(
                 top: 8,
                 right: 8,
@@ -417,6 +434,137 @@ class _AvatarCard extends ConsumerWidget {
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ── Locked Mochi slot sheet ───────────────────────────────────────────────────
+
+void _showSlotLockedSheet(BuildContext context, WidgetRef ref, Avatar avatar) {
+  showModalBottomSheet<void>(
+    context: context,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
+    builder: (sheetCtx) => _SlotLockedSheet(avatar: avatar, ref: ref),
+  );
+}
+
+class _SlotLockedSheet extends ConsumerStatefulWidget {
+  const _SlotLockedSheet({required this.avatar, required this.ref});
+  final Avatar avatar;
+  final WidgetRef ref;
+
+  @override
+  ConsumerState<_SlotLockedSheet> createState() => _SlotLockedSheetState();
+}
+
+class _SlotLockedSheetState extends ConsumerState<_SlotLockedSheet> {
+  bool _isLoading = false;
+  String? _error;
+
+  Future<void> _activateSlot() async {
+    setState(() { _isLoading = true; _error = null; });
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.patch<dynamic>(
+        '/api/v1/avatars/${widget.avatar.id}/active',
+        data: {'active': true},
+      );
+      if (mounted) Navigator.of(context).pop();
+      // Refresh home so the avatar unlocks immediately
+      ref.invalidate(homeViewModelProvider);
+    } on DioException catch (e) {
+      final msg = e.response?.data is Map
+          ? (e.response!.data as Map)['error']?.toString() ??
+              'Could not activate — try again.'
+          : 'Could not activate — try again.';
+      if (mounted) setState(() { _isLoading = false; _error = msg; });
+    } catch (_) {
+      if (mounted) setState(() { _isLoading = false; _error = 'Something went wrong.'; });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final trial = ref.watch(trialStatusProvider).valueOrNull;
+    final cap = trial?.freeTutorCap ?? 1;
+    final isPremium = trial?.isPremium ?? false;
+
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.lg,
+        AppSpacing.lg,
+        AppSpacing.lg + MediaQuery.of(context).padding.bottom,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 40, height: 4,
+            decoration: BoxDecoration(
+              color: AppColors.outline, borderRadius: BorderRadius.circular(2)),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          const Icon(Icons.lock_rounded, color: AppColors.amber, size: 48),
+          const SizedBox(height: AppSpacing.md),
+          Text('${widget.avatar.name} is locked', style: AppTextStyles.title),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            isPremium
+                ? 'Something went wrong — this Mochi should be active. Pull to refresh.'
+                : 'You have $cap active Mochi${cap == 1 ? '' : 's'} on your free plan. '
+                  'Deactivate another Mochi first, then activate this one.\n\n'
+                  'You can swap once every 24 hours.',
+            style: AppTextStyles.body.copyWith(color: AppColors.text2),
+            textAlign: TextAlign.center,
+          ),
+          if (_error != null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.sm),
+              decoration: BoxDecoration(
+                color: AppColors.coralL,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(_error!,
+                  style: AppTextStyles.bodySmall.copyWith(color: AppColors.coral),
+                  textAlign: TextAlign.center),
+            ),
+          ],
+          const SizedBox(height: AppSpacing.lg),
+          if (!isPremium) ...[
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: _isLoading ? null : _activateSlot,
+                icon: _isLoading
+                    ? const SizedBox(
+                        width: 16, height: 16,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.white))
+                    : const Icon(Icons.lock_open_rounded, size: 18),
+                label: Text(_isLoading ? 'Activating…' : 'Activate ${widget.avatar.name}'),
+                style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.purple,
+                    padding: const EdgeInsets.symmetric(vertical: 14)),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+          ],
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Close'),
+            ),
+          ),
+        ],
       ),
     );
   }

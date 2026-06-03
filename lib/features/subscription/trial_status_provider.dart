@@ -18,6 +18,7 @@ class TrialStatus {
     required this.trialDaysLeft,
     required this.trialHoursLeft,
     this.freeTutorCap,
+    this.slotCooldownSecondsRemaining = 0,
   });
 
   final bool isPremium;
@@ -28,9 +29,11 @@ class TrialStatus {
   final int trialDaysLeft;
   final int trialHoursLeft;
   final int? freeTutorCap; // null = unlimited (premium)
+  final int slotCooldownSecondsRemaining; // 0 = can swap now
 
   bool get isOnTrial => trialActive && source == 'TRIAL';
   bool get isTrialExpired => trialStatus == 'EXPIRED';
+  bool get canSwapSlot => slotCooldownSecondsRemaining == 0;
 
   static const empty = TrialStatus(
     isPremium: false,
@@ -63,6 +66,8 @@ Future<TrialStatus> trialStatus(Ref ref) async {
       trialDaysLeft: (data['trialDaysLeft'] as num?)?.toInt() ?? 0,
       trialHoursLeft: (data['trialHoursLeft'] as num?)?.toInt() ?? 0,
       freeTutorCap: (data['freeTutorCap'] as num?)?.toInt(),
+      slotCooldownSecondsRemaining:
+          (data['slotCooldownSecondsRemaining'] as num?)?.toInt() ?? 0,
     );
   } catch (e) {
     appLog.w('[Trial] /usage/today failed: $e');

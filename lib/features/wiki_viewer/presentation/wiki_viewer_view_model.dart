@@ -8,24 +8,54 @@ import 'package:pally/shared/models/wiki_page.dart';
 
 part 'wiki_viewer_view_model.g.dart';
 
+// Simple model for a source document shown in the Brain screen.
+@immutable
+class SourceFile {
+  const SourceFile({
+    required this.id,
+    required this.fileName,
+    required this.status,
+    this.pageCount = 0,
+  });
+
+  final String id;
+  final String fileName;
+  final String status; // PROCESSING | READY | FAILED | IRRELEVANT
+  final int pageCount;
+
+  bool get isProcessing => status.toUpperCase() == 'PROCESSING';
+  bool get isFailed => status.toUpperCase() == 'FAILED';
+
+  factory SourceFile.fromJson(Map<String, dynamic> json) => SourceFile(
+        id: json['id'] as String? ?? '',
+        fileName: json['fileName'] as String? ?? json['file_name'] as String? ?? 'Unknown',
+        status: json['status'] as String? ?? 'PROCESSING',
+        pageCount: (json['pageCount'] as num?)?.toInt() ?? 0,
+      );
+}
+
 @immutable
 class WikiViewerState {
   const WikiViewerState({
     this.pages = const [],
+    this.files = const [],
     this.searchQuery = '',
     this.isLoading = false,
     this.isCompiling = false,
+    this.isDeletingFile = false,
     this.error,
     this.avatar,
   });
 
   final List<WikiPage> pages;
+  final List<SourceFile> files;
   final String searchQuery;
   final bool isLoading;
   /// True while at least one knowledge file is still in PROCESSING state —
   /// compilation is async and may not be done yet. Shows a banner so the
   /// user knows to wait rather than thinking the upload was lost.
   final bool isCompiling;
+  final bool isDeletingFile;
   final PallyError? error;
   final Avatar? avatar;
 
@@ -43,17 +73,21 @@ class WikiViewerState {
 
   WikiViewerState copyWith({
     List<WikiPage>? pages,
+    List<SourceFile>? files,
     String? searchQuery,
     bool? isLoading,
     bool? isCompiling,
+    bool? isDeletingFile,
     Object? error = _sentinel,
     Object? avatar = _sentinel,
   }) {
     return WikiViewerState(
       pages: pages ?? this.pages,
+      files: files ?? this.files,
       searchQuery: searchQuery ?? this.searchQuery,
       isLoading: isLoading ?? this.isLoading,
       isCompiling: isCompiling ?? this.isCompiling,
+      isDeletingFile: isDeletingFile ?? this.isDeletingFile,
       error: error == _sentinel ? this.error : error as PallyError?,
       avatar: avatar == _sentinel ? this.avatar : avatar as Avatar?,
     );
@@ -114,15 +148,17 @@ class WikiViewerViewModel extends _$WikiViewerViewModel {
           : (filesData is Map
               ? (filesData['files'] as List<dynamic>? ?? [])
               : const <dynamic>[]);
-      final fileProcessing = fileList.any((f) {
-        final status = (f as Map)['status']?.toString().toUpperCase() ?? '';
-        return status == 'PROCESSING';
-      });
+      final files = fileList
+          .whereType<Map>()
+          .map((f) => SourceFile.fromJson(Map<String, dynamic>.from(f)))
+          .toList();
+      final fileProcessing = files.any((f) => f.isProcessing);
       // Primary: use brainState from avatar DTO; fall back to file processing flag
       final isCompiling = (avatar?.isBrainCompiling ?? false) || fileProcessing;
 
       state = state.copyWith(
         pages: pages,
+        files: files,
         avatar: avatar,
         isLoading: false,
         isCompiling: isCompiling,
@@ -159,6 +195,29 @@ class WikiViewerViewModel extends _$WikiViewerViewModel {
   }
 
   Future<void> refresh() => _loadPages();
+
+  /// Deletes a source document from the avatar's knowledge base.
+  /// The backend schedules a recompile so brain pages from this file
+  /// are archived automatically.
+  Future<void> deleteFile(String fileId) async {
+    state = state.copyWith(isDeletingFile: true);
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.delete('/api/v1/avatars/$_avatarId/files/$fileId');
+      // Remove optimistically and reload to get the updated compiling state
+      state = state.copyWith(
+        files: state.files.where((f) => f.id != fileId).toList(),
+        isDeletingFile: false,
+        isCompiling: true, // recompile just started
+      );
+      _startCompilationPoller();
+    } catch (e) {
+      state = state.copyWith(
+        isDeletingFile: false,
+        error: PallyError.from(e),
+      );
+    }
+  }
 
   void updateSearch(String query) {
     state = state.copyWith(searchQuery: query);

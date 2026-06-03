@@ -44,6 +44,10 @@ mixin _$Avatar {
   /// Brain compilation state: READY | PENDING_RECOMPILE | COMPILING
   String get brainState => throw _privateConstructorUsedError;
 
+  /// False when this avatar is outside the user's active slot cap.
+  /// Inactive avatars are visible but chat/quiz are blocked.
+  bool get isActive => throw _privateConstructorUsedError;
+
   /// Serializes this Avatar to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -79,7 +83,8 @@ abstract class $AvatarCopyWith<$Res> {
       String? curriculumType,
       @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
       DateTime? testDate,
-      String brainState});
+      String brainState,
+      bool isActive});
 }
 
 /// @nodoc
@@ -110,6 +115,7 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
     Object? curriculumType = freezed,
     Object? testDate = freezed,
     Object? brainState = null,
+    Object? isActive = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -164,6 +170,10 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
           ? _value.brainState
           : brainState // ignore: cast_nullable_to_non_nullable
               as String,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -196,7 +206,8 @@ abstract class _$$AvatarImplCopyWith<$Res> implements $AvatarCopyWith<$Res> {
       String? curriculumType,
       @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
       DateTime? testDate,
-      String brainState});
+      String brainState,
+      bool isActive});
 }
 
 /// @nodoc
@@ -225,6 +236,7 @@ class __$$AvatarImplCopyWithImpl<$Res>
     Object? curriculumType = freezed,
     Object? testDate = freezed,
     Object? brainState = null,
+    Object? isActive = null,
   }) {
     return _then(_$AvatarImpl(
       id: null == id
@@ -279,6 +291,10 @@ class __$$AvatarImplCopyWithImpl<$Res>
           ? _value.brainState
           : brainState // ignore: cast_nullable_to_non_nullable
               as String,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -307,7 +323,8 @@ class _$AvatarImpl implements _Avatar {
       this.curriculumType,
       @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
       this.testDate,
-      this.brainState = 'READY'});
+      this.brainState = 'READY',
+      this.isActive = true});
 
   factory _$AvatarImpl.fromJson(Map<String, dynamic> json) =>
       _$$AvatarImplFromJson(json);
@@ -351,9 +368,15 @@ class _$AvatarImpl implements _Avatar {
   @JsonKey()
   final String brainState;
 
+  /// False when this avatar is outside the user's active slot cap.
+  /// Inactive avatars are visible but chat/quiz are blocked.
+  @override
+  @JsonKey()
+  final bool isActive;
+
   @override
   String toString() {
-    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate, brainState: $brainState)';
+    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate, brainState: $brainState, isActive: $isActive)';
   }
 
   @override
@@ -383,7 +406,9 @@ class _$AvatarImpl implements _Avatar {
             (identical(other.testDate, testDate) ||
                 other.testDate == testDate) &&
             (identical(other.brainState, brainState) ||
-                other.brainState == brainState));
+                other.brainState == brainState) &&
+            (identical(other.isActive, isActive) ||
+                other.isActive == isActive));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -402,7 +427,8 @@ class _$AvatarImpl implements _Avatar {
       gradeLevel,
       curriculumType,
       testDate,
-      brainState);
+      brainState,
+      isActive);
 
   /// Create a copy of Avatar
   /// with the given fields replaced by the non-null parameter values.
@@ -442,7 +468,8 @@ abstract class _Avatar implements Avatar {
       final String? curriculumType,
       @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
       final DateTime? testDate,
-      final String brainState}) = _$AvatarImpl;
+      final String brainState,
+      final bool isActive}) = _$AvatarImpl;
 
   factory _Avatar.fromJson(Map<String, dynamic> json) = _$AvatarImpl.fromJson;
 
@@ -482,6 +509,11 @@ abstract class _Avatar implements Avatar {
   /// Brain compilation state: READY | PENDING_RECOMPILE | COMPILING
   @override
   String get brainState;
+
+  /// False when this avatar is outside the user's active slot cap.
+  /// Inactive avatars are visible but chat/quiz are blocked.
+  @override
+  bool get isActive;
 
   /// Create a copy of Avatar
   /// with the given fields replaced by the non-null parameter values.

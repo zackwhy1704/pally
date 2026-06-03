@@ -97,17 +97,40 @@ class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen> {
                         .read(wikiViewerViewModelProvider(widget.avatarId)
                             .notifier)
                         .refresh(),
-                    child: vmState.filteredPages.isEmpty
-                        ? ListView(
-                            children: const [
-                              SizedBox(height: 80),
-                              _EmptyView(),
-                            ],
-                          )
-                        : _PagesList(
-                            pages: vmState.filteredPages,
-                            avatarId: widget.avatarId,
+                    child: CustomScrollView(
+                      slivers: [
+                        // Source documents section — shown when files exist
+                        if (vmState.files.isNotEmpty)
+                          SliverToBoxAdapter(
+                            child: _SourceDocumentsSection(
+                              files: vmState.files,
+                              isDeletingFile: vmState.isDeletingFile,
+                              onDelete: (fileId) => ref
+                                  .read(wikiViewerViewModelProvider(
+                                          widget.avatarId)
+                                      .notifier)
+                                  .deleteFile(fileId),
+                            ),
                           ),
+                        // Brain pages
+                        if (vmState.filteredPages.isEmpty)
+                          const SliverToBoxAdapter(
+                            child: Column(
+                              children: [
+                                SizedBox(height: 80),
+                                _EmptyView(),
+                              ],
+                            ),
+                          )
+                        else
+                          SliverToBoxAdapter(
+                            child: _PagesList(
+                              pages: vmState.filteredPages,
+                              avatarId: widget.avatarId,
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
           ),
         ],
@@ -831,6 +854,232 @@ class _EmptyView extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ── Source documents section ──────────────────────────────────────────────────
+
+class _SourceDocumentsSection extends StatefulWidget {
+  const _SourceDocumentsSection({
+    required this.files,
+    required this.isDeletingFile,
+    required this.onDelete,
+  });
+
+  final List<SourceFile> files;
+  final bool isDeletingFile;
+  final ValueChanged<String> onDelete;
+
+  @override
+  State<_SourceDocumentsSection> createState() =>
+      _SourceDocumentsSectionState();
+}
+
+class _SourceDocumentsSectionState extends State<_SourceDocumentsSection> {
+  bool _expanded = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(
+          AppSpacing.md, AppSpacing.md, AppSpacing.md, 0),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.outline),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header — tap to collapse/expand
+          InkWell(
+            onTap: () => setState(() => _expanded = !_expanded),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
+              child: Row(
+                children: [
+                  const Icon(Icons.folder_open_rounded,
+                      size: 18, color: AppColors.purple),
+                  const SizedBox(width: AppSpacing.xs),
+                  Text(
+                    'Source documents (${widget.files.length})',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.text1,
+                    ),
+                  ),
+                  const Spacer(),
+                  if (widget.isDeletingFile)
+                    const SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: AppColors.purple),
+                    )
+                  else
+                    Icon(
+                      _expanded
+                          ? Icons.keyboard_arrow_up_rounded
+                          : Icons.keyboard_arrow_down_rounded,
+                      size: 20,
+                      color: AppColors.text3,
+                    ),
+                ],
+              ),
+            ),
+          ),
+          if (_expanded) ...[
+            const Divider(height: 1, color: AppColors.outline),
+            ...widget.files.asMap().entries.map((entry) {
+              final i = entry.key;
+              final file = entry.value;
+              final isLast = i == widget.files.length - 1;
+              return Column(
+                children: [
+                  _SourceFileRow(
+                    file: file,
+                    onDelete: widget.isDeletingFile
+                        ? null
+                        : () => _confirmDelete(context, file),
+                  ),
+                  if (!isLast)
+                    const Divider(
+                        height: 1,
+                        indent: AppSpacing.md,
+                        color: AppColors.outline),
+                ],
+              );
+            }),
+          ],
+        ],
+      ),
+    );
+  }
+
+  void _confirmDelete(BuildContext context, SourceFile file) {
+    showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: AppColors.surface,
+        title: const Text('Remove document?'),
+        content: Text(
+          '"${file.fileName}" will be removed and Mochi\'s brain will update automatically.',
+          style: AppTextStyles.body.copyWith(color: AppColors.text2),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('Cancel',
+                style: AppTextStyles.body.copyWith(color: AppColors.text2)),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.coral),
+            child: const Text('Remove'),
+          ),
+        ],
+      ),
+    ).then((confirmed) {
+      if (confirmed == true) widget.onDelete(file.id);
+    });
+  }
+}
+
+class _SourceFileRow extends StatelessWidget {
+  const _SourceFileRow({required this.file, required this.onDelete});
+
+  final SourceFile file;
+  final VoidCallback? onDelete;
+
+  IconData get _typeIcon {
+    final name = file.fileName.toLowerCase();
+    if (name.endsWith('.pdf')) { return Icons.picture_as_pdf_rounded; }
+    if (name.endsWith('.jpg') ||
+        name.endsWith('.jpeg') ||
+        name.endsWith('.png')) { return Icons.image_rounded; }
+    return Icons.description_rounded;
+  }
+
+  Color get _statusColor {
+    switch (file.status.toUpperCase()) {
+      case 'READY':
+        return AppColors.green;
+      case 'FAILED':
+        return AppColors.coral;
+      case 'PROCESSING':
+        return AppColors.amber;
+      default:
+        return AppColors.text3;
+    }
+  }
+
+  String get _statusLabel {
+    switch (file.status.toUpperCase()) {
+      case 'READY':
+        return file.pageCount > 0 ? '${file.pageCount}p' : 'Ready';
+      case 'FAILED':
+        return 'Failed';
+      case 'PROCESSING':
+        return 'Reading…';
+      case 'IRRELEVANT':
+        return 'Off-topic';
+      default:
+        return file.status;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.xs + 2),
+      child: Row(
+        children: [
+          Icon(_typeIcon, size: 20, color: AppColors.purpleC),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  file.fileName,
+                  style: AppTextStyles.bodySmall
+                      .copyWith(color: AppColors.text1, fontWeight: FontWeight.w600),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  constraints: const BoxConstraints(maxWidth: 80),
+                  decoration: BoxDecoration(
+                    color: _statusColor.withAlpha(25),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    _statusLabel,
+                    style:
+                        AppTextStyles.caption.copyWith(color: _statusColor),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete_outline_rounded,
+                color: AppColors.coral, size: 20),
+            visualDensity: VisualDensity.compact,
+            onPressed: onDelete,
+            tooltip: 'Remove document',
+          ),
+        ],
       ),
     );
   }
