@@ -17,7 +17,6 @@ import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/features/referral/referral_service.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
 import 'package:pally/features/subscription/trial_status_provider.dart';
-import 'package:pally/features/subscription/subscription_service.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/features/home/widgets/how_pally_is_different.dart';
@@ -978,36 +977,15 @@ class _SubscriptionTile extends ConsumerWidget {
           'Your subscription is managed by the parent account.');
       return;
     }
-    try {
-      final svc = ref.read(subscriptionServiceProvider);
-      final url = await svc.openPortal();
-      await svc.launchExternal(url);
-    } on SubscriptionError catch (e) {
-      if (context.mounted) PallyToast.error(context, _sanitizeError(e.message));
-    }
+    // Premium self-managed users: go to the plans screen which shows their
+    // current plan, lets them switch plans, AND has a "Manage billing / Cancel"
+    // link to the Stripe portal. Going straight to the portal only is wrong —
+    // users must be able to see and change their plan from within the app.
+    context.push('/subscription/plans');
   }
 }
 
 /// Sanitises error messages before showing them to the user.
-/// Strips technical prefixes; returns a friendly fallback for anything
-/// that looks like a raw exception or status code.
-String _sanitizeError(String? raw) {
-  if (raw == null || raw.isEmpty) return 'Something went wrong. Try again.';
-  // Strip common technical prefixes
-  var msg = raw
-      .replaceAll('DioException:', '')
-      .replaceAll('Exception:', '')
-      .replaceAll('Error:', '')
-      .trim();
-  // If it still looks like a class name or stack frame, use fallback
-  if (msg.contains('at com.') ||
-      msg.contains('SocketException') ||
-      msg.contains('HandshakeException') ||
-      RegExp(r'^\d{3}\b').hasMatch(msg)) {
-    return 'Something went wrong. Check your connection and try again.';
-  }
-  return msg.isNotEmpty ? msg : 'Something went wrong. Try again.';
-}
 
 /// Settings → Referral section. Two actions: open your own referral page
 /// (P-ref) and a prompt to enter someone else's code.
