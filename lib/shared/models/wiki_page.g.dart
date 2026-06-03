@@ -28,6 +28,10 @@ _$WikiPageImpl _$$WikiPageImplFromJson(Map<String, dynamic> json) =>
       qualityScore: (json['qualityScore'] as num?)?.toInt() ?? 0,
       humanVerified: json['humanVerified'] as bool? ?? false,
       humanCorrection: json['humanCorrection'] as String?,
+      sourceFileNames: (json['sourceFileNames'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$$WikiPageImplToJson(_$WikiPageImpl instance) =>
@@ -45,4 +49,5 @@ Map<String, dynamic> _$$WikiPageImplToJson(_$WikiPageImpl instance) =>
       'qualityScore': instance.qualityScore,
       'humanVerified': instance.humanVerified,
       'humanCorrection': instance.humanCorrection,
+      'sourceFileNames': instance.sourceFileNames,
     };

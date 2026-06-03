@@ -32,7 +32,9 @@ mixin _$WikiPage {
   DateTime? get compiledAt => throw _privateConstructorUsedError;
   int get qualityScore => throw _privateConstructorUsedError;
   bool get humanVerified => throw _privateConstructorUsedError;
-  String? get humanCorrection => throw _privateConstructorUsedError;
+  String? get humanCorrection =>
+      throw _privateConstructorUsedError; // Fix 3: provenance — names of knowledge files that contributed to this page
+  List<String> get sourceFileNames => throw _privateConstructorUsedError;
 
   /// Serializes this WikiPage to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -62,7 +64,8 @@ abstract class $WikiPageCopyWith<$Res> {
       DateTime? compiledAt,
       int qualityScore,
       bool humanVerified,
-      String? humanCorrection});
+      String? humanCorrection,
+      List<String> sourceFileNames});
 }
 
 /// @nodoc
@@ -93,6 +96,7 @@ class _$WikiPageCopyWithImpl<$Res, $Val extends WikiPage>
     Object? qualityScore = null,
     Object? humanVerified = null,
     Object? humanCorrection = freezed,
+    Object? sourceFileNames = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -147,6 +151,10 @@ class _$WikiPageCopyWithImpl<$Res, $Val extends WikiPage>
           ? _value.humanCorrection
           : humanCorrection // ignore: cast_nullable_to_non_nullable
               as String?,
+      sourceFileNames: null == sourceFileNames
+          ? _value.sourceFileNames
+          : sourceFileNames // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ) as $Val);
   }
 }
@@ -172,7 +180,8 @@ abstract class _$$WikiPageImplCopyWith<$Res>
       DateTime? compiledAt,
       int qualityScore,
       bool humanVerified,
-      String? humanCorrection});
+      String? humanCorrection,
+      List<String> sourceFileNames});
 }
 
 /// @nodoc
@@ -201,6 +210,7 @@ class __$$WikiPageImplCopyWithImpl<$Res>
     Object? qualityScore = null,
     Object? humanVerified = null,
     Object? humanCorrection = freezed,
+    Object? sourceFileNames = null,
   }) {
     return _then(_$WikiPageImpl(
       id: null == id
@@ -255,6 +265,10 @@ class __$$WikiPageImplCopyWithImpl<$Res>
           ? _value.humanCorrection
           : humanCorrection // ignore: cast_nullable_to_non_nullable
               as String?,
+      sourceFileNames: null == sourceFileNames
+          ? _value._sourceFileNames
+          : sourceFileNames // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ));
   }
 }
@@ -275,8 +289,10 @@ class _$WikiPageImpl implements _WikiPage {
       this.compiledAt,
       this.qualityScore = 0,
       this.humanVerified = false,
-      this.humanCorrection})
-      : _sourceFileIds = sourceFileIds;
+      this.humanCorrection,
+      final List<String> sourceFileNames = const []})
+      : _sourceFileIds = sourceFileIds,
+        _sourceFileNames = sourceFileNames;
 
   factory _$WikiPageImpl.fromJson(Map<String, dynamic> json) =>
       _$$WikiPageImplFromJson(json);
@@ -322,10 +338,20 @@ class _$WikiPageImpl implements _WikiPage {
   final bool humanVerified;
   @override
   final String? humanCorrection;
+// Fix 3: provenance — names of knowledge files that contributed to this page
+  final List<String> _sourceFileNames;
+// Fix 3: provenance — names of knowledge files that contributed to this page
+  @override
+  @JsonKey()
+  List<String> get sourceFileNames {
+    if (_sourceFileNames is EqualUnmodifiableListView) return _sourceFileNames;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_sourceFileNames);
+  }
 
   @override
   String toString() {
-    return 'WikiPage(id: $id, avatarId: $avatarId, title: $title, content: $content, certainty: $certainty, hasConflict: $hasConflict, sourceFileIds: $sourceFileIds, slug: $slug, updatedAt: $updatedAt, compiledAt: $compiledAt, qualityScore: $qualityScore, humanVerified: $humanVerified, humanCorrection: $humanCorrection)';
+    return 'WikiPage(id: $id, avatarId: $avatarId, title: $title, content: $content, certainty: $certainty, hasConflict: $hasConflict, sourceFileIds: $sourceFileIds, slug: $slug, updatedAt: $updatedAt, compiledAt: $compiledAt, qualityScore: $qualityScore, humanVerified: $humanVerified, humanCorrection: $humanCorrection, sourceFileNames: $sourceFileNames)';
   }
 
   @override
@@ -354,7 +380,9 @@ class _$WikiPageImpl implements _WikiPage {
             (identical(other.humanVerified, humanVerified) ||
                 other.humanVerified == humanVerified) &&
             (identical(other.humanCorrection, humanCorrection) ||
-                other.humanCorrection == humanCorrection));
+                other.humanCorrection == humanCorrection) &&
+            const DeepCollectionEquality()
+                .equals(other._sourceFileNames, _sourceFileNames));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -373,7 +401,8 @@ class _$WikiPageImpl implements _WikiPage {
       compiledAt,
       qualityScore,
       humanVerified,
-      humanCorrection);
+      humanCorrection,
+      const DeepCollectionEquality().hash(_sourceFileNames));
 
   /// Create a copy of WikiPage
   /// with the given fields replaced by the non-null parameter values.
@@ -405,7 +434,8 @@ abstract class _WikiPage implements WikiPage {
       final DateTime? compiledAt,
       final int qualityScore,
       final bool humanVerified,
-      final String? humanCorrection}) = _$WikiPageImpl;
+      final String? humanCorrection,
+      final List<String> sourceFileNames}) = _$WikiPageImpl;
 
   factory _WikiPage.fromJson(Map<String, dynamic> json) =
       _$WikiPageImpl.fromJson;
@@ -435,7 +465,10 @@ abstract class _WikiPage implements WikiPage {
   @override
   bool get humanVerified;
   @override
-  String? get humanCorrection;
+  String?
+      get humanCorrection; // Fix 3: provenance — names of knowledge files that contributed to this page
+  @override
+  List<String> get sourceFileNames;
 
   /// Create a copy of WikiPage
   /// with the given fields replaced by the non-null parameter values.

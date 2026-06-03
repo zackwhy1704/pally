@@ -19,6 +19,8 @@ class WikiPage with _$WikiPage {
     @Default(0) int qualityScore,
     @Default(false) bool humanVerified,
     String? humanCorrection,
+    // Fix 3: provenance — names of knowledge files that contributed to this page
+    @Default([]) List<String> sourceFileNames,
   }) = _WikiPage;
 
   factory WikiPage.fromJson(Map<String, dynamic> json) =>
