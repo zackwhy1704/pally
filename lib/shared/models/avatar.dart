@@ -117,6 +117,8 @@ class Avatar with _$Avatar {
     /// False when this avatar is outside the user's active slot cap.
     /// Inactive avatars are visible but chat/quiz are blocked.
     @Default(true) bool isActive,
+    /// Optional teacher-specified method preferences injected into Block 2.
+    String? teacherPreferences,
   }) = _Avatar;
 
   factory Avatar.fromJson(Map<String, dynamic> json) => _$AvatarFromJson(json);

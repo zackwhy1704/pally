@@ -29,6 +29,7 @@ _$AvatarImpl _$$AvatarImplFromJson(Map<String, dynamic> json) => _$AvatarImpl(
       testDate: _testDateFromJson(json['testDate']),
       brainState: json['brainState'] as String? ?? 'READY',
       isActive: json['isActive'] as bool? ?? true,
+      teacherPreferences: json['teacherPreferences'] as String?,
     );
 
 Map<String, dynamic> _$$AvatarImplToJson(_$AvatarImpl instance) =>
@@ -47,6 +48,7 @@ Map<String, dynamic> _$$AvatarImplToJson(_$AvatarImpl instance) =>
       'testDate': _testDateToJson(instance.testDate),
       'brainState': instance.brainState,
       'isActive': instance.isActive,
+      'teacherPreferences': instance.teacherPreferences,
     };
 
 _$CreateAvatarRequestImpl _$$CreateAvatarRequestImplFromJson(

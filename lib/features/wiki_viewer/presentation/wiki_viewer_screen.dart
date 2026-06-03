@@ -14,6 +14,7 @@ import 'package:pally/features/groups/presentation/groups_view_model.dart';
 import 'package:pally/features/wiki_viewer/presentation/wiki_viewer_view_model.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/wiki_page.dart';
+import 'package:pally/app/api_client.dart';
 import 'package:pally/shared/widgets/app_error_view.dart';
 
 class WikiViewerScreen extends ConsumerStatefulWidget {
@@ -168,7 +169,7 @@ class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen> {
 
 // ── Header with stats ──────────────────────────────────────────────────────
 
-class _BrainHeader extends StatelessWidget {
+class _BrainHeader extends ConsumerWidget {
   const _BrainHeader({
     required this.avatarId,
     required this.avatar,
@@ -179,8 +180,20 @@ class _BrainHeader extends StatelessWidget {
   final Avatar? avatar;
   final int pageCount;
 
+  void _showTeacherPreferencesSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _TeacherPreferencesSheet(
+        avatarId: avatarId,
+        currentPreferences: avatar?.teacherPreferences,
+      ),
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final topPad = MediaQuery.of(context).padding.top;
     return Container(
       color: AppColors.purpleL,
@@ -206,8 +219,12 @@ class _BrainHeader extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                // balance icon button
-                const SizedBox(width: 48),
+                // Teacher method preferences
+                IconButton(
+                  icon: const Icon(Icons.school_outlined, color: AppColors.purple),
+                  tooltip: 'Teacher notes',
+                  onPressed: () => _showTeacherPreferencesSheet(context),
+                ),
               ],
             ),
           ),
@@ -1160,6 +1177,135 @@ class _SourceFileRow extends StatelessWidget {
             tooltip: 'Remove document',
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ── Teacher preferences bottom sheet ─────────────────────────────────────────
+
+class _TeacherPreferencesSheet extends ConsumerStatefulWidget {
+  const _TeacherPreferencesSheet({
+    required this.avatarId,
+    this.currentPreferences,
+  });
+
+  final String avatarId;
+  final String? currentPreferences;
+
+  @override
+  ConsumerState<_TeacherPreferencesSheet> createState() =>
+      _TeacherPreferencesSheetState();
+}
+
+class _TeacherPreferencesSheetState
+    extends ConsumerState<_TeacherPreferencesSheet> {
+  late final TextEditingController _ctrl;
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = TextEditingController(text: widget.currentPreferences ?? '');
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    if (_saving) return;
+    setState(() => _saving = true);
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.patch<dynamic>(
+        '/api/v1/avatars/${widget.avatarId}/teacher-preferences',
+        data: {'teacherPreferences': _ctrl.text.trim()},
+      );
+      if (mounted) Navigator.of(context).pop();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not save — try again.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Container(
+        decoration: const BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                  color: AppColors.outline,
+                  borderRadius: BorderRadius.circular(2)),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text('Teacher Notes', style: AppTextStyles.title),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              'Tell Mochi how your teacher wants you to solve problems — e.g. "Use the bar model for fractions" or "Always show full working."',
+              style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            TextField(
+              controller: _ctrl,
+              maxLines: 4,
+              maxLength: 500,
+              decoration: InputDecoration(
+                hintText: 'e.g. Use model method for fractions. Show all steps.',
+                hintStyle: AppTextStyles.bodySmall
+                    .copyWith(color: AppColors.text3),
+                filled: true,
+                fillColor: AppColors.surf2,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: _saving ? null : _save,
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.purple,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                ),
+                child: _saving
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                            color: Colors.white, strokeWidth: 2))
+                    : const Text('Save'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

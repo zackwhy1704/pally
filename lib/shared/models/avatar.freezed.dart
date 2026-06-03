@@ -48,6 +48,9 @@ mixin _$Avatar {
   /// Inactive avatars are visible but chat/quiz are blocked.
   bool get isActive => throw _privateConstructorUsedError;
 
+  /// Optional teacher-specified method preferences injected into Block 2.
+  String? get teacherPreferences => throw _privateConstructorUsedError;
+
   /// Serializes this Avatar to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -84,7 +87,8 @@ abstract class $AvatarCopyWith<$Res> {
       @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
       DateTime? testDate,
       String brainState,
-      bool isActive});
+      bool isActive,
+      String? teacherPreferences});
 }
 
 /// @nodoc
@@ -116,6 +120,7 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
     Object? testDate = freezed,
     Object? brainState = null,
     Object? isActive = null,
+    Object? teacherPreferences = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -174,6 +179,10 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
           ? _value.isActive
           : isActive // ignore: cast_nullable_to_non_nullable
               as bool,
+      teacherPreferences: freezed == teacherPreferences
+          ? _value.teacherPreferences
+          : teacherPreferences // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -207,7 +216,8 @@ abstract class _$$AvatarImplCopyWith<$Res> implements $AvatarCopyWith<$Res> {
       @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
       DateTime? testDate,
       String brainState,
-      bool isActive});
+      bool isActive,
+      String? teacherPreferences});
 }
 
 /// @nodoc
@@ -237,6 +247,7 @@ class __$$AvatarImplCopyWithImpl<$Res>
     Object? testDate = freezed,
     Object? brainState = null,
     Object? isActive = null,
+    Object? teacherPreferences = freezed,
   }) {
     return _then(_$AvatarImpl(
       id: null == id
@@ -295,6 +306,10 @@ class __$$AvatarImplCopyWithImpl<$Res>
           ? _value.isActive
           : isActive // ignore: cast_nullable_to_non_nullable
               as bool,
+      teacherPreferences: freezed == teacherPreferences
+          ? _value.teacherPreferences
+          : teacherPreferences // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -324,7 +339,8 @@ class _$AvatarImpl implements _Avatar {
       @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
       this.testDate,
       this.brainState = 'READY',
-      this.isActive = true});
+      this.isActive = true,
+      this.teacherPreferences});
 
   factory _$AvatarImpl.fromJson(Map<String, dynamic> json) =>
       _$$AvatarImplFromJson(json);
@@ -374,9 +390,13 @@ class _$AvatarImpl implements _Avatar {
   @JsonKey()
   final bool isActive;
 
+  /// Optional teacher-specified method preferences injected into Block 2.
+  @override
+  final String? teacherPreferences;
+
   @override
   String toString() {
-    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate, brainState: $brainState, isActive: $isActive)';
+    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate, brainState: $brainState, isActive: $isActive, teacherPreferences: $teacherPreferences)';
   }
 
   @override
@@ -408,7 +428,9 @@ class _$AvatarImpl implements _Avatar {
             (identical(other.brainState, brainState) ||
                 other.brainState == brainState) &&
             (identical(other.isActive, isActive) ||
-                other.isActive == isActive));
+                other.isActive == isActive) &&
+            (identical(other.teacherPreferences, teacherPreferences) ||
+                other.teacherPreferences == teacherPreferences));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -428,7 +450,8 @@ class _$AvatarImpl implements _Avatar {
       curriculumType,
       testDate,
       brainState,
-      isActive);
+      isActive,
+      teacherPreferences);
 
   /// Create a copy of Avatar
   /// with the given fields replaced by the non-null parameter values.
@@ -469,7 +492,8 @@ abstract class _Avatar implements Avatar {
       @JsonKey(fromJson: _testDateFromJson, toJson: _testDateToJson)
       final DateTime? testDate,
       final String brainState,
-      final bool isActive}) = _$AvatarImpl;
+      final bool isActive,
+      final String? teacherPreferences}) = _$AvatarImpl;
 
   factory _Avatar.fromJson(Map<String, dynamic> json) = _$AvatarImpl.fromJson;
 
@@ -514,6 +538,10 @@ abstract class _Avatar implements Avatar {
   /// Inactive avatars are visible but chat/quiz are blocked.
   @override
   bool get isActive;
+
+  /// Optional teacher-specified method preferences injected into Block 2.
+  @override
+  String? get teacherPreferences;
 
   /// Create a copy of Avatar
   /// with the given fields replaced by the non-null parameter values.

@@ -130,6 +130,7 @@ class UploadScreen extends ConsumerWidget {
               _FileErrorList(
                 errors: state.fileErrors,
                 onDismiss: vm.clearErrors,
+                avatarId: avatarId,
               ),
             ],
           ],
@@ -141,13 +142,26 @@ class UploadScreen extends ConsumerWidget {
 
 // ── Per-file error list ───────────────────────────────────────────────────────
 
-class _FileErrorList extends StatelessWidget {
-  const _FileErrorList({required this.errors, required this.onDismiss});
+class _FileErrorList extends ConsumerWidget {
+  const _FileErrorList({
+    required this.errors,
+    required this.onDismiss,
+    required this.avatarId,
+  });
   final List<FileUploadError> errors;
   final VoidCallback onDismiss;
+  final String avatarId;
+
+  static bool _isOcrError(String message) =>
+      message.contains('photo') ||
+      message.contains('retake') ||
+      message.contains('dark') ||
+      message.contains('blurry') ||
+      message.contains('scanned image');
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final vm = ref.read(uploadViewModelProvider(avatarId).notifier);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -199,6 +213,27 @@ class _FileErrorList extends StatelessWidget {
                     Text(e.message,
                         style: AppTextStyles.bodySmall
                             .copyWith(color: AppColors.coral)),
+                    // Show a "Retake photo" button for OCR/photo failures
+                    if (_isOcrError(e.message)) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            onDismiss();
+                            vm.pickFromCamera();
+                          },
+                          icon: const Icon(Icons.camera_alt_rounded,
+                              size: 16, color: AppColors.coral),
+                          label: const Text('Retake photo',
+                              style: TextStyle(color: AppColors.coral)),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: AppColors.coral),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
