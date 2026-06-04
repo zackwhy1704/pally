@@ -2,61 +2,70 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/features/auth/auth_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Known feature flags. Add a new entry here when introducing a new gated module.
 class FeatureFlags {
-  /// Groups tab — now always true (open to all users). Backend still returns
-  /// the flag but it's forced true in the /me/flags response.
+  /// Groups tab — open to all users (server always returns true).
   static const groupsEnabled = 'groups_enabled';
 
-  /// Tuition marketplace tab — admin-only. Injected by the backend as a
-  /// synthetic flag derived from the user's role column (USER | ADMIN).
-  /// Never set client-side; always comes from the server.
+  /// Tuition marketplace tab — admin-only.
+  /// Set server-side from ADMIN_EMAILS env var only. Never set client-side.
   static const isAdmin = 'is_admin';
 }
 
 /// Server-controlled per-user feature flags.
 ///
-/// Fetched once on app launch from {@code GET /api/v1/me/flags}, cached in
-/// SharedPreferences so the first frame on subsequent launches can render the
-/// correct nav before the network round-trip completes. The cache is
-/// overwritten on every successful fetch.
+/// Cache is scoped per userId so an admin logging in on a shared device
+/// cannot leak their flags (including is_admin=true) to the next user.
+///
+/// Security guarantee for is_admin:
+/// - Cache key includes userId → different users never share a cache.
+/// - First-frame value always comes from the user's own cache (or empty).
+/// - is_admin is NEVER set client-side; it comes only from the server
+///   which checks ADMIN_EMAILS env var at request time.
 class FeatureFlagsNotifier extends AsyncNotifier<Map<String, bool>> {
-  static const _cacheKey = 'feature_flags_cache_v1';
+  static String _cacheKey(String userId) => 'feature_flags_v2_$userId';
 
   @override
   Future<Map<String, bool>> build() async {
-    // First paint uses the cache so the nav doesn't flicker between 4 and
-    // 5 tabs while the network call is in flight.
-    final cached = await _readCache();
+    final userId = ref.watch(authStateProvider).userId;
+    if (userId == null) {
+      // Not signed in — no flags, no cache read
+      return const {};
+    }
+
+    // First frame from this user's own cache (never another user's cache)
+    final cached = await _readCache(userId);
     if (cached.isNotEmpty) {
-      // Schedule a remote sync in the background.
       Future.microtask(_refreshFromRemote);
       return cached;
     }
-    return _fetchRemote();
+    return _fetchRemote(userId);
   }
 
-  Future<Map<String, bool>> _fetchRemote() async {
+  Future<Map<String, bool>> _fetchRemote([String? uid]) async {
+    final userId = uid ?? ref.read(authStateProvider).userId;
+    if (userId == null) return const {};
     try {
       final dio = ref.read(dioProvider);
-      final response = await dio.get<Map<String, dynamic>>(
-        '/api/v1/me/flags',
-      );
+      final response = await dio.get<Map<String, dynamic>>('/api/v1/me/flags');
       final data = (response.data?['data'] is Map
               ? response.data!['data']
               : response.data) as Map<String, dynamic>? ??
           const {};
       final flags = <String, bool>{
-        for (final entry in data.entries)
-          entry.key: entry.value == true,
+        for (final entry in data.entries) entry.key: entry.value == true,
       };
-      await _writeCache(flags);
+      // is_admin must come from the server — never cache a true value that
+      // was set locally. The server already enforces ADMIN_EMAILS, so if
+      // the server says is_admin=false, we store false (not absent).
+      await _writeCache(userId, flags);
       return flags;
     } on DioException catch (e) {
       appLog.w('[Flags] fetch failed: ${e.message} — using cache/empty');
-      return _readCache();
+      return await _readCache(userId);
     }
   }
 
@@ -65,9 +74,9 @@ class FeatureFlagsNotifier extends AsyncNotifier<Map<String, bool>> {
     state = AsyncData(fresh);
   }
 
-  Future<Map<String, bool>> _readCache() async {
+  Future<Map<String, bool>> _readCache(String userId) async {
     final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getStringList(_cacheKey) ?? const [];
+    final raw = prefs.getStringList(_cacheKey(userId)) ?? const [];
     final result = <String, bool>{};
     for (final entry in raw) {
       final i = entry.indexOf('=');
@@ -77,9 +86,9 @@ class FeatureFlagsNotifier extends AsyncNotifier<Map<String, bool>> {
     return result;
   }
 
-  Future<void> _writeCache(Map<String, bool> flags) async {
+  Future<void> _writeCache(String userId, Map<String, bool> flags) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(_cacheKey,
+    await prefs.setStringList(_cacheKey(userId),
         [for (final e in flags.entries) '${e.key}=${e.value}']);
   }
 
@@ -95,7 +104,10 @@ final featureFlagsProvider =
     AsyncNotifierProvider<FeatureFlagsNotifier, Map<String, bool>>(
         FeatureFlagsNotifier.new);
 
-/// Synchronous accessor that returns false while loading. Use this in build
-/// methods where AsyncValue handling is overkill (e.g. nav-tab visibility).
+/// Synchronous accessor — returns false while loading or when the flag is absent.
+///
+/// For is_admin specifically: returns false until the server confirms it,
+/// which means the Tuition tab is NEVER shown on the first frame unless
+/// the server has already confirmed admin status for this userId.
 bool isFlagEnabled(WidgetRef ref, String flag) =>
     ref.watch(featureFlagsProvider).valueOrNull?[flag] == true;

@@ -79,7 +79,11 @@ class ScaffoldShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isAdmin = isFlagEnabled(ref, FeatureFlags.isAdmin);
+    // Read flags state explicitly so we can treat loading as non-admin.
+    // isFlagEnabled already returns false when flags are loading (valueOrNull is null),
+    // but being explicit here makes the security intent clear in code review.
+    final flagsState = ref.watch(featureFlagsProvider);
+    final isAdmin = flagsState.valueOrNull?[FeatureFlags.isAdmin] == true;
     final tabs = buildTabs(isAdmin: isAdmin);
 
     // Map the shell's current branch index → visible tab index. Defaults to 0
