@@ -6,7 +6,7 @@ part of 'chat_usage_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$chatUsageNotifierHash() => r'8851b56bde6253cc5dabbe010e5aeb96ccce6f18';
+String _$chatUsageNotifierHash() => r'82ab509734fcea7f04304fd019f99c1592bd60af';
 
 /// Polls the backend's /usage/today endpoint. Best-effort: a failure leaves
 /// state null and the chat just doesn't show the hint — never an error.

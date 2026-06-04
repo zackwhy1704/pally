@@ -101,14 +101,31 @@ String? _planIdFromBackend(String? planKey) {
   return null;
 }
 
+/// Resolves a short tier name ('pro', 'max', 'family', 'centre') to the
+/// matching monthly plan ID, or null if unrecognised.
+String? _planIdFromHighlightTier(String? tier) => switch (tier) {
+      'pro' => 'pro_monthly',
+      'max' => 'max_monthly',
+      'family' => 'family_monthly',
+      'centre' => 'centre_monthly',
+      _ => null,
+    };
+
 /// Plan picker screen — adapts its copy and CTA based on entitlement:
 ///
 /// • **Free/trial user**: "Start 7-day free trial" → Stripe checkout.
 /// • **Premium user**: shows their current plan highlighted, lets them
 ///   switch plans, and provides a "Manage billing" link to the Stripe
 ///   portal for cancellation/card updates.
+///
+/// When [highlightTier] is provided (e.g. from the paywall), that plan
+/// is auto-selected on first load instead of defaulting to `max_monthly`.
 class SubscriptionPlansScreen extends ConsumerStatefulWidget {
-  const SubscriptionPlansScreen({super.key});
+  const SubscriptionPlansScreen({super.key, this.highlightTier});
+
+  /// Short tier name to pre-select: 'pro', 'max', 'family', 'centre'.
+  /// If null or unrecognised, the screen defaults to 'max_monthly'.
+  final String? highlightTier;
 
   @override
   ConsumerState<SubscriptionPlansScreen> createState() =>
@@ -184,8 +201,11 @@ class _SubscriptionPlansScreenState
         final currentPlanId = _planIdFromBackend(ent.plan);
         final tier = trialAsync.whenOrNull(data: (t) => t.subscriptionTier);
 
-        // Default selection
-        _selected ??= currentPlanId ?? 'max_monthly';
+        // Default selection — honour highlightTier from the paywall, or the
+        // user's current plan, falling back to 'max_monthly'.
+        _selected ??= currentPlanId
+            ?? _planIdFromHighlightTier(widget.highlightTier)
+            ?? 'max_monthly';
 
         return Scaffold(
           backgroundColor: AppColors.bg,

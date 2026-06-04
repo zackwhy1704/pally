@@ -406,11 +406,15 @@ class PaywallRoute extends GoRouteData {
 
 @TypedGoRoute<SubscriptionPlansRoute>(path: '/subscription/plans')
 class SubscriptionPlansRoute extends GoRouteData {
-  const SubscriptionPlansRoute();
+  const SubscriptionPlansRoute({this.highlightTier});
+
+  /// Optional tier to auto-select when arriving from the paywall.
+  /// Matches _Plan.id prefix: 'pro', 'max', 'family', 'centre'.
+  final String? highlightTier;
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const SubscriptionPlansScreen();
+      SubscriptionPlansScreen(highlightTier: highlightTier);
 }
 
 @TypedGoRoute<FamilyLinkCodeRoute>(path: '/family/link-code')

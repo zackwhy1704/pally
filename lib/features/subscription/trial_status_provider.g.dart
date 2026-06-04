@@ -6,7 +6,7 @@ part of 'trial_status_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$trialStatusHash() => r'1cf3af5ab7390485ad48e859109d588a7035fcb4';
+String _$trialStatusHash() => r'0e90725720b0449853db23de5526c4d595e420c0';
 
 /// See also [trialStatus].
 @ProviderFor(trialStatus)
