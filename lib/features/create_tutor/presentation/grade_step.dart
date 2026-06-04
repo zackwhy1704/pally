@@ -29,7 +29,9 @@ const _examSystems = [
   ('🇬🇧', 'UK GCSE / A-Level', 'UK_GCSE'),
   ('🇺🇸', 'US Common Core / AP', 'US_AP'),
   ('🇦🇺', 'Australian Curriculum', 'AU_ATAR'),
-  ('🎓', 'University / Self-directed', 'UNIVERSITY'),
+  ('🎓', 'University — Midterms / Finals', 'UNIVERSITY'),
+  ('💻', 'Coding Interview Prep', 'CODING_INTERVIEW'),
+  ('📊', 'Professional Exams (CFA, ACCA, CPA…)', 'PROFESSIONAL'),
   ('🌐', 'Other / Not sure', 'OTHER'),
 ];
 

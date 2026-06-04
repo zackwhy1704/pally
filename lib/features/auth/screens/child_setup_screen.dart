@@ -50,7 +50,9 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
     ('🇬🇧', 'UK GCSE / A-Level', 'UK_GCSE', 'UK & British international schools'),
     ('🇺🇸', 'US Common Core / AP', 'US_AP', 'US & American international schools'),
     ('🇦🇺', 'Australian Curriculum (ATAR)', 'AU_ATAR', 'Australia & Australian intl schools'),
-    ('🎓', 'University / Self-directed', 'UNIVERSITY', 'Higher education & independent learning'),
+    ('🎓', 'University — Midterms / Finals', 'UNIVERSITY', 'Undergraduate courses & exams'),
+    ('💻', 'Coding Interview Prep', 'CODING_INTERVIEW', 'LeetCode, system design, tech interviews'),
+    ('📊', 'Professional Exams (CFA, ACCA, CPA…)', 'PROFESSIONAL', 'Finance, accounting & professional certs'),
     ('🌐', 'Other / Not sure', 'OTHER', 'Custom or home curriculum'),
   ];
 
