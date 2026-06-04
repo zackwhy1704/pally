@@ -25,13 +25,15 @@ class TabSpec {
   final bool visible;
 }
 
-/// Returns the ordered tab list to render in the bar.
+/// Nav order: Home(0) | Library(1) | Groups(2) | Tuition(3, admin-only) | Me(4)
 ///
-/// Order is fixed (Home, Library, Groups, Chat, Me) but Groups is only present
-/// when the `groups_enabled` feature flag is on for the current user.
-/// Branch indexes correspond to the order branches are declared in
-/// `AppShellRouteData`.
-List<TabSpec> buildTabs({required bool groupsEnabled}) {
+/// Chat tab has been removed from the nav — chat is reachable via Home and
+/// Library (tap any Mochi avatar). The Chat branch (index 5) is still declared
+/// in the router for backward-compatibility with any existing deep links.
+///
+/// Groups is now open to all users (no feature flag required).
+/// Tuition is hidden from the nav bar for non-admin users (is_admin flag).
+List<TabSpec> buildTabs({required bool isAdmin}) {
   return [
     const TabSpec(
       branchIndex: 0,
@@ -45,24 +47,24 @@ List<TabSpec> buildTabs({required bool groupsEnabled}) {
       selectedIcon: Icons.menu_book_rounded,
       label: 'Library',
     ),
-    // Groups slot — pilot-gated. The branch must exist in the shell or the
-    // index lookup blows up; for now it's hidden and the actual branch is
-    // added in Batch 6. When that lands, flip visible to {@code groupsEnabled}.
-    if (groupsEnabled)
-      const TabSpec(
-        branchIndex: 4,
-        icon: Icons.groups_outlined,
-        selectedIcon: Icons.groups_rounded,
-        label: 'Groups',
-      ),
     const TabSpec(
       branchIndex: 2,
-      icon: Icons.chat_bubble_outline_rounded,
-      selectedIcon: Icons.chat_bubble_rounded,
-      label: 'Chat',
+      icon: Icons.groups_outlined,
+      selectedIcon: Icons.groups_rounded,
+      label: 'Groups',
     ),
+    // Tuition — visible only to admin users (platform administrators).
+    // Regular users never see this tab; the screen itself also checks
+    // the flag and shows an access-denied view for any direct navigation.
+    if (isAdmin)
+      const TabSpec(
+        branchIndex: 3,
+        icon: Icons.school_outlined,
+        selectedIcon: Icons.school_rounded,
+        label: 'Tuition',
+      ),
     const TabSpec(
-      branchIndex: 3,
+      branchIndex: 4,
       icon: Icons.person_outline_rounded,
       selectedIcon: Icons.person_rounded,
       label: 'Me',
@@ -77,13 +79,12 @@ class ScaffoldShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final groupsEnabled = isFlagEnabled(ref, FeatureFlags.groupsEnabled);
-    final tabs = buildTabs(groupsEnabled: groupsEnabled);
+    final isAdmin = isFlagEnabled(ref, FeatureFlags.isAdmin);
+    final tabs = buildTabs(isAdmin: isAdmin);
 
     // Map the shell's current branch index → visible tab index. Defaults to 0
-    // if the active branch has no visible tab (e.g. user deep-links to a
-    // pilot-only branch with the flag off — the screen still renders but the
-    // bar highlights Home so the user can navigate elsewhere).
+    // if the active branch has no visible tab (e.g. deep-link to the hidden
+    // Chat branch — the screen still renders but the bar highlights Home).
     final selected = tabs.indexWhere(
         (t) => t.branchIndex == navigationShell.currentIndex);
     final selectedIndex = selected >= 0 ? selected : 0;
@@ -94,8 +95,6 @@ class ScaffoldShell extends ConsumerWidget {
         key: featureTourLibraryTabKey,
         backgroundColor: AppColors.surface,
         indicatorColor: AppColors.purpleL,
-        // Labels shrink fine down to 5 tabs on a 360px phone; force-show keeps
-        // them legible.
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         selectedIndex: selectedIndex,
         onDestinationSelected: (visibleIndex) {

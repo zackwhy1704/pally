@@ -4,9 +4,16 @@ import 'package:pally/app/api_client.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Known pilot flags. Add a new entry here when introducing a new gated module.
+/// Known feature flags. Add a new entry here when introducing a new gated module.
 class FeatureFlags {
+  /// Groups tab — now always true (open to all users). Backend still returns
+  /// the flag but it's forced true in the /me/flags response.
   static const groupsEnabled = 'groups_enabled';
+
+  /// Tuition marketplace tab — admin-only. Injected by the backend as a
+  /// synthetic flag derived from the user's role column (USER | ADMIN).
+  /// Never set client-side; always comes from the server.
+  static const isAdmin = 'is_admin';
 }
 
 /// Server-controlled per-user feature flags.

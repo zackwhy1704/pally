@@ -79,8 +79,16 @@ RouteBase get $appShellRouteData => StatefulShellRouteData.$route(
         StatefulShellBranchData.$branch(
           routes: [
             GoRouteData.$route(
-              path: '/chat-tab',
-              factory: $ChatTabRouteExtension._fromState,
+              path: '/groups',
+              factory: $GroupsTabRouteExtension._fromState,
+            ),
+          ],
+        ),
+        StatefulShellBranchData.$branch(
+          routes: [
+            GoRouteData.$route(
+              path: '/tuition',
+              factory: $TuitionTabRouteExtension._fromState,
             ),
           ],
         ),
@@ -95,8 +103,8 @@ RouteBase get $appShellRouteData => StatefulShellRouteData.$route(
         StatefulShellBranchData.$branch(
           routes: [
             GoRouteData.$route(
-              path: '/groups',
-              factory: $GroupsTabRouteExtension._fromState,
+              path: '/chat-tab',
+              factory: $ChatTabRouteExtension._fromState,
             ),
           ],
         ),
@@ -160,11 +168,30 @@ extension $LibraryRouteExtension on LibraryRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $ChatTabRouteExtension on ChatTabRoute {
-  static ChatTabRoute _fromState(GoRouterState state) => const ChatTabRoute();
+extension $GroupsTabRouteExtension on GroupsTabRoute {
+  static GroupsTabRoute _fromState(GoRouterState state) =>
+      const GroupsTabRoute();
 
   String get location => GoRouteData.$location(
-        '/chat-tab',
+        '/groups',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+extension $TuitionTabRouteExtension on TuitionTabRoute {
+  static TuitionTabRoute _fromState(GoRouterState state) =>
+      const TuitionTabRoute();
+
+  String get location => GoRouteData.$location(
+        '/tuition',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -194,12 +221,11 @@ extension $ProgressRouteExtension on ProgressRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $GroupsTabRouteExtension on GroupsTabRoute {
-  static GroupsTabRoute _fromState(GoRouterState state) =>
-      const GroupsTabRoute();
+extension $ChatTabRouteExtension on ChatTabRoute {
+  static ChatTabRoute _fromState(GoRouterState state) => const ChatTabRoute();
 
   String get location => GoRouteData.$location(
-        '/groups',
+        '/chat-tab',
       );
 
   void go(BuildContext context) => context.go(location);

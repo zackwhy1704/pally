@@ -44,6 +44,7 @@ import 'package:pally/features/brain_map/presentation/brain_map_screen.dart';
 import 'package:pally/features/groups/presentation/create_group_screen.dart';
 import 'package:pally/features/groups/presentation/group_detail_screen.dart';
 import 'package:pally/features/groups/presentation/group_list_screen.dart';
+import 'package:pally/features/tuition/presentation/tuition_screen.dart';
 import 'package:pally/features/teach_mochi/presentation/teach_mochi_screen.dart';
 import 'package:pally/features/brain_health/presentation/brain_health_screen.dart';
 import 'package:pally/features/auth/screens/consent_waiting_screen.dart';
@@ -56,9 +57,12 @@ part 'router.g.dart';
 
 // ─── Shell (4-tab persistent navigation) ────────────────────────────────────
 
+// Nav: Home(0) | Library(1) | Groups(2) | Tuition(3) | Me(4)
+// Chat tab removed from nav — chat is still reachable via Home/Library avatar tap.
+// Chat branch kept at index 5 (hidden) so existing /chat-tab deep links don't break.
 @TypedStatefulShellRoute<AppShellRouteData>(
   branches: <TypedStatefulShellBranch<StatefulShellBranchData>>[
-    TypedStatefulShellBranch<HomeBranchData>(
+    TypedStatefulShellBranch<HomeBranchData>(         // index 0
       routes: <TypedRoute<RouteData>>[
         TypedGoRoute<HomeRoute>(
           path: '/',
@@ -68,27 +72,30 @@ part 'router.g.dart';
         ),
       ],
     ),
-    TypedStatefulShellBranch<LibraryBranchData>(
+    TypedStatefulShellBranch<LibraryBranchData>(      // index 1
       routes: <TypedRoute<RouteData>>[
         TypedGoRoute<LibraryRoute>(path: '/library'),
       ],
     ),
-    TypedStatefulShellBranch<ChatBranchData>(
+    TypedStatefulShellBranch<GroupsBranchData>(       // index 2 — open to all
       routes: <TypedRoute<RouteData>>[
-        TypedGoRoute<ChatTabRoute>(path: '/chat-tab'),
+        TypedGoRoute<GroupsTabRoute>(path: '/groups'),
       ],
     ),
-    TypedStatefulShellBranch<MeBranchData>(
+    TypedStatefulShellBranch<TuitionBranchData>(      // index 3 — admin-only tab
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<TuitionTabRoute>(path: '/tuition'),
+      ],
+    ),
+    TypedStatefulShellBranch<MeBranchData>(           // index 4
       routes: <TypedRoute<RouteData>>[
         TypedGoRoute<ProgressRoute>(path: '/progress'),
       ],
     ),
-    // 5th branch — must stay at index 4 to match TabSpec.branchIndex in
-    // scaffold_shell.dart. Hidden from the bar when the groups_enabled
-    // feature flag is off, but still routable so deep links keep working.
-    TypedStatefulShellBranch<GroupsBranchData>(
+    // Chat branch kept hidden so /chat-tab deep links still resolve.
+    TypedStatefulShellBranch<ChatBranchData>(         // index 5 (hidden)
       routes: <TypedRoute<RouteData>>[
-        TypedGoRoute<GroupsTabRoute>(path: '/groups'),
+        TypedGoRoute<ChatTabRoute>(path: '/chat-tab'),
       ],
     ),
   ],
@@ -113,16 +120,20 @@ class LibraryBranchData extends StatefulShellBranchData {
   const LibraryBranchData();
 }
 
-class ChatBranchData extends StatefulShellBranchData {
-  const ChatBranchData();
+class GroupsBranchData extends StatefulShellBranchData {
+  const GroupsBranchData();
+}
+
+class TuitionBranchData extends StatefulShellBranchData {
+  const TuitionBranchData();
 }
 
 class MeBranchData extends StatefulShellBranchData {
   const MeBranchData();
 }
 
-class GroupsBranchData extends StatefulShellBranchData {
-  const GroupsBranchData();
+class ChatBranchData extends StatefulShellBranchData {
+  const ChatBranchData();
 }
 
 // ─── Tab root screens ────────────────────────────────────────────────────────
@@ -164,6 +175,14 @@ class GroupsTabRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const GroupListScreen();
+}
+
+class TuitionTabRoute extends GoRouteData {
+  const TuitionTabRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const TuitionScreen();
 }
 
 class ProgressRoute extends GoRouteData {
