@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/ui/pally_relevance_warning_dialog.dart';
@@ -252,7 +253,7 @@ class _HeroPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 128,
+      height: AppSizing.heroPanelHeight,
       decoration: BoxDecoration(
         color: AppColors.purpleL,
         borderRadius: BorderRadius.circular(16),
@@ -261,13 +262,13 @@ class _HeroPanel extends StatelessWidget {
         children: [
           const SizedBox(width: AppSpacing.md),
           if (avatar != null)
-            CharacterWidget(character: avatar!.character, size: 80)
+            CharacterWidget(character: avatar!.character, size: AppSizing.heroMochiSize)
           else
             const SizedBox(
-              width: 80,
-              height: 80,
+              width: AppSizing.heroMochiSize,
+              height: AppSizing.heroMochiSize,
               child: Icon(Icons.smart_toy_outlined,
-                  size: 60, color: AppColors.text3),
+                  size: AppSizing.iconContainer, color: AppColors.text3),
             ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
@@ -445,13 +446,13 @@ class _UploadTile extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                width: 44,
-                height: 44,
+                width: AppSizing.buttonHeightSm,
+                height: AppSizing.buttonHeightSm,
                 decoration: BoxDecoration(
                   color: AppColors.purpleL,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, color: AppColors.purple, size: 22),
+                child: Icon(icon, color: AppColors.purple, size: AppSizing.icon18),
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
@@ -516,8 +517,8 @@ class _FileList extends StatelessWidget {
                 vertical: AppSpacing.xs,
               ),
               leading: Container(
-                width: 40,
-                height: 40,
+                width: AppSizing.iconContainerSm,
+                height: AppSizing.iconContainerSm,
                 decoration: const BoxDecoration(
                   color: AppColors.tealL,
                   shape: BoxShape.circle,
@@ -652,7 +653,7 @@ class _ContextTagBar extends StatelessWidget {
             // Topic tag text field
             Expanded(
               child: SizedBox(
-                height: 36,
+                height: AppSizing.fieldHeightSm,
                 child: TextField(
                   onChanged: (v) => onTopicChanged(v.isEmpty ? null : v),
                   decoration: InputDecoration(
@@ -700,6 +701,10 @@ class _ContextTagBar extends StatelessWidget {
 
 // ── Rich loading overlay with stage-aware copy ────────────────────────────────
 
+/// Full-screen upload loading overlay. Replaces MochiGenerating entirely
+/// (no nested Scaffold — Rule: never put a Scaffold inside a Column).
+/// Uses MochiGenerating as the full-screen root; adds stage-aware copy
+/// and the large-file warning via its [stepLabel] + [onCancel] parameters.
 class _UploadLoadingScreen extends StatelessWidget {
   const _UploadLoadingScreen({required this.state});
   final UploadState state;
@@ -711,146 +716,60 @@ class _UploadLoadingScreen extends StatelessWidget {
     final sizeLabel = _sizeLabel(state.pendingFileSizeBytes);
     final fileName = state.pendingFile?.name ?? '';
 
-    final (stepLabels, stepDuration) = switch (stage) {
-      UploadStage.checkingRelevance => (
-          const ['Reviewing content…', 'Checking relevance…'],
-          const Duration(seconds: 3),
-        ),
-      UploadStage.uploading when isLarge => (
-          const [
-            'Sending to server…',
-            'Processing document…',
-            'Extracting text…',
-            'Almost there…',
-          ],
-          const Duration(seconds: 5),
-        ),
-      _ => (
-          const ['Sending…', 'Processing…'],
-          const Duration(seconds: 3),
-        ),
+    final stepLabels = switch (stage) {
+      UploadStage.checkingRelevance => const [
+          'Step 1 of 3 — Reviewing content…',
+          'Step 1 of 3 — Checking relevance…',
+        ],
+      UploadStage.uploading when isLarge => const [
+          'Step 2 of 3 — Sending to server…',
+          'Step 2 of 3 — Processing document…',
+          'Step 2 of 3 — Extracting text…',
+          'Step 2 of 3 — Almost there…',
+        ],
+      _ => const [
+          'Step 2 of 3 — Sending…',
+          'Step 2 of 3 — Processing…',
+        ],
     };
 
-    final title = switch (stage) {
-      UploadStage.checkingRelevance => 'Checking your notes…',
-      UploadStage.uploading when isLarge => 'Uploading large document…',
-      UploadStage.uploading => 'Uploading…',
-      _ => 'Processing…',
-    };
+    final stepDuration = (isLarge && stage == UploadStage.uploading)
+        ? const Duration(seconds: 5)
+        : const Duration(seconds: 3);
 
-    final subtitle = switch (stage) {
-      UploadStage.checkingRelevance =>
-        'Making sure this fits Mochi\'s subject',
-      UploadStage.uploading when isLarge =>
-        'File: $sizeLabel${fileName.isNotEmpty ? " · $fileName" : ""}',
-      UploadStage.uploading => fileName.isNotEmpty ? fileName : 'Sending your notes',
-      _ => '',
-    };
+    // Build subtitle shown below the step label inside MochiGenerating
+    final lines = <String>[];
+    if (stage == UploadStage.uploading && isLarge) {
+      lines.add('File: $sizeLabel${fileName.isNotEmpty ? " · $fileName" : ""}');
+      lines.add(
+        '⚠️ Large document — Mochi will split it into sections '
+        '(~${state.estimatedCompileTime}).',
+      );
+    } else if (stage == UploadStage.uploading && fileName.isNotEmpty) {
+      lines.add(fileName);
+    } else if (stage == UploadStage.checkingRelevance) {
+      lines.add('Making sure this fits the subject…');
+    }
 
-    return Scaffold(
-      backgroundColor: AppColors.bg,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Step indicator pill
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: AppColors.purpleL,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(
-                      width: 12,
-                      height: 12,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: AppColors.purple),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      _stageLabel(stage),
-                      style:
-                          AppTextStyles.label.copyWith(color: AppColors.purple),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xl),
-              MochiGenerating(
-                stepLabels: stepLabels,
-                stepDuration: stepDuration,
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Text(title,
-                  style: AppTextStyles.title, textAlign: TextAlign.center),
-              if (subtitle.isNotEmpty) ...[
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  subtitle,
-                  style:
-                      AppTextStyles.body.copyWith(color: AppColors.text2),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-              // Large-file warning card
-              if (isLarge && stage == UploadStage.uploading) ...[
-                const SizedBox(height: AppSpacing.lg),
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: AppColors.amberL,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: AppColors.amber),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(Icons.info_outline_rounded,
-                          color: AppColors.amber, size: 18),
-                      const SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Large document detected',
-                                style: AppTextStyles.bodySmall.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.amber)),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Mochi will split this into sections for better accuracy. '
-                              'The brain will take ${state.estimatedCompileTime} to update after upload.',
-                              style: AppTextStyles.bodySmall
-                                  .copyWith(color: AppColors.amber),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
+    // Single combined label so MochiGenerating can show it without nesting
+    // another widget that would need unbounded height constraints.
+    final combinedLabel = [
+      switch (stage) {
+        UploadStage.checkingRelevance => 'Checking your notes…',
+        UploadStage.uploading when isLarge => 'Uploading large document…',
+        UploadStage.uploading => 'Uploading…',
+        _ => 'Processing…',
+      },
+      ...lines,
+    ].join('\n');
+
+    // MochiGenerating is a proper full-screen Scaffold — no nesting needed.
+    return MochiGenerating(
+      stepLabels: stepLabels,
+      stepDuration: stepDuration,
+      stepLabel: combinedLabel,
     );
   }
-
-  String _stageLabel(UploadStage stage) => switch (stage) {
-        UploadStage.checkingRelevance => 'Step 1 of 3 — Relevance check',
-        UploadStage.uploading => 'Step 2 of 3 — Uploading',
-        UploadStage.extractingText => 'Step 3 of 3 — Reading text',
-        _ => 'Processing',
-      };
 
   String _sizeLabel(int bytes) {
     if (bytes == 0) return 'large file';
@@ -885,8 +804,8 @@ class _BrainCompilingBanner extends StatelessWidget {
           Row(
             children: [
               SizedBox(
-                width: 16,
-                height: 16,
+                width: AppSizing.iconSm,
+                height: AppSizing.iconSm,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   color: isChunked ? AppColors.amber : AppColors.teal,
@@ -906,7 +825,7 @@ class _BrainCompilingBanner extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             isChunked
                 ? 'Your document is large — Mochi splits it into sections for better accuracy. Expected: $eta. You can close this screen; the brain updates automatically.'

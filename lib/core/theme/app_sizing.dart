@@ -44,7 +44,9 @@ abstract class AppSizing {
   static const double handleBarHeight = 4;
 
   // ── Loading / progress ───────────────────────────────────────────────────
-  /// Spinner inside a button or small loading slot.
+  /// Tiny spinner inside a status pill or chip (12 dp).
+  static const double spinnerXs = 12;
+  /// Spinner inside a button or small loading slot (20 dp).
   static const double spinnerSm = 20;
   /// Typing-indicator dot diameter.
   static const double typingDot = 8;
@@ -85,4 +87,21 @@ abstract class AppSizing {
   // ── Skeleton / placeholder ───────────────────────────────────────────────
   /// Avatar skeleton placeholder (52 × 52 dp).
   static const double skeletonAvatar = 52;
+
+  // ── Panel / hero heights ─────────────────────────────────────────────────
+  /// Upload hero panel height (128 dp) — compact enough for small phones.
+  /// Override with MediaQuery fraction on screen width < 360 dp.
+  static const double heroPanelHeight = 128;
+
+  // ── Icon containers ──────────────────────────────────────────────────────
+  /// Small icon container (40 × 40 dp) — file-list status circle, etc.
+  static const double iconContainerSm = 40;
+
+  // ── Form fields ─────────────────────────────────────────────────────────
+  /// Compact text field height (36 dp) — context-tag bar, inline search.
+  static const double fieldHeightSm = 36;
+
+  // ── Upload / mochi character sizing ─────────────────────────────────────
+  /// Mochi character size inside the upload hero panel (80 dp).
+  static const double heroMochiSize = 80;
 }

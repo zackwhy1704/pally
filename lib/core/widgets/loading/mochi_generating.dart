@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/widgets/loading/mochi_tips.dart';
@@ -122,7 +123,14 @@ class _MochiGeneratingState extends State<MochiGenerating>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/mochi.png', width: 100, height: 100),
+              // Mochi: 45% of shortest dimension, capped at 160 — scales across
+              // phones (360dp) and tablets without overflowing small screens.
+              LayoutBuilder(builder: (context, constraints) {
+                final size = (MediaQuery.of(context).size.shortestSide * 0.45)
+                    .clamp(80.0, 160.0);
+                return Image.asset('assets/images/mochi.png',
+                    width: size, height: size);
+              }),
               const SizedBox(height: AppSpacing.lg),
               Text(
                 _currentLabel,
@@ -137,8 +145,8 @@ class _MochiGeneratingState extends State<MochiGenerating>
                   duration: const Duration(milliseconds: 600),
                   curve: Curves.easeOut,
                   builder: (_, v, __) => LinearProgressIndicator(
-                    value: v > 0 ? v : null, // null = indeterminate until first step
-                    minHeight: 10,
+                    value: v > 0 ? v : null,
+                    minHeight: AppSizing.progressBarHeight + 2, // 8dp — slightly taller for visibility
                     backgroundColor: AppColors.outline,
                     valueColor:
                         const AlwaysStoppedAnimation<Color>(AppColors.purple),
