@@ -48,10 +48,15 @@ class ChatUsageNotifier extends _$ChatUsageNotifier {
           await dio.get<Map<String, dynamic>>('/api/v1/usage/today');
       final data = response.data;
       if (data == null) return;
+      // chatLimit == -1 means unlimited (PRO+/MAX/FAMILY/CENTRE).
+      // Treat same as isPremium=true so no cap warning appears.
+      final rawLimit = data['chatLimit'];
+      final chatLimitInt = rawLimit is int ? rawLimit : null;
+      final isUnlimited = chatLimitInt == -1;
       state = ChatUsage(
-        isPremium: (data['isPremium'] as bool?) ?? false,
+        isPremium: (data['isPremium'] as bool?) ?? false || isUnlimited,
         used: (data['chatUsed'] as int?) ?? 0,
-        limit: data['chatLimit'] as int?,
+        limit: isUnlimited ? null : chatLimitInt,
       );
     } catch (e) {
       // Quota hint is purely additive UX. Log and stay silent so the chat
@@ -64,7 +69,7 @@ class ChatUsageNotifier extends _$ChatUsageNotifier {
   /// land immediately after a send, before /usage/today catches up.
   void recordSent() {
     final current = state;
-    if (current == null || current.isPremium) return;
+    if (current == null || current.isPremium || current.limit == null) return;
     state = ChatUsage(
       isPremium: current.isPremium,
       used: current.used + 1,

@@ -19,6 +19,11 @@ class TrialStatus {
     required this.trialHoursLeft,
     this.freeTutorCap,
     this.slotCooldownSecondsRemaining = 0,
+    this.subscriptionTier = 'FREE',
+    this.mochiCap = 1,
+    this.chatLimit = 20,
+    this.chatUsed = 0,
+    this.chatRemaining = 20,
   });
 
   final bool isPremium;
@@ -30,10 +35,19 @@ class TrialStatus {
   final int trialHoursLeft;
   final int? freeTutorCap; // null = unlimited (premium)
   final int slotCooldownSecondsRemaining; // 0 = can swap now
+  // Subscription tier fields — populated from backend UsageController
+  final String subscriptionTier; // FREE | PRO | MAX | FAMILY | CENTRE
+  final int mochiCap;       // -1 = unlimited
+  final int chatLimit;      // -1 = unlimited
+  final int chatUsed;
+  final int chatRemaining;  // -1 = unlimited
 
   bool get isOnTrial => trialActive && source == 'TRIAL';
   bool get isTrialExpired => trialStatus == 'EXPIRED';
   bool get canSwapSlot => slotCooldownSecondsRemaining == 0;
+  bool get hasUnlimitedChat => chatLimit == -1;
+  bool get isLowOnMessages =>
+      !hasUnlimitedChat && chatRemaining <= 5 && chatRemaining >= 0;
 
   static const empty = TrialStatus(
     isPremium: false,
@@ -43,6 +57,11 @@ class TrialStatus {
     trialDaysLeft: 0,
     trialHoursLeft: 0,
     freeTutorCap: 1,
+    subscriptionTier: 'FREE',
+    mochiCap: 1,
+    chatLimit: 20,
+    chatUsed: 0,
+    chatRemaining: 20,
   );
 }
 
@@ -57,6 +76,11 @@ Future<TrialStatus> trialStatus(Ref ref) async {
         : Map<String, dynamic>.from(body);
 
     final endsAtStr = data['trialEndsAt'] as String?;
+    final chatLimit = (data['chatLimit'] as num?)?.toInt() ?? 20;
+    final chatUsed = (data['chatUsed'] as num?)?.toInt() ?? 0;
+    final chatRemaining = (data['chatRemaining'] as num?)?.toInt() ??
+        (chatLimit == -1 ? -1 : (chatLimit - chatUsed).clamp(0, chatLimit));
+
     return TrialStatus(
       isPremium: data['isPremium'] as bool? ?? false,
       source: data['source'] as String? ?? 'NONE',
@@ -68,6 +92,11 @@ Future<TrialStatus> trialStatus(Ref ref) async {
       freeTutorCap: (data['freeTutorCap'] as num?)?.toInt(),
       slotCooldownSecondsRemaining:
           (data['slotCooldownSecondsRemaining'] as num?)?.toInt() ?? 0,
+      subscriptionTier: data['subscriptionTier'] as String? ?? 'FREE',
+      mochiCap: (data['mochiCap'] as num?)?.toInt() ?? 1,
+      chatLimit: chatLimit,
+      chatUsed: chatUsed,
+      chatRemaining: chatRemaining,
     );
   } catch (e) {
     appLog.w('[Trial] /usage/today failed: $e');
