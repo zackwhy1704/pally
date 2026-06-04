@@ -20,6 +20,7 @@ import 'package:pally/features/progress/presentation/streak_milestone_controller
 import 'package:pally/features/progress/presentation/streak_status_provider.dart';
 import 'package:pally/features/family/family_status_provider.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
+import 'package:pally/features/subscription/trial_status_provider.dart';
 import 'package:pally/shared/models/achievement.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/entitlement.dart';
@@ -264,60 +265,112 @@ class _MochiStatusPill extends StatelessWidget {
   }
 }
 
-class _StatusBadge extends StatelessWidget {
+class _StatusBadge extends ConsumerWidget {
   const _StatusBadge({required this.entitlementAsync});
   final AsyncValue<Entitlement> entitlementAsync;
 
   @override
-  Widget build(BuildContext context) {
-    return entitlementAsync.when(
-      loading: () => _badge(
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Use trialStatusProvider for the precise tier string (FREE/PRO/MAX/FAMILY/CENTRE).
+    // Falls back to entitlement isPremium if trialStatus hasn't loaded yet.
+    final tierAsync = ref.watch(trialStatusProvider);
+    final tier = tierAsync.whenOrNull(data: (t) => t.subscriptionTier);
+
+    if (entitlementAsync.isLoading && tier == null) {
+      return _badge(
         label: '···',
         textColor: Colors.white.withValues(alpha: 0.5),
         bgDecoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(20),
         ),
-      ),
-      error: (_, __) => _badge(
-        label: 'FREE',
-        textColor: Colors.white.withValues(alpha: 0.55),
-        bgDecoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.14),
-          borderRadius: BorderRadius.circular(20),
-          border:
-              Border.all(color: Colors.white.withValues(alpha: 0.2)),
-        ),
-      ),
-      data: (e) => e.isPremium
-          ? _badge(
-              label: 'PREMIUM',
-              textColor: Colors.white,
-              bgDecoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
-                ),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFFFFD700).withValues(alpha: 0.5),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-            )
-          : _badge(
-              label: 'FREE',
-              textColor: Colors.white.withValues(alpha: 0.7),
-              bgDecoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.18),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.3)),
-              ),
+      );
+    }
+
+    final resolvedTier = tier ?? (entitlementAsync.valueOrNull?.isPremium == true ? 'PRO' : 'FREE');
+    return _badgeForTier(resolvedTier);
+  }
+
+  Widget _badgeForTier(String tier) {
+    return switch (tier) {
+      'PRO' => _badge(
+          label: 'PRO',
+          textColor: Colors.white,
+          bgDecoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF7042ED), Color(0xFF9B6DFF)],
             ),
-    );
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF7042ED).withValues(alpha: 0.5),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+        ),
+      'MAX' => _badge(
+          label: 'MAX',
+          textColor: Colors.white,
+          bgDecoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFFFD700).withValues(alpha: 0.5),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+        ),
+      'FAMILY' => _badge(
+          label: 'FAMILY',
+          textColor: Colors.white,
+          bgDecoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF00BBA4), Color(0xFF00D4BB)],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF00BBA4).withValues(alpha: 0.5),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+        ),
+      'CENTRE' => _badge(
+          label: 'CENTRE',
+          textColor: Colors.white,
+          bgDecoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFF6BAE), Color(0xFFFF9CC9)],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFFF6BAE).withValues(alpha: 0.5),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+        ),
+      _ => _badge(
+          label: 'FREE',
+          textColor: Colors.white.withValues(alpha: 0.7),
+          bgDecoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.18),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+          ),
+        ),
+    };
   }
 
   Widget _badge({
