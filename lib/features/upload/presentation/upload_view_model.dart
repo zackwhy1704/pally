@@ -24,6 +24,18 @@ class FileUploadError {
 }
 
 @immutable
+/// Which processing stage is actively running for a file.
+enum UploadStage {
+  idle,
+  scanning,       // ML Kit document scanner open
+  checkingSize,   // local validation
+  checkingRelevance,
+  uploading,
+  extractingText, // backend OCR/PDFBox
+  compilingBrain, // Gemini/Claude wiki compile
+  chunkedCompile, // large doc — split into chunks, takes longer
+}
+
 class UploadState {
   const UploadState({
     this.avatar,
@@ -36,6 +48,10 @@ class UploadState {
     this.pendingRelevance,
     this.topicTag,
     this.sourceType,
+    this.uploadStage = UploadStage.idle,
+    this.pendingFileSizeBytes = 0,
+    this.pendingFilePageCount = 0,
+    this.compilingFileCount = 0,
   });
 
   final Avatar? avatar;
@@ -51,8 +67,33 @@ class UploadState {
   final String? topicTag;
   final String? sourceType;
 
+  /// Granular stage shown in the loading overlay.
+  final UploadStage uploadStage;
+
+  /// Size of the file being uploaded (bytes) — drives time-estimate copy.
+  final int pendingFileSizeBytes;
+
+  /// Page count after upload — used to decide chunked-compile warning.
+  final int pendingFilePageCount;
+
+  /// How many files are currently in PROCESSING state (brain compiling).
+  final int compilingFileCount;
+
   int get totalFiles => files.length;
   bool get hasFiles => files.isNotEmpty;
+
+  /// True during any active processing that blocks new uploads.
+  bool get isBusy => isUploading || isCheckingRelevance;
+
+  /// True when the pending file is large enough to trigger chunked compile.
+  bool get isLargeFile => pendingFileSizeBytes > 5 * 1024 * 1024 || pendingFilePageCount > 20;
+
+  /// Estimated minutes to compile based on file size.
+  String get estimatedCompileTime {
+    if (pendingFilePageCount > 50 || pendingFileSizeBytes > 15 * 1024 * 1024) return '3–5 min';
+    if (pendingFilePageCount > 20 || pendingFileSizeBytes > 5 * 1024 * 1024) return '1–2 min';
+    return '30–60 sec';
+  }
 
   UploadState copyWith({
     Avatar? avatar,
@@ -65,6 +106,10 @@ class UploadState {
     Object? pendingRelevance = _sentinel,
     Object? topicTag = _sentinel,
     Object? sourceType = _sentinel,
+    UploadStage? uploadStage,
+    int? pendingFileSizeBytes,
+    int? pendingFilePageCount,
+    int? compilingFileCount,
   }) {
     return UploadState(
       avatar: avatar ?? this.avatar,
@@ -82,6 +127,10 @@ class UploadState {
       topicTag: topicTag == _sentinel ? this.topicTag : topicTag as String?,
       sourceType:
           sourceType == _sentinel ? this.sourceType : sourceType as String?,
+      uploadStage: uploadStage ?? this.uploadStage,
+      pendingFileSizeBytes: pendingFileSizeBytes ?? this.pendingFileSizeBytes,
+      pendingFilePageCount: pendingFilePageCount ?? this.pendingFilePageCount,
+      compilingFileCount: compilingFileCount ?? this.compilingFileCount,
     );
   }
 }
@@ -311,10 +360,12 @@ class UploadViewModel extends _$UploadViewModel {
   }
 
   Future<void> _checkRelevanceAndUpload(PlatformFile file) async {
-    appLog.i('[Upload] Relevance check: ${file.name}');
+    appLog.i('[Upload] Relevance check: ${file.name} size=${file.size}B');
     state = state.copyWith(
       isCheckingRelevance: true,
+      uploadStage: UploadStage.checkingRelevance,
       pendingFile: file,
+      pendingFileSizeBytes: file.size,
       pendingRelevance: null,
     );
 
@@ -372,6 +423,8 @@ class UploadViewModel extends _$UploadViewModel {
     appLog.i('[Upload] Uploading: ${file.name} (${file.size}B)');
     state = state.copyWith(
       isUploading: true,
+      uploadStage: UploadStage.uploading,
+      pendingFileSizeBytes: file.size,
       pendingFile: null,
       pendingRelevance: null,
       error: null,
@@ -404,8 +457,12 @@ class UploadViewModel extends _$UploadViewModel {
         uploadedAt: DateTime.now(),
       );
       appLog.i('[Upload] Success: ${result.id} pages=${result.pageCount}');
+      final isLarge = file.size > 5 * 1024 * 1024 || result.pageCount > 20;
       state = state.copyWith(
         isUploading: false,
+        uploadStage: isLarge ? UploadStage.chunkedCompile : UploadStage.compilingBrain,
+        pendingFilePageCount: result.pageCount,
+        compilingFileCount: state.compilingFileCount + 1,
         files: [...state.files, result],
       );
       // Invalidate library + home so they refetch from the API with the

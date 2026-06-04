@@ -54,15 +54,10 @@ class UploadScreen extends ConsumerWidget {
       }
     });
 
-    // Full-screen Mochi generating overlay while upload is in progress.
-    // Covers the entire screen (Pattern E) with rotating tips + step labels.
+    // Full-screen Mochi generating overlay while upload/process is in progress.
     final bool uploading = state.isUploading || state.isCheckingRelevance;
     if (uploading) {
-      return MochiGenerating(
-        stepLabels: state.isCheckingRelevance
-            ? const ['Checking relevance…', 'Reviewing your notes…']
-            : kUploadStepLabels,
-      );
+      return _UploadLoadingScreen(state: state);
     }
 
     return Scaffold(
@@ -117,6 +112,13 @@ class UploadScreen extends ConsumerWidget {
               onPdf: vm.pickPdf,
               onPasteText: vm.pasteText,
             ),
+            // Brain compiling banner — shown after upload while Gemini compiles
+            if (state.compilingFileCount > 0 &&
+                (state.uploadStage == UploadStage.compilingBrain ||
+                    state.uploadStage == UploadStage.chunkedCompile)) ...[
+              const SizedBox(height: AppSpacing.md),
+              _BrainCompilingBanner(state: state),
+            ],
             if (state.hasFiles) ...[
               const SizedBox(height: AppSpacing.md),
               _FileList(
@@ -692,6 +694,229 @@ class _ContextTagBar extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+// ── Rich loading overlay with stage-aware copy ────────────────────────────────
+
+class _UploadLoadingScreen extends StatelessWidget {
+  const _UploadLoadingScreen({required this.state});
+  final UploadState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final stage = state.uploadStage;
+    final isLarge = state.isLargeFile;
+    final sizeLabel = _sizeLabel(state.pendingFileSizeBytes);
+    final fileName = state.pendingFile?.name ?? '';
+
+    final (stepLabels, stepDuration) = switch (stage) {
+      UploadStage.checkingRelevance => (
+          const ['Reviewing content…', 'Checking relevance…'],
+          const Duration(seconds: 3),
+        ),
+      UploadStage.uploading when isLarge => (
+          const [
+            'Sending to server…',
+            'Processing document…',
+            'Extracting text…',
+            'Almost there…',
+          ],
+          const Duration(seconds: 5),
+        ),
+      _ => (
+          const ['Sending…', 'Processing…'],
+          const Duration(seconds: 3),
+        ),
+    };
+
+    final title = switch (stage) {
+      UploadStage.checkingRelevance => 'Checking your notes…',
+      UploadStage.uploading when isLarge => 'Uploading large document…',
+      UploadStage.uploading => 'Uploading…',
+      _ => 'Processing…',
+    };
+
+    final subtitle = switch (stage) {
+      UploadStage.checkingRelevance =>
+        'Making sure this fits Mochi\'s subject',
+      UploadStage.uploading when isLarge =>
+        'File: $sizeLabel${fileName.isNotEmpty ? " · $fileName" : ""}',
+      UploadStage.uploading => fileName.isNotEmpty ? fileName : 'Sending your notes',
+      _ => '',
+    };
+
+    return Scaffold(
+      backgroundColor: AppColors.bg,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Step indicator pill
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppColors.purpleL,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(
+                      width: 12,
+                      height: 12,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: AppColors.purple),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      _stageLabel(stage),
+                      style:
+                          AppTextStyles.label.copyWith(color: AppColors.purple),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              MochiGenerating(
+                stepLabels: stepLabels,
+                stepDuration: stepDuration,
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Text(title,
+                  style: AppTextStyles.title, textAlign: TextAlign.center),
+              if (subtitle.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  subtitle,
+                  style:
+                      AppTextStyles.body.copyWith(color: AppColors.text2),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+              // Large-file warning card
+              if (isLarge && stage == UploadStage.uploading) ...[
+                const SizedBox(height: AppSpacing.lg),
+                Container(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  decoration: BoxDecoration(
+                    color: AppColors.amberL,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: AppColors.amber),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.info_outline_rounded,
+                          color: AppColors.amber, size: 18),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Large document detected',
+                                style: AppTextStyles.bodySmall.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.amber)),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Mochi will split this into sections for better accuracy. '
+                              'The brain will take ${state.estimatedCompileTime} to update after upload.',
+                              style: AppTextStyles.bodySmall
+                                  .copyWith(color: AppColors.amber),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _stageLabel(UploadStage stage) => switch (stage) {
+        UploadStage.checkingRelevance => 'Step 1 of 3 — Relevance check',
+        UploadStage.uploading => 'Step 2 of 3 — Uploading',
+        UploadStage.extractingText => 'Step 3 of 3 — Reading text',
+        _ => 'Processing',
+      };
+
+  String _sizeLabel(int bytes) {
+    if (bytes == 0) return 'large file';
+    final mb = bytes / (1024 * 1024);
+    return mb >= 1 ? '${mb.toStringAsFixed(1)} MB' : '${(bytes / 1024).round()} KB';
+  }
+}
+
+// ── Brain compiling banner (shown after upload, while Gemini compiles) ────────
+
+class _BrainCompilingBanner extends StatelessWidget {
+  const _BrainCompilingBanner({required this.state});
+  final UploadState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final isChunked = state.uploadStage == UploadStage.chunkedCompile;
+    final eta = state.estimatedCompileTime;
+
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: isChunked ? AppColors.amberL : AppColors.tealL,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isChunked ? AppColors.amber : AppColors.teal,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: isChunked ? AppColors.amber : AppColors.teal,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  isChunked
+                      ? '🧩 Building brain in sections…'
+                      : '🧠 Mochi is reading your notes…',
+                  style: AppTextStyles.body.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: isChunked ? AppColors.amber : AppColors.teal,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            isChunked
+                ? 'Your document is large — Mochi splits it into sections for better accuracy. Expected: $eta. You can close this screen; the brain updates automatically.'
+                : 'New pages will appear in your brain map shortly. Expected: $eta.',
+            style: AppTextStyles.bodySmall.copyWith(
+              color: isChunked ? AppColors.amber : AppColors.teal,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
