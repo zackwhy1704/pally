@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -442,7 +443,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 label: 'Privacy Policy',
                 trailing: const Icon(Icons.open_in_new_rounded,
                     size: 16, color: AppColors.text3),
-                onTap: () {},
+                onTap: () => launchUrl(
+                  Uri.parse('https://memoly.app/privacy'),
+                  mode: LaunchMode.externalApplication,
+                ),
               ),
               const Divider(height: 1, color: AppColors.outline),
               _TappableTile(
@@ -450,7 +454,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 label: 'Help & Support',
                 trailing: const Icon(Icons.open_in_new_rounded,
                     size: 16, color: AppColors.text3),
-                onTap: () {},
+                onTap: () => launchUrl(
+                  Uri.parse('mailto:support@memoly.app'),
+                  mode: LaunchMode.externalApplication,
+                ),
               ),
             ],
           ),
