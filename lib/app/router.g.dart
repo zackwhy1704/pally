@@ -768,10 +768,15 @@ RouteBase get $subscriptionPlansRoute => GoRouteData.$route(
 
 extension $SubscriptionPlansRouteExtension on SubscriptionPlansRoute {
   static SubscriptionPlansRoute _fromState(GoRouterState state) =>
-      const SubscriptionPlansRoute();
+      SubscriptionPlansRoute(
+        highlightTier: state.uri.queryParameters['highlightTier'],
+      );
 
   String get location => GoRouteData.$location(
         '/subscription/plans',
+        queryParams: {
+          if (highlightTier != null) 'highlightTier': highlightTier!,
+        },
       );
 
   void go(BuildContext context) => context.go(location);

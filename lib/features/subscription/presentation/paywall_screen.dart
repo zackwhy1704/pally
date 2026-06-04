@@ -5,6 +5,17 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 
+/// Maps a feature code to the cheapest plan tier that unlocks it.
+/// Used to pre-select the recommended plan on the plans screen.
+String? _highlightTierForFeature(String? feature) => switch (feature) {
+      'CHAT_DAILY' => 'pro',
+      'CREATE_TUTOR' => 'pro',
+      'GROUPS' => 'pro',
+      'PARENT_DASHBOARD' => 'pro',
+      'ADD_STUDENT' => 'family',
+      _ => null,
+    };
+
 /// "P1" Paywall — the friction moment when a free user hits a server-side
 /// gate. Briefly explains the feature they want, lists what premium
 /// unlocks, and routes to the plan picker.
@@ -12,7 +23,8 @@ class PaywallScreen extends ConsumerWidget {
   const PaywallScreen({super.key, this.feature});
 
   /// Server-supplied feature code (CREATE_TUTOR, UPLOAD_DOC, CHAT_DAILY,
-  /// PARENT_DASHBOARD, CURRICULUM, EXTRA_FREEZE). Drives the headline.
+  /// PARENT_DASHBOARD, CURRICULUM, EXTRA_FREEZE, GROUPS, ADD_STUDENT).
+  /// Drives the headline and the recommended tier on the plans screen.
   final String? feature;
 
   String get _headline => switch (feature) {
@@ -22,6 +34,8 @@ class PaywallScreen extends ConsumerWidget {
         'PARENT_DASHBOARD' => 'Parent dashboard is premium',
         'CURRICULUM' => 'Curriculum journey is premium',
         'EXTRA_FREEZE' => 'Stack more streak freezes',
+        'GROUPS' => 'Study groups are premium',
+        'ADD_STUDENT' => 'Need more student accounts?',
         _ => 'Unlock Pally Premium',
       };
 
@@ -34,8 +48,8 @@ class PaywallScreen extends ConsumerWidget {
             'Uploads are unlimited — free or premium. The gate is how many '
                 'Mochis you can have. Premium gives you one per subject.',
         'CHAT_DAILY' =>
-            'Free users get 80 chats a day — enough for real exam prep. '
-                'Premium removes the cap entirely.',
+            'Free users get 20 chats a day. Pro lifts the cap to 100; '
+                'Max and above remove it entirely.',
         'PARENT_DASHBOARD' =>
             'Parents track progress, set goals, and read weekly reports.',
         'CURRICULUM' =>
@@ -43,6 +57,12 @@ class PaywallScreen extends ConsumerWidget {
         'EXTRA_FREEZE' =>
             'Premium lets you stack up to 3 streak freezes so a missed day '
                 'never costs your streak.',
+        'GROUPS' =>
+            'Collaborate with classmates in shared study groups. '
+                'Available on Pro and above.',
+        'ADD_STUDENT' =>
+            'Family plan supports up to 4 students. '
+                'Centre plan supports up to 15 students for tutoring centres.',
         _ =>
             'Get everything Pally has to offer — unlimited Mochis, family '
                 'sharing, premium analytics.',
@@ -110,7 +130,15 @@ class PaywallScreen extends ConsumerWidget {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed: () => context.push('/subscription/plans'),
+                  onPressed: () {
+                    final highlight = _highlightTierForFeature(feature);
+                    if (highlight != null) {
+                      context.push(
+                          '/subscription/plans?highlightTier=$highlight');
+                    } else {
+                      context.push('/subscription/plans');
+                    }
+                  },
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.purple,
                     padding: const EdgeInsets.symmetric(vertical: 14),
