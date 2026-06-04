@@ -196,8 +196,8 @@ class _MochiTipCoachState extends ConsumerState<MochiTipCoach>
     if (avatar.curriculumType == null) {
       result.add(const _ChatTip(
         id: 'no-curriculum',
-        text: "Tell me which syllabus you're on so I can guide your whole journey!",
-        emoji: '🗺️',
+        text: 'What are you studying towards? Set your goal so I can tailor my help!',
+        emoji: '🎯',
         action: _openLibrary,
       ));
     }

@@ -20,19 +20,13 @@ const _ageOptions = [
   (label: '21+', value: '21+'),
 ];
 
-// Curriculum options — SG-first ordering; CAMBRIDGE id unchanged so existing
-// avatar records need no migration. University added for 13–25+ audience.
+// What the user wants Mochi to help with — goal-oriented, not geography-based.
 const _examSystems = [
-  ('🇸🇬', 'Singapore / Cambridge (O-Level / A-Level)', 'CAMBRIDGE'),
-  ('🌍', 'IB (PYP / MYP / Diploma)', 'IB'),
-  ('🇲🇾', 'Malaysia SPM / KSSM', 'MY_SPM'),
-  ('🇬🇧', 'UK GCSE / A-Level', 'UK_GCSE'),
-  ('🇺🇸', 'US Common Core / AP', 'US_AP'),
-  ('🇦🇺', 'Australian Curriculum', 'AU_ATAR'),
+  ('📝', 'Examination Preparation', 'EXAM_PREP'),
   ('🎓', 'University — Midterms / Finals', 'UNIVERSITY'),
-  ('💻', 'Coding Interview Prep', 'CODING_INTERVIEW'),
-  ('📊', 'Professional Exams (CFA, ACCA, CPA…)', 'PROFESSIONAL'),
-  ('🌐', 'Other / Not sure', 'OTHER'),
+  ('💻', 'Coding Interview Preparation', 'CODING_INTERVIEW'),
+  ('📊', 'Professional Examinations', 'PROFESSIONAL'),
+  ('🌐', 'Others', 'OTHER'),
 ];
 
 class GradeStep extends StatelessWidget {
@@ -126,7 +120,7 @@ class GradeStep extends StatelessWidget {
                     onChanged: onGradeChanged,
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  Text('EXAM SYSTEM / CURRICULUM',
+                  Text('WHAT DO YOU WISH MOCHI TO HELP YOU WITH?',
                       style: AppTextStyles.label.copyWith(
                           color: AppColors.text3, letterSpacing: 0.8)),
                   const SizedBox(height: AppSpacing.sm),

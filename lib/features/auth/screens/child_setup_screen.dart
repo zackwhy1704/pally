@@ -44,16 +44,11 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
   bool get _isUnder13 => (_selectedAge ?? 99) < 13;
 
   static const _examSystems = [
-    ('📐', 'Cambridge (IGCSE / O-Level / A-Level)', 'CAMBRIDGE', 'SG, MY, SEA, 145+ countries'),
-    ('🌍', 'IB (PYP / MYP / Diploma)', 'IB', 'International schools worldwide'),
-    ('🇲🇾', 'Malaysia SPM / KSSM', 'MY_SPM', 'Malaysia national curriculum'),
-    ('🇬🇧', 'UK GCSE / A-Level', 'UK_GCSE', 'UK & British international schools'),
-    ('🇺🇸', 'US Common Core / AP', 'US_AP', 'US & American international schools'),
-    ('🇦🇺', 'Australian Curriculum (ATAR)', 'AU_ATAR', 'Australia & Australian intl schools'),
+    ('📝', 'Examination Preparation', 'EXAM_PREP', 'O-Level, A-Level, IB, SPM, GCSE, AP…'),
     ('🎓', 'University — Midterms / Finals', 'UNIVERSITY', 'Undergraduate courses & exams'),
-    ('💻', 'Coding Interview Prep', 'CODING_INTERVIEW', 'LeetCode, system design, tech interviews'),
-    ('📊', 'Professional Exams (CFA, ACCA, CPA…)', 'PROFESSIONAL', 'Finance, accounting & professional certs'),
-    ('🌐', 'Other / Not sure', 'OTHER', 'Custom or home curriculum'),
+    ('💻', 'Coding Interview Preparation', 'CODING_INTERVIEW', 'LeetCode, system design, tech interviews'),
+    ('📊', 'Professional Examinations', 'PROFESSIONAL', 'CFA, ACCA, CPA, bar exam & professional certs'),
+    ('🌐', 'Others', 'OTHER', 'Something else entirely'),
   ];
 
   bool get _canContinue =>
@@ -175,10 +170,10 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
               ),
               const SizedBox(height: AppSpacing.lg),
 
-              const _SectionLabel('Exam system / Curriculum'),
+              const _SectionLabel('What do you wish Mochi to help you with?'),
               const SizedBox(height: 4),
               Text(
-                'Choose what matches your studies',
+                'Pick what best describes your goal',
                 style: AppTextStyles.caption.copyWith(color: AppColors.text3),
               ),
               const SizedBox(height: 8),
