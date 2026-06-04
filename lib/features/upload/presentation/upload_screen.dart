@@ -55,10 +55,11 @@ class UploadScreen extends ConsumerWidget {
       }
     });
 
-    // Full-screen Mochi generating overlay while upload/process is in progress.
-    final bool uploading = state.isUploading || state.isCheckingRelevance;
-    if (uploading) {
-      return _UploadLoadingScreen(state: state);
+    // Full-screen loading overlay: blocks navigation during upload + compile.
+    // Terminal states (success / failed / timeout) also show full-screen so
+    // the user gets a clear outcome before continuing.
+    if (state.showsLoadingOverlay || state.isTerminalState) {
+      return _UploadLoadingScreen(state: state, avatarId: avatarId);
     }
 
     return Scaffold(
@@ -701,19 +702,62 @@ class _ContextTagBar extends StatelessWidget {
 
 // ── Rich loading overlay with stage-aware copy ────────────────────────────────
 
-/// Full-screen upload loading overlay. Replaces MochiGenerating entirely
-/// (no nested Scaffold — Rule: never put a Scaffold inside a Column).
-/// Uses MochiGenerating as the full-screen root; adds stage-aware copy
-/// and the large-file warning via its [stepLabel] + [onCancel] parameters.
 class _UploadLoadingScreen extends StatelessWidget {
-  const _UploadLoadingScreen({required this.state});
+  const _UploadLoadingScreen({required this.state, required this.avatarId});
   final UploadState state;
+  final String avatarId;
 
   @override
   Widget build(BuildContext context) {
     final stage = state.uploadStage;
+
+    // ── Terminal states: success / failed / timeout ───────────────────────
+    if (stage == UploadStage.compileSuccess) {
+      return _TerminalScreen(
+        icon: Icons.check_circle_rounded,
+        iconColor: AppColors.green,
+        title: '🧠 Brain updated!',
+        message: 'Mochi has read your notes and added them to the brain. '
+            'You can now chat, quiz, and explore the brain map.',
+        primaryLabel: 'Start chatting',
+        onPrimary: () => const HomeRoute().go(context),
+        secondaryLabel: 'Add more notes',
+        onSecondary: () {
+          if (context.canPop()) context.pop();
+        },
+      );
+    }
+
+    if (stage == UploadStage.compileFailed ||
+        stage == UploadStage.compileTimeout) {
+      final isTimeout = stage == UploadStage.compileTimeout;
+      return _TerminalScreen(
+        icon: isTimeout
+            ? Icons.hourglass_disabled_rounded
+            : Icons.error_outline_rounded,
+        iconColor: AppColors.amber,
+        title: isTimeout ? 'Taking longer than expected…' : 'Something went wrong',
+        message: state.error ??
+            (isTimeout
+                ? 'Mochi is still working on your notes in the background. '
+                    'Check back in a few minutes — the brain will update automatically.'
+                : 'Mochi couldn\'t process your notes. '
+                    'Try uploading again with a smaller file or different format.'),
+        primaryLabel: 'Return to home',
+        onPrimary: () => const HomeRoute().go(context),
+        secondaryLabel: isTimeout ? 'Check brain later' : 'Try again',
+        onSecondary: isTimeout
+            ? () => const HomeRoute().go(context)
+            : () {
+                if (context.canPop()) context.pop();
+              },
+      );
+    }
+
+    // ── Active loading: upload + compile ─────────────────────────────────
     final isLarge = state.isLargeFile;
-    final sizeLabel = _sizeLabel(state.pendingFileSizeBytes);
+    final isCompiling = stage == UploadStage.compilingBrain ||
+        stage == UploadStage.chunkedCompile;
     final fileName = state.pendingFile?.name ?? '';
 
     final stepLabels = switch (stage) {
@@ -727,43 +771,45 @@ class _UploadLoadingScreen extends StatelessWidget {
           'Step 2 of 3 — Extracting text…',
           'Step 2 of 3 — Almost there…',
         ],
-      _ => const [
-          'Step 2 of 3 — Sending…',
-          'Step 2 of 3 — Processing…',
+      UploadStage.compilingBrain || UploadStage.chunkedCompile => [
+          'Step 3 of 3 — Reading your notes…',
+          'Step 3 of 3 — Finding key concepts…',
+          'Step 3 of 3 — Building brain pages…',
+          if (isLarge) 'Step 3 of 3 — Processing sections…',
+          'Step 3 of 3 — Almost ready…',
         ],
+      _ => const ['Step 2 of 3 — Sending…', 'Step 2 of 3 — Processing…'],
     };
 
-    final stepDuration = (isLarge && stage == UploadStage.uploading)
-        ? const Duration(seconds: 5)
-        : const Duration(seconds: 3);
+    final stepDuration = isCompiling
+        ? const Duration(seconds: 6)
+        : (isLarge ? const Duration(seconds: 5) : const Duration(seconds: 3));
 
-    // Build subtitle shown below the step label inside MochiGenerating
     final lines = <String>[];
-    if (stage == UploadStage.uploading && isLarge) {
-      lines.add('File: $sizeLabel${fileName.isNotEmpty ? " · $fileName" : ""}');
-      lines.add(
-        '⚠️ Large document — Mochi will split it into sections '
-        '(~${state.estimatedCompileTime}).',
-      );
+    if (isCompiling && isLarge) {
+      lines.add('⚠️ Large document — splitting into sections (~${state.estimatedCompileTime})');
+    } else if (isCompiling) {
+      lines.add('This usually takes 30–60 seconds');
+    } else if (stage == UploadStage.uploading && isLarge) {
+      lines.add('File: ${_sizeLabel(state.pendingFileSizeBytes)}${fileName.isNotEmpty ? " · $fileName" : ""}');
     } else if (stage == UploadStage.uploading && fileName.isNotEmpty) {
       lines.add(fileName);
     } else if (stage == UploadStage.checkingRelevance) {
       lines.add('Making sure this fits the subject…');
     }
 
-    // Single combined label so MochiGenerating can show it without nesting
-    // another widget that would need unbounded height constraints.
     final combinedLabel = [
       switch (stage) {
         UploadStage.checkingRelevance => 'Checking your notes…',
         UploadStage.uploading when isLarge => 'Uploading large document…',
         UploadStage.uploading => 'Uploading…',
+        UploadStage.compilingBrain => 'Mochi is reading your notes…',
+        UploadStage.chunkedCompile => 'Building brain in sections…',
         _ => 'Processing…',
       },
       ...lines,
     ].join('\n');
 
-    // MochiGenerating is a proper full-screen Scaffold — no nesting needed.
     return MochiGenerating(
       stepLabels: stepLabels,
       stepDuration: stepDuration,
@@ -835,6 +881,88 @@ class _BrainCompilingBanner extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ── Terminal result screen (success / failed / timeout) ───────────────────────
+
+class _TerminalScreen extends StatelessWidget {
+  const _TerminalScreen({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.message,
+    required this.primaryLabel,
+    required this.onPrimary,
+    this.secondaryLabel,
+    this.onSecondary,
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String message;
+  final String primaryLabel;
+  final VoidCallback onPrimary;
+  final String? secondaryLabel;
+  final VoidCallback? onSecondary;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.bg,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: AppSizing.iconContainer, color: iconColor),
+              const SizedBox(height: AppSpacing.lg),
+              Text(title,
+                  style: AppTextStyles.heading1, textAlign: TextAlign.center),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                message,
+                style: AppTextStyles.body.copyWith(color: AppColors.text2),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: onPrimary,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.purple,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: AppSpacing.md),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14)),
+                  ),
+                  child: Text(primaryLabel),
+                ),
+              ),
+              if (secondaryLabel != null && onSecondary != null) ...[
+                const SizedBox(height: AppSpacing.sm),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: onSecondary,
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: AppSpacing.md),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
+                    ),
+                    child: Text(secondaryLabel!),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }

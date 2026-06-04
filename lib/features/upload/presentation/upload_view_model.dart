@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
@@ -27,13 +28,16 @@ class FileUploadError {
 /// Which processing stage is actively running for a file.
 enum UploadStage {
   idle,
-  scanning,       // ML Kit document scanner open
-  checkingSize,   // local validation
+  scanning,         // ML Kit document scanner open
+  checkingSize,     // local validation
   checkingRelevance,
   uploading,
-  extractingText, // backend OCR/PDFBox
-  compilingBrain, // Gemini/Claude wiki compile
-  chunkedCompile, // large doc — split into chunks, takes longer
+  extractingText,   // backend OCR/PDFBox
+  compilingBrain,   // Gemini/Claude wiki compile
+  chunkedCompile,   // large doc — split into chunks, takes longer
+  compileSuccess,   // all pages created → show confetti/success
+  compileFailed,    // compile permanently failed → show error + CTA
+  compileTimeout,   // timed out waiting for compile → show error + CTA
 }
 
 class UploadState {
@@ -84,6 +88,18 @@ class UploadState {
 
   /// True during any active processing that blocks new uploads.
   bool get isBusy => isUploading || isCheckingRelevance;
+
+  /// True while the loading overlay should be shown (user cannot navigate).
+  bool get showsLoadingOverlay =>
+      isBusy ||
+      uploadStage == UploadStage.compilingBrain ||
+      uploadStage == UploadStage.chunkedCompile;
+
+  /// Terminal states: success, failure, or timeout.
+  bool get isTerminalState =>
+      uploadStage == UploadStage.compileSuccess ||
+      uploadStage == UploadStage.compileFailed ||
+      uploadStage == UploadStage.compileTimeout;
 
   /// True when the pending file is large enough to trigger chunked compile.
   bool get isLargeFile => pendingFileSizeBytes > 5 * 1024 * 1024 || pendingFilePageCount > 20;
@@ -143,12 +159,23 @@ const _maxFileSizeBytes = 25 * 1024 * 1024;
 @riverpod
 class UploadViewModel extends _$UploadViewModel {
   late String _avatarId;
+  Timer? _compilePoller;
+  DateTime? _compileStartedAt;
+
+  // 3-minute hard timeout: if compile hasn't succeeded by then, surface error.
+  static const _compileTimeout = Duration(minutes: 3);
+  // Poll every 5s — fast enough to detect success, cheap enough not to flood.
+  static const _pollInterval = Duration(seconds: 5);
 
   @override
   UploadState build(String avatarId) {
     _avatarId = avatarId;
     _loadAvatar();
     _loadFiles();
+    ref.onDispose(() {
+      _compilePoller?.cancel();
+      _compilePoller = null;
+    });
     return const UploadState();
   }
 
@@ -465,17 +492,13 @@ class UploadViewModel extends _$UploadViewModel {
         compilingFileCount: state.compilingFileCount + 1,
         files: [...state.files, result],
       );
-      // Invalidate library + home so they refetch from the API with the
-      // updated wikiPageCount once async compilation completes in the background.
-      // Both providers are autoDispose — invalidate is a no-op if they're not
-      // currently watched, but if the user navigates back they'll see fresh data.
       ref.invalidate(libraryViewModelProvider);
       ref.invalidate(homeViewModelProvider);
-      // Trigger a recompile in the background to pick up any FAILED files
-      // from prior outages (e.g. Claude credit exhaustion). This is a
-      // best-effort fire-and-forget — it won't block the upload success UI.
       // ignore: discarded_futures
       _triggerRecompile();
+      // Start polling brainState so the loading overlay knows when to
+      // transition to success or timeout — user is blocked on this screen.
+      _startCompilePoller();
     } on DioException catch (e, st) {
       appLog.e('[Upload] Failed: ${file.name} status=${e.response?.statusCode}',
           error: e, stackTrace: st);
@@ -504,6 +527,70 @@ class UploadViewModel extends _$UploadViewModel {
     state = state.copyWith(
       fileErrors: [...state.fileErrors, err],
     );
+  }
+
+  // ── Compile polling ───────────────────────────────────────────────────────
+
+  void _startCompilePoller() {
+    _compilePoller?.cancel();
+    _compileStartedAt = DateTime.now();
+    appLog.d('[Upload] Compile poller started (timeout=${_compileTimeout.inSeconds}s)');
+    _compilePoller = Timer.periodic(_pollInterval, (_) => _pollCompileStatus());
+  }
+
+  Future<void> _pollCompileStatus() async {
+    final elapsed = DateTime.now().difference(_compileStartedAt ?? DateTime.now());
+    if (elapsed >= _compileTimeout) {
+      _compilePoller?.cancel();
+      _compilePoller = null;
+      appLog.w('[Upload] Compile timed out after ${elapsed.inSeconds}s for avatar=$_avatarId');
+      state = state.copyWith(
+        uploadStage: UploadStage.compileTimeout,
+        compilingFileCount: 0,
+        error: 'Mochi is taking too long to read your notes. '
+            'The brain will continue updating in the background — '
+            'check back in a few minutes.',
+      );
+      return;
+    }
+
+    try {
+      final dio = ref.read(dioProvider);
+      final resp = await dio.get<dynamic>('/api/v1/avatars/$_avatarId');
+      final data = resp.data is Map ? resp.data as Map : {};
+      final brainState = data['brainState']?.toString() ?? 'READY';
+      final wikiPageCount = (data['wikiPageCount'] as num?)?.toInt() ?? 0;
+      appLog.d('[Upload] Poll: brainState=$brainState wikiPageCount=$wikiPageCount elapsed=${elapsed.inSeconds}s');
+
+      if (brainState == 'READY') {
+        _compilePoller?.cancel();
+        _compilePoller = null;
+        if (wikiPageCount > 0) {
+          appLog.i('[Upload] Compile SUCCESS: $wikiPageCount pages for avatar=$_avatarId');
+          state = state.copyWith(
+            uploadStage: UploadStage.compileSuccess,
+            compilingFileCount: 0,
+          );
+          ref.invalidate(libraryViewModelProvider);
+          ref.invalidate(homeViewModelProvider);
+        } else {
+          // brainState == READY but 0 pages — compile ran and produced nothing
+          // (parse error, empty extract, etc.). Show error so user can retry.
+          appLog.w('[Upload] Compile finished but produced 0 pages for avatar=$_avatarId');
+          state = state.copyWith(
+            uploadStage: UploadStage.compileFailed,
+            compilingFileCount: 0,
+            error: 'Mochi couldn\'t process your notes. '
+                'Try uploading again — if the problem persists, '
+                'try a smaller file or a different format.',
+          );
+        }
+      }
+      // Still COMPILING or PENDING_RECOMPILE — keep polling
+    } catch (e) {
+      appLog.w('[Upload] Compile poll failed (non-fatal): $e');
+      // Don't stop polling on transient errors — let the timeout handle it
+    }
   }
 
   /// Calls POST /wiki/recompile to retry any FAILED files from prior outages.
