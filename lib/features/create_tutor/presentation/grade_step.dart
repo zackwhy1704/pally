@@ -24,7 +24,6 @@ const _ageOptions = [
 // avatar records need no migration. University added for 13–25+ audience.
 const _examSystems = [
   ('🇸🇬', 'Singapore / Cambridge (O-Level / A-Level)', 'CAMBRIDGE'),
-  ('🇸🇬', 'Singapore PSLE', 'SG_PSLE'),
   ('🌍', 'IB (PYP / MYP / Diploma)', 'IB'),
   ('🇲🇾', 'Malaysia SPM / KSSM', 'MY_SPM'),
   ('🇬🇧', 'UK GCSE / A-Level', 'UK_GCSE'),

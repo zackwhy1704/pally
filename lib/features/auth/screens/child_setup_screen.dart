@@ -46,7 +46,6 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
   static const _examSystems = [
     ('📐', 'Cambridge (IGCSE / O-Level / A-Level)', 'CAMBRIDGE', 'SG, MY, SEA, 145+ countries'),
     ('🌍', 'IB (PYP / MYP / Diploma)', 'IB', 'International schools worldwide'),
-    ('🇸🇬', 'Singapore PSLE', 'SG_PSLE', 'Singapore national primary'),
     ('🇲🇾', 'Malaysia SPM / KSSM', 'MY_SPM', 'Malaysia national curriculum'),
     ('🇬🇧', 'UK GCSE / A-Level', 'UK_GCSE', 'UK & British international schools'),
     ('🇺🇸', 'US Common Core / AP', 'US_AP', 'US & American international schools'),
