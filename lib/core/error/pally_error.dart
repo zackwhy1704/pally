@@ -40,7 +40,7 @@ class PallyError {
       PallyErrorKind.unauthorized, 'Please sign in again.');
   static const upgradeRequired = PallyError(
       PallyErrorKind.upgradeRequired,
-      'This needs Pally Premium.');
+      'This needs Memoly Premium.');
   static const slotLocked = PallyError(
       PallyErrorKind.slotLocked,
       'This Mochi is locked — activate a slot to use it.');

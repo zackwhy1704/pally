@@ -425,7 +425,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const Divider(height: 1, color: AppColors.outline),
               _TappableTile(
                 icon: Icons.lightbulb_outline_rounded,
-                label: 'Why Pally is different',
+                label: 'Why Memoly is different',
                 trailing: const Icon(Icons.chevron_right_rounded,
                     size: 16, color: AppColors.text3),
                 onTap: () => HowPallyIsDifferent.show(context),

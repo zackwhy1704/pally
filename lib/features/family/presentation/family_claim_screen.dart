@@ -75,7 +75,7 @@ class _FamilyClaimScreenState extends ConsumerState<FamilyClaimScreen> {
             children: [
               const SizedBox(height: AppSpacing.md),
               Text(
-                'Ask your child to open Pally → Me tab → "Link a grown-up" '
+                'Ask your child to open Memoly → Me tab → "Link a grown-up" '
                 'and read you their code.',
                 style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 textAlign: TextAlign.center,

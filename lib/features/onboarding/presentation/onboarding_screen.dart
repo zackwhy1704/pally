@@ -271,7 +271,7 @@ class _PageThree extends StatelessWidget {
                         color: AppColors.purple.withValues(alpha: 0.3)),
                   ),
                   child: Text(
-                    '“Not a tutor that knows the textbook — a study partner that knows yours.”',
+                    '“Not a generic AI — a Mochi that knows your notes.”',
                     style: AppTextStyles.body.copyWith(
                         color: AppColors.purple,
                         fontWeight: FontWeight.w700,

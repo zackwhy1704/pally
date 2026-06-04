@@ -41,7 +41,7 @@ const _plans = [
     annualPrice: r'$79/yr',
     features: [
       '100 AI messages / day',
-      'Up to 5 tutor characters',
+      'Up to 5 Mochis',
       'Quiz & flashcards',
       'Homework photo scan',
     ],
@@ -54,7 +54,7 @@ const _plans = [
     annualPrice: r'$159/yr',
     features: [
       'Unlimited AI messages',
-      'Unlimited tutor characters',
+      'Unlimited Mochis',
       'Sonnet model for complex questions',
       'All Pro features',
     ],
@@ -78,7 +78,7 @@ const _plans = [
   _Plan(
     id: 'centre_monthly',
     title: 'Centre',
-    subtitle: 'Up to 15 students · for tutoring centres',
+    subtitle: 'Up to 15 students · for learning centres',
     price: r'$89.99/mo',
     annualPrice: r'$720/yr',
     features: [
@@ -213,7 +213,7 @@ class _SubscriptionPlansScreenState
             backgroundColor: AppColors.bg,
             elevation: 0,
             title: Text(
-              isPremium ? 'Your subscription' : 'Upgrade Pally',
+              isPremium ? 'Your subscription' : 'Upgrade Memoly',
               style: AppTextStyles.title,
             ),
             centerTitle: true,
@@ -356,7 +356,7 @@ class _FreeTierBanner extends StatelessWidget {
               children: [
                 Text('Free', style: AppTextStyles.title),
                 Text(
-                  '20 messages/day · 1 tutor character · basic features',
+                  '20 messages/day · 1 Mochi · basic features',
                   style: AppTextStyles.bodySmall,
                 ),
               ],

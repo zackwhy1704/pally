@@ -58,7 +58,7 @@ List<_TourStep> _buildSteps() => [
   const _TourStep(
     emoji: '👋',
     title: 'Hi, I\'m Mochi!',
-    body: 'Let me show you 4 quick things that make Pally different from any other study app.',
+    body: 'Let me show you 4 quick things that make Memoly different from any other study app.',
   ),
   _TourStep(
     emoji: '📚',
@@ -90,7 +90,7 @@ List<_TourStep> _buildSteps() => [
   ),
   const _TourStep(
     emoji: '🚀',
-    title: 'Not a tutor that knows the textbook.',
+    title: 'Not a generic AI — a Mochi that knows yours.',
     body: 'A Mochi that knows yours.',
     cta: 'Make my first Mochi',
   ),

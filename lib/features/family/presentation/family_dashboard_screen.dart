@@ -225,7 +225,7 @@ class _EmptyChildren extends StatelessWidget {
                   .copyWith(fontWeight: FontWeight.w700)),
           const SizedBox(height: 4),
           Text(
-              'Ask your child to open Pally → Me → "Link a grown-up" and share their code.',
+              'Ask your child to open Memoly → Me → "Link a grown-up" and share their code.',
               style: AppTextStyles.bodySmall,
               textAlign: TextAlign.center),
           const SizedBox(height: AppSpacing.sm),

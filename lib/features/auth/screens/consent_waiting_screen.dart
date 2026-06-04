@@ -219,7 +219,7 @@ class _ConsentWaitingScreenState extends ConsumerState<ConsentWaitingScreen> {
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
-                'You can explore Pally now. Your progress saves once approved.',
+                'You can explore Memoly now. Your progress saves once approved.',
                 style: AppTextStyles.caption,
                 textAlign: TextAlign.center,
               ),

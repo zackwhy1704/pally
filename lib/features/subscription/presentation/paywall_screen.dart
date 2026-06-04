@@ -36,7 +36,7 @@ class PaywallScreen extends ConsumerWidget {
         'EXTRA_FREEZE' => 'Stack more streak freezes',
         'GROUPS' => 'Study groups are premium',
         'ADD_STUDENT' => 'Need more student accounts?',
-        _ => 'Unlock Pally Premium',
+        _ => 'Unlock Memoly Premium',
       };
 
   String get _subhead => switch (feature) {
@@ -62,9 +62,9 @@ class PaywallScreen extends ConsumerWidget {
                 'Available on Pro and above.',
         'ADD_STUDENT' =>
             'Family plan supports up to 4 students. '
-                'Centre plan supports up to 15 students for tutoring centres.',
+                'Centre plan supports up to 15 students.',
         _ =>
-            'Get everything Pally has to offer — unlimited Mochis, family '
+            'Get everything Memoly has to offer — unlimited Mochis, family '
                 'sharing, premium analytics.',
       };
 

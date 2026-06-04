@@ -128,7 +128,7 @@ class _CodeCard extends StatelessWidget {
               Expanded(
                 child: FilledButton.icon(
                   onPressed: () => share_plus.Share.share(
-                      'Try Pally — the AI study companion. '
+                      'Try Memoly — the AI study companion. '
                       'Use my code $code at sign-up so we both earn bonus '
                       'stars when you take your first quiz.'),
                   icon: const Icon(Icons.ios_share_rounded, size: 16),

@@ -309,7 +309,7 @@ class _TopBar extends StatelessWidget {
             ),
           Expanded(
             child: Text(
-              'Choose Your Pally ✨',
+              'Choose Your Mochi ✨',
               style: AppTextStyles.title,
               textAlign: isOnboarding ? TextAlign.center : TextAlign.start,
             ),
