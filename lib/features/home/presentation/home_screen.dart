@@ -21,6 +21,7 @@ import 'package:pally/features/subscription/presentation/trial_countdown_banner.
 import 'package:pally/features/subscription/presentation/trial_welcome_screen.dart';
 import 'package:pally/features/subscription/trial_status_provider.dart';
 import 'package:pally/features/onboarding/presentation/feature_tour.dart';
+import 'package:pally/features/centre/centre_mode.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -573,6 +574,7 @@ class _SlotLockedSheetState extends ConsumerState<_SlotLockedSheet> {
 // ── Tutor long-press options sheet ────────────────────────────────────────────
 
 void _showTutorOptions(BuildContext context, WidgetRef ref, Avatar avatar) {
+  final centreConfig = resolveCentreMode(ref, avatar);
   showModalBottomSheet<void>(
     context: context,
     backgroundColor: Colors.transparent,
@@ -628,40 +630,42 @@ void _showTutorOptions(BuildContext context, WidgetRef ref, Avatar avatar) {
             ],
           ),
           const SizedBox(height: AppSpacing.lg),
-          _OptionTile(
-            icon: Icons.library_books_outlined,
-            label: 'Manage knowledge',
-            color: AppColors.teal,
-            onTap: () {
-              Navigator.pop(sheetCtx);
-              UploadRoute(avatarId: avatar.id).push(context);
-            },
-          ),
-          _OptionTile(
-            icon: Icons.delete_outline_rounded,
-            label: 'Delete Mochi',
-            color: AppColors.coral,
-            onTap: () async {
-              Navigator.pop(sheetCtx);
-              final confirmed = await PallyDeleteTutorDialog.show(
-                context: context,
-                avatar: avatar,
-              );
-              if (confirmed == true) {
-                final ok = await ref
-                    .read(homeViewModelProvider.notifier)
-                    .deleteAvatar(avatar.id);
-                if (context.mounted) {
-                  if (ok) {
-                    HapticFeedback.heavyImpact();
-                    PallyToast.success(context, '${avatar.name} deleted');
-                  } else {
-                    PallyToast.error(context, 'Delete failed. Try again.');
+          if (centreConfig.canUpload)
+            _OptionTile(
+              icon: Icons.library_books_outlined,
+              label: 'Manage knowledge',
+              color: AppColors.teal,
+              onTap: () {
+                Navigator.pop(sheetCtx);
+                UploadRoute(avatarId: avatar.id).push(context);
+              },
+            ),
+          if (centreConfig.canDelete)
+            _OptionTile(
+              icon: Icons.delete_outline_rounded,
+              label: 'Delete Mochi',
+              color: AppColors.coral,
+              onTap: () async {
+                Navigator.pop(sheetCtx);
+                final confirmed = await PallyDeleteTutorDialog.show(
+                  context: context,
+                  avatar: avatar,
+                );
+                if (confirmed == true) {
+                  final ok = await ref
+                      .read(homeViewModelProvider.notifier)
+                      .deleteAvatar(avatar.id);
+                  if (context.mounted) {
+                    if (ok) {
+                      HapticFeedback.heavyImpact();
+                      PallyToast.success(context, '${avatar.name} deleted');
+                    } else {
+                      PallyToast.error(context, 'Delete failed. Try again.');
+                    }
                   }
                 }
-              }
-            },
-          ),
+              },
+            ),
           SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
         ],
       ),

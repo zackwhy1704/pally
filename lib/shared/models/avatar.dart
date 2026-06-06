@@ -119,6 +119,15 @@ class Avatar with _$Avatar {
     @Default(true) bool isActive,
     /// Optional teacher-specified method preferences injected into Block 2.
     String? teacherPreferences,
+    // ── Centre-mode fields (null/false for all personal avatars) ──────────
+    /// True when this avatar is provisioned by a tuition centre.
+    /// Disables uploads, teach, and delete; enforces closed-book chat.
+    @Default(false) bool centreManaged,
+    String? centreId,
+    /// Display name override, e.g. "ABC Mochi". Falls back to avatar.name.
+    String? centreBrandName,
+    /// Hex accent colour for the centre's card/appbar accent.
+    String? centreAccentColor,
   }) = _Avatar;
 
   factory Avatar.fromJson(Map<String, dynamic> json) => _$AvatarFromJson(json);

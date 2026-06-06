@@ -15,6 +15,7 @@ import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/features/quiz/providers/quiz_status_provider.dart';
 import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/features/centre/centre_mode.dart';
 
 class LibraryScreen extends ConsumerWidget {
   const LibraryScreen({super.key});
@@ -114,13 +115,14 @@ class LibraryScreen extends ConsumerWidget {
   }
 }
 
-class _AvatarRow extends StatelessWidget {
+class _AvatarRow extends ConsumerWidget {
   const _AvatarRow({required this.avatar});
 
   final Avatar avatar;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final centreConfig = resolveCentreMode(ref, avatar);
     return GestureDetector(
       onTap: () => WikiViewerRoute(avatarId: avatar.id).push(context),
       child: Container(
@@ -155,7 +157,9 @@ class _AvatarRow extends StatelessWidget {
                     children: [
                       Flexible(
                         child: Text(
-                          avatar.name,
+                          centreConfig.active
+                              ? centreConfig.brandName
+                              : avatar.name,
                           style: AppTextStyles.body
                               .copyWith(fontWeight: FontWeight.w700),
                           maxLines: 1,
@@ -204,13 +208,14 @@ class _AvatarRow extends StatelessWidget {
                       onTap: () => ChatRoute(avatarId: avatar.id).push(context),
                     ),
                     const SizedBox(width: AppSpacing.xs),
-                    _ActionChip(
-                      label: 'Add',
-                      icon: Icons.add_rounded,
-                      color: AppColors.teal,
-                      onTap: () =>
-                          UploadRoute(avatarId: avatar.id).push(context),
-                    ),
+                    if (centreConfig.canUpload)
+                      _ActionChip(
+                        label: 'Add',
+                        icon: Icons.add_rounded,
+                        color: AppColors.teal,
+                        onTap: () =>
+                            UploadRoute(avatarId: avatar.id).push(context),
+                      ),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.xs),
@@ -248,17 +253,18 @@ class _AvatarRow extends StatelessWidget {
                           : null,
                     ),
                     const SizedBox(width: AppSpacing.xs),
-                    _ActionChip(
-                      label: 'Teach',
-                      icon: Icons.school_rounded,
-                      color: avatar.hasKnowledge
-                          ? AppColors.pink
-                          : AppColors.text3,
-                      onTap: avatar.hasKnowledge
-                          ? () => TeachMochiRoute(avatarId: avatar.id)
-                              .push(context)
-                          : null,
-                    ),
+                    if (centreConfig.canTeach)
+                      _ActionChip(
+                        label: 'Teach',
+                        icon: Icons.school_rounded,
+                        color: avatar.hasKnowledge
+                            ? AppColors.pink
+                            : AppColors.text3,
+                        onTap: avatar.hasKnowledge
+                            ? () => TeachMochiRoute(avatarId: avatar.id)
+                                .push(context)
+                            : null,
+                      ),
                   ],
                 ),
               ],

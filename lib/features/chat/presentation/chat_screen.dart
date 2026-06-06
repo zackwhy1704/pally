@@ -27,6 +27,7 @@ import 'package:pally/features/chat/widgets/mode_coach_mark.dart';
 import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
 import 'package:pally/features/onboarding/presentation/feature_tour.dart';
 import 'package:pally/features/chat/providers/chat_usage_provider.dart';
+import 'package:pally/features/centre/centre_mode.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key, required this.avatarId});
@@ -233,6 +234,9 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final chatState = ref.watch(chatViewModelProvider(avatarId));
+    final centreConfig = avatar != null
+        ? resolveCentreMode(ref, avatar!)
+        : CentreModeConfig.inactive;
 
     // Derive the AppBar content height from the theme so it adapts if the
     // theme ever changes (no magic numbers).
@@ -295,11 +299,28 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
           // fill exactly the leftover space and never exceed it.
           Expanded(
             flex: 1,
-            child: Text(
-              avatar?.name ?? 'Loading…',
-              style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w700),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  centreConfig.active
+                      ? centreConfig.brandName
+                      : (avatar?.name ?? 'Loading…'),
+                  style:
+                      AppTextStyles.body.copyWith(fontWeight: FontWeight.w700),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (centreConfig.active)
+                  Text(
+                    'Centre-curated answers only',
+                    style: AppTextStyles.caption
+                        .copyWith(color: AppColors.text3),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+              ],
             ),
           ),
 
@@ -367,38 +388,42 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
               }
             },
             itemBuilder: (_) => [
-              PopupMenuItem(
-                value: 'teach',
-                child: Row(children: [
-                  const Icon(Icons.school_outlined,
-                      color: AppColors.purple, size: 18),
-                  const SizedBox(width: 10),
-                  Text('Teach Mochi',
-                      style: AppTextStyles.body.copyWith(fontSize: 13)),
-                ]),
-              ),
-              PopupMenuItem(
-                value: 'upload',
-                child: Row(children: [
-                  const Icon(Icons.upload_file_outlined,
-                      color: AppColors.text2, size: 18),
-                  const SizedBox(width: 10),
-                  Text('Add knowledge',
-                      style: AppTextStyles.body.copyWith(fontSize: 13)),
-                ]),
-              ),
-              const PopupMenuDivider(),
-              PopupMenuItem(
-                value: 'delete',
-                child: Row(children: [
-                  const Icon(Icons.delete_outline_rounded,
-                      color: AppColors.coral, size: 18),
-                  const SizedBox(width: 10),
-                  Text('Delete Mochi',
-                      style: AppTextStyles.body.copyWith(
-                          fontSize: 13, color: AppColors.coral)),
-                ]),
-              ),
+              if (centreConfig.canTeach)
+                PopupMenuItem(
+                  value: 'teach',
+                  child: Row(children: [
+                    const Icon(Icons.school_outlined,
+                        color: AppColors.purple, size: 18),
+                    const SizedBox(width: 10),
+                    Text('Teach Mochi',
+                        style: AppTextStyles.body.copyWith(fontSize: 13)),
+                  ]),
+                ),
+              if (centreConfig.canUpload)
+                PopupMenuItem(
+                  value: 'upload',
+                  child: Row(children: [
+                    const Icon(Icons.upload_file_outlined,
+                        color: AppColors.text2, size: 18),
+                    const SizedBox(width: 10),
+                    Text('Add knowledge',
+                        style: AppTextStyles.body.copyWith(fontSize: 13)),
+                  ]),
+                ),
+              if (centreConfig.canDelete) ...[
+                const PopupMenuDivider(),
+                PopupMenuItem(
+                  value: 'delete',
+                  child: Row(children: [
+                    const Icon(Icons.delete_outline_rounded,
+                        color: AppColors.coral, size: 18),
+                    const SizedBox(width: 10),
+                    Text('Delete Mochi',
+                        style: AppTextStyles.body.copyWith(
+                            fontSize: 13, color: AppColors.coral)),
+                  ]),
+                ),
+              ],
             ],
           ),
         ],

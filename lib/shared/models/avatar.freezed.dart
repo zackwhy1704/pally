@@ -49,7 +49,18 @@ mixin _$Avatar {
   bool get isActive => throw _privateConstructorUsedError;
 
   /// Optional teacher-specified method preferences injected into Block 2.
-  String? get teacherPreferences => throw _privateConstructorUsedError;
+  String? get teacherPreferences =>
+      throw _privateConstructorUsedError; // ── Centre-mode fields (null/false for all personal avatars) ──────────
+  /// True when this avatar is provisioned by a tuition centre.
+  /// Disables uploads, teach, and delete; enforces closed-book chat.
+  bool get centreManaged => throw _privateConstructorUsedError;
+  String? get centreId => throw _privateConstructorUsedError;
+
+  /// Display name override, e.g. "ABC Mochi". Falls back to avatar.name.
+  String? get centreBrandName => throw _privateConstructorUsedError;
+
+  /// Hex accent colour for the centre's card/appbar accent.
+  String? get centreAccentColor => throw _privateConstructorUsedError;
 
   /// Serializes this Avatar to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -88,7 +99,11 @@ abstract class $AvatarCopyWith<$Res> {
       DateTime? testDate,
       String brainState,
       bool isActive,
-      String? teacherPreferences});
+      String? teacherPreferences,
+      bool centreManaged,
+      String? centreId,
+      String? centreBrandName,
+      String? centreAccentColor});
 }
 
 /// @nodoc
@@ -121,6 +136,10 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
     Object? brainState = null,
     Object? isActive = null,
     Object? teacherPreferences = freezed,
+    Object? centreManaged = null,
+    Object? centreId = freezed,
+    Object? centreBrandName = freezed,
+    Object? centreAccentColor = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -183,6 +202,22 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
           ? _value.teacherPreferences
           : teacherPreferences // ignore: cast_nullable_to_non_nullable
               as String?,
+      centreManaged: null == centreManaged
+          ? _value.centreManaged
+          : centreManaged // ignore: cast_nullable_to_non_nullable
+              as bool,
+      centreId: freezed == centreId
+          ? _value.centreId
+          : centreId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      centreBrandName: freezed == centreBrandName
+          ? _value.centreBrandName
+          : centreBrandName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      centreAccentColor: freezed == centreAccentColor
+          ? _value.centreAccentColor
+          : centreAccentColor // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -217,7 +252,11 @@ abstract class _$$AvatarImplCopyWith<$Res> implements $AvatarCopyWith<$Res> {
       DateTime? testDate,
       String brainState,
       bool isActive,
-      String? teacherPreferences});
+      String? teacherPreferences,
+      bool centreManaged,
+      String? centreId,
+      String? centreBrandName,
+      String? centreAccentColor});
 }
 
 /// @nodoc
@@ -248,6 +287,10 @@ class __$$AvatarImplCopyWithImpl<$Res>
     Object? brainState = null,
     Object? isActive = null,
     Object? teacherPreferences = freezed,
+    Object? centreManaged = null,
+    Object? centreId = freezed,
+    Object? centreBrandName = freezed,
+    Object? centreAccentColor = freezed,
   }) {
     return _then(_$AvatarImpl(
       id: null == id
@@ -310,6 +353,22 @@ class __$$AvatarImplCopyWithImpl<$Res>
           ? _value.teacherPreferences
           : teacherPreferences // ignore: cast_nullable_to_non_nullable
               as String?,
+      centreManaged: null == centreManaged
+          ? _value.centreManaged
+          : centreManaged // ignore: cast_nullable_to_non_nullable
+              as bool,
+      centreId: freezed == centreId
+          ? _value.centreId
+          : centreId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      centreBrandName: freezed == centreBrandName
+          ? _value.centreBrandName
+          : centreBrandName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      centreAccentColor: freezed == centreAccentColor
+          ? _value.centreAccentColor
+          : centreAccentColor // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -340,7 +399,11 @@ class _$AvatarImpl implements _Avatar {
       this.testDate,
       this.brainState = 'READY',
       this.isActive = true,
-      this.teacherPreferences});
+      this.teacherPreferences,
+      this.centreManaged = false,
+      this.centreId,
+      this.centreBrandName,
+      this.centreAccentColor});
 
   factory _$AvatarImpl.fromJson(Map<String, dynamic> json) =>
       _$$AvatarImplFromJson(json);
@@ -393,10 +456,26 @@ class _$AvatarImpl implements _Avatar {
   /// Optional teacher-specified method preferences injected into Block 2.
   @override
   final String? teacherPreferences;
+// ── Centre-mode fields (null/false for all personal avatars) ──────────
+  /// True when this avatar is provisioned by a tuition centre.
+  /// Disables uploads, teach, and delete; enforces closed-book chat.
+  @override
+  @JsonKey()
+  final bool centreManaged;
+  @override
+  final String? centreId;
+
+  /// Display name override, e.g. "ABC Mochi". Falls back to avatar.name.
+  @override
+  final String? centreBrandName;
+
+  /// Hex accent colour for the centre's card/appbar accent.
+  @override
+  final String? centreAccentColor;
 
   @override
   String toString() {
-    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate, brainState: $brainState, isActive: $isActive, teacherPreferences: $teacherPreferences)';
+    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate, brainState: $brainState, isActive: $isActive, teacherPreferences: $teacherPreferences, centreManaged: $centreManaged, centreId: $centreId, centreBrandName: $centreBrandName, centreAccentColor: $centreAccentColor)';
   }
 
   @override
@@ -430,28 +509,41 @@ class _$AvatarImpl implements _Avatar {
             (identical(other.isActive, isActive) ||
                 other.isActive == isActive) &&
             (identical(other.teacherPreferences, teacherPreferences) ||
-                other.teacherPreferences == teacherPreferences));
+                other.teacherPreferences == teacherPreferences) &&
+            (identical(other.centreManaged, centreManaged) ||
+                other.centreManaged == centreManaged) &&
+            (identical(other.centreId, centreId) ||
+                other.centreId == centreId) &&
+            (identical(other.centreBrandName, centreBrandName) ||
+                other.centreBrandName == centreBrandName) &&
+            (identical(other.centreAccentColor, centreAccentColor) ||
+                other.centreAccentColor == centreAccentColor));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      name,
-      character,
-      subject,
-      wikiPageCount,
-      fileCount,
-      createdAt,
-      updatedAt,
-      pedagogyMode,
-      gradeLevel,
-      curriculumType,
-      testDate,
-      brainState,
-      isActive,
-      teacherPreferences);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        id,
+        name,
+        character,
+        subject,
+        wikiPageCount,
+        fileCount,
+        createdAt,
+        updatedAt,
+        pedagogyMode,
+        gradeLevel,
+        curriculumType,
+        testDate,
+        brainState,
+        isActive,
+        teacherPreferences,
+        centreManaged,
+        centreId,
+        centreBrandName,
+        centreAccentColor
+      ]);
 
   /// Create a copy of Avatar
   /// with the given fields replaced by the non-null parameter values.
@@ -493,7 +585,11 @@ abstract class _Avatar implements Avatar {
       final DateTime? testDate,
       final String brainState,
       final bool isActive,
-      final String? teacherPreferences}) = _$AvatarImpl;
+      final String? teacherPreferences,
+      final bool centreManaged,
+      final String? centreId,
+      final String? centreBrandName,
+      final String? centreAccentColor}) = _$AvatarImpl;
 
   factory _Avatar.fromJson(Map<String, dynamic> json) = _$AvatarImpl.fromJson;
 
@@ -541,7 +637,22 @@ abstract class _Avatar implements Avatar {
 
   /// Optional teacher-specified method preferences injected into Block 2.
   @override
-  String? get teacherPreferences;
+  String?
+      get teacherPreferences; // ── Centre-mode fields (null/false for all personal avatars) ──────────
+  /// True when this avatar is provisioned by a tuition centre.
+  /// Disables uploads, teach, and delete; enforces closed-book chat.
+  @override
+  bool get centreManaged;
+  @override
+  String? get centreId;
+
+  /// Display name override, e.g. "ABC Mochi". Falls back to avatar.name.
+  @override
+  String? get centreBrandName;
+
+  /// Hex accent colour for the centre's card/appbar accent.
+  @override
+  String? get centreAccentColor;
 
   /// Create a copy of Avatar
   /// with the given fields replaced by the non-null parameter values.

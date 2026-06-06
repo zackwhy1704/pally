@@ -12,6 +12,7 @@ import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/upload_result.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/upload/presentation/upload_view_model.dart';
+import 'package:pally/features/centre/centre_mode.dart';
 
 class UploadScreen extends ConsumerWidget {
   const UploadScreen({super.key, required this.avatarId});
@@ -22,6 +23,19 @@ class UploadScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(uploadViewModelProvider(avatarId));
     final vm = ref.read(uploadViewModelProvider(avatarId).notifier);
+
+    // Defence-in-depth: if this avatar is centre-managed, uploads are not
+    // allowed. Redirect back immediately — the calling screens already hide
+    // the entry point, so this only fires if someone navigates directly.
+    final centreConfig = state.avatar != null
+        ? resolveCentreMode(ref, state.avatar!)
+        : CentreModeConfig.inactive;
+    if (centreConfig.active) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) Navigator.of(context).pop();
+      });
+      return const SizedBox.shrink();
+    }
 
     // Toast single-file errors; multi-file errors are shown inline via
     // _FileErrorList so each file gets its own message.
