@@ -46,33 +46,27 @@ class CentreModeConfig {
 /// non-admin callers of [resolveCentreMode] always get `active=false`.
 final centreModeDemoOverrideProvider = StateProvider<bool>((ref) => false);
 
-/// Resolves the [CentreModeConfig] for [avatar] using [ref].
+/// Resolves the [CentreModeConfig] for [avatar].
 ///
-/// Call this inside `build()` or a callback — not in a top-level provider —
-/// because it reads both the avatar and the admin flag.
+/// Only looks at `avatar.centreManaged` — this is the server truth for real
+/// centre avatars. Personal avatars always return [CentreModeConfig.inactive].
+/// The admin demo toggle is handled separately via [showDemoCentreCard].
 CentreModeConfig resolveCentreMode(WidgetRef ref, Avatar avatar) {
-  // Production path: server says this avatar is centre-managed.
-  if (avatar.centreManaged) {
-    return CentreModeConfig(
-      active: true,
-      brandName: avatar.centreBrandName ?? CentreModeConfig._defaultBrand,
-      centreId: avatar.centreId,
-      accentColorHex: avatar.centreAccentColor,
-    );
-  }
+  if (!avatar.centreManaged) return CentreModeConfig.inactive;
+  return CentreModeConfig(
+    active: true,
+    brandName: avatar.centreBrandName ?? CentreModeConfig._defaultBrand,
+    centreId: avatar.centreId,
+    accentColorHex: avatar.centreAccentColor,
+  );
+}
 
-  // Admin demo path: override active only when the admin flag AND the toggle
-  // are both true. A non-admin who somehow sets the provider gets nothing.
+/// Returns true when an admin has the demo toggle on.
+/// Used to inject a FAKE centre Mochi card into the avatar list so the admin
+/// can preview the extra card without a real centre enrolment. Never affects
+/// real/existing avatar cards.
+bool showDemoCentreCard(WidgetRef ref) {
   final isAdmin = isFlagEnabled(ref, FeatureFlags.isAdmin);
   final demoOn = ref.watch(centreModeDemoOverrideProvider);
-  if (isAdmin && demoOn) {
-    return CentreModeConfig(
-      active: true,
-      brandName: avatar.centreBrandName ?? CentreModeConfig._defaultBrand,
-      centreId: avatar.centreId,
-      accentColorHex: avatar.centreAccentColor,
-    );
-  }
-
-  return CentreModeConfig.inactive;
+  return isAdmin && demoOn;
 }

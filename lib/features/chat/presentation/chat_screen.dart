@@ -27,7 +27,6 @@ import 'package:pally/features/chat/widgets/mode_coach_mark.dart';
 import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
 import 'package:pally/features/onboarding/presentation/feature_tour.dart';
 import 'package:pally/features/chat/providers/chat_usage_provider.dart';
-import 'package:pally/features/centre/centre_mode.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key, required this.avatarId});
@@ -234,9 +233,7 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final chatState = ref.watch(chatViewModelProvider(avatarId));
-    final centreConfig = avatar != null
-        ? resolveCentreMode(ref, avatar!)
-        : CentreModeConfig.inactive;
+    final isCentre = avatar?.centreManaged ?? false;
 
     // Derive the AppBar content height from the theme so it adapts if the
     // theme ever changes (no magic numbers).
@@ -304,15 +301,13 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  centreConfig.active
-                      ? centreConfig.brandName
-                      : (avatar?.name ?? 'Loading…'),
+                  avatar?.name ?? 'Loading…',
                   style:
                       AppTextStyles.body.copyWith(fontWeight: FontWeight.w700),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                if (centreConfig.active)
+                if (isCentre)
                   Text(
                     'Centre-curated answers only',
                     style: AppTextStyles.caption
@@ -388,7 +383,7 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
               }
             },
             itemBuilder: (_) => [
-              if (centreConfig.canTeach)
+              if (!isCentre)
                 PopupMenuItem(
                   value: 'teach',
                   child: Row(children: [
@@ -399,7 +394,7 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
                         style: AppTextStyles.body.copyWith(fontSize: 13)),
                   ]),
                 ),
-              if (centreConfig.canUpload)
+              if (!isCentre)
                 PopupMenuItem(
                   value: 'upload',
                   child: Row(children: [
@@ -410,7 +405,7 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
                         style: AppTextStyles.body.copyWith(fontSize: 13)),
                   ]),
                 ),
-              if (centreConfig.canDelete) ...[
+              if (!isCentre) ...[
                 const PopupMenuDivider(),
                 PopupMenuItem(
                   value: 'delete',

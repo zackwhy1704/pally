@@ -15,7 +15,6 @@ import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/features/quiz/providers/quiz_status_provider.dart';
 import 'package:pally/shared/models/avatar.dart';
-import 'package:pally/features/centre/centre_mode.dart';
 
 class LibraryScreen extends ConsumerWidget {
   const LibraryScreen({super.key});
@@ -122,7 +121,7 @@ class _AvatarRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final centreConfig = resolveCentreMode(ref, avatar);
+    final isCentre = avatar.centreManaged;
     return GestureDetector(
       onTap: () => WikiViewerRoute(avatarId: avatar.id).push(context),
       child: Container(
@@ -157,9 +156,7 @@ class _AvatarRow extends ConsumerWidget {
                     children: [
                       Flexible(
                         child: Text(
-                          centreConfig.active
-                              ? centreConfig.brandName
-                              : avatar.name,
+                          avatar.name,
                           style: AppTextStyles.body
                               .copyWith(fontWeight: FontWeight.w700),
                           maxLines: 1,
@@ -208,7 +205,7 @@ class _AvatarRow extends ConsumerWidget {
                       onTap: () => ChatRoute(avatarId: avatar.id).push(context),
                     ),
                     const SizedBox(width: AppSpacing.xs),
-                    if (centreConfig.canUpload)
+                    if (!isCentre)
                       _ActionChip(
                         label: 'Add',
                         icon: Icons.add_rounded,
@@ -253,7 +250,7 @@ class _AvatarRow extends ConsumerWidget {
                           : null,
                     ),
                     const SizedBox(width: AppSpacing.xs),
-                    if (centreConfig.canTeach)
+                    if (!isCentre)
                       _ActionChip(
                         label: 'Teach',
                         icon: Icons.school_rounded,

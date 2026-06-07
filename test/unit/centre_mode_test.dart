@@ -77,11 +77,28 @@ void main() {
       expect(config.closedBook, isTrue);
     });
 
-    test('active for admin with demo override on personal avatar', () {
+    test('inactive for personal avatar even when admin+demo (demo = extra card, not name change)', () {
+      // resolveCentreMode only checks centreManaged. The admin demo toggle
+      // shows an EXTRA fake card (showDemoCentreCard) but never changes an
+      // existing personal avatar's mode.
       final ref = _FakeRef(isAdmin: true, demoOn: true);
       final config = resolveCentreMode(ref, _avatar());
-      expect(config.active, isTrue);
-      expect(config.brandName, 'ABC Mochi'); // default brand
+      expect(config.active, isFalse);
+    });
+
+    test('showDemoCentreCard true for admin with toggle on', () {
+      final ref = _FakeRef(isAdmin: true, demoOn: true);
+      expect(showDemoCentreCard(ref), isTrue);
+    });
+
+    test('showDemoCentreCard false for non-admin even with toggle on', () {
+      final ref = _FakeRef(isAdmin: false, demoOn: true);
+      expect(showDemoCentreCard(ref), isFalse);
+    });
+
+    test('showDemoCentreCard false for admin with toggle off', () {
+      final ref = _FakeRef(isAdmin: true, demoOn: false);
+      expect(showDemoCentreCard(ref), isFalse);
     });
 
     test('inactive for non-admin even if demo override is on', () {

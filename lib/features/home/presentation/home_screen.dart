@@ -294,6 +294,12 @@ class _AvatarGrid extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Admin demo: show a fake centre Mochi card appended to the real list.
+    // Real centre Mochis (centreManaged=true) come from the server as normal
+    // avatars and are already in [avatars] — the demo card is purely additive.
+    final showDemo = showDemoCentreCard(ref);
+    final totalCount = avatars.length + (showDemo ? 1 : 0);
+
     return RefreshIndicator(
       color: AppColors.purple,
       onRefresh: () => ref.read(homeViewModelProvider.notifier).refresh(),
@@ -305,9 +311,13 @@ class _AvatarGrid extends ConsumerWidget {
           mainAxisSpacing: 12,
           childAspectRatio: 178 / 160,
         ),
-        itemCount: avatars.length,
+        itemCount: totalCount,
         itemBuilder: (context, index) {
-          return _AvatarCard(avatar: avatars[index]);
+          if (index < avatars.length) {
+            return _AvatarCard(avatar: avatars[index]);
+          }
+          // Demo centre card — shown only to admins with toggle on.
+          return const _DemoCentreCard();
         },
       ),
     );
@@ -433,6 +443,109 @@ class _AvatarCard extends ConsumerWidget {
                   ),
                 ),
               ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Demo centre card (admin-only, visual preview only) ────────────────────────
+
+/// A read-only preview card that looks like a centre-provisioned Mochi.
+/// Shown ONLY when an admin has the "Centre-mode (demo)" toggle on.
+/// Tapping it shows a toast explaining it's a demo preview.
+class _DemoCentreCard extends StatelessWidget {
+  const _DemoCentreCard();
+
+  @override
+  Widget build(BuildContext context) {
+    const accentColor = AppColors.teal;
+    const bgColor = AppColors.tealL;
+
+    return GestureDetector(
+      onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Demo: this is how a centre Mochi card looks.'),
+          duration: Duration(seconds: 2),
+        ),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: accentColor, width: 2),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: Container(
+                    color: bgColor,
+                    width: double.infinity,
+                    child: const Center(
+                      child: Icon(Icons.business_center_outlined,
+                          color: accentColor, size: 44),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: bgColor,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          'CENTRE',
+                          style: AppTextStyles.caption.copyWith(
+                            color: accentColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'ABC Mochi',
+                        style: AppTextStyles.label.copyWith(
+                          color: AppColors.text1,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            // Admin demo badge — top-left
+            Positioned(
+              top: 6,
+              left: 6,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                decoration: BoxDecoration(
+                  color: accentColor,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  'DEMO',
+                  style: AppTextStyles.caption
+                      .copyWith(color: Colors.white, fontSize: 8),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -574,7 +687,9 @@ class _SlotLockedSheetState extends ConsumerState<_SlotLockedSheet> {
 // ── Tutor long-press options sheet ────────────────────────────────────────────
 
 void _showTutorOptions(BuildContext context, WidgetRef ref, Avatar avatar) {
-  final centreConfig = resolveCentreMode(ref, avatar);
+  // centreManaged=true → this avatar is a centre Mochi; suppress destructive
+  // and knowledge-management options. Personal avatars are always fully editable.
+  final isCentre = avatar.centreManaged;
   showModalBottomSheet<void>(
     context: context,
     backgroundColor: Colors.transparent,
@@ -630,7 +745,7 @@ void _showTutorOptions(BuildContext context, WidgetRef ref, Avatar avatar) {
             ],
           ),
           const SizedBox(height: AppSpacing.lg),
-          if (centreConfig.canUpload)
+          if (!isCentre)
             _OptionTile(
               icon: Icons.library_books_outlined,
               label: 'Manage knowledge',
@@ -640,7 +755,7 @@ void _showTutorOptions(BuildContext context, WidgetRef ref, Avatar avatar) {
                 UploadRoute(avatarId: avatar.id).push(context);
               },
             ),
-          if (centreConfig.canDelete)
+          if (!isCentre)
             _OptionTile(
               icon: Icons.delete_outline_rounded,
               label: 'Delete Mochi',
