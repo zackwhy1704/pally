@@ -15,6 +15,8 @@ import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/features/quiz/providers/quiz_status_provider.dart';
 import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/shared/models/mochi_character.dart';
+import 'package:pally/features/centre/centre_mode.dart';
 
 class LibraryScreen extends ConsumerWidget {
   const LibraryScreen({super.key});
@@ -48,8 +50,12 @@ class LibraryScreen extends ConsumerWidget {
                     ref.read(libraryViewModelProvider.notifier).refresh(),
                 child: ListView.builder(
                   padding: const EdgeInsets.all(AppSpacing.md),
-                  itemCount: avatars.length,
+                  itemCount: avatars.length +
+                      (showDemoCentreCard(ref) ? 1 : 0),
                   itemBuilder: (context, index) {
+                    if (index == avatars.length) {
+                      return const _DemoCentreLibraryRow();
+                    }
                     final avatar = avatars[index];
                     return Dismissible(
                       key: ValueKey(avatar.id),
@@ -416,6 +422,110 @@ class _QuizChipForAvatar extends ConsumerWidget {
       icon: takenToday ? Icons.check_circle_rounded : Icons.bolt_rounded,
       color: takenToday ? AppColors.green : AppColors.amber,
       onTap: () => QuizRoute(avatarId: avatar.id).push(context),
+    );
+  }
+}
+
+// ── Demo centre row (admin-only) ──────────────────────────────────────────────
+
+class _DemoCentreLibraryRow extends StatefulWidget {
+  const _DemoCentreLibraryRow();
+
+  @override
+  State<_DemoCentreLibraryRow> createState() => _DemoCentreLibraryRowState();
+}
+
+class _DemoCentreLibraryRowState extends State<_DemoCentreLibraryRow> {
+  late final MochiCharacter _character;
+
+  @override
+  void initState() {
+    super.initState();
+    const list = MochiCharacter.aroundTheWorld;
+    _character = list[DateTime.now().millisecondsSinceEpoch % list.length];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bgColor = _character.bgColor;
+    final accentColor = _character.accentColor;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: accentColor, width: 2),
+        ),
+        padding: AppSpacing.card,
+        child: Row(
+          children: [
+            Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                color: bgColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: Image.asset(
+                  _character.assetPath,
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          _character.displayName,
+                          style: AppTextStyles.body
+                              .copyWith(fontWeight: FontWeight.w700),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: accentColor,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        constraints: const BoxConstraints(maxWidth: 60),
+                        child: Text(
+                          'DEMO',
+                          style: AppTextStyles.caption
+                              .copyWith(color: Colors.white),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '🏫 Centre-provisioned · read-only',
+                    style: AppTextStyles.caption
+                        .copyWith(color: AppColors.text2),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
