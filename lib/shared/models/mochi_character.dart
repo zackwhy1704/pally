@@ -9,7 +9,15 @@ enum MochiCharacter {
   lunchbox,
   library,
   headmaster,
-  goldstar;
+  goldstar,
+  // ── Around the World series (centre / special edition) ────────────────
+  atwBeret,
+  atwGlobeRider,
+  atwKebaya,
+  atwLionCity,
+  atwPharaoh,
+  atwSakura,
+  atwSombrero;
 
   String get displayName => switch (this) {
     MochiCharacter.mochi => 'Mochi',
@@ -21,6 +29,13 @@ enum MochiCharacter {
     MochiCharacter.library => 'Library Mochi',
     MochiCharacter.headmaster => 'Headmaster Mochi',
     MochiCharacter.goldstar => 'Gold Star Mochi',
+    MochiCharacter.atwBeret => 'Beret Mochi',
+    MochiCharacter.atwGlobeRider => 'Globe Rider',
+    MochiCharacter.atwKebaya => 'Kebaya Mochi',
+    MochiCharacter.atwLionCity => 'Lion City Mochi',
+    MochiCharacter.atwPharaoh => 'Pharaoh Mochi',
+    MochiCharacter.atwSakura => 'Sakura Mochi',
+    MochiCharacter.atwSombrero => 'Sombrero Mochi',
   };
 
   String get assetPath => switch (this) {
@@ -33,6 +48,13 @@ enum MochiCharacter {
     MochiCharacter.library => 'assets/images/mochi_school_7.png',
     MochiCharacter.headmaster => 'assets/images/mochi_school_6.png',
     MochiCharacter.goldstar => 'assets/images/mochi_school_premium.png',
+    MochiCharacter.atwBeret => 'assets/images/aroundTheWorld_Beret_normal.png',
+    MochiCharacter.atwGlobeRider => 'assets/images/aroundTheWorld_GlobeRider_rare.png',
+    MochiCharacter.atwKebaya => 'assets/images/aroundTheWorld_Kebaya_normal.png',
+    MochiCharacter.atwLionCity => 'assets/images/aroundTheWorld_LionCity_secret.png',
+    MochiCharacter.atwPharaoh => 'assets/images/aroundTheWorld_Pharaoh_normal.png',
+    MochiCharacter.atwSakura => 'assets/images/aroundTheWorld_Sakura_normal.png',
+    MochiCharacter.atwSombrero => 'assets/images/aroundTheWorld_Sombrero_normal.png',
   };
 
   String get defaultSubject => switch (this) {
@@ -45,6 +67,13 @@ enum MochiCharacter {
     MochiCharacter.library => 'Literature',
     MochiCharacter.headmaster => 'General',
     MochiCharacter.goldstar => 'General',
+    MochiCharacter.atwBeret ||
+    MochiCharacter.atwGlobeRider ||
+    MochiCharacter.atwKebaya ||
+    MochiCharacter.atwLionCity ||
+    MochiCharacter.atwPharaoh ||
+    MochiCharacter.atwSakura ||
+    MochiCharacter.atwSombrero => 'General',
   };
 
   /// Only the starter "Mochi" is free for every account. All eight school
@@ -53,10 +82,21 @@ enum MochiCharacter {
   bool get isLockedByDefault => this != MochiCharacter.mochi;
 
   MochiRarity get rarity => switch (this) {
-    MochiCharacter.goldstar => MochiRarity.secret,
-    MochiCharacter.headmaster => MochiRarity.rare,
+    MochiCharacter.goldstar || MochiCharacter.atwLionCity => MochiRarity.secret,
+    MochiCharacter.headmaster || MochiCharacter.atwGlobeRider => MochiRarity.rare,
     _ => MochiRarity.standard,
   };
+
+  /// All aroundTheWorld series characters.
+  static const aroundTheWorld = [
+    MochiCharacter.atwBeret,
+    MochiCharacter.atwGlobeRider,
+    MochiCharacter.atwKebaya,
+    MochiCharacter.atwLionCity,
+    MochiCharacter.atwPharaoh,
+    MochiCharacter.atwSakura,
+    MochiCharacter.atwSombrero,
+  ];
 
   Color get bgColor => switch (this) {
     MochiCharacter.mochi => const Color(0xFFFFF6F0),
@@ -68,6 +108,13 @@ enum MochiCharacter {
     MochiCharacter.library => const Color(0xFFE6F4FF),
     MochiCharacter.headmaster => const Color(0xFFFFFBE6),
     MochiCharacter.goldstar => const Color(0xFFFFFCE6),
+    MochiCharacter.atwBeret => const Color(0xFFFFF0F5),
+    MochiCharacter.atwGlobeRider => const Color(0xFFE8F4FD),
+    MochiCharacter.atwKebaya => const Color(0xFFFCF0FF),
+    MochiCharacter.atwLionCity => const Color(0xFFFFF5E0),
+    MochiCharacter.atwPharaoh => const Color(0xFFFFFAE6),
+    MochiCharacter.atwSakura => const Color(0xFFFFF0F5),
+    MochiCharacter.atwSombrero => const Color(0xFFFFF8E6),
   };
 
   Color get accentColor => switch (this) {
@@ -80,6 +127,13 @@ enum MochiCharacter {
     MochiCharacter.library => const Color(0xFF2196F3),
     MochiCharacter.headmaster => const Color(0xFFF5A623),
     MochiCharacter.goldstar => const Color(0xFFFFD700),
+    MochiCharacter.atwBeret => const Color(0xFFE91E8C),
+    MochiCharacter.atwGlobeRider => const Color(0xFF1565C0),
+    MochiCharacter.atwKebaya => const Color(0xFF8E24AA),
+    MochiCharacter.atwLionCity => const Color(0xFFE65100),
+    MochiCharacter.atwPharaoh => const Color(0xFFB8860B),
+    MochiCharacter.atwSakura => const Color(0xFFE91E8C),
+    MochiCharacter.atwSombrero => const Color(0xFF6D4C41),
   };
 
   Color get primaryColor => accentColor;

@@ -22,6 +22,7 @@ import 'package:pally/features/subscription/presentation/trial_welcome_screen.da
 import 'package:pally/features/subscription/trial_status_provider.dart';
 import 'package:pally/features/onboarding/presentation/feature_tour.dart';
 import 'package:pally/features/centre/centre_mode.dart';
+import 'package:pally/shared/models/mochi_character.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -452,22 +453,38 @@ class _AvatarCard extends ConsumerWidget {
 
 // ── Demo centre card (admin-only, visual preview only) ────────────────────────
 
-/// A read-only preview card that looks like a centre-provisioned Mochi.
+/// A read-only preview card showing a randomly selected aroundTheWorld Mochi.
 /// Shown ONLY when an admin has the "Centre-mode (demo)" toggle on.
-/// Tapping it shows a toast explaining it's a demo preview.
-class _DemoCentreCard extends StatelessWidget {
+/// The character is picked once at creation time and stays stable for the
+/// widget's lifetime (no re-randomise on rebuild).
+class _DemoCentreCard extends StatefulWidget {
   const _DemoCentreCard();
 
   @override
+  State<_DemoCentreCard> createState() => _DemoCentreCardState();
+}
+
+class _DemoCentreCardState extends State<_DemoCentreCard> {
+  late final MochiCharacter _character;
+
+  @override
+  void initState() {
+    super.initState();
+    const list = MochiCharacter.aroundTheWorld;
+    _character = list[DateTime.now().millisecondsSinceEpoch % list.length];
+  }
+
+  @override
   Widget build(BuildContext context) {
-    const accentColor = AppColors.teal;
-    const bgColor = AppColors.tealL;
+    final bgColor = _character.bgColor;
+    final accentColor = _character.accentColor;
 
     return GestureDetector(
       onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Demo: this is how a centre Mochi card looks.'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(
+              'Demo: ${_character.displayName} — centre Mochi preview.'),
+          duration: const Duration(seconds: 2),
         ),
       ),
       child: Container(
@@ -485,9 +502,13 @@ class _DemoCentreCard extends StatelessWidget {
                   child: Container(
                     color: bgColor,
                     width: double.infinity,
-                    child: const Center(
-                      child: Icon(Icons.business_center_outlined,
-                          color: accentColor, size: 44),
+                    child: Center(
+                      child: Image.asset(
+                        _character.assetPath,
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ),
@@ -514,7 +535,7 @@ class _DemoCentreCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'ABC Mochi',
+                        _character.displayName,
                         style: AppTextStyles.label.copyWith(
                           color: AppColors.text1,
                           fontWeight: FontWeight.w700,

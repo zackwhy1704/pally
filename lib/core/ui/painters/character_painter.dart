@@ -32,6 +32,16 @@ CustomPainter characterPainterFor(MochiCharacter character, double size) {
       return NoriPainter(size);
     case MochiCharacter.goldstar:
       return LumisPainter(size);
+    // aroundTheWorld series — rendered via Image.asset; painter is a
+    // fallback if asset fails (use the base Mochi painter).
+    case MochiCharacter.atwBeret:
+    case MochiCharacter.atwGlobeRider:
+    case MochiCharacter.atwKebaya:
+    case MochiCharacter.atwLionCity:
+    case MochiCharacter.atwPharaoh:
+    case MochiCharacter.atwSakura:
+    case MochiCharacter.atwSombrero:
+      return MochiPainter(size);
   }
 }
 
