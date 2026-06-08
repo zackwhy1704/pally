@@ -34,6 +34,10 @@ _$AvatarImpl _$$AvatarImplFromJson(Map<String, dynamic> json) => _$AvatarImpl(
       centreId: json['centreId'] as String?,
       centreBrandName: json['centreBrandName'] as String?,
       centreAccentColor: json['centreAccentColor'] as String?,
+      avatarLocked: json['avatarLocked'] as bool? ?? false,
+      cosmeticEyewear: json['cosmeticEyewear'] as String?,
+      cosmeticClothes: json['cosmeticClothes'] as String?,
+      cosmeticShoes: json['cosmeticShoes'] as String?,
     );
 
 Map<String, dynamic> _$$AvatarImplToJson(_$AvatarImpl instance) =>
@@ -57,6 +61,10 @@ Map<String, dynamic> _$$AvatarImplToJson(_$AvatarImpl instance) =>
       'centreId': instance.centreId,
       'centreBrandName': instance.centreBrandName,
       'centreAccentColor': instance.centreAccentColor,
+      'avatarLocked': instance.avatarLocked,
+      'cosmeticEyewear': instance.cosmeticEyewear,
+      'cosmeticClothes': instance.cosmeticClothes,
+      'cosmeticShoes': instance.cosmeticShoes,
     };
 
 _$CreateAvatarRequestImpl _$$CreateAvatarRequestImplFromJson(

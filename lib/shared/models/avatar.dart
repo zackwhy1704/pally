@@ -128,6 +128,15 @@ class Avatar with _$Avatar {
     String? centreBrandName,
     /// Hex accent colour for the centre's card/appbar accent.
     String? centreAccentColor,
+    /// True when the centre has paused student access to this avatar
+    /// (e.g. removed from a class). Chat shows a canned "ask your centre".
+    @Default(false) bool avatarLocked,
+    // ── Cosmetic accessory slots (centre-admin customization) ─────────────
+    /// Accessory slot ids set by the centre. Inert until layered art exists;
+    /// resolved to optional overlay assets by [MochiCosmetics].
+    String? cosmeticEyewear,
+    String? cosmeticClothes,
+    String? cosmeticShoes,
   }) = _Avatar;
 
   factory Avatar.fromJson(Map<String, dynamic> json) => _$AvatarFromJson(json);

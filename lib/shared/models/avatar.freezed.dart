@@ -62,6 +62,16 @@ mixin _$Avatar {
   /// Hex accent colour for the centre's card/appbar accent.
   String? get centreAccentColor => throw _privateConstructorUsedError;
 
+  /// True when the centre has paused student access to this avatar
+  /// (e.g. removed from a class). Chat shows a canned "ask your centre".
+  bool get avatarLocked =>
+      throw _privateConstructorUsedError; // ── Cosmetic accessory slots (centre-admin customization) ─────────────
+  /// Accessory slot ids set by the centre. Inert until layered art exists;
+  /// resolved to optional overlay assets by [MochiCosmetics].
+  String? get cosmeticEyewear => throw _privateConstructorUsedError;
+  String? get cosmeticClothes => throw _privateConstructorUsedError;
+  String? get cosmeticShoes => throw _privateConstructorUsedError;
+
   /// Serializes this Avatar to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -103,7 +113,11 @@ abstract class $AvatarCopyWith<$Res> {
       bool centreManaged,
       String? centreId,
       String? centreBrandName,
-      String? centreAccentColor});
+      String? centreAccentColor,
+      bool avatarLocked,
+      String? cosmeticEyewear,
+      String? cosmeticClothes,
+      String? cosmeticShoes});
 }
 
 /// @nodoc
@@ -140,6 +154,10 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
     Object? centreId = freezed,
     Object? centreBrandName = freezed,
     Object? centreAccentColor = freezed,
+    Object? avatarLocked = null,
+    Object? cosmeticEyewear = freezed,
+    Object? cosmeticClothes = freezed,
+    Object? cosmeticShoes = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -218,6 +236,22 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
           ? _value.centreAccentColor
           : centreAccentColor // ignore: cast_nullable_to_non_nullable
               as String?,
+      avatarLocked: null == avatarLocked
+          ? _value.avatarLocked
+          : avatarLocked // ignore: cast_nullable_to_non_nullable
+              as bool,
+      cosmeticEyewear: freezed == cosmeticEyewear
+          ? _value.cosmeticEyewear
+          : cosmeticEyewear // ignore: cast_nullable_to_non_nullable
+              as String?,
+      cosmeticClothes: freezed == cosmeticClothes
+          ? _value.cosmeticClothes
+          : cosmeticClothes // ignore: cast_nullable_to_non_nullable
+              as String?,
+      cosmeticShoes: freezed == cosmeticShoes
+          ? _value.cosmeticShoes
+          : cosmeticShoes // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -256,7 +290,11 @@ abstract class _$$AvatarImplCopyWith<$Res> implements $AvatarCopyWith<$Res> {
       bool centreManaged,
       String? centreId,
       String? centreBrandName,
-      String? centreAccentColor});
+      String? centreAccentColor,
+      bool avatarLocked,
+      String? cosmeticEyewear,
+      String? cosmeticClothes,
+      String? cosmeticShoes});
 }
 
 /// @nodoc
@@ -291,6 +329,10 @@ class __$$AvatarImplCopyWithImpl<$Res>
     Object? centreId = freezed,
     Object? centreBrandName = freezed,
     Object? centreAccentColor = freezed,
+    Object? avatarLocked = null,
+    Object? cosmeticEyewear = freezed,
+    Object? cosmeticClothes = freezed,
+    Object? cosmeticShoes = freezed,
   }) {
     return _then(_$AvatarImpl(
       id: null == id
@@ -369,6 +411,22 @@ class __$$AvatarImplCopyWithImpl<$Res>
           ? _value.centreAccentColor
           : centreAccentColor // ignore: cast_nullable_to_non_nullable
               as String?,
+      avatarLocked: null == avatarLocked
+          ? _value.avatarLocked
+          : avatarLocked // ignore: cast_nullable_to_non_nullable
+              as bool,
+      cosmeticEyewear: freezed == cosmeticEyewear
+          ? _value.cosmeticEyewear
+          : cosmeticEyewear // ignore: cast_nullable_to_non_nullable
+              as String?,
+      cosmeticClothes: freezed == cosmeticClothes
+          ? _value.cosmeticClothes
+          : cosmeticClothes // ignore: cast_nullable_to_non_nullable
+              as String?,
+      cosmeticShoes: freezed == cosmeticShoes
+          ? _value.cosmeticShoes
+          : cosmeticShoes // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -403,7 +461,11 @@ class _$AvatarImpl implements _Avatar {
       this.centreManaged = false,
       this.centreId,
       this.centreBrandName,
-      this.centreAccentColor});
+      this.centreAccentColor,
+      this.avatarLocked = false,
+      this.cosmeticEyewear,
+      this.cosmeticClothes,
+      this.cosmeticShoes});
 
   factory _$AvatarImpl.fromJson(Map<String, dynamic> json) =>
       _$$AvatarImplFromJson(json);
@@ -473,9 +535,24 @@ class _$AvatarImpl implements _Avatar {
   @override
   final String? centreAccentColor;
 
+  /// True when the centre has paused student access to this avatar
+  /// (e.g. removed from a class). Chat shows a canned "ask your centre".
+  @override
+  @JsonKey()
+  final bool avatarLocked;
+// ── Cosmetic accessory slots (centre-admin customization) ─────────────
+  /// Accessory slot ids set by the centre. Inert until layered art exists;
+  /// resolved to optional overlay assets by [MochiCosmetics].
+  @override
+  final String? cosmeticEyewear;
+  @override
+  final String? cosmeticClothes;
+  @override
+  final String? cosmeticShoes;
+
   @override
   String toString() {
-    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate, brainState: $brainState, isActive: $isActive, teacherPreferences: $teacherPreferences, centreManaged: $centreManaged, centreId: $centreId, centreBrandName: $centreBrandName, centreAccentColor: $centreAccentColor)';
+    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate, brainState: $brainState, isActive: $isActive, teacherPreferences: $teacherPreferences, centreManaged: $centreManaged, centreId: $centreId, centreBrandName: $centreBrandName, centreAccentColor: $centreAccentColor, avatarLocked: $avatarLocked, cosmeticEyewear: $cosmeticEyewear, cosmeticClothes: $cosmeticClothes, cosmeticShoes: $cosmeticShoes)';
   }
 
   @override
@@ -517,7 +594,15 @@ class _$AvatarImpl implements _Avatar {
             (identical(other.centreBrandName, centreBrandName) ||
                 other.centreBrandName == centreBrandName) &&
             (identical(other.centreAccentColor, centreAccentColor) ||
-                other.centreAccentColor == centreAccentColor));
+                other.centreAccentColor == centreAccentColor) &&
+            (identical(other.avatarLocked, avatarLocked) ||
+                other.avatarLocked == avatarLocked) &&
+            (identical(other.cosmeticEyewear, cosmeticEyewear) ||
+                other.cosmeticEyewear == cosmeticEyewear) &&
+            (identical(other.cosmeticClothes, cosmeticClothes) ||
+                other.cosmeticClothes == cosmeticClothes) &&
+            (identical(other.cosmeticShoes, cosmeticShoes) ||
+                other.cosmeticShoes == cosmeticShoes));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -542,7 +627,11 @@ class _$AvatarImpl implements _Avatar {
         centreManaged,
         centreId,
         centreBrandName,
-        centreAccentColor
+        centreAccentColor,
+        avatarLocked,
+        cosmeticEyewear,
+        cosmeticClothes,
+        cosmeticShoes
       ]);
 
   /// Create a copy of Avatar
@@ -589,7 +678,11 @@ abstract class _Avatar implements Avatar {
       final bool centreManaged,
       final String? centreId,
       final String? centreBrandName,
-      final String? centreAccentColor}) = _$AvatarImpl;
+      final String? centreAccentColor,
+      final bool avatarLocked,
+      final String? cosmeticEyewear,
+      final String? cosmeticClothes,
+      final String? cosmeticShoes}) = _$AvatarImpl;
 
   factory _Avatar.fromJson(Map<String, dynamic> json) = _$AvatarImpl.fromJson;
 
@@ -653,6 +746,20 @@ abstract class _Avatar implements Avatar {
   /// Hex accent colour for the centre's card/appbar accent.
   @override
   String? get centreAccentColor;
+
+  /// True when the centre has paused student access to this avatar
+  /// (e.g. removed from a class). Chat shows a canned "ask your centre".
+  @override
+  bool
+      get avatarLocked; // ── Cosmetic accessory slots (centre-admin customization) ─────────────
+  /// Accessory slot ids set by the centre. Inert until layered art exists;
+  /// resolved to optional overlay assets by [MochiCosmetics].
+  @override
+  String? get cosmeticEyewear;
+  @override
+  String? get cosmeticClothes;
+  @override
+  String? get cosmeticShoes;
 
   /// Create a copy of Avatar
   /// with the given fields replaced by the non-null parameter values.
