@@ -17,7 +17,8 @@ enum MochiCharacter {
   atwLionCity,
   atwPharaoh,
   atwSakura,
-  atwSombrero;
+  atwSombrero,
+  atwKilt;
 
   String get displayName => switch (this) {
     MochiCharacter.mochi => 'Mochi',
@@ -36,6 +37,7 @@ enum MochiCharacter {
     MochiCharacter.atwPharaoh => 'Pharaoh Mochi',
     MochiCharacter.atwSakura => 'Sakura Mochi',
     MochiCharacter.atwSombrero => 'Sombrero Mochi',
+    MochiCharacter.atwKilt => 'Kilt Mochi',
   };
 
   String get assetPath => switch (this) {
@@ -55,6 +57,7 @@ enum MochiCharacter {
     MochiCharacter.atwPharaoh => 'assets/images/aroundTheWorld_Pharaoh_normal.png',
     MochiCharacter.atwSakura => 'assets/images/aroundTheWorld_Sakura_normal.png',
     MochiCharacter.atwSombrero => 'assets/images/aroundTheWorld_Sombrero_normal.png',
+    MochiCharacter.atwKilt => 'assets/images/aroundTheWorld_kilt_normal.png',
   };
 
   String get defaultSubject => switch (this) {
@@ -73,6 +76,7 @@ enum MochiCharacter {
     MochiCharacter.atwLionCity ||
     MochiCharacter.atwPharaoh ||
     MochiCharacter.atwSakura ||
+    MochiCharacter.atwKilt ||
     MochiCharacter.atwSombrero => 'General',
   };
 
@@ -96,6 +100,7 @@ enum MochiCharacter {
     MochiCharacter.atwPharaoh,
     MochiCharacter.atwSakura,
     MochiCharacter.atwSombrero,
+    MochiCharacter.atwKilt,
   ];
 
   Color get bgColor => switch (this) {
@@ -115,6 +120,7 @@ enum MochiCharacter {
     MochiCharacter.atwPharaoh => const Color(0xFFFFFAE6),
     MochiCharacter.atwSakura => const Color(0xFFFFF0F5),
     MochiCharacter.atwSombrero => const Color(0xFFFFF8E6),
+    MochiCharacter.atwKilt => const Color(0xFFE8F5E9),
   };
 
   Color get accentColor => switch (this) {
@@ -134,6 +140,7 @@ enum MochiCharacter {
     MochiCharacter.atwPharaoh => const Color(0xFFB8860B),
     MochiCharacter.atwSakura => const Color(0xFFE91E8C),
     MochiCharacter.atwSombrero => const Color(0xFF6D4C41),
+    MochiCharacter.atwKilt => const Color(0xFF2E7D32),
   };
 
   Color get primaryColor => accentColor;

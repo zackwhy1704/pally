@@ -41,6 +41,7 @@ CustomPainter characterPainterFor(MochiCharacter character, double size) {
     case MochiCharacter.atwPharaoh:
     case MochiCharacter.atwSakura:
     case MochiCharacter.atwSombrero:
+    case MochiCharacter.atwKilt:
       return MochiPainter(size);
   }
 }
