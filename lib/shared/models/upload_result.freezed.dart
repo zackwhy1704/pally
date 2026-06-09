@@ -29,6 +29,18 @@ mixin _$UploadResult {
   String? get errorMessage => throw _privateConstructorUsedError;
   DateTime? get uploadedAt => throw _privateConstructorUsedError;
 
+  /// Which backend node served this request (null if backend hasn't upgraded).
+  String? get servedBy => throw _privateConstructorUsedError;
+
+  /// True when the backend fell back to a secondary text extractor.
+  bool get degraded => throw _privateConstructorUsedError;
+
+  /// Pages compiled so far (for partial-progress display during chunked compile).
+  int get pagesCompiled => throw _privateConstructorUsedError;
+
+  /// Total pages expected (null until the backend reports it).
+  int? get pagesTotal => throw _privateConstructorUsedError;
+
   /// Serializes this UploadResult to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -53,7 +65,11 @@ abstract class $UploadResultCopyWith<$Res> {
       int pageCount,
       List<String> wikiPageTitles,
       String? errorMessage,
-      DateTime? uploadedAt});
+      DateTime? uploadedAt,
+      String? servedBy,
+      bool degraded,
+      int pagesCompiled,
+      int? pagesTotal});
 }
 
 /// @nodoc
@@ -79,6 +95,10 @@ class _$UploadResultCopyWithImpl<$Res, $Val extends UploadResult>
     Object? wikiPageTitles = null,
     Object? errorMessage = freezed,
     Object? uploadedAt = freezed,
+    Object? servedBy = freezed,
+    Object? degraded = null,
+    Object? pagesCompiled = null,
+    Object? pagesTotal = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -113,6 +133,22 @@ class _$UploadResultCopyWithImpl<$Res, $Val extends UploadResult>
           ? _value.uploadedAt
           : uploadedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      servedBy: freezed == servedBy
+          ? _value.servedBy
+          : servedBy // ignore: cast_nullable_to_non_nullable
+              as String?,
+      degraded: null == degraded
+          ? _value.degraded
+          : degraded // ignore: cast_nullable_to_non_nullable
+              as bool,
+      pagesCompiled: null == pagesCompiled
+          ? _value.pagesCompiled
+          : pagesCompiled // ignore: cast_nullable_to_non_nullable
+              as int,
+      pagesTotal: freezed == pagesTotal
+          ? _value.pagesTotal
+          : pagesTotal // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
   }
 }
@@ -133,7 +169,11 @@ abstract class _$$UploadResultImplCopyWith<$Res>
       int pageCount,
       List<String> wikiPageTitles,
       String? errorMessage,
-      DateTime? uploadedAt});
+      DateTime? uploadedAt,
+      String? servedBy,
+      bool degraded,
+      int pagesCompiled,
+      int? pagesTotal});
 }
 
 /// @nodoc
@@ -157,6 +197,10 @@ class __$$UploadResultImplCopyWithImpl<$Res>
     Object? wikiPageTitles = null,
     Object? errorMessage = freezed,
     Object? uploadedAt = freezed,
+    Object? servedBy = freezed,
+    Object? degraded = null,
+    Object? pagesCompiled = null,
+    Object? pagesTotal = freezed,
   }) {
     return _then(_$UploadResultImpl(
       id: null == id
@@ -191,6 +235,22 @@ class __$$UploadResultImplCopyWithImpl<$Res>
           ? _value.uploadedAt
           : uploadedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      servedBy: freezed == servedBy
+          ? _value.servedBy
+          : servedBy // ignore: cast_nullable_to_non_nullable
+              as String?,
+      degraded: null == degraded
+          ? _value.degraded
+          : degraded // ignore: cast_nullable_to_non_nullable
+              as bool,
+      pagesCompiled: null == pagesCompiled
+          ? _value.pagesCompiled
+          : pagesCompiled // ignore: cast_nullable_to_non_nullable
+              as int,
+      pagesTotal: freezed == pagesTotal
+          ? _value.pagesTotal
+          : pagesTotal // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -206,7 +266,11 @@ class _$UploadResultImpl implements _UploadResult {
       this.pageCount = 0,
       final List<String> wikiPageTitles = const <String>[],
       this.errorMessage,
-      this.uploadedAt})
+      this.uploadedAt,
+      this.servedBy,
+      this.degraded = false,
+      this.pagesCompiled = 0,
+      this.pagesTotal})
       : _wikiPageTitles = wikiPageTitles;
 
   factory _$UploadResultImpl.fromJson(Map<String, dynamic> json) =>
@@ -241,9 +305,27 @@ class _$UploadResultImpl implements _UploadResult {
   @override
   final DateTime? uploadedAt;
 
+  /// Which backend node served this request (null if backend hasn't upgraded).
+  @override
+  final String? servedBy;
+
+  /// True when the backend fell back to a secondary text extractor.
+  @override
+  @JsonKey()
+  final bool degraded;
+
+  /// Pages compiled so far (for partial-progress display during chunked compile).
+  @override
+  @JsonKey()
+  final int pagesCompiled;
+
+  /// Total pages expected (null until the backend reports it).
+  @override
+  final int? pagesTotal;
+
   @override
   String toString() {
-    return 'UploadResult(id: $id, avatarId: $avatarId, fileName: $fileName, status: $status, pageCount: $pageCount, wikiPageTitles: $wikiPageTitles, errorMessage: $errorMessage, uploadedAt: $uploadedAt)';
+    return 'UploadResult(id: $id, avatarId: $avatarId, fileName: $fileName, status: $status, pageCount: $pageCount, wikiPageTitles: $wikiPageTitles, errorMessage: $errorMessage, uploadedAt: $uploadedAt, servedBy: $servedBy, degraded: $degraded, pagesCompiled: $pagesCompiled, pagesTotal: $pagesTotal)';
   }
 
   @override
@@ -264,7 +346,15 @@ class _$UploadResultImpl implements _UploadResult {
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage) &&
             (identical(other.uploadedAt, uploadedAt) ||
-                other.uploadedAt == uploadedAt));
+                other.uploadedAt == uploadedAt) &&
+            (identical(other.servedBy, servedBy) ||
+                other.servedBy == servedBy) &&
+            (identical(other.degraded, degraded) ||
+                other.degraded == degraded) &&
+            (identical(other.pagesCompiled, pagesCompiled) ||
+                other.pagesCompiled == pagesCompiled) &&
+            (identical(other.pagesTotal, pagesTotal) ||
+                other.pagesTotal == pagesTotal));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -278,7 +368,11 @@ class _$UploadResultImpl implements _UploadResult {
       pageCount,
       const DeepCollectionEquality().hash(_wikiPageTitles),
       errorMessage,
-      uploadedAt);
+      uploadedAt,
+      servedBy,
+      degraded,
+      pagesCompiled,
+      pagesTotal);
 
   /// Create a copy of UploadResult
   /// with the given fields replaced by the non-null parameter values.
@@ -305,7 +399,11 @@ abstract class _UploadResult implements UploadResult {
       final int pageCount,
       final List<String> wikiPageTitles,
       final String? errorMessage,
-      final DateTime? uploadedAt}) = _$UploadResultImpl;
+      final DateTime? uploadedAt,
+      final String? servedBy,
+      final bool degraded,
+      final int pagesCompiled,
+      final int? pagesTotal}) = _$UploadResultImpl;
 
   factory _UploadResult.fromJson(Map<String, dynamic> json) =
       _$UploadResultImpl.fromJson;
@@ -326,6 +424,22 @@ abstract class _UploadResult implements UploadResult {
   String? get errorMessage;
   @override
   DateTime? get uploadedAt;
+
+  /// Which backend node served this request (null if backend hasn't upgraded).
+  @override
+  String? get servedBy;
+
+  /// True when the backend fell back to a secondary text extractor.
+  @override
+  bool get degraded;
+
+  /// Pages compiled so far (for partial-progress display during chunked compile).
+  @override
+  int get pagesCompiled;
+
+  /// Total pages expected (null until the backend reports it).
+  @override
+  int? get pagesTotal;
 
   /// Create a copy of UploadResult
   /// with the given fields replaced by the non-null parameter values.

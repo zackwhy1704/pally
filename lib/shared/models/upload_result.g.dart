@@ -22,6 +22,10 @@ _$UploadResultImpl _$$UploadResultImplFromJson(Map<String, dynamic> json) =>
       uploadedAt: json['uploadedAt'] == null
           ? null
           : DateTime.parse(json['uploadedAt'] as String),
+      servedBy: json['servedBy'] as String?,
+      degraded: json['degraded'] as bool? ?? false,
+      pagesCompiled: (json['pagesCompiled'] as num?)?.toInt() ?? 0,
+      pagesTotal: (json['pagesTotal'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$UploadResultImplToJson(_$UploadResultImpl instance) =>
@@ -34,6 +38,10 @@ Map<String, dynamic> _$$UploadResultImplToJson(_$UploadResultImpl instance) =>
       'wikiPageTitles': instance.wikiPageTitles,
       'errorMessage': instance.errorMessage,
       'uploadedAt': instance.uploadedAt?.toIso8601String(),
+      'servedBy': instance.servedBy,
+      'degraded': instance.degraded,
+      'pagesCompiled': instance.pagesCompiled,
+      'pagesTotal': instance.pagesTotal,
     };
 
 const _$UploadStatusEnumMap = {

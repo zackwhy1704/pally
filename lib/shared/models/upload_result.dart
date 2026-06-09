@@ -16,6 +16,14 @@ class UploadResult with _$UploadResult {
     @Default(<String>[]) List<String> wikiPageTitles,
     String? errorMessage,
     DateTime? uploadedAt,
+    /// Which backend node served this request (null if backend hasn't upgraded).
+    String? servedBy,
+    /// True when the backend fell back to a secondary text extractor.
+    @Default(false) bool degraded,
+    /// Pages compiled so far (for partial-progress display during chunked compile).
+    @Default(0) int pagesCompiled,
+    /// Total pages expected (null until the backend reports it).
+    int? pagesTotal,
   }) = _UploadResult;
 
   factory UploadResult.fromJson(Map<String, dynamic> json) =>

@@ -142,6 +142,11 @@ class UploadScreen extends ConsumerWidget {
                 onDelete: vm.deleteFile,
               ),
             ],
+            // Per-file warning notes (e.g. backup reader / degraded)
+            if (state.fileWarnings.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.md),
+              _FileWarningList(warnings: state.fileWarnings),
+            ],
             // Per-file error cards shown after upload batch completes
             if (state.fileErrors.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.md),
@@ -154,6 +159,60 @@ class UploadScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ── Per-file warning notes (non-error) ───────────────────────────────────────
+
+class _FileWarningList extends StatelessWidget {
+  const _FileWarningList({required this.warnings});
+  final List<FileUploadWarning> warnings;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: warnings.map((w) => Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+          decoration: BoxDecoration(
+            color: AppColors.amberL,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+                color: AppColors.amber.withValues(alpha: 0.35)),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.info_outline_rounded,
+                  size: 16, color: AppColors.amber),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      w.fileName,
+                      style: AppTextStyles.caption.copyWith(
+                          color: AppColors.amber,
+                          fontWeight: FontWeight.w700),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(w.message,
+                        style: AppTextStyles.bodySmall
+                            .copyWith(color: AppColors.text2)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      )).toList(),
     );
   }
 }
@@ -800,7 +859,9 @@ class _UploadLoadingScreen extends StatelessWidget {
         : (isLarge ? const Duration(seconds: 5) : const Duration(seconds: 3));
 
     final lines = <String>[];
-    if (isCompiling && isLarge) {
+    if (isCompiling && state.compileProgress != null) {
+      lines.add(state.compileProgress!);
+    } else if (isCompiling && isLarge) {
       lines.add('⚠️ Large document — splitting into sections (~${state.estimatedCompileTime})');
     } else if (isCompiling) {
       lines.add('This usually takes 30–60 seconds');
@@ -886,6 +947,16 @@ class _BrainCompilingBanner extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.xs),
+          if (state.compileProgress != null) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              state.compileProgress!,
+              style: AppTextStyles.body.copyWith(
+                fontWeight: FontWeight.w600,
+                color: isChunked ? AppColors.amber : AppColors.teal,
+              ),
+            ),
+          ],
           Text(
             isChunked
                 ? 'Your document is large — Mochi splits it into sections for better accuracy. Expected: $eta. You can close this screen; the brain updates automatically.'

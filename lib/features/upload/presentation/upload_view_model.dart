@@ -24,6 +24,13 @@ class FileUploadError {
   final String message;
 }
 
+/// Non-error info notes shown alongside a file (e.g. degraded fallback reader).
+class FileUploadWarning {
+  const FileUploadWarning({required this.fileName, required this.message});
+  final String fileName;
+  final String message;
+}
+
 @immutable
 /// Which processing stage is actively running for a file.
 enum UploadStage {
@@ -48,6 +55,7 @@ class UploadState {
     this.isCheckingRelevance = false,
     this.error,
     this.fileErrors = const [],
+    this.fileWarnings = const [],
     this.pendingFile,
     this.pendingRelevance,
     this.topicTag,
@@ -56,6 +64,7 @@ class UploadState {
     this.pendingFileSizeBytes = 0,
     this.pendingFilePageCount = 0,
     this.compilingFileCount = 0,
+    this.compileProgress,
   });
 
   final Avatar? avatar;
@@ -66,6 +75,8 @@ class UploadState {
   /// Per-file errors for multi-upload: one entry per file that failed so
   /// the user sees which file had which problem.
   final List<FileUploadError> fileErrors;
+  /// Per-file info notes (non-error) — e.g. "backup reader" degraded notice.
+  final List<FileUploadWarning> fileWarnings;
   final PlatformFile? pendingFile;
   final RelevanceCheckResponse? pendingRelevance;
   final String? topicTag;
@@ -82,6 +93,10 @@ class UploadState {
 
   /// How many files are currently in PROCESSING state (brain compiling).
   final int compilingFileCount;
+
+  /// Partial compile progress string, e.g. "8 of 12 pages added".
+  /// Null when no progress info is available from the backend.
+  final String? compileProgress;
 
   int get totalFiles => files.length;
   bool get hasFiles => files.isNotEmpty;
@@ -118,6 +133,7 @@ class UploadState {
     bool? isCheckingRelevance,
     Object? error = _sentinel,
     List<FileUploadError>? fileErrors,
+    List<FileUploadWarning>? fileWarnings,
     Object? pendingFile = _sentinel,
     Object? pendingRelevance = _sentinel,
     Object? topicTag = _sentinel,
@@ -126,6 +142,7 @@ class UploadState {
     int? pendingFileSizeBytes,
     int? pendingFilePageCount,
     int? compilingFileCount,
+    Object? compileProgress = _sentinel,
   }) {
     return UploadState(
       avatar: avatar ?? this.avatar,
@@ -134,6 +151,7 @@ class UploadState {
       isCheckingRelevance: isCheckingRelevance ?? this.isCheckingRelevance,
       error: error == _sentinel ? this.error : error as String?,
       fileErrors: fileErrors ?? this.fileErrors,
+      fileWarnings: fileWarnings ?? this.fileWarnings,
       pendingFile: pendingFile == _sentinel
           ? this.pendingFile
           : pendingFile as PlatformFile?,
@@ -147,6 +165,9 @@ class UploadState {
       pendingFileSizeBytes: pendingFileSizeBytes ?? this.pendingFileSizeBytes,
       pendingFilePageCount: pendingFilePageCount ?? this.pendingFilePageCount,
       compilingFileCount: compilingFileCount ?? this.compilingFileCount,
+      compileProgress: compileProgress == _sentinel
+          ? this.compileProgress
+          : compileProgress as String?,
     );
   }
 }
@@ -162,8 +183,9 @@ class UploadViewModel extends _$UploadViewModel {
   Timer? _compilePoller;
   DateTime? _compileStartedAt;
 
-  // 3-minute hard timeout: if compile hasn't succeeded by then, surface error.
-  static const _compileTimeout = Duration(minutes: 3);
+  // 5-minute hard timeout: must exceed the backend's 4-min cap so the app only
+  // times out when the backend genuinely stalled (not while it's still working).
+  static const _compileTimeout = Duration(minutes: 5);
   // Poll every 5s — fast enough to detect success, cheap enough not to flood.
   static const _pollInterval = Duration(seconds: 5);
 
@@ -274,8 +296,11 @@ class UploadViewModel extends _$UploadViewModel {
             ? serverMsg!
             : '"$fileName" couldn\'t be processed — it may be '
               'password-protected or corrupted. Try a different version.',
-      502 || 503 || 504 => 'The server is busy right now. '
+      502 => 'The server is busy right now. '
             'Wait a moment and try uploading "$fileName" again.',
+      503 => 'Mochi is busy right now — try again in a moment.',
+      504 => 'Mochi is still working on your notes in the background '
+            '— check back in a few minutes.',
       _ when e.type == DioExceptionType.connectionTimeout ||
              e.type == DioExceptionType.receiveTimeout ||
              e.type == DioExceptionType.sendTimeout =>
@@ -474,6 +499,10 @@ class UploadViewModel extends _$UploadViewModel {
       final wikiPageTitles = titlesRaw is List
           ? titlesRaw.whereType<String>().toList()
           : <String>[];
+      final servedBy = data['servedBy'] as String?;
+      final degraded = data['degraded'] == true;
+      final pagesCompiled = (data['pagesCompiled'] as num?)?.toInt() ?? 0;
+      final pagesTotal = (data['pagesTotal'] as num?)?.toInt();
       final result = UploadResult(
         id: (data['fileId'] ?? data['id'] ?? '') as String,
         avatarId: _avatarId,
@@ -482,15 +511,33 @@ class UploadViewModel extends _$UploadViewModel {
         pageCount: (data['pageCount'] as num?)?.toInt() ?? 0,
         wikiPageTitles: wikiPageTitles,
         uploadedAt: DateTime.now(),
+        servedBy: servedBy,
+        degraded: degraded,
+        pagesCompiled: pagesCompiled,
+        pagesTotal: pagesTotal,
       );
-      appLog.i('[Upload] Success: ${result.id} pages=${result.pageCount}');
+      appLog.i('[Upload] Success: ${result.id} pages=${result.pageCount}'
+          '${servedBy != null ? " servedBy=$servedBy" : ""}'
+          '${degraded ? " DEGRADED" : ""}');
       final isLarge = file.size > 5 * 1024 * 1024 || result.pageCount > 20;
+
+      // If the backend used a fallback reader, surface a friendly info note.
+      final warnings = [...state.fileWarnings];
+      if (degraded) {
+        warnings.add(FileUploadWarning(
+          fileName: file.name,
+          message: 'I used my backup reader for this one '
+              '— double-check it looks right.',
+        ));
+      }
+
       state = state.copyWith(
         isUploading: false,
         uploadStage: isLarge ? UploadStage.chunkedCompile : UploadStage.compilingBrain,
         pendingFilePageCount: result.pageCount,
         compilingFileCount: state.compilingFileCount + 1,
         files: [...state.files, result],
+        fileWarnings: warnings,
       );
       ref.invalidate(libraryViewModelProvider);
       ref.invalidate(homeViewModelProvider);
@@ -502,6 +549,21 @@ class UploadViewModel extends _$UploadViewModel {
     } on DioException catch (e, st) {
       appLog.e('[Upload] Failed: ${file.name} status=${e.response?.statusCode}',
           error: e, stackTrace: st);
+
+      // 504 Gateway Timeout: the backend is still working — transition to
+      // compileTimeout stage so the user sees "still working in background"
+      // instead of a hard error.
+      if (e.response?.statusCode == 504) {
+        appLog.w('[Upload] 504 for ${file.name} — treating as compile-in-progress');
+        state = state.copyWith(
+          isUploading: false,
+          uploadStage: UploadStage.compileTimeout,
+          compilingFileCount: 0,
+          error: 'Mochi is still working on your notes in the background '
+              '— check back in a few minutes.',
+        );
+        return;
+      }
 
       // 409 duplicate/similar: the content IS already in the brain.
       // Invalidate library so the user sees the existing pages — then
@@ -560,7 +622,18 @@ class UploadViewModel extends _$UploadViewModel {
       final data = resp.data is Map ? resp.data as Map : {};
       final brainState = data['brainState']?.toString() ?? 'READY';
       final wikiPageCount = (data['wikiPageCount'] as num?)?.toInt() ?? 0;
-      appLog.d('[Upload] Poll: brainState=$brainState wikiPageCount=$wikiPageCount elapsed=${elapsed.inSeconds}s');
+      final pagesCompiled = (data['pagesCompiled'] as num?)?.toInt() ?? 0;
+      final pagesTotal = (data['pagesTotal'] as num?)?.toInt();
+      appLog.d('[Upload] Poll: brainState=$brainState wikiPageCount=$wikiPageCount'
+          ' pagesCompiled=$pagesCompiled pagesTotal=$pagesTotal'
+          ' elapsed=${elapsed.inSeconds}s');
+
+      // Update partial progress display when the backend reports it.
+      if (pagesCompiled > 0 && pagesTotal != null && pagesCompiled < pagesTotal) {
+        state = state.copyWith(
+          compileProgress: '$pagesCompiled of $pagesTotal pages added',
+        );
+      }
 
       if (brainState == 'READY') {
         _compilePoller?.cancel();
@@ -638,6 +711,6 @@ class UploadViewModel extends _$UploadViewModel {
   }
 
   void clearErrors() {
-    state = state.copyWith(error: null, fileErrors: []);
+    state = state.copyWith(error: null, fileErrors: [], fileWarnings: []);
   }
 }

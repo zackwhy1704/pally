@@ -46,7 +46,11 @@ class PallyError {
       'This Mochi is locked — activate a slot to use it.');
   static const aiBusy = PallyError(
       PallyErrorKind.aiBusy,
-      "Mochi's brain is busy right now. Try again in a moment.");
+      'Mochi is busy right now — try again in a moment.');
+  static const compileTimeout = PallyError(
+      PallyErrorKind.timeout,
+      'Mochi is still working on your notes in the background '
+      '— check back in a few minutes.');
   static const unknown = PallyError(
       PallyErrorKind.unknown,
       'Something went wrong. Please try again.');
@@ -75,6 +79,7 @@ class PallyError {
         if (code == 402) return upgradeRequired;
         if (code == 409) return slotLocked;
         if (code == 503) return aiBusy;
+        if (code == 504) return compileTimeout;
         final backend = _safeBackendMessage(e.response?.data);
         if (backend != null) return PallyError(PallyErrorKind.server, backend);
         return server;
