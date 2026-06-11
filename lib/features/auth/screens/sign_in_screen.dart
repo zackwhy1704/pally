@@ -10,6 +10,8 @@ import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/utils/device_info.dart';
 import 'package:pally/core/observability/observability.dart';
 import 'package:pally/core/observability/observability_providers.dart';
+import 'package:pally/app/api_client.dart';
+import 'package:pally/core/services/fcm_token_service.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/auth/services/auth_service.dart';
 
@@ -84,6 +86,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         'email': email,
       });
       ref.read(analyticsProvider).event(AnalyticsEvents.signIn);
+      // Fire-and-forget FCM token registration.
+      FcmTokenService(ref.read(dioProvider)).registerToken();
       if (mounted) {
         if (result.accountType == 'PARENT') {
           context.go('/parent-home');
@@ -140,6 +144,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         setupComplete: result.setupComplete,
         onboardingComplete: result.setupComplete,
       );
+      // Fire-and-forget FCM token registration.
+      FcmTokenService(ref.read(dioProvider)).registerToken();
       _bioStateCtrl.add(_BiometricState.success);
       await Future.delayed(const Duration(milliseconds: 1200));
       if (mounted) {

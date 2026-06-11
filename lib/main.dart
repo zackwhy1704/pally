@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/api_client.dart';
@@ -28,6 +30,21 @@ void main() async {
 }
 
 Future<void> _bootstrap() async {
+  // Initialise Firebase — non-fatal so dev/CI builds work without config.
+  try {
+    await Firebase.initializeApp();
+    // Handle foreground FCM messages via existing local-notification service.
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        appLog.d(
+          '[FCM] Foreground: ${message.notification?.title}',
+        );
+      }
+    });
+  } catch (e) {
+    appLog.w('[Firebase] Init failed (non-fatal): $e');
+  }
+
   // Load persisted auth credentials before first frame.
   await AuthNotifier.instance.load();
 

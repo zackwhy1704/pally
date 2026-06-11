@@ -1,4 +1,4 @@
-package com.pally.pally
+package com.apalchi.app
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

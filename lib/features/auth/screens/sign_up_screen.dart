@@ -5,6 +5,8 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/app/api_client.dart';
+import 'package:pally/core/services/fcm_token_service.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/auth/services/auth_service.dart';
 import 'package:pally/features/referral/referral_service.dart';
@@ -74,6 +76,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         onboardingComplete: _selectedRole == 'parent',
         accountType: result.accountType ?? accountType,
       );
+      // Fire-and-forget FCM token registration.
+      FcmTokenService(ref.read(dioProvider)).registerToken();
       // Optional referral redeem — best-effort, never blocks signup.
       final referral = _referralCtrl.text.trim();
       if (referral.isNotEmpty) {
