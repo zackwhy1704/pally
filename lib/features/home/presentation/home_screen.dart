@@ -84,22 +84,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               maxLevel: maxLevel,
             ),
             const TrialCountdownBanner(),
-            // Assignments: show overdue/pending/in-progress assignments
-            avatarsAsync.maybeWhen(
-              data: (avatars) => avatars.isNotEmpty
-                  ? AssignmentBanner(avatars: avatars)
-                  : const SizedBox.shrink(),
-              orElse: () => const SizedBox.shrink(),
-            ),
-            const DueCardsBanner(),
-            // Module progress: show in-progress modules from avatars
-            avatarsAsync.maybeWhen(
-              data: (avatars) => avatars.isNotEmpty
-                  ? ModuleProgressBanner(avatars: avatars)
-                  : const SizedBox.shrink(),
-              orElse: () => const SizedBox.shrink(),
-            ),
-            const _NudgeCardsRow(),
             Expanded(
               child: avatarsAsync.when(
                 loading: () => const Center(
@@ -137,7 +121,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
                 data: (avatars) => avatars.isEmpty
                     ? EmptyHomeState(childName: childName)
-                    : _AvatarGrid(avatars: avatars),
+                    : _HomeContent(avatars: avatars),
               ),
             ),
           ],
@@ -201,10 +185,10 @@ class _HomeHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('👋 Hey, there!', style: AppTextStyles.heading1),
+                Text('Welcome back! 👋', style: AppTextStyles.heading1),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  'Which Mochi do you want to chat with today?',
+                  'Ready to keep learning?',
                   style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 ),
 
@@ -258,32 +242,23 @@ class _HomeHeader extends StatelessWidget {
                 ],
 
                 const SizedBox(height: AppSpacing.sm),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'MY MOCHIS',
-                      style: AppTextStyles.label.copyWith(
-                        letterSpacing: 1.2,
-                        color: AppColors.text2,
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton.icon(
+                    key: featureTourCreateMochiKey,
+                    onPressed: onNewTutor,
+                    icon: const Icon(Icons.add, size: 16),
+                    label: const Text('New Mochi'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.purple,
+                      textStyle: AppTextStyles.label
+                          .copyWith(fontWeight: FontWeight.w700),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.sm,
+                        vertical: AppSpacing.xs,
                       ),
                     ),
-                    TextButton.icon(
-                      key: featureTourCreateMochiKey,
-                      onPressed: onNewTutor,
-                      icon: const Icon(Icons.add, size: 16),
-                      label: const Text('New'),
-                      style: TextButton.styleFrom(
-                        foregroundColor: AppColors.purple,
-                        textStyle: AppTextStyles.label
-                            .copyWith(fontWeight: FontWeight.w700),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.sm,
-                          vertical: AppSpacing.xs,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),
@@ -305,38 +280,94 @@ class _StarShape extends StatelessWidget {
   }
 }
 
-class _AvatarGrid extends ConsumerWidget {
-  const _AvatarGrid({required this.avatars});
+/// Module-first home content: module progress first, then assignments,
+/// then nudge cards, then avatar grid at the bottom.
+class _HomeContent extends ConsumerWidget {
+  const _HomeContent({required this.avatars});
   final List<Avatar> avatars;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Admin demo: show a fake centre Mochi card appended to the real list.
-    // Real centre Mochis (centreManaged=true) come from the server as normal
-    // avatars and are already in [avatars] — the demo card is purely additive.
+    return Stack(
+      children: [
+        RefreshIndicator(
+          color: AppColors.purple,
+          onRefresh: () => ref.read(homeViewModelProvider.notifier).refresh(),
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              // 1. Module progress — most prominent
+              ModuleProgressBanner(avatars: avatars),
+              // 2. Assignments with deadlines
+              AssignmentBanner(avatars: avatars),
+              // 3. Nudge cards + flashcard reminders
+              const _NudgeCardsRow(),
+              const DueCardsBanner(),
+              // 4. Avatar grid — "Your Mochis"
+              _AvatarSection(avatars: avatars),
+              // Bottom padding for FAB clearance
+              const SizedBox(height: 80),
+            ],
+          ),
+        ),
+        // Chat FAB
+        Positioned(
+          right: AppSpacing.md,
+          bottom: AppSpacing.md,
+          child: FloatingActionButton(
+            onPressed: () => const ChatTabRoute().go(context),
+            backgroundColor: AppColors.purple,
+            child: const Icon(Icons.chat_rounded, color: Colors.white),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// The avatar grid section at the bottom of the home content.
+class _AvatarSection extends ConsumerWidget {
+  const _AvatarSection({required this.avatars});
+  final List<Avatar> avatars;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final showDemo = showDemoCentreCard(ref);
     final totalCount = avatars.length + (showDemo ? 1 : 0);
 
-    return RefreshIndicator(
-      color: AppColors.purple,
-      onRefresh: () => ref.read(homeViewModelProvider.notifier).refresh(),
-      child: GridView.builder(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 220,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          childAspectRatio: 178 / 160,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+              AppSpacing.md, AppSpacing.md, AppSpacing.md, AppSpacing.xs),
+          child: Text(
+            'YOUR MOCHIS',
+            style: AppTextStyles.label.copyWith(
+              letterSpacing: 1.2,
+              color: AppColors.text2,
+            ),
+          ),
         ),
-        itemCount: totalCount,
-        itemBuilder: (context, index) {
-          if (index < avatars.length) {
-            return _AvatarCard(avatar: avatars[index]);
-          }
-          // Demo centre card — shown only to admins with toggle on.
-          return const _DemoCentreCard();
-        },
-      ),
+        GridView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 220,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 178 / 160,
+          ),
+          itemCount: totalCount,
+          itemBuilder: (context, index) {
+            if (index < avatars.length) {
+              return _AvatarCard(avatar: avatars[index]);
+            }
+            return const _DemoCentreCard();
+          },
+        ),
+      ],
     );
   }
 }
@@ -355,7 +386,7 @@ class _AvatarCard extends ConsumerWidget {
     return GestureDetector(
       onTap: isLocked
           ? () => _showSlotLockedSheet(context, ref, avatar)
-          : () => ChatRoute(avatarId: avatar.id).push(context),
+          : () => ModuleListRoute(avatarId: avatar.id).push(context),
       onLongPress: () => _showTutorOptions(context, ref, avatar),
       child: Container(
         decoration: BoxDecoration(
