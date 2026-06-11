@@ -14,12 +14,16 @@ class AuthResult {
     required this.token,
     this.isNewUser = false,
     this.setupComplete = false,
+    this.accountType,
   });
 
   final String userId;
   final String token;
   final bool isNewUser;
   final bool setupComplete;
+
+  /// "PARENT" or "STUDENT" — returned from login/register.
+  final String? accountType;
 }
 
 class AuthService {
@@ -48,11 +52,20 @@ class AuthService {
   }
 
   Future<AuthResult> signUpWithEmail(
-      String email, String password, String name) async {
+    String email,
+    String password,
+    String name, {
+    String? role,
+  }) async {
     try {
       final res = await _http.post<Map<String, dynamic>>(
         '/api/v1/auth/register',
-        data: {'email': email, 'password': password, 'displayName': name},
+        data: {
+          'email': email,
+          'password': password,
+          'displayName': name,
+          if (role != null) 'role': role,
+        },
       );
       return _parseAuthResponse(res.data!);
     } on DioException catch (e) {
@@ -114,6 +127,7 @@ class AuthService {
       token: inner['token'] as String? ?? '',
       isNewUser: inner['isNewUser'] as bool? ?? false,
       setupComplete: inner['setupComplete'] as bool? ?? false,
+      accountType: inner['accountType'] as String?,
     );
   }
 

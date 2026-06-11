@@ -33,12 +33,21 @@ class _FamilyClaimScreenState extends ConsumerState<FamilyClaimScreen> {
     }
     setState(() => _loading = true);
     try {
-      await ref.read(familyServiceProvider).claim(_code);
+      final result = await ref.read(familyServiceProvider).claim(_code);
       if (!mounted) return;
       // Refresh family status so Parent Mode becomes visible immediately.
       ref.invalidate(familyStatusProvider);
       if (!mounted) return;
-      PallyToast.success(context, 'Linked! 🎉 Parent Mode is now enabled.');
+
+      // If the child is 13+ and PDPA consent is required, navigate
+      // to the consent screen instead of the family dashboard.
+      final consentRequired = result['consentRequired'] == true;
+      final parentName = result['parentName'] as String?;
+      if (consentRequired) {
+        context.go('/family/consent${parentName != null ? '?parentName=$parentName' : ''}');
+        return;
+      }
+      PallyToast.success(context, 'Linked! Parent Mode is now enabled.');
       context.go('/family');
     } on FamilyError catch (e) {
       if (mounted) PallyToast.error(context, e.message);

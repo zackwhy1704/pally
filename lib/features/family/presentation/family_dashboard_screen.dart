@@ -165,6 +165,8 @@ class _ChildTile extends StatelessWidget {
         : (data['displayName'] as String? ?? 'Child');
     final level = (data['level'] as num?)?.toInt() ?? 1;
     final streak = (data['streakDays'] as num?)?.toInt() ?? 0;
+    final minutes = (data['minutesThisWeek'] as num?)?.toInt() ?? 0;
+    final modules = (data['modulesCompleted'] as num?)?.toInt() ?? 0;
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       padding: AppSpacing.card,
@@ -193,7 +195,8 @@ class _ChildTile extends StatelessWidget {
                         fontWeight: FontWeight.w700),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis),
-                Text('Level $level · 🔥 $streak days',
+                Text(
+                    'Lv.$level · $streak days · $minutes min · $modules done',
                     style: AppTextStyles.caption),
               ],
             ),

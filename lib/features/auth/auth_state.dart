@@ -11,6 +11,7 @@ class AuthState {
     this.isSetupComplete = false,
     this.isOnboardingComplete = false,
     this.childName,
+    this.accountType,
   });
 
   final String? userId;
@@ -19,7 +20,13 @@ class AuthState {
   final bool isOnboardingComplete;
   final String? childName;
 
+  /// Account role: "PARENT" or "STUDENT" (null = unknown / legacy).
+  final String? accountType;
+
   bool get isSignedIn => userId != null && token != null;
+
+  /// True when this account was registered as a parent/guardian.
+  bool get isParentAccount => accountType == 'PARENT';
 
   AuthState copyWith({
     String? userId,
@@ -27,6 +34,7 @@ class AuthState {
     bool? isSetupComplete,
     bool? isOnboardingComplete,
     String? childName,
+    Object? accountType = _authSentinel,
   }) {
     return AuthState(
       userId: userId ?? this.userId,
@@ -34,9 +42,14 @@ class AuthState {
       isSetupComplete: isSetupComplete ?? this.isSetupComplete,
       isOnboardingComplete: isOnboardingComplete ?? this.isOnboardingComplete,
       childName: childName ?? this.childName,
+      accountType: accountType == _authSentinel
+          ? this.accountType
+          : accountType as String?,
     );
   }
 }
+
+const _authSentinel = Object();
 
 // ── AuthNotifier ──────────────────────────────────────────────────────────────
 
@@ -51,6 +64,7 @@ class AuthNotifier extends ChangeNotifier {
   static const _keySetupComplete = 'auth_setup_complete';
   static const _keyOnboardingComplete = 'auth_onboarding_complete';
   static const _keyChildName = 'auth_child_name';
+  static const _keyAccountType = 'auth_account_type';
   static const _keyBiometricRegistered = 'biometric_registered';
   static const _keyLastUserId = 'auth_last_user_id';
 
@@ -63,12 +77,14 @@ class AuthNotifier extends ChangeNotifier {
     final setupRaw = await _storage.read(key: _keySetupComplete);
     final onboardingRaw = await _storage.read(key: _keyOnboardingComplete);
     final childName = await _storage.read(key: _keyChildName);
+    final accountType = await _storage.read(key: _keyAccountType);
     _state = AuthState(
       userId: userId,
       token: token,
       isSetupComplete: setupRaw == 'true',
       isOnboardingComplete: onboardingRaw == 'true',
       childName: childName,
+      accountType: accountType,
     );
     notifyListeners();
   }
@@ -78,6 +94,7 @@ class AuthNotifier extends ChangeNotifier {
     required String token,
     bool setupComplete = false,
     bool onboardingComplete = false,
+    String? accountType,
   }) async {
     await _storage.write(key: _keyUserId, value: userId);
     await _storage.write(key: _keyToken, value: token);
@@ -89,12 +106,22 @@ class AuthNotifier extends ChangeNotifier {
       key: _keyOnboardingComplete,
       value: onboardingComplete.toString(),
     );
+    if (accountType != null) {
+      await _storage.write(key: _keyAccountType, value: accountType);
+    }
     _state = AuthState(
       userId: userId,
       token: token,
       isSetupComplete: setupComplete,
       isOnboardingComplete: onboardingComplete,
+      accountType: accountType,
     );
+    notifyListeners();
+  }
+
+  Future<void> setAccountType(String accountType) async {
+    await _storage.write(key: _keyAccountType, value: accountType);
+    _state = _state.copyWith(accountType: accountType);
     notifyListeners();
   }
 
@@ -142,6 +169,7 @@ class AuthNotifier extends ChangeNotifier {
     await _storage.delete(key: _keySetupComplete);
     await _storage.delete(key: _keyOnboardingComplete);
     await _storage.delete(key: _keyChildName);
+    await _storage.delete(key: _keyAccountType);
     _state = const AuthState();
     notifyListeners();
   }

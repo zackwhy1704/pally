@@ -7,6 +7,7 @@ import 'package:pally/features/auth/screens/splash_screen.dart';
 import 'package:pally/features/auth/screens/sign_in_screen.dart';
 import 'package:pally/features/auth/screens/sign_up_screen.dart';
 import 'package:pally/features/auth/screens/child_setup_screen.dart';
+import 'package:pally/features/auth/screens/parent_onboarding_screen.dart';
 import 'package:pally/features/avatar_picker/screens/avatar_picker_screen.dart';
 import 'package:pally/features/home/presentation/home_screen.dart';
 import 'package:pally/features/create_tutor/presentation/create_tutor_screen.dart';
@@ -32,8 +33,11 @@ import 'package:pally/features/subscription/presentation/subscription_return_scr
 import 'package:pally/features/collection/presentation/collection_screen.dart';
 import 'package:pally/features/shop/presentation/shop_screen.dart';
 import 'package:pally/features/parent/presentation/parent_screen.dart';
+import 'package:pally/features/parent/presentation/parent_home_screen.dart';
+import 'package:pally/features/parent/presentation/child_detail_screen.dart';
 import 'package:pally/features/parent/presentation/report_list_screen.dart';
 import 'package:pally/features/parent/presentation/report_detail_screen.dart';
+import 'package:pally/features/family/presentation/family_consent_screen.dart';
 import 'package:pally/features/study_plan/presentation/study_plan_screen.dart';
 import 'package:pally/features/settings/presentation/settings_screen.dart';
 import 'package:pally/features/photo_question/presentation/camera_screen.dart';
@@ -285,6 +289,44 @@ class ParentRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const ParentScreen();
+}
+
+@TypedGoRoute<ParentHomeRoute>(path: '/parent-home')
+class ParentHomeRoute extends GoRouteData {
+  const ParentHomeRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ParentHomeScreen();
+}
+
+@TypedGoRoute<ChildDetailRoute>(path: '/parent/child/:childId')
+class ChildDetailRoute extends GoRouteData {
+  const ChildDetailRoute({required this.childId});
+  final String childId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      ChildDetailScreen(childId: childId);
+}
+
+@TypedGoRoute<ParentOnboardingRoute>(path: '/parent-onboarding')
+class ParentOnboardingRoute extends GoRouteData {
+  const ParentOnboardingRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ParentOnboardingScreen();
+}
+
+@TypedGoRoute<FamilyConsentRoute2>(path: '/family/consent')
+class FamilyConsentRoute2 extends GoRouteData {
+  const FamilyConsentRoute2({this.parentName});
+  final String? parentName;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      FamilyConsentScreen(parentName: parentName);
 }
 
 @TypedGoRoute<ParentReportsRoute>(path: '/parent/reports')
@@ -658,6 +700,9 @@ const _publicPaths = {
   '/onboarding',
   '/onboarding/direct',
   '/consent/', // all consent sub-paths are accessible after login (auth token present)
+  '/parent-onboarding',
+  '/parent-home',
+  '/family/consent',
 };
 
 GoRouter buildAppRouter({
@@ -681,6 +726,7 @@ GoRouter buildAppRouter({
       }
 
       if (auth.isSignedIn && path == '/') {
+        if (auth.isParentAccount) return '/parent-home';
         if (!auth.isSetupComplete) return '/auth/setup';
         if (!auth.isOnboardingComplete) return '/onboarding';
       }

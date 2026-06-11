@@ -78,13 +78,18 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         token: result.token,
         setupComplete: result.setupComplete,
         onboardingComplete: result.setupComplete,
+        accountType: result.accountType,
       );
       ref.read(analyticsProvider).identify(result.userId, props: {
         'email': email,
       });
       ref.read(analyticsProvider).event(AnalyticsEvents.signIn);
       if (mounted) {
-        context.go(result.setupComplete ? '/' : '/auth/setup');
+        if (result.accountType == 'PARENT') {
+          context.go('/parent-home');
+        } else {
+          context.go(result.setupComplete ? '/' : '/auth/setup');
+        }
       }
     } on AuthException catch (e) {
       if (mounted) _showError(e.message);

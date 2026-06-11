@@ -20,7 +20,7 @@ class ParentScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Parent Mode', style: AppTextStyles.title),
+        title: Text('Parent / Guardian check-in', style: AppTextStyles.title),
         centerTitle: true,
         actions: [
           if (parentState.isPinVerified)
@@ -307,6 +307,16 @@ class _PinGateState extends State<_PinGate> {
                         .copyWith(color: AppColors.purple)),
               ),
             ],
+            const SizedBox(height: AppSpacing.md),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              child: Text(
+                'On your own phone? Download Memoly and create a parent '
+                'account to see your child\'s progress anytime.',
+                style: AppTextStyles.caption.copyWith(color: AppColors.text3),
+                textAlign: TextAlign.center,
+              ),
+            ),
           ],
         ),
       ),

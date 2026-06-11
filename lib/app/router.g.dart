@@ -17,6 +17,10 @@ List<RouteBase> get $appRoutes => [
       $shopRoute,
       $collectionRoute,
       $parentRoute,
+      $parentHomeRoute,
+      $childDetailRoute,
+      $parentOnboardingRoute,
+      $familyConsentRoute2,
       $parentReportsRoute,
       $parentReportDetailRoute,
       $createGroupRoute,
@@ -462,6 +466,104 @@ extension $ParentRouteExtension on ParentRoute {
 
   String get location => GoRouteData.$location(
         '/parent',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $parentHomeRoute => GoRouteData.$route(
+      path: '/parent-home',
+      factory: $ParentHomeRouteExtension._fromState,
+    );
+
+extension $ParentHomeRouteExtension on ParentHomeRoute {
+  static ParentHomeRoute _fromState(GoRouterState state) =>
+      const ParentHomeRoute();
+
+  String get location => GoRouteData.$location(
+        '/parent-home',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $childDetailRoute => GoRouteData.$route(
+      path: '/parent/child/:childId',
+      factory: $ChildDetailRouteExtension._fromState,
+    );
+
+extension $ChildDetailRouteExtension on ChildDetailRoute {
+  static ChildDetailRoute _fromState(GoRouterState state) => ChildDetailRoute(
+        childId: state.pathParameters['childId']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/parent/child/${Uri.encodeComponent(childId)}',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $parentOnboardingRoute => GoRouteData.$route(
+      path: '/parent-onboarding',
+      factory: $ParentOnboardingRouteExtension._fromState,
+    );
+
+extension $ParentOnboardingRouteExtension on ParentOnboardingRoute {
+  static ParentOnboardingRoute _fromState(GoRouterState state) =>
+      const ParentOnboardingRoute();
+
+  String get location => GoRouteData.$location(
+        '/parent-onboarding',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $familyConsentRoute2 => GoRouteData.$route(
+      path: '/family/consent',
+      factory: $FamilyConsentRoute2Extension._fromState,
+    );
+
+extension $FamilyConsentRoute2Extension on FamilyConsentRoute2 {
+  static FamilyConsentRoute2 _fromState(GoRouterState state) =>
+      FamilyConsentRoute2(
+        parentName: state.uri.queryParameters['parent-name'],
+      );
+
+  String get location => GoRouteData.$location(
+        '/family/consent',
+        queryParams: {
+          if (parentName != null) 'parent-name': parentName,
+        },
       );
 
   void go(BuildContext context) => context.go(location);
