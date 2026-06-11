@@ -8,6 +8,8 @@ import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/utils/device_info.dart';
+import 'package:pally/core/observability/observability.dart';
+import 'package:pally/core/observability/observability_providers.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/auth/services/auth_service.dart';
 
@@ -77,6 +79,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         setupComplete: result.setupComplete,
         onboardingComplete: result.setupComplete,
       );
+      ref.read(analyticsProvider).identify(result.userId, props: {
+        'email': email,
+      });
+      ref.read(analyticsProvider).event(AnalyticsEvents.signIn);
       if (mounted) {
         context.go(result.setupComplete ? '/' : '/auth/setup');
       }

@@ -4,6 +4,8 @@ import 'package:just_audio/just_audio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/error/pally_error.dart';
+import 'package:pally/core/observability/observability.dart';
+import 'package:pally/core/observability/observability_providers.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/shared/models/learning_module.dart';
 import 'package:pally/shared/models/narration.dart';
@@ -204,6 +206,16 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
 
       appLog.i('[ModulePlayer] Loaded ${items.length} items for ${state.stage}'
           '${isRevision ? ' (revision mode)' : ''}');
+      ref.read(analyticsProvider).event(
+        AnalyticsEvents.moduleStarted,
+        props: {
+          'module_id': _moduleId,
+          'avatar_id': _avatarId,
+          'stage': state.stage,
+          'is_revision': isRevision,
+          'item_count': items.length,
+        },
+      );
       state = state.copyWith(
         items: items,
         currentIndex: 0,
@@ -269,8 +281,24 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
       final data = res.data;
       final nextStage = _extractNextStage(data);
       appLog.i('[ModulePlayer] Submission complete, next stage: $nextStage');
+      ref.read(analyticsProvider).event(
+        AnalyticsEvents.moduleStageCompleted,
+        props: {
+          'module_id': _moduleId,
+          'avatar_id': _avatarId,
+          'stage': state.stage,
+          'next_stage': nextStage,
+        },
+      );
 
       if (nextStage == 'COMPLETE') {
+        ref.read(analyticsProvider).event(
+          AnalyticsEvents.moduleCompleted,
+          props: {
+            'module_id': _moduleId,
+            'avatar_id': _avatarId,
+          },
+        );
         await _loadResults();
       } else {
         state = state.copyWith(
@@ -411,6 +439,14 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
     }
 
     appLog.i('[ModulePlayer] Playing narration for card $cardIndex');
+    ref.read(analyticsProvider).event(
+      AnalyticsEvents.narrationPlayed,
+      props: {
+        'module_id': _moduleId,
+        'avatar_id': _avatarId,
+        'card_index': cardIndex,
+      },
+    );
     _audioPlayer ??= AudioPlayer();
 
     try {

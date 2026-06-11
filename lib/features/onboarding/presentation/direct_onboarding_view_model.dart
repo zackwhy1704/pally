@@ -6,6 +6,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/observability/observability.dart';
+import 'package:pally/core/observability/observability_providers.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/auth/auth_state.dart';
 
@@ -196,6 +198,21 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
 
       appLog.i(
           '[DirectOnboard] Quick onboard success: userId=$userId avatarId=$avatarId');
+
+      ref.read(analyticsProvider).identify(userId, props: {
+        'email': email,
+        'display_name': displayName,
+        'subject': subject,
+        'level': level,
+      });
+      ref.read(analyticsProvider).event(
+        AnalyticsEvents.onboardingCompleted,
+        props: {
+          'avatar_id': avatarId,
+          'subject': subject,
+          'level': level,
+        },
+      );
 
       state = state.copyWith(
         isLoading: false,

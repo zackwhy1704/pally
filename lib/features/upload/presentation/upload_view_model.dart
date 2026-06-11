@@ -10,6 +10,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/upload_result.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/observability/observability.dart';
+import 'package:pally/core/observability/observability_providers.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
@@ -519,6 +521,15 @@ class UploadViewModel extends _$UploadViewModel {
       appLog.i('[Upload] Success: ${result.id} pages=${result.pageCount}'
           '${servedBy != null ? " servedBy=$servedBy" : ""}'
           '${degraded ? " DEGRADED" : ""}');
+      ref.read(analyticsProvider).event(
+        AnalyticsEvents.uploadNote,
+        props: {
+          'avatar_id': _avatarId,
+          'file_name': file.name,
+          'file_size_bytes': file.size,
+          'page_count': result.pageCount,
+        },
+      );
       final isLarge = file.size > 5 * 1024 * 1024 || result.pageCount > 20;
 
       // If the backend used a fallback reader, surface a friendly info note.

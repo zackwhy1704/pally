@@ -48,4 +48,12 @@ abstract class AnalyticsEvents {
   static const guideModeToggle    = 'guide_mode_toggle';
   static const brainMapView       = 'brain_map_view';
   static const photoQuestion      = 'photo_question';
+  static const moduleStarted       = 'module_started';
+  static const moduleStageCompleted = 'module_stage_completed';
+  static const moduleCompleted      = 'module_completed';
+  static const assignmentStarted    = 'assignment_started';
+  static const assignmentCompleted  = 'assignment_completed';
+  static const examPrepViewed       = 'exam_prep_viewed';
+  static const narrationPlayed      = 'narration_played';
+  static const onboardingCompleted  = 'onboarding_completed';
 }

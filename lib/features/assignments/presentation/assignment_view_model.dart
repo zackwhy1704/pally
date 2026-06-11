@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/observability/observability.dart';
+import 'package:pally/core/observability/observability_providers.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/shared/models/assignment.dart';
 
@@ -72,6 +74,13 @@ class AssignmentViewModel extends _$AssignmentViewModel {
         '/api/v1/avatars/$_avatarId/assignments/$assignmentId/start',
       );
       appLog.i('[Assignments] Assignment started, refreshing');
+      ref.read(analyticsProvider).event(
+        AnalyticsEvents.assignmentStarted,
+        props: {
+          'assignment_id': assignmentId,
+          'avatar_id': _avatarId,
+        },
+      );
       await refresh();
       return true;
     } on DioException catch (e, st) {
