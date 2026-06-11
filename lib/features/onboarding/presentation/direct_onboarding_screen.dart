@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -453,100 +456,11 @@ class _Step3Upload extends ConsumerWidget {
     }
 
     // Idle or failed — show upload prompt
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-      child: Column(
-        children: [
-          const SizedBox(height: AppSpacing.lg),
-          Center(
-            child: Image.asset(
-              'assets/images/mochi.png',
-              width: AppSizing.heroMochiSize,
-              height: AppSizing.heroMochiSize,
-              fit: BoxFit.contain,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            'Upload your first notes',
-            style: AppTextStyles.heading1,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            'Snap a photo of your textbook, worksheet, or notes. '
-            'Mochi will read them and build a study module for you.',
-            style: AppTextStyles.body.copyWith(color: AppColors.text2),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: AppSpacing.xl),
-          // Camera button (large)
-          SizedBox(
-            height: AppSizing.buttonHeight,
-            width: double.infinity,
-            child: FilledButton.icon(
-              onPressed: () => _pickFromCamera(context, ref),
-              icon: const Icon(Icons.camera_alt_rounded),
-              label: Text(
-                'Take a photo',
-                style: AppTextStyles.body.copyWith(
-                    color: Colors.white, fontWeight: FontWeight.w700),
-              ),
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.purple,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
-              ),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          // File picker (secondary)
-          SizedBox(
-            height: AppSizing.buttonHeightSm,
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () => _pickFile(context, ref),
-              icon:
-                  const Icon(Icons.upload_file_rounded, color: AppColors.purple),
-              label: Text(
-                'Or choose a file',
-                style: AppTextStyles.body.copyWith(
-                    color: AppColors.purple, fontWeight: FontWeight.w600),
-              ),
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppColors.purple),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
-              ),
-            ),
-          ),
-          if (uploadStage == DirectUploadStage.failed) ...[
-            const SizedBox(height: AppSpacing.md),
-            Container(
-              padding: AppSpacing.card,
-              decoration: BoxDecoration(
-                color: AppColors.coralL,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                'Upload failed. Please try again.',
-                style: AppTextStyles.body.copyWith(color: AppColors.coral),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-          const Spacer(),
-          // Skip option
-          TextButton(
-            onPressed: () => context.go('/'),
-            child: Text(
-              'Skip for now',
-              style: AppTextStyles.body.copyWith(color: AppColors.text2),
-            ),
-          ),
-          SizedBox(height: MediaQuery.of(context).padding.bottom + AppSpacing.md),
-        ],
-      ),
+    return _UploadIdleView(
+      avatarId: avatarId,
+      uploadStage: uploadStage,
+      onPickCamera: (ctx, r) => _pickFromCamera(ctx, r),
+      onPickFile: (ctx, r) => _pickFile(ctx, r),
     );
   }
 
@@ -586,6 +500,264 @@ class _Step3Upload extends ConsumerWidget {
     await ref
         .read(directOnboardingViewModelProvider.notifier)
         .uploadFile(result.files.first);
+  }
+}
+
+// ── Upload idle view (with typed notes primary + photo secondary) ───────────
+
+class _UploadIdleView extends ConsumerStatefulWidget {
+  const _UploadIdleView({
+    required this.avatarId,
+    required this.uploadStage,
+    required this.onPickCamera,
+    required this.onPickFile,
+  });
+
+  final String? avatarId;
+  final DirectUploadStage uploadStage;
+  final void Function(BuildContext, WidgetRef) onPickCamera;
+  final void Function(BuildContext, WidgetRef) onPickFile;
+
+  @override
+  ConsumerState<_UploadIdleView> createState() => _UploadIdleViewState();
+}
+
+class _UploadIdleViewState extends ConsumerState<_UploadIdleView> {
+  final _textCtrl = TextEditingController();
+  int _charCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _textCtrl.addListener(_onChanged);
+  }
+
+  void _onChanged() {
+    final len = _textCtrl.text.length;
+    if (len != _charCount) setState(() => _charCount = len);
+  }
+
+  @override
+  void dispose() {
+    _textCtrl.removeListener(_onChanged);
+    _textCtrl.dispose();
+    super.dispose();
+  }
+
+  bool get _canSubmit => _charCount >= 50;
+
+  Future<void> _submitTypedNotes() async {
+    if (!_canSubmit) return;
+    final avatarId = widget.avatarId;
+    if (avatarId == null || avatarId.isEmpty) return;
+
+    final text = _textCtrl.text.trim();
+    // Write to a temp file and upload via the direct onboarding VM
+    final dir = await getTemporaryDirectory();
+    final ts = DateTime.now().millisecondsSinceEpoch;
+    final fileName = 'typed-notes-$ts.txt';
+    final file = File('${dir.path}/$fileName');
+    await file.writeAsString(text);
+
+    final platformFile = PlatformFile(
+      name: fileName,
+      path: file.path,
+      size: text.length,
+    );
+    await ref
+        .read(directOnboardingViewModelProvider.notifier)
+        .uploadFile(platformFile);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final charColor = _charCount > 5000 ? AppColors.coral : AppColors.text3;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: AppSpacing.lg),
+                  Center(
+                    child: Image.asset(
+                      'assets/images/mochi.png',
+                      width: AppSizing.heroMochiSize,
+                      height: AppSizing.heroMochiSize,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
+                    'Add your first notes',
+                    style: AppTextStyles.heading1,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    'Type or paste your notes below. Mochi will read them and build a study module for you.',
+                    style: AppTextStyles.body.copyWith(color: AppColors.text2),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  // Text field
+                  TextField(
+                    controller: _textCtrl,
+                    maxLines: 6,
+                    minLines: 4,
+                    textAlignVertical: TextAlignVertical.top,
+                    decoration: InputDecoration(
+                      hintText: 'Paste or type your notes here...',
+                      hintStyle:
+                          AppTextStyles.body.copyWith(color: AppColors.text3),
+                      filled: true,
+                      fillColor: AppColors.surface,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide:
+                            const BorderSide(color: AppColors.outline),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide:
+                            const BorderSide(color: AppColors.outline),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                            color: AppColors.purple, width: 1.5),
+                      ),
+                      contentPadding: const EdgeInsets.all(AppSpacing.md),
+                    ),
+                    style: AppTextStyles.body,
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  // Char count
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      '$_charCount chars${_charCount < 50 ? ' (min 50)' : ''}',
+                      style: AppTextStyles.caption.copyWith(color: charColor),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  // Submit typed notes button
+                  SizedBox(
+                    height: AppSizing.buttonHeight,
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: _canSubmit ? _submitTypedNotes : null,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: AppColors.purple,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
+                      ),
+                      child: Text(
+                        'Add to Mochi',
+                        style: AppTextStyles.body.copyWith(
+                            color: Colors.white, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  // Divider with "or"
+                  Row(
+                    children: [
+                      const Expanded(child: Divider(color: AppColors.outline)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.md),
+                        child: Text('or',
+                            style: AppTextStyles.bodySmall
+                                .copyWith(color: AppColors.text3)),
+                      ),
+                      const Expanded(child: Divider(color: AppColors.outline)),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  // Photo button (secondary)
+                  SizedBox(
+                    height: AppSizing.buttonHeightSm,
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () =>
+                          widget.onPickCamera(context, ref),
+                      icon: const Icon(Icons.camera_alt_rounded,
+                          color: AppColors.purple),
+                      label: Text(
+                        'Or snap a photo',
+                        style: AppTextStyles.body.copyWith(
+                            color: AppColors.purple,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: AppColors.purple),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  // File picker (tertiary)
+                  SizedBox(
+                    height: AppSizing.buttonHeightSm,
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () =>
+                          widget.onPickFile(context, ref),
+                      icon: const Icon(Icons.upload_file_rounded,
+                          color: AppColors.text2),
+                      label: Text(
+                        'Or choose a file',
+                        style: AppTextStyles.body.copyWith(
+                            color: AppColors.text2,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: AppColors.outline),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
+                      ),
+                    ),
+                  ),
+                  if (widget.uploadStage == DirectUploadStage.failed) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    Container(
+                      padding: AppSpacing.card,
+                      decoration: BoxDecoration(
+                        color: AppColors.coralL,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        'Upload failed. Please try again.',
+                        style:
+                            AppTextStyles.body.copyWith(color: AppColors.coral),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: AppSpacing.md),
+                ],
+              ),
+            ),
+          ),
+          // Skip option
+          TextButton(
+            onPressed: () => context.go('/'),
+            child: Text(
+              'Skip for now',
+              style: AppTextStyles.body.copyWith(color: AppColors.text2),
+            ),
+          ),
+          SizedBox(
+              height: MediaQuery.of(context).padding.bottom + AppSpacing.md),
+        ],
+      ),
+    );
   }
 }
 

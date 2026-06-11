@@ -7,7 +7,7 @@ part of 'direct_onboarding_view_model.dart';
 // **************************************************************************
 
 String _$directOnboardingViewModelHash() =>
-    r'75b084b8346cbfe07e98a64f79c39b5251349d5b';
+    r'e43d40b3d53d2ffc042ebf8e6575409c8eb7f533';
 
 /// See also [DirectOnboardingViewModel].
 @ProviderFor(DirectOnboardingViewModel)

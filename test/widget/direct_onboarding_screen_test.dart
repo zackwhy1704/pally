@@ -61,8 +61,9 @@ void main() {
         ],
       ));
 
-      expect(find.text('Upload your first notes'), findsOneWidget);
-      expect(find.text('Take a photo'), findsOneWidget);
+      expect(find.text('Add your first notes'), findsOneWidget);
+      expect(find.text('Add to Mochi'), findsOneWidget);
+      expect(find.text('Or snap a photo'), findsOneWidget);
       expect(find.text('Or choose a file'), findsOneWidget);
       expect(find.text('Skip for now'), findsOneWidget);
       expect(find.text('Step 3 of 3'), findsOneWidget);

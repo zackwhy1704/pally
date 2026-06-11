@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -9,9 +10,9 @@ import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/ui/pally_relevance_warning_dialog.dart';
 import 'package:pally/core/widgets/loading/mochi_generating.dart';
 import 'package:pally/shared/models/avatar.dart';
-import 'package:pally/shared/models/upload_result.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/upload/presentation/upload_view_model.dart';
+import 'package:pally/features/upload/presentation/ocr_review_screen.dart';
 import 'package:pally/features/centre/centre_mode.dart';
 
 class UploadScreen extends ConsumerWidget {
@@ -49,6 +50,37 @@ class UploadScreen extends ConsumerWidget {
       }
     });
 
+    // Show OCR review screen when quality is BORDERLINE
+    ref.listen<UploadState>(uploadViewModelProvider(avatarId), (prev, next) {
+      if (next.needsOcrReview &&
+          prev?.reviewFileId != next.reviewFileId &&
+          context.mounted) {
+        Navigator.of(context)
+            .push<String>(
+          MaterialPageRoute(
+            builder: (_) => OcrReviewScreen(
+              avatarId: avatarId,
+              fileId: next.reviewFileId!,
+              qualityReason: next.uploadQualityReason ?? 'Some text may need review.',
+              extractedText: next.uploadExtractedText ?? '',
+            ),
+          ),
+        )
+            .then((result) {
+          if (!context.mounted) return;
+          if (result == 'reupload') {
+            vm.pickFromCamera();
+          } else if (result == 'type') {
+            // Pre-fill with extracted text and show paste dialog
+            final extracted = next.uploadExtractedText ?? '';
+            if (extracted.isNotEmpty) {
+              vm.pasteText(extracted);
+            }
+          }
+        });
+      }
+    });
+
     // Show relevance warning when check completes and result is not relevant
     ref.listen(uploadViewModelProvider(avatarId), (prev, next) async {
       if (next.pendingRelevance != null &&
@@ -76,6 +108,47 @@ class UploadScreen extends ConsumerWidget {
       return _UploadLoadingScreen(state: state, avatarId: avatarId);
     }
 
+    return _UploadScreenContent(avatarId: avatarId, state: state);
+  }
+}
+
+// ── Main content with tab bar ────────────────────────────────────────────────
+
+class _UploadScreenContent extends ConsumerStatefulWidget {
+  const _UploadScreenContent({
+    required this.avatarId,
+    required this.state,
+  });
+
+  final String avatarId;
+  final UploadState state;
+
+  @override
+  ConsumerState<_UploadScreenContent> createState() =>
+      _UploadScreenContentState();
+}
+
+class _UploadScreenContentState extends ConsumerState<_UploadScreenContent>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabCtrl = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = widget.state;
+    final vm = ref.read(uploadViewModelProvider(widget.avatarId).notifier);
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.bg,
@@ -83,8 +156,8 @@ class UploadScreen extends ConsumerWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () {
-            if (context.canPop()) {
-              context.pop();
+            if (_canPop(context)) {
+              Navigator.of(context).pop();
             } else {
               const HomeRoute().go(context);
             }
@@ -94,8 +167,8 @@ class UploadScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () {
-              if (context.canPop()) {
-                context.pop();
+              if (_canPop(context)) {
+                Navigator.of(context).pop();
               } else {
                 const HomeRoute().go(context);
               }
@@ -107,58 +180,393 @@ class UploadScreen extends ConsumerWidget {
         ],
       ),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(
           children: [
             _HeroPanel(avatar: state.avatar),
-            const SizedBox(height: AppSpacing.md),
-            const _TipBanner(),
             const SizedBox(height: AppSpacing.sm),
-            _ContextTagBar(
-              topicTag: state.topicTag,
-              sourceType: state.sourceType,
-              onTopicChanged: vm.setTopicTag,
-              onSourceChanged: vm.setSourceType,
+            // Tab bar
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              decoration: BoxDecoration(
+                color: AppColors.surf2,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: TabBar(
+                controller: _tabCtrl,
+                indicator: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.purple.withValues(alpha: 0.12),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicatorPadding: const EdgeInsets.all(3),
+                dividerColor: Colors.transparent,
+                labelColor: AppColors.purple,
+                unselectedLabelColor: AppColors.text3,
+                labelStyle: AppTextStyles.body
+                    .copyWith(fontWeight: FontWeight.w700, fontSize: 13),
+                unselectedLabelStyle: AppTextStyles.body
+                    .copyWith(fontWeight: FontWeight.w500, fontSize: 13),
+                tabs: const [
+                  Tab(text: 'Type'),
+                  Tab(text: 'Photo'),
+                  Tab(text: 'File'),
+                ],
+              ),
             ),
-            const SizedBox(height: AppSpacing.md),
-            _UploadOptions(
-              isUploading: state.isUploading,
-              isCheckingRelevance: state.isCheckingRelevance,
-              onCamera: vm.pickFromCamera,
-              onPdf: vm.pickPdf,
-              onPasteText: vm.pasteText,
+            const SizedBox(height: AppSpacing.sm),
+            // Tab content
+            Expanded(
+              child: TabBarView(
+                controller: _tabCtrl,
+                children: [
+                  _TypeTab(
+                    avatarId: widget.avatarId,
+                    subject: state.avatar?.subject,
+                    isBusy: state.isBusy,
+                  ),
+                  _PhotoTab(
+                    isUploading: state.isUploading,
+                    isCheckingRelevance: state.isCheckingRelevance,
+                    onCamera: vm.pickFromCamera,
+                    topicTag: state.topicTag,
+                    sourceType: state.sourceType,
+                    onTopicChanged: vm.setTopicTag,
+                    onSourceChanged: vm.setSourceType,
+                  ),
+                  _FileTab(
+                    isUploading: state.isUploading,
+                    isCheckingRelevance: state.isCheckingRelevance,
+                    onPdf: vm.pickPdf,
+                    topicTag: state.topicTag,
+                    sourceType: state.sourceType,
+                    onTopicChanged: vm.setTopicTag,
+                    onSourceChanged: vm.setSourceType,
+                  ),
+                ],
+              ),
             ),
-            // Brain compiling banner — shown after upload while Gemini compiles
+            // Shared sections below tabs: file list, errors, warnings
             if (state.compilingFileCount > 0 &&
                 (state.uploadStage == UploadStage.compilingBrain ||
-                    state.uploadStage == UploadStage.chunkedCompile)) ...[
-              const SizedBox(height: AppSpacing.md),
-              _BrainCompilingBanner(state: state),
-            ],
-            if (state.hasFiles) ...[
-              const SizedBox(height: AppSpacing.md),
-              _FileList(
-                files: state.files,
-                onDelete: vm.deleteFile,
+                    state.uploadStage == UploadStage.chunkedCompile))
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                child: _BrainCompilingBanner(state: state),
               ),
-            ],
-            // Per-file warning notes (e.g. backup reader / degraded)
-            if (state.fileWarnings.isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.md),
-              _FileWarningList(warnings: state.fileWarnings),
-            ],
-            // Per-file error cards shown after upload batch completes
-            if (state.fileErrors.isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.md),
-              _FileErrorList(
-                errors: state.fileErrors,
-                onDismiss: vm.clearErrors,
-                avatarId: avatarId,
+            if (state.hasFiles)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.md, AppSpacing.sm, AppSpacing.md, 0),
+                child: _CollapsedFileCount(count: state.totalFiles),
               ),
-            ],
+            if (state.fileWarnings.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.md, AppSpacing.sm, AppSpacing.md, 0),
+                child: _FileWarningList(warnings: state.fileWarnings),
+              ),
+            if (state.fileErrors.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.md, AppSpacing.sm, AppSpacing.md, 0),
+                child: _FileErrorList(
+                  errors: state.fileErrors,
+                  onDismiss: vm.clearErrors,
+                  avatarId: widget.avatarId,
+                ),
+              ),
+            SizedBox(height: MediaQuery.of(context).padding.bottom + AppSpacing.xs),
           ],
         ),
       ),
+    );
+  }
+
+  bool _canPop(BuildContext context) => Navigator.of(context).canPop();
+}
+
+// ── Type tab ─────────────────────────────────────────────────────────────────
+
+class _TypeTab extends ConsumerStatefulWidget {
+  const _TypeTab({
+    required this.avatarId,
+    required this.subject,
+    required this.isBusy,
+  });
+
+  final String avatarId;
+  final String? subject;
+  final bool isBusy;
+
+  @override
+  ConsumerState<_TypeTab> createState() => _TypeTabState();
+}
+
+class _TypeTabState extends ConsumerState<_TypeTab>
+    with AutomaticKeepAliveClientMixin {
+  final _textCtrl = TextEditingController();
+  int _charCount = 0;
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    _textCtrl.addListener(_onChanged);
+  }
+
+  void _onChanged() {
+    final len = _textCtrl.text.length;
+    if (len != _charCount) setState(() => _charCount = len);
+  }
+
+  @override
+  void dispose() {
+    _textCtrl.removeListener(_onChanged);
+    _textCtrl.dispose();
+    super.dispose();
+  }
+
+  bool get _canSubmit => _charCount >= 50 && !widget.isBusy;
+
+  Future<void> _pasteFromClipboard() async {
+    final data = await Clipboard.getData(Clipboard.kTextPlain);
+    if (data?.text != null && data!.text!.isNotEmpty) {
+      _textCtrl.text = data.text!;
+      _textCtrl.selection =
+          TextSelection.collapsed(offset: _textCtrl.text.length);
+    }
+  }
+
+  void _submit() {
+    if (!_canSubmit) return;
+    final vm = ref.read(uploadViewModelProvider(widget.avatarId).notifier);
+    vm.uploadTypedText(_textCtrl.text);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    final charColor = _charCount > 5000 ? AppColors.coral : AppColors.text3;
+
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+      children: [
+        const SizedBox(height: AppSpacing.sm),
+        if (widget.subject != null)
+          Text(
+            'Adding notes to ${widget.subject}',
+            style: AppTextStyles.label.copyWith(color: AppColors.text2),
+          ),
+        const SizedBox(height: AppSpacing.sm),
+        // Tip
+        Container(
+          padding: const EdgeInsets.all(AppSpacing.sm),
+          decoration: BoxDecoration(
+            color: AppColors.tealL,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
+            'Typed notes give the best results. Paste from Google Docs or type from your textbook.',
+            style: AppTextStyles.bodySmall.copyWith(color: AppColors.teal),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        // Text field
+        TextField(
+          controller: _textCtrl,
+          maxLines: 10,
+          minLines: 6,
+          textAlignVertical: TextAlignVertical.top,
+          decoration: InputDecoration(
+            hintText: 'Paste or type your notes here...',
+            hintStyle: AppTextStyles.body.copyWith(color: AppColors.text3),
+            filled: true,
+            fillColor: AppColors.surface,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: AppColors.outline),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: AppColors.outline),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: AppColors.purple, width: 1.5),
+            ),
+            contentPadding: const EdgeInsets.all(AppSpacing.md),
+          ),
+          style: AppTextStyles.body,
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        // Character count + paste button row
+        Row(
+          children: [
+            TextButton.icon(
+              onPressed: _pasteFromClipboard,
+              icon: const Icon(Icons.content_paste_rounded,
+                  size: 16, color: AppColors.purple),
+              label: Text('Paste from clipboard',
+                  style: AppTextStyles.bodySmall
+                      .copyWith(color: AppColors.purple)),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+            ),
+            const Spacer(),
+            Text(
+              '$_charCount chars${_charCount < 50 ? ' (min 50)' : ''}',
+              style: AppTextStyles.caption.copyWith(color: charColor),
+            ),
+          ],
+        ),
+        if (_charCount > 5000)
+          Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.xs),
+            child: Text(
+              'Consider splitting long notes into separate uploads for better accuracy.',
+              style: AppTextStyles.caption.copyWith(color: AppColors.amber),
+            ),
+          ),
+        const SizedBox(height: AppSpacing.md),
+        // Submit button
+        SizedBox(
+          width: double.infinity,
+          height: AppSizing.buttonHeight,
+          child: FilledButton(
+            onPressed: _canSubmit ? _submit : null,
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.purple,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
+            ),
+            child: widget.isBusy
+                ? const SizedBox(
+                    width: AppSizing.spinnerSm,
+                    height: AppSizing.spinnerSm,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white),
+                  )
+                : Text('Add to Mochi',
+                    style: AppTextStyles.body.copyWith(
+                        color: Colors.white, fontWeight: FontWeight.w700)),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+      ],
+    );
+  }
+}
+
+// ── Photo tab ────────────────────────────────────────────────────────────────
+
+class _PhotoTab extends StatelessWidget {
+  const _PhotoTab({
+    required this.isUploading,
+    required this.isCheckingRelevance,
+    required this.onCamera,
+    required this.topicTag,
+    required this.sourceType,
+    required this.onTopicChanged,
+    required this.onSourceChanged,
+  });
+
+  final bool isUploading;
+  final bool isCheckingRelevance;
+  final VoidCallback onCamera;
+  final String? topicTag;
+  final String? sourceType;
+  final ValueChanged<String?> onTopicChanged;
+  final ValueChanged<String?> onSourceChanged;
+
+  bool get _busy => isUploading || isCheckingRelevance;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+      children: [
+        const SizedBox(height: AppSpacing.sm),
+        const _TipBanner(),
+        const SizedBox(height: AppSpacing.sm),
+        _ContextTagBar(
+          topicTag: topicTag,
+          sourceType: sourceType,
+          onTopicChanged: onTopicChanged,
+          onSourceChanged: onSourceChanged,
+        ),
+        const SizedBox(height: AppSpacing.md),
+        if (!_busy) ...[
+          _UploadTile(
+            icon: Icons.camera_alt_outlined,
+            title: 'Take a photo',
+            subtitle: 'Snap your notes or textbook',
+            onTap: onCamera,
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+// ── File tab ─────────────────────────────────────────────────────────────────
+
+class _FileTab extends StatelessWidget {
+  const _FileTab({
+    required this.isUploading,
+    required this.isCheckingRelevance,
+    required this.onPdf,
+    required this.topicTag,
+    required this.sourceType,
+    required this.onTopicChanged,
+    required this.onSourceChanged,
+  });
+
+  final bool isUploading;
+  final bool isCheckingRelevance;
+  final VoidCallback onPdf;
+  final String? topicTag;
+  final String? sourceType;
+  final ValueChanged<String?> onTopicChanged;
+  final ValueChanged<String?> onSourceChanged;
+
+  bool get _busy => isUploading || isCheckingRelevance;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+      children: [
+        const SizedBox(height: AppSpacing.sm),
+        const _TipBanner(),
+        const SizedBox(height: AppSpacing.sm),
+        _ContextTagBar(
+          topicTag: topicTag,
+          sourceType: sourceType,
+          onTopicChanged: onTopicChanged,
+          onSourceChanged: onSourceChanged,
+        ),
+        const SizedBox(height: AppSpacing.md),
+        if (!_busy) ...[
+          _UploadTile(
+            icon: Icons.picture_as_pdf_outlined,
+            title: 'Upload PDF',
+            subtitle: 'Choose a PDF from your device',
+            onTap: onPdf,
+          ),
+        ],
+      ],
     );
   }
 }
@@ -328,6 +736,7 @@ class _HeroPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: AppSizing.heroPanelHeight,
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.purpleL,
         borderRadius: BorderRadius.circular(16),
@@ -352,8 +761,8 @@ class _HeroPanel extends StatelessWidget {
               children: [
                 _SpeechBubble(
                   text: avatar != null
-                      ? 'Teach me your ${avatar!.subject} material — your notes become my brain! 🧠'
-                      : 'Teach me your material — I only learn from what you give me! 🧠',
+                      ? 'Teach me your ${avatar!.subject} material — your notes become my brain!'
+                      : 'Teach me your material — I only learn from what you give me!',
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -428,71 +837,6 @@ class _TipBanner extends StatelessWidget {
   }
 }
 
-class _UploadOptions extends StatelessWidget {
-  const _UploadOptions({
-    required this.isUploading,
-    required this.isCheckingRelevance,
-    required this.onCamera,
-    required this.onPdf,
-    required this.onPasteText,
-  });
-
-  final bool isUploading;
-  final bool isCheckingRelevance;
-  final VoidCallback onCamera;
-  final VoidCallback onPdf;
-  final ValueChanged<String> onPasteText;
-
-  bool get _busy => isUploading || isCheckingRelevance;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Add files', style: AppTextStyles.title),
-        const SizedBox(height: AppSpacing.sm),
-        // MochiGenerating overlay is shown at the UploadScreen level —
-        // this fallback should never be visible, but kept for safety.
-        if (_busy)
-          const SizedBox.shrink()
-        else ...[
-          _UploadTile(
-            icon: Icons.camera_alt_outlined,
-            title: 'Take a photo',
-            subtitle: 'Snap your notes or textbook',
-            onTap: onCamera,
-          ),
-          const Divider(height: 1),
-          _UploadTile(
-            icon: Icons.picture_as_pdf_outlined,
-            title: 'Upload PDF',
-            subtitle: 'Choose a PDF from your device',
-            onTap: onPdf,
-          ),
-          const Divider(height: 1),
-          _UploadTile(
-            icon: Icons.text_snippet_outlined,
-            title: 'Paste text',
-            subtitle: 'Copy-paste notes directly',
-            onTap: () => _showPasteDialog(context),
-          ),
-        ],
-      ],
-    );
-  }
-
-  void _showPasteDialog(BuildContext context) async {
-    final result = await showDialog<String>(
-      context: context,
-      builder: (ctx) => const _PasteTextDialog(),
-    );
-    if (result != null && result.trim().isNotEmpty) {
-      onPasteText(result);
-    }
-  }
-}
-
 class _UploadTile extends StatelessWidget {
   const _UploadTile({
     required this.icon,
@@ -510,7 +854,9 @@ class _UploadTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: AppColors.surface,
+      borderRadius: BorderRadius.circular(12),
       child: InkWell(
+        borderRadius: BorderRadius.circular(12),
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -549,152 +895,37 @@ class _UploadTile extends StatelessWidget {
   }
 }
 
-class _FileList extends StatelessWidget {
-  const _FileList({required this.files, required this.onDelete});
+// ── Collapsed file count (compact summary for below tabs) ────────────────────
 
-  final List<UploadResult> files;
-  final ValueChanged<String> onDelete;
-
-  String _statusIcon(UploadStatus status) {
-    switch (status) {
-      case UploadStatus.pending:
-        return '⏳';
-      case UploadStatus.processing:
-        return '⚙️';
-      case UploadStatus.ready:
-        return '✅';
-      case UploadStatus.failed:
-        return '❌';
-    }
-  }
+class _CollapsedFileCount extends StatelessWidget {
+  const _CollapsedFileCount({required this.count});
+  final int count;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Uploaded files (${files.length})',
-          style: AppTextStyles.title,
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: files.length,
-          separatorBuilder: (_, __) => const Divider(height: 1),
-          itemBuilder: (context, index) {
-            final file = files[index];
-            return ListTile(
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.xs,
-              ),
-              leading: Container(
-                width: AppSizing.iconContainerSm,
-                height: AppSizing.iconContainerSm,
-                decoration: const BoxDecoration(
-                  color: AppColors.tealL,
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Text(
-                    _statusIcon(file.status),
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                ),
-              ),
-              title: Text(
-                file.fileName,
-                style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              subtitle: file.pageCount > 0
-                  ? Text(
-                      '${file.pageCount} page${file.pageCount != 1 ? 's' : ''}',
-                      style: AppTextStyles.caption,
-                    )
-                  : null,
-              trailing: IconButton(
-                icon: const Icon(Icons.delete_outline_rounded,
-                    color: AppColors.coral),
-                onPressed: () => onDelete(file.id),
-              ),
-            );
-          },
-        ),
-      ],
+    return Container(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: AppColors.tealL,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.check_circle_rounded,
+              size: 16, color: AppColors.teal),
+          const SizedBox(width: AppSpacing.sm),
+          Text(
+            '$count file${count != 1 ? 's' : ''} uploaded',
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.teal,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
     );
   }
-}
-
-class _PasteTextDialog extends StatefulWidget {
-  const _PasteTextDialog();
-
-  @override
-  State<_PasteTextDialog> createState() => _PasteTextDialogState();
-}
-
-class _PasteTextDialogState extends State<_PasteTextDialog> {
-  final _controller = TextEditingController();
-  bool _hasText = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller.addListener(_onChanged);
-  }
-
-  void _onChanged() {
-    final has = _controller.text.trim().isNotEmpty;
-    if (has != _hasText) setState(() => _hasText = has);
-  }
-
-  @override
-  void dispose() {
-    _controller.removeListener(_onChanged);
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: AppColors.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      title: Text('Paste your notes', style: AppTextStyles.title),
-      content: TextField(
-        controller: _controller,
-        maxLines: 8,
-        autofocus: true,
-        decoration: InputDecoration(
-          hintText: 'Paste or type your notes here…',
-          hintStyle: AppTextStyles.body.copyWith(color: AppColors.text3),
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text('Cancel',
-              style: AppTextStyles.body.copyWith(color: AppColors.text2)),
-        ),
-        FilledButton(
-          onPressed: _hasText
-              ? () => Navigator.of(context).pop(_controller.text.trim())
-              : null,
-          child: const Text('Add'),
-        ),
-      ],
-    );
-  }
-}
-
-extension on BuildContext {
-  bool canPop() => Navigator.of(this).canPop();
-  void pop() => Navigator.of(this).pop();
 }
 
 // ── P7: Context tag bar ───────────────────────────────────────────────────────
@@ -789,14 +1020,14 @@ class _UploadLoadingScreen extends StatelessWidget {
       return _TerminalScreen(
         icon: Icons.check_circle_rounded,
         iconColor: AppColors.green,
-        title: '🧠 Brain updated!',
+        title: 'Brain updated!',
         message: 'Mochi has read your notes and added them to the brain. '
             'You can now chat, quiz, and explore the brain map.',
         primaryLabel: 'Start chatting',
         onPrimary: () => const HomeRoute().go(context),
         secondaryLabel: 'Add more notes',
         onSecondary: () {
-          if (context.canPop()) context.pop();
+          if (Navigator.of(context).canPop()) Navigator.of(context).pop();
         },
       );
     }
@@ -809,7 +1040,7 @@ class _UploadLoadingScreen extends StatelessWidget {
             ? Icons.hourglass_disabled_rounded
             : Icons.error_outline_rounded,
         iconColor: AppColors.amber,
-        title: isTimeout ? 'Taking longer than expected…' : 'Something went wrong',
+        title: isTimeout ? 'Taking longer than expected...' : 'Something went wrong',
         message: state.error ??
             (isTimeout
                 ? 'Mochi is still working on your notes in the background. '
@@ -822,7 +1053,7 @@ class _UploadLoadingScreen extends StatelessWidget {
         onSecondary: isTimeout
             ? () => const HomeRoute().go(context)
             : () {
-                if (context.canPop()) context.pop();
+                if (Navigator.of(context).canPop()) Navigator.of(context).pop();
               },
       );
     }
@@ -835,23 +1066,23 @@ class _UploadLoadingScreen extends StatelessWidget {
 
     final stepLabels = switch (stage) {
       UploadStage.checkingRelevance => const [
-          'Step 1 of 3 — Reviewing content…',
-          'Step 1 of 3 — Checking relevance…',
+          'Step 1 of 3 — Reviewing content...',
+          'Step 1 of 3 — Checking relevance...',
         ],
       UploadStage.uploading when isLarge => const [
-          'Step 2 of 3 — Sending to server…',
-          'Step 2 of 3 — Processing document…',
-          'Step 2 of 3 — Extracting text…',
-          'Step 2 of 3 — Almost there…',
+          'Step 2 of 3 — Sending to server...',
+          'Step 2 of 3 — Processing document...',
+          'Step 2 of 3 — Extracting text...',
+          'Step 2 of 3 — Almost there...',
         ],
       UploadStage.compilingBrain || UploadStage.chunkedCompile => [
-          'Step 3 of 3 — Reading your notes…',
-          'Step 3 of 3 — Finding key concepts…',
-          'Step 3 of 3 — Building brain pages…',
-          if (isLarge) 'Step 3 of 3 — Processing sections…',
-          'Step 3 of 3 — Almost ready…',
+          'Step 3 of 3 — Reading your notes...',
+          'Step 3 of 3 — Finding key concepts...',
+          'Step 3 of 3 — Building brain pages...',
+          if (isLarge) 'Step 3 of 3 — Processing sections...',
+          'Step 3 of 3 — Almost ready...',
         ],
-      _ => const ['Step 2 of 3 — Sending…', 'Step 2 of 3 — Processing…'],
+      _ => const ['Step 2 of 3 — Sending...', 'Step 2 of 3 — Processing...'],
     };
 
     final stepDuration = isCompiling
@@ -862,25 +1093,25 @@ class _UploadLoadingScreen extends StatelessWidget {
     if (isCompiling && state.compileProgress != null) {
       lines.add(state.compileProgress!);
     } else if (isCompiling && isLarge) {
-      lines.add('⚠️ Large document — splitting into sections (~${state.estimatedCompileTime})');
+      lines.add('Large document — splitting into sections (~${state.estimatedCompileTime})');
     } else if (isCompiling) {
-      lines.add('This usually takes 30–60 seconds');
+      lines.add('This usually takes 30-60 seconds');
     } else if (stage == UploadStage.uploading && isLarge) {
       lines.add('File: ${_sizeLabel(state.pendingFileSizeBytes)}${fileName.isNotEmpty ? " · $fileName" : ""}');
     } else if (stage == UploadStage.uploading && fileName.isNotEmpty) {
       lines.add(fileName);
     } else if (stage == UploadStage.checkingRelevance) {
-      lines.add('Making sure this fits the subject…');
+      lines.add('Making sure this fits the subject...');
     }
 
     final combinedLabel = [
       switch (stage) {
-        UploadStage.checkingRelevance => 'Checking your notes…',
-        UploadStage.uploading when isLarge => 'Uploading large document…',
-        UploadStage.uploading => 'Uploading…',
-        UploadStage.compilingBrain => 'Mochi is reading your notes…',
-        UploadStage.chunkedCompile => 'Building brain in sections…',
-        _ => 'Processing…',
+        UploadStage.checkingRelevance => 'Checking your notes...',
+        UploadStage.uploading when isLarge => 'Uploading large document...',
+        UploadStage.uploading => 'Uploading...',
+        UploadStage.compilingBrain => 'Mochi is reading your notes...',
+        UploadStage.chunkedCompile => 'Building brain in sections...',
+        _ => 'Processing...',
       },
       ...lines,
     ].join('\n');
@@ -936,8 +1167,8 @@ class _BrainCompilingBanner extends StatelessWidget {
               Expanded(
                 child: Text(
                   isChunked
-                      ? '🧩 Building brain in sections…'
-                      : '🧠 Mochi is reading your notes…',
+                      ? 'Building brain in sections...'
+                      : 'Mochi is reading your notes...',
                   style: AppTextStyles.body.copyWith(
                     fontWeight: FontWeight.w700,
                     color: isChunked ? AppColors.amber : AppColors.teal,

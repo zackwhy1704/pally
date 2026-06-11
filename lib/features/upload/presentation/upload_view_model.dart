@@ -67,6 +67,10 @@ class UploadState {
     this.pendingFilePageCount = 0,
     this.compilingFileCount = 0,
     this.compileProgress,
+    this.uploadQuality,
+    this.uploadQualityReason,
+    this.uploadExtractedText,
+    this.reviewFileId,
   });
 
   final Avatar? avatar;
@@ -99,6 +103,22 @@ class UploadState {
   /// Partial compile progress string, e.g. "8 of 12 pages added".
   /// Null when no progress info is available from the backend.
   final String? compileProgress;
+
+  /// OCR quality verdict from the backend: GOOD, BORDERLINE, or REJECTED.
+  final String? uploadQuality;
+
+  /// Reason for the quality verdict (shown to user for BORDERLINE).
+  final String? uploadQualityReason;
+
+  /// OCR-extracted text from the backend (for review/edit on BORDERLINE uploads).
+  final String? uploadExtractedText;
+
+  /// File ID of the file being reviewed (BORDERLINE quality).
+  final String? reviewFileId;
+
+  /// True when the user needs to review borderline OCR quality.
+  bool get needsOcrReview =>
+      uploadQuality == 'BORDERLINE' && reviewFileId != null;
 
   int get totalFiles => files.length;
   bool get hasFiles => files.isNotEmpty;
@@ -145,6 +165,10 @@ class UploadState {
     int? pendingFilePageCount,
     int? compilingFileCount,
     Object? compileProgress = _sentinel,
+    Object? uploadQuality = _sentinel,
+    Object? uploadQualityReason = _sentinel,
+    Object? uploadExtractedText = _sentinel,
+    Object? reviewFileId = _sentinel,
   }) {
     return UploadState(
       avatar: avatar ?? this.avatar,
@@ -170,6 +194,18 @@ class UploadState {
       compileProgress: compileProgress == _sentinel
           ? this.compileProgress
           : compileProgress as String?,
+      uploadQuality: uploadQuality == _sentinel
+          ? this.uploadQuality
+          : uploadQuality as String?,
+      uploadQualityReason: uploadQualityReason == _sentinel
+          ? this.uploadQualityReason
+          : uploadQualityReason as String?,
+      uploadExtractedText: uploadExtractedText == _sentinel
+          ? this.uploadExtractedText
+          : uploadExtractedText as String?,
+      reviewFileId: reviewFileId == _sentinel
+          ? this.reviewFileId
+          : reviewFileId as String?,
     );
   }
 }
@@ -413,6 +449,32 @@ class UploadViewModel extends _$UploadViewModel {
     }
   }
 
+  /// Upload typed/pasted text as a .txt file. Used by the Type tab.
+  Future<void> uploadTypedText(String text) async {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return;
+    appLog.i('[Upload] Typed text upload: ${trimmed.length} chars');
+
+    try {
+      final dir = await getTemporaryDirectory();
+      final ts = DateTime.now().millisecondsSinceEpoch;
+      final fileName = 'typed-notes-$ts.txt';
+      final file = File('${dir.path}/$fileName');
+      await file.writeAsString(trimmed);
+
+      final platformFile = PlatformFile(
+        name: fileName,
+        path: file.path,
+        size: trimmed.length,
+      );
+      await _checkRelevanceAndUpload(platformFile);
+    } catch (e, st) {
+      appLog.e('[Upload] Typed text upload failed', error: e, stackTrace: st);
+      state = state.copyWith(
+          error: 'Could not save your notes. Try again.');
+    }
+  }
+
   Future<void> _checkRelevanceAndUpload(PlatformFile file) async {
     appLog.i('[Upload] Relevance check: ${file.name} size=${file.size}B');
     state = state.copyWith(
@@ -505,8 +567,14 @@ class UploadViewModel extends _$UploadViewModel {
       final degraded = data['degraded'] == true;
       final pagesCompiled = (data['pagesCompiled'] as num?)?.toInt() ?? 0;
       final pagesTotal = (data['pagesTotal'] as num?)?.toInt();
+      // Parse OCR quality fields from the backend response
+      final quality = data['quality'] as String?;
+      final qualityReason = data['qualityReason'] as String?;
+      final extractedTextFromServer = data['extractedText'] as String?;
+      final fileId = (data['fileId'] ?? data['id'] ?? '') as String;
+
       final result = UploadResult(
-        id: (data['fileId'] ?? data['id'] ?? '') as String,
+        id: fileId,
         avatarId: _avatarId,
         fileName: file.name,
         status: UploadStatus.ready,
@@ -520,7 +588,8 @@ class UploadViewModel extends _$UploadViewModel {
       );
       appLog.i('[Upload] Success: ${result.id} pages=${result.pageCount}'
           '${servedBy != null ? " servedBy=$servedBy" : ""}'
-          '${degraded ? " DEGRADED" : ""}');
+          '${degraded ? " DEGRADED" : ""}'
+          '${quality != null ? " quality=$quality" : ""}');
       ref.read(analyticsProvider).event(
         AnalyticsEvents.uploadNote,
         props: {
@@ -549,6 +618,10 @@ class UploadViewModel extends _$UploadViewModel {
         compilingFileCount: state.compilingFileCount + 1,
         files: [...state.files, result],
         fileWarnings: warnings,
+        uploadQuality: quality,
+        uploadQualityReason: qualityReason,
+        uploadExtractedText: extractedTextFromServer,
+        reviewFileId: quality == 'BORDERLINE' ? fileId : null,
       );
       ref.invalidate(libraryViewModelProvider);
       ref.invalidate(homeViewModelProvider);
@@ -723,5 +796,46 @@ class UploadViewModel extends _$UploadViewModel {
 
   void clearErrors() {
     state = state.copyWith(error: null, fileErrors: [], fileWarnings: []);
+  }
+
+  /// Review a BORDERLINE OCR file: approve as-is or submit edited text.
+  Future<void> reviewFile(String fileId,
+      {required String action, String? editedText}) async {
+    appLog.i('[Upload] Review file=$fileId action=$action');
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.patch<Map<String, dynamic>>(
+        '/api/v1/avatars/$_avatarId/files/$fileId/review',
+        data: {
+          'action': action,
+          if (editedText != null) 'editedText': editedText,
+        },
+      );
+      appLog.i('[Upload] Review accepted for file=$fileId');
+      // Clear review state
+      state = state.copyWith(
+        uploadQuality: null,
+        uploadQualityReason: null,
+        uploadExtractedText: null,
+        reviewFileId: null,
+      );
+      ref.invalidate(libraryViewModelProvider);
+      ref.invalidate(homeViewModelProvider);
+    } on DioException catch (e, st) {
+      appLog.e('[Upload] Review failed for file=$fileId',
+          error: e, stackTrace: st);
+      state = state.copyWith(
+          error: 'Could not save your review. Please try again.');
+    }
+  }
+
+  /// Clear the OCR review state (user dismissed without action).
+  void clearOcrReview() {
+    state = state.copyWith(
+      uploadQuality: null,
+      uploadQualityReason: null,
+      uploadExtractedText: null,
+      reviewFileId: null,
+    );
   }
 }

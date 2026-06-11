@@ -7,7 +7,7 @@ part of 'assignment_view_model.dart';
 // **************************************************************************
 
 String _$assignmentViewModelHash() =>
-    r'0dd54d2649c3e2f40cd39376ed6c4dd52be6b2cb';
+    r'847107d6dbbe2e13cc61c2fcde90ed337ee45d04';
 
 /// Copied from Dart SDK
 class _SystemHash {
