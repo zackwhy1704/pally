@@ -58,6 +58,7 @@ import 'package:pally/features/exam_prep/presentation/exam_prep_screen.dart';
 import 'package:pally/features/auth/screens/consent_waiting_screen.dart';
 import 'package:pally/features/auth/screens/parent_consent_screen.dart';
 import 'package:pally/features/auth/screens/self_consent_screen.dart';
+import 'package:pally/features/consent/presentation/ai_disclosure_screen.dart';
 import 'package:pally/features/ocr_awareness/screens/ocr_what_can_read.dart';
 import 'package:pally/shared/models/photo_question.dart';
 
@@ -674,6 +675,15 @@ class SelfConsentRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const SelfConsentScreen();
+}
+
+@TypedGoRoute<AiDisclosureRoute>(path: '/consent/ai-disclosure')
+class AiDisclosureRoute extends GoRouteData {
+  const AiDisclosureRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const AiDisclosureScreen();
 }
 
 @TypedGoRoute<PhotoPreviewRoute>(path: '/avatar/:avatarId/photo-preview')

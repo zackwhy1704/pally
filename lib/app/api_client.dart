@@ -214,6 +214,24 @@ class _ServerErrorInterceptor extends Interceptor {
       }
     }
 
+    // 403 AI_CONSENT_REQUIRED → show the AI data-transfer disclosure, then
+    // retry the original request once if the user agrees. Handled before the
+    // parental CONSENT_REQUIRED branch because it has its own gate UI.
+    if (status == 403) {
+      final body = err.response?.data;
+      String? aiCode;
+      if (body is Map) {
+        final dataNode = body['data'];
+        if (dataNode is Map) {
+          aiCode = dataNode['code']?.toString();
+        }
+      }
+      if (aiCode == 'AI_CONSENT_REQUIRED') {
+        _handleAiConsentRequired(err, handler);
+        return; // _handleAiConsentRequired owns the handler from here on.
+      }
+    }
+
     // 403 CONSENT_REQUIRED → show the consent-gate sheet / remind-grown-up flow.
     if (status == 403) {
       final body = err.response?.data;
@@ -257,6 +275,47 @@ class _ServerErrorInterceptor extends Interceptor {
       }
     }
     handler.next(err);
+  }
+
+  /// Shows the AI-disclosure screen for a 403 `AI_CONSENT_REQUIRED`. When the
+  /// user agrees (and consent is recorded server-side), the original request
+  /// is retried once and its response resolves the pending call. Otherwise the
+  /// original 403 is propagated so the caller can surface it.
+  Future<void> _handleAiConsentRequired(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
+    final ctx = _ref.read(globalNavigatorKeyProvider)?.currentContext;
+    if (ctx == null || !ctx.mounted) {
+      handler.next(err);
+      return;
+    }
+
+    bool? agreed;
+    try {
+      // String nav so this file stays independent of the generated typed
+      // routes. push() awaits the AiDisclosureScreen's pop result.
+      agreed = await ctx.push<bool>('/consent/ai-disclosure');
+    } catch (_) {
+      agreed = null;
+    }
+
+    if (agreed != true) {
+      handler.next(err);
+      return;
+    }
+
+    // Retry the original request once on a fresh Dio (now that consent exists).
+    try {
+      final dio = _ref.read(dioProvider);
+      final req = err.requestOptions;
+      final retried = await dio.fetch<dynamic>(req);
+      handler.resolve(retried);
+    } on DioException catch (retryErr) {
+      handler.next(retryErr);
+    } catch (_) {
+      handler.next(err);
+    }
   }
 }
 

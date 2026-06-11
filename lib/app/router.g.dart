@@ -56,6 +56,7 @@ List<RouteBase> get $appRoutes => [
       $parentConsentRoute,
       $consentWaitingRoute,
       $selfConsentRoute,
+      $aiDisclosureRoute,
       $photoPreviewRoute,
     ];
 
@@ -1418,6 +1419,29 @@ extension $SelfConsentRouteExtension on SelfConsentRoute {
 
   String get location => GoRouteData.$location(
         '/consent/self',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $aiDisclosureRoute => GoRouteData.$route(
+      path: '/consent/ai-disclosure',
+      factory: $AiDisclosureRouteExtension._fromState,
+    );
+
+extension $AiDisclosureRouteExtension on AiDisclosureRoute {
+  static AiDisclosureRoute _fromState(GoRouterState state) =>
+      const AiDisclosureRoute();
+
+  String get location => GoRouteData.$location(
+        '/consent/ai-disclosure',
       );
 
   void go(BuildContext context) => context.go(location);
