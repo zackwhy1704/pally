@@ -37,6 +37,8 @@ List<RouteBase> get $appRoutes => [
       $centreJoinRoute,
       $homeworkScanDetailRoute,
       $brainHealthRoute,
+      $moduleListRoute,
+      $modulePlayerRoute,
       $splashRoute,
       $signInRoute,
       $signUpRoute,
@@ -769,13 +771,13 @@ RouteBase get $subscriptionPlansRoute => GoRouteData.$route(
 extension $SubscriptionPlansRouteExtension on SubscriptionPlansRoute {
   static SubscriptionPlansRoute _fromState(GoRouterState state) =>
       SubscriptionPlansRoute(
-        highlightTier: state.uri.queryParameters['highlightTier'],
+        highlightTier: state.uri.queryParameters['highlight-tier'],
       );
 
   String get location => GoRouteData.$location(
         '/subscription/plans',
         queryParams: {
-          if (highlightTier != null) 'highlightTier': highlightTier!,
+          if (highlightTier != null) 'highlight-tier': highlightTier,
         },
       );
 
@@ -942,6 +944,55 @@ extension $BrainHealthRouteExtension on BrainHealthRoute {
 
   String get location => GoRouteData.$location(
         '/avatar/${Uri.encodeComponent(avatarId)}/brain-health',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $moduleListRoute => GoRouteData.$route(
+      path: '/avatar/:avatarId/modules',
+      factory: $ModuleListRouteExtension._fromState,
+    );
+
+extension $ModuleListRouteExtension on ModuleListRoute {
+  static ModuleListRoute _fromState(GoRouterState state) => ModuleListRoute(
+        avatarId: state.pathParameters['avatarId']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/avatar/${Uri.encodeComponent(avatarId)}/modules',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $modulePlayerRoute => GoRouteData.$route(
+      path: '/avatar/:avatarId/modules/:moduleId',
+      factory: $ModulePlayerRouteExtension._fromState,
+    );
+
+extension $ModulePlayerRouteExtension on ModulePlayerRoute {
+  static ModulePlayerRoute _fromState(GoRouterState state) => ModulePlayerRoute(
+        avatarId: state.pathParameters['avatarId']!,
+        moduleId: state.pathParameters['moduleId']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/avatar/${Uri.encodeComponent(avatarId)}/modules/${Uri.encodeComponent(moduleId)}',
       );
 
   void go(BuildContext context) => context.go(location);

@@ -16,6 +16,7 @@ import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/home/widgets/due_cards_banner.dart';
 import 'package:pally/features/home/widgets/empty_home_state.dart';
+import 'package:pally/features/home/widgets/module_progress_banner.dart';
 import 'package:pally/features/progress/presentation/progress_view_model.dart';
 import 'package:pally/features/subscription/presentation/trial_countdown_banner.dart';
 import 'package:pally/features/subscription/presentation/trial_welcome_screen.dart';
@@ -83,6 +84,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             const TrialCountdownBanner(),
             const DueCardsBanner(),
+            // Module progress: show in-progress modules from avatars
+            avatarsAsync.maybeWhen(
+              data: (avatars) => avatars.isNotEmpty
+                  ? ModuleProgressBanner(avatars: avatars)
+                  : const SizedBox.shrink(),
+              orElse: () => const SizedBox.shrink(),
+            ),
             const _NudgeCardsRow(),
             Expanded(
               child: avatarsAsync.when(

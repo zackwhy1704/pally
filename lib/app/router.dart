@@ -47,6 +47,8 @@ import 'package:pally/features/groups/presentation/group_list_screen.dart';
 import 'package:pally/features/tuition/presentation/tuition_screen.dart';
 import 'package:pally/features/teach_mochi/presentation/teach_mochi_screen.dart';
 import 'package:pally/features/brain_health/presentation/brain_health_screen.dart';
+import 'package:pally/features/modules/presentation/module_list_screen.dart';
+import 'package:pally/features/modules/presentation/module_player_screen.dart';
 import 'package:pally/features/auth/screens/consent_waiting_screen.dart';
 import 'package:pally/features/auth/screens/parent_consent_screen.dart';
 import 'package:pally/features/auth/screens/self_consent_screen.dart';
@@ -487,6 +489,28 @@ class BrainHealthRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       BrainHealthScreen(avatarId: avatarId);
+}
+
+@TypedGoRoute<ModuleListRoute>(path: '/avatar/:avatarId/modules')
+class ModuleListRoute extends GoRouteData {
+  const ModuleListRoute({required this.avatarId});
+  final String avatarId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      ModuleListScreen(avatarId: avatarId);
+}
+
+@TypedGoRoute<ModulePlayerRoute>(
+    path: '/avatar/:avatarId/modules/:moduleId')
+class ModulePlayerRoute extends GoRouteData {
+  const ModulePlayerRoute({required this.avatarId, required this.moduleId});
+  final String avatarId;
+  final String moduleId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      ModulePlayerScreen(avatarId: avatarId, moduleId: moduleId);
 }
 
 @TypedGoRoute<SplashRoute>(path: '/splash')

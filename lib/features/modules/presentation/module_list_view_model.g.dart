@@ -1,12 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'upload_view_model.dart';
+part of 'module_list_view_model.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$uploadViewModelHash() => r'3c0a1127cc849e617251e4c4838ce68f0f083b4c';
+String _$moduleListViewModelHash() =>
+    r'689d47832e9a5fca123b1c6bbbfe7e4b6d070025';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,36 +30,37 @@ class _SystemHash {
   }
 }
 
-abstract class _$UploadViewModel
-    extends BuildlessAutoDisposeNotifier<UploadState> {
+abstract class _$ModuleListViewModel
+    extends BuildlessAutoDisposeAsyncNotifier<List<LearningModule>> {
   late final String avatarId;
 
-  UploadState build(
+  FutureOr<List<LearningModule>> build(
     String avatarId,
   );
 }
 
-/// See also [UploadViewModel].
-@ProviderFor(UploadViewModel)
-const uploadViewModelProvider = UploadViewModelFamily();
+/// See also [ModuleListViewModel].
+@ProviderFor(ModuleListViewModel)
+const moduleListViewModelProvider = ModuleListViewModelFamily();
 
-/// See also [UploadViewModel].
-class UploadViewModelFamily extends Family<UploadState> {
-  /// See also [UploadViewModel].
-  const UploadViewModelFamily();
+/// See also [ModuleListViewModel].
+class ModuleListViewModelFamily
+    extends Family<AsyncValue<List<LearningModule>>> {
+  /// See also [ModuleListViewModel].
+  const ModuleListViewModelFamily();
 
-  /// See also [UploadViewModel].
-  UploadViewModelProvider call(
+  /// See also [ModuleListViewModel].
+  ModuleListViewModelProvider call(
     String avatarId,
   ) {
-    return UploadViewModelProvider(
+    return ModuleListViewModelProvider(
       avatarId,
     );
   }
 
   @override
-  UploadViewModelProvider getProviderOverride(
-    covariant UploadViewModelProvider provider,
+  ModuleListViewModelProvider getProviderOverride(
+    covariant ModuleListViewModelProvider provider,
   ) {
     return call(
       provider.avatarId,
@@ -77,30 +79,30 @@ class UploadViewModelFamily extends Family<UploadState> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'uploadViewModelProvider';
+  String? get name => r'moduleListViewModelProvider';
 }
 
-/// See also [UploadViewModel].
-class UploadViewModelProvider
-    extends AutoDisposeNotifierProviderImpl<UploadViewModel, UploadState> {
-  /// See also [UploadViewModel].
-  UploadViewModelProvider(
+/// See also [ModuleListViewModel].
+class ModuleListViewModelProvider extends AutoDisposeAsyncNotifierProviderImpl<
+    ModuleListViewModel, List<LearningModule>> {
+  /// See also [ModuleListViewModel].
+  ModuleListViewModelProvider(
     String avatarId,
   ) : this._internal(
-          () => UploadViewModel()..avatarId = avatarId,
-          from: uploadViewModelProvider,
-          name: r'uploadViewModelProvider',
+          () => ModuleListViewModel()..avatarId = avatarId,
+          from: moduleListViewModelProvider,
+          name: r'moduleListViewModelProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$uploadViewModelHash,
-          dependencies: UploadViewModelFamily._dependencies,
+                  : _$moduleListViewModelHash,
+          dependencies: ModuleListViewModelFamily._dependencies,
           allTransitiveDependencies:
-              UploadViewModelFamily._allTransitiveDependencies,
+              ModuleListViewModelFamily._allTransitiveDependencies,
           avatarId: avatarId,
         );
 
-  UploadViewModelProvider._internal(
+  ModuleListViewModelProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -113,8 +115,8 @@ class UploadViewModelProvider
   final String avatarId;
 
   @override
-  UploadState runNotifierBuild(
-    covariant UploadViewModel notifier,
+  FutureOr<List<LearningModule>> runNotifierBuild(
+    covariant ModuleListViewModel notifier,
   ) {
     return notifier.build(
       avatarId,
@@ -122,10 +124,10 @@ class UploadViewModelProvider
   }
 
   @override
-  Override overrideWith(UploadViewModel Function() create) {
+  Override overrideWith(ModuleListViewModel Function() create) {
     return ProviderOverride(
       origin: this,
-      override: UploadViewModelProvider._internal(
+      override: ModuleListViewModelProvider._internal(
         () => create()..avatarId = avatarId,
         from: from,
         name: null,
@@ -138,14 +140,14 @@ class UploadViewModelProvider
   }
 
   @override
-  AutoDisposeNotifierProviderElement<UploadViewModel, UploadState>
-      createElement() {
-    return _UploadViewModelProviderElement(this);
+  AutoDisposeAsyncNotifierProviderElement<ModuleListViewModel,
+      List<LearningModule>> createElement() {
+    return _ModuleListViewModelProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is UploadViewModelProvider && other.avatarId == avatarId;
+    return other is ModuleListViewModelProvider && other.avatarId == avatarId;
   }
 
   @override
@@ -159,18 +161,19 @@ class UploadViewModelProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin UploadViewModelRef on AutoDisposeNotifierProviderRef<UploadState> {
+mixin ModuleListViewModelRef
+    on AutoDisposeAsyncNotifierProviderRef<List<LearningModule>> {
   /// The parameter `avatarId` of this provider.
   String get avatarId;
 }
 
-class _UploadViewModelProviderElement
-    extends AutoDisposeNotifierProviderElement<UploadViewModel, UploadState>
-    with UploadViewModelRef {
-  _UploadViewModelProviderElement(super.provider);
+class _ModuleListViewModelProviderElement
+    extends AutoDisposeAsyncNotifierProviderElement<ModuleListViewModel,
+        List<LearningModule>> with ModuleListViewModelRef {
+  _ModuleListViewModelProviderElement(super.provider);
 
   @override
-  String get avatarId => (origin as UploadViewModelProvider).avatarId;
+  String get avatarId => (origin as ModuleListViewModelProvider).avatarId;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
