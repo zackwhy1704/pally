@@ -52,7 +52,7 @@
 		<key>UIStatusBarHidden</key>
 		<false/>
 		<key>com.posthog.posthog.API_KEY</key>
-		<string>phc_PLACEHOLDER</string>
+		<string>phc_oW63hGALSXc6oniKzsvrNJAEro57RAkznobYPkikYUqW</string>
 		<key>com.posthog.posthog.POSTHOG_HOST</key>
 		<string>https://us.i.posthog.com</string>
 	</dict>

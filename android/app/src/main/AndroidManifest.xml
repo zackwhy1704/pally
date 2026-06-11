@@ -38,7 +38,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <meta-data android:name="com.posthog.posthog.API_KEY" android:value="phc_PLACEHOLDER" />
+        <meta-data android:name="com.posthog.posthog.API_KEY" android:value="phc_oW63hGALSXc6oniKzsvrNJAEro57RAkznobYPkikYUqW" />
         <meta-data android:name="com.posthog.posthog.POSTHOG_HOST" android:value="https://us.i.posthog.com" />
     </application>
     <queries>
