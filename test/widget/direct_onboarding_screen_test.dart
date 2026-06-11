@@ -1,0 +1,138 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/features/onboarding/presentation/direct_onboarding_screen.dart';
+import 'package:pally/features/onboarding/presentation/direct_onboarding_view_model.dart';
+
+Widget _wrap(Widget child, {List<Override> overrides = const []}) =>
+    ProviderScope(
+      overrides: overrides,
+      child: MaterialApp(home: child),
+    );
+
+void main() {
+  group('DirectOnboardingScreen', () {
+    testWidgets('step 1 renders sign-up fields', (tester) async {
+      await tester.pumpWidget(_wrap(
+        const DirectOnboardingScreen(),
+        overrides: [
+          directOnboardingViewModelProvider
+              .overrideWith(() => _Step1VM()),
+        ],
+      ));
+
+      expect(find.text('Create your account'), findsOneWidget);
+      expect(find.text('Name'), findsOneWidget);
+      expect(find.text('Email'), findsOneWidget);
+      expect(find.text('Password'), findsOneWidget);
+      expect(find.text('Next'), findsOneWidget);
+      expect(find.text('Already have an account? Sign in'), findsOneWidget);
+      expect(find.text('Step 1 of 3'), findsOneWidget);
+    });
+
+    testWidgets('step 2 renders subject and level pickers', (tester) async {
+      await tester.pumpWidget(_wrap(
+        const DirectOnboardingScreen(),
+        overrides: [
+          directOnboardingViewModelProvider
+              .overrideWith(() => _Step2VM()),
+        ],
+      ));
+
+      expect(find.text('What are you studying?'), findsOneWidget);
+      expect(find.text('Subject'), findsOneWidget);
+      expect(find.text('Level'), findsOneWidget);
+      expect(find.text('Create account'), findsOneWidget);
+      expect(find.text('Step 2 of 3'), findsOneWidget);
+      // Verify some subject chips are present
+      expect(find.text('Maths'), findsOneWidget);
+      expect(find.text('Science'), findsOneWidget);
+      // Verify some level chips are present
+      expect(find.text('P3'), findsOneWidget);
+      expect(find.text('Sec 1'), findsOneWidget);
+    });
+
+    testWidgets('step 3 renders upload prompt', (tester) async {
+      await tester.pumpWidget(_wrap(
+        const DirectOnboardingScreen(),
+        overrides: [
+          directOnboardingViewModelProvider
+              .overrideWith(() => _Step3IdleVM()),
+        ],
+      ));
+
+      expect(find.text('Upload your first notes'), findsOneWidget);
+      expect(find.text('Take a photo'), findsOneWidget);
+      expect(find.text('Or choose a file'), findsOneWidget);
+      expect(find.text('Skip for now'), findsOneWidget);
+      expect(find.text('Step 3 of 3'), findsOneWidget);
+    });
+
+    testWidgets('step 3 processing shows spinner and message', (tester) async {
+      await tester.pumpWidget(_wrap(
+        const DirectOnboardingScreen(),
+        overrides: [
+          directOnboardingViewModelProvider
+              .overrideWith(() => _Step3CompilingVM()),
+        ],
+      ));
+
+      expect(find.text('Mochi is reading your notes...'), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsWidgets);
+    });
+
+    testWidgets('step 3 ready shows success and start button', (tester) async {
+      await tester.pumpWidget(_wrap(
+        const DirectOnboardingScreen(),
+        overrides: [
+          directOnboardingViewModelProvider
+              .overrideWith(() => _Step3ReadyVM()),
+        ],
+      ));
+
+      expect(find.text('Your "Fractions" module is ready!'), findsOneWidget);
+      expect(find.text('Start learning'), findsOneWidget);
+    });
+  });
+}
+
+// ── Test view model overrides ──────────────────────────────────────────────
+
+class _Step1VM extends DirectOnboardingViewModel {
+  @override
+  DirectOnboardingState build() => const DirectOnboardingState(step: 1);
+}
+
+class _Step2VM extends DirectOnboardingViewModel {
+  @override
+  DirectOnboardingState build() => const DirectOnboardingState(step: 2);
+}
+
+class _Step3IdleVM extends DirectOnboardingViewModel {
+  @override
+  DirectOnboardingState build() => const DirectOnboardingState(
+        step: 3,
+        avatarId: 'test-avatar',
+        uploadStage: DirectUploadStage.idle,
+      );
+}
+
+class _Step3CompilingVM extends DirectOnboardingViewModel {
+  @override
+  DirectOnboardingState build() => const DirectOnboardingState(
+        step: 3,
+        avatarId: 'test-avatar',
+        uploadStage: DirectUploadStage.compiling,
+      );
+}
+
+class _Step3ReadyVM extends DirectOnboardingViewModel {
+  @override
+  DirectOnboardingState build() => const DirectOnboardingState(
+        step: 3,
+        avatarId: 'test-avatar',
+        uploadStage: DirectUploadStage.ready,
+        firstModuleId: 'mod-1',
+        firstModuleTitle: 'Fractions',
+      );
+}

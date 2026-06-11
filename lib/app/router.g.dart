@@ -45,6 +45,7 @@ List<RouteBase> get $appRoutes => [
       $childSetupRoute,
       $avatarPickerRoute,
       $onboardingRoute,
+      $directOnboardingRoute,
       $cameraRoute,
       $ocrGuideRoute,
       $parentConsentRoute,
@@ -1154,6 +1155,29 @@ extension $OnboardingRouteExtension on OnboardingRoute {
 
   String get location => GoRouteData.$location(
         '/onboarding',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $directOnboardingRoute => GoRouteData.$route(
+      path: '/onboarding/direct',
+      factory: $DirectOnboardingRouteExtension._fromState,
+    );
+
+extension $DirectOnboardingRouteExtension on DirectOnboardingRoute {
+  static DirectOnboardingRoute _fromState(GoRouterState state) =>
+      const DirectOnboardingRoute();
+
+  String get location => GoRouteData.$location(
+        '/onboarding/direct',
       );
 
   void go(BuildContext context) => context.go(location);

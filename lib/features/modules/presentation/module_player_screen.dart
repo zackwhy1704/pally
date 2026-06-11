@@ -7,6 +7,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/features/modules/presentation/module_player_view_model.dart';
 import 'package:pally/shared/models/learning_module.dart';
+import 'package:pally/shared/models/narration.dart';
 
 class ModulePlayerScreen extends ConsumerStatefulWidget {
   const ModulePlayerScreen({
@@ -189,6 +190,31 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
           },
           isLast: playerState.isLastItem,
           isSubmitting: playerState.isSubmitting,
+          narration: playerState.narration,
+          narrationLoading: playerState.narrationLoading,
+          isPlaying: playerState.isPlaying,
+          isPlayingAll: playerState.isPlayingAll,
+          currentPlayingCard: playerState.currentPlayingCard,
+          onPlayCard: (index) => ref
+              .read(modulePlayerViewModelProvider(
+                      widget.avatarId, widget.moduleId)
+                  .notifier)
+              .playCard(index),
+          onPlayAll: () => ref
+              .read(modulePlayerViewModelProvider(
+                      widget.avatarId, widget.moduleId)
+                  .notifier)
+              .playAll(),
+          onPause: () => ref
+              .read(modulePlayerViewModelProvider(
+                      widget.avatarId, widget.moduleId)
+                  .notifier)
+              .pauseNarration(),
+          onFetchNarration: () => ref
+              .read(modulePlayerViewModelProvider(
+                      widget.avatarId, widget.moduleId)
+                  .notifier)
+              .fetchNarration(),
         ),
       'TEST' => _TestBody(
           item: playerState.currentItem,
@@ -258,6 +284,15 @@ class _LearnBody extends StatelessWidget {
     required this.onNext,
     required this.isLast,
     required this.isSubmitting,
+    required this.narration,
+    required this.narrationLoading,
+    required this.isPlaying,
+    required this.isPlayingAll,
+    required this.currentPlayingCard,
+    required this.onPlayCard,
+    required this.onPlayAll,
+    required this.onPause,
+    required this.onFetchNarration,
   });
 
   final List<ModuleContentItem> items;
@@ -266,31 +301,60 @@ class _LearnBody extends StatelessWidget {
   final VoidCallback onNext;
   final bool isLast;
   final bool isSubmitting;
+  final Narration? narration;
+  final bool narrationLoading;
+  final bool isPlaying;
+  final bool isPlayingAll;
+  final int currentPlayingCard;
+  final void Function(int) onPlayCard;
+  final VoidCallback onPlayAll;
+  final VoidCallback onPause;
+  final VoidCallback onFetchNarration;
 
   @override
   Widget build(BuildContext context) {
+    final hasNarration =
+        narration != null && narration!.status == 'READY';
+
     return Column(
       children: [
-        // Progress dots
+        // Progress dots + Play All button
         Padding(
           padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.md, vertical: AppSpacing.sm),
           child: Row(
-            children: List.generate(items.length, (i) {
-              final isActive = i <= currentIndex;
-              return Expanded(
-                child: Container(
-                  height: 4,
-                  margin: EdgeInsets.only(
-                    right: i < items.length - 1 ? 4 : 0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isActive ? AppColors.teal : AppColors.outline,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
+            children: [
+              Expanded(
+                child: Row(
+                  children: List.generate(items.length, (i) {
+                    final isActive = i <= currentIndex;
+                    return Expanded(
+                      child: Container(
+                        height: 4,
+                        margin: EdgeInsets.only(
+                          right: i < items.length - 1 ? 4 : 0,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isActive ? AppColors.teal : AppColors.outline,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    );
+                  }),
                 ),
-              );
-            }),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              // Play All / Pause button
+              _PlayAllButton(
+                hasNarration: hasNarration,
+                isPlaying: isPlaying,
+                isPlayingAll: isPlayingAll,
+                narrationLoading: narrationLoading,
+                onPlayAll: onPlayAll,
+                onPause: onPause,
+                onFetchNarration: onFetchNarration,
+              ),
+            ],
           ),
         ),
         // Cards
@@ -299,8 +363,17 @@ class _LearnBody extends StatelessWidget {
             controller: pageController,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: items.length,
-            itemBuilder: (context, index) =>
-                _MicroCard(item: items[index], cardNumber: index + 1, total: items.length),
+            itemBuilder: (context, index) => _MicroCard(
+              item: items[index],
+              cardNumber: index + 1,
+              total: items.length,
+              isCurrentlyPlaying: currentPlayingCard == index,
+              narrationLoading: narrationLoading,
+              hasNarration: hasNarration,
+              onListen: () => onPlayCard(index),
+              onPause: onPause,
+              onFetchNarration: onFetchNarration,
+            ),
           ),
         ),
         // Next button
@@ -343,16 +416,114 @@ class _LearnBody extends StatelessWidget {
   }
 }
 
+// ── Play All button ─────────────────────────────────────────────────────────
+
+class _PlayAllButton extends StatelessWidget {
+  const _PlayAllButton({
+    required this.hasNarration,
+    required this.isPlaying,
+    required this.isPlayingAll,
+    required this.narrationLoading,
+    required this.onPlayAll,
+    required this.onPause,
+    required this.onFetchNarration,
+  });
+
+  final bool hasNarration;
+  final bool isPlaying;
+  final bool isPlayingAll;
+  final bool narrationLoading;
+  final VoidCallback onPlayAll;
+  final VoidCallback onPause;
+  final VoidCallback onFetchNarration;
+
+  @override
+  Widget build(BuildContext context) {
+    if (narrationLoading) {
+      return const SizedBox(
+        width: AppSizing.spinnerSm,
+        height: AppSizing.spinnerSm,
+        child: CircularProgressIndicator(
+            strokeWidth: 2, color: AppColors.teal),
+      );
+    }
+
+    if (isPlayingAll) {
+      return GestureDetector(
+        onTap: onPause,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: AppColors.tealL,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.pause_rounded, size: 16, color: AppColors.teal),
+              const SizedBox(width: 4),
+              Text('Pause',
+                  style: AppTextStyles.caption.copyWith(
+                      color: AppColors.teal, fontWeight: FontWeight.w700)),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return GestureDetector(
+      onTap: hasNarration ? onPlayAll : onFetchNarration,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: AppColors.tealL,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              hasNarration
+                  ? Icons.play_arrow_rounded
+                  : Icons.volume_up_rounded,
+              size: 16,
+              color: AppColors.teal,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              hasNarration ? 'Play all' : 'Listen',
+              style: AppTextStyles.caption.copyWith(
+                  color: AppColors.teal, fontWeight: FontWeight.w700),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _MicroCard extends StatelessWidget {
   const _MicroCard({
     required this.item,
     required this.cardNumber,
     required this.total,
+    this.isCurrentlyPlaying = false,
+    this.narrationLoading = false,
+    this.hasNarration = false,
+    this.onListen,
+    this.onPause,
+    this.onFetchNarration,
   });
 
   final ModuleContentItem item;
   final int cardNumber;
   final int total;
+  final bool isCurrentlyPlaying;
+  final bool narrationLoading;
+  final bool hasNarration;
+  final VoidCallback? onListen;
+  final VoidCallback? onPause;
+  final VoidCallback? onFetchNarration;
 
   @override
   Widget build(BuildContext context) {
@@ -370,16 +541,35 @@ class _MicroCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.outline),
+          border: Border.all(
+            color: isCurrentlyPlaying ? AppColors.teal : AppColors.outline,
+            width: isCurrentlyPlaying ? 2 : 1,
+          ),
         ),
         child: SingleChildScrollView(
           padding: AppSpacing.card,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Card $cardNumber of $total',
-                style: AppTextStyles.caption.copyWith(color: AppColors.teal),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Card $cardNumber of $total',
+                      style:
+                          AppTextStyles.caption.copyWith(color: AppColors.teal),
+                    ),
+                  ),
+                  // Listen / Pause button
+                  _ListenButton(
+                    isPlaying: isCurrentlyPlaying,
+                    isLoading: narrationLoading,
+                    hasNarration: hasNarration,
+                    onListen: onListen,
+                    onPause: onPause,
+                    onFetchNarration: onFetchNarration,
+                  ),
+                ],
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(title, style: AppTextStyles.heading1),
@@ -412,6 +602,69 @@ class _MicroCard extends StatelessWidget {
               ],
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Listen button on each micro-card ────────────────────────────────────────
+
+class _ListenButton extends StatelessWidget {
+  const _ListenButton({
+    required this.isPlaying,
+    required this.isLoading,
+    required this.hasNarration,
+    this.onListen,
+    this.onPause,
+    this.onFetchNarration,
+  });
+
+  final bool isPlaying;
+  final bool isLoading;
+  final bool hasNarration;
+  final VoidCallback? onListen;
+  final VoidCallback? onPause;
+  final VoidCallback? onFetchNarration;
+
+  @override
+  Widget build(BuildContext context) {
+    if (isLoading) {
+      return const SizedBox(
+        width: AppSizing.spinnerXs,
+        height: AppSizing.spinnerXs,
+        child: CircularProgressIndicator(
+            strokeWidth: 1.5, color: AppColors.teal),
+      );
+    }
+
+    if (isPlaying) {
+      return GestureDetector(
+        onTap: onPause,
+        child: Container(
+          padding: const EdgeInsets.all(4),
+          decoration: const BoxDecoration(
+            color: AppColors.tealL,
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(Icons.pause_rounded,
+              size: AppSizing.iconSm, color: AppColors.teal),
+        ),
+      );
+    }
+
+    return GestureDetector(
+      onTap: hasNarration ? onListen : onFetchNarration,
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: const BoxDecoration(
+          color: AppColors.tealL,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          hasNarration ? Icons.volume_up_rounded : Icons.volume_up_outlined,
+          size: AppSizing.iconSm,
+          color: AppColors.teal,
         ),
       ),
     );

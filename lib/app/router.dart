@@ -40,6 +40,7 @@ import 'package:pally/features/photo_question/presentation/camera_screen.dart';
 import 'package:pally/features/photo_question/presentation/photo_preview_screen.dart';
 import 'package:pally/features/photo_question/presentation/homework_scan_detail_screen.dart';
 import 'package:pally/features/onboarding/presentation/onboarding_screen.dart';
+import 'package:pally/features/onboarding/presentation/direct_onboarding_screen.dart';
 import 'package:pally/features/brain_map/presentation/brain_map_screen.dart';
 import 'package:pally/features/groups/presentation/create_group_screen.dart';
 import 'package:pally/features/groups/presentation/group_detail_screen.dart';
@@ -568,6 +569,15 @@ class OnboardingRoute extends GoRouteData {
       const OnboardingScreen();
 }
 
+@TypedGoRoute<DirectOnboardingRoute>(path: '/onboarding/direct')
+class DirectOnboardingRoute extends GoRouteData {
+  const DirectOnboardingRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const DirectOnboardingScreen();
+}
+
 @TypedGoRoute<CameraRoute>(path: '/camera')
 class CameraRoute extends GoRouteData {
   const CameraRoute();
@@ -635,6 +645,7 @@ const _publicPaths = {
   '/auth/setup',
   '/auth/avatar',
   '/onboarding',
+  '/onboarding/direct',
   '/consent/', // all consent sub-paths are accessible after login (auth token present)
 };
 
