@@ -50,6 +50,7 @@ import 'package:pally/features/teach_mochi/presentation/teach_mochi_screen.dart'
 import 'package:pally/features/brain_health/presentation/brain_health_screen.dart';
 import 'package:pally/features/modules/presentation/module_list_screen.dart';
 import 'package:pally/features/modules/presentation/module_player_screen.dart';
+import 'package:pally/features/exam_prep/presentation/exam_prep_screen.dart';
 import 'package:pally/features/auth/screens/consent_waiting_screen.dart';
 import 'package:pally/features/auth/screens/parent_consent_screen.dart';
 import 'package:pally/features/auth/screens/self_consent_screen.dart';
@@ -512,6 +513,16 @@ class ModulePlayerRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       ModulePlayerScreen(avatarId: avatarId, moduleId: moduleId);
+}
+
+@TypedGoRoute<ExamPrepRoute>(path: '/avatar/:avatarId/exam-prep')
+class ExamPrepRoute extends GoRouteData {
+  const ExamPrepRoute({required this.avatarId});
+  final String avatarId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      ExamPrepScreen(avatarId: avatarId);
 }
 
 @TypedGoRoute<SplashRoute>(path: '/splash')

@@ -14,6 +14,7 @@ import 'package:pally/core/ui/pally_delete_tutor_dialog.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/features/auth/auth_state.dart';
+import 'package:pally/features/home/widgets/assignment_banner.dart';
 import 'package:pally/features/home/widgets/due_cards_banner.dart';
 import 'package:pally/features/home/widgets/empty_home_state.dart';
 import 'package:pally/features/home/widgets/module_progress_banner.dart';
@@ -83,6 +84,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               maxLevel: maxLevel,
             ),
             const TrialCountdownBanner(),
+            // Assignments: show overdue/pending/in-progress assignments
+            avatarsAsync.maybeWhen(
+              data: (avatars) => avatars.isNotEmpty
+                  ? AssignmentBanner(avatars: avatars)
+                  : const SizedBox.shrink(),
+              orElse: () => const SizedBox.shrink(),
+            ),
             const DueCardsBanner(),
             // Module progress: show in-progress modules from avatars
             avatarsAsync.maybeWhen(

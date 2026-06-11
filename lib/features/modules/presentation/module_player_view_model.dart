@@ -20,6 +20,7 @@ class ModulePlayerState {
     this.isLoading = false,
     this.isSubmitting = false,
     this.isComplete = false,
+    this.isRevision = false,
     this.results,
     this.error,
     this.answers = const {},
@@ -38,6 +39,7 @@ class ModulePlayerState {
   final bool isLoading;
   final bool isSubmitting;
   final bool isComplete;
+  final bool isRevision;
   final ModuleResults? results;
   final PallyError? error;
 
@@ -78,6 +80,7 @@ class ModulePlayerState {
     bool? isLoading,
     bool? isSubmitting,
     bool? isComplete,
+    bool? isRevision,
     Object? results = _sentinel,
     Object? error = _sentinel,
     Map<String, String>? answers,
@@ -96,6 +99,7 @@ class ModulePlayerState {
       isLoading: isLoading ?? this.isLoading,
       isSubmitting: isSubmitting ?? this.isSubmitting,
       isComplete: isComplete ?? this.isComplete,
+      isRevision: isRevision ?? this.isRevision,
       results:
           results == _sentinel ? this.results : results as ModuleResults?,
       error: error == _sentinel ? this.error : error as PallyError?,
@@ -194,11 +198,17 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
       // Sort by sortOrder
       items.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
 
-      appLog.i('[ModulePlayer] Loaded ${items.length} items for ${state.stage}');
+      // Detect revision mode from backend response
+      final isRevision =
+          (data is Map && data['revision'] == true) || state.isRevision;
+
+      appLog.i('[ModulePlayer] Loaded ${items.length} items for ${state.stage}'
+          '${isRevision ? ' (revision mode)' : ''}');
       state = state.copyWith(
         items: items,
         currentIndex: 0,
         isLoading: false,
+        isRevision: isRevision,
         answers: const {},
         revealedItems: const {},
       );

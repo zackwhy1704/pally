@@ -111,7 +111,13 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
               ),
         centerTitle: true,
       ),
-      body: _buildBody(playerState),
+      body: Column(
+        children: [
+          if (playerState.isRevision && !playerState.isComplete)
+            _RevisionBanner(),
+          Expanded(child: _buildBody(playerState)),
+        ],
+      ),
     );
   }
 
@@ -1581,6 +1587,37 @@ class _MasteryRow extends StatelessWidget {
             Text(concept.feedback,
                 style: AppTextStyles.caption.copyWith(color: AppColors.text2)),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+// ── Revision mode banner ───────────────────────────────────────────────────
+
+class _RevisionBanner extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
+      color: AppColors.purpleL,
+      child: Row(
+        children: [
+          const Icon(Icons.replay_rounded, size: 18, color: AppColors.purple),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Text(
+              'Revision mode — fresh questions to check your progress.',
+              style: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.purple,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
         ],
       ),
     );
