@@ -76,7 +76,7 @@ class ReportDetailScreen extends ConsumerWidget {
     // streak/badges). Fall back to a local string if the call fails so
     // the share sheet still opens.
     String text;
-    String subject = 'Memoly Weekly Report';
+    String subject = 'Apalchi Weekly Report';
     try {
       final dio = ref.read(dioProvider);
       final res = await dio.get<Map<String, dynamic>>(
@@ -91,7 +91,7 @@ class ReportDetailScreen extends ConsumerWidget {
       appLog.w('[Report] share-text failed: $e — using local fallback');
       final fmt = DateFormat('MMM d');
       final sb = StringBuffer()
-        ..writeln('Memoly weekly report (${fmt.format(r.startDate)} – '
+        ..writeln('Apalchi weekly report (${fmt.format(r.startDate)} – '
             '${fmt.format(r.endDate)})')
         ..writeln()
         ..writeln('• ${r.sessions} session${r.sessions == 1 ? '' : 's'}')

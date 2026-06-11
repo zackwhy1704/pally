@@ -122,7 +122,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
     try {
       final authenticated = await _localAuth.authenticate(
-        localizedReason: 'Sign in to Memoly',
+        localizedReason: 'Sign in to Apalchi',
         options: const AuthenticationOptions(
           biometricOnly: true,
           stickyAuth: true,

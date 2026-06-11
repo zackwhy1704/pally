@@ -172,7 +172,7 @@ class _ParentOnboardingScreenState
         ),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          'Ask your child to open Memoly, go to Me tab, '
+          'Ask your child to open Apalchi, go to Me tab, '
           'tap "Link a grown-up", and read you their 6-character code.',
           style: AppTextStyles.body.copyWith(color: AppColors.text2),
         ),

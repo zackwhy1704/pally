@@ -118,7 +118,7 @@ class _SubscriptionReturnScreenState
                 const SizedBox(height: AppSpacing.lg),
                 OutlinedButton(
                   onPressed: () => context.go('/progress'),
-                  child: const Text('Back to Memoly'),
+                  child: const Text('Back to Apalchi'),
                 ),
               ] else ...[
                 const CircularProgressIndicator(

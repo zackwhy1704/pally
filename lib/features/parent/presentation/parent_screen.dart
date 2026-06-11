@@ -311,7 +311,7 @@ class _PinGateState extends State<_PinGate> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
               child: Text(
-                'On your own phone? Download Memoly and create a parent '
+                'On your own phone? Download Apalchi and create a parent '
                 'account to see your child\'s progress anytime.',
                 style: AppTextStyles.caption.copyWith(color: AppColors.text3),
                 textAlign: TextAlign.center,

@@ -213,7 +213,7 @@ class _SubscriptionPlansScreenState
             backgroundColor: AppColors.bg,
             elevation: 0,
             title: Text(
-              isPremium ? 'Your subscription' : 'Upgrade Memoly',
+              isPremium ? 'Your subscription' : 'Upgrade Apalchi',
               style: AppTextStyles.title,
             ),
             centerTitle: true,

@@ -1116,7 +1116,7 @@ class _FamilyConnectionRow extends ConsumerWidget {
           icon: Icons.child_care_rounded,
           iconColor: AppColors.purple,
           label: "I'm a parent — add my child's account",
-          sub: 'Enter the code from your child\'s Memoly',
+          sub: 'Enter the code from your child\'s Apalchi',
           onTap: () {
             ref.invalidate(familyStatusProvider);
             const FamilyClaimRoute().push(context);

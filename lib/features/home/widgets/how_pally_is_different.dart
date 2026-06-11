@@ -65,7 +65,7 @@ class _ExplainerSheet extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
 
-            Text('What makes Memoly different 🧠',
+            Text('What makes Apalchi different 🧠',
                 style: AppTextStyles.heading1.copyWith(fontSize: 20),
                 textAlign: TextAlign.center),
             const SizedBox(height: AppSpacing.xs),

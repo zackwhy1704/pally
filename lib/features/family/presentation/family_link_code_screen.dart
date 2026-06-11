@@ -83,7 +83,7 @@ class _FamilyLinkCodeScreenState
               const SizedBox(height: AppSpacing.md),
               Text(
                 'Share this code with a parent or guardian. They\'ll enter '
-                'it in their Memoly app to connect to your account.',
+                'it in their Apalchi app to connect to your account.',
                 style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 textAlign: TextAlign.center,
               ),
@@ -116,7 +116,7 @@ class _FamilyLinkCodeScreenState
                     Expanded(
                       child: FilledButton.icon(
                         onPressed: () => share_plus.Share.share(
-                            'Connect to my Memoly account with code: ${_code!.code}'),
+                            'Connect to my Apalchi account with code: ${_code!.code}'),
                         icon: const Icon(Icons.ios_share_rounded, size: 16),
                         label: const Text('Share'),
                         style: FilledButton.styleFrom(

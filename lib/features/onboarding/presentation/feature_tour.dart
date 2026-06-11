@@ -58,7 +58,7 @@ List<_TourStep> _buildSteps() => [
   const _TourStep(
     emoji: '👋',
     title: 'Hi, I\'m Mochi!',
-    body: 'Let me show you 4 quick things that make Memoly different from any other study app.',
+    body: 'Let me show you 4 quick things that make Apalchi different from any other study app.',
   ),
   _TourStep(
     emoji: '📚',

@@ -450,7 +450,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const Divider(height: 1, color: AppColors.outline),
               _TappableTile(
                 icon: Icons.lightbulb_outline_rounded,
-                label: 'Why Memoly is different',
+                label: 'Why Apalchi is different',
                 trailing: const Icon(Icons.chevron_right_rounded,
                     size: 16, color: AppColors.text3),
                 onTap: () => HowPallyIsDifferent.show(context),
@@ -468,7 +468,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 trailing: const Icon(Icons.open_in_new_rounded,
                     size: 16, color: AppColors.text3),
                 onTap: () => launchUrl(
-                  Uri.parse('https://memoly.app/privacy'),
+                  Uri.parse('https://apalchi.com/privacy'),
+                  mode: LaunchMode.externalApplication,
+                ),
+              ),
+              const Divider(height: 1, color: AppColors.outline),
+              _TappableTile(
+                icon: Icons.description_outlined,
+                label: 'Terms of Service',
+                trailing: const Icon(Icons.open_in_new_rounded,
+                    size: 16, color: AppColors.text3),
+                onTap: () => launchUrl(
+                  Uri.parse('https://apalchi.com/terms'),
                   mode: LaunchMode.externalApplication,
                 ),
               ),
@@ -479,7 +490,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 trailing: const Icon(Icons.open_in_new_rounded,
                     size: 16, color: AppColors.text3),
                 onTap: () => launchUrl(
-                  Uri.parse('mailto:support@memoly.app'),
+                  Uri.parse('mailto:support@apalchi.com'),
                   mode: LaunchMode.externalApplication,
                 ),
               ),

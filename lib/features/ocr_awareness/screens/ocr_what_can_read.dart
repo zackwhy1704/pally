@@ -18,7 +18,7 @@ class OcrWhatCanReadScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_rounded, color: AppColors.text1),
           onPressed: () => context.pop(),
         ),
-        title: Text('What can Memoly read?',
+        title: Text('What can Apalchi read?',
             style: AppTextStyles.title.copyWith(fontSize: 16)),
         centerTitle: true,
       ),

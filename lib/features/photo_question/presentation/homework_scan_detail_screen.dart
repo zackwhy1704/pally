@@ -128,7 +128,7 @@ class _HomeworkScanDetailScreenState extends State<HomeworkScanDetailScreen> {
     // Render as plain text — share sheet sends to messaging apps that
     // don't render Markdown nicely. Number each Q so parents can follow
     // along with the photo they're sharing alongside.
-    final buf = StringBuffer('My Memoly homework results:\n');
+    final buf = StringBuffer('My Apalchi homework results:\n');
     for (var i = 0; i < answers.length; i++) {
       final a = answers[i];
       buf
@@ -142,7 +142,7 @@ class _HomeworkScanDetailScreenState extends State<HomeworkScanDetailScreen> {
       }
     }
     share_plus.Share.share(buf.toString(),
-        subject: 'My Memoly homework results');
+        subject: 'My Apalchi homework results');
   }
 }
 
