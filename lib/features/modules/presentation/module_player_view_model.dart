@@ -22,6 +22,7 @@ class ModulePlayerState {
     this.isLoading = false,
     this.isSubmitting = false,
     this.isComplete = false,
+    this.muddiestSubmitted = false,
     this.isRevision = false,
     this.results,
     this.error,
@@ -41,6 +42,11 @@ class ModulePlayerState {
   final bool isLoading;
   final bool isSubmitting;
   final bool isComplete;
+
+  /// True once the post-PROVE "muddiest point" prompt has been answered or
+  /// skipped. Gates the one-tap muddiest screen so it only shows once and the
+  /// completion screen follows.
+  final bool muddiestSubmitted;
   final bool isRevision;
   final ModuleResults? results;
   final PallyError? error;
@@ -82,6 +88,7 @@ class ModulePlayerState {
     bool? isLoading,
     bool? isSubmitting,
     bool? isComplete,
+    bool? muddiestSubmitted,
     bool? isRevision,
     Object? results = _sentinel,
     Object? error = _sentinel,
@@ -101,6 +108,7 @@ class ModulePlayerState {
       isLoading: isLoading ?? this.isLoading,
       isSubmitting: isSubmitting ?? this.isSubmitting,
       isComplete: isComplete ?? this.isComplete,
+      muddiestSubmitted: muddiestSubmitted ?? this.muddiestSubmitted,
       isRevision: isRevision ?? this.isRevision,
       results: results == _sentinel ? this.results : results as ModuleResults?,
       error: error == _sentinel ? this.error : error as PallyError?,
@@ -383,6 +391,43 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
         stage: 'COMPLETE',
       );
     }
+  }
+
+  // ── Muddiest point ────────────────────────────────────────────────────────
+
+  /// Records the concept the child found hardest after PROVE, then advances to
+  /// the completion screen. One tap, fire-and-proceed: a failed POST must never
+  /// trap the child on this screen, so we mark it done regardless of the result.
+  Future<void> submitMuddiest(String conceptId) async {
+    appLog.i('[ModulePlayer] Muddiest point conceptId=$conceptId '
+        'module=$_moduleId');
+    // Optimistically advance — the survey is a soft signal, not a gate.
+    state = state.copyWith(muddiestSubmitted: true);
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.post<dynamic>(
+        '/api/v1/modules/$_moduleId/muddiest',
+        data: {'conceptId': conceptId},
+      );
+      ref.read(analyticsProvider).event(
+        AnalyticsEvents.moduleStageCompleted,
+        props: {
+          'module_id': _moduleId,
+          'avatar_id': _avatarId,
+          'stage': 'MUDDIEST',
+          'concept_id': conceptId,
+        },
+      );
+    } catch (e, st) {
+      // Soft-fail: the child has already moved on; just log it.
+      appLog.w('[ModulePlayer] Muddiest POST failed', error: e, stackTrace: st);
+    }
+  }
+
+  /// Skips the muddiest-point prompt and proceeds to the completion screen.
+  void skipMuddiest() {
+    appLog.d('[ModulePlayer] Muddiest point skipped for $_moduleId');
+    state = state.copyWith(muddiestSubmitted: true);
   }
 
   // ── Narration ─────────────────────────────────────────────────────────────

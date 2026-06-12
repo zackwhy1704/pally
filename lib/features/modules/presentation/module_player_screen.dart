@@ -161,6 +161,21 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
     }
 
     if (playerState.isComplete) {
+      final concepts = playerState.results?.concepts ?? const [];
+      // Post-PROVE muddiest-point check: one tap to flag the hardest concept,
+      // shown once before the celebration. Skipped automatically when the
+      // module reported no concepts to choose between.
+      if (!playerState.muddiestSubmitted && concepts.isNotEmpty) {
+        final vm = ref.read(
+          modulePlayerViewModelProvider(widget.avatarId, widget.moduleId)
+              .notifier,
+        );
+        return _MuddiestBody(
+          concepts: concepts,
+          onPick: vm.submitMuddiest,
+          onSkip: vm.skipMuddiest,
+        );
+      }
       return _CompleteBody(
         results: playerState.results,
         onBack: () {
@@ -1410,6 +1425,125 @@ class _ProveQuestionState extends State<_ProveQuestion> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ── MUDDIEST POINT (post-PROVE, pre-COMPLETE) ───────────────────────────────
+
+/// One-tap "which part was hardest?" survey shown after PROVE. Tapping a
+/// concept chip records the muddiest point and proceeds; "Skip" proceeds
+/// without recording. No free text by design.
+class _MuddiestBody extends StatelessWidget {
+  const _MuddiestBody({
+    required this.concepts,
+    required this.onPick,
+    required this.onSkip,
+  });
+
+  final List<ConceptMastery> concepts;
+  final void Function(String conceptId) onPick;
+  final VoidCallback onSkip;
+
+  @override
+  Widget build(BuildContext context) {
+    // De-duplicate + drop empty names so chips stay clean.
+    final seen = <String>{};
+    final labels = <String>[];
+    for (final c in concepts) {
+      final name = c.concept.trim();
+      if (name.isEmpty || !seen.add(name)) continue;
+      labels.add(name);
+    }
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: AppSpacing.xl),
+          Container(
+            width: MediaQuery.of(context).size.shortestSide * 0.28,
+            height: MediaQuery.of(context).size.shortestSide * 0.28,
+            decoration: const BoxDecoration(
+              color: AppColors.purpleL,
+              shape: BoxShape.circle,
+            ),
+            child: const Center(
+              child: Icon(Icons.psychology_alt_rounded,
+                  size: 44, color: AppColors.purple),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Text('Which part was hardest?',
+              style: AppTextStyles.heading1, textAlign: TextAlign.center),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            'Tap the one that felt the muddiest. This helps your tutor know '
+            'what to review next.',
+            style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            alignment: WrapAlignment.center,
+            children: [
+              for (final label in labels)
+                _MuddiestChip(label: label, onTap: () => onPick(label)),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xl),
+          TextButton(
+            onPressed: onSkip,
+            child: Text('Skip',
+                style: AppTextStyles.body.copyWith(
+                  color: AppColors.text2,
+                  fontWeight: FontWeight.w700,
+                )),
+          ),
+          SizedBox(height: MediaQuery.of(context).padding.bottom + AppSpacing.md),
+        ],
+      ),
+    );
+  }
+}
+
+class _MuddiestChip extends StatelessWidget {
+  const _MuddiestChip({required this.label, required this.onTap});
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.surface,
+      borderRadius: BorderRadius.circular(24),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(24),
+        onTap: onTap,
+        child: Container(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width * 0.8,
+          ),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: AppColors.purpleC),
+          ),
+          child: Text(
+            label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyles.body.copyWith(
+              color: AppColors.purple,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
       ),
     );
   }
