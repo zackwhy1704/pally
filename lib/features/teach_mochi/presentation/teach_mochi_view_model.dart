@@ -32,11 +32,9 @@ class TeachEvaluation {
   final bool levelledUp;
   final int newLevel;
 
-  bool get isPerfect =>
-      totalConcepts > 0 && score == totalConcepts;
+  bool get isPerfect => totalConcepts > 0 && score == totalConcepts;
 
-  static TeachEvaluation fromJson(Map<String, dynamic> json) =>
-      TeachEvaluation(
+  static TeachEvaluation fromJson(Map<String, dynamic> json) => TeachEvaluation(
         score: (json['score'] as num?)?.toInt() ?? 0,
         totalConcepts: (json['totalConcepts'] as num?)?.toInt() ?? 0,
         xpEarned: (json['xpEarned'] as num?)?.toInt() ?? 0,
@@ -104,6 +102,12 @@ const _sentinel = Object();
 class TeachMochiViewModel extends _$TeachMochiViewModel {
   late String _avatarId;
 
+  // ITEM 6 — measures how long the student spent explaining. Started on the
+  // first non-empty keystroke for a topic, stopped on submit. The backend
+  // TeachController accepts + clamps `durationSeconds`; sending a real value
+  // lets it reward genuine effort instead of defaulting to zero.
+  final Stopwatch _explainStopwatch = Stopwatch();
+
   @override
   TeachState build(String avatarId) {
     _avatarId = avatarId;
@@ -118,8 +122,8 @@ class TeachMochiViewModel extends _$TeachMochiViewModel {
         '/api/v1/avatars/$_avatarId/wiki/pages',
       );
       final data = (response.data?['data'] is Map
-              ? response.data!['data']
-              : response.data) as Map<String, dynamic>;
+          ? response.data!['data']
+          : response.data) as Map<String, dynamic>;
       final list = (data['pages'] as List?) ?? const [];
       final topics = list
           .whereType<Map<String, dynamic>>()
@@ -128,12 +132,15 @@ class TeachMochiViewModel extends _$TeachMochiViewModel {
       state = state.copyWith(topics: topics, isLoadingTopics: false);
     } on DioException catch (e) {
       appLog.w('[Teach] topic load failed: ${e.message}');
-      state = state.copyWith(
-          topics: const [], isLoadingTopics: false);
+      state = state.copyWith(topics: const [], isLoadingTopics: false);
     }
   }
 
   void selectTopic(WikiPage topic) {
+    // New topic → fresh timing.
+    _explainStopwatch
+      ..reset()
+      ..stop();
     state = state.copyWith(
       selectedTopic: topic,
       explanation: '',
@@ -142,6 +149,10 @@ class TeachMochiViewModel extends _$TeachMochiViewModel {
   }
 
   void updateExplanation(String text) {
+    // Start timing on the first real keystroke; keep running on edits.
+    if (text.trim().isNotEmpty && !_explainStopwatch.isRunning) {
+      _explainStopwatch.start();
+    }
     state = state.copyWith(explanation: text);
   }
 
@@ -150,6 +161,9 @@ class TeachMochiViewModel extends _$TeachMochiViewModel {
   }
 
   void back() {
+    _explainStopwatch
+      ..reset()
+      ..stop();
     state = state.copyWith(
       selectedTopic: null,
       explanation: '',
@@ -165,6 +179,9 @@ class TeachMochiViewModel extends _$TeachMochiViewModel {
       return;
     }
     state = state.copyWith(isSubmitting: true, error: null);
+    // Stop timing at submit; send the real elapsed seconds (backend clamps it).
+    _explainStopwatch.stop();
+    final durationSeconds = _explainStopwatch.elapsed.inSeconds;
     try {
       final dio = ref.read(dioProvider);
       // Teach evaluates the student explanation via Claude — allow 90s.
@@ -173,12 +190,13 @@ class TeachMochiViewModel extends _$TeachMochiViewModel {
         data: {
           'topicSlug': topic.slug,
           'explanation': state.explanation,
+          'durationSeconds': durationSeconds,
         },
         options: Options(receiveTimeout: const Duration(seconds: 90)),
       );
       final data = (response.data?['data'] is Map
-              ? response.data!['data']
-              : response.data) as Map<String, dynamic>;
+          ? response.data!['data']
+          : response.data) as Map<String, dynamic>;
       final evaluation = TeachEvaluation.fromJson(data);
       appLog.i('[Teach] score=${evaluation.score}/${evaluation.totalConcepts} '
           'xp=${evaluation.xpEarned}');
