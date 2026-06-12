@@ -333,22 +333,23 @@ class _AvatarSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final showDemo = showDemoCentreCard(ref);
-    final totalCount = avatars.length + (showDemo ? 1 : 0);
+    // Centre classes and personal tutors are two distinct systems; group
+    // class avatars under their own header above the personal "YOUR MOCHIS".
+    final classAvatars =
+        avatars.where((a) => a.isCentreClass).toList(growable: false);
+    final personalAvatars =
+        avatars.where((a) => !a.isCentreClass).toList(growable: false);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md, AppSpacing.md, AppSpacing.md, AppSpacing.xs),
-          child: Text(
-            'YOUR MOCHIS',
-            style: AppTextStyles.label.copyWith(
-              letterSpacing: 1.2,
-              color: AppColors.text2,
-            ),
-          ),
-        ),
+        // ── My classes (only when the child has centre-class avatars) ─────
+        if (classAvatars.isNotEmpty) ...[
+          const _SectionHeader(label: 'MY CLASSES'),
+          _AvatarGrid(avatars: classAvatars),
+        ],
+        // ── Personal tutors ────────────────────────────────────────────────
+        const _SectionHeader(label: 'YOUR MOCHIS'),
         GridView.builder(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
           shrinkWrap: true,
@@ -359,15 +360,60 @@ class _AvatarSection extends ConsumerWidget {
             mainAxisSpacing: 12,
             childAspectRatio: 178 / 160,
           ),
-          itemCount: totalCount,
+          itemCount: personalAvatars.length + (showDemo ? 1 : 0),
           itemBuilder: (context, index) {
-            if (index < avatars.length) {
-              return _AvatarCard(avatar: avatars[index]);
+            if (index < personalAvatars.length) {
+              return _AvatarCard(avatar: personalAvatars[index]);
             }
             return const _DemoCentreCard();
           },
         ),
       ],
+    );
+  }
+}
+
+/// A small uppercase section label used between avatar groups.
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.label});
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md, AppSpacing.md, AppSpacing.md, AppSpacing.xs),
+      child: Text(
+        label,
+        style: AppTextStyles.label.copyWith(
+          letterSpacing: 1.2,
+          color: AppColors.text2,
+        ),
+      ),
+    );
+  }
+}
+
+/// A non-scrolling avatar grid used for the "My classes" group (the personal
+/// group keeps its own grid so it can append the demo-centre marketing card).
+class _AvatarGrid extends StatelessWidget {
+  const _AvatarGrid({required this.avatars});
+  final List<Avatar> avatars;
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 220,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 178 / 160,
+      ),
+      itemCount: avatars.length,
+      itemBuilder: (context, index) => _AvatarCard(avatar: avatars[index]),
     );
   }
 }

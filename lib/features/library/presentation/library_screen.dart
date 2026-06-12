@@ -18,6 +18,29 @@ import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/mochi_character.dart';
 import 'package:pally/features/centre/centre_mode.dart';
 
+enum _LibraryItemType { header, avatar, demoCard }
+
+/// A single positioned row in the library list: a section header, an avatar
+/// row, or the demo-centre marketing card.
+class _LibraryItem {
+  const _LibraryItem.header(String label)
+      : type = _LibraryItemType.header,
+        headerLabel = label,
+        avatar = null;
+  const _LibraryItem.avatar(Avatar a)
+      : type = _LibraryItemType.avatar,
+        headerLabel = null,
+        avatar = a;
+  const _LibraryItem.demoCard()
+      : type = _LibraryItemType.demoCard,
+        headerLabel = null,
+        avatar = null;
+
+  final _LibraryItemType type;
+  final String? headerLabel;
+  final Avatar? avatar;
+}
+
 class LibraryScreen extends ConsumerWidget {
   const LibraryScreen({super.key});
 
@@ -48,75 +71,122 @@ class LibraryScreen extends ConsumerWidget {
                 color: AppColors.purple,
                 onRefresh: () =>
                     ref.read(libraryViewModelProvider.notifier).refresh(),
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  itemCount: avatars.length +
-                      (showDemoCentreCard(ref) ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index == avatars.length) {
-                      return const _DemoCentreLibraryRow();
-                    }
-                    final avatar = avatars[index];
-                    return Dismissible(
-                      key: ValueKey(avatar.id),
-                      direction: DismissDirection.endToStart,
-                      background: Container(
-                        margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.only(right: 24),
-                        decoration: BoxDecoration(
-                          color: AppColors.coral,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.delete_outline_rounded,
-                                color: Colors.white, size: 24),
-                            SizedBox(height: 2),
-                            Text('Delete',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600)),
-                          ],
-                        ),
-                      ),
-                      // Delete in confirmDismiss so the data is gone BEFORE
-                      // the dismiss animation completes — prevents the
-                      // "A dismissed Dismissible widget is still part of
-                      // the tree" Flutter crash on next rebuild.
-                      confirmDismiss: (_) async {
-                        final confirmed =
-                            await PallyDeleteTutorDialog.show(
-                          context: context,
-                          avatar: avatar,
-                        );
-                        if (confirmed != true) return false;
-
-                        final ok = await ref
-                            .read(homeViewModelProvider.notifier)
-                            .deleteAvatar(avatar.id);
-                        if (!context.mounted) return ok;
-
-                        if (ok) {
-                          HapticFeedback.heavyImpact();
-                          PallyToast.success(
-                              context, '${avatar.name} deleted');
-                          ref.invalidate(libraryViewModelProvider);
-                          return true;
-                        }
-                        PallyToast.error(
-                            context, 'Delete failed. Try again.');
-                        return false;
-                      },
-                      child: _AvatarRow(avatar: avatar),
-                    );
-                  },
-                ),
+                child: Builder(builder: (context) {
+                  // Build an ordered list of rows: "My classes" header + class
+                  // avatars first (when any), then personal tutor rows, then
+                  // the optional demo-centre marketing card.
+                  final items = _buildLibraryItems(
+                    avatars,
+                    showDemo: showDemoCentreCard(ref),
+                  );
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    itemCount: items.length,
+                    itemBuilder: (context, index) =>
+                        _buildLibraryRow(context, ref, items[index]),
+                  );
+                }),
               ),
       ),
     );
+  }
+
+  /// Orders library rows so class avatars are grouped under a "My classes"
+  /// header above personal tutors. Personal avatars never get a header (their
+  /// rows read as the default library list).
+  List<_LibraryItem> _buildLibraryItems(
+    List<Avatar> avatars, {
+    required bool showDemo,
+  }) {
+    final classAvatars = avatars.where((a) => a.isCentreClass);
+    final personalAvatars = avatars.where((a) => !a.isCentreClass);
+    return [
+      if (classAvatars.isNotEmpty) ...[
+        const _LibraryItem.header('My classes'),
+        for (final a in classAvatars) _LibraryItem.avatar(a),
+      ],
+      for (final a in personalAvatars) _LibraryItem.avatar(a),
+      if (showDemo) const _LibraryItem.demoCard(),
+    ];
+  }
+
+  Widget _buildLibraryRow(
+    BuildContext context,
+    WidgetRef ref,
+    _LibraryItem item,
+  ) {
+    switch (item.type) {
+      case _LibraryItemType.header:
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(
+              AppSpacing.xs, AppSpacing.xs, AppSpacing.xs, AppSpacing.sm),
+          child: Text(
+            item.headerLabel!,
+            style: AppTextStyles.label
+                .copyWith(letterSpacing: 1.2, color: AppColors.text2),
+          ),
+        );
+      case _LibraryItemType.demoCard:
+        return const _DemoCentreLibraryRow();
+      case _LibraryItemType.avatar:
+        final avatar = item.avatar!;
+        // Centre-class avatars are provisioned by a centre and cannot be
+        // deleted by the child — render the row without swipe-to-delete.
+        if (avatar.isCentreClass) {
+          return _AvatarRow(avatar: avatar);
+        }
+        return Dismissible(
+          key: ValueKey(avatar.id),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 24),
+            decoration: BoxDecoration(
+              color: AppColors.coral,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.delete_outline_rounded,
+                    color: Colors.white, size: 24),
+                SizedBox(height: 2),
+                Text('Delete',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600)),
+              ],
+            ),
+          ),
+          // Delete in confirmDismiss so the data is gone BEFORE the dismiss
+          // animation completes — prevents the "A dismissed Dismissible widget
+          // is still part of the tree" Flutter crash on next rebuild.
+          confirmDismiss: (_) async {
+            final confirmed = await PallyDeleteTutorDialog.show(
+              context: context,
+              avatar: avatar,
+            );
+            if (confirmed != true) return false;
+
+            final ok = await ref
+                .read(homeViewModelProvider.notifier)
+                .deleteAvatar(avatar.id);
+            if (!context.mounted) return ok;
+
+            if (ok) {
+              HapticFeedback.heavyImpact();
+              PallyToast.success(context, '${avatar.name} deleted');
+              ref.invalidate(libraryViewModelProvider);
+              return true;
+            }
+            PallyToast.error(context, 'Delete failed. Try again.');
+            return false;
+          },
+          child: _AvatarRow(avatar: avatar),
+        );
+    }
   }
 }
 
