@@ -37,6 +37,13 @@ _$WikiPageImpl _$$WikiPageImplFromJson(Map<String, dynamic> json) =>
           : _reviewStateFromJson(json['reviewState']),
       verifiedBy: json['verifiedBy'] as String?,
       flagNote: json['flagNote'] as String?,
+      prerequisiteSlugs: (json['prerequisiteSlugs'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      certaintyScore: (json['certaintyScore'] as num?)?.toDouble() ?? 0.0,
+      quizUseCount: (json['quizUseCount'] as num?)?.toInt() ?? 0,
+      conflictNote: json['conflictNote'] as String?,
     );
 
 Map<String, dynamic> _$$WikiPageImplToJson(_$WikiPageImpl instance) =>
@@ -58,6 +65,10 @@ Map<String, dynamic> _$$WikiPageImplToJson(_$WikiPageImpl instance) =>
       'reviewState': _$WikiReviewStateEnumMap[instance.reviewState]!,
       'verifiedBy': instance.verifiedBy,
       'flagNote': instance.flagNote,
+      'prerequisiteSlugs': instance.prerequisiteSlugs,
+      'certaintyScore': instance.certaintyScore,
+      'quizUseCount': instance.quizUseCount,
+      'conflictNote': instance.conflictNote,
     };
 
 const _$WikiReviewStateEnumMap = {

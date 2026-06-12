@@ -101,13 +101,31 @@ class _StubBrainMap extends BrainMapViewModel {
   Future<BrainMapState> build(String avatarId) async => const BrainMapState(
         isLoading: false,
         subject: 'Science',
+        newSlugs: {'cells'},
+        newTitles: {'Cells'},
         nodes: [
           TopicNode(
-              slug: 'photosynthesis',
-              title: 'Photosynthesis and the very long topic name',
-              mastery: 0.8,
-              attempts: 4),
-          TopicNode(slug: 'cells', title: 'Cells', mastery: -1, attempts: 0),
+            slug: 'photosynthesis',
+            title: 'Photosynthesis and the very long topic name',
+            mastery: 0.8,
+            attempts: 4,
+            certainty: 'VERIFIED',
+            certaintyScore: 0.9,
+            quizUseCount: 6,
+            hasConflict: true,
+            conflictNote: 'You wrote leaves are blue, but earlier notes '
+                'say green — which is right?',
+          ),
+          TopicNode(
+            slug: 'cells',
+            title: 'Cells',
+            mastery: -1,
+            attempts: 0,
+            certainty: 'UNCERTAIN',
+            certaintyScore: 0.2,
+            quizUseCount: 0,
+            prerequisiteSlugs: ['photosynthesis'],
+          ),
         ],
       );
 }

@@ -61,6 +61,20 @@ class WikiPage with _$WikiPage {
     // Present (and non-empty) only when [reviewState] == flagged — the
     // reviewer's note on what looked wrong.
     String? flagNote,
+    // Knowledge-graph edges: slugs of pages this page depends on (its
+    // prerequisites). Null-tolerant (PART 16): a missing array → empty list,
+    // so an older backend that omits the field renders as a root node.
+    @Default([]) List<String> prerequisiteSlugs,
+    // Mochi's confidence in this page, 0.0–1.0. Drives the graph node's
+    // border weight. Missing → 0.0 (treated as no extra confidence signal).
+    @Default(0.0) double certaintyScore,
+    // How many times this page has been used to generate a quiz question.
+    // Drives the graph node's size. Missing → 0.
+    @Default(0) int quizUseCount,
+    // A short human-readable note about the contradiction Mochi found on this
+    // page. Present (non-null) only when [hasConflict] is true. Shown in the
+    // topic sheet as "Mochi noticed: …".
+    String? conflictNote,
   }) = _WikiPage;
 
   factory WikiPage.fromJson(Map<String, dynamic> json) =>

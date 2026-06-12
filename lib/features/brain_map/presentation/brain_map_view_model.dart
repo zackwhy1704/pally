@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
@@ -14,6 +16,12 @@ class TopicNode {
     required this.mastery,
     required this.attempts,
     this.reviewRequired = false,
+    this.certainty = 'inferred',
+    this.certaintyScore = 0.0,
+    this.quizUseCount = 0,
+    this.hasConflict = false,
+    this.conflictNote,
+    this.prerequisiteSlugs = const [],
   });
   final String slug;
   final String title;
@@ -24,7 +32,22 @@ class TopicNode {
   // which topics the system thinks they got wrong.
   final bool reviewRequired;
 
+  // Knowledge-graph fields (IMPROVEMENT 2). Mirror the wiki-page DTO so the
+  // graph view can colour by certainty, size by usage, and draw prereq edges.
+  final String certainty; // INFERRED / VERIFIED / UNCERTAIN (lower-cased)
+  final double certaintyScore; // 0.0–1.0 → node border weight
+  final int quizUseCount; // → node size
+  final bool hasConflict; // → pulsing node
+  final String? conflictNote; // shown in the topic sheet (IMPROVEMENT 3)
+  final List<String> prerequisiteSlugs; // graph edges: these → this node
+
   bool get isUntouched => attempts == 0;
+
+  /// Node diameter, 40–72px: base 40 + 4px per quiz use, capped at 8 uses.
+  double get nodeDiameter => 40.0 + math.min(quizUseCount, 8) * 4.0;
+
+  /// Border stroke weight: 1 + certaintyScore*3 → 1.0–4.0px.
+  double get borderWeight => 1.0 + certaintyScore.clamp(0.0, 1.0) * 3.0;
 }
 
 @immutable
@@ -34,18 +57,59 @@ class BrainMapState {
     this.subject = '',
     this.isLoading = true,
     this.error,
+    this.newSlugs = const {},
+    this.newTitles = const {},
   });
   final List<TopicNode> nodes;
   final String subject;
   final bool isLoading;
   final String? error;
+
+  // IMPROVEMENT 6 — slugs/titles compiled during this app session. The graph
+  // and list animate these nodes in (fade+scale, staggered). In-memory only:
+  // reset on app restart. A node is "new" if its slug OR title matches.
+  final Set<String> newSlugs;
+  final Set<String> newTitles;
+
+  bool isNew(TopicNode n) =>
+      newSlugs.contains(n.slug) || newTitles.contains(n.title);
 }
 
 @riverpod
 class BrainMapViewModel extends _$BrainMapViewModel {
+  // IMPROVEMENT 6 — slugs/titles seen so far this session, and the subset that
+  // appeared since the first load (i.e. compiled this session). In-memory only,
+  // resets on app restart / provider dispose. No backend change.
+  final Set<String> _seenSlugs = <String>{};
+  final Set<String> _newSlugs = <String>{};
+  final Set<String> _newTitles = <String>{};
+  bool _hadFirstLoad = false;
+
   @override
   Future<BrainMapState> build(String avatarId) async {
     return _fetch(avatarId);
+  }
+
+  /// Explicitly mark pages compiled this session so the graph/list animate them
+  /// in. Optional hook for the compile-complete handler; the provider also
+  /// auto-detects new slugs on refresh (see [_fetch]).
+  void markNewlyCompiled({
+    Iterable<String> slugs = const [],
+    Iterable<String> titles = const [],
+  }) {
+    _newSlugs.addAll(slugs);
+    _newTitles.addAll(titles);
+    final current = state.valueOrNull;
+    if (current != null) {
+      state = AsyncValue.data(BrainMapState(
+        nodes: current.nodes,
+        subject: current.subject,
+        isLoading: current.isLoading,
+        error: current.error,
+        newSlugs: Set.of(_newSlugs),
+        newTitles: Set.of(_newTitles),
+      ));
+    }
   }
 
   Future<BrainMapState> _fetch(String avatarId) async {
@@ -101,13 +165,38 @@ class BrainMapViewModel extends _$BrainMapViewModel {
           mastery: m?.ratio ?? 0,
           attempts: m?.attempts ?? 0,
           reviewRequired: m?.reviewRequired ?? false,
+          certainty: p.certainty,
+          certaintyScore: p.certaintyScore,
+          quizUseCount: p.quizUseCount,
+          hasConflict: p.hasConflict,
+          conflictNote: p.conflictNote,
+          prerequisiteSlugs: p.prerequisiteSlugs,
         );
       }).toList();
+
+      // IMPROVEMENT 6 — auto-detect pages that appeared after the first load.
+      // On the very first fetch we only seed the baseline (nothing is "new").
+      // On later refreshes (e.g. returning from an upload+compile), any slug
+      // not previously seen is animated in.
+      if (_hadFirstLoad) {
+        for (final n in nodes) {
+          if (!_seenSlugs.contains(n.slug)) {
+            _newSlugs.add(n.slug);
+            _newTitles.add(n.title);
+          }
+        }
+      }
+      for (final n in nodes) {
+        _seenSlugs.add(n.slug);
+      }
+      _hadFirstLoad = true;
 
       return BrainMapState(
         nodes: nodes,
         subject: subject,
         isLoading: false,
+        newSlugs: Set.of(_newSlugs),
+        newTitles: Set.of(_newTitles),
       );
     } catch (e, st) {
       appLog.w('[BrainMap] fetch failed', error: e, stackTrace: st);
