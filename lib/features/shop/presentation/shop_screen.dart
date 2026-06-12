@@ -6,9 +6,11 @@ import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
+import 'package:pally/features/collection/presentation/collection_view_model.dart';
 import 'package:pally/features/shop/presentation/powerup_view_model.dart';
 import 'package:pally/features/shop/presentation/shop_view_model.dart';
 import 'package:pally/features/shop/providers/mystery_box_odds_provider.dart';
+import 'package:pally/features/shop/providers/unlocked_characters_provider.dart';
 import 'package:pally/shared/models/mochi_character.dart';
 
 class ShopScreen extends ConsumerWidget {
@@ -33,8 +35,8 @@ class ShopScreen extends ConsumerWidget {
           duration: const Duration(seconds: 3),
           backgroundColor: AppColors.text1,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           content: Text(
             '❄️ Freeze added — you now have '
             '${next.lastFreezePurchase!.freezes}/'
@@ -51,8 +53,8 @@ class ShopScreen extends ConsumerWidget {
           duration: const Duration(seconds: 3),
           backgroundColor: AppColors.coral,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           content: Text(next.error ?? 'Something went wrong.'),
         ));
       }
@@ -95,7 +97,7 @@ class ShopScreen extends ConsumerWidget {
                   const SizedBox(height: AppSpacing.lg),
                   _EarnMethodsCard(),
                   const SizedBox(height: AppSpacing.md),
-                  _CollectionCard(count: shopState.collectionCount),
+                  const _CollectionCard(),
                 ],
               ),
             ),
@@ -290,7 +292,8 @@ class _MysteryBoxCardState extends State<_MysteryBoxCard>
           SizedBox(
             width: double.infinity,
             child: FilledButton(
-              onPressed: (canAfford && !widget.isOpening) ? widget.onOpen : null,
+              onPressed:
+                  (canAfford && !widget.isOpening) ? widget.onOpen : null,
               style: FilledButton.styleFrom(
                 backgroundColor: canAfford ? AppColors.gold : Colors.white24,
                 foregroundColor: canAfford ? AppColors.text1 : Colors.white54,
@@ -315,9 +318,7 @@ class _MysteryBoxCardState extends State<_MysteryBoxCard>
                             size: 18, color: AppColors.amber),
                         const SizedBox(width: 6),
                         Text(
-                          canAfford
-                              ? 'Open Box (600 ⭐)'
-                              : 'Need 600 ⭐ to open',
+                          canAfford ? 'Open Box (600 ⭐)' : 'Need 600 ⭐ to open',
                           style: AppTextStyles.body.copyWith(
                             fontWeight: FontWeight.w700,
                             color: canAfford ? AppColors.text1 : Colors.white54,
@@ -372,8 +373,8 @@ class _PowerupShopCard extends ConsumerWidget {
           duration: const Duration(seconds: 3),
           backgroundColor: AppColors.text1,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           content: Text(
             'Bought ${_labelFor(next.lastPurchase!.type)} — '
             'you now have ${next.lastPurchase!.count}',
@@ -386,8 +387,8 @@ class _PowerupShopCard extends ConsumerWidget {
           duration: const Duration(seconds: 3),
           backgroundColor: AppColors.coral,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           content: Text(next.error ?? 'Something went wrong.'),
         ));
         notifier.clearError();
@@ -547,10 +548,9 @@ class _PowerupRow extends StatelessWidget {
               style: FilledButton.styleFrom(
                 backgroundColor:
                     canAfford ? AppColors.purple : AppColors.outline,
-                foregroundColor:
-                    canAfford ? Colors.white : AppColors.text3,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 8),
+                foregroundColor: canAfford ? Colors.white : AppColors.text3,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -561,8 +561,7 @@ class _PowerupRow extends StatelessWidget {
                   Text(
                     cost == 0 ? '…' : '$cost',
                     style: const TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontFamily: 'Nunito'),
+                        fontWeight: FontWeight.w800, fontFamily: 'Nunito'),
                   ),
                   const SizedBox(width: 4),
                   const Icon(Icons.star_rounded, size: 14),
@@ -609,8 +608,7 @@ class _MysteryOddsPanel extends ConsumerWidget {
           if (odds == null || odds.isEmpty)
             Text(
               'Loading odds…',
-              style: AppTextStyles.caption
-                  .copyWith(color: AppColors.text2),
+              style: AppTextStyles.caption.copyWith(color: AppColors.text2),
             )
           else
             Text(
@@ -679,8 +677,7 @@ class _PowerUpsCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.tealL,
               borderRadius: BorderRadius.circular(12),
-              border:
-                  Border.all(color: AppColors.teal.withValues(alpha: 0.25)),
+              border: Border.all(color: AppColors.teal.withValues(alpha: 0.25)),
             ),
             child: Row(
               children: [
@@ -720,8 +717,7 @@ class _PowerUpsCard extends StatelessWidget {
                   style: FilledButton.styleFrom(
                     backgroundColor:
                         canAfford ? AppColors.teal : AppColors.outline,
-                    foregroundColor:
-                        canAfford ? Colors.white : AppColors.text3,
+                    foregroundColor: canAfford ? Colors.white : AppColors.text3,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 14, vertical: 10),
                     shape: RoundedRectangleBorder(
@@ -830,13 +826,39 @@ class _EarnMethodsCard extends StatelessWidget {
   }
 }
 
-class _CollectionCard extends StatelessWidget {
-  const _CollectionCard({required this.count});
-
-  final int count;
+/// "My Collection x / y" card.
+///
+/// One source of truth, two derived numbers — both from /shop/characters:
+///   • numerator   = characters the user has unlocked
+///     (unlockedCharactersProvider, where unlocked == true)
+///   • denominator = the server's RELEASED set size
+///     (collectionViewModelProvider.totalCount — entries returned by
+///      /shop/characters), NOT MochiCharacter.values.length, which also
+///      contains unreleased `atw*` painters that must stay invisible.
+/// This is exactly the data the Mochi Album grid renders, so the count on
+/// this card can never disagree with the grid.
+class _CollectionCard extends ConsumerWidget {
+  const _CollectionCard();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final collection = ref.watch(collectionViewModelProvider);
+    final unlocked = ref.watch(unlockedCharactersProvider);
+
+    // Released total = number of catalog entries the server returned.
+    final total = collection.totalCount;
+    // Owned = unlocked characters, but never more than the released total
+    // (defensive against an in-flight optimistic unlock racing the refetch).
+    final ownedRaw = unlocked.maybeWhen(
+      data: (set) => set.length,
+      orElse: () => collection.ownedCount,
+    );
+    final owned = total > 0 ? ownedRaw.clamp(0, total) : ownedRaw;
+
+    final subtitle = total > 0
+        ? '$owned / $total characters unlocked'
+        : 'Loading your collection…';
+
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: () => const CollectionRoute().push<void>(context),
@@ -861,7 +883,7 @@ class _CollectionCard extends StatelessWidget {
                         .copyWith(fontWeight: FontWeight.w600),
                   ),
                   Text(
-                    '$count / ${MochiCharacter.values.length} characters unlocked',
+                    subtitle,
                     style: AppTextStyles.bodySmall,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -869,8 +891,7 @@ class _CollectionCard extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded,
-                color: AppColors.purple),
+            const Icon(Icons.chevron_right_rounded, color: AppColors.purple),
           ],
         ),
       ),
@@ -886,8 +907,7 @@ class _UnlockedDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      insetPadding:
-          const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
@@ -980,8 +1000,7 @@ class _DuplicateDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      insetPadding:
-          const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
@@ -1007,8 +1026,7 @@ class _DuplicateDialog extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 color: AppColors.amberL,
                 borderRadius: BorderRadius.circular(12),

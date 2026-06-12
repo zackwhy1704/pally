@@ -86,8 +86,11 @@ class ShopViewModel extends _$ShopViewModel {
       final response =
           await dio.get<Map<String, dynamic>>('/api/v1/shop/stars');
       final s = (response.data?['stars'] as int?) ?? 0;
-      final c = (response.data?['collectionCount'] as int?) ?? 0;
-      state = state.copyWith(stars: s, collectionCount: c, isLoading: false);
+      // NOTE: /shop/stars does NOT return a collection count. The "My
+      // Collection" card derives its numerator from unlockedCharactersProvider
+      // and its denominator from the server's released set (/shop/characters)
+      // — the same source the collection grid uses — so the two never disagree.
+      state = state.copyWith(stars: s, isLoading: false);
     } catch (e) {
       // Stars are a real currency. Never fabricate a balance — show a
       // real error + retry instead, so a kid can't think they have 1240
