@@ -67,6 +67,39 @@ PedagogyMode _pedagogyFromJson(Object? v) => PedagogyMode.socratic;
 
 String _pedagogyToJson(PedagogyMode m) => 'SOCRATIC';
 
+// ── Avatar kind ───────────────────────────────────────────────────────────────
+
+/// Distinguishes a child's own collectible tutor (PERSONAL) from a
+/// centre-provisioned class avatar (CENTRE_CLASS). Class avatars render as a
+/// parameterised "uniform" Mochi and must never appear in the create-tutor
+/// picker, shop, or collection.
+enum AvatarKind { personal, centreClass }
+
+/// Defensive parse: any unknown/missing value falls back to [personal] per the
+/// network null-tolerance rules (CLAUDE.md PART 16).
+AvatarKind _kindFromJson(Object? v) {
+  final s = (v as String?)?.toUpperCase() ?? '';
+  switch (s) {
+    case 'CENTRE_CLASS':
+    case 'CENTER_CLASS':
+      return AvatarKind.centreClass;
+    case 'PERSONAL':
+    default:
+      return AvatarKind.personal;
+  }
+}
+
+String _kindToJson(AvatarKind k) =>
+    k == AvatarKind.centreClass ? 'CENTRE_CLASS' : 'PERSONAL';
+
+ClassAppearance? _appearanceFromJson(Object? v) {
+  if (v is Map<String, dynamic>) return ClassAppearance.fromJson(v);
+  if (v is Map) return ClassAppearance.fromJson(Map<String, dynamic>.from(v));
+  return null;
+}
+
+Map<String, dynamic>? _appearanceToJson(ClassAppearance? a) => a?.toJson();
+
 // ── Models ───────────────────────────────────────────────────────────────────
 
 DateTime? _testDateFromJson(Object? v) {
@@ -86,6 +119,27 @@ String? _testDateToJson(DateTime? d) =>
     d == null ? null : '${d.year.toString().padLeft(4, '0')}-'
         '${d.month.toString().padLeft(2, '0')}-'
         '${d.day.toString().padLeft(2, '0')}';
+
+/// Render parameters for a CENTRE_CLASS avatar's "uniform" Mochi.
+/// All fields are network-sourced, so every scalar is null-tolerant with a
+/// safe default (CLAUDE.md PART 16).
+@freezed
+class ClassAppearance with _$ClassAppearance {
+  const factory ClassAppearance({
+    /// Hex band colour, e.g. "#7042ED". Empty string when omitted.
+    @JsonKey(name: 'bandColorHex') @Default('') String bandColorHex,
+
+    /// Subject glyph key, e.g. "math". Drives the badge icon; unknown keys
+    /// map to a neutral book icon at render time.
+    @JsonKey(name: 'subjectGlyph') @Default('') String subjectGlyph,
+
+    /// 1-2 uppercase letters shown on/beneath the badge.
+    @Default('') String initials,
+  }) = _ClassAppearance;
+
+  factory ClassAppearance.fromJson(Map<String, dynamic> json) =>
+      _$ClassAppearanceFromJson(json);
+}
 
 @freezed
 class Avatar with _$Avatar {
@@ -137,6 +191,15 @@ class Avatar with _$Avatar {
     String? cosmeticEyewear,
     String? cosmeticClothes,
     String? cosmeticShoes,
+    // ── Centre-class kind + uniform appearance ────────────────────────────
+    /// PERSONAL (collectible tutor) or CENTRE_CLASS (class uniform). Defaults
+    /// to PERSONAL when the backend omits the field.
+    @JsonKey(fromJson: _kindFromJson, toJson: _kindToJson)
+    @Default(AvatarKind.personal)
+    AvatarKind kind,
+    /// Uniform render params; present only for CENTRE_CLASS avatars.
+    @JsonKey(fromJson: _appearanceFromJson, toJson: _appearanceToJson)
+    ClassAppearance? appearance,
   }) = _Avatar;
 
   factory Avatar.fromJson(Map<String, dynamic> json) => _$AvatarFromJson(json);
@@ -146,6 +209,11 @@ extension AvatarKnowledge on Avatar {
   bool get hasKnowledge => wikiPageCount > 0;
   /// True while the brain is being compiled (debounced or in-flight).
   bool get isBrainCompiling => brainState != 'READY';
+
+  /// True when this avatar is a centre-provisioned class that should render as
+  /// a uniform Mochi instead of collectible character art.
+  bool get isCentreClass =>
+      kind == AvatarKind.centreClass && appearance != null;
 }
 
 @freezed

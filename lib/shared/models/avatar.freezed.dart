@@ -14,6 +14,229 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+ClassAppearance _$ClassAppearanceFromJson(Map<String, dynamic> json) {
+  return _ClassAppearance.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ClassAppearance {
+  /// Hex band colour, e.g. "#7042ED". Empty string when omitted.
+  @JsonKey(name: 'bandColorHex')
+  String get bandColorHex => throw _privateConstructorUsedError;
+
+  /// Subject glyph key, e.g. "math". Drives the badge icon; unknown keys
+  /// map to a neutral book icon at render time.
+  @JsonKey(name: 'subjectGlyph')
+  String get subjectGlyph => throw _privateConstructorUsedError;
+
+  /// 1-2 uppercase letters shown on/beneath the badge.
+  String get initials => throw _privateConstructorUsedError;
+
+  /// Serializes this ClassAppearance to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of ClassAppearance
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ClassAppearanceCopyWith<ClassAppearance> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ClassAppearanceCopyWith<$Res> {
+  factory $ClassAppearanceCopyWith(
+          ClassAppearance value, $Res Function(ClassAppearance) then) =
+      _$ClassAppearanceCopyWithImpl<$Res, ClassAppearance>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'bandColorHex') String bandColorHex,
+      @JsonKey(name: 'subjectGlyph') String subjectGlyph,
+      String initials});
+}
+
+/// @nodoc
+class _$ClassAppearanceCopyWithImpl<$Res, $Val extends ClassAppearance>
+    implements $ClassAppearanceCopyWith<$Res> {
+  _$ClassAppearanceCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of ClassAppearance
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? bandColorHex = null,
+    Object? subjectGlyph = null,
+    Object? initials = null,
+  }) {
+    return _then(_value.copyWith(
+      bandColorHex: null == bandColorHex
+          ? _value.bandColorHex
+          : bandColorHex // ignore: cast_nullable_to_non_nullable
+              as String,
+      subjectGlyph: null == subjectGlyph
+          ? _value.subjectGlyph
+          : subjectGlyph // ignore: cast_nullable_to_non_nullable
+              as String,
+      initials: null == initials
+          ? _value.initials
+          : initials // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ClassAppearanceImplCopyWith<$Res>
+    implements $ClassAppearanceCopyWith<$Res> {
+  factory _$$ClassAppearanceImplCopyWith(_$ClassAppearanceImpl value,
+          $Res Function(_$ClassAppearanceImpl) then) =
+      __$$ClassAppearanceImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'bandColorHex') String bandColorHex,
+      @JsonKey(name: 'subjectGlyph') String subjectGlyph,
+      String initials});
+}
+
+/// @nodoc
+class __$$ClassAppearanceImplCopyWithImpl<$Res>
+    extends _$ClassAppearanceCopyWithImpl<$Res, _$ClassAppearanceImpl>
+    implements _$$ClassAppearanceImplCopyWith<$Res> {
+  __$$ClassAppearanceImplCopyWithImpl(
+      _$ClassAppearanceImpl _value, $Res Function(_$ClassAppearanceImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of ClassAppearance
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? bandColorHex = null,
+    Object? subjectGlyph = null,
+    Object? initials = null,
+  }) {
+    return _then(_$ClassAppearanceImpl(
+      bandColorHex: null == bandColorHex
+          ? _value.bandColorHex
+          : bandColorHex // ignore: cast_nullable_to_non_nullable
+              as String,
+      subjectGlyph: null == subjectGlyph
+          ? _value.subjectGlyph
+          : subjectGlyph // ignore: cast_nullable_to_non_nullable
+              as String,
+      initials: null == initials
+          ? _value.initials
+          : initials // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ClassAppearanceImpl implements _ClassAppearance {
+  const _$ClassAppearanceImpl(
+      {@JsonKey(name: 'bandColorHex') this.bandColorHex = '',
+      @JsonKey(name: 'subjectGlyph') this.subjectGlyph = '',
+      this.initials = ''});
+
+  factory _$ClassAppearanceImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ClassAppearanceImplFromJson(json);
+
+  /// Hex band colour, e.g. "#7042ED". Empty string when omitted.
+  @override
+  @JsonKey(name: 'bandColorHex')
+  final String bandColorHex;
+
+  /// Subject glyph key, e.g. "math". Drives the badge icon; unknown keys
+  /// map to a neutral book icon at render time.
+  @override
+  @JsonKey(name: 'subjectGlyph')
+  final String subjectGlyph;
+
+  /// 1-2 uppercase letters shown on/beneath the badge.
+  @override
+  @JsonKey()
+  final String initials;
+
+  @override
+  String toString() {
+    return 'ClassAppearance(bandColorHex: $bandColorHex, subjectGlyph: $subjectGlyph, initials: $initials)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ClassAppearanceImpl &&
+            (identical(other.bandColorHex, bandColorHex) ||
+                other.bandColorHex == bandColorHex) &&
+            (identical(other.subjectGlyph, subjectGlyph) ||
+                other.subjectGlyph == subjectGlyph) &&
+            (identical(other.initials, initials) ||
+                other.initials == initials));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, bandColorHex, subjectGlyph, initials);
+
+  /// Create a copy of ClassAppearance
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ClassAppearanceImplCopyWith<_$ClassAppearanceImpl> get copyWith =>
+      __$$ClassAppearanceImplCopyWithImpl<_$ClassAppearanceImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ClassAppearanceImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ClassAppearance implements ClassAppearance {
+  const factory _ClassAppearance(
+      {@JsonKey(name: 'bandColorHex') final String bandColorHex,
+      @JsonKey(name: 'subjectGlyph') final String subjectGlyph,
+      final String initials}) = _$ClassAppearanceImpl;
+
+  factory _ClassAppearance.fromJson(Map<String, dynamic> json) =
+      _$ClassAppearanceImpl.fromJson;
+
+  /// Hex band colour, e.g. "#7042ED". Empty string when omitted.
+  @override
+  @JsonKey(name: 'bandColorHex')
+  String get bandColorHex;
+
+  /// Subject glyph key, e.g. "math". Drives the badge icon; unknown keys
+  /// map to a neutral book icon at render time.
+  @override
+  @JsonKey(name: 'subjectGlyph')
+  String get subjectGlyph;
+
+  /// 1-2 uppercase letters shown on/beneath the badge.
+  @override
+  String get initials;
+
+  /// Create a copy of ClassAppearance
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ClassAppearanceImplCopyWith<_$ClassAppearanceImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 Avatar _$AvatarFromJson(Map<String, dynamic> json) {
   return _Avatar.fromJson(json);
 }
@@ -70,7 +293,16 @@ mixin _$Avatar {
   /// resolved to optional overlay assets by [MochiCosmetics].
   String? get cosmeticEyewear => throw _privateConstructorUsedError;
   String? get cosmeticClothes => throw _privateConstructorUsedError;
-  String? get cosmeticShoes => throw _privateConstructorUsedError;
+  String? get cosmeticShoes =>
+      throw _privateConstructorUsedError; // ── Centre-class kind + uniform appearance ────────────────────────────
+  /// PERSONAL (collectible tutor) or CENTRE_CLASS (class uniform). Defaults
+  /// to PERSONAL when the backend omits the field.
+  @JsonKey(fromJson: _kindFromJson, toJson: _kindToJson)
+  AvatarKind get kind => throw _privateConstructorUsedError;
+
+  /// Uniform render params; present only for CENTRE_CLASS avatars.
+  @JsonKey(fromJson: _appearanceFromJson, toJson: _appearanceToJson)
+  ClassAppearance? get appearance => throw _privateConstructorUsedError;
 
   /// Serializes this Avatar to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -117,7 +349,12 @@ abstract class $AvatarCopyWith<$Res> {
       bool avatarLocked,
       String? cosmeticEyewear,
       String? cosmeticClothes,
-      String? cosmeticShoes});
+      String? cosmeticShoes,
+      @JsonKey(fromJson: _kindFromJson, toJson: _kindToJson) AvatarKind kind,
+      @JsonKey(fromJson: _appearanceFromJson, toJson: _appearanceToJson)
+      ClassAppearance? appearance});
+
+  $ClassAppearanceCopyWith<$Res>? get appearance;
 }
 
 /// @nodoc
@@ -158,6 +395,8 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
     Object? cosmeticEyewear = freezed,
     Object? cosmeticClothes = freezed,
     Object? cosmeticShoes = freezed,
+    Object? kind = null,
+    Object? appearance = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -252,7 +491,29 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
           ? _value.cosmeticShoes
           : cosmeticShoes // ignore: cast_nullable_to_non_nullable
               as String?,
+      kind: null == kind
+          ? _value.kind
+          : kind // ignore: cast_nullable_to_non_nullable
+              as AvatarKind,
+      appearance: freezed == appearance
+          ? _value.appearance
+          : appearance // ignore: cast_nullable_to_non_nullable
+              as ClassAppearance?,
     ) as $Val);
+  }
+
+  /// Create a copy of Avatar
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ClassAppearanceCopyWith<$Res>? get appearance {
+    if (_value.appearance == null) {
+      return null;
+    }
+
+    return $ClassAppearanceCopyWith<$Res>(_value.appearance!, (value) {
+      return _then(_value.copyWith(appearance: value) as $Val);
+    });
   }
 }
 
@@ -294,7 +555,13 @@ abstract class _$$AvatarImplCopyWith<$Res> implements $AvatarCopyWith<$Res> {
       bool avatarLocked,
       String? cosmeticEyewear,
       String? cosmeticClothes,
-      String? cosmeticShoes});
+      String? cosmeticShoes,
+      @JsonKey(fromJson: _kindFromJson, toJson: _kindToJson) AvatarKind kind,
+      @JsonKey(fromJson: _appearanceFromJson, toJson: _appearanceToJson)
+      ClassAppearance? appearance});
+
+  @override
+  $ClassAppearanceCopyWith<$Res>? get appearance;
 }
 
 /// @nodoc
@@ -333,6 +600,8 @@ class __$$AvatarImplCopyWithImpl<$Res>
     Object? cosmeticEyewear = freezed,
     Object? cosmeticClothes = freezed,
     Object? cosmeticShoes = freezed,
+    Object? kind = null,
+    Object? appearance = freezed,
   }) {
     return _then(_$AvatarImpl(
       id: null == id
@@ -427,6 +696,14 @@ class __$$AvatarImplCopyWithImpl<$Res>
           ? _value.cosmeticShoes
           : cosmeticShoes // ignore: cast_nullable_to_non_nullable
               as String?,
+      kind: null == kind
+          ? _value.kind
+          : kind // ignore: cast_nullable_to_non_nullable
+              as AvatarKind,
+      appearance: freezed == appearance
+          ? _value.appearance
+          : appearance // ignore: cast_nullable_to_non_nullable
+              as ClassAppearance?,
     ));
   }
 }
@@ -465,7 +742,11 @@ class _$AvatarImpl implements _Avatar {
       this.avatarLocked = false,
       this.cosmeticEyewear,
       this.cosmeticClothes,
-      this.cosmeticShoes});
+      this.cosmeticShoes,
+      @JsonKey(fromJson: _kindFromJson, toJson: _kindToJson)
+      this.kind = AvatarKind.personal,
+      @JsonKey(fromJson: _appearanceFromJson, toJson: _appearanceToJson)
+      this.appearance});
 
   factory _$AvatarImpl.fromJson(Map<String, dynamic> json) =>
       _$$AvatarImplFromJson(json);
@@ -549,10 +830,21 @@ class _$AvatarImpl implements _Avatar {
   final String? cosmeticClothes;
   @override
   final String? cosmeticShoes;
+// ── Centre-class kind + uniform appearance ────────────────────────────
+  /// PERSONAL (collectible tutor) or CENTRE_CLASS (class uniform). Defaults
+  /// to PERSONAL when the backend omits the field.
+  @override
+  @JsonKey(fromJson: _kindFromJson, toJson: _kindToJson)
+  final AvatarKind kind;
+
+  /// Uniform render params; present only for CENTRE_CLASS avatars.
+  @override
+  @JsonKey(fromJson: _appearanceFromJson, toJson: _appearanceToJson)
+  final ClassAppearance? appearance;
 
   @override
   String toString() {
-    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate, brainState: $brainState, isActive: $isActive, teacherPreferences: $teacherPreferences, centreManaged: $centreManaged, centreId: $centreId, centreBrandName: $centreBrandName, centreAccentColor: $centreAccentColor, avatarLocked: $avatarLocked, cosmeticEyewear: $cosmeticEyewear, cosmeticClothes: $cosmeticClothes, cosmeticShoes: $cosmeticShoes)';
+    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate, brainState: $brainState, isActive: $isActive, teacherPreferences: $teacherPreferences, centreManaged: $centreManaged, centreId: $centreId, centreBrandName: $centreBrandName, centreAccentColor: $centreAccentColor, avatarLocked: $avatarLocked, cosmeticEyewear: $cosmeticEyewear, cosmeticClothes: $cosmeticClothes, cosmeticShoes: $cosmeticShoes, kind: $kind, appearance: $appearance)';
   }
 
   @override
@@ -602,7 +894,10 @@ class _$AvatarImpl implements _Avatar {
             (identical(other.cosmeticClothes, cosmeticClothes) ||
                 other.cosmeticClothes == cosmeticClothes) &&
             (identical(other.cosmeticShoes, cosmeticShoes) ||
-                other.cosmeticShoes == cosmeticShoes));
+                other.cosmeticShoes == cosmeticShoes) &&
+            (identical(other.kind, kind) || other.kind == kind) &&
+            (identical(other.appearance, appearance) ||
+                other.appearance == appearance));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -631,7 +926,9 @@ class _$AvatarImpl implements _Avatar {
         avatarLocked,
         cosmeticEyewear,
         cosmeticClothes,
-        cosmeticShoes
+        cosmeticShoes,
+        kind,
+        appearance
       ]);
 
   /// Create a copy of Avatar
@@ -682,7 +979,11 @@ abstract class _Avatar implements Avatar {
       final bool avatarLocked,
       final String? cosmeticEyewear,
       final String? cosmeticClothes,
-      final String? cosmeticShoes}) = _$AvatarImpl;
+      final String? cosmeticShoes,
+      @JsonKey(fromJson: _kindFromJson, toJson: _kindToJson)
+      final AvatarKind kind,
+      @JsonKey(fromJson: _appearanceFromJson, toJson: _appearanceToJson)
+      final ClassAppearance? appearance}) = _$AvatarImpl;
 
   factory _Avatar.fromJson(Map<String, dynamic> json) = _$AvatarImpl.fromJson;
 
@@ -759,7 +1060,18 @@ abstract class _Avatar implements Avatar {
   @override
   String? get cosmeticClothes;
   @override
-  String? get cosmeticShoes;
+  String?
+      get cosmeticShoes; // ── Centre-class kind + uniform appearance ────────────────────────────
+  /// PERSONAL (collectible tutor) or CENTRE_CLASS (class uniform). Defaults
+  /// to PERSONAL when the backend omits the field.
+  @override
+  @JsonKey(fromJson: _kindFromJson, toJson: _kindToJson)
+  AvatarKind get kind;
+
+  /// Uniform render params; present only for CENTRE_CLASS avatars.
+  @override
+  @JsonKey(fromJson: _appearanceFromJson, toJson: _appearanceToJson)
+  ClassAppearance? get appearance;
 
   /// Create a copy of Avatar
   /// with the given fields replaced by the non-null parameter values.

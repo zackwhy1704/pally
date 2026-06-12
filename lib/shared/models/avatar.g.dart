@@ -6,6 +6,22 @@ part of 'avatar.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+_$ClassAppearanceImpl _$$ClassAppearanceImplFromJson(
+        Map<String, dynamic> json) =>
+    _$ClassAppearanceImpl(
+      bandColorHex: json['bandColorHex'] as String? ?? '',
+      subjectGlyph: json['subjectGlyph'] as String? ?? '',
+      initials: json['initials'] as String? ?? '',
+    );
+
+Map<String, dynamic> _$$ClassAppearanceImplToJson(
+        _$ClassAppearanceImpl instance) =>
+    <String, dynamic>{
+      'bandColorHex': instance.bandColorHex,
+      'subjectGlyph': instance.subjectGlyph,
+      'initials': instance.initials,
+    };
+
 _$AvatarImpl _$$AvatarImplFromJson(Map<String, dynamic> json) => _$AvatarImpl(
       id: json['id'] as String,
       name: json['name'] as String,
@@ -38,6 +54,10 @@ _$AvatarImpl _$$AvatarImplFromJson(Map<String, dynamic> json) => _$AvatarImpl(
       cosmeticEyewear: json['cosmeticEyewear'] as String?,
       cosmeticClothes: json['cosmeticClothes'] as String?,
       cosmeticShoes: json['cosmeticShoes'] as String?,
+      kind: json['kind'] == null
+          ? AvatarKind.personal
+          : _kindFromJson(json['kind']),
+      appearance: _appearanceFromJson(json['appearance']),
     );
 
 Map<String, dynamic> _$$AvatarImplToJson(_$AvatarImpl instance) =>
@@ -65,6 +85,8 @@ Map<String, dynamic> _$$AvatarImplToJson(_$AvatarImpl instance) =>
       'cosmeticEyewear': instance.cosmeticEyewear,
       'cosmeticClothes': instance.cosmeticClothes,
       'cosmeticShoes': instance.cosmeticShoes,
+      'kind': _kindToJson(instance.kind),
+      'appearance': _appearanceToJson(instance.appearance),
     };
 
 _$CreateAvatarRequestImpl _$$CreateAvatarRequestImplFromJson(
