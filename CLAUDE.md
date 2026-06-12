@@ -2384,3 +2384,30 @@ infinite width` and renders an ErrorWidget for the entire Scaffold — a white s
 APIs and passing tests. This is exactly the kind of silent device-specific failure that never
 shows up in unit tests.
 
+
+---
+
+# PART XX — UI LAYOUT RULES (overflow prevention — MANDATORY)
+
+Every overflow is a constraint bug, never a padding-tuning problem.
+
+1. NEVER fix an overflow by nudging padding/fontSize/height a few px. Remove the rigid
+   constraint instead (scroll view, Flexible/Expanded, intrinsic sizing, minHeight).
+2. Bottom sheets: any sheet whose body is a Column with dynamic or wrappable content MUST
+   use isScrollControlled: true + a maxHeight constraint (<=85% screen) + SingleChildScrollView.
+   isScrollControlled alone does NOT add scrolling. Sheets with TextFields MUST pad by
+   MediaQuery.viewInsetsOf(context).bottom.
+3. No hardcoded height: on any widget that renders Text. Use padding-driven sizing or
+   ConstrainedBox(minHeight:). Exemptions: skeletons, pure-decorative boxes, icons.
+4. Dynamic Text inside a Row MUST be wrapped in Expanded/Flexible with
+   overflow: TextOverflow.ellipsis (user names, titles, counters, localized strings).
+5. All new screens/sheets must pass the small-device + large-font test harness:
+   Size(320, 568) at TextScaler.linear(1.3) with takeException() == null
+   (see test/ui/overflow_test.dart — add new widgets to it).
+6. Use MediaQuery.sizeOf / .viewInsetsOf (scoped) rather than MediaQuery.of for layout reads.
+
+- The MochiCharacter enum is a RENDERING registry, not a content/release registry. Anything
+  user-visible that counts or lists characters must be driven by the server's released set
+  (/shop/characters), never by enum length. Unreleased characters may exist in the enum
+  (painters pre-shipped) but must be invisible in all counts, grids, and odds until the
+  server returns them.

@@ -69,19 +69,33 @@ class _Body extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Text('🔥', style: TextStyle(fontSize: 36)),
-                  const SizedBox(width: AppSpacing.sm),
-                  _StreakNumber(value: status.streakDays),
-                  const SizedBox(width: 6),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Text(
-                      status.streakDays == 1 ? 'day' : 'days',
-                      style: AppTextStyles.body.copyWith(
-                          color: Colors.white, fontWeight: FontWeight.w700),
+                  // Number + unit group takes the remaining width and shrinks
+                  // (label ellipsises) before the freeze pill is pushed off the
+                  // right edge on small screens / large text scales.
+                  Expanded(
+                    child: Row(
+                      children: [
+                        const Text('🔥', style: TextStyle(fontSize: 36)),
+                        const SizedBox(width: AppSpacing.sm),
+                        _StreakNumber(value: status.streakDays),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: Text(
+                              status.streakDays == 1 ? 'day' : 'days',
+                              style: AppTextStyles.body.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const Spacer(),
+                  const SizedBox(width: AppSpacing.sm),
                   _FreezePill(freezes: status.freezes),
                 ],
               ),
@@ -96,8 +110,8 @@ class _Body extends StatelessWidget {
                   Expanded(
                     child: Text(
                       goalText,
-                      style: AppTextStyles.bodySmall
-                          .copyWith(color: Colors.white),
+                      style:
+                          AppTextStyles.bodySmall.copyWith(color: Colors.white),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -141,8 +155,8 @@ class _StreakNumber extends StatelessWidget {
       child: Text(
         '$value',
         key: ValueKey<int>(value),
-        style: AppTextStyles.heading1.copyWith(
-            color: Colors.white, fontSize: 40, height: 1.0),
+        style: AppTextStyles.heading1
+            .copyWith(color: Colors.white, fontSize: 40, height: 1.0),
       ),
     );
   }
@@ -164,8 +178,8 @@ class _FreezePill extends StatelessWidget {
               : 'Earn a freeze by hitting a new 7-day milestone.'),
           backgroundColor: AppColors.text1,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ));
       },
       child: Container(
@@ -181,8 +195,8 @@ class _FreezePill extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               '$freezes',
-              style: AppTextStyles.label.copyWith(
-                  color: Colors.white, fontWeight: FontWeight.w800),
+              style: AppTextStyles.label
+                  .copyWith(color: Colors.white, fontWeight: FontWeight.w800),
             ),
           ],
         ),
@@ -212,12 +226,8 @@ class _WeekStrip extends StatelessWidget {
           height: size,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: active
-                ? Colors.white
-                : Colors.white.withValues(alpha: 0.18),
-            border: isToday
-                ? Border.all(color: Colors.white, width: 2)
-                : null,
+            color: active ? Colors.white : Colors.white.withValues(alpha: 0.18),
+            border: isToday ? Border.all(color: Colors.white, width: 2) : null,
           ),
           child: active && isToday
               ? const Icon(Icons.check_rounded,
@@ -344,9 +354,7 @@ class _LadderRow extends StatelessWidget {
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(14),
-        border: current
-            ? Border.all(color: AppColors.amber, width: 1.5)
-            : null,
+        border: current ? Border.all(color: AppColors.amber, width: 1.5) : null,
       ),
       child: Row(
         children: [
