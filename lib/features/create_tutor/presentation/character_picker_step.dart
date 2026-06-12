@@ -5,7 +5,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/pally_button.dart';
-import 'package:pally/features/shop/providers/unlocked_characters_provider.dart';
+import 'package:pally/features/collection/presentation/collection_view_model.dart';
 import 'package:pally/shared/models/mochi_character.dart';
 
 class CharacterPickerStep extends ConsumerWidget {
@@ -22,7 +22,12 @@ class CharacterPickerStep extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final unlockedAsync = ref.watch(unlockedCharactersProvider);
+    // TRUTH RULE: render ONLY the characters the server has released, never the
+    // local enum. MochiCharacter.values still carries unreleased `atw*` painters
+    // that must stay invisible until the backend ships them. The released set
+    // (and each character's unlock flag) comes from /shop/characters via
+    // collectionViewModelProvider -- exactly what the shop's collection grid uses.
+    final collection = ref.watch(collectionViewModelProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,44 +48,7 @@ class CharacterPickerStep extends ConsumerWidget {
           ),
         ),
         Expanded(
-          child: unlockedAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => const Center(
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Text(
-                  'Could not load Mochis — pull down to retry.',
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-            data: (unlocked) => GridView.builder(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio: 181 / 178,
-              ),
-              itemCount: MochiCharacter.values.length,
-              itemBuilder: (context, index) {
-                final character = MochiCharacter.values[index];
-                final isUnlocked = unlocked.contains(character) ||
-                    !character.isLockedByDefault;
-                final isSelected = character == selectedCharacter;
-                return _MochiCard(
-                  character: character,
-                  isSelected: isSelected,
-                  isUnlocked: isUnlocked,
-                  onTap: isUnlocked
-                      // Second tap on the same card deselects it
-                      ? () => onSelect(isSelected ? null : character)
-                      : null,
-                );
-              },
-            ),
-          ),
+          child: _buildGrid(context, ref, collection),
         ),
         Padding(
           padding: const EdgeInsets.all(AppSpacing.md),
@@ -91,6 +59,75 @@ class CharacterPickerStep extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildGrid(
+    BuildContext context,
+    WidgetRef ref,
+    CollectionState collection,
+  ) {
+    if (collection.isLoading && collection.entries.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (collection.error != null && collection.entries.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Could not load Mochis — tap to retry.',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              PallyButton(
+                label: 'Retry',
+                onPressed: () =>
+                    ref.read(collectionViewModelProvider.notifier).refresh(),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Only entries the client can render (has a local painter/asset for). A
+    // future seasonal Mochi shipped server-side ahead of the app has a null
+    // character mapping and is skipped until the app catches up.
+    final cards = collection.entries
+        .where((e) => e.character != null)
+        .map((e) => (character: e.character!, unlocked: e.unlocked))
+        .toList();
+
+    return GridView.builder(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 200,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 181 / 178,
+      ),
+      itemCount: cards.length,
+      itemBuilder: (context, index) {
+        final entry = cards[index];
+        final character = entry.character;
+        // A character is selectable if the server says it's unlocked, or it's
+        // free by default (the base Mochi always is, regardless of catalog flag).
+        final isUnlocked = entry.unlocked || !character.isLockedByDefault;
+        final isSelected = character == selectedCharacter;
+        return _MochiCard(
+          character: character,
+          isSelected: isSelected,
+          isUnlocked: isUnlocked,
+          onTap: isUnlocked
+              // Second tap on the same card deselects it
+              ? () => onSelect(isSelected ? null : character)
+              : null,
+        );
+      },
     );
   }
 }
