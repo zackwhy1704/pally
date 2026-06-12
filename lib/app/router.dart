@@ -698,11 +698,16 @@ class SelfConsentRoute extends GoRouteData {
 
 @TypedGoRoute<AiDisclosureRoute>(path: '/consent/ai-disclosure')
 class AiDisclosureRoute extends GoRouteData {
-  const AiDisclosureRoute();
+  const AiDisclosureRoute({this.info = false});
+
+  /// When true, render the under-13 informational variant (no "I agree"; the
+  /// parent records consent in the parent app). Defaults to the 13+
+  /// self-consent variant so the `AI_CONSENT_REQUIRED` gate keeps working.
+  final bool info;
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const AiDisclosureScreen();
+      AiDisclosureScreen(informationOnly: info);
 }
 
 @TypedGoRoute<PhotoPreviewRoute>(path: '/avatar/:avatarId/photo-preview')

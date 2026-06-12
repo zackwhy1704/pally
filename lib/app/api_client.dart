@@ -172,6 +172,7 @@ class _ServerErrorInterceptor extends Interceptor {
   final Ref _ref;
   static DateTime? _lastShown;
   static DateTime? _lastPaywallRoute;
+  static DateTime? _lastParentLinkRoute;
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
@@ -232,6 +233,28 @@ class _ServerErrorInterceptor extends Interceptor {
       }
     }
 
+    // 403 PARENT_LINK_REQUIRED → an under-13 user tried a gated action (chat /
+    // upload) with no parent linked. Route them to the existing "link a
+    // grown-up" code screen as a blocking step instead of a raw error toast.
+    // No auto-retry: once a parent links, the next attempt passes server-side.
+    if (status == 403) {
+      final body = err.response?.data;
+      String? linkCode;
+      if (body is Map) {
+        final dataNode = body['data'];
+        if (dataNode is Map) {
+          linkCode = dataNode['code']?.toString();
+        }
+      }
+      if (linkCode == 'PARENT_LINK_REQUIRED') {
+        _handleParentLinkRequired();
+        // Still propagate the original error so the calling view-model can
+        // clear its loading state; the routing above is the user-facing action.
+        handler.next(err);
+        return;
+      }
+    }
+
     // 403 CONSENT_REQUIRED → show the consent-gate sheet / remind-grown-up flow.
     if (status == 403) {
       final body = err.response?.data;
@@ -275,6 +298,29 @@ class _ServerErrorInterceptor extends Interceptor {
       }
     }
     handler.next(err);
+  }
+
+  /// Routes an under-13 user to the existing "link a grown-up" code screen on
+  /// a 403 `PARENT_LINK_REQUIRED`, with a friendly one-line explanation. Rate-
+  /// limited to once per second so a refresh storm can't stack the screen.
+  void _handleParentLinkRequired() {
+    final now = DateTime.now();
+    final allowed = _lastParentLinkRoute == null ||
+        now.difference(_lastParentLinkRoute!) > const Duration(seconds: 1);
+    if (!allowed) return;
+    _lastParentLinkRoute = now;
+
+    final ctx = _ref.read(globalNavigatorKeyProvider)?.currentContext;
+    if (ctx == null || !ctx.mounted) return;
+    try {
+      PallyToast.success(
+        ctx,
+        'Ask a grown-up to link your account so you can start learning',
+      );
+      ctx.push('/family/link-code');
+    } catch (_) {
+      // Fall through; the view model will surface the original error.
+    }
   }
 
   /// Shows the AI-disclosure screen for a 403 `AI_CONSENT_REQUIRED`. When the

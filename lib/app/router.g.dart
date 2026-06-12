@@ -1461,11 +1461,17 @@ RouteBase get $aiDisclosureRoute => GoRouteData.$route(
     );
 
 extension $AiDisclosureRouteExtension on AiDisclosureRoute {
-  static AiDisclosureRoute _fromState(GoRouterState state) =>
-      const AiDisclosureRoute();
+  static AiDisclosureRoute _fromState(GoRouterState state) => AiDisclosureRoute(
+        info: _$convertMapValue(
+                'info', state.uri.queryParameters, _$boolConverter) ??
+            false,
+      );
 
   String get location => GoRouteData.$location(
         '/consent/ai-disclosure',
+        queryParams: {
+          if (info != false) 'info': info.toString(),
+        },
       );
 
   void go(BuildContext context) => context.go(location);
