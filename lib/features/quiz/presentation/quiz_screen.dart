@@ -12,6 +12,33 @@ import 'package:pally/features/quiz/presentation/quiz_view_model.dart';
 import 'package:pally/features/progress/presentation/level_up_controller.dart';
 import 'package:pally/shared/models/quiz_question.dart';
 
+/// Turns a topic slug like "photosynthesis-chapter-3" into a readable
+/// "Photosynthesis Chapter 3". Used wherever the backend only gives us a
+/// slug and no human title — never show the raw slug to a child.
+String humaniseSlug(String slug) {
+  return slug
+      .replaceAll('-', ' ')
+      .replaceAll('_', ' ')
+      .split(' ')
+      .map((w) => w.isEmpty ? '' : '${w[0].toUpperCase()}${w.substring(1)}')
+      .join(' ')
+      .trim();
+}
+
+/// Resolves a question ID to its human-readable question stem using the
+/// session's questions. Falls back to a humanised slug of the id (never the
+/// raw id/UUID) when the question can't be found.
+String questionLabel(String id, List<QuizQuestion> questions) {
+  for (final q in questions) {
+    if (q.id == id) {
+      final text = q.question.trim();
+      if (text.isEmpty) break;
+      return text.length > 60 ? '${text.substring(0, 57)}…' : text;
+    }
+  }
+  return humaniseSlug(id);
+}
+
 class QuizScreen extends ConsumerWidget {
   const QuizScreen({super.key, required this.avatarId});
 
@@ -456,7 +483,7 @@ class _ExplanationCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Flexible(
                       child: Text(
-                        question.sourcePage,
+                        humaniseSlug(question.sourcePage),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.caption.copyWith(
@@ -596,10 +623,16 @@ class _CompletionView extends StatelessWidget {
                 (matrix?.knownGap.isNotEmpty ?? false)) ...[
               const SizedBox(height: AppSpacing.md),
               _MemoryNoticeCard(
-                topicSlug: matrix?.priorityReview
-                    ?? matrix?.misconception.firstOrNull
-                    ?? matrix?.knownGap.firstOrNull
-                    ?? '',
+                // These matrix fields carry question IDs (often UUIDs), not
+                // slugs — resolve each to its question text before display so
+                // a child never sees a raw id.
+                topicLabel: questionLabel(
+                  matrix?.priorityReview
+                      ?? matrix?.misconception.firstOrNull
+                      ?? matrix?.knownGap.firstOrNull
+                      ?? '',
+                  questions,
+                ),
               ),
             ],
             if (matrix != null && matrix!.hasAny) ...[
@@ -738,25 +771,9 @@ class _MasteryMatrixCard extends StatelessWidget {
   final MasteryMatrix matrix;
   final List<QuizQuestion> questions;
 
-  /// Resolves a question ID to a short display label.
-  /// Falls back to a truncated version of the ID if the question isn't found
-  /// (shouldn't happen in practice — the matrix only contains IDs from this session).
-  String _label(String id) {
-    final q = questions.firstWhere(
-      (q) => q.id == id,
-      orElse: () => QuizQuestion(
-        id: id,
-        question: id,
-        options: const [],
-        correctIndex: 0,
-        sourcePage: '',
-        explanation: '',
-      ),
-    );
-    // Show the first ~60 chars of the question stem — enough to identify it
-    final text = q.question.trim();
-    return text.length > 60 ? '${text.substring(0, 57)}…' : text;
-  }
+  /// Resolves a question ID to a short, human-readable label (the question
+  /// stem). Never surfaces a raw id/UUID — falls back to a humanised slug.
+  String _label(String id) => questionLabel(id, questions);
 
   @override
   Widget build(BuildContext context) {
@@ -920,18 +937,15 @@ class _MasteryQuadrant extends StatelessWidget {
 /// Shown after a quiz only when the harness actually detected a tricky topic.
 /// Maps to real state — never fabricated.
 class _MemoryNoticeCard extends StatelessWidget {
-  const _MemoryNoticeCard({required this.topicSlug});
-  final String topicSlug;
+  const _MemoryNoticeCard({required this.topicLabel});
+
+  /// Already-resolved, human-readable label (question text or humanised slug).
+  /// The caller resolves question IDs upstream — this card never sees a raw id.
+  final String topicLabel;
 
   @override
   Widget build(BuildContext context) {
-    // Convert a slug like "photosynthesis-chapter-3" to "Photosynthesis Chapter 3"
-    final display = topicSlug
-        .replaceAll('-', ' ')
-        .replaceAll('_', ' ')
-        .split(' ')
-        .map((w) => w.isEmpty ? '' : '${w[0].toUpperCase()}${w.substring(1)}')
-        .join(' ');
+    final display = topicLabel.trim();
 
     return Container(
       padding: const EdgeInsets.symmetric(
