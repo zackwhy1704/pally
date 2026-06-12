@@ -56,6 +56,7 @@ class AuthService {
     String password,
     String name, {
     String? role,
+    int? birthYear,
   }) async {
     try {
       final res = await _http.post<Map<String, dynamic>>(
@@ -65,6 +66,9 @@ class AuthService {
           'password': password,
           'displayName': name,
           if (role != null) 'role': role,
+          // Student-only signal; the backend derives under-13 from this. Never
+          // sent for the parent path (caller passes null there).
+          if (birthYear != null) 'birthYear': birthYear,
         },
       );
       return _parseAuthResponse(res.data!);

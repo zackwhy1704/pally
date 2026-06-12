@@ -25,10 +25,15 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final _passCtrl = TextEditingController();
   final _confirmCtrl = TextEditingController();
   final _referralCtrl = TextEditingController();
+  final _birthYearCtrl = TextEditingController();
   bool _obscurePass = true;
   bool _obscureConfirm = true;
   bool _agreed = false;
   bool _loading = false;
+
+  /// Inline validation message for the (optional) birth-year field. Shown
+  /// only when the child types something that isn't a sensible 4-digit year.
+  String? _birthYearError;
 
   /// Which step of the signup flow: 0 = details, 1 = role selection.
   int _step = 0;
@@ -43,7 +48,35 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     _passCtrl.dispose();
     _confirmCtrl.dispose();
     _referralCtrl.dispose();
+    _birthYearCtrl.dispose();
     super.dispose();
+  }
+
+  /// Parses and validates the optional birth year. Returns the year as an int
+  /// when valid and in-bounds, or null when the field is empty. Sets
+  /// [_birthYearError] for any invalid (non-empty) input and returns null.
+  ///
+  /// Bounds: 1950..currentYear. Future years are rejected with a friendly
+  /// message — a child can't have been born in the future.
+  int? _parseBirthYear() {
+    final raw = _birthYearCtrl.text.trim();
+    if (raw.isEmpty) return null; // optional — empty is fine
+    final year = int.tryParse(raw);
+    final currentYear = DateTime.now().year;
+    if (year == null || raw.length != 4) {
+      _birthYearError = 'Enter a 4-digit year, like 2014';
+      return null;
+    }
+    if (year > currentYear) {
+      _birthYearError = "That year hasn't happened yet!";
+      return null;
+    }
+    if (year < 1950) {
+      _birthYearError = 'Please enter a year after 1950';
+      return null;
+    }
+    _birthYearError = null;
+    return year;
   }
 
   bool get _canContinue =>
@@ -59,6 +92,18 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   }
 
   Future<void> _signUp() async {
+    // Birth year is a student-only signal. Validate it (when present) before
+    // we fire the request so an obviously-wrong year gets a friendly nudge
+    // instead of silently dropping through.
+    int? birthYear;
+    if (_selectedRole == 'student') {
+      birthYear = _parseBirthYear();
+      if (_birthYearError != null) {
+        setState(() {});
+        return;
+      }
+    }
+
     setState(() => _loading = true);
     try {
       final result = await AuthService.instance.signUpWithEmail(
@@ -66,6 +111,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         _passCtrl.text,
         _nameCtrl.text.trim(),
         role: _selectedRole,
+        birthYear: _selectedRole == 'student' ? birthYear : null,
       );
       final accountType =
           _selectedRole == 'parent' ? 'PARENT' : 'STUDENT';
@@ -326,6 +372,13 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Scrollable content so the optional birth-year field + keyboard
+          // never overflow on short screens (Overflow Rule 1).
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
           const SizedBox(height: AppSpacing.md),
           const _ProgressBar(filled: 2 / 3),
           const SizedBox(height: AppSpacing.sm),
@@ -373,7 +426,58 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             isSelected: _selectedRole == 'parent',
             onTap: () => setState(() => _selectedRole = 'parent'),
           ),
-          const Spacer(),
+          // Birth-year field — STUDENT path only. Determines whether the child
+          // needs a grown-up to link their account, so we encourage (but don't
+          // force) filling it in.
+          if (_selectedRole == 'student') ...[
+            const SizedBox(height: AppSpacing.lg),
+            Text('Year you were born',
+                style: AppTextStyles.label
+                    .copyWith(fontSize: 11, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 6),
+            TextField(
+              controller: _birthYearCtrl,
+              keyboardType: TextInputType.number,
+              textInputAction: TextInputAction.done,
+              maxLength: 4,
+              style: AppTextStyles.body,
+              onChanged: (_) {
+                if (_birthYearError != null) {
+                  setState(() => _birthYearError = null);
+                }
+              },
+              decoration: InputDecoration(
+                hintText: 'e.g. 2014',
+                hintStyle:
+                    AppTextStyles.body.copyWith(color: AppColors.text3),
+                counterText: '',
+                filled: true,
+                fillColor: const Color(0xFFEDE8F5),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: BorderSide.none,
+                ),
+                errorText: _birthYearError,
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: AppColors.coral),
+                ),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'This helps us know if you need a grown-up to help set up '
+              'your account.',
+              style: AppTextStyles.caption.copyWith(color: AppColors.text3),
+            ),
+          ],
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+              ),
+            ),
+          ),
           SizedBox(
             height: AppSizing.buttonHeight,
             child: ElevatedButton(

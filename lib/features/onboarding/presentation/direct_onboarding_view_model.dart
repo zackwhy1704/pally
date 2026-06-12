@@ -154,6 +154,7 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
     required String displayName,
     required String subject,
     required String level,
+    int? birthYear,
   }) async {
     appLog.i('[DirectOnboard] Starting quick onboard for $email');
     state = state.copyWith(isLoading: true, error: null);
@@ -178,6 +179,8 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
           'displayName': displayName,
           'subject': subject,
           'level': level,
+          // Optional student birth year (year only); backend derives under-13.
+          if (birthYear != null) 'birthYear': birthYear,
         },
       );
 
