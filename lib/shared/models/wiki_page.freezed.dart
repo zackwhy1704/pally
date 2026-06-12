@@ -44,7 +44,21 @@ mixin _$WikiPage {
   String? get verifiedBy =>
       throw _privateConstructorUsedError; // Present (and non-empty) only when [reviewState] == flagged — the
 // reviewer's note on what looked wrong.
-  String? get flagNote => throw _privateConstructorUsedError;
+  String? get flagNote =>
+      throw _privateConstructorUsedError; // Knowledge-graph edges: slugs of pages this page depends on (its
+// prerequisites). Null-tolerant (PART 16): a missing array → empty list,
+// so an older backend that omits the field renders as a root node.
+  List<String> get prerequisiteSlugs =>
+      throw _privateConstructorUsedError; // Mochi's confidence in this page, 0.0–1.0. Drives the graph node's
+// border weight. Missing → 0.0 (treated as no extra confidence signal).
+  double get certaintyScore =>
+      throw _privateConstructorUsedError; // How many times this page has been used to generate a quiz question.
+// Drives the graph node's size. Missing → 0.
+  int get quizUseCount =>
+      throw _privateConstructorUsedError; // A short human-readable note about the contradiction Mochi found on this
+// page. Present (non-null) only when [hasConflict] is true. Shown in the
+// topic sheet as "Mochi noticed: …".
+  String? get conflictNote => throw _privateConstructorUsedError;
 
   /// Serializes this WikiPage to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -78,7 +92,11 @@ abstract class $WikiPageCopyWith<$Res> {
       List<String> sourceFileNames,
       @JsonKey(fromJson: _reviewStateFromJson) WikiReviewState reviewState,
       String? verifiedBy,
-      String? flagNote});
+      String? flagNote,
+      List<String> prerequisiteSlugs,
+      double certaintyScore,
+      int quizUseCount,
+      String? conflictNote});
 }
 
 /// @nodoc
@@ -113,6 +131,10 @@ class _$WikiPageCopyWithImpl<$Res, $Val extends WikiPage>
     Object? reviewState = null,
     Object? verifiedBy = freezed,
     Object? flagNote = freezed,
+    Object? prerequisiteSlugs = null,
+    Object? certaintyScore = null,
+    Object? quizUseCount = null,
+    Object? conflictNote = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -183,6 +205,22 @@ class _$WikiPageCopyWithImpl<$Res, $Val extends WikiPage>
           ? _value.flagNote
           : flagNote // ignore: cast_nullable_to_non_nullable
               as String?,
+      prerequisiteSlugs: null == prerequisiteSlugs
+          ? _value.prerequisiteSlugs
+          : prerequisiteSlugs // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      certaintyScore: null == certaintyScore
+          ? _value.certaintyScore
+          : certaintyScore // ignore: cast_nullable_to_non_nullable
+              as double,
+      quizUseCount: null == quizUseCount
+          ? _value.quizUseCount
+          : quizUseCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      conflictNote: freezed == conflictNote
+          ? _value.conflictNote
+          : conflictNote // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -212,7 +250,11 @@ abstract class _$$WikiPageImplCopyWith<$Res>
       List<String> sourceFileNames,
       @JsonKey(fromJson: _reviewStateFromJson) WikiReviewState reviewState,
       String? verifiedBy,
-      String? flagNote});
+      String? flagNote,
+      List<String> prerequisiteSlugs,
+      double certaintyScore,
+      int quizUseCount,
+      String? conflictNote});
 }
 
 /// @nodoc
@@ -245,6 +287,10 @@ class __$$WikiPageImplCopyWithImpl<$Res>
     Object? reviewState = null,
     Object? verifiedBy = freezed,
     Object? flagNote = freezed,
+    Object? prerequisiteSlugs = null,
+    Object? certaintyScore = null,
+    Object? quizUseCount = null,
+    Object? conflictNote = freezed,
   }) {
     return _then(_$WikiPageImpl(
       id: null == id
@@ -315,6 +361,22 @@ class __$$WikiPageImplCopyWithImpl<$Res>
           ? _value.flagNote
           : flagNote // ignore: cast_nullable_to_non_nullable
               as String?,
+      prerequisiteSlugs: null == prerequisiteSlugs
+          ? _value._prerequisiteSlugs
+          : prerequisiteSlugs // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      certaintyScore: null == certaintyScore
+          ? _value.certaintyScore
+          : certaintyScore // ignore: cast_nullable_to_non_nullable
+              as double,
+      quizUseCount: null == quizUseCount
+          ? _value.quizUseCount
+          : quizUseCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      conflictNote: freezed == conflictNote
+          ? _value.conflictNote
+          : conflictNote // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -340,9 +402,14 @@ class _$WikiPageImpl implements _WikiPage {
       @JsonKey(fromJson: _reviewStateFromJson)
       this.reviewState = WikiReviewState.unverified,
       this.verifiedBy,
-      this.flagNote})
+      this.flagNote,
+      final List<String> prerequisiteSlugs = const [],
+      this.certaintyScore = 0.0,
+      this.quizUseCount = 0,
+      this.conflictNote})
       : _sourceFileIds = sourceFileIds,
-        _sourceFileNames = sourceFileNames;
+        _sourceFileNames = sourceFileNames,
+        _prerequisiteSlugs = prerequisiteSlugs;
 
   factory _$WikiPageImpl.fromJson(Map<String, dynamic> json) =>
       _$$WikiPageImplFromJson(json);
@@ -412,10 +479,41 @@ class _$WikiPageImpl implements _WikiPage {
 // reviewer's note on what looked wrong.
   @override
   final String? flagNote;
+// Knowledge-graph edges: slugs of pages this page depends on (its
+// prerequisites). Null-tolerant (PART 16): a missing array → empty list,
+// so an older backend that omits the field renders as a root node.
+  final List<String> _prerequisiteSlugs;
+// Knowledge-graph edges: slugs of pages this page depends on (its
+// prerequisites). Null-tolerant (PART 16): a missing array → empty list,
+// so an older backend that omits the field renders as a root node.
+  @override
+  @JsonKey()
+  List<String> get prerequisiteSlugs {
+    if (_prerequisiteSlugs is EqualUnmodifiableListView)
+      return _prerequisiteSlugs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_prerequisiteSlugs);
+  }
+
+// Mochi's confidence in this page, 0.0–1.0. Drives the graph node's
+// border weight. Missing → 0.0 (treated as no extra confidence signal).
+  @override
+  @JsonKey()
+  final double certaintyScore;
+// How many times this page has been used to generate a quiz question.
+// Drives the graph node's size. Missing → 0.
+  @override
+  @JsonKey()
+  final int quizUseCount;
+// A short human-readable note about the contradiction Mochi found on this
+// page. Present (non-null) only when [hasConflict] is true. Shown in the
+// topic sheet as "Mochi noticed: …".
+  @override
+  final String? conflictNote;
 
   @override
   String toString() {
-    return 'WikiPage(id: $id, avatarId: $avatarId, title: $title, content: $content, certainty: $certainty, hasConflict: $hasConflict, sourceFileIds: $sourceFileIds, slug: $slug, updatedAt: $updatedAt, compiledAt: $compiledAt, qualityScore: $qualityScore, humanVerified: $humanVerified, humanCorrection: $humanCorrection, sourceFileNames: $sourceFileNames, reviewState: $reviewState, verifiedBy: $verifiedBy, flagNote: $flagNote)';
+    return 'WikiPage(id: $id, avatarId: $avatarId, title: $title, content: $content, certainty: $certainty, hasConflict: $hasConflict, sourceFileIds: $sourceFileIds, slug: $slug, updatedAt: $updatedAt, compiledAt: $compiledAt, qualityScore: $qualityScore, humanVerified: $humanVerified, humanCorrection: $humanCorrection, sourceFileNames: $sourceFileNames, reviewState: $reviewState, verifiedBy: $verifiedBy, flagNote: $flagNote, prerequisiteSlugs: $prerequisiteSlugs, certaintyScore: $certaintyScore, quizUseCount: $quizUseCount, conflictNote: $conflictNote)';
   }
 
   @override
@@ -452,30 +550,43 @@ class _$WikiPageImpl implements _WikiPage {
             (identical(other.verifiedBy, verifiedBy) ||
                 other.verifiedBy == verifiedBy) &&
             (identical(other.flagNote, flagNote) ||
-                other.flagNote == flagNote));
+                other.flagNote == flagNote) &&
+            const DeepCollectionEquality()
+                .equals(other._prerequisiteSlugs, _prerequisiteSlugs) &&
+            (identical(other.certaintyScore, certaintyScore) ||
+                other.certaintyScore == certaintyScore) &&
+            (identical(other.quizUseCount, quizUseCount) ||
+                other.quizUseCount == quizUseCount) &&
+            (identical(other.conflictNote, conflictNote) ||
+                other.conflictNote == conflictNote));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      avatarId,
-      title,
-      content,
-      certainty,
-      hasConflict,
-      const DeepCollectionEquality().hash(_sourceFileIds),
-      slug,
-      updatedAt,
-      compiledAt,
-      qualityScore,
-      humanVerified,
-      humanCorrection,
-      const DeepCollectionEquality().hash(_sourceFileNames),
-      reviewState,
-      verifiedBy,
-      flagNote);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        id,
+        avatarId,
+        title,
+        content,
+        certainty,
+        hasConflict,
+        const DeepCollectionEquality().hash(_sourceFileIds),
+        slug,
+        updatedAt,
+        compiledAt,
+        qualityScore,
+        humanVerified,
+        humanCorrection,
+        const DeepCollectionEquality().hash(_sourceFileNames),
+        reviewState,
+        verifiedBy,
+        flagNote,
+        const DeepCollectionEquality().hash(_prerequisiteSlugs),
+        certaintyScore,
+        quizUseCount,
+        conflictNote
+      ]);
 
   /// Create a copy of WikiPage
   /// with the given fields replaced by the non-null parameter values.
@@ -512,7 +623,11 @@ abstract class _WikiPage implements WikiPage {
       @JsonKey(fromJson: _reviewStateFromJson)
       final WikiReviewState reviewState,
       final String? verifiedBy,
-      final String? flagNote}) = _$WikiPageImpl;
+      final String? flagNote,
+      final List<String> prerequisiteSlugs,
+      final double certaintyScore,
+      final int quizUseCount,
+      final String? conflictNote}) = _$WikiPageImpl;
 
   factory _WikiPage.fromJson(Map<String, dynamic> json) =
       _$WikiPageImpl.fromJson;
@@ -558,7 +673,24 @@ abstract class _WikiPage implements WikiPage {
       get verifiedBy; // Present (and non-empty) only when [reviewState] == flagged — the
 // reviewer's note on what looked wrong.
   @override
-  String? get flagNote;
+  String?
+      get flagNote; // Knowledge-graph edges: slugs of pages this page depends on (its
+// prerequisites). Null-tolerant (PART 16): a missing array → empty list,
+// so an older backend that omits the field renders as a root node.
+  @override
+  List<String>
+      get prerequisiteSlugs; // Mochi's confidence in this page, 0.0–1.0. Drives the graph node's
+// border weight. Missing → 0.0 (treated as no extra confidence signal).
+  @override
+  double
+      get certaintyScore; // How many times this page has been used to generate a quiz question.
+// Drives the graph node's size. Missing → 0.
+  @override
+  int get quizUseCount; // A short human-readable note about the contradiction Mochi found on this
+// page. Present (non-null) only when [hasConflict] is true. Shown in the
+// topic sheet as "Mochi noticed: …".
+  @override
+  String? get conflictNote;
 
   /// Create a copy of WikiPage
   /// with the given fields replaced by the non-null parameter values.
