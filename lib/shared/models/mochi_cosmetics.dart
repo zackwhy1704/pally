@@ -25,6 +25,12 @@ abstract final class MochiCosmetics {
     return catalog[slotId];
   }
 
+  /// True only when at least one cosmetic catalog has art. Any cosmetic-picker
+  /// surface MUST check this first and render nothing while it's false — the
+  /// catalogs are server/art-driven and empty today, so no picker may be shown.
+  static bool get hasAnyCosmetics =>
+      _eyewear.isNotEmpty || _clothes.isNotEmpty || _shoes.isNotEmpty;
+
   // ── Catalogs — empty until layered art is commissioned ────────────────────
   // When art lands, add entries like:
   //   'round_glasses': 'assets/images/cosmetics/eyewear_round_glasses.png',

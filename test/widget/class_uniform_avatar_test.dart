@@ -106,8 +106,9 @@ void main() {
     });
   });
 
-  group('ClassUniformAvatar rendering', () {
-    testWidgets('renders band colour, glyph icon, and initials', (tester) async {
+  group('ClassUniformAvatar — ring + corner tag (base untouched)', () {
+    testWidgets('at large size shows initials in the corner tag, not a glyph',
+        (tester) async {
       await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
           body: Center(
@@ -123,21 +124,46 @@ void main() {
         ),
       ));
 
-      // Initials text is visible.
+      // >= 64px: initials are legible and shown in the tag…
       expect(find.text('AB'), findsOneWidget);
-      // The art (palette) glyph is shown.
-      expect(find.byIcon(Icons.palette), findsOneWidget);
-      // A coloured band container carries the parsed coral colour.
-      final bands = tester.widgetList<Container>(find.byType(Container)).where(
-            (c) =>
-                c.decoration is BoxDecoration &&
-                (c.decoration as BoxDecoration).color == const Color(0xFFFF6660),
-          );
-      expect(bands, isNotEmpty);
+      // …so the glyph is NOT drawn (tag shows initials OR glyph, never both).
+      expect(find.byIcon(Icons.palette), findsNothing);
+      // The ring + tag carry the parsed colour.
+      final coloured = tester
+          .widgetList<DecoratedBox>(find.byType(DecoratedBox))
+          .where((d) =>
+              d.decoration is BoxDecoration &&
+              ((d.decoration as BoxDecoration).border?.top.color ==
+                      const Color(0xFFFF6660) ||
+                  (d.decoration as BoxDecoration).color ==
+                      const Color(0xFFFF6660)));
+      expect(coloured, isNotEmpty);
+      // The base character renders untouched via CharacterWidget.
+      expect(find.byType(CharacterWidget), findsOneWidget);
       drainAssetExceptions(tester);
     });
 
-    testWidgets('unknown glyph key renders the neutral book icon, no crash',
+    testWidgets('at nav size (<64px) the tag is glyph-only — initials hidden',
+        (tester) async {
+      await tester.pumpWidget(const MaterialApp(
+        home: Scaffold(
+          body: ClassUniformAvatar(
+            appearance: ClassAppearance(
+              bandColorHex: '#7042ED',
+              subjectGlyph: 'science',
+              initials: 'P5',
+            ),
+            size: 36,
+          ),
+        ),
+      ));
+      // Initials illegible at nav size → hidden; glyph shown instead.
+      expect(find.text('P5'), findsNothing);
+      expect(find.byIcon(Icons.science), findsOneWidget);
+      drainAssetExceptions(tester);
+    });
+
+    testWidgets('unknown glyph key falls back to the neutral book icon',
         (tester) async {
       await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
@@ -145,7 +171,8 @@ void main() {
             appearance: ClassAppearance(
               bandColorHex: '#7042ED',
               subjectGlyph: 'totally_unknown_key',
-              initials: 'Z',
+              // No initials → tag always shows the glyph regardless of size.
+              initials: '',
             ),
             size: 80,
           ),
@@ -163,12 +190,15 @@ void main() {
         home: Scaffold(body: CharacterWidget.forAvatar(_classAvatar(), 100)),
       ));
 
-      // Uniform widget is used; plain CharacterWidget collectible art is not.
+      // The uniform wrapper is used. forAvatar returns ClassUniformAvatar
+      // (no top-level CharacterWidget); the base character renders via an
+      // INNER CharacterWidget so the body stays pixel-identical to a personal
+      // avatar of the same character.
       expect(find.byType(ClassUniformAvatar), findsOneWidget);
-      expect(find.byType(CharacterWidget), findsNothing);
-      // Uniform shows the maths glyph + initials.
-      expect(find.byIcon(Icons.calculate), findsOneWidget);
+      expect(find.byType(CharacterWidget), findsOneWidget);
+      // At 100px (>=64) the tag shows the class initials, glyph hidden.
       expect(find.text('P5'), findsOneWidget);
+      expect(find.byIcon(Icons.calculate), findsNothing);
       drainAssetExceptions(tester);
     });
 

@@ -75,6 +75,9 @@ class CharacterWidget extends StatelessWidget {
       return ClassUniformAvatar(
         key: key,
         appearance: avatar.appearance!,
+        // Render the class avatar's own character untouched beneath the
+        // ring + corner tag (works for vector painters and image assets).
+        character: avatar.character,
         size: size,
       );
     }
