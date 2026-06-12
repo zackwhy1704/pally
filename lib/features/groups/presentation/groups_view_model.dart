@@ -45,6 +45,40 @@ class StudyGroup {
       );
 }
 
+/// A server-generated feed item in a class group (answers released, muddiest
+/// digest, daily challenge). Null-tolerant per CLAUDE.md PART 16.
+@immutable
+class GroupSystemPost {
+  const GroupSystemPost({
+    required this.id,
+    required this.kind,
+    required this.body,
+    required this.refId,
+    required this.createdAt,
+  });
+  final String id;
+
+  /// ANSWERS_RELEASED | MUDDIEST | CHALLENGE (unknown kinds render as plain).
+  final String kind;
+  final String body;
+
+  /// Cross-reference: assignmentId for ANSWERS_RELEASED, challengeId for
+  /// CHALLENGE. Empty when the server omits it.
+  final String refId;
+  final DateTime createdAt;
+
+  static GroupSystemPost fromJson(Map<String, dynamic> j) => GroupSystemPost(
+        id: (j['id'] as String?) ?? '',
+        kind: (j['kind'] as String?) ?? '',
+        body: (j['body'] as String?) ?? '',
+        refId: (j['refId'] as String?) ?? '',
+        createdAt: j['createdAt'] != null
+            ? DateTime.tryParse(j['createdAt'] as String)?.toLocal() ??
+                DateTime.now()
+            : DateTime.now(),
+      );
+}
+
 @immutable
 class GroupMember {
   const GroupMember(
@@ -97,10 +131,15 @@ class GroupDetail {
     required this.group,
     required this.members,
     required this.sharedNotes,
+    this.systemPosts = const [],
   });
   final StudyGroup group;
   final List<GroupMember> members;
   final List<SharedNote> sharedNotes;
+
+  /// Class-group system feed (answers released / muddiest / challenge),
+  /// newest first. Empty for peer groups.
+  final List<GroupSystemPost> systemPosts;
 }
 
 @riverpod
@@ -244,7 +283,18 @@ class GroupDetailViewModel extends _$GroupDetailViewModel {
               relevanceStatus: (n['relevanceStatus'] as String?) ?? 'OK',
             ))
         .toList();
-    return GroupDetail(group: group, members: members, sharedNotes: notes);
+    final systemPosts = ((data['systemPosts'] as List?) ?? const [])
+        .whereType<Map<String, dynamic>>()
+        .map(GroupSystemPost.fromJson)
+        .toList()
+      // Newest first.
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return GroupDetail(
+      group: group,
+      members: members,
+      sharedNotes: notes,
+      systemPosts: systemPosts,
+    );
   }
 
   Future<void> shareWikiPage({

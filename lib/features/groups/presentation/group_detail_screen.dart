@@ -13,6 +13,8 @@ import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/groups/presentation/challenge_card.dart';
 import 'package:pally/features/groups/presentation/challenge_view_model.dart';
 import 'package:pally/features/groups/presentation/groups_view_model.dart';
+import 'package:pally/features/library/presentation/library_view_model.dart';
+import 'package:pally/shared/models/avatar.dart';
 
 class GroupDetailScreen extends ConsumerWidget {
   const GroupDetailScreen({super.key, required this.groupId});
@@ -113,6 +115,10 @@ class GroupDetailScreen extends ConsumerWidget {
                   if (detail.group.classId != null &&
                       detail.group.classId!.isNotEmpty)
                     _ChallengesSection(classId: detail.group.classId!),
+                  _SystemPostsFeed(
+                    posts: detail.systemPosts,
+                    classId: detail.group.classId,
+                  ),
                 ] else ...[
                   // Invite card (peer groups only)
                   _InviteCard(group: detail.group),
@@ -198,6 +204,195 @@ class _ChallengesSection extends ConsumerWidget {
         for (final c in challenges) ChallengeCard(challengeId: c.id),
         const SizedBox(height: AppSpacing.sm),
       ],
+    );
+  }
+}
+
+// ── System posts feed (P4) ───────────────────────────────────────────────────
+
+/// Renders the class-group system feed (answers released / muddiest /
+/// challenge), newest first. ANSWERS_RELEASED taps through to the answer
+/// compare view; CHALLENGE scrolls the child up to the inline challenge card.
+class _SystemPostsFeed extends ConsumerWidget {
+  const _SystemPostsFeed({required this.posts, required this.classId});
+  final List<GroupSystemPost> posts;
+  final String? classId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (posts.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const _SectionHeader('Class feed'),
+        const SizedBox(height: AppSpacing.xs),
+        for (final p in posts) _SystemPostTile(post: p),
+        const SizedBox(height: AppSpacing.md),
+      ],
+    );
+  }
+}
+
+class _SystemPostTile extends ConsumerWidget {
+  const _SystemPostTile({required this.post});
+  final GroupSystemPost post;
+
+  ({IconData icon, Color color, Color bg, String label}) _style() {
+    switch (post.kind.toUpperCase()) {
+      case 'ANSWERS_RELEASED':
+        return (
+          icon: Icons.fact_check_rounded,
+          color: AppColors.green,
+          bg: AppColors.greenL,
+          label: 'Answers released',
+        );
+      case 'CHALLENGE':
+        return (
+          icon: Icons.bolt_rounded,
+          color: AppColors.amber,
+          bg: AppColors.amberL,
+          label: 'New challenge',
+        );
+      case 'MUDDIEST':
+        return (
+          icon: Icons.psychology_alt_rounded,
+          color: AppColors.purple,
+          bg: AppColors.purpleL,
+          label: 'Muddiest points',
+        );
+      default:
+        return (
+          icon: Icons.campaign_rounded,
+          color: AppColors.text2,
+          bg: AppColors.surf2,
+          label: 'Update',
+        );
+    }
+  }
+
+  String _timeAgo(DateTime dt) {
+    final diff = DateTime.now().difference(dt);
+    if (diff.inMinutes < 1) return 'just now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    return '${diff.inDays}d ago';
+  }
+
+  /// ANSWERS_RELEASED → compare view. The contract omits avatarId, so we
+  /// resolve it from the student's single centre-class avatar.
+  Future<void> _openAnswers(BuildContext context, WidgetRef ref) async {
+    final avatars = ref.read(libraryViewModelProvider).valueOrNull ?? const [];
+    final classAvatars =
+        avatars.where((a) => a.kind == AvatarKind.centreClass).toList();
+    final Avatar? classAvatar =
+        classAvatars.isEmpty ? null : classAvatars.first;
+    if (classAvatar == null || post.refId.isEmpty) {
+      if (context.mounted) {
+        PallyToast.show(
+            context, 'Open this assignment from your class avatar.');
+      }
+      return;
+    }
+    if (context.mounted) {
+      AssignmentCompareRoute(
+        avatarId: classAvatar.id,
+        assignmentId: post.refId,
+      ).push(context);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = _style();
+    final kind = post.kind.toUpperCase();
+    final tappable =
+        kind == 'ANSWERS_RELEASED' || kind == 'CHALLENGE';
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Material(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: tappable
+              ? () {
+                  if (kind == 'ANSWERS_RELEASED') {
+                    _openAnswers(context, ref);
+                  } else if (kind == 'CHALLENGE') {
+                    // The challenge card is rendered inline above; nudge the
+                    // child up to it.
+                    Scrollable.maybeOf(context)?.position.animateTo(
+                          0,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                  }
+                }
+              : null,
+          child: Container(
+            padding: AppSpacing.card,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.outline),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: s.bg,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(s.icon, size: 18, color: s.color),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              s.label,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.label.copyWith(
+                                color: s.color,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Text(_timeAgo(post.createdAt),
+                              style: AppTextStyles.caption),
+                        ],
+                      ),
+                      if (post.body.isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          post.body,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.bodySmall
+                              .copyWith(color: AppColors.text1),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                if (tappable) ...[
+                  const SizedBox(width: 4),
+                  const Icon(Icons.chevron_right_rounded,
+                      size: 18, color: AppColors.text3),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
