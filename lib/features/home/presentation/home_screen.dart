@@ -674,24 +674,28 @@ class _SlotLockedSheetState extends ConsumerState<_SlotLockedSheet> {
     final isPremium = trial?.isPremium ?? false;
 
     return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+      ),
       decoration: const BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      padding: EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.lg,
-        AppSpacing.lg,
-        AppSpacing.lg + MediaQuery.of(context).padding.bottom,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 40, height: 4,
-            decoration: BoxDecoration(
-              color: AppColors.outline, borderRadius: BorderRadius.circular(2)),
-          ),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          AppSpacing.lg,
+          AppSpacing.lg,
+          AppSpacing.lg + MediaQuery.of(context).padding.bottom,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40, height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.outline, borderRadius: BorderRadius.circular(2)),
+            ),
           const SizedBox(height: AppSpacing.lg),
           const Icon(Icons.lock_rounded, color: AppColors.amber, size: 48),
           const SizedBox(height: AppSpacing.md),
@@ -746,7 +750,8 @@ class _SlotLockedSheetState extends ConsumerState<_SlotLockedSheet> {
               child: const Text('Close'),
             ),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -760,19 +765,24 @@ void _showTutorOptions(BuildContext context, WidgetRef ref, Avatar avatar) {
   final isCentre = avatar.centreManaged;
   showModalBottomSheet<void>(
     context: context,
+    isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (sheetCtx) => Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(sheetCtx).height * 0.85,
+      ),
       decoration: const BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 40,
-            height: 4,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
             decoration: BoxDecoration(
               color: AppColors.outline,
               borderRadius: BorderRadius.circular(2),
@@ -850,7 +860,8 @@ void _showTutorOptions(BuildContext context, WidgetRef ref, Avatar avatar) {
               },
             ),
           SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
-        ],
+          ],
+        ),
       ),
     ),
   );

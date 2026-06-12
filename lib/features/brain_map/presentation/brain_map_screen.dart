@@ -149,6 +149,7 @@ class _BrainMapScreenState extends ConsumerState<BrainMapScreen> {
   void _showTopicSheet(BuildContext context, TopicNode node) {
     showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
       backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
           borderRadius:
@@ -282,16 +283,20 @@ class _TopicSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: AppSizing.brainMapNode,
+      child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: AppSizing.brainMapNode,
                   height: AppSizing.brainMapNode,
                   decoration: BoxDecoration(
                       color: _accent, shape: BoxShape.circle),
@@ -348,7 +353,8 @@ class _TopicSheet extends StatelessWidget {
                 TeachMochiRoute(avatarId: avatarId).push(context);
               },
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );

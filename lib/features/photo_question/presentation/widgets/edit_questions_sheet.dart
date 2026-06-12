@@ -59,15 +59,21 @@ class _EditQuestionsSheetState extends State<EditQuestionsSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+      ),
       decoration: const BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Handle
-          Padding(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.only(
+            bottom: MediaQuery.viewInsetsOf(context).bottom),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle
+            Padding(
             padding: const EdgeInsets.only(top: 12, bottom: 4),
             child: Container(
               width: 54,
@@ -171,10 +177,8 @@ class _EditQuestionsSheetState extends State<EditQuestionsSheet> {
               ),
             ),
           ),
-
-          // Keyboard inset
-          SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 8),
-        ],
+          ],
+        ),
       ),
     );
   }

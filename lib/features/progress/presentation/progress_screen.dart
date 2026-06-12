@@ -916,34 +916,40 @@ void _pickAvatarForQuiz(BuildContext context, List<Avatar> avatars) {
   showModalBottomSheet<void>(
     context: context,
     backgroundColor: Colors.transparent,
-    builder: (_) => SafeArea(
+    isScrollControlled: true,
+    builder: (sheetCtx) => SafeArea(
       child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(sheetCtx).height * 0.85,
+        ),
         decoration: const BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Which Mochi to quiz?', style: AppTextStyles.title),
-            const SizedBox(height: AppSpacing.md),
-            for (final a in avatars)
-              ListTile(
-                leading: CharacterWidget(character: a.character, size: 36),
-                title: Text(a.name,
-                    maxLines: 1, overflow: TextOverflow.ellipsis),
-                subtitle: Text(a.subject,
-                    style:
-                        AppTextStyles.caption.copyWith(color: AppColors.text2),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis),
-                onTap: () {
-                  Navigator.pop(context);
-                  QuizRoute(avatarId: a.id).push(context);
-                },
-              ),
-          ],
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Which Mochi to quiz?', style: AppTextStyles.title),
+              const SizedBox(height: AppSpacing.md),
+              for (final a in avatars)
+                ListTile(
+                  leading: CharacterWidget(character: a.character, size: 36),
+                  title: Text(a.name,
+                      maxLines: 1, overflow: TextOverflow.ellipsis),
+                  subtitle: Text(a.subject,
+                      style: AppTextStyles.caption
+                          .copyWith(color: AppColors.text2),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
+                  onTap: () {
+                    Navigator.pop(context);
+                    QuizRoute(avatarId: a.id).push(context);
+                  },
+                ),
+            ],
+          ),
         ),
       ),
     ),
@@ -954,37 +960,43 @@ void _pickAvatarStatic(BuildContext context, List<Avatar> avatars) {
   showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (_) => SafeArea(
+      isScrollControlled: true,
+      builder: (sheetCtx) => SafeArea(
         child: Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(sheetCtx).height * 0.85,
+          ),
           decoration: const BoxDecoration(
             color: AppColors.surface,
             borderRadius:
                 BorderRadius.vertical(top: Radius.circular(20)),
           ),
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Choose Mochi', style: AppTextStyles.title),
-              const SizedBox(height: AppSpacing.md),
-              for (final a in avatars)
-                ListTile(
-                  leading: CharacterWidget(
-                      character: a.character, size: 36),
-                  title: Text(a.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis),
-                  subtitle: Text(a.subject,
-                      style: AppTextStyles.caption
-                          .copyWith(color: AppColors.text2),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis),
-                  onTap: () {
-                    Navigator.pop(context);
-                    BrainMapRoute(avatarId: a.id).push(context);
-                  },
-                ),
-            ],
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Choose Mochi', style: AppTextStyles.title),
+                const SizedBox(height: AppSpacing.md),
+                for (final a in avatars)
+                  ListTile(
+                    leading: CharacterWidget(
+                        character: a.character, size: 36),
+                    title: Text(a.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis),
+                    subtitle: Text(a.subject,
+                        style: AppTextStyles.caption
+                            .copyWith(color: AppColors.text2),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis),
+                    onTap: () {
+                      Navigator.pop(context);
+                      BrainMapRoute(avatarId: a.id).push(context);
+                    },
+                  ),
+              ],
+            ),
           ),
         ),
       ),

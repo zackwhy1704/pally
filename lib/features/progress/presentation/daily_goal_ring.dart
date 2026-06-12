@@ -209,14 +209,18 @@ class _GoalSheetState extends State<_GoalSheet> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+        ),
         decoration: const BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
-        padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.lg),
         child: Consumer(builder: (context, ref, _) {
-          return Column(
+          return SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.lg),
+            child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -291,6 +295,7 @@ class _GoalSheetState extends State<_GoalSheet> {
                 ),
               ),
             ],
+            ),
           );
         }),
       ),

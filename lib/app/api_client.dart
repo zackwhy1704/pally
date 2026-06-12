@@ -349,57 +349,66 @@ class _ConsentGateSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+      ),
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      padding: EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.md,
-        AppSpacing.lg,
-        AppSpacing.lg + MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Center(
-            child: Container(
-              width: AppSizing.handleBarWidth, height: AppSizing.handleBarHeight,
-              decoration: BoxDecoration(
-                color: AppColors.outline,
-                borderRadius: BorderRadius.circular(2)),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          AppSpacing.md,
+          AppSpacing.lg,
+          AppSpacing.lg + MediaQuery.viewInsetsOf(context).bottom,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                width: AppSizing.handleBarWidth,
+                height: AppSizing.handleBarHeight,
+                decoration: BoxDecoration(
+                    color: AppColors.outline,
+                    borderRadius: BorderRadius.circular(2)),
+              ),
             ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          const Text('⏳', style: TextStyle(fontSize: 40)),
-          const SizedBox(height: AppSpacing.sm),
-          Text('Almost there!', style: AppTextStyles.heading1.copyWith(fontSize: 20)),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            '$_title unlocks once a grown-up approves your account. '
-            "We've already sent them an email — or tap below to send a reminder.",
-            style: AppTextStyles.body.copyWith(color: AppColors.text2),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          FilledButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              context.go('/consent/waiting');
-            },
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.purple,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              padding: const EdgeInsets.symmetric(vertical: 14),
+            const SizedBox(height: AppSpacing.md),
+            const Text('⏳', style: TextStyle(fontSize: 40)),
+            const SizedBox(height: AppSpacing.sm),
+            Text('Almost there!',
+                style: AppTextStyles.heading1.copyWith(fontSize: 20)),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              '$_title unlocks once a grown-up approves your account. '
+              "We've already sent them an email — or tap below to send a reminder.",
+              style: AppTextStyles.body.copyWith(color: AppColors.text2),
             ),
-            child: const Text('Remind my grown-up'),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('Got it', style: AppTextStyles.body.copyWith(color: AppColors.text2)),
-          ),
-        ],
+            const SizedBox(height: AppSpacing.lg),
+            FilledButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                context.go('/consent/waiting');
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.purple,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+              child: const Text('Remind my grown-up'),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Got it',
+                  style: AppTextStyles.body.copyWith(color: AppColors.text2)),
+            ),
+          ],
+        ),
       ),
     );
   }

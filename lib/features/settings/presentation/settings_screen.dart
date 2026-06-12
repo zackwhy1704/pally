@@ -1073,18 +1073,22 @@ class _ReferralTile extends ConsumerWidget {
             bottom: MediaQuery.of(sheetCtx).viewInsets.bottom),
         child: SafeArea(
           child: Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.sizeOf(sheetCtx).height * 0.85,
+            ),
             decoration: const BoxDecoration(
               color: AppColors.surface,
               borderRadius:
                   BorderRadius.vertical(top: Radius.circular(24)),
             ),
-            padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.lg),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Enter referral code', style: AppTextStyles.title),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.lg),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Enter referral code', style: AppTextStyles.title),
                 const SizedBox(height: 4),
                 Text('Share the reward with the friend who invited you.',
                     style: AppTextStyles.bodySmall
@@ -1139,7 +1143,8 @@ class _ReferralTile extends ConsumerWidget {
                     child: const Text('Apply code'),
                   ),
                 ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

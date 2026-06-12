@@ -51,23 +51,25 @@ class _AwardStarsSheetState extends ConsumerState<AwardStarsSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final sheetHeight =
-        (MediaQuery.of(context).size.height * 0.45).clamp(320.0, 420.0);
     return Container(
-      height: sheetHeight,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+      ),
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      padding: EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.md,
-        AppSpacing.lg,
-        AppSpacing.md + MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+      child: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          AppSpacing.md,
+          AppSpacing.lg,
+          AppSpacing.md + MediaQuery.viewInsetsOf(context).bottom,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
           Center(
             child: Container(
               width: AppSizing.handleBarWidth,
@@ -132,7 +134,7 @@ class _AwardStarsSheetState extends ConsumerState<AwardStarsSheet> {
                   horizontal: AppSpacing.md, vertical: 12),
             ),
           ),
-          const Spacer(),
+          const SizedBox(height: AppSpacing.lg),
           SizedBox(
             height: AppSizing.buttonHeight,
             child: FilledButton(
@@ -153,7 +155,8 @@ class _AwardStarsSheetState extends ConsumerState<AwardStarsSheet> {
                   : Text('Award $_amount stars'),
             ),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -456,36 +456,44 @@ class _PageTileState extends ConsumerState<_PageTile> {
     } else {
       picked = await showModalBottomSheet<StudyGroup>(
         context: context,
+        isScrollControlled: true,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         builder: (ctx) => SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.md, AppSpacing.md, AppSpacing.md, 0),
-                child: Text('Share to which group?',
-                    style: AppTextStyles.title),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.sizeOf(ctx).height * 0.85,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.md, AppSpacing.md, AppSpacing.md, 0),
+                    child: Text('Share to which group?',
+                        style: AppTextStyles.title),
+                  ),
+                  ...groups.map((g) => ListTile(
+                        leading: const CircleAvatar(
+                          backgroundColor: AppColors.purpleL,
+                          child: Icon(Icons.groups_rounded,
+                              color: AppColors.purple, size: 20),
+                        ),
+                        title: Text(g.name,
+                            maxLines: 1, overflow: TextOverflow.ellipsis),
+                        subtitle: g.subject != null
+                            ? Text(g.subject!,
+                                style: AppTextStyles.caption)
+                            : null,
+                        onTap: () => Navigator.of(ctx).pop(g),
+                      )),
+                  const SizedBox(height: AppSpacing.sm),
+                ],
               ),
-              ...groups.map((g) => ListTile(
-                    leading: const CircleAvatar(
-                      backgroundColor: AppColors.purpleL,
-                      child: Icon(Icons.groups_rounded,
-                          color: AppColors.purple, size: 20),
-                    ),
-                    title: Text(g.name,
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
-                    subtitle: g.subject != null
-                        ? Text(g.subject!,
-                            style: AppTextStyles.caption)
-                        : null,
-                    onTap: () => Navigator.of(ctx).pop(g),
-                  )),
-              const SizedBox(height: AppSpacing.sm),
-            ],
+            ),
           ),
         ),
       );
@@ -1238,17 +1246,21 @@ class _TeacherPreferencesSheetState
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.85,
       ),
-      child: Container(
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          AppSpacing.lg,
+          AppSpacing.lg,
+          AppSpacing.lg + MediaQuery.viewInsetsOf(context).bottom,
         ),
-        padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

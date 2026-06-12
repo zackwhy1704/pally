@@ -236,6 +236,7 @@ class _StreakDetailSheet extends StatelessWidget {
   static void show(BuildContext context, StreakStatus status) {
     showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => _StreakDetailSheet(status: status),
     );
@@ -246,54 +247,66 @@ class _StreakDetailSheet extends StatelessWidget {
     final reached = status.milestonesReached.toSet();
     return SafeArea(
       child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+        ),
         decoration: const BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
-        padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 36,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.outline,
-                  borderRadius: BorderRadius.circular(2),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.outline,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Row(
-              children: [
-                const Text('🔥', style: TextStyle(fontSize: 28)),
-                const SizedBox(width: AppSpacing.sm),
-                Text('Streak ladder', style: AppTextStyles.title),
-                const Spacer(),
-                Text('Best: ${status.longestStreak} days',
-                    style: AppTextStyles.caption),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-            for (final m in status.ladder) ...[
-              _LadderRow(
-                milestone: m,
-                reached: reached.contains(m) || status.streakDays >= m,
-                current: status.nextMilestone == m,
-                streakDays: status.streakDays,
+              const SizedBox(height: AppSpacing.md),
+              Row(
+                children: [
+                  const Text('🔥', style: TextStyle(fontSize: 28)),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Text('Streak ladder',
+                        style: AppTextStyles.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Text('Best: ${status.longestStreak} days',
+                      style: AppTextStyles.caption,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
+                ],
               ),
-              const SizedBox(height: AppSpacing.xs),
+              const SizedBox(height: AppSpacing.md),
+              for (final m in status.ladder) ...[
+                _LadderRow(
+                  milestone: m,
+                  reached: reached.contains(m) || status.streakDays >= m,
+                  current: status.nextMilestone == m,
+                  streakDays: status.streakDays,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+              ],
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                'Freezes save your streak when you miss a day. Hit each new 7-day '
+                'milestone to earn one back (up to 3).',
+                style: AppTextStyles.caption.copyWith(color: AppColors.text2),
+              ),
             ],
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              'Freezes save your streak when you miss a day. Hit each new 7-day '
-              'milestone to earn one back (up to 3).',
-              style: AppTextStyles.caption.copyWith(color: AppColors.text2),
-            ),
-          ],
+          ),
         ),
       ),
     );

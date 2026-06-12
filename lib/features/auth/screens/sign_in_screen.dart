@@ -679,10 +679,10 @@ class _BiometricSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sheetHeight =
-        (MediaQuery.of(context).size.height * 0.55).clamp(360.0, 480.0);
+    final maxSheetHeight =
+        (MediaQuery.sizeOf(context).height * 0.55).clamp(360.0, 480.0);
     return Container(
-      height: sheetHeight,
+      constraints: BoxConstraints(maxHeight: maxSheetHeight),
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
@@ -692,7 +692,9 @@ class _BiometricSheet extends StatelessWidget {
         initialData: _BiometricState.scanning,
         builder: (context, snapshot) {
           final state = snapshot.data ?? _BiometricState.scanning;
-          return _buildContent(context, state);
+          return SingleChildScrollView(
+            child: _buildContent(context, state),
+          );
         },
       ),
     );
@@ -707,6 +709,7 @@ class _BiometricSheet extends StatelessWidget {
     final double animSize = MediaQuery.of(context).size.shortestSide * 0.38;
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         const SizedBox(height: 12),
         Container(
