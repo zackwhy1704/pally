@@ -32,6 +32,11 @@ _$WikiPageImpl _$$WikiPageImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList() ??
           const [],
+      reviewState: json['reviewState'] == null
+          ? WikiReviewState.unverified
+          : _reviewStateFromJson(json['reviewState']),
+      verifiedBy: json['verifiedBy'] as String?,
+      flagNote: json['flagNote'] as String?,
     );
 
 Map<String, dynamic> _$$WikiPageImplToJson(_$WikiPageImpl instance) =>
@@ -50,4 +55,14 @@ Map<String, dynamic> _$$WikiPageImplToJson(_$WikiPageImpl instance) =>
       'humanVerified': instance.humanVerified,
       'humanCorrection': instance.humanCorrection,
       'sourceFileNames': instance.sourceFileNames,
+      'reviewState': _$WikiReviewStateEnumMap[instance.reviewState]!,
+      'verifiedBy': instance.verifiedBy,
+      'flagNote': instance.flagNote,
     };
+
+const _$WikiReviewStateEnumMap = {
+  WikiReviewState.flagged: 'flagged',
+  WikiReviewState.verified: 'verified',
+  WikiReviewState.lowConfidence: 'lowConfidence',
+  WikiReviewState.unverified: 'unverified',
+};

@@ -12,6 +12,8 @@ import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/groups/presentation/groups_view_model.dart';
 import 'package:pally/features/progress/data/reading_time_reporter.dart';
+import 'package:pally/features/wiki_viewer/presentation/get_it_checked_sheet.dart';
+import 'package:pally/features/wiki_viewer/presentation/review_status_widgets.dart';
 import 'package:pally/features/wiki_viewer/presentation/wiki_viewer_view_model.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/wiki_page.dart';
@@ -607,6 +609,23 @@ class _PageTileState extends ConsumerState<_PageTile> {
     }
   }
 
+  void _openReviewSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => GetItCheckedSheet(
+        avatarId: widget.avatarId,
+        page: widget.page,
+      ),
+    );
+  }
+
+  void _startEditing() {
+    _editController.text = widget.page.content;
+    setState(() => _isEditing = true);
+  }
+
   @override
   Widget build(BuildContext context) {
     final filename = '$_slug.md';
@@ -636,11 +655,16 @@ class _PageTileState extends ConsumerState<_PageTile> {
                 children: [
                   Row(
                     children: [
+                      // Tiny status dot — colour-only at card density, no text.
+                      ReviewStatusDot(state: widget.page.reviewState),
+                      const SizedBox(width: AppSpacing.xs),
                       Expanded(
                         child: Text(
                           filename,
                           style: AppTextStyles.body
                               .copyWith(fontWeight: FontWeight.w600),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const SizedBox(width: AppSpacing.xs),
@@ -714,6 +738,14 @@ class _PageTileState extends ConsumerState<_PageTile> {
                         ? 'Updated ${_timeAgo(widget.page.updatedAt!)}'
                         : 'Just added',
                     style: AppTextStyles.caption,
+                  ),
+                  // Review-state surface: small chip for VERIFIED/UNVERIFIED,
+                  // full banner for LOW_CONFIDENCE/FLAGGED. Tapping any of
+                  // these opens the "get it checked" sheet.
+                  ReviewStateSurface(
+                    page: widget.page,
+                    onGetChecked: _openReviewSheet,
+                    onFixNotes: _startEditing,
                   ),
                 ],
               ),

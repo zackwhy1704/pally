@@ -34,7 +34,17 @@ mixin _$WikiPage {
   bool get humanVerified => throw _privateConstructorUsedError;
   String? get humanCorrection =>
       throw _privateConstructorUsedError; // Fix 3: provenance — names of knowledge files that contributed to this page
-  List<String> get sourceFileNames => throw _privateConstructorUsedError;
+  List<String> get sourceFileNames =>
+      throw _privateConstructorUsedError; // Review lifecycle — see [WikiReviewState]. Null-tolerant: a missing or
+// unknown value parses to UNVERIFIED rather than throwing.
+  @JsonKey(fromJson: _reviewStateFromJson)
+  WikiReviewState get reviewState =>
+      throw _privateConstructorUsedError; // Display name of whoever verified/flagged the page (e.g. "Mum", a tutor).
+// Null when never reviewed.
+  String? get verifiedBy =>
+      throw _privateConstructorUsedError; // Present (and non-empty) only when [reviewState] == flagged — the
+// reviewer's note on what looked wrong.
+  String? get flagNote => throw _privateConstructorUsedError;
 
   /// Serializes this WikiPage to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -65,7 +75,10 @@ abstract class $WikiPageCopyWith<$Res> {
       int qualityScore,
       bool humanVerified,
       String? humanCorrection,
-      List<String> sourceFileNames});
+      List<String> sourceFileNames,
+      @JsonKey(fromJson: _reviewStateFromJson) WikiReviewState reviewState,
+      String? verifiedBy,
+      String? flagNote});
 }
 
 /// @nodoc
@@ -97,6 +110,9 @@ class _$WikiPageCopyWithImpl<$Res, $Val extends WikiPage>
     Object? humanVerified = null,
     Object? humanCorrection = freezed,
     Object? sourceFileNames = null,
+    Object? reviewState = null,
+    Object? verifiedBy = freezed,
+    Object? flagNote = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -155,6 +171,18 @@ class _$WikiPageCopyWithImpl<$Res, $Val extends WikiPage>
           ? _value.sourceFileNames
           : sourceFileNames // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      reviewState: null == reviewState
+          ? _value.reviewState
+          : reviewState // ignore: cast_nullable_to_non_nullable
+              as WikiReviewState,
+      verifiedBy: freezed == verifiedBy
+          ? _value.verifiedBy
+          : verifiedBy // ignore: cast_nullable_to_non_nullable
+              as String?,
+      flagNote: freezed == flagNote
+          ? _value.flagNote
+          : flagNote // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -181,7 +209,10 @@ abstract class _$$WikiPageImplCopyWith<$Res>
       int qualityScore,
       bool humanVerified,
       String? humanCorrection,
-      List<String> sourceFileNames});
+      List<String> sourceFileNames,
+      @JsonKey(fromJson: _reviewStateFromJson) WikiReviewState reviewState,
+      String? verifiedBy,
+      String? flagNote});
 }
 
 /// @nodoc
@@ -211,6 +242,9 @@ class __$$WikiPageImplCopyWithImpl<$Res>
     Object? humanVerified = null,
     Object? humanCorrection = freezed,
     Object? sourceFileNames = null,
+    Object? reviewState = null,
+    Object? verifiedBy = freezed,
+    Object? flagNote = freezed,
   }) {
     return _then(_$WikiPageImpl(
       id: null == id
@@ -269,6 +303,18 @@ class __$$WikiPageImplCopyWithImpl<$Res>
           ? _value._sourceFileNames
           : sourceFileNames // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      reviewState: null == reviewState
+          ? _value.reviewState
+          : reviewState // ignore: cast_nullable_to_non_nullable
+              as WikiReviewState,
+      verifiedBy: freezed == verifiedBy
+          ? _value.verifiedBy
+          : verifiedBy // ignore: cast_nullable_to_non_nullable
+              as String?,
+      flagNote: freezed == flagNote
+          ? _value.flagNote
+          : flagNote // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -290,7 +336,11 @@ class _$WikiPageImpl implements _WikiPage {
       this.qualityScore = 0,
       this.humanVerified = false,
       this.humanCorrection,
-      final List<String> sourceFileNames = const []})
+      final List<String> sourceFileNames = const [],
+      @JsonKey(fromJson: _reviewStateFromJson)
+      this.reviewState = WikiReviewState.unverified,
+      this.verifiedBy,
+      this.flagNote})
       : _sourceFileIds = sourceFileIds,
         _sourceFileNames = sourceFileNames;
 
@@ -349,9 +399,23 @@ class _$WikiPageImpl implements _WikiPage {
     return EqualUnmodifiableListView(_sourceFileNames);
   }
 
+// Review lifecycle — see [WikiReviewState]. Null-tolerant: a missing or
+// unknown value parses to UNVERIFIED rather than throwing.
+  @override
+  @JsonKey(fromJson: _reviewStateFromJson)
+  final WikiReviewState reviewState;
+// Display name of whoever verified/flagged the page (e.g. "Mum", a tutor).
+// Null when never reviewed.
+  @override
+  final String? verifiedBy;
+// Present (and non-empty) only when [reviewState] == flagged — the
+// reviewer's note on what looked wrong.
+  @override
+  final String? flagNote;
+
   @override
   String toString() {
-    return 'WikiPage(id: $id, avatarId: $avatarId, title: $title, content: $content, certainty: $certainty, hasConflict: $hasConflict, sourceFileIds: $sourceFileIds, slug: $slug, updatedAt: $updatedAt, compiledAt: $compiledAt, qualityScore: $qualityScore, humanVerified: $humanVerified, humanCorrection: $humanCorrection, sourceFileNames: $sourceFileNames)';
+    return 'WikiPage(id: $id, avatarId: $avatarId, title: $title, content: $content, certainty: $certainty, hasConflict: $hasConflict, sourceFileIds: $sourceFileIds, slug: $slug, updatedAt: $updatedAt, compiledAt: $compiledAt, qualityScore: $qualityScore, humanVerified: $humanVerified, humanCorrection: $humanCorrection, sourceFileNames: $sourceFileNames, reviewState: $reviewState, verifiedBy: $verifiedBy, flagNote: $flagNote)';
   }
 
   @override
@@ -382,7 +446,13 @@ class _$WikiPageImpl implements _WikiPage {
             (identical(other.humanCorrection, humanCorrection) ||
                 other.humanCorrection == humanCorrection) &&
             const DeepCollectionEquality()
-                .equals(other._sourceFileNames, _sourceFileNames));
+                .equals(other._sourceFileNames, _sourceFileNames) &&
+            (identical(other.reviewState, reviewState) ||
+                other.reviewState == reviewState) &&
+            (identical(other.verifiedBy, verifiedBy) ||
+                other.verifiedBy == verifiedBy) &&
+            (identical(other.flagNote, flagNote) ||
+                other.flagNote == flagNote));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -402,7 +472,10 @@ class _$WikiPageImpl implements _WikiPage {
       qualityScore,
       humanVerified,
       humanCorrection,
-      const DeepCollectionEquality().hash(_sourceFileNames));
+      const DeepCollectionEquality().hash(_sourceFileNames),
+      reviewState,
+      verifiedBy,
+      flagNote);
 
   /// Create a copy of WikiPage
   /// with the given fields replaced by the non-null parameter values.
@@ -435,7 +508,11 @@ abstract class _WikiPage implements WikiPage {
       final int qualityScore,
       final bool humanVerified,
       final String? humanCorrection,
-      final List<String> sourceFileNames}) = _$WikiPageImpl;
+      final List<String> sourceFileNames,
+      @JsonKey(fromJson: _reviewStateFromJson)
+      final WikiReviewState reviewState,
+      final String? verifiedBy,
+      final String? flagNote}) = _$WikiPageImpl;
 
   factory _WikiPage.fromJson(Map<String, dynamic> json) =
       _$WikiPageImpl.fromJson;
@@ -468,7 +545,20 @@ abstract class _WikiPage implements WikiPage {
   String?
       get humanCorrection; // Fix 3: provenance — names of knowledge files that contributed to this page
   @override
-  List<String> get sourceFileNames;
+  List<String>
+      get sourceFileNames; // Review lifecycle — see [WikiReviewState]. Null-tolerant: a missing or
+// unknown value parses to UNVERIFIED rather than throwing.
+  @override
+  @JsonKey(fromJson: _reviewStateFromJson)
+  WikiReviewState
+      get reviewState; // Display name of whoever verified/flagged the page (e.g. "Mum", a tutor).
+// Null when never reviewed.
+  @override
+  String?
+      get verifiedBy; // Present (and non-empty) only when [reviewState] == flagged — the
+// reviewer's note on what looked wrong.
+  @override
+  String? get flagNote;
 
   /// Create a copy of WikiPage
   /// with the given fields replaced by the non-null parameter values.
