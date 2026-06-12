@@ -4,7 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/error/pally_error.dart';
+import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
+import 'package:pally/core/utils/json_reader.dart';
+import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/family/family_service.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
 import 'package:pally/shared/models/entitlement.dart';
@@ -50,10 +54,33 @@ class _FamilyDashboardScreenState
       body: FutureBuilder<Map<String, dynamic>>(
         future: _future,
         builder: (context, snap) {
+          if (snap.hasError) {
+            return PallyErrorCard(
+              message: PallyError.from(snap.error!).userMessage,
+              onRetry: _refresh,
+            );
+          }
           if (!snap.hasData) return const PallyLoadingSpinner();
           final data = snap.data!;
-          final children =
+          // `children` is legitimately optional: a parent with no linked
+          // kids yet gets an absent/empty list, which we render as the
+          // empty state rather than an error.
+          final rawChildren =
               (data['children'] as List?) ?? const [];
+          final List<_ChildSummary> children;
+          try {
+            children = rawChildren
+                .map((c) => _ChildSummary.fromJson(
+                    Map<String, dynamic>.from(c as Map)))
+                .toList();
+          } catch (e, st) {
+            appLog.e('[Family] dashboard parse failed',
+                error: e, stackTrace: st);
+            return PallyErrorCard(
+              message: PallyError.from(e).userMessage,
+              onRetry: _refresh,
+            );
+          }
           return RefreshIndicator(
             color: AppColors.purple,
             onRefresh: _refresh,
@@ -68,9 +95,7 @@ class _FamilyDashboardScreenState
                 if (children.isEmpty)
                   _EmptyChildren(onAdd: () => context.push('/family/claim'))
                 else
-                  ...children.map((c) => _ChildTile(
-                        data: Map<String, dynamic>.from(c as Map),
-                      )),
+                  ...children.map((c) => _ChildTile(child: c)),
                 const SizedBox(height: AppSpacing.sm),
                 OutlinedButton.icon(
                   onPressed: () => context.push('/family/claim'),
@@ -154,19 +179,55 @@ class _SubBanner extends StatelessWidget {
   }
 }
 
+/// Parsed parent-facing summary of one linked child. The four progress
+/// stats are read with strict `require<int>()` per CLAUDE.md PART 16: if
+/// the backend omits any of them the dashboard must surface an error, not
+/// quietly show a parent zeros that look like their kid did nothing.
+class _ChildSummary {
+  const _ChildSummary({
+    required this.name,
+    required this.level,
+    required this.streakDays,
+    required this.minutesThisWeek,
+    required this.modulesCompleted,
+  });
+
+  final String name;
+  final int level;
+  final int streakDays;
+  final int minutesThisWeek;
+  final int modulesCompleted;
+
+  factory _ChildSummary.fromJson(Map<String, dynamic> json) {
+    // Name is display-only and may arrive under either key (or neither
+    // for a freshly-claimed child) — a friendly fallback here is correct,
+    // not a masked contract.
+    final childName = json.optional<String>('childName', '');
+    final displayName = json.optional<String>('displayName', '');
+    final name = childName.isNotEmpty
+        ? childName
+        : (displayName.isNotEmpty ? displayName : 'Child');
+    return _ChildSummary(
+      name: name,
+      level: json.require<int>('level'),
+      streakDays: json.require<int>('streakDays'),
+      minutesThisWeek: json.require<int>('minutesThisWeek'),
+      modulesCompleted: json.require<int>('modulesCompleted'),
+    );
+  }
+}
+
 class _ChildTile extends StatelessWidget {
-  const _ChildTile({required this.data});
-  final Map<String, dynamic> data;
+  const _ChildTile({required this.child});
+  final _ChildSummary child;
 
   @override
   Widget build(BuildContext context) {
-    final name = (data['childName'] as String?)?.isNotEmpty == true
-        ? data['childName'] as String
-        : (data['displayName'] as String? ?? 'Child');
-    final level = (data['level'] as num?)?.toInt() ?? 1;
-    final streak = (data['streakDays'] as num?)?.toInt() ?? 0;
-    final minutes = (data['minutesThisWeek'] as num?)?.toInt() ?? 0;
-    final modules = (data['modulesCompleted'] as num?)?.toInt() ?? 0;
+    final name = child.name;
+    final level = child.level;
+    final streak = child.streakDays;
+    final minutes = child.minutesThisWeek;
+    final modules = child.modulesCompleted;
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       padding: AppSpacing.card,

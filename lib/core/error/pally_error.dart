@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:pally/core/utils/json_reader.dart';
 
 /// Buckets every failure into one of seven kinds so the UI can choose
 /// the right copy + recovery affordance without sprinkling DioException
@@ -54,6 +55,10 @@ class PallyError {
   static const unknown = PallyError(
       PallyErrorKind.unknown,
       'Something went wrong. Please try again.');
+  static const badContract = PallyError(
+      PallyErrorKind.server,
+      "Mochi got an unexpected reply — some info couldn't load. "
+      'Please try again.');
 
   /// Best-effort mapping from any thrown object to a user-safe message.
   /// Never reflects `toString()` directly — every branch lands on a
@@ -61,6 +66,7 @@ class PallyError {
   static PallyError from(Object e) {
     if (e is PallyError) return e;
     if (e is DioException) return _fromDio(e);
+    if (e is JsonParseException) return badContract;
     return unknown;
   }
 

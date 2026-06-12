@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:pally/core/utils/json_reader.dart';
 import 'package:pally/features/family/family_service.dart';
 
 part 'family_status_provider.g.dart';
@@ -56,7 +57,10 @@ Future<FamilyStatus> familyStatus(Ref ref) async {
     final svc = ref.read(familyServiceProvider);
     final data = await svc.family();
 
-    final rawType = (data['accountType'] as String? ?? 'SOLO').toUpperCase();
+    // accountType is intentionally optional with a SOLO default: this
+    // provider fails open (see catch below) so the screen is never
+    // blocked. An absent type means "not yet in a family graph" = solo.
+    final rawType = data.optional<String>('accountType', 'SOLO').toUpperCase();
     final accountType = switch (rawType) {
       'PARENT' => AccountType.parent,
       'CHILD' => AccountType.child,
