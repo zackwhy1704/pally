@@ -107,6 +107,25 @@ class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen>
         PallyToast.error(
             context, next.error?.userMessage ?? 'Something went wrong.');
       }
+      // One-time celebratory snackbar when a page becomes VERIFIED. The VM
+      // tracks shown-once locally (prefs), so acknowledging clears it for good.
+      final verified = next.newlyVerified;
+      if (verified.isNotEmpty) {
+        final p = verified.first;
+        final by = p.verifiedBy ?? 'a reviewer';
+        final more =
+            verified.length > 1 ? ' (+${verified.length - 1} more)' : '';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Checked by $by ✓$more'),
+            backgroundColor: AppColors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        ref
+            .read(wikiViewerViewModelProvider(widget.avatarId).notifier)
+            .acknowledgeVerified(verified.map((e) => e.id).toList());
+      }
     });
 
     return Listener(

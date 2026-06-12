@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/shared/models/avatar.dart';
@@ -45,12 +46,19 @@ class WikiViewerState {
     this.isDeletingFile = false,
     this.error,
     this.avatar,
+    this.newlyVerified = const [],
   });
 
   final List<WikiPage> pages;
   final List<SourceFile> files;
   final String searchQuery;
   final bool isLoading;
+
+  /// Pages that flipped to VERIFIED since the last load and haven't yet been
+  /// celebrated. The screen consumes these via ref.listen to fire a one-time
+  /// snackbar, then calls [WikiViewerViewModel.acknowledgeVerified] to clear
+  /// them and persist the shown-once flag so they never repeat.
+  final List<WikiPage> newlyVerified;
   /// True while at least one knowledge file is still in PROCESSING state —
   /// compilation is async and may not be done yet. Shows a banner so the
   /// user knows to wait rather than thinking the upload was lost.
@@ -80,6 +88,7 @@ class WikiViewerState {
     bool? isDeletingFile,
     Object? error = _sentinel,
     Object? avatar = _sentinel,
+    List<WikiPage>? newlyVerified,
   }) {
     return WikiViewerState(
       pages: pages ?? this.pages,
@@ -90,6 +99,7 @@ class WikiViewerState {
       isDeletingFile: isDeletingFile ?? this.isDeletingFile,
       error: error == _sentinel ? this.error : error as PallyError?,
       avatar: avatar == _sentinel ? this.avatar : avatar as Avatar?,
+      newlyVerified: newlyVerified ?? this.newlyVerified,
     );
   }
 }
@@ -106,15 +116,33 @@ class WikiViewerViewModel extends _$WikiViewerViewModel {
   // that returns stale or empty data, wiping out the pages the user sees.
   bool _loadInFlight = false;
 
+  // Page IDs whose VERIFIED state has already been celebrated. Loaded from
+  // prefs once on build so the snackbar fires at most once per page, even
+  // across app restarts and the 4s poller.
+  Set<String> _celebrated = {};
+
+  static const _celebratedPrefsKey = 'wiki_verified_celebrated';
+
   @override
   WikiViewerState build(String avatarId) {
     _avatarId = avatarId;
-    _loadPages();
+    _loadCelebrated().then((_) => _loadPages());
     ref.onDispose(() {
       _compilationPoller?.cancel();
       _loadInFlight = false;
     });
     return const WikiViewerState(isLoading: true);
+  }
+
+  Future<void> _loadCelebrated() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _celebrated =
+          (prefs.getStringList(_celebratedPrefsKey) ?? const <String>[])
+              .toSet();
+    } catch (_) {
+      _celebrated = {};
+    }
   }
 
   Future<void> _loadPages() async {
@@ -165,6 +193,15 @@ class WikiViewerViewModel extends _$WikiViewerViewModel {
       // Primary: use brainState from avatar DTO; fall back to file processing flag
       final isCompiling = (avatar?.isBrainCompiling ?? false) || fileProcessing;
 
+      // Detect pages that are now VERIFIED and haven't been celebrated yet.
+      // Empty IDs are skipped (can't track without a stable key).
+      final newlyVerified = pages
+          .where((p) =>
+              p.reviewState == WikiReviewState.verified &&
+              p.id.isNotEmpty &&
+              !_celebrated.contains(p.id))
+          .toList();
+
       state = state.copyWith(
         pages: pages,
         files: files,
@@ -172,6 +209,7 @@ class WikiViewerViewModel extends _$WikiViewerViewModel {
         isLoading: false,
         isCompiling: isCompiling,
         error: null,
+        newlyVerified: newlyVerified,
       );
 
       // While compilation is in progress, poll every 4 s so the brain
@@ -233,6 +271,22 @@ class WikiViewerViewModel extends _$WikiViewerViewModel {
 
   void updateSearch(String query) {
     state = state.copyWith(searchQuery: query);
+  }
+
+  /// Marks [pageIds] as celebrated so their VERIFIED snackbar never fires
+  /// again, persists the set, and clears [WikiViewerState.newlyVerified].
+  /// Called by the screen right after it shows the one-time snackbar.
+  Future<void> acknowledgeVerified(List<String> pageIds) async {
+    if (pageIds.isEmpty) return;
+    _celebrated = {..._celebrated, ...pageIds};
+    state = state.copyWith(newlyVerified: const []);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList(_celebratedPrefsKey, _celebrated.toList());
+    } catch (_) {
+      // Best-effort persistence; the in-memory set still prevents repeats
+      // within this session.
+    }
   }
 
   Future<void> patchCorrection(String slug, String newContent) async {
