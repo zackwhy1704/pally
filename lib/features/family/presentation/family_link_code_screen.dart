@@ -13,7 +13,11 @@ import 'package:share_plus/share_plus.dart' as share_plus;
 
 /// P3 — child generates a one-shot code that a parent can claim.
 class FamilyLinkCodeScreen extends ConsumerStatefulWidget {
-  const FamilyLinkCodeScreen({super.key});
+  const FamilyLinkCodeScreen({super.key, this.clock = DateTime.now});
+
+  /// Wall-clock source. Injectable so tests can drive the countdown
+  /// deterministically; defaults to [DateTime.now] in production.
+  final DateTime Function() clock;
 
   @override
   ConsumerState<FamilyLinkCodeScreen> createState() =>
@@ -41,22 +45,40 @@ class _FamilyLinkCodeScreenState
     try {
       final svc = ref.read(familyServiceProvider);
       final c = await svc.issueLinkCode();
-      final expires = DateTime.parse(c.expiresAt);
-      setState(() {
-        _code = c;
-        _remaining = expires.difference(DateTime.now());
-      });
+      // Read the real expiry from the server — never hardcode the TTL. The
+      // backend is the source of truth for how long the code is valid.
+      final expires = DateTime.parse(c.expiresAt).toLocal();
+      void recompute() {
+        var left = expires.difference(widget.clock());
+        if (left.isNegative) left = Duration.zero;
+        setState(() => _remaining = left);
+        // Stop ticking the moment the code expires — no point spinning a
+        // timer once we've flipped to the expired state.
+        if (left == Duration.zero) _timer?.cancel();
+      }
+
+      setState(() => _code = c);
       _timer?.cancel();
-      _timer = Timer.periodic(const Duration(seconds: 30), (_) {
-        if (!mounted) return;
-        setState(() {
-          _remaining = expires.difference(DateTime.now());
-          if (_remaining.isNegative) _remaining = Duration.zero;
-        });
+      recompute();
+      // Tick every second so the countdown visibly decrements (mm:ss).
+      _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+        if (!mounted) {
+          _timer?.cancel();
+          return;
+        }
+        recompute();
       });
     } catch (e) {
       setState(() => _error = 'Could not generate a code — try again');
     }
+  }
+
+  /// Formats a remaining duration as mm:ss (e.g. 9m 5s -> "09:05").
+  static String _formatRemaining(Duration d) {
+    final totalSeconds = d.inSeconds;
+    final mm = (totalSeconds ~/ 60).toString().padLeft(2, '0');
+    final ss = (totalSeconds % 60).toString().padLeft(2, '0');
+    return '$mm:$ss';
   }
 
   @override
@@ -90,12 +112,24 @@ class _FamilyLinkCodeScreenState
               const SizedBox(height: AppSpacing.xl),
               if (_code != null) ...[
                 _CodeDisplay(code: _code!.code),
-                const SizedBox(height: AppSpacing.md),
+                const SizedBox(height: AppSpacing.sm),
+                // Plain, kid-readable TTL near the code.
                 Text(
-                  _remaining.inMinutes <= 0
+                  'This code works for 15 minutes.',
+                  style: AppTextStyles.bodySmall
+                      .copyWith(color: AppColors.text2),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  _remaining == Duration.zero
                       ? 'Code expired — tap refresh below'
-                      : 'Expires in ${_remaining.inHours}h ${_remaining.inMinutes % 60}m',
-                  style: AppTextStyles.bodySmall,
+                      : 'Expires in ${_formatRemaining(_remaining)}',
+                  style: AppTextStyles.bodySmall.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: _remaining == Duration.zero
+                        ? AppColors.coral
+                        : AppColors.text1,
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 Row(
