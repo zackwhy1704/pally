@@ -20,6 +20,8 @@ import 'package:pally/features/shop/presentation/shop_view_model.dart';
 import 'package:pally/features/shop/providers/mystery_box_odds_provider.dart';
 import 'package:pally/features/shop/providers/unlocked_characters_provider.dart';
 import 'package:pally/features/subscription/presentation/trial_welcome_screen.dart';
+import 'package:pally/core/ui/painters/class_uniform_mochi_painter.dart';
+import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/daily_goal.dart';
 import 'package:pally/shared/models/mochi_character.dart';
 import 'package:pally/shared/models/streak_status.dart';
@@ -181,6 +183,16 @@ void main() {
     'ShopScreen': () => const ShopScreen(),
     'AiDisclosureScreen': () => const AiDisclosureScreen(),
     'BrainMapScreen': () => const BrainMapScreen(avatarId: 'a1'),
+    'ClassUniformAvatar': () => const Center(
+          child: ClassUniformAvatar(
+            appearance: ClassAppearance(
+              bandColorHex: '#7042ED',
+              subjectGlyph: 'math',
+              initials: 'P5',
+            ),
+            size: 120,
+          ),
+        ),
   };
 
   for (final entry in cases.entries) {
