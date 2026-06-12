@@ -20,7 +20,12 @@ import 'package:pally/features/shop/presentation/shop_view_model.dart';
 import 'package:pally/features/shop/providers/mystery_box_odds_provider.dart';
 import 'package:pally/features/shop/providers/unlocked_characters_provider.dart';
 import 'package:pally/features/subscription/presentation/trial_welcome_screen.dart';
+import 'package:pally/features/assignments/presentation/assignment_compare_screen.dart';
+import 'package:pally/features/assignments/presentation/assignment_detail_view_model.dart';
+import 'package:pally/features/groups/presentation/challenge_card.dart';
+import 'package:pally/features/groups/presentation/challenge_view_model.dart';
 import 'package:pally/core/ui/painters/class_uniform_mochi_painter.dart';
+import 'package:pally/shared/models/assignment_detail.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/daily_goal.dart';
 import 'package:pally/shared/models/mochi_character.dart';
@@ -101,6 +106,121 @@ class _StubBrainMap extends BrainMapViewModel {
       );
 }
 
+/// Released assignment with long answers + per-concept evaluation to stress
+/// the compare cards.
+class _StubAssignmentDetail extends AssignmentDetailViewModel {
+  @override
+  Future<AssignmentDetail> build(String avatarId, String assignmentId) async =>
+      AssignmentDetail(
+        id: 'as1',
+        classId: 'c1',
+        title: 'Photosynthesis and cellular respiration revision worksheet',
+        type: 'PRE_CLASS',
+        status: 'COMPLETED',
+        dueDate: null,
+        answersReleased: true,
+        answersReleasedAt: null,
+        moduleIds: const ['m1'],
+        questions: const [
+          AssignmentQuestion(
+            index: 0,
+            prompt:
+                'Explain how plants convert sunlight into chemical energy and '
+                'why this matters for the whole food chain.',
+            studentAnswer:
+                'Plants use sunlight, water and carbon dioxide to make glucose '
+                'and oxygen inside the chloroplast during photosynthesis.',
+            modelAnswer:
+                'Photosynthesis converts light energy into chemical energy '
+                'stored in glucose, releasing oxygen as a by-product.',
+            concepts: [
+              ConceptEval(
+                concept: 'Reactants and products of photosynthesis',
+                passed: true,
+                feedback: 'Correctly identified water and carbon dioxide.',
+              ),
+              ConceptEval(
+                concept: 'Role of chlorophyll in absorbing light',
+                passed: false,
+                feedback:
+                    'Missed that chlorophyll is the pigment that absorbs the '
+                    'light energy needed to start the reaction.',
+              ),
+            ],
+          ),
+        ],
+      );
+}
+
+/// Pre-release assignment — no model answer, "not released" hint.
+class _StubAssignmentDetailLocked extends AssignmentDetailViewModel {
+  @override
+  Future<AssignmentDetail> build(String avatarId, String assignmentId) async =>
+      const AssignmentDetail(
+        id: 'as2',
+        classId: 'c1',
+        title: 'Locked assignment',
+        type: 'PRE_CLASS',
+        status: 'SUBMITTED',
+        dueDate: null,
+        answersReleased: false,
+        answersReleasedAt: null,
+        moduleIds: ['m1'],
+        questions: [
+          AssignmentQuestion(
+            index: 0,
+            prompt: 'What is the powerhouse of the cell?',
+            studentAnswer: 'The mitochondria.',
+            modelAnswer: null,
+            concepts: [],
+          ),
+        ],
+      );
+}
+
+/// Revealed MCQ challenge with a distribution to stress the bars + long option
+/// text. revealAt in the past so the countdown shows the revealed state.
+class _StubChallengeRevealed extends ChallengeViewModel {
+  @override
+  Future<Challenge> build(String challengeId) async => Challenge(
+        id: challengeId,
+        classId: 'c1',
+        question:
+            'Which process releases the most usable energy for the cell over '
+            'the long term and why does it depend on oxygen?',
+        options: const [
+          'Aerobic respiration in the mitochondria',
+          'Anaerobic fermentation in the cytoplasm',
+        ],
+        revealAt: DateTime.now().subtract(const Duration(minutes: 5)),
+        revealed: true,
+        answered: true,
+        answer: 'Aerobic respiration in the mitochondria',
+        correct: 'Aerobic respiration in the mitochondria',
+        distribution: const [
+          ChallengeDistribution(
+              answer: 'Aerobic respiration in the mitochondria', count: 18),
+          ChallengeDistribution(
+              answer: 'Anaerobic fermentation in the cytoplasm', count: 4),
+        ],
+        myAnswer: 'Anaerobic fermentation in the cytoplasm',
+      );
+}
+
+/// Open MCQ challenge with a far-future reveal (OPEN state with options).
+class _StubChallengeOpen extends ChallengeViewModel {
+  @override
+  Future<Challenge> build(String challengeId) async => Challenge(
+        id: challengeId,
+        classId: 'c1',
+        question: 'What gas do plants take in during photosynthesis?',
+        options: const ['Carbon dioxide', 'Oxygen', 'Nitrogen'],
+        revealAt: DateTime.now().add(const Duration(hours: 2)),
+        revealed: false,
+        answered: false,
+      );
+}
+
 class _FakeConsentService extends ConsentService {
   _FakeConsentService() : super(Dio());
   @override
@@ -141,11 +261,13 @@ List<Override> _overrides() => [
 
 /// Pumps [child] at [size] with [scale] text scaling and asserts the build
 /// produced no layout exception (overflow throws in the test harness).
+/// Extra provider overrides can be appended for screen-specific stubs.
 Future<void> _pumpAt(
   WidgetTester tester,
   Widget child, {
   required Size size,
   required double scale,
+  List<Override> extraOverrides = const [],
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1.0;
@@ -154,7 +276,7 @@ Future<void> _pumpAt(
 
   await tester.pumpWidget(
     ProviderScope(
-      overrides: _overrides(),
+      overrides: [..._overrides(), ...extraOverrides],
       child: MaterialApp(
         home: MediaQuery(
           data: MediaQueryData(
@@ -285,6 +407,82 @@ void main() {
       await tester.pump(const Duration(milliseconds: 400));
       expect(find.textContaining('Premium is on us'), findsOneWidget);
       expect(tester.takeException(), isNull);
+    });
+  });
+
+  // ── Assignment compare (P1) — released + locked ────────────────────────────
+  group('AssignmentCompareScreen released', () {
+    final overrides = [
+      assignmentDetailViewModelProvider('a1', 'as1')
+          .overrideWith(_StubAssignmentDetail.new),
+    ];
+    Widget build() =>
+        const AssignmentCompareScreen(avatarId: 'a1', assignmentId: 'as1');
+
+    testWidgets('no overflow @ 320x568 textScale 1.3', (tester) async {
+      await _pumpAt(tester, build(),
+          size: small, scale: 1.3, extraOverrides: overrides);
+    });
+    testWidgets('no overflow @ 360x690 textScale 1.3', (tester) async {
+      await _pumpAt(tester, build(),
+          size: medium, scale: 1.3, extraOverrides: overrides);
+    });
+  });
+
+  group('AssignmentCompareScreen not released', () {
+    final overrides = [
+      assignmentDetailViewModelProvider('a1', 'as2')
+          .overrideWith(_StubAssignmentDetailLocked.new),
+    ];
+    testWidgets('no overflow @ 320x568 textScale 1.3', (tester) async {
+      await _pumpAt(
+        tester,
+        const AssignmentCompareScreen(avatarId: 'a1', assignmentId: 'as2'),
+        size: small,
+        scale: 1.3,
+        extraOverrides: overrides,
+      );
+    });
+  });
+
+  // ── Challenge card (P3) — open + revealed ──────────────────────────────────
+  group('ChallengeCard revealed', () {
+    final overrides = [
+      challengeViewModelProvider('ch1')
+          .overrideWith(_StubChallengeRevealed.new),
+    ];
+    testWidgets('no overflow @ 320x568 textScale 1.3', (tester) async {
+      await _pumpAt(
+        tester,
+        const SingleChildScrollView(child: ChallengeCard(challengeId: 'ch1')),
+        size: small,
+        scale: 1.3,
+        extraOverrides: overrides,
+      );
+    });
+    testWidgets('no overflow @ 360x690 textScale 1.3', (tester) async {
+      await _pumpAt(
+        tester,
+        const SingleChildScrollView(child: ChallengeCard(challengeId: 'ch1')),
+        size: medium,
+        scale: 1.3,
+        extraOverrides: overrides,
+      );
+    });
+  });
+
+  group('ChallengeCard open', () {
+    final overrides = [
+      challengeViewModelProvider('ch2').overrideWith(_StubChallengeOpen.new),
+    ];
+    testWidgets('no overflow @ 320x568 textScale 1.3', (tester) async {
+      await _pumpAt(
+        tester,
+        const SingleChildScrollView(child: ChallengeCard(challengeId: 'ch2')),
+        size: small,
+        scale: 1.3,
+        extraOverrides: overrides,
+      );
     });
   });
 }

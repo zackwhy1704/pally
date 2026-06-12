@@ -90,6 +90,26 @@ void main() {
       expect(find.text('Adding fractions'), findsOneWidget);
     });
 
+    testWidgets(
+        'muddiest screen shows before completion when not yet submitted',
+        (tester) async {
+      await tester.pumpWidget(_wrap(
+        const ModulePlayerScreen(
+            avatarId: 'test-avatar', moduleId: 'test-mod'),
+        overrides: [
+          modulePlayerViewModelProvider('test-avatar', 'test-mod')
+              .overrideWith(() => _MuddiestVM()),
+        ],
+      ));
+
+      // Complete + concepts present + muddiest not yet answered → the
+      // one-tap "which part was hardest?" prompt, not the celebration.
+      expect(find.text('Which part was hardest?'), findsOneWidget);
+      expect(find.text('Adding fractions'), findsOneWidget);
+      expect(find.text('Skip'), findsOneWidget);
+      expect(find.text('Module complete!'), findsNothing);
+    });
+
     testWidgets('error state shows error message and retry button',
         (tester) async {
       await tester.pumpWidget(_wrap(
@@ -188,6 +208,30 @@ class _CompleteVM extends ModulePlayerViewModel {
       const ModulePlayerState(
         stage: 'COMPLETE',
         isComplete: true,
+        // Post-muddiest: the celebration screen follows the one-tap muddiest
+        // prompt, so this represents the state after that prompt is answered.
+        muddiestSubmitted: true,
+        results: ModuleResults(
+          xpEarned: 25,
+          concepts: [
+            ConceptMastery(
+              concept: 'Adding fractions',
+              mastery: 0.9,
+              feedback: 'Well done!',
+              passed: true,
+            ),
+          ],
+        ),
+      );
+}
+
+class _MuddiestVM extends ModulePlayerViewModel {
+  @override
+  ModulePlayerState build(String avatarId, String moduleId) =>
+      const ModulePlayerState(
+        stage: 'COMPLETE',
+        isComplete: true,
+        // muddiestSubmitted defaults to false → muddiest screen should show.
         results: ModuleResults(
           xpEarned: 25,
           concepts: [
