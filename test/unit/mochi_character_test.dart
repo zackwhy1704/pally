@@ -38,19 +38,12 @@ void main() {
       }
     });
 
-    test('mystery-box roster has exactly 9 characters', () {
-      // The mystery box draws from the 9 school Mochis only. The 8
-      // aroundTheWorld characters are centre / special-edition and are NOT in
-      // the box, so they're excluded here. Catches an accidental add/remove
-      // that would knock the box odds off the spec (6×15 + 8 + 2 = 100).
-      final boxRoster = MochiCharacter.values
-          .where((c) => !MochiCharacter.aroundTheWorld.contains(c))
-          .toList();
-      expect(boxRoster.length, 9);
-    });
-
-    test('aroundTheWorld series has exactly 8 characters', () {
-      expect(MochiCharacter.aroundTheWorld.length, 8);
+    test('roster has exactly 9 characters (starter + 8 school Mochis)', () {
+      // The 8 unreleased aroundTheWorld characters were removed product-wide,
+      // so the enum is now exactly the starter Mochi plus the 8 school Mochis.
+      // Catches an accidental add/remove that would knock the box odds off
+      // the spec (6×15 + 8 + 2 = 100).
+      expect(MochiCharacter.values.length, 9);
     });
 
     test('jsonValue round-trip preserves identity', () {

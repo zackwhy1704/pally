@@ -15,8 +15,7 @@ class _StubVM extends CollectionViewModel {
 }
 
 // The 9 classic characters the server releases today: 1 free default + 8 classic.
-// NOTE: deliberately excludes every `atw*` (Around-the-World) painter, which the
-// local enum still carries but the backend has NOT released.
+// The picker is server-driven, so it renders exactly this released fixture.
 const _releasedFixture = CollectionState(entries: [
   CollectionEntry(
       id: 'MOCHI',
@@ -95,24 +94,15 @@ void main() {
     expect(delegate.childCount, 9);
   });
 
-  testWidgets('no Around-the-World (atw) character name leaks into the picker',
+  testWidgets('only released characters render — picker is server-driven',
       (tester) async {
     await tester.pumpWidget(_wrap(_releasedFixture));
     await tester.pump();
 
-    // None of the unreleased ATW display names may appear.
-    for (final atw in const [
-      'Beret Mochi',
-      'Globe Rider',
-      'Kebaya Mochi',
-      'Lion City Mochi',
-      'Pharaoh Mochi',
-      'Sakura Mochi',
-      'Sombrero Mochi',
-      'Kilt Mochi',
-    ]) {
-      expect(find.text(atw), findsNothing, reason: '$atw must not be shown');
-    }
+    // The picker renders ONLY the server's released fixture, never the full
+    // local enum. (The 8 Around-the-World Mochis were removed product-wide;
+    // this guards the truth rule for any future unreleased character too.)
+    expect(find.text('Made-up Mochi'), findsNothing);
 
     // And the free default Mochi IS present, proving the released set rendered.
     expect(find.text('Mochi'), findsOneWidget);

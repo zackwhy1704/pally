@@ -25,7 +25,7 @@ Avatar _classAvatar({
     );
 
 /// Builds a personal collectible avatar (no class appearance).
-Avatar _personalAvatar({MochiCharacter character = MochiCharacter.atwSakura}) =>
+Avatar _personalAvatar({MochiCharacter character = MochiCharacter.goldstar}) =>
     Avatar(
       id: 'p1',
       name: 'Sakura',
@@ -222,7 +222,7 @@ void main() {
       final mixed = <Avatar>[
         _personalAvatar(),
         _classAvatar(initials: 'P3'),
-        _personalAvatar(character: MochiCharacter.atwBeret),
+        _personalAvatar(character: MochiCharacter.pencil),
         _classAvatar(initials: 'P6'),
       ];
 

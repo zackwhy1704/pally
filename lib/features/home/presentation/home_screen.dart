@@ -543,7 +543,7 @@ class _AvatarCard extends ConsumerWidget {
 
 // ── Demo centre card (admin-only, visual preview only) ────────────────────────
 
-/// A read-only preview card showing a randomly selected aroundTheWorld Mochi.
+/// A read-only preview card showing a randomly selected released Mochi.
 /// Shown ONLY when an admin has the "Centre-mode (demo)" toggle on.
 /// The character is picked once at creation time and stays stable for the
 /// widget's lifetime (no re-randomise on rebuild).
@@ -557,11 +557,25 @@ class _DemoCentreCard extends StatefulWidget {
 class _DemoCentreCardState extends State<_DemoCentreCard> {
   late final MochiCharacter _character;
 
+  /// Released collectible Mochis the demo card can preview. The
+  /// aroundTheWorld series was scrapped product-wide, so the admin demo
+  /// now cycles the shipped school series instead.
+  static const _demoPool = [
+    MochiCharacter.pencil,
+    MochiCharacter.science,
+    MochiCharacter.pe,
+    MochiCharacter.art,
+    MochiCharacter.lunchbox,
+    MochiCharacter.library,
+    MochiCharacter.headmaster,
+    MochiCharacter.goldstar,
+  ];
+
   @override
   void initState() {
     super.initState();
-    const list = MochiCharacter.aroundTheWorld;
-    _character = list[DateTime.now().millisecondsSinceEpoch % list.length];
+    _character =
+        _demoPool[DateTime.now().millisecondsSinceEpoch % _demoPool.length];
   }
 
   @override

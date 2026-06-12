@@ -6,7 +6,7 @@ import 'package:pally/shared/models/mochi_character.dart';
 import 'package:pally/shared/models/mochi_cosmetics.dart';
 
 Avatar _avatar({
-  MochiCharacter character = MochiCharacter.atwSakura,
+  MochiCharacter character = MochiCharacter.goldstar,
   String? cosmeticEyewear,
   String? cosmeticClothes,
   String? cosmeticShoes,
@@ -50,7 +50,7 @@ void main() {
     testWidgets('renders a single base image when no cosmetics are set',
         (tester) async {
       await tester.pumpWidget(const MaterialApp(
-        home: CharacterWidget(character: MochiCharacter.atwSakura, size: 64),
+        home: CharacterWidget(character: MochiCharacter.goldstar, size: 64),
       ));
       // Exactly the base image, no Stack overlay.
       expect(find.byType(Image), findsOneWidget);
@@ -79,7 +79,7 @@ void main() {
       // scaffold works the moment real art is wired into the catalogs).
       await tester.pumpWidget(const MaterialApp(
         home: CharacterWidget(
-          character: MochiCharacter.atwSakura,
+          character: MochiCharacter.goldstar,
           size: 64,
           clothesAsset: 'assets/images/base.png',
           eyewearAsset: 'assets/images/base.png',

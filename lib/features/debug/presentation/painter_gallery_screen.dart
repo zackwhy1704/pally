@@ -87,7 +87,7 @@ class PainterGalleryScreen extends StatelessWidget {
 }
 
 /// Class-uniform comparison strip: the ring + corner-tag variant rendered
-/// beside the plain default Mochi and beside one ATW image-based character,
+/// beside the plain default Mochi and beside one image-based character,
 /// proving the decoration works AROUND both vector painters and image assets
 /// while leaving the base body untouched.
 class _ClassUniformStrip extends StatelessWidget {
@@ -127,13 +127,13 @@ class _ClassUniformStrip extends StatelessWidget {
                   character: MochiCharacter.mochi,
                 ),
               ),
-              // The ATW image-based character with the ring + tag.
+              // An image-based collectible with the ring + tag.
               _LabeledTile(
-                label: 'atw + class',
+                label: 'goldstar + class',
                 child: ClassUniformAvatar(
                   appearance: _appearance,
                   size: _tile,
-                  character: MochiCharacter.atwSakura,
+                  character: MochiCharacter.goldstar,
                 ),
               ),
             ],

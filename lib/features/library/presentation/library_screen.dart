@@ -508,11 +508,25 @@ class _DemoCentreLibraryRow extends StatefulWidget {
 class _DemoCentreLibraryRowState extends State<_DemoCentreLibraryRow> {
   late final MochiCharacter _character;
 
+  /// Released collectible Mochis the demo row can preview. The
+  /// aroundTheWorld series was scrapped product-wide, so the admin demo
+  /// now cycles the shipped school series instead.
+  static const _demoPool = [
+    MochiCharacter.pencil,
+    MochiCharacter.science,
+    MochiCharacter.pe,
+    MochiCharacter.art,
+    MochiCharacter.lunchbox,
+    MochiCharacter.library,
+    MochiCharacter.headmaster,
+    MochiCharacter.goldstar,
+  ];
+
   @override
   void initState() {
     super.initState();
-    const list = MochiCharacter.aroundTheWorld;
-    _character = list[DateTime.now().millisecondsSinceEpoch % list.length];
+    _character =
+        _demoPool[DateTime.now().millisecondsSinceEpoch % _demoPool.length];
   }
 
   @override

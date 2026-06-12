@@ -833,8 +833,8 @@ class _EarnMethodsCard extends StatelessWidget {
 ///     (unlockedCharactersProvider, where unlocked == true)
 ///   • denominator = the server's RELEASED set size
 ///     (collectionViewModelProvider.totalCount — entries returned by
-///      /shop/characters), NOT MochiCharacter.values.length, which also
-///      contains unreleased `atw*` painters that must stay invisible.
+///      /shop/characters), NOT MochiCharacter.values.length, which may
+///      contain unreleased painters that must stay invisible.
 /// This is exactly the data the Mochi Album grid renders, so the count on
 /// this card can never disagree with the grid.
 class _CollectionCard extends ConsumerWidget {

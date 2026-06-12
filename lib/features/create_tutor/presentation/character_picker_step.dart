@@ -23,8 +23,8 @@ class CharacterPickerStep extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // TRUTH RULE: render ONLY the characters the server has released, never the
-    // local enum. MochiCharacter.values still carries unreleased `atw*` painters
-    // that must stay invisible until the backend ships them. The released set
+    // local enum. MochiCharacter.values may carry unreleased painters that must
+    // stay invisible until the backend ships them. The released set
     // (and each character's unlock flag) comes from /shop/characters via
     // collectionViewModelProvider -- exactly what the shop's collection grid uses.
     final collection = ref.watch(collectionViewModelProvider);

@@ -6,10 +6,10 @@
 /// character art.
 ///
 /// IMPORTANT: deep accessory swapping is **inert until layered art is
-/// commissioned** — separated body + accessory PNGs sharing one rig for the 8
-/// aroundTheWorld characters. Until those assets ship, every lookup returns
-/// null, so [CharacterWidget] renders exactly the single base image it does
-/// today. The pipeline is built and waiting; only the art is missing.
+/// commissioned** — separated body + accessory PNGs sharing one rig. Until
+/// those assets ship, every lookup returns null, so [CharacterWidget] renders
+/// exactly the single base image it does today. The pipeline is built and
+/// waiting; only the art is missing.
 abstract final class MochiCosmetics {
   /// Maps an eyewear slot id to its overlay asset, or null if no art exists.
   static String? eyewearAsset(String? slotId) => _resolve(_eyewear, slotId);
