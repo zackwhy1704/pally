@@ -149,7 +149,7 @@ class _AvatarRow extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
-                child: CharacterWidget(character: avatar.character, size: 40),
+                child: CharacterWidget.forAvatar(avatar, 40),
               ),
             ),
             const SizedBox(width: AppSpacing.md),

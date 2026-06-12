@@ -76,7 +76,7 @@ class _AvatarTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
-                child: CharacterWidget(character: avatar.character, size: 38),
+                child: CharacterWidget.forAvatar(avatar, 38),
               ),
             ),
             const SizedBox(width: AppSpacing.md),

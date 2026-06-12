@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/mochi_character.dart';
 import 'package:pally/shared/models/mochi_cosmetics.dart';
+import 'package:pally/core/ui/painters/class_uniform_mochi_painter.dart';
 import 'package:pally/core/ui/painters/mochi_painter.dart';
 import 'package:pally/core/ui/painters/chimi_painter.dart';
 import 'package:pally/core/ui/painters/zap_painter.dart';
@@ -62,10 +63,21 @@ class CharacterWidget extends StatelessWidget {
     this.shoesAsset,
   });
 
-  /// Renders an avatar with its centre cosmetic slots resolved to overlay
-  /// assets. Until layered art is commissioned every slot resolves to null,
-  /// so this renders identically to the plain base-image constructor.
-  factory CharacterWidget.forAvatar(Avatar avatar, double size, {Key? key}) {
+  /// Renders an avatar's art with the correct renderer for its [Avatar.kind].
+  ///
+  /// CENTRE_CLASS avatars (with appearance) render the parameterised uniform
+  /// Mochi via [ClassUniformAvatar]; PERSONAL avatars render collectible
+  /// character art with their centre cosmetic slots resolved to overlay assets
+  /// (every slot is null until layered art is commissioned, so personal
+  /// avatars render identically to the plain base-image constructor).
+  static Widget forAvatar(Avatar avatar, double size, {Key? key}) {
+    if (avatar.isCentreClass) {
+      return ClassUniformAvatar(
+        key: key,
+        appearance: avatar.appearance!,
+        size: size,
+      );
+    }
     return CharacterWidget(
       key: key,
       character: avatar.character,

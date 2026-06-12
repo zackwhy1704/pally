@@ -314,8 +314,7 @@ class _BrainHeader extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Center(
-                      child: CharacterWidget(
-                          character: avatar!.character, size: 38),
+                      child: CharacterWidget.forAvatar(avatar!, 38),
                     ),
                   ),
                 if (avatar != null) const SizedBox(width: AppSpacing.md),

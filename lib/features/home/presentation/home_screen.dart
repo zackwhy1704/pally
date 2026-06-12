@@ -405,10 +405,7 @@ class _AvatarCard extends ConsumerWidget {
                     color: _bgColor,
                     width: double.infinity,
                     child: Center(
-                      child: CharacterWidget(
-                        character: avatar.character,
-                        size: 80,
-                      ),
+                      child: CharacterWidget.forAvatar(avatar, 80),
                     ),
                   ),
                 ),

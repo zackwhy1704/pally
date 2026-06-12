@@ -935,7 +935,7 @@ void _pickAvatarForQuiz(BuildContext context, List<Avatar> avatars) {
               const SizedBox(height: AppSpacing.md),
               for (final a in avatars)
                 ListTile(
-                  leading: CharacterWidget(character: a.character, size: 36),
+                  leading: CharacterWidget.forAvatar(a, 36),
                   title: Text(a.name,
                       maxLines: 1, overflow: TextOverflow.ellipsis),
                   subtitle: Text(a.subject,
@@ -980,8 +980,7 @@ void _pickAvatarStatic(BuildContext context, List<Avatar> avatars) {
                 const SizedBox(height: AppSpacing.md),
                 for (final a in avatars)
                   ListTile(
-                    leading: CharacterWidget(
-                        character: a.character, size: 36),
+                    leading: CharacterWidget.forAvatar(a, 36),
                     title: Text(a.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis),

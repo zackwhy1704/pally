@@ -280,8 +280,7 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
               ),
               child: Center(
                 child: avatar != null
-                    ? CharacterWidget(
-                        character: avatar!.character, size: AppSizing.avatarSm)
+                    ? CharacterWidget.forAvatar(avatar!, AppSizing.avatarSm)
                     : const Icon(Icons.smart_toy_outlined,
                         color: AppColors.purple, size: AppSizing.icon18),
               ),

@@ -745,7 +745,7 @@ class _HeroPanel extends StatelessWidget {
         children: [
           const SizedBox(width: AppSpacing.md),
           if (avatar != null)
-            CharacterWidget(character: avatar!.character, size: AppSizing.heroMochiSize)
+            CharacterWidget.forAvatar(avatar!, AppSizing.heroMochiSize)
           else
             const SizedBox(
               width: AppSizing.heroMochiSize,
