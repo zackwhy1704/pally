@@ -11,6 +11,7 @@ import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/groups/presentation/groups_view_model.dart';
+import 'package:pally/features/progress/data/reading_time_reporter.dart';
 import 'package:pally/features/wiki_viewer/presentation/wiki_viewer_view_model.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/wiki_page.dart';
@@ -26,11 +27,70 @@ class WikiViewerScreen extends ConsumerStatefulWidget {
   ConsumerState<WikiViewerScreen> createState() => _WikiViewerScreenState();
 }
 
-class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen> {
+class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen>
+    with WidgetsBindingObserver {
   final _searchController = TextEditingController();
+
+  // ── Active reading-time measurement ────────────────────────────────────────
+  // Accumulates only foreground time: backgrounding the app stops the clock
+  // (the main source of inflated minutes), and a 60s idle cutoff trims a screen
+  // left open and walked away from. Reported once on dispose.
+  static const Duration _idleCutoff = Duration(seconds: 60);
+  DateTime? _segmentStart; // start of the current foreground segment
+  DateTime _lastInteraction = DateTime.now();
+  int _accumulatedSeconds = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _segmentStart = DateTime.now();
+    _lastInteraction = DateTime.now();
+  }
+
+  /// Folds the time since [_segmentStart] into [_accumulatedSeconds], applying
+  /// the idle cutoff (a segment with no interaction for >60s only counts up to
+  /// the cutoff). Resets the segment clock.
+  void _flushSegment() {
+    final start = _segmentStart;
+    if (start == null) return;
+    final now = DateTime.now();
+    var seconds = now.difference(start).inSeconds;
+    // Idle trim: if the user hasn't touched the screen for a while, cap this
+    // segment at the time up to the last interaction + the cutoff grace.
+    final sinceInteraction = now.difference(_lastInteraction);
+    if (sinceInteraction > _idleCutoff) {
+      final activeUntil = _lastInteraction.add(_idleCutoff);
+      seconds = activeUntil.difference(start).inSeconds;
+    }
+    if (seconds > 0) _accumulatedSeconds += seconds;
+    _segmentStart = null;
+  }
+
+  void _registerInteraction() => _lastInteraction = DateTime.now();
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _segmentStart = DateTime.now();
+      _lastInteraction = DateTime.now();
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.hidden) {
+      _flushSegment();
+    }
+  }
 
   @override
   void dispose() {
+    _flushSegment();
+    final seconds = _accumulatedSeconds;
+    final avatarId = widget.avatarId;
+    // Fire-and-forget; reporter clamps + drops trivially short sessions.
+    ref
+        .read(readingTimeReporterProvider)
+        .report(avatarId: avatarId, durationSeconds: seconds);
+    WidgetsBinding.instance.removeObserver(this);
     _searchController.dispose();
     super.dispose();
   }
@@ -42,126 +102,136 @@ class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen> {
     ref.listen<WikiViewerState>(wikiViewerViewModelProvider(widget.avatarId),
         (_, next) {
       if (next.error != null) {
-        PallyToast.error(context, next.error?.userMessage ?? 'Something went wrong.');
+        PallyToast.error(
+            context, next.error?.userMessage ?? 'Something went wrong.');
       }
     });
 
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: AppColors.bg,
-      body: Column(
-        children: [
-          _BrainHeader(
-            avatarId: widget.avatarId,
-            avatar: vmState.avatar,
-            pageCount: vmState.pageCount,
-          ),
-          // Compiling banner: shown while async wiki compilation is in
-          // progress. Auto-disappears once all files leave PROCESSING state.
-          if (vmState.isCompiling)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-              color: AppColors.amberL,
-              child: Row(
-                children: [
-                  const SizedBox(
-                    width: AppSizing.spinnerSm,
-                    height: AppSizing.spinnerSm,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: AppColors.amber,
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(
-                    child: Text(
-                      'Mochi is reading your notes — new pages will appear here automatically.',
-                      style: AppTextStyles.bodySmall
-                          .copyWith(color: AppColors.amber),
-                    ),
-                  ),
-                ],
-              ),
+    return Listener(
+      // Any pointer activity counts as active reading — feeds the idle cutoff
+      // that trims time when the screen is left open and untouched.
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: (_) => _registerInteraction(),
+      onPointerMove: (_) => _registerInteraction(),
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: AppColors.bg,
+        body: Column(
+          children: [
+            _BrainHeader(
+              avatarId: widget.avatarId,
+              avatar: vmState.avatar,
+              pageCount: vmState.pageCount,
             ),
-          _SearchBar(
-            controller: _searchController,
-            onChanged: (q) => ref
-                .read(wikiViewerViewModelProvider(widget.avatarId).notifier)
-                .updateSearch(q),
-          ),
-          Expanded(
-            child: vmState.isLoading
-                ? const PallyLoadingSpinner()
-                // Source documents section sits ABOVE the scrollable pages list
-                // in a Column so it has proper bounded constraints. Putting it
-                // inside SliverToBoxAdapter alongside a ListView child gave
-                // unbounded height to the ListView → "RenderBox was not laid out".
-                : Column(
-                    children: [
-                      if (vmState.files.isNotEmpty)
-                        _SourceDocumentsSection(
-                          files: vmState.files,
-                          isDeletingFile: vmState.isDeletingFile,
-                          onDelete: (fileId) => ref
-                              .read(wikiViewerViewModelProvider(widget.avatarId)
-                                  .notifier)
-                              .deleteFile(fileId),
-                        ),
-                      // U4 — show a persistent error card when pages failed to
-                      // load and the error is not a transient poller hit.
-                      if (vmState.error != null && vmState.pages.isEmpty)
-                        Expanded(
-                          child: AppErrorView(
-                            message: vmState.error!.userMessage,
-                            onRetry: vmState.error!.kind ==
-                                    PallyErrorKind.slotLocked
-                                ? null
-                                : () => ref
-                                    .read(wikiViewerViewModelProvider(
-                                            widget.avatarId)
+            // Compiling banner: shown while async wiki compilation is in
+            // progress. Auto-disappears once all files leave PROCESSING state.
+            if (vmState.isCompiling)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+                color: AppColors.amberL,
+                child: Row(
+                  children: [
+                    const SizedBox(
+                      width: AppSizing.spinnerSm,
+                      height: AppSizing.spinnerSm,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.amber,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        'Mochi is reading your notes — new pages will appear here automatically.',
+                        style: AppTextStyles.bodySmall
+                            .copyWith(color: AppColors.amber),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            _SearchBar(
+              controller: _searchController,
+              onChanged: (q) => ref
+                  .read(wikiViewerViewModelProvider(widget.avatarId).notifier)
+                  .updateSearch(q),
+            ),
+            Expanded(
+              child: vmState.isLoading
+                  ? const PallyLoadingSpinner()
+                  // Source documents section sits ABOVE the scrollable pages list
+                  // in a Column so it has proper bounded constraints. Putting it
+                  // inside SliverToBoxAdapter alongside a ListView child gave
+                  // unbounded height to the ListView → "RenderBox was not laid out".
+                  : Column(
+                      children: [
+                        if (vmState.files.isNotEmpty)
+                          _SourceDocumentsSection(
+                            files: vmState.files,
+                            isDeletingFile: vmState.isDeletingFile,
+                            onDelete: (fileId) => ref
+                                .read(
+                                    wikiViewerViewModelProvider(widget.avatarId)
                                         .notifier)
-                                    .refresh(),
-                            action: vmState.error!.kind ==
-                                    PallyErrorKind.slotLocked
-                                ? TextButton(
-                                    onPressed: () => context.go('/'),
-                                    child: const Text('Manage Mochis'),
-                                  )
-                                : null,
+                                .deleteFile(fileId),
                           ),
-                        )
-                      else
-                        Expanded(
-                          child: RefreshIndicator(
-                            color: AppColors.purple,
-                            onRefresh: () => ref
-                                .read(wikiViewerViewModelProvider(widget.avatarId)
-                                    .notifier)
-                                .refresh(),
-                            // U5 — context-aware empty state copy
-                            child: vmState.filteredPages.isEmpty
-                                ? ListView(
-                                    children: [
-                                      const SizedBox(height: 80),
-                                      _EmptyBrainView(
-                                        hasFiles: vmState.files.isNotEmpty,
-                                        isCompiling: vmState.isCompiling,
-                                        avatarName: vmState.avatar?.name,
-                                      ),
-                                    ],
-                                  )
-                                : _PagesList(
-                                    pages: vmState.filteredPages,
-                                    avatarId: widget.avatarId,
-                                  ),
+                        // U4 — show a persistent error card when pages failed to
+                        // load and the error is not a transient poller hit.
+                        if (vmState.error != null && vmState.pages.isEmpty)
+                          Expanded(
+                            child: AppErrorView(
+                              message: vmState.error!.userMessage,
+                              onRetry: vmState.error!.kind ==
+                                      PallyErrorKind.slotLocked
+                                  ? null
+                                  : () => ref
+                                      .read(wikiViewerViewModelProvider(
+                                              widget.avatarId)
+                                          .notifier)
+                                      .refresh(),
+                              action: vmState.error!.kind ==
+                                      PallyErrorKind.slotLocked
+                                  ? TextButton(
+                                      onPressed: () => context.go('/'),
+                                      child: const Text('Manage Mochis'),
+                                    )
+                                  : null,
+                            ),
+                          )
+                        else
+                          Expanded(
+                            child: RefreshIndicator(
+                              color: AppColors.purple,
+                              onRefresh: () => ref
+                                  .read(wikiViewerViewModelProvider(
+                                          widget.avatarId)
+                                      .notifier)
+                                  .refresh(),
+                              // U5 — context-aware empty state copy
+                              child: vmState.filteredPages.isEmpty
+                                  ? ListView(
+                                      children: [
+                                        const SizedBox(height: 80),
+                                        _EmptyBrainView(
+                                          hasFiles: vmState.files.isNotEmpty,
+                                          isCompiling: vmState.isCompiling,
+                                          avatarName: vmState.avatar?.name,
+                                        ),
+                                      ],
+                                    )
+                                  : _PagesList(
+                                      pages: vmState.filteredPages,
+                                      avatarId: widget.avatarId,
+                                    ),
+                            ),
                           ),
-                        ),
-                    ],
-                  ),
-          ),
-        ],
+                      ],
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -221,7 +291,8 @@ class _BrainHeader extends ConsumerWidget {
                 ),
                 // Teacher method preferences
                 IconButton(
-                  icon: const Icon(Icons.school_outlined, color: AppColors.purple),
+                  icon: const Icon(Icons.school_outlined,
+                      color: AppColors.purple),
                   tooltip: 'Teacher notes',
                   onPressed: () => _showTeacherPreferencesSheet(context),
                 ),
@@ -405,8 +476,7 @@ class _PageTileState extends ConsumerState<_PageTile> {
   }
 
   String get _slug =>
-      widget.page.slug ??
-      widget.page.title.toLowerCase().replaceAll(' ', '-');
+      widget.page.slug ?? widget.page.title.toLowerCase().replaceAll(' ', '-');
 
   Future<void> _save() async {
     final newContent = _editController.text.trim();
@@ -415,7 +485,12 @@ class _PageTileState extends ConsumerState<_PageTile> {
     await ref
         .read(wikiViewerViewModelProvider(widget.avatarId).notifier)
         .patchCorrection(_slug, newContent);
-    if (mounted) setState(() { _isSaving = false; _isEditing = false; });
+    if (mounted) {
+      setState(() {
+        _isSaving = false;
+        _isEditing = false;
+      });
+    }
   }
 
   Future<void> _shareToGroup(BuildContext context) async {
@@ -436,8 +511,7 @@ class _PageTileState extends ConsumerState<_PageTile> {
             ),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(true),
-              style:
-                  FilledButton.styleFrom(backgroundColor: AppColors.purple),
+              style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
               child: const Text('Go to Groups'),
             ),
           ],
@@ -485,8 +559,7 @@ class _PageTileState extends ConsumerState<_PageTile> {
                         title: Text(g.name,
                             maxLines: 1, overflow: TextOverflow.ellipsis),
                         subtitle: g.subject != null
-                            ? Text(g.subject!,
-                                style: AppTextStyles.caption)
+                            ? Text(g.subject!, style: AppTextStyles.caption)
                             : null,
                         onTap: () => Navigator.of(ctx).pop(g),
                       )),
@@ -505,13 +578,12 @@ class _PageTileState extends ConsumerState<_PageTile> {
     String? successMsg;
     String? errorMsg;
     try {
-      final result = await ref
-          .read(groupListViewModelProvider.notifier)
-          .shareToGroup(
-            groupId: picked.id,
-            wikiPageId: widget.page.id,
-            title: widget.page.title,
-          );
+      final result =
+          await ref.read(groupListViewModelProvider.notifier).shareToGroup(
+                groupId: picked.id,
+                wikiPageId: widget.page.id,
+                title: widget.page.title,
+              );
       successMsg = result.earnedReward
           ? 'Shared to $groupName! ⭐ +${result.starsGranted}'
           : 'Shared to $groupName!';
@@ -674,11 +746,13 @@ class _PageTileState extends ConsumerState<_PageTile> {
                         contentPadding: const EdgeInsets.all(AppSpacing.sm),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: AppColors.outline),
+                          borderSide:
+                              const BorderSide(color: AppColors.outline),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: AppColors.outline),
+                          borderSide:
+                              const BorderSide(color: AppColors.outline),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -694,8 +768,7 @@ class _PageTileState extends ConsumerState<_PageTile> {
                           child: OutlinedButton(
                             onPressed: _isSaving
                                 ? null
-                                : () =>
-                                    setState(() => _isEditing = false),
+                                : () => setState(() => _isEditing = false),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: AppColors.text2,
                               side: const BorderSide(color: AppColors.outline),
@@ -710,8 +783,7 @@ class _PageTileState extends ConsumerState<_PageTile> {
                             onPressed: _isSaving ? null : _save,
                             style: FilledButton.styleFrom(
                               backgroundColor: AppColors.purple,
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 10),
+                              padding: const EdgeInsets.symmetric(vertical: 10),
                             ),
                             child: _isSaving
                                 ? const SizedBox(
@@ -847,8 +919,7 @@ class _ConflictBadge extends StatelessWidget {
               Navigator.of(context).pop();
               onFix?.call();
             },
-            style: FilledButton.styleFrom(
-                backgroundColor: AppColors.purple),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
             child: const Text('Fix Now'),
           ),
         ],
@@ -1103,10 +1174,14 @@ class _SourceFileRow extends StatelessWidget {
 
   IconData get _typeIcon {
     final name = file.fileName.toLowerCase();
-    if (name.endsWith('.pdf')) { return Icons.picture_as_pdf_rounded; }
+    if (name.endsWith('.pdf')) {
+      return Icons.picture_as_pdf_rounded;
+    }
     if (name.endsWith('.jpg') ||
         name.endsWith('.jpeg') ||
-        name.endsWith('.png')) { return Icons.image_rounded; }
+        name.endsWith('.png')) {
+      return Icons.image_rounded;
+    }
     return Icons.description_rounded;
   }
 
@@ -1153,14 +1228,15 @@ class _SourceFileRow extends StatelessWidget {
               children: [
                 Text(
                   file.fileName,
-                  style: AppTextStyles.bodySmall
-                      .copyWith(color: AppColors.text1, fontWeight: FontWeight.w600),
+                  style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.text1, fontWeight: FontWeight.w600),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 2),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   constraints: const BoxConstraints(maxWidth: 80),
                   decoration: BoxDecoration(
                     color: _statusColor.withAlpha(25),
@@ -1168,8 +1244,7 @@ class _SourceFileRow extends StatelessWidget {
                   ),
                   child: Text(
                     _statusLabel,
-                    style:
-                        AppTextStyles.caption.copyWith(color: _statusColor),
+                    style: AppTextStyles.caption.copyWith(color: _statusColor),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -1285,9 +1360,10 @@ class _TeacherPreferencesSheetState
               maxLines: 4,
               maxLength: 500,
               decoration: InputDecoration(
-                hintText: 'e.g. Use model method for fractions. Show all steps.',
-                hintStyle: AppTextStyles.bodySmall
-                    .copyWith(color: AppColors.text3),
+                hintText:
+                    'e.g. Use model method for fractions. Show all steps.',
+                hintStyle:
+                    AppTextStyles.bodySmall.copyWith(color: AppColors.text3),
                 filled: true,
                 fillColor: AppColors.surf2,
                 border: OutlineInputBorder(

@@ -102,8 +102,7 @@ class ModulePlayerState {
       isSubmitting: isSubmitting ?? this.isSubmitting,
       isComplete: isComplete ?? this.isComplete,
       isRevision: isRevision ?? this.isRevision,
-      results:
-          results == _sentinel ? this.results : results as ModuleResults?,
+      results: results == _sentinel ? this.results : results as ModuleResults?,
       error: error == _sentinel ? this.error : error as PallyError?,
       answers: answers ?? this.answers,
       revealedItems: revealedItems ?? this.revealedItems,
@@ -124,6 +123,23 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
   late String _avatarId;
   late String _moduleId;
   AudioPlayer? _audioPlayer;
+
+  /// Wall-clock the current stage's items rendered, read again on submit to
+  /// report real active time. Reset on every [startStage].
+  DateTime? _stageStartedAt;
+
+  /// Per-stage active-time cap (1h) so a backgrounded stage can't inflate
+  /// study minutes. Backend clamps too.
+  static const int _maxStageSeconds = 3600;
+
+  int get _stageDurationSeconds {
+    final started = _stageStartedAt;
+    if (started == null) return 0;
+    return DateTime.now()
+        .difference(started)
+        .inSeconds
+        .clamp(0, _maxStageSeconds);
+  }
 
   @override
   ModulePlayerState build(String avatarId, String moduleId) {
@@ -204,6 +220,9 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
       final isRevision =
           (data is Map && data['revision'] == true) || state.isRevision;
 
+      // Start the active-time clock for this stage now that items are visible.
+      _stageStartedAt = DateTime.now();
+
       appLog.i('[ModulePlayer] Loaded ${items.length} items for ${state.stage}'
           '${isRevision ? ' (revision mode)' : ''}');
       ref.read(analyticsProvider).event(
@@ -273,9 +292,13 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
         return {'itemId': item.id, 'response': response};
       }).toList();
 
+      // Body is a bare submissions list, so the active-time measurement rides
+      // as a query parameter. Backend reads + clamps durationSeconds to credit
+      // real study minutes for this stage.
       final res = await dio.post<dynamic>(
         '/api/v1/avatars/$_avatarId/modules/$_moduleId/submit',
         data: submissions,
+        queryParameters: {'durationSeconds': _stageDurationSeconds},
       );
 
       final data = res.data;
@@ -464,8 +487,7 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
 
       state = state.copyWith(isPlaying: false, currentPlayingCard: -1);
     } catch (e, st) {
-      appLog.e('[ModulePlayer] Audio playback error',
-          error: e, stackTrace: st);
+      appLog.e('[ModulePlayer] Audio playback error', error: e, stackTrace: st);
       state = state.copyWith(isPlaying: false, currentPlayingCard: -1);
     }
   }
@@ -483,7 +505,8 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
 
     if (segments.isEmpty) return;
 
-    appLog.i('[ModulePlayer] Playing all ${segments.length} narration segments');
+    appLog
+        .i('[ModulePlayer] Playing all ${segments.length} narration segments');
     state = state.copyWith(isPlayingAll: true, isPlaying: true);
     _audioPlayer ??= AudioPlayer();
 

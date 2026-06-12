@@ -130,6 +130,22 @@ const _sentinel = Object();
 class QuizViewModel extends _$QuizViewModel {
   late String _avatarId;
 
+  /// Wall-clock the child started working the quiz — set the moment questions
+  /// render, read again at submit to report real active study time. Server
+  /// also clamps, but we cap client-side too (see [_durationSeconds]).
+  DateTime? _startedAt;
+
+  /// Upper bound on a single quiz session's reported duration. A 1-hour cap
+  /// stops a backgrounded/forgotten quiz from inflating study minutes.
+  static const int _maxQuizSeconds = 3600;
+
+  int get _durationSeconds {
+    final started = _startedAt;
+    if (started == null) return 0;
+    final elapsed = DateTime.now().difference(started).inSeconds;
+    return elapsed.clamp(0, _maxQuizSeconds);
+  }
+
   @override
   QuizState build(String avatarId) {
     _avatarId = avatarId;
@@ -138,10 +154,8 @@ class QuizViewModel extends _$QuizViewModel {
   }
 
   Future<void> _loadQuestions() async {
-    final span = ref.read(perfMonitorProvider).startSpan(
-        'ai.quiz.daily',
-        operation: 'ai',
-        description: 'GET /quiz/daily');
+    final span = ref.read(perfMonitorProvider).startSpan('ai.quiz.daily',
+        operation: 'ai', description: 'GET /quiz/daily');
     span.setTag('route', 'quiz.daily');
     try {
       final dio = ref.read(dioProvider);
@@ -164,10 +178,12 @@ class QuizViewModel extends _$QuizViewModel {
               ? data['questions'] as List<dynamic>
               : const <dynamic>[]);
       final questions = list
-          .map((e) => QuizQuestion.fromJson(
-              Map<String, dynamic>.from(e as Map)))
+          .map(
+              (e) => QuizQuestion.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList();
       state = state.copyWith(questions: questions, isLoading: false);
+      // Start the active-time clock once the child can actually see questions.
+      if (questions.isNotEmpty) _startedAt = DateTime.now();
       span.setData('questions_count', questions.length);
       span.finish(statusCode: 200);
     } on DioException catch (e) {
@@ -178,12 +194,10 @@ class QuizViewModel extends _$QuizViewModel {
         span.finish(statusCode: 404);
         return;
       }
-      state = state.copyWith(
-          isLoading: false, error: PallyError.from(e));
+      state = state.copyWith(isLoading: false, error: PallyError.from(e));
       span.finish(statusCode: e.response?.statusCode ?? 500);
     } catch (e) {
-      state = state.copyWith(
-          isLoading: false, error: PallyError.from(e));
+      state = state.copyWith(isLoading: false, error: PallyError.from(e));
       span.finish(statusCode: 500);
     }
   }
@@ -251,10 +265,8 @@ class QuizViewModel extends _$QuizViewModel {
 
   Future<void> _submitAnswers() async {
     state = state.copyWith(isSubmitting: true);
-    final span = ref.read(perfMonitorProvider).startSpan(
-        'ai.quiz.submit',
-        operation: 'ai',
-        description: 'POST /quiz/answers');
+    final span = ref.read(perfMonitorProvider).startSpan('ai.quiz.submit',
+        operation: 'ai', description: 'POST /quiz/answers');
     span.setTag('route', 'quiz.submit');
     try {
       final dio = ref.read(dioProvider);
@@ -265,14 +277,17 @@ class QuizViewModel extends _$QuizViewModel {
           'correctMap': _correctMap,
           'topicMap': _topicMap,
           if (_confidenceMap.isNotEmpty) 'confidenceMap': _confidenceMap,
+          // Real active time spent on the quiz (clamped client-side; backend
+          // clamps again). Feeds the daily-minutes study metric.
+          'durationSeconds': _durationSeconds,
         },
       );
 
       // Backend returns the authoritative XP/stars earned. Trust the backend
       // value over the local client estimate. Some wrappers nest under "data".
       final body = response.data ?? const <String, dynamic>{};
-      final data = (body['data'] is Map ? body['data'] : body)
-          as Map<String, dynamic>;
+      final data =
+          (body['data'] is Map ? body['data'] : body) as Map<String, dynamic>;
       final backendXp = (data['xpEarned'] as num?)?.toInt() ?? state.xpEarned;
       final levelledUp = data['levelledUp'] == true;
       final newLevel = (data['newLevel'] as num?)?.toInt() ?? 0;
@@ -287,7 +302,8 @@ class QuizViewModel extends _$QuizViewModel {
               priorityReview: matrixJson['priorityReview'] as String?,
             );
 
-      appLog.i('[Quiz] submitted answers=${_answers.length} correct=${state.score} '
+      appLog.i(
+          '[Quiz] submitted answers=${_answers.length} correct=${state.score} '
           'backendXp=$backendXp levelledUp=$levelledUp newLevel=$newLevel '
           'matrix=${matrix?.hasAny ?? false}');
 
@@ -322,4 +338,3 @@ class QuizViewModel extends _$QuizViewModel {
   List<String> _asStringList(Object? v) =>
       v is List ? v.whereType<String>().toList() : const <String>[];
 }
-
