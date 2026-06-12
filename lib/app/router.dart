@@ -56,6 +56,7 @@ import 'package:pally/features/brain_health/presentation/brain_health_screen.dar
 import 'package:pally/features/modules/presentation/module_list_screen.dart';
 import 'package:pally/features/modules/presentation/module_player_screen.dart';
 import 'package:pally/features/exam_prep/presentation/exam_prep_screen.dart';
+import 'package:pally/features/assignments/presentation/assignment_compare_screen.dart';
 import 'package:pally/features/auth/screens/consent_waiting_screen.dart';
 import 'package:pally/features/auth/screens/parent_consent_screen.dart';
 import 'package:pally/features/auth/screens/self_consent_screen.dart';
@@ -575,6 +576,19 @@ class ModulePlayerRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       ModulePlayerScreen(avatarId: avatarId, moduleId: moduleId);
+}
+
+@TypedGoRoute<AssignmentCompareRoute>(
+    path: '/avatar/:avatarId/assignments/:assignmentId')
+class AssignmentCompareRoute extends GoRouteData {
+  const AssignmentCompareRoute(
+      {required this.avatarId, required this.assignmentId});
+  final String avatarId;
+  final String assignmentId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      AssignmentCompareScreen(avatarId: avatarId, assignmentId: assignmentId);
 }
 
 @TypedGoRoute<ExamPrepRoute>(path: '/avatar/:avatarId/exam-prep')

@@ -44,6 +44,7 @@ List<RouteBase> get $appRoutes => [
       $brainHealthRoute,
       $moduleListRoute,
       $modulePlayerRoute,
+      $assignmentCompareRoute,
       $examPrepRoute,
       $splashRoute,
       $signInRoute,
@@ -1122,6 +1123,32 @@ extension $ModulePlayerRouteExtension on ModulePlayerRoute {
 
   String get location => GoRouteData.$location(
         '/avatar/${Uri.encodeComponent(avatarId)}/modules/${Uri.encodeComponent(moduleId)}',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $assignmentCompareRoute => GoRouteData.$route(
+      path: '/avatar/:avatarId/assignments/:assignmentId',
+      factory: $AssignmentCompareRouteExtension._fromState,
+    );
+
+extension $AssignmentCompareRouteExtension on AssignmentCompareRoute {
+  static AssignmentCompareRoute _fromState(GoRouterState state) =>
+      AssignmentCompareRoute(
+        avatarId: state.pathParameters['avatarId']!,
+        assignmentId: state.pathParameters['assignmentId']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/avatar/${Uri.encodeComponent(avatarId)}/assignments/${Uri.encodeComponent(assignmentId)}',
       );
 
   void go(BuildContext context) => context.go(location);
