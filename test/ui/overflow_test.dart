@@ -25,6 +25,12 @@ import 'package:pally/features/assignments/presentation/assignment_detail_view_m
 import 'package:pally/features/groups/presentation/challenge_card.dart';
 import 'package:pally/features/groups/presentation/challenge_view_model.dart';
 import 'package:pally/core/ui/painters/class_uniform_mochi_painter.dart';
+import 'package:pally/features/wiki_viewer/data/review_service.dart';
+import 'package:pally/features/wiki_viewer/presentation/review_view_model.dart';
+import 'package:pally/features/wiki_viewer/presentation/review_status_widgets.dart';
+import 'package:pally/features/wiki_viewer/presentation/get_it_checked_sheet.dart';
+import 'package:pally/features/family/family_status_provider.dart';
+import 'package:pally/shared/models/wiki_page.dart';
 import 'package:pally/shared/models/assignment_detail.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/daily_goal.dart';
@@ -218,6 +224,23 @@ class _StubChallengeOpen extends ChallengeViewModel {
         revealAt: DateTime.now().add(const Duration(hours: 2)),
         revealed: false,
         answered: false,
+      );
+}
+
+/// Review VM stub — pending request so the sheet renders its full surface
+/// (link-active row + revoke) under the overflow harness.
+class _StubReviewVm extends ReviewViewModel {
+  @override
+  ReviewState build(String pageId) => ReviewState(
+        isLoading: false,
+        requests: [
+          ReviewRequest(
+            id: 'rr1',
+            status: 'PENDING',
+            reviewerName: 'Mum',
+            expiresAt: DateTime.now().add(const Duration(days: 6)),
+          ),
+        ],
       );
 }
 
@@ -483,6 +506,98 @@ void main() {
         scale: 1.3,
         extraOverrides: overrides,
       );
+    });
+  });
+
+  // ── Review surfaces (PART 1/2) — banners + chips + get-it-checked sheet ────
+  WikiPage flaggedPage() => const WikiPage(
+        id: 'wp1',
+        avatarId: 'a1',
+        title:
+            'Photosynthesis and cellular respiration — the complete revision page',
+        content: 'long content',
+        reviewState: WikiReviewState.flagged,
+        verifiedBy: 'Mrs Tan the science teacher',
+        flagNote:
+            'The equation for photosynthesis is missing the light energy '
+            'arrow and the role of chlorophyll is not explained clearly enough.',
+      );
+
+  WikiPage lowConfidencePage() => const WikiPage(
+        id: 'wp2',
+        avatarId: 'a1',
+        title: 'Fractions',
+        content: 'c',
+        reviewState: WikiReviewState.lowConfidence,
+      );
+
+  group('ReviewStateSurface flagged banner', () {
+    testWidgets('no overflow @ 320x568 textScale 1.3', (tester) async {
+      await _pumpAt(
+        tester,
+        SingleChildScrollView(
+          child: ReviewStateSurface(
+            page: flaggedPage(),
+            onGetChecked: () {},
+            onFixNotes: () {},
+          ),
+        ),
+        size: small,
+        scale: 1.3,
+      );
+    });
+  });
+
+  group('ReviewStateSurface low-confidence banner', () {
+    testWidgets('no overflow @ 320x568 textScale 1.3', (tester) async {
+      await _pumpAt(
+        tester,
+        SingleChildScrollView(
+          child: ReviewStateSurface(
+            page: lowConfidencePage(),
+            onGetChecked: () {},
+            onFixNotes: () {},
+          ),
+        ),
+        size: small,
+        scale: 1.3,
+      );
+    });
+  });
+
+  group('GetItCheckedSheet', () {
+    final withParent = [
+      reviewViewModelProvider('wp1').overrideWith(_StubReviewVm.new),
+      familyStatusProvider.overrideWith((ref) async =>
+          const FamilyStatus(accountType: AccountType.child, parentLinked: true)),
+    ];
+    final noParent = [
+      reviewViewModelProvider('wp1').overrideWith(_StubReviewVm.new),
+      familyStatusProvider.overrideWith((ref) async => FamilyStatus.empty),
+    ];
+
+    testWidgets('no overflow with parent linked @ 320x568 textScale 1.3',
+        (tester) async {
+      await _pumpAt(
+        tester,
+        GetItCheckedSheet(avatarId: 'a1', page: flaggedPage()),
+        size: small,
+        scale: 1.3,
+        extraOverrides: withParent,
+      );
+      expect(find.text('Ask my parent'), findsOneWidget);
+    });
+
+    testWidgets('"Ask my parent" hidden when unlinked', (tester) async {
+      await _pumpAt(
+        tester,
+        GetItCheckedSheet(avatarId: 'a1', page: flaggedPage()),
+        size: medium,
+        scale: 1.0,
+        extraOverrides: noParent,
+      );
+      expect(find.text('Ask my parent'), findsNothing);
+      expect(find.text('Share review link'), findsOneWidget);
     });
   });
 }
