@@ -14,6 +14,8 @@ class StudyGroup {
     required this.subject,
     required this.inviteCode,
     required this.memberCount,
+    this.groupType = 'PEER',
+    this.classId,
   });
   final String id;
   final String name;
@@ -21,12 +23,25 @@ class StudyGroup {
   final String inviteCode;
   final int memberCount;
 
+  /// "PEER" (student-run study group) or "CLASS" (centre-managed class group).
+  /// CLASS groups hide join/leave/kick controls — students get 403 on those.
+  final String groupType;
+
+  /// Set only for CLASS groups; links the group to a centre class.
+  final String? classId;
+
+  /// True for a centre-managed class group (members can't join/leave/kick).
+  bool get isClassGroup => groupType.toUpperCase() == 'CLASS';
+
   static StudyGroup fromJson(Map<String, dynamic> j) => StudyGroup(
         id: j['id'] as String,
         name: (j['name'] as String?) ?? '',
         subject: j['subject'] as String?,
         inviteCode: (j['inviteCode'] as String?) ?? '',
         memberCount: (j['memberCount'] as num?)?.toInt() ?? 0,
+        // Defensive: peer groups omit groupType, so default to PEER.
+        groupType: (j['groupType'] as String?) ?? 'PEER',
+        classId: j['classId'] as String?,
       );
 }
 

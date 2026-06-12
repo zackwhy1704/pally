@@ -10,6 +10,8 @@ import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/core/ui/pally_toast.dart';
+import 'package:pally/features/groups/presentation/challenge_card.dart';
+import 'package:pally/features/groups/presentation/challenge_view_model.dart';
 import 'package:pally/features/groups/presentation/groups_view_model.dart';
 
 class GroupDetailScreen extends ConsumerWidget {
@@ -34,27 +36,30 @@ class GroupDetailScreen extends ConsumerWidget {
             Text('Study Group', style: AppTextStyles.title),
         centerTitle: true,
         actions: [
-          PopupMenuButton<_MenuAction>(
-            onSelected: (action) {
-              if (action == _MenuAction.leave) {
-                _confirmLeave(context, ref);
-              }
-            },
-            itemBuilder: (_) => const [
-              PopupMenuItem(
-                value: _MenuAction.leave,
-                child: Row(
-                  children: [
-                    Icon(Icons.logout_rounded,
-                        color: AppColors.coral, size: 18),
-                    SizedBox(width: 8),
-                    Text('Leave group',
-                        style: TextStyle(color: AppColors.coral)),
-                  ],
+          // CLASS groups are centre-managed: students get 403 on leave/kick,
+          // so the leave control is hidden entirely for them.
+          if (detailAsync.valueOrNull?.group.isClassGroup == false)
+            PopupMenuButton<_MenuAction>(
+              onSelected: (action) {
+                if (action == _MenuAction.leave) {
+                  _confirmLeave(context, ref);
+                }
+              },
+              itemBuilder: (_) => const [
+                PopupMenuItem(
+                  value: _MenuAction.leave,
+                  child: Row(
+                    children: [
+                      Icon(Icons.logout_rounded,
+                          color: AppColors.coral, size: 18),
+                      SizedBox(width: 8),
+                      Text('Leave group',
+                          style: TextStyle(color: AppColors.coral)),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
         ],
       ),
       body: detailAsync.when(
@@ -85,11 +90,14 @@ class GroupDetailScreen extends ConsumerWidget {
                   ),
                   child: Row(
                     children: [
-                      const Text('📚', style: TextStyle(fontSize: 18)),
+                      Text(detail.group.isClassGroup ? '🏫' : '📚',
+                          style: const TextStyle(fontSize: 18)),
                       const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: Text(
-                          'Share your best notes — learn from each other',
+                          detail.group.isClassGroup
+                              ? 'Your class feed — challenges & released answers'
+                              : 'Share your best notes — learn from each other',
                           style: AppTextStyles.bodySmall
                               .copyWith(color: AppColors.purple),
                         ),
@@ -99,9 +107,17 @@ class GroupDetailScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: AppSpacing.md),
 
-                // Invite card
-                _InviteCard(group: detail.group),
-                const SizedBox(height: AppSpacing.md),
+                // Class groups: challenges + system feed. Invite is hidden
+                // (students can't invite into a centre-managed class).
+                if (detail.group.isClassGroup) ...[
+                  if (detail.group.classId != null &&
+                      detail.group.classId!.isNotEmpty)
+                    _ChallengesSection(classId: detail.group.classId!),
+                ] else ...[
+                  // Invite card (peer groups only)
+                  _InviteCard(group: detail.group),
+                  const SizedBox(height: AppSpacing.md),
+                ],
 
                 // Members
                 _SectionHeader(
@@ -161,6 +177,30 @@ class GroupDetailScreen extends ConsumerWidget {
 }
 
 enum _MenuAction { leave }
+
+// ── Challenges section (P3) ──────────────────────────────────────────────────
+
+/// Renders every open/recent challenge for the class as inline cards.
+class _ChallengesSection extends ConsumerWidget {
+  const _ChallengesSection({required this.classId});
+  final String classId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final async = ref.watch(classChallengesViewModelProvider(classId));
+    final challenges = async.valueOrNull ?? const [];
+    if (challenges.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const _SectionHeader('Challenges'),
+        const SizedBox(height: AppSpacing.xs),
+        for (final c in challenges) ChallengeCard(challengeId: c.id),
+        const SizedBox(height: AppSpacing.sm),
+      ],
+    );
+  }
+}
 
 // ── Invite card ──────────────────────────────────────────────────────────────
 
