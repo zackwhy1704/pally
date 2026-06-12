@@ -16,6 +16,7 @@ List<RouteBase> get $appRoutes => [
       $flashcardRoute,
       $shopRoute,
       $collectionRoute,
+      $debugPainterGalleryRoute,
       $parentRoute,
       $parentHomeRoute,
       $childDetailRoute,
@@ -445,6 +446,29 @@ extension $CollectionRouteExtension on CollectionRoute {
 
   String get location => GoRouteData.$location(
         '/collection',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $debugPainterGalleryRoute => GoRouteData.$route(
+      path: '/debug/painters',
+      factory: $DebugPainterGalleryRouteExtension._fromState,
+    );
+
+extension $DebugPainterGalleryRouteExtension on DebugPainterGalleryRoute {
+  static DebugPainterGalleryRoute _fromState(GoRouterState state) =>
+      const DebugPainterGalleryRoute();
+
+  String get location => GoRouteData.$location(
+        '/debug/painters',
       );
 
   void go(BuildContext context) => context.go(location);

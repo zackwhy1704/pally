@@ -31,6 +31,7 @@ import 'package:pally/features/subscription/presentation/paywall_screen.dart';
 import 'package:pally/features/subscription/presentation/subscription_plans_screen.dart';
 import 'package:pally/features/subscription/presentation/subscription_return_screen.dart';
 import 'package:pally/features/collection/presentation/collection_screen.dart';
+import 'package:pally/features/debug/presentation/painter_gallery_screen.dart';
 import 'package:pally/features/shop/presentation/shop_screen.dart';
 import 'package:pally/features/parent/presentation/parent_screen.dart';
 import 'package:pally/features/parent/presentation/parent_home_screen.dart';
@@ -71,7 +72,8 @@ part 'router.g.dart';
 // Chat branch kept at index 5 (hidden) so existing /chat-tab deep links don't break.
 @TypedStatefulShellRoute<AppShellRouteData>(
   branches: <TypedStatefulShellBranch<StatefulShellBranchData>>[
-    TypedStatefulShellBranch<HomeBranchData>(         // index 0
+    TypedStatefulShellBranch<HomeBranchData>(
+      // index 0
       routes: <TypedRoute<RouteData>>[
         TypedGoRoute<HomeRoute>(
           path: '/',
@@ -81,28 +83,33 @@ part 'router.g.dart';
         ),
       ],
     ),
-    TypedStatefulShellBranch<LibraryBranchData>(      // index 1
+    TypedStatefulShellBranch<LibraryBranchData>(
+      // index 1
       routes: <TypedRoute<RouteData>>[
         TypedGoRoute<LibraryRoute>(path: '/library'),
       ],
     ),
-    TypedStatefulShellBranch<GroupsBranchData>(       // index 2 — open to all
+    TypedStatefulShellBranch<GroupsBranchData>(
+      // index 2 — open to all
       routes: <TypedRoute<RouteData>>[
         TypedGoRoute<GroupsTabRoute>(path: '/groups'),
       ],
     ),
-    TypedStatefulShellBranch<TuitionBranchData>(      // index 3 — admin-only tab
+    TypedStatefulShellBranch<TuitionBranchData>(
+      // index 3 — admin-only tab
       routes: <TypedRoute<RouteData>>[
         TypedGoRoute<TuitionTabRoute>(path: '/tuition'),
       ],
     ),
-    TypedStatefulShellBranch<MeBranchData>(           // index 4
+    TypedStatefulShellBranch<MeBranchData>(
+      // index 4
       routes: <TypedRoute<RouteData>>[
         TypedGoRoute<ProgressRoute>(path: '/progress'),
       ],
     ),
     // Chat branch kept hidden so /chat-tab deep links still resolve.
-    TypedStatefulShellBranch<ChatBranchData>(         // index 5 (hidden)
+    TypedStatefulShellBranch<ChatBranchData>(
+      // index 5 (hidden)
       routes: <TypedRoute<RouteData>>[
         TypedGoRoute<ChatTabRoute>(path: '/chat-tab'),
       ],
@@ -281,6 +288,19 @@ class CollectionRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const CollectionScreen();
+}
+
+/// Debug-only painter gallery — `/debug/painters`. Renders every
+/// [MochiCharacter] via its CustomPainter so the dispatcher can be eyeballed.
+/// The screen itself guards on kDebugMode; the route stays registered but the
+/// body shows a placeholder in release builds.
+@TypedGoRoute<DebugPainterGalleryRoute>(path: '/debug/painters')
+class DebugPainterGalleryRoute extends GoRouteData {
+  const DebugPainterGalleryRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const PainterGalleryScreen();
 }
 
 @TypedGoRoute<ParentRoute>(path: '/parent')
@@ -546,8 +566,7 @@ class ModuleListRoute extends GoRouteData {
       ModuleListScreen(avatarId: avatarId);
 }
 
-@TypedGoRoute<ModulePlayerRoute>(
-    path: '/avatar/:avatarId/modules/:moduleId')
+@TypedGoRoute<ModulePlayerRoute>(path: '/avatar/:avatarId/modules/:moduleId')
 class ModulePlayerRoute extends GoRouteData {
   const ModulePlayerRoute({required this.avatarId, required this.moduleId});
   final String avatarId;

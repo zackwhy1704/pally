@@ -3,6 +3,7 @@ import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/mochi_character.dart';
 import 'package:pally/shared/models/mochi_cosmetics.dart';
 import 'package:pally/core/ui/painters/mochi_painter.dart';
+import 'package:pally/core/ui/painters/chimi_painter.dart';
 import 'package:pally/core/ui/painters/zap_painter.dart';
 import 'package:pally/core/ui/painters/finn_painter.dart';
 import 'package:pally/core/ui/painters/boba_painter.dart';
@@ -19,7 +20,10 @@ CustomPainter characterPainterFor(MochiCharacter character, double size) {
       // the round-bear MochiPainter as a visually-on-brand fallback.
       return MochiPainter(size);
     case MochiCharacter.pencil:
-      return MochiPainter(size);
+      // BUGFIX: previously fell back to MochiPainter, making Pencil render
+      // identically to the starter Mochi. ChimiPainter (the warm-red scarf
+      // bear) was implemented but never wired into the dispatcher.
+      return ChimiPainter(size);
     case MochiCharacter.science:
       return ZapPainter(size);
     case MochiCharacter.pe:
