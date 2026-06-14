@@ -3,6 +3,7 @@ import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/mochi_character.dart';
 import 'package:pally/shared/models/mochi_cosmetics.dart';
 import 'package:pally/core/ui/painters/class_uniform_mochi_painter.dart';
+import 'package:pally/core/ui/mochi_avatar.dart';
 import 'package:pally/core/ui/painters/mochi_painter.dart';
 import 'package:pally/core/ui/painters/chimi_painter.dart';
 import 'package:pally/core/ui/painters/zap_painter.dart';
@@ -54,12 +55,18 @@ class CharacterWidget extends StatelessWidget {
 
   /// Renders an avatar's art with the correct renderer for its [Avatar.kind].
   ///
-  /// CENTRE_CLASS avatars (with appearance) render the parameterised uniform
-  /// Mochi via [ClassUniformAvatar]; PERSONAL avatars render collectible
-  /// character art with their centre cosmetic slots resolved to overlay assets
-  /// (every slot is null until layered art is commissioned, so personal
-  /// avatars render identically to the plain base-image constructor).
+  /// CENTRE_CLASS avatars with a centre-designed [Avatar.mochiConfig] render
+  /// the custom class Mochi (body colour + accessory + aura) via [MochiAvatar];
+  /// CENTRE_CLASS avatars without a config fall back to the parameterised
+  /// uniform Mochi via [ClassUniformAvatar]; PERSONAL avatars render
+  /// collectible character art with their centre cosmetic slots resolved to
+  /// overlay assets (every slot is null until layered art is commissioned, so
+  /// personal avatars render identically to the plain base-image constructor).
   static Widget forAvatar(Avatar avatar, double size, {Key? key}) {
+    final mochiConfig = avatar.mochiConfig;
+    if (avatar.kind == AvatarKind.centreClass && mochiConfig != null) {
+      return MochiAvatar(key: key, config: mochiConfig, size: size);
+    }
     if (avatar.isCentreClass) {
       return ClassUniformAvatar(
         key: key,
