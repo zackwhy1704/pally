@@ -82,7 +82,10 @@ class CreateTutorScreen extends ConsumerWidget {
                   ? () async {
                       final id = await vm.createAvatar();
                       if (id != null && context.mounted) {
-                        const HomeRoute().go(context);
+                        // Notes are the hero: drop the new Mochi straight into
+                        // "teach me your notes" rather than an empty home grid.
+                        // UploadScreen's own back + post-success both route Home.
+                        UploadRoute(avatarId: id).go(context);
                         // Show "How Pally is different" once after first tutor creation.
                         await HowPallyIsDifferent.maybeShow(context);
                       }
