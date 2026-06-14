@@ -33,6 +33,7 @@ enum FamilyErrorKind {
   expired, // 410 — code expired
   alreadyLinked, // 409 — already linked
   forbidden, // 403/400 — guards
+  upgradeRequired, // 402 — child cap reached; the global interceptor opens the paywall
   unknown,
 }
 
@@ -158,6 +159,10 @@ class FamilyService {
           'That child is already linked to a parent.'),
       403 => FamilyError(FamilyErrorKind.forbidden, msg),
       400 => FamilyError(FamilyErrorKind.forbidden, msg),
+      // Child cap reached — the global Dio interceptor already routes to the
+      // paywall on 402 UPGRADE_REQUIRED; the screen suppresses its own toast.
+      402 => const FamilyError(FamilyErrorKind.upgradeRequired,
+          'A Family plan is needed to link more children.'),
       _ => FamilyError(FamilyErrorKind.unknown, msg),
     };
   }

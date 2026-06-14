@@ -50,7 +50,11 @@ class _FamilyClaimScreenState extends ConsumerState<FamilyClaimScreen> {
       PallyToast.success(context, 'Linked! Parent Mode is now enabled.');
       context.go('/family');
     } on FamilyError catch (e) {
-      if (mounted) PallyToast.error(context, e.message);
+      // Child cap reached: the global Dio interceptor already routes to the
+      // paywall on 402 UPGRADE_REQUIRED — don't stack a redundant error toast.
+      if (mounted && e.kind != FamilyErrorKind.upgradeRequired) {
+        PallyToast.error(context, e.message);
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }
