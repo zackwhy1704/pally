@@ -25,6 +25,8 @@ import 'package:pally/features/assignments/presentation/assignment_detail_view_m
 import 'package:pally/features/groups/presentation/challenge_card.dart';
 import 'package:pally/features/groups/presentation/challenge_view_model.dart';
 import 'package:pally/core/ui/painters/class_uniform_mochi_painter.dart';
+import 'package:pally/core/ui/mochi_avatar.dart';
+import 'package:pally/shared/models/mochi_config.dart';
 import 'package:pally/features/wiki_viewer/data/review_service.dart';
 import 'package:pally/features/wiki_viewer/presentation/review_view_model.dart';
 import 'package:pally/features/wiki_viewer/presentation/review_status_widgets.dart';
@@ -353,6 +355,12 @@ void main() {
               subjectGlyph: 'math',
               initials: 'P5',
             ),
+            size: 120,
+          ),
+        ),
+    'MochiAvatar': () => const Center(
+          child: MochiAvatar(
+            config: MochiConfig(body: 4, accessory: 'crown', aura: 'sparkle'),
             size: 120,
           ),
         ),
