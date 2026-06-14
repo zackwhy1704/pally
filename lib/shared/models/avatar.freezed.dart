@@ -312,6 +312,12 @@ mixin _$Avatar {
       toJson: _mochiConfigToJson)
   MochiConfig? get mochiConfig => throw _privateConstructorUsedError;
 
+  /// The class this avatar belongs to. Present only for a student's class-bound
+  /// CENTRE_CLASS avatar; null for PERSONAL and the hidden corpus. Used by the
+  /// leave-class action.
+  @JsonKey(name: 'classId')
+  String? get classId => throw _privateConstructorUsedError;
+
   /// Serializes this Avatar to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -365,7 +371,8 @@ abstract class $AvatarCopyWith<$Res> {
           name: 'mochiConfig',
           fromJson: _mochiConfigFromJson,
           toJson: _mochiConfigToJson)
-      MochiConfig? mochiConfig});
+      MochiConfig? mochiConfig,
+      @JsonKey(name: 'classId') String? classId});
 
   $ClassAppearanceCopyWith<$Res>? get appearance;
 }
@@ -411,6 +418,7 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
     Object? kind = null,
     Object? appearance = freezed,
     Object? mochiConfig = freezed,
+    Object? classId = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -517,6 +525,10 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
           ? _value.mochiConfig
           : mochiConfig // ignore: cast_nullable_to_non_nullable
               as MochiConfig?,
+      classId: freezed == classId
+          ? _value.classId
+          : classId // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 
@@ -581,7 +593,8 @@ abstract class _$$AvatarImplCopyWith<$Res> implements $AvatarCopyWith<$Res> {
           name: 'mochiConfig',
           fromJson: _mochiConfigFromJson,
           toJson: _mochiConfigToJson)
-      MochiConfig? mochiConfig});
+      MochiConfig? mochiConfig,
+      @JsonKey(name: 'classId') String? classId});
 
   @override
   $ClassAppearanceCopyWith<$Res>? get appearance;
@@ -626,6 +639,7 @@ class __$$AvatarImplCopyWithImpl<$Res>
     Object? kind = null,
     Object? appearance = freezed,
     Object? mochiConfig = freezed,
+    Object? classId = freezed,
   }) {
     return _then(_$AvatarImpl(
       id: null == id
@@ -732,6 +746,10 @@ class __$$AvatarImplCopyWithImpl<$Res>
           ? _value.mochiConfig
           : mochiConfig // ignore: cast_nullable_to_non_nullable
               as MochiConfig?,
+      classId: freezed == classId
+          ? _value.classId
+          : classId // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -779,7 +797,8 @@ class _$AvatarImpl implements _Avatar {
           name: 'mochiConfig',
           fromJson: _mochiConfigFromJson,
           toJson: _mochiConfigToJson)
-      this.mochiConfig});
+      this.mochiConfig,
+      @JsonKey(name: 'classId') this.classId});
 
   factory _$AvatarImpl.fromJson(Map<String, dynamic> json) =>
       _$$AvatarImplFromJson(json);
@@ -884,9 +903,16 @@ class _$AvatarImpl implements _Avatar {
       toJson: _mochiConfigToJson)
   final MochiConfig? mochiConfig;
 
+  /// The class this avatar belongs to. Present only for a student's class-bound
+  /// CENTRE_CLASS avatar; null for PERSONAL and the hidden corpus. Used by the
+  /// leave-class action.
+  @override
+  @JsonKey(name: 'classId')
+  final String? classId;
+
   @override
   String toString() {
-    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate, brainState: $brainState, isActive: $isActive, teacherPreferences: $teacherPreferences, centreManaged: $centreManaged, centreId: $centreId, centreBrandName: $centreBrandName, centreAccentColor: $centreAccentColor, avatarLocked: $avatarLocked, cosmeticEyewear: $cosmeticEyewear, cosmeticClothes: $cosmeticClothes, cosmeticShoes: $cosmeticShoes, kind: $kind, appearance: $appearance, mochiConfig: $mochiConfig)';
+    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate, brainState: $brainState, isActive: $isActive, teacherPreferences: $teacherPreferences, centreManaged: $centreManaged, centreId: $centreId, centreBrandName: $centreBrandName, centreAccentColor: $centreAccentColor, avatarLocked: $avatarLocked, cosmeticEyewear: $cosmeticEyewear, cosmeticClothes: $cosmeticClothes, cosmeticShoes: $cosmeticShoes, kind: $kind, appearance: $appearance, mochiConfig: $mochiConfig, classId: $classId)';
   }
 
   @override
@@ -941,7 +967,8 @@ class _$AvatarImpl implements _Avatar {
             (identical(other.appearance, appearance) ||
                 other.appearance == appearance) &&
             (identical(other.mochiConfig, mochiConfig) ||
-                other.mochiConfig == mochiConfig));
+                other.mochiConfig == mochiConfig) &&
+            (identical(other.classId, classId) || other.classId == classId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -973,7 +1000,8 @@ class _$AvatarImpl implements _Avatar {
         cosmeticShoes,
         kind,
         appearance,
-        mochiConfig
+        mochiConfig,
+        classId
       ]);
 
   /// Create a copy of Avatar
@@ -1033,7 +1061,8 @@ abstract class _Avatar implements Avatar {
           name: 'mochiConfig',
           fromJson: _mochiConfigFromJson,
           toJson: _mochiConfigToJson)
-      final MochiConfig? mochiConfig}) = _$AvatarImpl;
+      final MochiConfig? mochiConfig,
+      @JsonKey(name: 'classId') final String? classId}) = _$AvatarImpl;
 
   factory _Avatar.fromJson(Map<String, dynamic> json) = _$AvatarImpl.fromJson;
 
@@ -1131,6 +1160,13 @@ abstract class _Avatar implements Avatar {
       fromJson: _mochiConfigFromJson,
       toJson: _mochiConfigToJson)
   MochiConfig? get mochiConfig;
+
+  /// The class this avatar belongs to. Present only for a student's class-bound
+  /// CENTRE_CLASS avatar; null for PERSONAL and the hidden corpus. Used by the
+  /// leave-class action.
+  @override
+  @JsonKey(name: 'classId')
+  String? get classId;
 
   /// Create a copy of Avatar
   /// with the given fields replaced by the non-null parameter values.

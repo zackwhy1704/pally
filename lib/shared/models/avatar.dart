@@ -215,6 +215,11 @@ class Avatar with _$Avatar {
     /// Present only for CENTRE_CLASS avatars; null for PERSONAL avatars.
     @JsonKey(name: 'mochiConfig', fromJson: _mochiConfigFromJson, toJson: _mochiConfigToJson)
     MochiConfig? mochiConfig,
+    /// The class this avatar belongs to. Present only for a student's class-bound
+    /// CENTRE_CLASS avatar; null for PERSONAL and the hidden corpus. Used by the
+    /// leave-class action.
+    @JsonKey(name: 'classId')
+    String? classId,
   }) = _Avatar;
 
   factory Avatar.fromJson(Map<String, dynamic> json) => _$AvatarFromJson(json);

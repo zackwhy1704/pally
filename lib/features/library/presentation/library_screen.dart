@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pally/app/api_client.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -130,10 +132,42 @@ class LibraryScreen extends ConsumerWidget {
         return const _DemoCentreLibraryRow();
       case _LibraryItemType.avatar:
         final avatar = item.avatar!;
-        // Centre-class avatars are provisioned by a centre and cannot be
-        // deleted by the child — render the row without swipe-to-delete.
+        // Centre-class avatars are provisioned by a centre and can't be DELETED
+        // by the child — but the child may LEAVE the class (swipe → confirm).
+        // Class materials stay read-only; only their enrolment + class avatar go.
         if (avatar.isCentreClass) {
-          return _AvatarRow(avatar: avatar);
+          final classId = avatar.classId;
+          if (classId == null) {
+            return _AvatarRow(avatar: avatar); // corpus/edge case — no action
+          }
+          return Dismissible(
+            key: ValueKey('leave-${avatar.id}'),
+            direction: DismissDirection.endToStart,
+            background: Container(
+              margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 24),
+              decoration: BoxDecoration(
+                color: AppColors.amber,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.logout_rounded, color: Colors.white, size: 24),
+                  SizedBox(height: 2),
+                  Text('Leave',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600)),
+                ],
+              ),
+            ),
+            confirmDismiss: (_) =>
+                _confirmAndLeaveClass(context, ref, avatar.name, classId),
+            child: _AvatarRow(avatar: avatar),
+          );
         }
         return Dismissible(
           key: ValueKey(avatar.id),
@@ -186,6 +220,53 @@ class LibraryScreen extends ConsumerWidget {
           },
           child: _AvatarRow(avatar: avatar),
         );
+    }
+  }
+
+  /// Confirms then leaves a class via POST /centre/leave-class. Returns true if
+  /// the row should dismiss. Only the enrolment + this class avatar are removed;
+  /// personal Mochis and class materials are untouched.
+  Future<bool> _confirmAndLeaveClass(
+      BuildContext context, WidgetRef ref, String name, String classId) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Leave this class?'),
+        content: Text(
+          "You'll lose access to $name's materials and class Mochi. "
+          'Your personal Mochis stay. You can rejoin with the class code.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.coral),
+            child: const Text('Leave'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return false;
+
+    try {
+      await ref.read(dioProvider).post<dynamic>(
+        '/api/v1/centre/leave-class',
+        data: {'classId': classId},
+      );
+      if (!context.mounted) return true;
+      HapticFeedback.heavyImpact();
+      PallyToast.success(context, 'Left $name');
+      ref.invalidate(libraryViewModelProvider);
+      ref.invalidate(homeViewModelProvider);
+      return true;
+    } on DioException catch (e) {
+      if (context.mounted) {
+        PallyToast.error(context, PallyError.from(e).userMessage);
+      }
+      return false;
     }
   }
 }

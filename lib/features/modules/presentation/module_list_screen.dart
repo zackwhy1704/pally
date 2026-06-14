@@ -47,14 +47,23 @@ class ModuleListScreen extends ConsumerWidget {
         data: (modules) => modules.isEmpty
             ? _EmptyBody(
                 onGenerate: () async {
-                  final ok = await ref
+                  final result = await ref
                       .read(moduleListViewModelProvider(avatarId).notifier)
                       .generateModules();
-                  if (context.mounted && !ok) {
-                    PallyToast.error(context,
-                        'Could not generate modules. Upload notes first.');
+                  if (!context.mounted) return;
+                  switch (result) {
+                    case ModuleGenResult.success:
+                      break; // list refreshes via the provider
+                    case ModuleGenResult.noNotes:
+                      PallyToast.success(context,
+                          'Add your notes and I\'ll build your first lesson.');
+                      UploadRoute(avatarId: avatarId).push(context);
+                    case ModuleGenResult.error:
+                      PallyToast.error(context,
+                          'Could not build lessons just now — try again.');
                   }
                 },
+                onUpload: () => UploadRoute(avatarId: avatarId).push(context),
               )
             : _ModuleList(avatarId: avatarId, modules: modules),
       ),
@@ -98,8 +107,9 @@ class _ErrorBody extends StatelessWidget {
 }
 
 class _EmptyBody extends StatelessWidget {
-  const _EmptyBody({required this.onGenerate});
+  const _EmptyBody({required this.onGenerate, required this.onUpload});
   final VoidCallback onGenerate;
+  final VoidCallback onUpload;
 
   @override
   Widget build(BuildContext context) {
@@ -112,21 +122,30 @@ class _EmptyBody extends StatelessWidget {
             const Icon(Icons.auto_stories_rounded,
                 size: 56, color: AppColors.purpleC),
             const SizedBox(height: AppSpacing.md),
-            Text('No modules yet',
+            Text('No lessons yet',
                 style: AppTextStyles.title, textAlign: TextAlign.center),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'Upload notes to create your first learning module.',
+              'Add your notes and I\'ll build your first lesson from them.',
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.lg),
+            // Primary path is upload — the value is the notes. Generation only
+            // makes sense once notes exist (and is offered as the secondary tap).
             FilledButton.icon(
-              onPressed: onGenerate,
-              icon: const Icon(Icons.auto_awesome_rounded, size: 18),
-              label: const Text('Generate modules'),
+              onPressed: onUpload,
+              icon: const Icon(Icons.upload_file_rounded, size: 18),
+              label: const Text('Upload notes'),
               style:
                   FilledButton.styleFrom(backgroundColor: AppColors.purple),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            TextButton.icon(
+              onPressed: onGenerate,
+              icon: const Icon(Icons.auto_awesome_rounded, size: 18),
+              label: const Text('Already added notes? Build my lessons'),
+              style: TextButton.styleFrom(foregroundColor: AppColors.purple),
             ),
           ],
         ),

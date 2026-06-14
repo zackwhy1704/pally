@@ -59,6 +59,7 @@ _$AvatarImpl _$$AvatarImplFromJson(Map<String, dynamic> json) => _$AvatarImpl(
           : _kindFromJson(json['kind']),
       appearance: _appearanceFromJson(json['appearance']),
       mochiConfig: _mochiConfigFromJson(json['mochiConfig']),
+      classId: json['classId'] as String?,
     );
 
 Map<String, dynamic> _$$AvatarImplToJson(_$AvatarImpl instance) =>
@@ -89,6 +90,7 @@ Map<String, dynamic> _$$AvatarImplToJson(_$AvatarImpl instance) =>
       'kind': _kindToJson(instance.kind),
       'appearance': _appearanceToJson(instance.appearance),
       'mochiConfig': _mochiConfigToJson(instance.mochiConfig),
+      'classId': instance.classId,
     };
 
 _$CreateAvatarRequestImpl _$$CreateAvatarRequestImplFromJson(

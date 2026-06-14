@@ -6,6 +6,10 @@ import 'package:pally/shared/models/learning_module.dart';
 
 part 'module_list_view_model.g.dart';
 
+/// Outcome of a module-generation attempt, so the UI can route deterministically
+/// instead of dead-ending on a generic snackbar.
+enum ModuleGenResult { success, noNotes, error }
+
 @riverpod
 class ModuleListViewModel extends _$ModuleListViewModel {
   late String _avatarId;
@@ -62,7 +66,7 @@ class ModuleListViewModel extends _$ModuleListViewModel {
     state = await AsyncValue.guard(_fetchModules);
   }
 
-  Future<bool> generateModules() async {
+  Future<ModuleGenResult> generateModules() async {
     appLog.i('[Modules] Requesting module generation for $_avatarId');
     try {
       final dio = ref.read(dioProvider);
@@ -71,11 +75,20 @@ class ModuleListViewModel extends _$ModuleListViewModel {
       );
       appLog.i('[Modules] Generation triggered, refreshing list');
       await refresh();
-      return true;
+      return ModuleGenResult.success;
     } on DioException catch (e, st) {
+      // Backend signals "no notes to build from" with a structured 409 (NO_NOTES)
+      // so we can route the user to upload instead of stranding them.
+      final body = e.response?.data;
+      final isNoNotes = e.response?.statusCode == 409 ||
+          (body is Map && body['error']?.toString().contains('NO_NOTES') == true);
+      if (isNoNotes) {
+        appLog.i('[Modules] No notes yet — routing user to upload');
+        return ModuleGenResult.noNotes;
+      }
       appLog.e('[Modules] Module generation failed',
           error: e, stackTrace: st);
-      return false;
+      return ModuleGenResult.error;
     }
   }
 }

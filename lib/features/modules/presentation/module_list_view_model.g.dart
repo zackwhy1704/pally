@@ -7,7 +7,7 @@ part of 'module_list_view_model.dart';
 // **************************************************************************
 
 String _$moduleListViewModelHash() =>
-    r'689d47832e9a5fca123b1c6bbbfe7e4b6d070025';
+    r'6a2452822163368d1042b0408d851208dc97891b';
 
 /// Copied from Dart SDK
 class _SystemHash {

@@ -46,8 +46,11 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      expect(find.text('No modules yet'), findsOneWidget);
-      expect(find.text('Generate modules'), findsOneWidget);
+      // Notes-first empty state: the primary action is upload (never a dead
+      // "generate" that fails silently when there are no notes).
+      expect(find.text('No lessons yet'), findsOneWidget);
+      expect(find.text('Upload notes'), findsOneWidget);
+      expect(find.text('Already added notes? Build my lessons'), findsOneWidget);
     });
 
     testWidgets('shows module cards when modules exist', (tester) async {
