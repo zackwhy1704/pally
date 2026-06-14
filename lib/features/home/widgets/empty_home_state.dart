@@ -134,6 +134,14 @@ class _EmptyHomeStateState extends State<EmptyHomeState>
                     Text('Pick a buddy, teach it your notes, ask it anything!',
                         style: AppTextStyles.label.copyWith(color: AppColors.text3),
                         textAlign: TextAlign.center),
+                    const SizedBox(height: AppSpacing.md),
+                    TextButton(
+                      onPressed: () => const CentreJoinRoute().push(context),
+                      child: Text('🏫  Got a class code? Join your class',
+                          style: AppTextStyles.body.copyWith(
+                              color: AppColors.purple,
+                              fontWeight: FontWeight.w700)),
+                    ),
                   ],
                 ),
               ),

@@ -9,10 +9,12 @@ import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_toast.dart';
+import 'package:pally/features/home/presentation/home_view_model.dart';
+import 'package:pally/features/library/presentation/library_view_model.dart';
 
-/// Student-side enrollment-code entry — mirrors the P4 family claim
-/// layout so the UX is consistent across "claim a person" vs
-/// "join a class" flows.
+/// Student-side class-join entry. The single code printed on a class card
+/// (e.g. "PFDM4CYB") joins the class AND its centre, then provisions the
+/// student's class avatar (which carries the class's custom Mochi look).
 class CentreJoinScreen extends ConsumerStatefulWidget {
   const CentreJoinScreen({super.key});
 
@@ -21,35 +23,37 @@ class CentreJoinScreen extends ConsumerStatefulWidget {
 }
 
 class _CentreJoinScreenState extends ConsumerState<CentreJoinScreen> {
-  final _controllers = List.generate(6, (_) => TextEditingController());
-  final _focusNodes = List.generate(6, (_) => FocusNode());
+  final _controller = TextEditingController();
   bool _loading = false;
 
-  String get _code => _controllers.map((c) => c.text).join().toUpperCase();
+  String get _code => _controller.text.trim().toUpperCase();
 
   Future<void> _submit() async {
-    if (_code.length != 6) {
-      PallyToast.error(context, 'Enter all 6 characters');
+    if (_code.length < 6) {
+      PallyToast.error(context, 'Enter the full class code');
       return;
     }
     setState(() => _loading = true);
     try {
       final dio = ref.read(dioProvider);
       final res = await dio.post<dynamic>(
-        '/api/v1/centre/redeem-enroll-code',
+        '/api/v1/centre/redeem-class-code',
         data: {'code': _code},
       );
       final data = res.data;
       final body = (data is Map && data['data'] is Map)
           ? Map<String, dynamic>.from(data['data'] as Map)
           : Map<String, dynamic>.from(data as Map);
-      final cohort = body['cohortLabel'] as String? ?? 'your class';
+      final className = body['className'] as String? ?? 'your class';
       if (!mounted) return;
-      PallyToast.success(context, 'Joined $cohort 🎉');
+      // Refresh the avatar surfaces so the new class Mochi appears right away.
+      ref.invalidate(homeViewModelProvider);
+      ref.invalidate(libraryViewModelProvider);
+      PallyToast.success(context, 'Joined $className 🎉');
       context.pop();
     } on DioException catch (e) {
       final raw = e.response?.data;
-      String msg = 'Could not join — try again';
+      String msg = 'Could not join — check the code and try again';
       if (raw is Map && raw['error'] != null) {
         msg = raw['error'].toString();
       }
@@ -61,12 +65,7 @@ class _CentreJoinScreenState extends ConsumerState<CentreJoinScreen> {
 
   @override
   void dispose() {
-    for (final c in _controllers) {
-      c.dispose();
-    }
-    for (final f in _focusNodes) {
-      f.dispose();
-    }
+    _controller.dispose();
     super.dispose();
   }
 
@@ -81,48 +80,81 @@ class _CentreJoinScreenState extends ConsumerState<CentreJoinScreen> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: AppSpacing.md),
+              const Center(
+                child: Text('🏫', style: TextStyle(fontSize: 56)),
+              ),
+              const SizedBox(height: AppSpacing.md),
               Text(
-                'Ask your teacher or tuition centre for the 6-character class '
-                'code, then enter it below.',
+                'Enter the class code',
+                style: AppTextStyles.title,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                'Ask your teacher or tuition centre for the class code on their '
+                'dashboard, then type it in below.',
                 style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppSpacing.xl),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(6, (i) {
-                  return Padding(
-                    padding: EdgeInsets.only(right: i == 5 ? 0 : 8),
-                    child: _CodeBox(
-                      controller: _controllers[i],
-                      focusNode: _focusNodes[i],
-                      onFilled: () {
-                        if (i < 5) {
-                          _focusNodes[i + 1].requestFocus();
-                        } else {
-                          _focusNodes[i].unfocus();
-                        }
-                      },
-                      onCleared: () {
-                        if (i > 0) _focusNodes[i - 1].requestFocus();
-                      },
-                    ),
-                  );
-                }),
+              TextField(
+                controller: _controller,
+                textAlign: TextAlign.center,
+                textCapitalization: TextCapitalization.characters,
+                autofocus: true,
+                keyboardType: TextInputType.visiblePassword,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(10),
+                  FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9]')),
+                  TextInputFormatter.withFunction((oldV, newV) =>
+                      newV.copyWith(text: newV.text.toUpperCase())),
+                ],
+                style: const TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 6,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'PFDM4CYB',
+                  hintStyle: const TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 6,
+                    color: AppColors.text3,
+                  ),
+                  filled: true,
+                  fillColor: AppColors.surface,
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: const BorderSide(color: AppColors.outline),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: const BorderSide(color: AppColors.outline),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide:
+                        const BorderSide(color: AppColors.purple, width: 2),
+                  ),
+                ),
+                onSubmitted: (_) => _submit(),
               ),
-              const Spacer(),
+              const SizedBox(height: AppSpacing.xl),
               SizedBox(
-                width: double.infinity,
+                height: 56,
                 child: FilledButton(
                   onPressed: _loading ? null : _submit,
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.purple,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16)),
                   ),
@@ -138,68 +170,6 @@ class _CentreJoinScreenState extends ConsumerState<CentreJoinScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _CodeBox extends StatelessWidget {
-  const _CodeBox({
-    required this.controller,
-    required this.focusNode,
-    required this.onFilled,
-    required this.onCleared,
-  });
-
-  final TextEditingController controller;
-  final FocusNode focusNode;
-  final VoidCallback onFilled;
-  final VoidCallback onCleared;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 44,
-      height: 56,
-      child: TextField(
-        controller: controller,
-        focusNode: focusNode,
-        textAlign: TextAlign.center,
-        textCapitalization: TextCapitalization.characters,
-        keyboardType: TextInputType.visiblePassword,
-        inputFormatters: [
-          LengthLimitingTextInputFormatter(1),
-          FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9]')),
-        ],
-        style: const TextStyle(
-            fontSize: 22, fontWeight: FontWeight.w800, letterSpacing: 1),
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: AppColors.surface,
-          contentPadding: EdgeInsets.zero,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.outline),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.outline),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.purple, width: 2),
-          ),
-        ),
-        onChanged: (v) {
-          if (v.isNotEmpty) {
-            controller.text = v.toUpperCase();
-            controller.selection = TextSelection.fromPosition(
-                const TextPosition(offset: 1));
-            onFilled();
-          } else {
-            onCleared();
-          }
-        },
       ),
     );
   }
