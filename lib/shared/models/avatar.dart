@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:pally/shared/models/mochi_character.dart';
+import 'package:pally/shared/models/mochi_config.dart';
 
 part 'avatar.freezed.dart';
 part 'avatar.g.dart';
@@ -99,6 +100,16 @@ ClassAppearance? _appearanceFromJson(Object? v) {
 }
 
 Map<String, dynamic>? _appearanceToJson(ClassAppearance? a) => a?.toJson();
+
+/// Parse the centre-designed Mochi look. Present only on CENTRE_CLASS
+/// avatars; null/absent for PERSONAL avatars. Null-tolerant per PART 16.
+MochiConfig? _mochiConfigFromJson(Object? v) {
+  if (v is Map<String, dynamic>) return MochiConfig.fromJson(v);
+  if (v is Map) return MochiConfig.fromJson(Map<String, dynamic>.from(v));
+  return null;
+}
+
+Map<String, dynamic>? _mochiConfigToJson(MochiConfig? c) => c?.toJson();
 
 // ── Models ───────────────────────────────────────────────────────────────────
 
@@ -200,6 +211,10 @@ class Avatar with _$Avatar {
     /// Uniform render params; present only for CENTRE_CLASS avatars.
     @JsonKey(fromJson: _appearanceFromJson, toJson: _appearanceToJson)
     ClassAppearance? appearance,
+    /// Centre-designed class Mochi look (body colour + accessory + aura).
+    /// Present only for CENTRE_CLASS avatars; null for PERSONAL avatars.
+    @JsonKey(name: 'mochiConfig', fromJson: _mochiConfigFromJson, toJson: _mochiConfigToJson)
+    MochiConfig? mochiConfig,
   }) = _Avatar;
 
   factory Avatar.fromJson(Map<String, dynamic> json) => _$AvatarFromJson(json);

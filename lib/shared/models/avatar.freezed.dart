@@ -304,6 +304,14 @@ mixin _$Avatar {
   @JsonKey(fromJson: _appearanceFromJson, toJson: _appearanceToJson)
   ClassAppearance? get appearance => throw _privateConstructorUsedError;
 
+  /// Centre-designed class Mochi look (body colour + accessory + aura).
+  /// Present only for CENTRE_CLASS avatars; null for PERSONAL avatars.
+  @JsonKey(
+      name: 'mochiConfig',
+      fromJson: _mochiConfigFromJson,
+      toJson: _mochiConfigToJson)
+  MochiConfig? get mochiConfig => throw _privateConstructorUsedError;
+
   /// Serializes this Avatar to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -352,7 +360,12 @@ abstract class $AvatarCopyWith<$Res> {
       String? cosmeticShoes,
       @JsonKey(fromJson: _kindFromJson, toJson: _kindToJson) AvatarKind kind,
       @JsonKey(fromJson: _appearanceFromJson, toJson: _appearanceToJson)
-      ClassAppearance? appearance});
+      ClassAppearance? appearance,
+      @JsonKey(
+          name: 'mochiConfig',
+          fromJson: _mochiConfigFromJson,
+          toJson: _mochiConfigToJson)
+      MochiConfig? mochiConfig});
 
   $ClassAppearanceCopyWith<$Res>? get appearance;
 }
@@ -397,6 +410,7 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
     Object? cosmeticShoes = freezed,
     Object? kind = null,
     Object? appearance = freezed,
+    Object? mochiConfig = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -499,6 +513,10 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
           ? _value.appearance
           : appearance // ignore: cast_nullable_to_non_nullable
               as ClassAppearance?,
+      mochiConfig: freezed == mochiConfig
+          ? _value.mochiConfig
+          : mochiConfig // ignore: cast_nullable_to_non_nullable
+              as MochiConfig?,
     ) as $Val);
   }
 
@@ -558,7 +576,12 @@ abstract class _$$AvatarImplCopyWith<$Res> implements $AvatarCopyWith<$Res> {
       String? cosmeticShoes,
       @JsonKey(fromJson: _kindFromJson, toJson: _kindToJson) AvatarKind kind,
       @JsonKey(fromJson: _appearanceFromJson, toJson: _appearanceToJson)
-      ClassAppearance? appearance});
+      ClassAppearance? appearance,
+      @JsonKey(
+          name: 'mochiConfig',
+          fromJson: _mochiConfigFromJson,
+          toJson: _mochiConfigToJson)
+      MochiConfig? mochiConfig});
 
   @override
   $ClassAppearanceCopyWith<$Res>? get appearance;
@@ -602,6 +625,7 @@ class __$$AvatarImplCopyWithImpl<$Res>
     Object? cosmeticShoes = freezed,
     Object? kind = null,
     Object? appearance = freezed,
+    Object? mochiConfig = freezed,
   }) {
     return _then(_$AvatarImpl(
       id: null == id
@@ -704,6 +728,10 @@ class __$$AvatarImplCopyWithImpl<$Res>
           ? _value.appearance
           : appearance // ignore: cast_nullable_to_non_nullable
               as ClassAppearance?,
+      mochiConfig: freezed == mochiConfig
+          ? _value.mochiConfig
+          : mochiConfig // ignore: cast_nullable_to_non_nullable
+              as MochiConfig?,
     ));
   }
 }
@@ -746,7 +774,12 @@ class _$AvatarImpl implements _Avatar {
       @JsonKey(fromJson: _kindFromJson, toJson: _kindToJson)
       this.kind = AvatarKind.personal,
       @JsonKey(fromJson: _appearanceFromJson, toJson: _appearanceToJson)
-      this.appearance});
+      this.appearance,
+      @JsonKey(
+          name: 'mochiConfig',
+          fromJson: _mochiConfigFromJson,
+          toJson: _mochiConfigToJson)
+      this.mochiConfig});
 
   factory _$AvatarImpl.fromJson(Map<String, dynamic> json) =>
       _$$AvatarImplFromJson(json);
@@ -842,9 +875,18 @@ class _$AvatarImpl implements _Avatar {
   @JsonKey(fromJson: _appearanceFromJson, toJson: _appearanceToJson)
   final ClassAppearance? appearance;
 
+  /// Centre-designed class Mochi look (body colour + accessory + aura).
+  /// Present only for CENTRE_CLASS avatars; null for PERSONAL avatars.
+  @override
+  @JsonKey(
+      name: 'mochiConfig',
+      fromJson: _mochiConfigFromJson,
+      toJson: _mochiConfigToJson)
+  final MochiConfig? mochiConfig;
+
   @override
   String toString() {
-    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate, brainState: $brainState, isActive: $isActive, teacherPreferences: $teacherPreferences, centreManaged: $centreManaged, centreId: $centreId, centreBrandName: $centreBrandName, centreAccentColor: $centreAccentColor, avatarLocked: $avatarLocked, cosmeticEyewear: $cosmeticEyewear, cosmeticClothes: $cosmeticClothes, cosmeticShoes: $cosmeticShoes, kind: $kind, appearance: $appearance)';
+    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate, brainState: $brainState, isActive: $isActive, teacherPreferences: $teacherPreferences, centreManaged: $centreManaged, centreId: $centreId, centreBrandName: $centreBrandName, centreAccentColor: $centreAccentColor, avatarLocked: $avatarLocked, cosmeticEyewear: $cosmeticEyewear, cosmeticClothes: $cosmeticClothes, cosmeticShoes: $cosmeticShoes, kind: $kind, appearance: $appearance, mochiConfig: $mochiConfig)';
   }
 
   @override
@@ -897,7 +939,9 @@ class _$AvatarImpl implements _Avatar {
                 other.cosmeticShoes == cosmeticShoes) &&
             (identical(other.kind, kind) || other.kind == kind) &&
             (identical(other.appearance, appearance) ||
-                other.appearance == appearance));
+                other.appearance == appearance) &&
+            (identical(other.mochiConfig, mochiConfig) ||
+                other.mochiConfig == mochiConfig));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -928,7 +972,8 @@ class _$AvatarImpl implements _Avatar {
         cosmeticClothes,
         cosmeticShoes,
         kind,
-        appearance
+        appearance,
+        mochiConfig
       ]);
 
   /// Create a copy of Avatar
@@ -983,7 +1028,12 @@ abstract class _Avatar implements Avatar {
       @JsonKey(fromJson: _kindFromJson, toJson: _kindToJson)
       final AvatarKind kind,
       @JsonKey(fromJson: _appearanceFromJson, toJson: _appearanceToJson)
-      final ClassAppearance? appearance}) = _$AvatarImpl;
+      final ClassAppearance? appearance,
+      @JsonKey(
+          name: 'mochiConfig',
+          fromJson: _mochiConfigFromJson,
+          toJson: _mochiConfigToJson)
+      final MochiConfig? mochiConfig}) = _$AvatarImpl;
 
   factory _Avatar.fromJson(Map<String, dynamic> json) = _$AvatarImpl.fromJson;
 
@@ -1072,6 +1122,15 @@ abstract class _Avatar implements Avatar {
   @override
   @JsonKey(fromJson: _appearanceFromJson, toJson: _appearanceToJson)
   ClassAppearance? get appearance;
+
+  /// Centre-designed class Mochi look (body colour + accessory + aura).
+  /// Present only for CENTRE_CLASS avatars; null for PERSONAL avatars.
+  @override
+  @JsonKey(
+      name: 'mochiConfig',
+      fromJson: _mochiConfigFromJson,
+      toJson: _mochiConfigToJson)
+  MochiConfig? get mochiConfig;
 
   /// Create a copy of Avatar
   /// with the given fields replaced by the non-null parameter values.
