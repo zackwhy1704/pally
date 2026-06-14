@@ -362,30 +362,51 @@ class _BrainHeader extends ConsumerWidget {
               ],
             ),
           ),
-          // Always-visible "Add notes" — the knowledge base is a living, growable
-          // list (Claude Projects pattern). Teaching the Mochi is the primary
-          // action, present whether the brain is empty or full.
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-                AppSpacing.md, 0, AppSpacing.md, AppSpacing.md),
-            child: SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                onPressed: () => UploadRoute(avatarId: avatarId).push(context),
-                icon: const Icon(Icons.add_rounded, size: 18),
-                label: Text(
-                  pageCount == 0
-                      ? 'Add notes to teach ${avatar?.name ?? 'your Mochi'}'
-                      : 'Add more notes',
-                ),
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.purple,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
+          // "Add notes" — only for the student's OWN (personal) Mochi. For a
+          // centre class the content is owned by the centre (uploads are blocked
+          // server-side), so we don't offer it — that avoids the "tap → kicked
+          // out" dead-end. Centre classes show a "centre adds materials" note.
+          if (avatar?.kind != AvatarKind.centreClass)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.md, 0, AppSpacing.md, AppSpacing.md),
+              child: SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: () => UploadRoute(avatarId: avatarId).push(context),
+                  icon: const Icon(Icons.add_rounded, size: 18),
+                  label: Text(
+                    pageCount == 0
+                        ? 'Add notes to teach ${avatar?.name ?? 'your Mochi'}'
+                        : 'Add more notes',
+                  ),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.purple,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14)),
+                  ),
                 ),
               ),
+            )
+          else
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.md, 0, AppSpacing.md, AppSpacing.md),
+              child: Row(
+                children: [
+                  const Icon(Icons.school_rounded,
+                      size: 16, color: AppColors.text2),
+                  const SizedBox(width: AppSpacing.xs),
+                  Expanded(
+                    child: Text(
+                      'Your centre keeps this class\'s materials up to date.',
+                      style: AppTextStyles.bodySmall
+                          .copyWith(color: AppColors.text2),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );

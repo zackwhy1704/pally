@@ -42,9 +42,10 @@ void main() {
         overrides: [
           moduleListViewModelProvider('test-avatar')
               .overrideWith(() => _EmptyModuleListVM()),
-          // No notes → exactly one CTA: "Upload notes" (never "build lessons").
-          avatarHasNotesProvider('test-avatar')
-              .overrideWith((ref) async => false),
+          // Personal avatar, no notes → exactly one CTA: "Upload notes".
+          moduleAvatarInfoProvider('test-avatar').overrideWith(
+              (ref) async => const ModuleAvatarInfo(
+                  hasNotes: false, isCentreClass: false)),
         ],
       ));
       await tester.pumpAndSettle();
@@ -62,8 +63,9 @@ void main() {
         overrides: [
           moduleListViewModelProvider('test-avatar')
               .overrideWith(() => _EmptyModuleListVM()),
-          avatarHasNotesProvider('test-avatar')
-              .overrideWith((ref) async => true),
+          moduleAvatarInfoProvider('test-avatar').overrideWith(
+              (ref) async =>
+                  const ModuleAvatarInfo(hasNotes: true, isCentreClass: false)),
         ],
       ));
       await tester.pumpAndSettle();
@@ -71,6 +73,26 @@ void main() {
       // Notes exist but no modules → single CTA is "Build my first lesson".
       expect(find.text('Build my first lesson'), findsOneWidget);
       expect(find.text('Upload notes'), findsNothing);
+    });
+
+    testWidgets('centre class with no materials shows a wait state, no upload',
+        (tester) async {
+      await tester.pumpWidget(_wrap(
+        const ModuleListScreen(avatarId: 'test-avatar'),
+        overrides: [
+          moduleListViewModelProvider('test-avatar')
+              .overrideWith(() => _EmptyModuleListVM()),
+          moduleAvatarInfoProvider('test-avatar').overrideWith(
+              (ref) async =>
+                  const ModuleAvatarInfo(hasNotes: false, isCentreClass: true)),
+        ],
+      ));
+      await tester.pumpAndSettle();
+
+      // Students can't upload to a centre class → no upload CTA, no kick-out.
+      expect(find.text('No materials yet'), findsOneWidget);
+      expect(find.text('Upload notes'), findsNothing);
+      expect(find.text('Build my first lesson'), findsNothing);
     });
 
     testWidgets('shows module cards when modules exist', (tester) async {

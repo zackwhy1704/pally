@@ -46,10 +46,11 @@ class ModuleListScreen extends ConsumerWidget {
         ),
         data: (modules) => modules.isEmpty
             ? _EmptyBody(
-                // Exactly one CTA, chosen by whether notes actually exist — no
-                // contradictory "already added notes?" button on a no-notes
-                // screen, and no re-trigger of the silent no-notes path.
-                hasNotes: ref.watch(avatarHasNotesProvider(avatarId)),
+                // Exactly one CTA, chosen by whether notes exist AND whether
+                // this is a centre class (students can't upload to those — the
+                // centre owns the content, so we never offer upload / never
+                // kick them out to the upload screen).
+                info: ref.watch(moduleAvatarInfoProvider(avatarId)),
                 onUpload: () => UploadRoute(avatarId: avatarId).push(context),
                 onGenerate: () async {
                   final result = await ref
@@ -112,21 +113,33 @@ class _ErrorBody extends StatelessWidget {
 
 class _EmptyBody extends StatelessWidget {
   const _EmptyBody({
-    required this.hasNotes,
+    required this.info,
     required this.onGenerate,
     required this.onUpload,
   });
 
-  /// Async because we fetch the avatar's wiki-page count to choose the CTA.
-  final AsyncValue<bool> hasNotes;
+  /// Async because we fetch the avatar's notes + kind to choose the CTA.
+  final AsyncValue<ModuleAvatarInfo> info;
   final VoidCallback onGenerate;
   final VoidCallback onUpload;
 
   @override
   Widget build(BuildContext context) {
-    // Default to the upload CTA while loading / on error — never show "build
-    // lessons" unless we've confirmed notes exist.
-    final notes = hasNotes.valueOrNull ?? false;
+    final notes = info.valueOrNull?.hasNotes ?? false;
+    final isCentre = info.valueOrNull?.isCentreClass ?? false;
+
+    // Centre class with no materials yet: the student can't upload (the centre
+    // owns the content), so we show a friendly "waiting" state — no upload CTA,
+    // no kick-out to the upload screen, no dead generate.
+    if (isCentre && !notes) {
+      return const _EmptyMessage(
+        icon: Icons.hourglass_empty_rounded,
+        title: 'No materials yet',
+        body: 'Your centre hasn\'t added any lessons for this class yet. '
+            'Check back soon — they\'ll appear here automatically.',
+      );
+    }
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
@@ -147,7 +160,8 @@ class _EmptyBody extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.lg),
-            // Exactly ONE CTA, chosen by whether notes exist.
+            // ONE CTA: generate when notes exist (centre or personal); upload
+            // only for a personal Mochi with no notes yet.
             if (notes)
               FilledButton.icon(
                 onPressed: onGenerate,
@@ -162,6 +176,35 @@ class _EmptyBody extends StatelessWidget {
                 label: const Text('Upload notes'),
                 style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
               ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyMessage extends StatelessWidget {
+  const _EmptyMessage(
+      {required this.icon, required this.title, required this.body});
+  final IconData icon;
+  final String title;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 56, color: AppColors.text3),
+            const SizedBox(height: AppSpacing.md),
+            Text(title, style: AppTextStyles.title, textAlign: TextAlign.center),
+            const SizedBox(height: AppSpacing.sm),
+            Text(body,
+                style: AppTextStyles.body.copyWith(color: AppColors.text2),
+                textAlign: TextAlign.center),
           ],
         ),
       ),

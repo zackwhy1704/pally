@@ -6,7 +6,7 @@ part of 'module_list_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$avatarHasNotesHash() => r'016fdcdfb2b6c693bea1995f8fb6f5e0c856d608';
+String _$moduleAvatarInfoHash() => r'281617638caf400579aadd299f9c4556ee2134d0';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,43 +29,35 @@ class _SystemHash {
   }
 }
 
-/// Whether the avatar has any compiled wiki pages — drives the module empty
-/// state's single CTA (no notes → "Upload notes"; notes but no modules →
-/// "Build my first lesson"). Reads wikiPageCount off the avatar DTO.
+/// Reads wikiPageCount + kind off the avatar DTO.
 ///
-/// Copied from [avatarHasNotes].
-@ProviderFor(avatarHasNotes)
-const avatarHasNotesProvider = AvatarHasNotesFamily();
+/// Copied from [moduleAvatarInfo].
+@ProviderFor(moduleAvatarInfo)
+const moduleAvatarInfoProvider = ModuleAvatarInfoFamily();
 
-/// Whether the avatar has any compiled wiki pages — drives the module empty
-/// state's single CTA (no notes → "Upload notes"; notes but no modules →
-/// "Build my first lesson"). Reads wikiPageCount off the avatar DTO.
+/// Reads wikiPageCount + kind off the avatar DTO.
 ///
-/// Copied from [avatarHasNotes].
-class AvatarHasNotesFamily extends Family<AsyncValue<bool>> {
-  /// Whether the avatar has any compiled wiki pages — drives the module empty
-  /// state's single CTA (no notes → "Upload notes"; notes but no modules →
-  /// "Build my first lesson"). Reads wikiPageCount off the avatar DTO.
+/// Copied from [moduleAvatarInfo].
+class ModuleAvatarInfoFamily extends Family<AsyncValue<ModuleAvatarInfo>> {
+  /// Reads wikiPageCount + kind off the avatar DTO.
   ///
-  /// Copied from [avatarHasNotes].
-  const AvatarHasNotesFamily();
+  /// Copied from [moduleAvatarInfo].
+  const ModuleAvatarInfoFamily();
 
-  /// Whether the avatar has any compiled wiki pages — drives the module empty
-  /// state's single CTA (no notes → "Upload notes"; notes but no modules →
-  /// "Build my first lesson"). Reads wikiPageCount off the avatar DTO.
+  /// Reads wikiPageCount + kind off the avatar DTO.
   ///
-  /// Copied from [avatarHasNotes].
-  AvatarHasNotesProvider call(
+  /// Copied from [moduleAvatarInfo].
+  ModuleAvatarInfoProvider call(
     String avatarId,
   ) {
-    return AvatarHasNotesProvider(
+    return ModuleAvatarInfoProvider(
       avatarId,
     );
   }
 
   @override
-  AvatarHasNotesProvider getProviderOverride(
-    covariant AvatarHasNotesProvider provider,
+  ModuleAvatarInfoProvider getProviderOverride(
+    covariant ModuleAvatarInfoProvider provider,
   ) {
     return call(
       provider.avatarId,
@@ -84,40 +76,37 @@ class AvatarHasNotesFamily extends Family<AsyncValue<bool>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'avatarHasNotesProvider';
+  String? get name => r'moduleAvatarInfoProvider';
 }
 
-/// Whether the avatar has any compiled wiki pages — drives the module empty
-/// state's single CTA (no notes → "Upload notes"; notes but no modules →
-/// "Build my first lesson"). Reads wikiPageCount off the avatar DTO.
+/// Reads wikiPageCount + kind off the avatar DTO.
 ///
-/// Copied from [avatarHasNotes].
-class AvatarHasNotesProvider extends AutoDisposeFutureProvider<bool> {
-  /// Whether the avatar has any compiled wiki pages — drives the module empty
-  /// state's single CTA (no notes → "Upload notes"; notes but no modules →
-  /// "Build my first lesson"). Reads wikiPageCount off the avatar DTO.
+/// Copied from [moduleAvatarInfo].
+class ModuleAvatarInfoProvider
+    extends AutoDisposeFutureProvider<ModuleAvatarInfo> {
+  /// Reads wikiPageCount + kind off the avatar DTO.
   ///
-  /// Copied from [avatarHasNotes].
-  AvatarHasNotesProvider(
+  /// Copied from [moduleAvatarInfo].
+  ModuleAvatarInfoProvider(
     String avatarId,
   ) : this._internal(
-          (ref) => avatarHasNotes(
-            ref as AvatarHasNotesRef,
+          (ref) => moduleAvatarInfo(
+            ref as ModuleAvatarInfoRef,
             avatarId,
           ),
-          from: avatarHasNotesProvider,
-          name: r'avatarHasNotesProvider',
+          from: moduleAvatarInfoProvider,
+          name: r'moduleAvatarInfoProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$avatarHasNotesHash,
-          dependencies: AvatarHasNotesFamily._dependencies,
+                  : _$moduleAvatarInfoHash,
+          dependencies: ModuleAvatarInfoFamily._dependencies,
           allTransitiveDependencies:
-              AvatarHasNotesFamily._allTransitiveDependencies,
+              ModuleAvatarInfoFamily._allTransitiveDependencies,
           avatarId: avatarId,
         );
 
-  AvatarHasNotesProvider._internal(
+  ModuleAvatarInfoProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -131,12 +120,12 @@ class AvatarHasNotesProvider extends AutoDisposeFutureProvider<bool> {
 
   @override
   Override overrideWith(
-    FutureOr<bool> Function(AvatarHasNotesRef provider) create,
+    FutureOr<ModuleAvatarInfo> Function(ModuleAvatarInfoRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: AvatarHasNotesProvider._internal(
-        (ref) => create(ref as AvatarHasNotesRef),
+      override: ModuleAvatarInfoProvider._internal(
+        (ref) => create(ref as ModuleAvatarInfoRef),
         from: from,
         name: null,
         dependencies: null,
@@ -148,13 +137,13 @@ class AvatarHasNotesProvider extends AutoDisposeFutureProvider<bool> {
   }
 
   @override
-  AutoDisposeFutureProviderElement<bool> createElement() {
-    return _AvatarHasNotesProviderElement(this);
+  AutoDisposeFutureProviderElement<ModuleAvatarInfo> createElement() {
+    return _ModuleAvatarInfoProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is AvatarHasNotesProvider && other.avatarId == avatarId;
+    return other is ModuleAvatarInfoProvider && other.avatarId == avatarId;
   }
 
   @override
@@ -168,17 +157,18 @@ class AvatarHasNotesProvider extends AutoDisposeFutureProvider<bool> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin AvatarHasNotesRef on AutoDisposeFutureProviderRef<bool> {
+mixin ModuleAvatarInfoRef on AutoDisposeFutureProviderRef<ModuleAvatarInfo> {
   /// The parameter `avatarId` of this provider.
   String get avatarId;
 }
 
-class _AvatarHasNotesProviderElement
-    extends AutoDisposeFutureProviderElement<bool> with AvatarHasNotesRef {
-  _AvatarHasNotesProviderElement(super.provider);
+class _ModuleAvatarInfoProviderElement
+    extends AutoDisposeFutureProviderElement<ModuleAvatarInfo>
+    with ModuleAvatarInfoRef {
+  _ModuleAvatarInfoProviderElement(super.provider);
 
   @override
-  String get avatarId => (origin as AvatarHasNotesProvider).avatarId;
+  String get avatarId => (origin as ModuleAvatarInfoProvider).avatarId;
 }
 
 String _$moduleListViewModelHash() =>

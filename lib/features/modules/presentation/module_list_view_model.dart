@@ -11,11 +11,18 @@ part 'module_list_view_model.g.dart';
 /// instead of dead-ending on a generic snackbar.
 enum ModuleGenResult { success, noNotes, error }
 
-/// Whether the avatar has any compiled wiki pages — drives the module empty
-/// state's single CTA (no notes → "Upload notes"; notes but no modules →
-/// "Build my first lesson"). Reads wikiPageCount off the avatar DTO.
+/// Avatar facts the module empty state needs to pick exactly one honest CTA:
+/// whether it has compiled notes, and whether it's a centre class (students
+/// can't upload to those — the centre owns the content).
+class ModuleAvatarInfo {
+  const ModuleAvatarInfo({required this.hasNotes, required this.isCentreClass});
+  final bool hasNotes;
+  final bool isCentreClass;
+}
+
+/// Reads wikiPageCount + kind off the avatar DTO.
 @riverpod
-Future<bool> avatarHasNotes(Ref ref, String avatarId) async {
+Future<ModuleAvatarInfo> moduleAvatarInfo(Ref ref, String avatarId) async {
   final dio = ref.read(dioProvider);
   final res = await dio.get<dynamic>('/api/v1/avatars/$avatarId');
   final data = res.data;
@@ -23,7 +30,11 @@ Future<bool> avatarHasNotes(Ref ref, String avatarId) async {
       ? Map<String, dynamic>.from(data['data'] as Map)
       : <String, dynamic>{};
   final count = (map['wikiPageCount'] as num?)?.toInt() ?? 0;
-  return count > 0;
+  final kind = (map['kind'] as String?)?.toUpperCase() ?? 'PERSONAL';
+  return ModuleAvatarInfo(
+    hasNotes: count > 0,
+    isCentreClass: kind == 'CENTRE_CLASS',
+  );
 }
 
 @riverpod
