@@ -113,8 +113,14 @@ sentry:
 # ── Native splash screen ──────────────────────────────────────────────────────
 # Run: dart run flutter_native_splash:create
 flutter_native_splash:
-  color: "#0A0A0C"
-  image: assets/images/base.png
+  # Brand purple (matches the Flutter splash_screen.dart background) so the
+  # native → Flutter handoff is seamless — no black flash. Use the padded
+  # mascot (mochi.png), not the full-frame studio render (base.png): on Android
+  # 12 the icon is masked to a circle, and base.png's edge-to-edge sprout/face
+  # got cropped on a black field. mochi.png has transparent padding so the whole
+  # mascot stays inside the circle.
+  color: "#7042ED"
+  image: assets/images/splash_mochi.png
   android_12:
-    color: "#0A0A0C"
-    image: assets/images/base.png
+    color: "#7042ED"
+    image: assets/images/splash_mochi.png
