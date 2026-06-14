@@ -14,6 +14,7 @@ _$ReferralSummaryImpl _$$ReferralSummaryImplFromJson(
       activatedCount: (json['activatedCount'] as num?)?.toInt() ?? 0,
       rewardsEarned: (json['rewardsEarned'] as num?)?.toInt() ?? 0,
       nextTierAt: (json['nextTierAt'] as num?)?.toInt() ?? 0,
+      nextTierBonus: (json['nextTierBonus'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$$ReferralSummaryImplToJson(
@@ -24,6 +25,7 @@ Map<String, dynamic> _$$ReferralSummaryImplToJson(
       'activatedCount': instance.activatedCount,
       'rewardsEarned': instance.rewardsEarned,
       'nextTierAt': instance.nextTierAt,
+      'nextTierBonus': instance.nextTierBonus,
     };
 
 _$ReferralRedemptionImpl _$$ReferralRedemptionImplFromJson(

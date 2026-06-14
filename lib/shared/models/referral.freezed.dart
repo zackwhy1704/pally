@@ -26,6 +26,10 @@ mixin _$ReferralSummary {
   int get rewardsEarned => throw _privateConstructorUsedError;
   int get nextTierAt => throw _privateConstructorUsedError;
 
+  /// Real server-paid star bonus for reaching [nextTierAt] friends. Drives the
+  /// "refer N more → +X⭐" copy so the tier ladder reflects actual rewards.
+  int get nextTierBonus => throw _privateConstructorUsedError;
+
   /// Serializes this ReferralSummary to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -47,7 +51,8 @@ abstract class $ReferralSummaryCopyWith<$Res> {
       int totalReferred,
       int activatedCount,
       int rewardsEarned,
-      int nextTierAt});
+      int nextTierAt,
+      int nextTierBonus});
 }
 
 /// @nodoc
@@ -70,6 +75,7 @@ class _$ReferralSummaryCopyWithImpl<$Res, $Val extends ReferralSummary>
     Object? activatedCount = null,
     Object? rewardsEarned = null,
     Object? nextTierAt = null,
+    Object? nextTierBonus = null,
   }) {
     return _then(_value.copyWith(
       code: null == code
@@ -92,6 +98,10 @@ class _$ReferralSummaryCopyWithImpl<$Res, $Val extends ReferralSummary>
           ? _value.nextTierAt
           : nextTierAt // ignore: cast_nullable_to_non_nullable
               as int,
+      nextTierBonus: null == nextTierBonus
+          ? _value.nextTierBonus
+          : nextTierBonus // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -109,7 +119,8 @@ abstract class _$$ReferralSummaryImplCopyWith<$Res>
       int totalReferred,
       int activatedCount,
       int rewardsEarned,
-      int nextTierAt});
+      int nextTierAt,
+      int nextTierBonus});
 }
 
 /// @nodoc
@@ -130,6 +141,7 @@ class __$$ReferralSummaryImplCopyWithImpl<$Res>
     Object? activatedCount = null,
     Object? rewardsEarned = null,
     Object? nextTierAt = null,
+    Object? nextTierBonus = null,
   }) {
     return _then(_$ReferralSummaryImpl(
       code: null == code
@@ -152,6 +164,10 @@ class __$$ReferralSummaryImplCopyWithImpl<$Res>
           ? _value.nextTierAt
           : nextTierAt // ignore: cast_nullable_to_non_nullable
               as int,
+      nextTierBonus: null == nextTierBonus
+          ? _value.nextTierBonus
+          : nextTierBonus // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -164,7 +180,8 @@ class _$ReferralSummaryImpl implements _ReferralSummary {
       this.totalReferred = 0,
       this.activatedCount = 0,
       this.rewardsEarned = 0,
-      this.nextTierAt = 0});
+      this.nextTierAt = 0,
+      this.nextTierBonus = 0});
 
   factory _$ReferralSummaryImpl.fromJson(Map<String, dynamic> json) =>
       _$$ReferralSummaryImplFromJson(json);
@@ -185,9 +202,15 @@ class _$ReferralSummaryImpl implements _ReferralSummary {
   @JsonKey()
   final int nextTierAt;
 
+  /// Real server-paid star bonus for reaching [nextTierAt] friends. Drives the
+  /// "refer N more → +X⭐" copy so the tier ladder reflects actual rewards.
+  @override
+  @JsonKey()
+  final int nextTierBonus;
+
   @override
   String toString() {
-    return 'ReferralSummary(code: $code, totalReferred: $totalReferred, activatedCount: $activatedCount, rewardsEarned: $rewardsEarned, nextTierAt: $nextTierAt)';
+    return 'ReferralSummary(code: $code, totalReferred: $totalReferred, activatedCount: $activatedCount, rewardsEarned: $rewardsEarned, nextTierAt: $nextTierAt, nextTierBonus: $nextTierBonus)';
   }
 
   @override
@@ -203,13 +226,15 @@ class _$ReferralSummaryImpl implements _ReferralSummary {
             (identical(other.rewardsEarned, rewardsEarned) ||
                 other.rewardsEarned == rewardsEarned) &&
             (identical(other.nextTierAt, nextTierAt) ||
-                other.nextTierAt == nextTierAt));
+                other.nextTierAt == nextTierAt) &&
+            (identical(other.nextTierBonus, nextTierBonus) ||
+                other.nextTierBonus == nextTierBonus));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, code, totalReferred,
-      activatedCount, rewardsEarned, nextTierAt);
+      activatedCount, rewardsEarned, nextTierAt, nextTierBonus);
 
   /// Create a copy of ReferralSummary
   /// with the given fields replaced by the non-null parameter values.
@@ -234,7 +259,8 @@ abstract class _ReferralSummary implements ReferralSummary {
       final int totalReferred,
       final int activatedCount,
       final int rewardsEarned,
-      final int nextTierAt}) = _$ReferralSummaryImpl;
+      final int nextTierAt,
+      final int nextTierBonus}) = _$ReferralSummaryImpl;
 
   factory _ReferralSummary.fromJson(Map<String, dynamic> json) =
       _$ReferralSummaryImpl.fromJson;
@@ -249,6 +275,11 @@ abstract class _ReferralSummary implements ReferralSummary {
   int get rewardsEarned;
   @override
   int get nextTierAt;
+
+  /// Real server-paid star bonus for reaching [nextTierAt] friends. Drives the
+  /// "refer N more → +X⭐" copy so the tier ladder reflects actual rewards.
+  @override
+  int get nextTierBonus;
 
   /// Create a copy of ReferralSummary
   /// with the given fields replaced by the non-null parameter values.

@@ -199,6 +199,15 @@ class _TierProgress extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
+          if (summary.nextTierBonus > 0 &&
+              summary.activatedCount < target)
+            Text(
+              'Refer ${target - summary.activatedCount} more → '
+              '+${summary.nextTierBonus}⭐ bonus',
+              style: AppTextStyles.label.copyWith(
+                  color: AppColors.purple, fontWeight: FontWeight.w700),
+            ),
+          const SizedBox(height: 4),
           Text(
             'Friends count as "activated" after they complete their first quiz.',
             style: AppTextStyles.caption,
