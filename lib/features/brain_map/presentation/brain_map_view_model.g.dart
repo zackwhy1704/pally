@@ -6,7 +6,7 @@ part of 'brain_map_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$brainMapViewModelHash() => r'8eeeac37a34a829d6bb756116a99cc7554709bf2';
+String _$brainMapViewModelHash() => r'3d7f83932d1b36d8200b08aa88a73bb3a8a949a9';
 
 /// Copied from Dart SDK
 class _SystemHash {

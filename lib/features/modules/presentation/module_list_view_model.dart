@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/utils/logger.dart';
@@ -9,6 +10,21 @@ part 'module_list_view_model.g.dart';
 /// Outcome of a module-generation attempt, so the UI can route deterministically
 /// instead of dead-ending on a generic snackbar.
 enum ModuleGenResult { success, noNotes, error }
+
+/// Whether the avatar has any compiled wiki pages — drives the module empty
+/// state's single CTA (no notes → "Upload notes"; notes but no modules →
+/// "Build my first lesson"). Reads wikiPageCount off the avatar DTO.
+@riverpod
+Future<bool> avatarHasNotes(Ref ref, String avatarId) async {
+  final dio = ref.read(dioProvider);
+  final res = await dio.get<dynamic>('/api/v1/avatars/$avatarId');
+  final data = res.data;
+  final map = (data is Map && data['data'] is Map)
+      ? Map<String, dynamic>.from(data['data'] as Map)
+      : <String, dynamic>{};
+  final count = (map['wikiPageCount'] as num?)?.toInt() ?? 0;
+  return count > 0;
+}
 
 @riverpod
 class ModuleListViewModel extends _$ModuleListViewModel {

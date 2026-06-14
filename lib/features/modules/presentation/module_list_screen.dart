@@ -46,6 +46,11 @@ class ModuleListScreen extends ConsumerWidget {
         ),
         data: (modules) => modules.isEmpty
             ? _EmptyBody(
+                // Exactly one CTA, chosen by whether notes actually exist — no
+                // contradictory "already added notes?" button on a no-notes
+                // screen, and no re-trigger of the silent no-notes path.
+                hasNotes: ref.watch(avatarHasNotesProvider(avatarId)),
+                onUpload: () => UploadRoute(avatarId: avatarId).push(context),
                 onGenerate: () async {
                   final result = await ref
                       .read(moduleListViewModelProvider(avatarId).notifier)
@@ -63,7 +68,6 @@ class ModuleListScreen extends ConsumerWidget {
                           'Could not build lessons just now — try again.');
                   }
                 },
-                onUpload: () => UploadRoute(avatarId: avatarId).push(context),
               )
             : _ModuleList(avatarId: avatarId, modules: modules),
       ),
@@ -107,12 +111,22 @@ class _ErrorBody extends StatelessWidget {
 }
 
 class _EmptyBody extends StatelessWidget {
-  const _EmptyBody({required this.onGenerate, required this.onUpload});
+  const _EmptyBody({
+    required this.hasNotes,
+    required this.onGenerate,
+    required this.onUpload,
+  });
+
+  /// Async because we fetch the avatar's wiki-page count to choose the CTA.
+  final AsyncValue<bool> hasNotes;
   final VoidCallback onGenerate;
   final VoidCallback onUpload;
 
   @override
   Widget build(BuildContext context) {
+    // Default to the upload CTA while loading / on error — never show "build
+    // lessons" unless we've confirmed notes exist.
+    final notes = hasNotes.valueOrNull ?? false;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
@@ -126,27 +140,28 @@ class _EmptyBody extends StatelessWidget {
                 style: AppTextStyles.title, textAlign: TextAlign.center),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'Add your notes and I\'ll build your first lesson from them.',
+              notes
+                  ? 'Your notes are in — let\'s build your first lesson.'
+                  : 'Add your notes and I\'ll build your first lesson from them.',
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.lg),
-            // Primary path is upload — the value is the notes. Generation only
-            // makes sense once notes exist (and is offered as the secondary tap).
-            FilledButton.icon(
-              onPressed: onUpload,
-              icon: const Icon(Icons.upload_file_rounded, size: 18),
-              label: const Text('Upload notes'),
-              style:
-                  FilledButton.styleFrom(backgroundColor: AppColors.purple),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            TextButton.icon(
-              onPressed: onGenerate,
-              icon: const Icon(Icons.auto_awesome_rounded, size: 18),
-              label: const Text('Already added notes? Build my lessons'),
-              style: TextButton.styleFrom(foregroundColor: AppColors.purple),
-            ),
+            // Exactly ONE CTA, chosen by whether notes exist.
+            if (notes)
+              FilledButton.icon(
+                onPressed: onGenerate,
+                icon: const Icon(Icons.auto_awesome_rounded, size: 18),
+                label: const Text('Build my first lesson'),
+                style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
+              )
+            else
+              FilledButton.icon(
+                onPressed: onUpload,
+                icon: const Icon(Icons.upload_file_rounded, size: 18),
+                label: const Text('Upload notes'),
+                style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
+              ),
           ],
         ),
       ),

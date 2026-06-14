@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
@@ -12,17 +10,12 @@ import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/features/brain_map/presentation/brain_map_view_model.dart';
 
-/// Which lens the brain map is shown through.
-enum BrainMapView { graph, list }
-
-/// Dark-themed knowledge map. Two lenses (IMPROVEMENT 2):
-///  • Graph — a layered/topological knowledge graph: pages with no
-///    prerequisites on top, dependents in lower rows, thin arrows
-///    prerequisite→dependent. Node colour by certainty, border weight by
-///    certaintyScore, size by quizUseCount, conflict nodes pulse.
-///  • List — the flat topic list (mastery + certainty + conflict per row).
-/// Newly compiled pages (this session) fade+scale in with a stagger
-/// (IMPROVEMENT 6). Tap any node/row → quick-action sheet.
+/// Dark-themed knowledge map shown as a **mastery list** (Anki/Quizlet pattern):
+/// topics ordered by what needs attention — conflicts first, then lowest mastery
+/// (what to study next), then mastered. Each row shows a mastery bar, a certainty
+/// chip, a conflict flag and a practice count. Tap a row → quick-action sheet.
+/// (The old force-directed graph lens was removed: bare circles conveyed nothing
+/// about what to do next.) Newly compiled pages fade+scale in with a stagger.
 class BrainMapScreen extends ConsumerStatefulWidget {
   const BrainMapScreen({super.key, required this.avatarId});
 
@@ -34,20 +27,12 @@ class BrainMapScreen extends ConsumerStatefulWidget {
 
 class _BrainMapScreenState extends ConsumerState<BrainMapScreen>
     with TickerProviderStateMixin {
-  BrainMapView _view = BrainMapView.graph;
-
-  // Pulse for conflict nodes (opacity 0.6 → 1.0).
-  late final AnimationController _pulse;
-  // Staggered entrance for newly-compiled nodes (0 → 1).
+  // Staggered entrance for newly-compiled rows (0 → 1).
   late final AnimationController _entrance;
 
   @override
   void initState() {
     super.initState();
-    _pulse = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 900),
-    )..repeat(reverse: true);
     _entrance = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
@@ -56,7 +41,6 @@ class _BrainMapScreenState extends ConsumerState<BrainMapScreen>
 
   @override
   void dispose() {
-    _pulse.dispose();
     _entrance.dispose();
     super.dispose();
   }
@@ -104,27 +88,10 @@ class _BrainMapScreenState extends ConsumerState<BrainMapScreen>
               ..reset()
               ..forward();
           }
-          return Column(
-            children: [
-              _ViewToggle(
-                value: _view,
-                onChanged: (v) => setState(() => _view = v),
-              ),
-              Expanded(
-                child: _view == BrainMapView.graph
-                    ? _GraphView(
-                        state: state,
-                        pulse: _pulse,
-                        entrance: _entrance,
-                        onTapNode: (n) => _showTopicSheet(context, n),
-                      )
-                    : _ListView(
-                        state: state,
-                        entrance: _entrance,
-                        onTapNode: (n) => _showTopicSheet(context, n),
-                      ),
-              ),
-            ],
+          return _ListView(
+            state: state,
+            entrance: _entrance,
+            onTapNode: (n) => _showTopicSheet(context, n),
           );
         },
       ),
@@ -141,68 +108,6 @@ class _BrainMapScreenState extends ConsumerState<BrainMapScreen>
       builder: (sheetCtx) => _TopicSheet(
         node: node,
         avatarId: widget.avatarId,
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────
-// View toggle (Graph | List)
-// ─────────────────────────────────────────────────────────────────────────
-
-class _ViewToggle extends StatelessWidget {
-  const _ViewToggle({required this.value, required this.onChanged});
-  final BrainMapView value;
-  final ValueChanged<BrainMapView> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-      child: LayoutBuilder(builder: (context, constraints) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          padding: const EdgeInsets.all(3),
-          child: Row(
-            children: [
-              _toggleTab('Graph', Icons.hub_rounded, BrainMapView.graph),
-              _toggleTab('List', Icons.view_list_rounded, BrainMapView.list),
-            ],
-          ),
-        );
-      }),
-    );
-  }
-
-  Widget _toggleTab(String label, IconData icon, BrainMapView v) {
-    final selected = value == v;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => onChanged(v),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            color: selected ? AppColors.purple : Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon,
-                  size: 16, color: selected ? Colors.white : Colors.white60),
-              const SizedBox(width: 6),
-              Text(label,
-                  style: AppTextStyles.label.copyWith(
-                      color: selected ? Colors.white : Colors.white60,
-                      fontWeight: FontWeight.w700)),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -237,293 +142,6 @@ double entranceProgress(Animation<double> entrance, int index) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────
-// Graph view — InteractiveViewer + layered topological CustomPainter
-// ─────────────────────────────────────────────────────────────────────────
-
-class _GraphView extends StatelessWidget {
-  const _GraphView({
-    required this.state,
-    required this.pulse,
-    required this.entrance,
-    required this.onTapNode,
-  });
-
-  final BrainMapState state;
-  final Animation<double> pulse;
-  final Animation<double> entrance;
-  final ValueChanged<TopicNode> onTapNode;
-
-  @override
-  Widget build(BuildContext context) {
-    final layout = _GraphLayout(state.nodes);
-    return InteractiveViewer(
-      minScale: 0.5,
-      maxScale: 3.0,
-      boundaryMargin: const EdgeInsets.all(120),
-      constrained: false,
-      child: SizedBox(
-        width: layout.canvasSize.width,
-        height: layout.canvasSize.height,
-        child: GestureDetector(
-          onTapUp: (d) {
-            final node = layout.hitTest(d.localPosition);
-            if (node != null) onTapNode(node);
-          },
-          child: AnimatedBuilder(
-            animation: Listenable.merge([pulse, entrance]),
-            builder: (context, _) => CustomPaint(
-              size: layout.canvasSize,
-              painter: _GraphPainter(
-                layout: layout,
-                state: state,
-                pulseValue: pulse.value,
-                entrance: entrance,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Layered topological layout. Depth = longest prerequisite chain. Roots
-/// (no prereqs, or prereqs not present in this avatar) sit at depth 0.
-class _GraphLayout {
-  _GraphLayout(this.nodes) {
-    _compute();
-  }
-
-  final List<TopicNode> nodes;
-
-  // Per-node centre position (index-aligned with [nodes]).
-  late final List<Offset> positions;
-  late final Size canvasSize;
-  // slug → index for edge drawing.
-  final Map<String, int> _indexBySlug = {};
-
-  static const double _rowGap = 130;
-  static const double _colGap = 110;
-  static const double _topPad = 60;
-  static const double _sidePad = 70;
-
-  void _compute() {
-    for (var i = 0; i < nodes.length; i++) {
-      _indexBySlug[nodes[i].slug] = i;
-    }
-    final depth = _computeDepths();
-    // Bucket nodes by depth.
-    final byDepth = <int, List<int>>{};
-    var maxDepth = 0;
-    for (var i = 0; i < nodes.length; i++) {
-      final d = depth[i];
-      byDepth.putIfAbsent(d, () => []).add(i);
-      if (d > maxDepth) maxDepth = d;
-    }
-    var widest = 1;
-    for (final row in byDepth.values) {
-      if (row.length > widest) widest = row.length;
-    }
-    positions = List<Offset>.filled(nodes.length, Offset.zero);
-    for (var d = 0; d <= maxDepth; d++) {
-      final row = byDepth[d] ?? const [];
-      for (var k = 0; k < row.length; k++) {
-        final i = row[k];
-        final x = _sidePad +
-            (k + 0.5) * _colGap +
-            // centre each row within the widest row
-            (widest - row.length) * _colGap / 2;
-        final y = _topPad + d * _rowGap;
-        positions[i] = Offset(x, y);
-      }
-    }
-    canvasSize = Size(
-      _sidePad * 2 + widest * _colGap,
-      _topPad * 2 + (maxDepth + 1) * _rowGap,
-    );
-  }
-
-  /// Longest-prerequisite-chain depth per node, robust to cycles.
-  List<int> _computeDepths() {
-    final depth = List<int>.filled(nodes.length, -1);
-    final visiting = List<bool>.filled(nodes.length, false);
-
-    int resolve(int i) {
-      if (depth[i] >= 0) return depth[i];
-      if (visiting[i]) return 0; // cycle guard
-      visiting[i] = true;
-      var d = 0;
-      for (final pre in nodes[i].prerequisiteSlugs) {
-        final pi = _indexBySlug[pre];
-        if (pi != null && pi != i) {
-          d = math.max(d, resolve(pi) + 1);
-        }
-      }
-      visiting[i] = false;
-      depth[i] = d;
-      return d;
-    }
-
-    for (var i = 0; i < nodes.length; i++) {
-      resolve(i);
-    }
-    return depth;
-  }
-
-  /// Directed edges as (fromIndex, toIndex) — prerequisite → dependent.
-  List<(int, int)> get edges {
-    final out = <(int, int)>[];
-    for (var i = 0; i < nodes.length; i++) {
-      for (final pre in nodes[i].prerequisiteSlugs) {
-        final pi = _indexBySlug[pre];
-        if (pi != null && pi != i) out.add((pi, i));
-      }
-    }
-    return out;
-  }
-
-  TopicNode? hitTest(Offset p) {
-    for (var i = 0; i < nodes.length; i++) {
-      final r = nodes[i].nodeDiameter / 2;
-      if ((p - positions[i]).distance <= r + 6) return nodes[i];
-    }
-    return null;
-  }
-}
-
-class _GraphPainter extends CustomPainter {
-  _GraphPainter({
-    required this.layout,
-    required this.state,
-    required this.pulseValue,
-    required this.entrance,
-  });
-
-  final _GraphLayout layout;
-  final BrainMapState state;
-  final double pulseValue;
-  final Animation<double> entrance;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final nodes = layout.nodes;
-
-    // Edges (prerequisite → dependent) behind nodes.
-    final edgePaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.25)
-      ..strokeWidth = 1.2
-      ..style = PaintingStyle.stroke;
-    for (final (from, to) in layout.edges) {
-      final a = layout.positions[from];
-      final b = layout.positions[to];
-      canvas.drawLine(a, b, edgePaint);
-      _drawArrowHead(canvas, a, b, nodes[to].nodeDiameter / 2, edgePaint.color);
-    }
-
-    for (var i = 0; i < nodes.length; i++) {
-      final node = nodes[i];
-      final pos = layout.positions[i];
-      final isNew = state.isNew(node);
-      final prog = isNew ? entranceProgress(entrance, i) : 1.0;
-      if (prog <= 0) continue;
-
-      final baseColor = certaintyColor(node.certainty);
-      final r = (node.nodeDiameter / 2) * (0.7 + 0.3 * prog); // scale 0.7→1.0
-      var alpha = prog; // fade 0→1
-
-      // Conflict nodes pulse 0.6 → 1.0.
-      if (node.hasConflict) {
-        alpha *= 0.6 + 0.4 * pulseValue;
-      }
-
-      final fill = Paint()..color = baseColor.withValues(alpha: alpha);
-      final glow = Paint()
-        ..color = baseColor.withValues(alpha: 0.30 * alpha)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
-      canvas.drawCircle(pos, r + 6, glow);
-      canvas.drawCircle(pos, r, fill);
-
-      // Border weight = 1 + certaintyScore*3.
-      final border = Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = node.borderWeight
-        ..color = Colors.white.withValues(alpha: 0.85 * alpha);
-      canvas.drawCircle(pos, r, border);
-
-      // Conflict marker — a small ! ring outside the node.
-      if (node.hasConflict) {
-        final ring = Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2
-          ..color = AppColors.coral.withValues(alpha: alpha);
-        canvas.drawCircle(pos, r + 5, ring);
-      }
-
-      // Review-required pulsing coral ring (R8).
-      if (node.reviewRequired) {
-        final ring = Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.5
-          ..color = const Color(0xFFFF6660)
-              .withValues(alpha: alpha * (0.6 + 0.4 * pulseValue));
-        canvas.drawCircle(pos, r + 9, ring);
-      }
-
-      final title = node.title.length > 14
-          ? '${node.title.substring(0, 14)}…'
-          : node.title;
-      _drawText(
-        canvas,
-        title,
-        Offset(pos.dx, pos.dy + r + 12),
-        TextStyle(
-            color: Colors.white.withValues(alpha: 0.75 * alpha),
-            fontSize: 10,
-            fontWeight: FontWeight.w600),
-      );
-    }
-  }
-
-  void _drawArrowHead(
-      Canvas canvas, Offset from, Offset to, double targetRadius, Color color) {
-    final dir = (to - from);
-    final len = dir.distance;
-    if (len < 1) return;
-    final unit = dir / len;
-    // Land just outside the target node body.
-    final tip = to - unit * (targetRadius + 2);
-    const headLen = 8.0;
-    const headW = 4.0;
-    final perp = Offset(-unit.dy, unit.dx);
-    final base = tip - unit * headLen;
-    final p1 = base + perp * headW;
-    final p2 = base - perp * headW;
-    final path = Path()
-      ..moveTo(tip.dx, tip.dy)
-      ..lineTo(p1.dx, p1.dy)
-      ..lineTo(p2.dx, p2.dy)
-      ..close();
-    canvas.drawPath(path, Paint()..color = color);
-  }
-
-  void _drawText(Canvas canvas, String s, Offset center, TextStyle style) {
-    final tp = TextPainter(
-      text: TextSpan(text: s, style: style),
-      textAlign: TextAlign.center,
-      textDirection: TextDirection.ltr,
-    )..layout(maxWidth: 96);
-    tp.paint(
-        canvas, Offset(center.dx - tp.width / 2, center.dy - tp.height / 2));
-  }
-
-  @override
-  bool shouldRepaint(covariant _GraphPainter old) =>
-      old.layout.nodes != layout.nodes ||
-      old.pulseValue != pulseValue ||
-      old.state != state;
-}
-
-// ─────────────────────────────────────────────────────────────────────────
 // List view — flat topic rows
 // ─────────────────────────────────────────────────────────────────────────
 
@@ -540,12 +158,19 @@ class _ListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Order by what needs attention: conflicts first, then lowest mastery (what
+    // to study next), then mastered. This is the "study this next" the graph
+    // never conveyed.
+    final nodes = [...state.nodes]..sort((a, b) {
+      if (a.hasConflict != b.hasConflict) return a.hasConflict ? -1 : 1;
+      return a.mastery.compareTo(b.mastery);
+    });
     return ListView.separated(
       padding: const EdgeInsets.all(AppSpacing.md),
-      itemCount: state.nodes.length,
+      itemCount: nodes.length,
       separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
       itemBuilder: (context, i) {
-        final node = state.nodes[i];
+        final node = nodes[i];
         final isNew = state.isNew(node);
         final row = _TopicRow(node: node, onTap: () => onTapNode(node));
         if (!isNew) return row;
@@ -576,6 +201,7 @@ class _TopicRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = certaintyColor(node.certainty);
+    final masteryPct = (node.mastery.clamp(0.0, 1.0) * 100).round();
     return Material(
       color: Colors.white.withValues(alpha: 0.06),
       borderRadius: BorderRadius.circular(14),
@@ -584,42 +210,87 @@ class _TopicRow extends StatelessWidget {
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.md),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: AppSizing.checkboxSize,
-                height: AppSizing.checkboxSize,
-                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(node.title,
-                        style: AppTextStyles.body.copyWith(color: Colors.white),
+              // Title + certainty chip + conflict flag
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(node.title,
+                        style: AppTextStyles.body
+                            .copyWith(color: Colors.white, fontWeight: FontWeight.w600),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis),
-                    const SizedBox(height: 2),
-                    Text(
-                      node.isUntouched
-                          ? 'No quiz attempts yet'
-                          : '${(node.mastery * 100).round()}% mastery',
-                      style: AppTextStyles.bodySmall
-                          .copyWith(color: Colors.white60),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  if (node.hasConflict) ...[
+                    const Icon(Icons.warning_amber_rounded,
+                        color: AppColors.coral, size: 16),
+                    const SizedBox(width: 4),
                   ],
+                  _CertaintyChip(certainty: node.certainty, color: color),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              // Mastery bar
+              ClipRRect(
+                borderRadius: BorderRadius.circular(3),
+                child: LinearProgressIndicator(
+                  value: node.isUntouched ? 0.0 : node.mastery.clamp(0.0, 1.0),
+                  minHeight: 6,
+                  backgroundColor: Colors.white.withValues(alpha: 0.10),
+                  valueColor: AlwaysStoppedAnimation<Color>(color),
                 ),
               ),
-              const SizedBox(width: AppSpacing.sm),
-              if (node.hasConflict)
-                const Icon(Icons.warning_amber_rounded,
-                    color: AppColors.coral, size: 18),
+              const SizedBox(height: 6),
+              // Mastery % + practice count
+              Row(
+                children: [
+                  Text(
+                    node.isUntouched ? 'Not studied yet' : '$masteryPct% mastery',
+                    style: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
+                  ),
+                  const Spacer(),
+                  Text(
+                    node.attempts == 0
+                        ? 'Tap to study'
+                        : 'Practised ${node.attempts}×',
+                    style: AppTextStyles.caption.copyWith(color: Colors.white54),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Small pill showing the page's certainty (VERIFIED / INFERRED / UNCERTAIN).
+class _CertaintyChip extends StatelessWidget {
+  const _CertaintyChip({required this.certainty, required this.color});
+  final String certainty;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = certainty.toUpperCase() == 'VERIFIED'
+        ? 'Verified'
+        : certainty.toUpperCase() == 'UNCERTAIN'
+            ? 'Uncertain'
+            : 'Inferred';
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: AppTextStyles.caption
+            .copyWith(color: color, fontWeight: FontWeight.w700),
       ),
     );
   }

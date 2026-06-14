@@ -42,15 +42,35 @@ void main() {
         overrides: [
           moduleListViewModelProvider('test-avatar')
               .overrideWith(() => _EmptyModuleListVM()),
+          // No notes → exactly one CTA: "Upload notes" (never "build lessons").
+          avatarHasNotesProvider('test-avatar')
+              .overrideWith((ref) async => false),
         ],
       ));
       await tester.pumpAndSettle();
 
-      // Notes-first empty state: the primary action is upload (never a dead
-      // "generate" that fails silently when there are no notes).
       expect(find.text('No lessons yet'), findsOneWidget);
       expect(find.text('Upload notes'), findsOneWidget);
-      expect(find.text('Already added notes? Build my lessons'), findsOneWidget);
+      // The contradictory "already added notes?" CTA is gone — single CTA only.
+      expect(find.text('Build my first lesson'), findsNothing);
+    });
+
+    testWidgets('empty state shows the build CTA when notes already exist',
+        (tester) async {
+      await tester.pumpWidget(_wrap(
+        const ModuleListScreen(avatarId: 'test-avatar'),
+        overrides: [
+          moduleListViewModelProvider('test-avatar')
+              .overrideWith(() => _EmptyModuleListVM()),
+          avatarHasNotesProvider('test-avatar')
+              .overrideWith((ref) async => true),
+        ],
+      ));
+      await tester.pumpAndSettle();
+
+      // Notes exist but no modules → single CTA is "Build my first lesson".
+      expect(find.text('Build my first lesson'), findsOneWidget);
+      expect(find.text('Upload notes'), findsNothing);
     });
 
     testWidgets('shows module cards when modules exist', (tester) async {

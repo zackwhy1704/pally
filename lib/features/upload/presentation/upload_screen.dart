@@ -53,6 +53,7 @@ class UploadScreen extends ConsumerWidget {
     // Show OCR review screen when quality is BORDERLINE
     ref.listen<UploadState>(uploadViewModelProvider(avatarId), (prev, next) {
       if (next.needsOcrReview &&
+          next.reviewFileId != null &&
           prev?.reviewFileId != next.reviewFileId &&
           context.mounted) {
         Navigator.of(context)
