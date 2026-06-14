@@ -280,6 +280,9 @@ class _BrainHeader extends ConsumerWidget {
       builder: (_) => _TeacherPreferencesSheet(
         avatarId: avatarId,
         currentPreferences: avatar?.teacherPreferences,
+        // A class Mochi's teaching style is set by the centre (on the web);
+        // students see it read-only rather than hitting a 403 on save.
+        readOnly: avatar?.kind == AvatarKind.centreClass,
       ),
     );
   }
@@ -1346,10 +1349,12 @@ class _TeacherPreferencesSheet extends ConsumerStatefulWidget {
   const _TeacherPreferencesSheet({
     required this.avatarId,
     this.currentPreferences,
+    this.readOnly = false,
   });
 
   final String avatarId;
   final String? currentPreferences;
+  final bool readOnly;
 
   @override
   ConsumerState<_TeacherPreferencesSheet> createState() =>
@@ -1371,6 +1376,33 @@ class _TeacherPreferencesSheetState
   void dispose() {
     _ctrl.dispose();
     super.dispose();
+  }
+
+  /// Quick teaching-style presets that compose into the free-text instruction.
+  /// They write into the same field, which is already wired into the tutor's
+  /// system prompt (## TEACHER INSTRUCTIONS) — so both chips and free text take
+  /// effect identically.
+  static const _stylePresets = <String, String>{
+    'More examples': 'Use more worked examples.',
+    'Harder questions': 'Challenge me with harder questions.',
+    'Explain simply': 'Explain things as simply as possible.',
+    'Exam-focused': 'Focus on exam-style questions and techniques.',
+  };
+
+  void _toggleStyle(String phrase) {
+    final current = _ctrl.text.trim();
+    if (current.contains(phrase)) {
+      // Remove it (toggle off).
+      var next = current.replaceAll(phrase, '').replaceAll('  ', ' ').trim();
+      _ctrl.text = next;
+    } else {
+      final sep = current.isEmpty ? '' : (current.endsWith('.') ? ' ' : '. ');
+      final next = '$current$sep$phrase';
+      if (next.length <= 500) _ctrl.text = next;
+    }
+    _ctrl.selection =
+        TextSelection.collapsed(offset: _ctrl.text.length);
+    setState(() {});
   }
 
   Future<void> _save() async {
@@ -1423,17 +1455,67 @@ class _TeacherPreferencesSheetState
                   borderRadius: BorderRadius.circular(2)),
             ),
             const SizedBox(height: AppSpacing.md),
-            Text('Teacher Notes', style: AppTextStyles.title),
+            Text('How should Mochi teach you?', style: AppTextStyles.title),
             const SizedBox(height: AppSpacing.xs),
+            if (widget.readOnly) ...[
+              Text(
+                'Your centre sets how this class Mochi teaches.',
+                style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: AppColors.surf2,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  (widget.currentPreferences != null &&
+                          widget.currentPreferences!.trim().isNotEmpty)
+                      ? widget.currentPreferences!.trim()
+                      : 'No teaching style set by your centre yet.',
+                  style: AppTextStyles.body.copyWith(color: AppColors.text1),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+            ] else ...[
             Text(
-              'Tell Mochi how your teacher wants you to solve problems — e.g. "Use the bar model for fractions" or "Always show full working."',
+              'Tap a style or write your own — e.g. "Use the bar model for fractions" or "Always show full working." Mochi follows this in every lesson and chat.',
               style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: _stylePresets.entries.map((e) {
+                final on = _ctrl.text.contains(e.value);
+                return FilterChip(
+                  label: Text(e.key),
+                  selected: on,
+                  onSelected: (_) => _toggleStyle(e.value),
+                  showCheckmark: true,
+                  selectedColor: AppColors.purpleL,
+                  checkmarkColor: AppColors.purple,
+                  labelStyle: AppTextStyles.label.copyWith(
+                    color: on ? AppColors.purple : AppColors.text2,
+                    fontWeight: on ? FontWeight.w700 : FontWeight.w600,
+                  ),
+                  backgroundColor: AppColors.surf2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    side: BorderSide(
+                        color: on ? AppColors.purple : AppColors.outline),
+                  ),
+                );
+              }).toList(),
             ),
             const SizedBox(height: AppSpacing.md),
             TextField(
               controller: _ctrl,
               maxLines: 4,
               maxLength: 500,
+              onChanged: (_) => setState(() {}), // keep chip highlights in sync
               decoration: InputDecoration(
                 hintText:
                     'e.g. Use model method for fractions. Show all steps.',
@@ -1467,6 +1549,7 @@ class _TeacherPreferencesSheetState
                     : const Text('Save'),
               ),
             ),
+            ],
           ],
         ),
       ),
