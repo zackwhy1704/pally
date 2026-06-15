@@ -7,7 +7,7 @@ part of 'no_notes_cta.dart';
 // **************************************************************************
 
 String _$avatarIsCentreClassHash() =>
-    r'32697849baa76ac67909623cfa4d99ae81adec39';
+    r'92639cb299656f06c069528bcf1926a292cc5e0f';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -34,9 +34,11 @@ class _SystemHash {
 /// personal Mochi. Students can upload to their personal Mochi but NOT to a
 /// centre class — only the teacher/centre adds materials there.
 ///
-/// Resolves from `GET /avatars/{id}` (the `kind` field). Defaults to `false`
-/// (personal) on any error so the worst case is showing the upload button to a
-/// personal avatar, never hiding it from one who needs it.
+/// Fast path: reads synchronously from the already-loaded home list so there is
+/// never a second network round-trip when the user navigated here from home.
+/// Slow path: if home is not loaded yet, falls back to a direct avatar fetch.
+/// Defaults to `false` (personal) on any error so the worst case is showing the
+/// upload button to a personal avatar, never hiding it from one who needs it.
 ///
 /// Copied from [avatarIsCentreClass].
 @ProviderFor(avatarIsCentreClass)
@@ -46,9 +48,11 @@ const avatarIsCentreClassProvider = AvatarIsCentreClassFamily();
 /// personal Mochi. Students can upload to their personal Mochi but NOT to a
 /// centre class — only the teacher/centre adds materials there.
 ///
-/// Resolves from `GET /avatars/{id}` (the `kind` field). Defaults to `false`
-/// (personal) on any error so the worst case is showing the upload button to a
-/// personal avatar, never hiding it from one who needs it.
+/// Fast path: reads synchronously from the already-loaded home list so there is
+/// never a second network round-trip when the user navigated here from home.
+/// Slow path: if home is not loaded yet, falls back to a direct avatar fetch.
+/// Defaults to `false` (personal) on any error so the worst case is showing the
+/// upload button to a personal avatar, never hiding it from one who needs it.
 ///
 /// Copied from [avatarIsCentreClass].
 class AvatarIsCentreClassFamily extends Family<AsyncValue<bool>> {
@@ -56,9 +60,11 @@ class AvatarIsCentreClassFamily extends Family<AsyncValue<bool>> {
   /// personal Mochi. Students can upload to their personal Mochi but NOT to a
   /// centre class — only the teacher/centre adds materials there.
   ///
-  /// Resolves from `GET /avatars/{id}` (the `kind` field). Defaults to `false`
-  /// (personal) on any error so the worst case is showing the upload button to a
-  /// personal avatar, never hiding it from one who needs it.
+  /// Fast path: reads synchronously from the already-loaded home list so there is
+  /// never a second network round-trip when the user navigated here from home.
+  /// Slow path: if home is not loaded yet, falls back to a direct avatar fetch.
+  /// Defaults to `false` (personal) on any error so the worst case is showing the
+  /// upload button to a personal avatar, never hiding it from one who needs it.
   ///
   /// Copied from [avatarIsCentreClass].
   const AvatarIsCentreClassFamily();
@@ -67,9 +73,11 @@ class AvatarIsCentreClassFamily extends Family<AsyncValue<bool>> {
   /// personal Mochi. Students can upload to their personal Mochi but NOT to a
   /// centre class — only the teacher/centre adds materials there.
   ///
-  /// Resolves from `GET /avatars/{id}` (the `kind` field). Defaults to `false`
-  /// (personal) on any error so the worst case is showing the upload button to a
-  /// personal avatar, never hiding it from one who needs it.
+  /// Fast path: reads synchronously from the already-loaded home list so there is
+  /// never a second network round-trip when the user navigated here from home.
+  /// Slow path: if home is not loaded yet, falls back to a direct avatar fetch.
+  /// Defaults to `false` (personal) on any error so the worst case is showing the
+  /// upload button to a personal avatar, never hiding it from one who needs it.
   ///
   /// Copied from [avatarIsCentreClass].
   AvatarIsCentreClassProvider call(
@@ -108,9 +116,11 @@ class AvatarIsCentreClassFamily extends Family<AsyncValue<bool>> {
 /// personal Mochi. Students can upload to their personal Mochi but NOT to a
 /// centre class — only the teacher/centre adds materials there.
 ///
-/// Resolves from `GET /avatars/{id}` (the `kind` field). Defaults to `false`
-/// (personal) on any error so the worst case is showing the upload button to a
-/// personal avatar, never hiding it from one who needs it.
+/// Fast path: reads synchronously from the already-loaded home list so there is
+/// never a second network round-trip when the user navigated here from home.
+/// Slow path: if home is not loaded yet, falls back to a direct avatar fetch.
+/// Defaults to `false` (personal) on any error so the worst case is showing the
+/// upload button to a personal avatar, never hiding it from one who needs it.
 ///
 /// Copied from [avatarIsCentreClass].
 class AvatarIsCentreClassProvider extends AutoDisposeFutureProvider<bool> {
@@ -118,9 +128,11 @@ class AvatarIsCentreClassProvider extends AutoDisposeFutureProvider<bool> {
   /// personal Mochi. Students can upload to their personal Mochi but NOT to a
   /// centre class — only the teacher/centre adds materials there.
   ///
-  /// Resolves from `GET /avatars/{id}` (the `kind` field). Defaults to `false`
-  /// (personal) on any error so the worst case is showing the upload button to a
-  /// personal avatar, never hiding it from one who needs it.
+  /// Fast path: reads synchronously from the already-loaded home list so there is
+  /// never a second network round-trip when the user navigated here from home.
+  /// Slow path: if home is not loaded yet, falls back to a direct avatar fetch.
+  /// Defaults to `false` (personal) on any error so the worst case is showing the
+  /// upload button to a personal avatar, never hiding it from one who needs it.
   ///
   /// Copied from [avatarIsCentreClass].
   AvatarIsCentreClassProvider(

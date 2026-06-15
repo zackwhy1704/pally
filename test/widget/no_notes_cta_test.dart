@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -17,6 +19,25 @@ Widget _wrap({required bool isCentre}) => ProviderScope(
       ),
     );
 
+/// Provider backed by a Completer that is never resolved — simulates a genuine
+/// loading state without leaving a pending timer in the fake clock.
+Widget _wrapLoading() {
+  final completer = Completer<bool>();
+  return ProviderScope(
+      overrides: [
+        avatarIsCentreClassProvider('a1').overrideWith((_) => completer.future),
+      ],
+      child: const MaterialApp(
+        home: Scaffold(
+          body: NoNotesCta(
+            avatarId: 'a1',
+            personalDescription: 'Upload notes for this Mochi.',
+          ),
+        ),
+      ),
+    );
+}
+
 void main() {
   group('NoNotesCta', () {
     testWidgets('personal avatar shows the upload button and description',
@@ -24,7 +45,6 @@ void main() {
       await tester.pumpWidget(_wrap(isCentre: false));
       await tester.pumpAndSettle();
 
-      // Individual use: the child owns the knowledge base → may upload.
       expect(find.text('Upload notes for this Mochi.'), findsOneWidget);
       expect(find.text('Upload notes'), findsOneWidget);
       expect(find.byIcon(Icons.upload_file_rounded), findsOneWidget);
@@ -35,19 +55,22 @@ void main() {
       await tester.pumpWidget(_wrap(isCentre: true));
       await tester.pumpAndSettle();
 
-      // Centre use: students cannot upload → reminder only, never the button.
       expect(find.textContaining('Ask your teacher'), findsOneWidget);
       expect(find.text('Upload notes'), findsNothing);
       expect(find.byIcon(Icons.upload_file_rounded), findsNothing);
     });
 
-    testWidgets('while kind is loading, defaults to NOT showing upload button',
+    testWidgets(
+        'while kind is still resolving, shows nothing — no personal text, no upload button',
         (tester) async {
-      // valueOrNull is null during load → treated as personal=false default,
-      // i.e. no premature upload button before we know the avatar type.
-      await tester.pumpWidget(_wrap(isCentre: true));
-      await tester.pump(); // first frame, provider still resolving
+      await tester.pumpWidget(_wrapLoading());
+      await tester.pump(); // one frame — provider has not resolved yet
+
+      // The null-guard in NoNotesCta must render SizedBox.shrink(): no text, no button.
+      expect(find.text('Upload notes for this Mochi.'), findsNothing);
       expect(find.text('Upload notes'), findsNothing);
+      expect(find.byIcon(Icons.upload_file_rounded), findsNothing);
+      expect(find.textContaining('Ask your teacher'), findsNothing);
     });
   });
 }

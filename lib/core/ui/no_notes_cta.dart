@@ -7,6 +7,8 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/features/home/presentation/home_view_model.dart';
+import 'package:pally/shared/models/avatar.dart';
 
 part 'no_notes_cta.g.dart';
 
@@ -14,11 +16,21 @@ part 'no_notes_cta.g.dart';
 /// personal Mochi. Students can upload to their personal Mochi but NOT to a
 /// centre class — only the teacher/centre adds materials there.
 ///
-/// Resolves from `GET /avatars/{id}` (the `kind` field). Defaults to `false`
-/// (personal) on any error so the worst case is showing the upload button to a
-/// personal avatar, never hiding it from one who needs it.
+/// Fast path: reads synchronously from the already-loaded home list so there is
+/// never a second network round-trip when the user navigated here from home.
+/// Slow path: if home is not loaded yet, falls back to a direct avatar fetch.
+/// Defaults to `false` (personal) on any error so the worst case is showing the
+/// upload button to a personal avatar, never hiding it from one who needs it.
 @riverpod
 Future<bool> avatarIsCentreClass(Ref ref, String avatarId) async {
+  // Fast path — home list is almost always already loaded when the user reaches
+  // any feature screen. Use ref.read (not watch) so this provider does not
+  // re-execute every time the home list refreshes.
+  final homeState = ref.read(homeViewModelProvider);
+  final cached = homeState.valueOrNull?.where((a) => a.id == avatarId).firstOrNull;
+  if (cached != null) return cached.isCentreClass;
+
+  // Slow path — home not loaded yet; fetch the avatar directly.
   final dio = ref.read(dioProvider);
   try {
     final res = await dio.get<dynamic>('/api/v1/avatars/$avatarId');
@@ -63,12 +75,14 @@ class NoNotesCta extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // null = still resolving the avatar kind. true = centre class. false =
-    // personal. We only ever show the upload button once we KNOW it's personal,
-    // so a centre student never flashes an "Upload notes" button mid-load.
     final isCentre = ref.watch(avatarIsCentreClassProvider(avatarId)).valueOrNull;
 
-    if (isCentre == true) {
+    // Still resolving — show nothing rather than flashing the personal variant.
+    // The fast path in avatarIsCentreClassProvider reads the home cache
+    // synchronously, so this null state is avoided in the common case.
+    if (isCentre == null) return const SizedBox.shrink();
+
+    if (isCentre) {
       return Text(
         _centreReminder,
         style: AppTextStyles.body.copyWith(color: AppColors.text2),
@@ -84,19 +98,17 @@ class NoNotesCta extends ConsumerWidget {
           style: AppTextStyles.body.copyWith(color: AppColors.text2),
           textAlign: TextAlign.center,
         ),
-        if (isCentre == false) ...[
-          const SizedBox(height: AppSpacing.lg),
-          FilledButton.icon(
-            onPressed: () => UploadRoute(avatarId: avatarId).push(context),
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.purple,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14)),
-            ),
-            icon: const Icon(Icons.upload_file_rounded, size: 18),
-            label: Text(personalButtonLabel),
+        const SizedBox(height: AppSpacing.lg),
+        FilledButton.icon(
+          onPressed: () => UploadRoute(avatarId: avatarId).push(context),
+          style: FilledButton.styleFrom(
+            backgroundColor: AppColors.purple,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14)),
           ),
-        ],
+          icon: const Icon(Icons.upload_file_rounded, size: 18),
+          label: Text(personalButtonLabel),
+        ),
       ],
     );
   }
