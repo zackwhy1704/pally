@@ -184,16 +184,24 @@ class _MochiTipCoachState extends ConsumerState<MochiTipCoach>
 
   List<_ChatTip> _actionableTips(Avatar avatar) {
     final result = <_ChatTip>[];
+    // Centre classes are filled by the teacher/centre — students can't upload,
+    // so any "add notes" nudge must point at the teacher and NEVER navigate to
+    // the (blocked) upload screen.
+    final isCentre = avatar.kind == AvatarKind.centreClass;
     if (!avatar.hasKnowledge) {
-      result.add(const _ChatTip(
+      result.add(_ChatTip(
         id: 'no-notes',
-        text: 'Upload your notes or textbook so I can learn from YOUR syllabus!',
-        emoji: '📷',
-        action: _openUpload,
+        text: isCentre
+            ? "This class doesn't have notes yet. Ask your teacher to add some! 📚"
+            : 'Upload your notes or textbook so I can learn from YOUR syllabus!',
+        emoji: isCentre ? '📚' : '📷',
+        action: isCentre ? null : _openUpload,
       ));
       return result; // hard-block: nothing else matters before notes exist
     }
-    if (avatar.curriculumType == null) {
+    // Curriculum + "feed me more notes" nudges only apply to a child's own
+    // Mochi; for a centre class the centre manages both.
+    if (!isCentre && avatar.curriculumType == null) {
       result.add(const _ChatTip(
         id: 'no-curriculum',
         text: 'What are you studying towards? Set your goal so I can tailor my help!',
@@ -201,7 +209,7 @@ class _MochiTipCoachState extends ConsumerState<MochiTipCoach>
         action: _openLibrary,
       ));
     }
-    if (avatar.wikiPageCount >= 1 && avatar.wikiPageCount <= 2) {
+    if (!isCentre && avatar.wikiPageCount >= 1 && avatar.wikiPageCount <= 2) {
       result.add(const _ChatTip(
         id: 'few-notes',
         text: 'Keep feeding me! The more notes you add, the smarter I get.',

@@ -13,6 +13,7 @@ Avatar _avatar({
   String? centreBrandName,
   String? centreAccentColor,
   String? centreId,
+  AvatarKind kind = AvatarKind.personal,
 }) =>
     Avatar(
       id: 'test-id',
@@ -23,6 +24,7 @@ Avatar _avatar({
       centreBrandName: centreBrandName,
       centreAccentColor: centreAccentColor,
       centreId: centreId,
+      kind: kind,
     );
 
 // ── Fake WidgetRef ────────────────────────────────────────────────────────────
@@ -119,6 +121,27 @@ void main() {
       final config = resolveCentreMode(ref, avatar);
       expect(config.active, isTrue);
       expect(config.brandName, 'XYZ Mochi');
+    });
+
+    test('active for a centre CLASS avatar even when centreManaged=false', () {
+      // A student's per-class avatar (and the class corpus) is identified by
+      // kind=CENTRE_CLASS, NOT the legacy centreManaged flag. It must still lock
+      // down uploads/teach/delete so students can't add notes to a class.
+      final ref = _FakeRef(isAdmin: false, demoOn: false);
+      final avatar = _avatar(kind: AvatarKind.centreClass);
+      final config = resolveCentreMode(ref, avatar);
+      expect(config.active, isTrue);
+      expect(config.canUpload, isFalse);
+      expect(config.canTeach, isFalse);
+      expect(config.canDelete, isFalse);
+      expect(config.closedBook, isTrue);
+    });
+
+    test('personal avatar (kind=personal, centreManaged=false) stays inactive', () {
+      final ref = _FakeRef(isAdmin: false, demoOn: false);
+      final config = resolveCentreMode(ref, _avatar(kind: AvatarKind.personal));
+      expect(config.active, isFalse);
+      expect(config.canUpload, isTrue);
     });
 
     test('falls back to default brand when centreBrandName is null', () {

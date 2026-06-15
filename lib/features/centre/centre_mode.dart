@@ -48,11 +48,20 @@ final centreModeDemoOverrideProvider = StateProvider<bool>((ref) => false);
 
 /// Resolves the [CentreModeConfig] for [avatar].
 ///
-/// Only looks at `avatar.centreManaged` — this is the server truth for real
-/// centre avatars. Personal avatars always return [CentreModeConfig.inactive].
+/// Centre mode is active when EITHER:
+///   1. `avatar.centreManaged` — the legacy server flag set when a centre
+///      provisions a branded avatar, OR
+///   2. `avatar.kind == AvatarKind.centreClass` — the avatar belongs to a
+///      centre CLASS (a student's per-class avatar or the hidden class corpus).
+///      These are filled by the teacher/centre, so students must not upload,
+///      teach, or delete them.
+///
+/// Either signal alone locks the avatar down. Personal avatars
+/// (centreManaged == false AND kind == personal) return [CentreModeConfig.inactive].
 /// The admin demo toggle is handled separately via [showDemoCentreCard].
 CentreModeConfig resolveCentreMode(WidgetRef ref, Avatar avatar) {
-  if (!avatar.centreManaged) return CentreModeConfig.inactive;
+  final isClass = avatar.kind == AvatarKind.centreClass;
+  if (!avatar.centreManaged && !isClass) return CentreModeConfig.inactive;
   return CentreModeConfig(
     active: true,
     brandName: avatar.centreBrandName ?? CentreModeConfig._defaultBrand,
