@@ -80,7 +80,23 @@ class _BrainMapScreenState extends ConsumerState<BrainMapScreen>
         ),
         data: (state) {
           if (state.nodes.isEmpty) {
-            return _EmptyState(avatarId: widget.avatarId);
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.xl),
+                child: Container(
+                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: NoNotesCta(
+                    avatarId: widget.avatarId,
+                    personalDescription:
+                        'Upload some notes — Mochi will map what you know!',
+                  ),
+                ),
+              ),
+            );
           }
           // Restart the entrance animation whenever the set of new nodes
           // changes (e.g. after a fresh compile while the screen is open).
@@ -516,38 +532,3 @@ class _SheetButton extends StatelessWidget {
   }
 }
 
-class _EmptyState extends ConsumerWidget {
-  const _EmptyState({required this.avatarId});
-
-  final String avatarId;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isCentre =
-        ref.watch(avatarIsCentreClassProvider(avatarId)).valueOrNull ?? false;
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.bubble_chart_outlined,
-                size: 80, color: Colors.white24),
-            const SizedBox(height: AppSpacing.md),
-            Text('No topics yet',
-                style: AppTextStyles.title.copyWith(color: Colors.white)),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              isCentre
-                  ? 'Your teacher hasn\'t added notes for this class yet — '
-                      'ask them to upload some! 📚'
-                  : 'Upload some notes — Mochi will fill the map for you.',
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white70),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
