@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/core/ui/no_notes_cta.dart';
 import 'package:pally/features/modules/presentation/module_list_screen.dart';
 import 'package:pally/features/modules/presentation/module_list_view_model.dart';
 import 'package:pally/shared/models/learning_module.dart';
@@ -46,6 +47,9 @@ void main() {
           moduleAvatarInfoProvider('test-avatar').overrideWith(
               (ref) async => const ModuleAvatarInfo(
                   hasNotes: false, isCentreClass: false)),
+          // No-notes branch delegates to NoNotesCta, which resolves kind here.
+          avatarIsCentreClassProvider('test-avatar')
+              .overrideWith((ref) async => false),
         ],
       ));
       await tester.pumpAndSettle();
@@ -75,7 +79,7 @@ void main() {
       expect(find.text('Upload notes'), findsNothing);
     });
 
-    testWidgets('centre class offers Generate (never Upload), even with no notes',
+    testWidgets('empty centre class shows ask-teacher message and NO button',
         (tester) async {
       await tester.pumpWidget(_wrap(
         const ModuleListScreen(avatarId: 'test-avatar'),
@@ -85,12 +89,33 @@ void main() {
           moduleAvatarInfoProvider('test-avatar').overrideWith(
               (ref) async =>
                   const ModuleAvatarInfo(hasNotes: false, isCentreClass: true)),
+          avatarIsCentreClassProvider('test-avatar')
+              .overrideWith((ref) async => true),
         ],
       ));
       await tester.pumpAndSettle();
 
-      // Students generate (old behaviour); never upload to a class. The
-      // no-notes case is handled by a teacher-reminder toast on tap.
+      // Centre + no notes → static "ask your teacher" text, ZERO tap action.
+      expect(find.textContaining('Ask your teacher'), findsOneWidget);
+      expect(find.text('Generate lessons'), findsNothing);
+      expect(find.text('Upload notes'), findsNothing);
+    });
+
+    testWidgets('centre class WITH notes offers Generate lessons (no upload)',
+        (tester) async {
+      await tester.pumpWidget(_wrap(
+        const ModuleListScreen(avatarId: 'test-avatar'),
+        overrides: [
+          moduleListViewModelProvider('test-avatar')
+              .overrideWith(() => _EmptyModuleListVM()),
+          moduleAvatarInfoProvider('test-avatar').overrideWith(
+              (ref) async =>
+                  const ModuleAvatarInfo(hasNotes: true, isCentreClass: true)),
+        ],
+      ));
+      await tester.pumpAndSettle();
+
+      // Notes exist → generation works, so the Generate button is valid.
       expect(find.text('Generate lessons'), findsOneWidget);
       expect(find.text('Upload notes'), findsNothing);
     });

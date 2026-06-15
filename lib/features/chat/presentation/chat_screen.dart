@@ -355,6 +355,10 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
               if (value == 'teach') {
                 TeachMochiRoute(avatarId: avatarId).push(context);
               } else if (value == 'upload') {
+                // Defensive: the upload menu item is already hidden for centre
+                // classes (students can't upload — uploads are blocked
+                // server-side). Guard the action too in case it's ever invoked.
+                if (isCentre) return;
                 UploadRoute(avatarId: avatarId).push(context);
               } else if (value == 'delete' && chatState.avatar != null) {
                 final avatar = chatState.avatar!;
