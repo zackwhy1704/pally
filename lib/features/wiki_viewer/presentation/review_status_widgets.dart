@@ -38,12 +38,12 @@ class ReviewStateSurface extends StatelessWidget {
     super.key,
     required this.page,
     required this.onGetChecked,
-    required this.onFixNotes,
+    this.onFixNotes,
   });
 
   final WikiPage page;
   final VoidCallback onGetChecked;
-  final VoidCallback onFixNotes;
+  final VoidCallback? onFixNotes;
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +149,7 @@ class _ReviewBanner extends StatelessWidget {
     required this.title,
     this.detail,
     required this.onGetChecked,
-    required this.onFixNotes,
+    this.onFixNotes,
   });
 
   final Color color;
@@ -158,7 +158,7 @@ class _ReviewBanner extends StatelessWidget {
   final String title;
   final String? detail;
   final VoidCallback onGetChecked;
-  final VoidCallback onFixNotes;
+  final VoidCallback? onFixNotes;
 
   @override
   Widget build(BuildContext context) {
@@ -207,12 +207,13 @@ class _ReviewBanner extends StatelessWidget {
                 label: 'Get it checked',
                 onTap: onGetChecked,
               ),
-              _BannerAction(
-                color: color,
-                icon: Icons.edit_outlined,
-                label: 'Fix my notes',
-                onTap: onFixNotes,
-              ),
+              if (onFixNotes != null)
+                _BannerAction(
+                  color: color,
+                  icon: Icons.edit_outlined,
+                  label: 'Fix my notes',
+                  onTap: onFixNotes!,
+                ),
             ],
           ),
         ],

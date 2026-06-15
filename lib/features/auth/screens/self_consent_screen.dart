@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pally/app/api_client.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/features/auth/screens/self_consent_view_model.dart';
 
 /// C5 — "Before you start" (13–17 self-consent)
 /// Child-readable disclosure cards + single checkbox. Withdrawal as easy
@@ -19,7 +19,6 @@ class SelfConsentScreen extends ConsumerStatefulWidget {
 
 class _SelfConsentScreenState extends ConsumerState<SelfConsentScreen> {
   bool _agreed = false;
-  bool _loading = false;
 
   static const _disclosures = [
     ('📝', 'Your notes stay yours',
@@ -33,22 +32,13 @@ class _SelfConsentScreenState extends ConsumerState<SelfConsentScreen> {
   ];
 
   Future<void> _agree() async {
-    setState(() => _loading = true);
-    try {
-      final dio = ref.read(dioProvider);
-      await dio.post<void>('/api/v1/consent/self');
-    } catch (_) {
-      // Best-effort — proceed even if recording fails
-    } finally {
-      if (mounted) {
-        setState(() => _loading = false);
-        context.go('/onboarding');
-      }
-    }
+    await ref.read(selfConsentViewModelProvider.notifier).submitConsent();
+    if (mounted) context.go('/onboarding');
   }
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(selfConsentViewModelProvider).isLoading;
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
@@ -143,13 +133,13 @@ class _SelfConsentScreenState extends ConsumerState<SelfConsentScreen> {
               SizedBox(
                 height: AppSizing.buttonHeight,
                 child: FilledButton(
-                  onPressed: (_agreed && !_loading) ? _agree : null,
+                  onPressed: (_agreed && !isLoading) ? _agree : null,
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.purple,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14)),
                   ),
-                  child: _loading
+                  child: isLoading
                       ? const SizedBox(
                           width: AppSizing.checkboxSize,
                           height: AppSizing.checkboxSize,

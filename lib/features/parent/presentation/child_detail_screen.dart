@@ -1,119 +1,67 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pally/app/api_client.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
-import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/parent/presentation/assign_revision_sheet.dart';
 import 'package:pally/features/parent/presentation/award_stars_sheet.dart';
+import 'package:pally/features/parent/presentation/child_dashboard_view_model.dart';
 import 'package:pally/features/parent/presentation/weekly_goal_sheet.dart';
 
 /// Drills down into a single child's progress from the parent home screen.
-class ChildDetailScreen extends ConsumerStatefulWidget {
+class ChildDetailScreen extends ConsumerWidget {
   const ChildDetailScreen({super.key, required this.childId});
   final String childId;
 
   @override
-  ConsumerState<ChildDetailScreen> createState() => _ChildDetailScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dashAsync = ref.watch(childDashboardProvider(childId));
 
-class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen> {
-  Map<String, dynamic>? _data;
-  bool _loading = true;
-  String? _error;
-
-  @override
-  void initState() {
-    super.initState();
-    _load();
-  }
-
-  Future<void> _load() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-    try {
-      final dio = ref.read(dioProvider);
-      final res = await dio.get<Map<String, dynamic>>(
-        '/api/v1/parent/children/${widget.childId}/dashboard',
-      );
-      if (mounted) {
-        setState(() {
-          _data = res.data ?? {};
-          _loading = false;
-        });
-      }
-    } on DioException catch (e, st) {
-      appLog.e('[ChildDetail] Failed to load dashboard',
-          error: e, stackTrace: st);
-      if (mounted) {
-        setState(() {
-          _error = 'Could not load data.';
-          _loading = false;
-        });
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bg,
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
         title: Text(
-          (_data?['childName'] as String?) ?? 'Child',
+          dashAsync.valueOrNull?.childName ?? 'Child',
           style: AppTextStyles.title,
         ),
         centerTitle: true,
       ),
-      body: _loading
-          ? const PallyLoadingSpinner()
-          : _error != null
-              ? _ErrorView(error: _error!, onRetry: _load)
-              : RefreshIndicator(
-                  color: AppColors.purple,
-                  onRefresh: _load,
-                  child: _buildContent(),
-                ),
+      body: dashAsync.when(
+        loading: () => const PallyLoadingSpinner(),
+        error: (e, _) => _ErrorView(
+          error: 'Could not load data.',
+          onRetry: () => ref.invalidate(childDashboardProvider(childId)),
+        ),
+        data: (dash) => RefreshIndicator(
+          color: AppColors.purple,
+          onRefresh: () =>
+              ref.refresh(childDashboardProvider(childId).future),
+          child: _buildContent(context, dash),
+        ),
+      ),
     );
   }
 
-  Widget _buildContent() {
-    final data = _data ?? {};
-    final sessions = (data['sessionsThisWeek'] as num?)?.toInt() ?? 0;
-    final minutes = (data['minutesThisWeek'] as num?)?.toInt() ?? 0;
-    final xp = (data['xpThisWeek'] as num?)?.toInt() ?? 0;
-    final streak = (data['streakDays'] as num?)?.toInt() ?? 0;
-
-    final subjects = ((data['subjects'] as List?) ?? [])
-        .whereType<Map<String, dynamic>>()
-        .toList();
-    final weakConcepts = ((data['weakAreas'] as List?) ?? [])
-        .whereType<Map<String, dynamic>>()
-        .toList();
-    final modulesCompleted = (data['modulesCompleted'] as num?)?.toInt() ?? 0;
-    final modulesTotal = (data['modulesTotal'] as num?)?.toInt() ?? 0;
-
+  Widget _buildContent(BuildContext context, ChildDashboard dash) {
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.md),
       children: [
-        // Stats row
         _StatsRow(
-            sessions: sessions, minutes: minutes, xp: xp, streak: streak),
+          sessions: dash.sessionsThisWeek,
+          minutes: dash.minutesThisWeek,
+          xp: dash.xpThisWeek,
+          streak: dash.streakDays,
+        ),
         const SizedBox(height: AppSpacing.md),
 
-        // Subject mastery
-        if (subjects.isNotEmpty) ...[
+        if (dash.subjects.isNotEmpty) ...[
           _SectionCard(
             title: 'Subject mastery',
             child: Column(
-              children: subjects.map((s) {
+              children: dash.subjects.map((s) {
                 final name = (s['subject'] as String?) ?? '';
                 final mastery = ((s['mastery'] as num?) ?? 0).toDouble();
                 return _MasteryBar(label: name, value: mastery);
@@ -123,12 +71,11 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen> {
           const SizedBox(height: AppSpacing.md),
         ],
 
-        // Weak concepts
-        if (weakConcepts.isNotEmpty) ...[
+        if (dash.weakAreas.isNotEmpty) ...[
           _SectionCard(
             title: 'Weak concepts',
             child: Column(
-              children: weakConcepts.take(5).map((w) {
+              children: dash.weakAreas.take(5).map((w) {
                 final topic = (w['topic'] as String?) ?? '';
                 final mastery = ((w['mastery'] as num?) ?? 0).toDouble();
                 final pct = (mastery * 100).round();
@@ -144,24 +91,26 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen> {
           const SizedBox(height: AppSpacing.md),
         ],
 
-        // Module progress
         _SectionCard(
           title: 'Module progress',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('$modulesCompleted / $modulesTotal completed',
-                  style: AppTextStyles.body),
+              Text(
+                '${dash.modulesCompleted} / ${dash.modulesTotal} completed',
+                style: AppTextStyles.body,
+              ),
               const SizedBox(height: AppSpacing.sm),
               ClipRRect(
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
-                  value: modulesTotal > 0
-                      ? (modulesCompleted / modulesTotal).clamp(0.0, 1.0)
+                  value: dash.modulesTotal > 0
+                      ? (dash.modulesCompleted / dash.modulesTotal)
+                          .clamp(0.0, 1.0)
                       : 0,
                   backgroundColor: AppColors.outline,
-                  valueColor:
-                      const AlwaysStoppedAnimation<Color>(AppColors.purple),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                      AppColors.purple),
                   minHeight: 6,
                 ),
               ),
@@ -170,7 +119,6 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen> {
         ),
         const SizedBox(height: AppSpacing.lg),
 
-        // Action buttons
         Text('Actions', style: AppTextStyles.title),
         const SizedBox(height: AppSpacing.sm),
         _ActionButton(
@@ -182,8 +130,8 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen> {
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
             builder: (_) => AssignRevisionSheet(
-              childId: widget.childId,
-              weakAreas: weakConcepts
+              childId: childId,
+              weakAreas: dash.weakAreas
                   .map((w) => (w['topic'] as String?) ?? '')
                   .where((t) => t.isNotEmpty)
                   .toList(),
@@ -199,7 +147,7 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen> {
             context: context,
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
-            builder: (_) => AwardStarsSheet(childId: widget.childId),
+            builder: (_) => AwardStarsSheet(childId: childId),
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -211,7 +159,7 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen> {
             context: context,
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
-            builder: (_) => WeeklyGoalSheet(childId: widget.childId),
+            builder: (_) => WeeklyGoalSheet(childId: childId),
           ),
         ),
         const SizedBox(height: AppSpacing.xl),

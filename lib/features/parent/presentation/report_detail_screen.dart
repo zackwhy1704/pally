@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:pally/app/api_client.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
-import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/parent/presentation/weekly_report_view_model.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -72,23 +70,17 @@ class ReportDetailScreen extends ConsumerWidget {
 
   Future<void> _share(
       BuildContext context, WidgetRef ref, WeeklyReportDetail r) async {
-    // Prefer the backend-generated share text (richer + includes
-    // streak/badges). Fall back to a local string if the call fails so
-    // the share sheet still opens.
     String text;
     String subject = 'Apalchi Weekly Report';
-    try {
-      final dio = ref.read(dioProvider);
-      final res = await dio.get<Map<String, dynamic>>(
-        '/api/v1/parent/reports/${r.weekId}/share-text',
-      );
-      final data = (res.data?['data'] is Map
-              ? res.data!['data']
-              : res.data) as Map<String, dynamic>;
-      text = (data['text'] as String?) ?? '';
-      subject = (data['subject'] as String?) ?? subject;
-    } catch (e) {
-      appLog.w('[Report] share-text failed: $e — using local fallback');
+
+    final shareData = await ref
+        .read(weeklyReportDetailViewModelProvider(weekId).notifier)
+        .fetchShareText();
+
+    if (shareData != null && shareData.text.isNotEmpty) {
+      text = shareData.text;
+      subject = shareData.subject;
+    } else {
       final fmt = DateFormat('MMM d');
       final sb = StringBuffer()
         ..writeln('Apalchi weekly report (${fmt.format(r.startDate)} – '

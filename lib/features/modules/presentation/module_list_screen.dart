@@ -122,13 +122,12 @@ class _EmptyBody extends StatelessWidget {
 
   final String avatarId;
 
-  /// Async because we fetch the avatar's notes + kind to choose the CTA.
-  final AsyncValue<ModuleAvatarInfo> info;
+  final ModuleAvatarInfo? info;
   final VoidCallback onGenerate;
 
   @override
   Widget build(BuildContext context) {
-    final loaded = info.valueOrNull;
+    final loaded = info;
     final notes = loaded?.hasNotes ?? false;
     final isCentre = loaded?.isCentreClass ?? false;
 

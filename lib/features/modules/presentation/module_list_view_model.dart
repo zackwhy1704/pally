@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/features/home/presentation/home_view_model.dart';
+import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/learning_module.dart';
 
 part 'module_list_view_model.g.dart';
@@ -20,20 +22,19 @@ class ModuleAvatarInfo {
   final bool isCentreClass;
 }
 
-/// Reads wikiPageCount + kind off the avatar DTO.
+/// Reads avatar info (notes presence + centre/personal kind) synchronously from
+/// the home cache so the module-list empty state renders in one frame with no
+/// extra network round-trip. Returns null only while the home list is still
+/// loading (extremely rare — the user navigated through home to get here).
 @riverpod
-Future<ModuleAvatarInfo> moduleAvatarInfo(Ref ref, String avatarId) async {
-  final dio = ref.read(dioProvider);
-  final res = await dio.get<dynamic>('/api/v1/avatars/$avatarId');
-  final data = res.data;
-  final map = (data is Map && data['data'] is Map)
-      ? Map<String, dynamic>.from(data['data'] as Map)
-      : <String, dynamic>{};
-  final count = (map['wikiPageCount'] as num?)?.toInt() ?? 0;
-  final kind = (map['kind'] as String?)?.toUpperCase() ?? 'PERSONAL';
+ModuleAvatarInfo? moduleAvatarInfo(Ref ref, String avatarId) {
+  final homeState = ref.read(homeViewModelProvider);
+  final avatar =
+      homeState.valueOrNull?.where((a) => a.id == avatarId).firstOrNull;
+  if (avatar == null) return null;
   return ModuleAvatarInfo(
-    hasNotes: count > 0,
-    isCentreClass: kind == 'CENTRE_CLASS',
+    hasNotes: avatar.hasKnowledge,
+    isCentreClass: avatar.isCentreClass,
   );
 }
 

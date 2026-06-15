@@ -45,8 +45,7 @@ void main() {
               .overrideWith(() => _EmptyModuleListVM()),
           // Personal avatar, no notes → exactly one CTA: "Upload notes".
           moduleAvatarInfoProvider('test-avatar').overrideWith(
-              (ref) async => const ModuleAvatarInfo(
-                  hasNotes: false, isCentreClass: false)),
+              (ref) => const ModuleAvatarInfo(hasNotes: false, isCentreClass: false)),
           // No-notes branch delegates to NoNotesCta, which resolves kind here.
           avatarIsCentreClassProvider('test-avatar')
               .overrideWith((ref) async => false),
@@ -68,8 +67,7 @@ void main() {
           moduleListViewModelProvider('test-avatar')
               .overrideWith(() => _EmptyModuleListVM()),
           moduleAvatarInfoProvider('test-avatar').overrideWith(
-              (ref) async =>
-                  const ModuleAvatarInfo(hasNotes: true, isCentreClass: false)),
+              (ref) => const ModuleAvatarInfo(hasNotes: true, isCentreClass: false)),
         ],
       ));
       await tester.pumpAndSettle();
@@ -87,8 +85,7 @@ void main() {
           moduleListViewModelProvider('test-avatar')
               .overrideWith(() => _EmptyModuleListVM()),
           moduleAvatarInfoProvider('test-avatar').overrideWith(
-              (ref) async =>
-                  const ModuleAvatarInfo(hasNotes: false, isCentreClass: true)),
+              (ref) => const ModuleAvatarInfo(hasNotes: false, isCentreClass: true)),
           avatarIsCentreClassProvider('test-avatar')
               .overrideWith((ref) async => true),
         ],
@@ -109,8 +106,7 @@ void main() {
           moduleListViewModelProvider('test-avatar')
               .overrideWith(() => _EmptyModuleListVM()),
           moduleAvatarInfoProvider('test-avatar').overrideWith(
-              (ref) async =>
-                  const ModuleAvatarInfo(hasNotes: true, isCentreClass: true)),
+              (ref) => const ModuleAvatarInfo(hasNotes: true, isCentreClass: true)),
         ],
       ));
       await tester.pumpAndSettle();

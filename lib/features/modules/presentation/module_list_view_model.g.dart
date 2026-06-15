@@ -6,7 +6,7 @@ part of 'module_list_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$moduleAvatarInfoHash() => r'281617638caf400579aadd299f9c4556ee2134d0';
+String _$moduleAvatarInfoHash() => r'83dcf26618903407319c42bb35f72764288c7f23';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,22 +29,34 @@ class _SystemHash {
   }
 }
 
-/// Reads wikiPageCount + kind off the avatar DTO.
+/// Reads avatar info (notes presence + centre/personal kind) synchronously from
+/// the home cache so the module-list empty state renders in one frame with no
+/// extra network round-trip. Returns null only while the home list is still
+/// loading (extremely rare — the user navigated through home to get here).
 ///
 /// Copied from [moduleAvatarInfo].
 @ProviderFor(moduleAvatarInfo)
 const moduleAvatarInfoProvider = ModuleAvatarInfoFamily();
 
-/// Reads wikiPageCount + kind off the avatar DTO.
+/// Reads avatar info (notes presence + centre/personal kind) synchronously from
+/// the home cache so the module-list empty state renders in one frame with no
+/// extra network round-trip. Returns null only while the home list is still
+/// loading (extremely rare — the user navigated through home to get here).
 ///
 /// Copied from [moduleAvatarInfo].
-class ModuleAvatarInfoFamily extends Family<AsyncValue<ModuleAvatarInfo>> {
-  /// Reads wikiPageCount + kind off the avatar DTO.
+class ModuleAvatarInfoFamily extends Family<ModuleAvatarInfo?> {
+  /// Reads avatar info (notes presence + centre/personal kind) synchronously from
+  /// the home cache so the module-list empty state renders in one frame with no
+  /// extra network round-trip. Returns null only while the home list is still
+  /// loading (extremely rare — the user navigated through home to get here).
   ///
   /// Copied from [moduleAvatarInfo].
   const ModuleAvatarInfoFamily();
 
-  /// Reads wikiPageCount + kind off the avatar DTO.
+  /// Reads avatar info (notes presence + centre/personal kind) synchronously from
+  /// the home cache so the module-list empty state renders in one frame with no
+  /// extra network round-trip. Returns null only while the home list is still
+  /// loading (extremely rare — the user navigated through home to get here).
   ///
   /// Copied from [moduleAvatarInfo].
   ModuleAvatarInfoProvider call(
@@ -79,12 +91,17 @@ class ModuleAvatarInfoFamily extends Family<AsyncValue<ModuleAvatarInfo>> {
   String? get name => r'moduleAvatarInfoProvider';
 }
 
-/// Reads wikiPageCount + kind off the avatar DTO.
+/// Reads avatar info (notes presence + centre/personal kind) synchronously from
+/// the home cache so the module-list empty state renders in one frame with no
+/// extra network round-trip. Returns null only while the home list is still
+/// loading (extremely rare — the user navigated through home to get here).
 ///
 /// Copied from [moduleAvatarInfo].
-class ModuleAvatarInfoProvider
-    extends AutoDisposeFutureProvider<ModuleAvatarInfo> {
-  /// Reads wikiPageCount + kind off the avatar DTO.
+class ModuleAvatarInfoProvider extends AutoDisposeProvider<ModuleAvatarInfo?> {
+  /// Reads avatar info (notes presence + centre/personal kind) synchronously from
+  /// the home cache so the module-list empty state renders in one frame with no
+  /// extra network round-trip. Returns null only while the home list is still
+  /// loading (extremely rare — the user navigated through home to get here).
   ///
   /// Copied from [moduleAvatarInfo].
   ModuleAvatarInfoProvider(
@@ -120,7 +137,7 @@ class ModuleAvatarInfoProvider
 
   @override
   Override overrideWith(
-    FutureOr<ModuleAvatarInfo> Function(ModuleAvatarInfoRef provider) create,
+    ModuleAvatarInfo? Function(ModuleAvatarInfoRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -137,7 +154,7 @@ class ModuleAvatarInfoProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<ModuleAvatarInfo> createElement() {
+  AutoDisposeProviderElement<ModuleAvatarInfo?> createElement() {
     return _ModuleAvatarInfoProviderElement(this);
   }
 
@@ -157,13 +174,13 @@ class ModuleAvatarInfoProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin ModuleAvatarInfoRef on AutoDisposeFutureProviderRef<ModuleAvatarInfo> {
+mixin ModuleAvatarInfoRef on AutoDisposeProviderRef<ModuleAvatarInfo?> {
   /// The parameter `avatarId` of this provider.
   String get avatarId;
 }
 
 class _ModuleAvatarInfoProviderElement
-    extends AutoDisposeFutureProviderElement<ModuleAvatarInfo>
+    extends AutoDisposeProviderElement<ModuleAvatarInfo?>
     with ModuleAvatarInfoRef {
   _ModuleAvatarInfoProviderElement(super.provider);
 

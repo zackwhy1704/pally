@@ -155,4 +155,25 @@ class WeeklyReportDetailViewModel extends _$WeeklyReportDetailViewModel {
             : response.data) as Map<String, dynamic>;
     return WeeklyReportDetail.fromJson(data);
   }
+
+  /// Fetches the backend-generated share text. Returns null on any failure so
+  /// the caller can fall back to a locally composed string.
+  Future<({String text, String subject})?> fetchShareText() async {
+    try {
+      final dio = ref.read(dioProvider);
+      final res = await dio.get<Map<String, dynamic>>(
+        '/api/v1/parent/reports/$weekId/share-text',
+      );
+      final data = (res.data?['data'] is Map
+              ? res.data!['data']
+              : res.data) as Map<String, dynamic>;
+      return (
+        text: (data['text'] as String?) ?? '',
+        subject: (data['subject'] as String?) ?? 'Apalchi Weekly Report',
+      );
+    } catch (e) {
+      appLog.w('[Parent] share-text failed: $e — using local fallback');
+      return null;
+    }
+  }
 }

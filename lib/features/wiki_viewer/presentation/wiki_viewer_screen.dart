@@ -832,7 +832,8 @@ class _PageTileState extends ConsumerState<_PageTile> {
                   ReviewStateSurface(
                     page: widget.page,
                     onGetChecked: _openReviewSheet,
-                    onFixNotes: _startEditing,
+                    onFixNotes:
+                        widget.isCentreClass ? null : _startEditing,
                   ),
                 ],
               ),

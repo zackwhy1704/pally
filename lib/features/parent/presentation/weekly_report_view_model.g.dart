@@ -25,7 +25,7 @@ final weeklyReportListViewModelProvider = AutoDisposeAsyncNotifierProvider<
 typedef _$WeeklyReportListViewModel
     = AutoDisposeAsyncNotifier<List<WeeklyReportSummary>>;
 String _$weeklyReportDetailViewModelHash() =>
-    r'fb13de7b4860c3e0297adaf9d13d1a3da53ec93b';
+    r'f854dda319c65a7a11875a69f5d1f7361fad1e5e';
 
 /// Copied from Dart SDK
 class _SystemHash {

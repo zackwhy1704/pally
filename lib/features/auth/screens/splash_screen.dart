@@ -1,11 +1,8 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pally/app/api_client.dart';
-import 'package:pally/core/utils/logger.dart';
 import 'package:pally/core/widgets/loading/splash_lines.dart';
-import 'package:pally/features/auth/auth_state.dart';
+import 'package:pally/features/auth/screens/splash_view_model.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -52,38 +49,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     if (mounted) context.go(route);
   }
 
-  /// Runs the auth check and returns the route to navigate to.
-  Future<String> _resolveRoute() async {
-    var auth = ref.read(authStateProvider);
-    if (!auth.isSignedIn) return '/auth/signin';
-
-    try {
-      final dio = ref.read(dioProvider);
-      final response = await dio.get<Map<String, dynamic>>('/api/v1/auth/me');
-      final data = response.data;
-      if (data != null) {
-        if (data['setupComplete'] == true && !auth.isSetupComplete) {
-          await AuthNotifier.instance.markSetupComplete();
-        }
-        if (data['setupComplete'] == true && !auth.isOnboardingComplete) {
-          await AuthNotifier.instance.markOnboardingComplete();
-        }
-        final childName = data['childName'] as String?;
-        if (childName != null &&
-            childName.isNotEmpty &&
-            childName != auth.childName) {
-          await AuthNotifier.instance.setChildName(childName);
-        }
-        auth = ref.read(authStateProvider);
-      }
-    } on DioException catch (e) {
-      appLog.w('[Splash] Profile refresh failed (cached state): ${e.type}');
-    }
-
-    if (!auth.isSetupComplete) return '/auth/setup';
-    if (!auth.isOnboardingComplete) return '/onboarding';
-    return '/';
-  }
+  Future<String> _resolveRoute() =>
+      ref.read(resolveStartRouteProvider.future);
 
   @override
   void dispose() {
