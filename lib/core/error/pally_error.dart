@@ -16,6 +16,7 @@ enum PallyErrorKind {
   unauthorized,
   upgradeRequired,
   permissionDenied,
+  consentRequired,
   slotLocked,
   rateLimited,
   aiBusy,
@@ -47,6 +48,9 @@ class PallyError {
   static const permissionDenied = PallyError(
       PallyErrorKind.permissionDenied,
       "You don't have permission to do that.");
+  static const consentRequired = PallyError(
+      PallyErrorKind.consentRequired,
+      'You need to agree to AI terms first. Check the settings screen.');
   static const rateLimited = PallyError(
       PallyErrorKind.rateLimited,
       "Mochi's a bit busy. Try again in a moment.");
@@ -91,7 +95,17 @@ class PallyError {
         if (code == 404) return notFound;
         if (code == 401) return unauthorized;
         if (code == 402) return upgradeRequired;
-        if (code == 403) return permissionDenied;
+        if (code == 403) {
+          final body = e.response?.data;
+          if (body is Map && body['data'] is Map) {
+            final consentCode = (body['data'] as Map)['code'] as String?;
+            if (consentCode == 'AI_CONSENT_REQUIRED' ||
+                consentCode == 'CONSENT_REQUIRED') {
+              return consentRequired;
+            }
+          }
+          return permissionDenied;
+        }
         if (code == 409) return slotLocked;
         if (code == 429) return rateLimited;
         if (code == 503) return aiBusy;

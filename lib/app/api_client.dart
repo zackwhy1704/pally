@@ -381,22 +381,34 @@ class _ServerErrorInterceptor extends Interceptor {
 }
 
 class _SessionExpiredInterceptor extends Interceptor {
-  // Session housekeeping calls are fire-and-forget; a 401 on them must NOT
-  // trigger a global sign-out (the token may still be valid for all other
-  // requests — the backend simply rejects stale session IDs).
-  static const _housekeepingPaths = [
-    '/chat/session-end',
-    '/chat/session-start',
-  ];
-
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     final path = err.requestOptions.path;
-    final isHousekeeping = _housekeepingPaths.any((p) => path.contains(p));
-    if (err.response?.statusCode == 401 &&
-        !path.contains('/auth/') &&
-        !isHousekeeping) {
-      AuthNotifier.instance.signOut();
+    final status = err.response?.statusCode;
+
+    if (!path.contains('/auth/')) {
+      if (status == 401) {
+        // Only sign out when the body explicitly signals an invalid token.
+        // Housekeeping 401s (session-end on an expired session), or transient
+        // auth blips, must NOT force a sign-out while the user is actively
+        // using the app — the JWT itself may still be valid.
+        final body = err.response?.data;
+        final isTokenInvalid = body is Map &&
+            (body['error'] == 'Authentication required' ||
+                body['status'] == 401);
+        if (isTokenInvalid) {
+          appLog.w('[Auth] 401 on $path — token invalid, signing out');
+          Future.microtask(() => AuthNotifier.instance.signOut());
+        }
+      } else if (status == 403) {
+        final body = err.response?.data;
+        if (body is Map && body['data'] is Map) {
+          final code = (body['data'] as Map)['code'] as String?;
+          if (code == 'AI_CONSENT_REQUIRED' || code == 'CONSENT_REQUIRED') {
+            appLog.w('[Auth] Consent required on $path: $code');
+          }
+        }
+      }
     }
     handler.next(err);
   }

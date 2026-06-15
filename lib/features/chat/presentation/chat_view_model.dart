@@ -18,6 +18,7 @@ import 'package:pally/features/chat/data/local/chat_local_data_source.dart';
 import 'package:pally/features/chat/data/local/chat_message_mapper.dart';
 import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
 
+import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/observability/observability_providers.dart';
 
 part 'chat_view_model.g.dart';
@@ -437,6 +438,19 @@ class ChatViewModel extends _$ChatViewModel {
       }
     } catch (e, st) {
       appLog.e('[Chat] sendMessage failed', error: e, stackTrace: st);
+      final pallyError = PallyError.from(e);
+      if (pallyError.kind == PallyErrorKind.consentRequired ||
+          pallyError.kind == PallyErrorKind.unauthorized) {
+        // Recoverable: remove the streaming placeholder so no broken bubble
+        // appears, then surface the error as a toast via state.error.
+        _removeStreamingMessage(streamId);
+        state = state.copyWith(
+          isTyping: false,
+          isSending: false,
+          error: pallyError.userMessage,
+        );
+        return;
+      }
       _finaliseStreamingMessage(
         streamId,
         'Sorry, I had trouble answering that. Please try again!',
@@ -912,6 +926,12 @@ class ChatViewModel extends _$ChatViewModel {
 
   String _stripSourceTrailer(String content) =>
       content.replaceFirst(_sourceTrailerPattern, '').trimRight();
+
+  void _removeStreamingMessage(String id) {
+    state = state.copyWith(
+      messages: state.messages.where((m) => m.id != id).toList(),
+    );
+  }
 
   void _finaliseStreamingMessage(
       String id, String content, List<String> sources) {
