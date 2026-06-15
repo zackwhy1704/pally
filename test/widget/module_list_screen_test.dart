@@ -75,7 +75,7 @@ void main() {
       expect(find.text('Upload notes'), findsNothing);
     });
 
-    testWidgets('centre class with no materials shows a wait state, no upload',
+    testWidgets('centre class offers Generate (never Upload), even with no notes',
         (tester) async {
       await tester.pumpWidget(_wrap(
         const ModuleListScreen(avatarId: 'test-avatar'),
@@ -89,10 +89,10 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      // Students can't upload to a centre class → no upload CTA, no kick-out.
-      expect(find.text('No materials yet'), findsOneWidget);
+      // Students generate (old behaviour); never upload to a class. The
+      // no-notes case is handled by a teacher-reminder toast on tap.
+      expect(find.text('Generate lessons'), findsOneWidget);
       expect(find.text('Upload notes'), findsNothing);
-      expect(find.text('Build my first lesson'), findsNothing);
     });
 
     testWidgets('shows module cards when modules exist', (tester) async {

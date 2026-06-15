@@ -53,6 +53,11 @@ class ModuleListScreen extends ConsumerWidget {
                 info: ref.watch(moduleAvatarInfoProvider(avatarId)),
                 onUpload: () => UploadRoute(avatarId: avatarId).push(context),
                 onGenerate: () async {
+                  final isCentre = ref
+                          .read(moduleAvatarInfoProvider(avatarId))
+                          .valueOrNull
+                          ?.isCentreClass ??
+                      false;
                   final result = await ref
                       .read(moduleListViewModelProvider(avatarId).notifier)
                       .generateModules();
@@ -61,9 +66,18 @@ class ModuleListScreen extends ConsumerWidget {
                     case ModuleGenResult.success:
                       break; // list refreshes via the provider
                     case ModuleGenResult.noNotes:
-                      PallyToast.success(context,
-                          'Add your notes and I\'ll build your first lesson.');
-                      UploadRoute(avatarId: avatarId).push(context);
+                      if (isCentre) {
+                        // Students can't upload to a class — point them at the
+                        // teacher instead of the (blocked) upload screen.
+                        PallyToast.error(
+                            context,
+                            'This class doesn\'t have enough notes yet to build '
+                            'lessons. Ask your teacher to add some! 📚');
+                      } else {
+                        PallyToast.success(context,
+                            'Add your notes and I\'ll build your first lesson.');
+                        UploadRoute(avatarId: avatarId).push(context);
+                      }
                     case ModuleGenResult.error:
                       PallyToast.error(context,
                           'Could not build lessons just now — try again.');
@@ -128,18 +142,11 @@ class _EmptyBody extends StatelessWidget {
     final notes = info.valueOrNull?.hasNotes ?? false;
     final isCentre = info.valueOrNull?.isCentreClass ?? false;
 
-    // Centre class with no materials yet: the student can't upload (the centre
-    // owns the content), so we show a friendly "waiting" state — no upload CTA,
-    // no kick-out to the upload screen, no dead generate.
-    if (isCentre && !notes) {
-      return const _EmptyMessage(
-        icon: Icons.hourglass_empty_rounded,
-        title: 'No materials yet',
-        body: 'Your centre hasn\'t added any lessons for this class yet. '
-            'Check back soon — they\'ll appear here automatically.',
-      );
-    }
-
+    // Centre class → the student can't upload (centre owns the content), so the
+    // only action is Generate. If there are no notes yet, onGenerate surfaces a
+    // "ask your teacher" toast (handled by the caller) — no kick-out to upload.
+    // Personal Mochi → Generate when notes exist, else Upload.
+    final showGenerate = isCentre || notes;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
@@ -153,20 +160,20 @@ class _EmptyBody extends StatelessWidget {
                 style: AppTextStyles.title, textAlign: TextAlign.center),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              notes
-                  ? 'Your notes are in — let\'s build your first lesson.'
-                  : 'Add your notes and I\'ll build your first lesson from them.',
+              isCentre
+                  ? 'Generate lessons from your class materials.'
+                  : (notes
+                      ? 'Your notes are in — let\'s build your first lesson.'
+                      : 'Add your notes and I\'ll build your first lesson from them.'),
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.lg),
-            // ONE CTA: generate when notes exist (centre or personal); upload
-            // only for a personal Mochi with no notes yet.
-            if (notes)
+            if (showGenerate)
               FilledButton.icon(
                 onPressed: onGenerate,
                 icon: const Icon(Icons.auto_awesome_rounded, size: 18),
-                label: const Text('Build my first lesson'),
+                label: Text(isCentre ? 'Generate lessons' : 'Build my first lesson'),
                 style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
               )
             else
@@ -176,35 +183,6 @@ class _EmptyBody extends StatelessWidget {
                 label: const Text('Upload notes'),
                 style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
               ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _EmptyMessage extends StatelessWidget {
-  const _EmptyMessage(
-      {required this.icon, required this.title, required this.body});
-  final IconData icon;
-  final String title;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 56, color: AppColors.text3),
-            const SizedBox(height: AppSpacing.md),
-            Text(title, style: AppTextStyles.title, textAlign: TextAlign.center),
-            const SizedBox(height: AppSpacing.sm),
-            Text(body,
-                style: AppTextStyles.body.copyWith(color: AppColors.text2),
-                textAlign: TextAlign.center),
           ],
         ),
       ),
