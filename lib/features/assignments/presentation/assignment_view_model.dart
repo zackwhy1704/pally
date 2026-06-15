@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/observability/observability.dart';
 import 'package:pally/core/observability/observability_providers.dart';
 import 'package:pally/core/utils/logger.dart';
@@ -54,9 +55,13 @@ class AssignmentViewModel extends _$AssignmentViewModel {
         appLog.d('[Assignments] No assignments found (404)');
         return const [];
       }
-      appLog.e('[Assignments] fetchAssignments failed',
+      appLog.e('[Assignments] fetchAssignments failed statusCode=${e.response?.statusCode}',
           error: e, stackTrace: st);
-      rethrow;
+      throw PallyError.from(e);
+    } catch (e, st) {
+      appLog.e('[Assignments] unexpected error fetching assignments',
+          error: e, stackTrace: st);
+      throw PallyError.unknown;
     }
   }
 

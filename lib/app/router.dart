@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/scaffold_shell.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/auth/screens/splash_screen.dart';
@@ -782,6 +785,26 @@ GoRouter buildAppRouter({
     debugLogDiagnostics: true,
     navigatorKey: navigatorKey,
     refreshListenable: authNotifier,
+    errorBuilder: (context, state) => Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline_rounded,
+                size: 48, color: AppColors.text3),
+            const SizedBox(height: AppSpacing.md),
+            Text('Something went wrong.', style: AppTextStyles.title),
+            const SizedBox(height: AppSpacing.sm),
+            FilledButton(
+              onPressed: () => context.go('/'),
+              style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.purple),
+              child: const Text('Go home'),
+            ),
+          ],
+        ),
+      ),
+    ),
     redirect: (context, state) {
       final auth = authNotifier.state;
       final path = state.matchedLocation;

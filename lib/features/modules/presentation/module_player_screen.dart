@@ -61,6 +61,30 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
       modulePlayerViewModelProvider(widget.avatarId, widget.moduleId),
     );
 
+    // Toast on transient action errors (submit/start failures) so the user
+    // knows something failed even when the inline error banner isn't visible.
+    ref.listen<ModulePlayerState>(
+      modulePlayerViewModelProvider(widget.avatarId, widget.moduleId),
+      (prev, next) {
+        if (next.error != null && prev?.error != next.error) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(next.error!.userMessage),
+                backgroundColor: AppColors.coral,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                margin: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md, vertical: 12),
+                duration: const Duration(seconds: 4),
+              ),
+            );
+        }
+      },
+    );
+
     final stageColor = _stageColor(playerState.stage);
     final stageTitle = _stageTitle(playerState.stage);
 

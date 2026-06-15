@@ -94,11 +94,18 @@ class ParentHomeViewModel extends _$ParentHomeViewModel {
       appLog.i(
           '[ParentHome] Loaded ${children.length} children for parent');
     } on DioException catch (e, st) {
-      appLog.e('[ParentHome] Failed to load children',
+      appLog.e('[ParentHome] Failed to load children statusCode=${e.response?.statusCode}',
           error: e, stackTrace: st);
       state = state.copyWith(
         isLoading: false,
         error: 'Could not load children. Check your connection.',
+      );
+    } catch (e, st) {
+      appLog.e('[ParentHome] Unexpected error loading children',
+          error: e, stackTrace: st);
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Something went wrong. Please try again.',
       );
     }
   }

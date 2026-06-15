@@ -5,7 +5,9 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
+import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/parent/presentation/parent_home_view_model.dart';
 
 /// Parent home screen — the landing page for parent accounts.
@@ -16,6 +18,12 @@ class ParentHomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(parentHomeViewModelProvider);
+
+    ref.listen<ParentHomeState>(parentHomeViewModelProvider, (_, next) {
+      if (next.error != null && !next.isLoading) {
+        PallyToast.error(context, next.error!);
+      }
+    });
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -35,24 +43,30 @@ class ParentHomeScreen extends ConsumerWidget {
       ),
       body: state.isLoading
           ? const PallyLoadingSpinner()
-          : RefreshIndicator(
-              color: AppColors.purple,
-              onRefresh: () =>
-                  ref.read(parentHomeViewModelProvider.notifier).refresh(),
-              child: state.children.isEmpty
-                  ? _EmptyState()
-                  : ListView(
-                      padding: const EdgeInsets.all(AppSpacing.md),
-                      children: [
-                        for (final child in state.children) ...[
-                          _ChildProgressCard(child: child),
-                          const SizedBox(height: AppSpacing.md),
-                        ],
-                        const SizedBox(height: AppSpacing.md),
-                        _BottomActions(),
-                      ],
-                    ),
-            ),
+          : state.error != null && state.children.isEmpty
+              ? PallyErrorCard(
+                  message: state.error!,
+                  onRetry: () =>
+                      ref.read(parentHomeViewModelProvider.notifier).refresh(),
+                )
+              : RefreshIndicator(
+                  color: AppColors.purple,
+                  onRefresh: () =>
+                      ref.read(parentHomeViewModelProvider.notifier).refresh(),
+                  child: state.children.isEmpty
+                      ? _EmptyState()
+                      : ListView(
+                          padding: const EdgeInsets.all(AppSpacing.md),
+                          children: [
+                            for (final child in state.children) ...[
+                              _ChildProgressCard(child: child),
+                              const SizedBox(height: AppSpacing.md),
+                            ],
+                            const SizedBox(height: AppSpacing.md),
+                            _BottomActions(),
+                          ],
+                        ),
+                ),
     );
   }
 }

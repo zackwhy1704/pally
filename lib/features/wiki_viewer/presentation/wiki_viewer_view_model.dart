@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/error/pally_error.dart';
+import 'package:pally/core/utils/logger.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/wiki_page.dart';
 
@@ -300,14 +301,14 @@ class WikiViewerViewModel extends _$WikiViewerViewModel {
         final pageSlug = p.slug ?? p.title.toLowerCase().replaceAll(' ', '-');
         return pageSlug == slug ? p.copyWith(content: newContent) : p;
       }).toList();
-      state = state.copyWith(pages: updated);
-    } catch (_) {
-      // Optimistically update in-memory even if backend is unavailable
-      final updated = state.pages.map((p) {
-        final pageSlug = p.slug ?? p.title.toLowerCase().replaceAll(' ', '-');
-        return pageSlug == slug ? p.copyWith(content: newContent) : p;
-      }).toList();
-      state = state.copyWith(pages: updated);
+      state = state.copyWith(pages: updated, error: null);
+    } catch (e, st) {
+      // Surface the error so the wiki_viewer_screen ref.listen fires a toast.
+      // The in-memory pages are NOT updated on failure — the student's edit
+      // is lost rather than silently persisting a change the backend rejected.
+      appLog.e('[WikiViewer] patchCorrection failed slug=$slug',
+          error: e, stackTrace: st);
+      state = state.copyWith(error: PallyError.from(e));
     }
   }
 }

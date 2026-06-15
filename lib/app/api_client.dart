@@ -231,6 +231,21 @@ class _ServerErrorInterceptor extends Interceptor {
         _handleAiConsentRequired(err, handler);
         return; // _handleAiConsentRequired owns the handler from here on.
       }
+
+      // SSE chat requests send Accept: text/event-stream, which causes
+      // Spring's exception handler to fail serialising JSON, returning an
+      // empty 403 body. We can't parse the code, so fall back to path-based
+      // detection: the only reason the /chat SSE endpoint returns 403 is
+      // AI_DATA_TRANSFER consent. Session-end/start are excluded (they're
+      // JSON endpoints that return their own errors).
+      final path = err.requestOptions.path;
+      final isConsentlessSSE = body == null &&
+          path.contains('/chat') &&
+          !path.contains('/chat/session-');
+      if (isConsentlessSSE) {
+        _handleAiConsentRequired(err, handler);
+        return;
+      }
     }
 
     // 403 PARENT_LINK_REQUIRED → an under-13 user tried a gated action (chat /
@@ -366,10 +381,21 @@ class _ServerErrorInterceptor extends Interceptor {
 }
 
 class _SessionExpiredInterceptor extends Interceptor {
+  // Session housekeeping calls are fire-and-forget; a 401 on them must NOT
+  // trigger a global sign-out (the token may still be valid for all other
+  // requests — the backend simply rejects stale session IDs).
+  static const _housekeepingPaths = [
+    '/chat/session-end',
+    '/chat/session-start',
+  ];
+
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
+    final path = err.requestOptions.path;
+    final isHousekeeping = _housekeepingPaths.any((p) => path.contains(p));
     if (err.response?.statusCode == 401 &&
-        !err.requestOptions.path.contains('/auth/')) {
+        !path.contains('/auth/') &&
+        !isHousekeeping) {
       AuthNotifier.instance.signOut();
     }
     handler.next(err);

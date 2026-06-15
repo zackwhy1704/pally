@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/shared/models/assignment_detail.dart';
 
@@ -13,17 +15,28 @@ class AssignmentDetailViewModel extends _$AssignmentDetailViewModel {
   @override
   Future<AssignmentDetail> build(String avatarId, String assignmentId) async {
     appLog.d('[Assignments] Fetching detail $assignmentId for avatar $avatarId');
-    final dio = ref.read(dioProvider);
-    final response = await dio.get<dynamic>(
-      '/api/v1/avatars/$avatarId/assignments/$assignmentId',
-    );
-    final data = response.data is Map
-        ? Map<String, dynamic>.from(response.data as Map)
-        : <String, dynamic>{};
-    final detail = AssignmentDetail.fromJson(data);
-    appLog.i('[Assignments] Detail loaded released=${detail.answersReleased} '
-        'questions=${detail.questions.length}');
-    return detail;
+    try {
+      final dio = ref.read(dioProvider);
+      final response = await dio.get<dynamic>(
+        '/api/v1/avatars/$avatarId/assignments/$assignmentId',
+      );
+      final data = response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : <String, dynamic>{};
+      final detail = AssignmentDetail.fromJson(data);
+      appLog.i('[Assignments] Detail loaded released=${detail.answersReleased} '
+          'questions=${detail.questions.length}');
+      return detail;
+    } on DioException catch (e, st) {
+      appLog.e('[Assignments] detail load failed avatarId=$avatarId '
+          'assignmentId=$assignmentId statusCode=${e.response?.statusCode}',
+          error: e, stackTrace: st);
+      throw PallyError.from(e);
+    } catch (e, st) {
+      appLog.e('[Assignments] unexpected error loading detail',
+          error: e, stackTrace: st);
+      throw PallyError.unknown;
+    }
   }
 
   Future<void> refresh() async {

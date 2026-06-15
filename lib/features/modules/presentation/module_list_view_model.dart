@@ -22,13 +22,20 @@ class ModuleAvatarInfo {
   final bool isCentreClass;
 }
 
-/// Reads avatar info (notes presence + centre/personal kind) synchronously from
-/// the home cache so the module-list empty state renders in one frame with no
-/// extra network round-trip. Returns null only while the home list is still
-/// loading (extremely rare — the user navigated through home to get here).
+/// Reads avatar info (notes presence + centre/personal kind) reactively from
+/// the home cache so the module-list empty state renders correctly and updates
+/// when the home list refreshes. Returns null while loading or on error so the
+/// empty state never flashes an incorrect centre/personal guess.
 @riverpod
 ModuleAvatarInfo? moduleAvatarInfo(Ref ref, String avatarId) {
-  final homeState = ref.read(homeViewModelProvider);
+  // watch (not read) so this updates reactively when home provider refreshes.
+  final homeState = ref.watch(homeViewModelProvider);
+
+  // While loading or errored, return null — the empty state's null guard waits
+  // rather than guessing, preventing the "Upload" button flashing to a centre
+  // student.
+  if (!homeState.hasValue) return null;
+
   final avatar =
       homeState.valueOrNull?.where((a) => a.id == avatarId).firstOrNull;
   if (avatar == null) return null;

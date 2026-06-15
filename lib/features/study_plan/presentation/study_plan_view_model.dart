@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/shared/models/study_plan_item.dart';
 
@@ -53,11 +54,16 @@ class StudyPlanViewModel extends _$StudyPlanViewModel {
       final dio = ref.read(dioProvider);
       await dio.post<void>('/api/v1/progress/study-plan/$itemId/done');
       appLog.d('[StudyPlan] task $itemId marked done');
-    } on DioException catch (e) {
-      appLog.w('[StudyPlan] mark-done failed, reverting: ${e.message}');
-      // Revert to previous state
+    } on DioException catch (e, st) {
+      appLog.e('[StudyPlan] mark-done failed, reverting itemId=$itemId statusCode=${e.response?.statusCode}',
+          error: e, stackTrace: st);
       state = AsyncData(previous);
-      rethrow;
+      throw PallyError.from(e);
+    } catch (e, st) {
+      appLog.e('[StudyPlan] unexpected error marking done itemId=$itemId',
+          error: e, stackTrace: st);
+      state = AsyncData(previous);
+      throw PallyError.unknown;
     }
   }
 

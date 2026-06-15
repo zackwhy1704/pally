@@ -133,6 +133,9 @@ class TeachMochiViewModel extends _$TeachMochiViewModel {
     } on DioException catch (e) {
       appLog.w('[Teach] topic load failed: ${e.message}');
       state = state.copyWith(topics: const [], isLoadingTopics: false);
+    } catch (e, st) {
+      appLog.e('[Teach] unexpected error loading topics', error: e, stackTrace: st);
+      state = state.copyWith(topics: const [], isLoadingTopics: false);
     }
   }
 
@@ -211,6 +214,12 @@ class TeachMochiViewModel extends _$TeachMochiViewModel {
       state = state.copyWith(
         isSubmitting: false,
         error: 'Could not reach Mochi. Try again.',
+      );
+    } catch (e, st) {
+      appLog.e('[Teach] unexpected error submitting', error: e, stackTrace: st);
+      state = state.copyWith(
+        isSubmitting: false,
+        error: 'Something went wrong. Please try again.',
       );
     }
   }

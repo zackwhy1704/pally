@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/shared/models/avatar.dart';
 
@@ -25,8 +26,12 @@ class LibraryViewModel extends _$LibraryViewModel {
       // Never fabricate Pencil/Science Mochi tutors on a network blip —
       // the user would see "tutors" they never made. Surface the error
       // through AsyncError so the screen can render its empty / retry UI.
-      appLog.w('[Library] fetchAvatars failed', error: e, stackTrace: st);
-      rethrow;
+      appLog.e('[Library] fetchAvatars failed statusCode=${e.response?.statusCode}',
+          error: e, stackTrace: st);
+      throw PallyError.from(e);
+    } catch (e, st) {
+      appLog.e('[Library] unexpected error fetching avatars', error: e, stackTrace: st);
+      throw PallyError.unknown;
     }
   }
 

@@ -160,18 +160,29 @@ class ChallengeViewModel extends _$ChallengeViewModel {
 
   Future<Challenge> _fetch() async {
     appLog.d('[Challenge] Fetching $_challengeId');
-    final dio = ref.read(dioProvider);
-    final response =
-        await dio.get<dynamic>('/api/v1/challenges/$_challengeId');
-    final raw = response.data;
-    final data = raw is Map
-        ? Map<String, dynamic>.from(
-            raw['data'] is Map ? raw['data'] as Map : raw)
-        : <String, dynamic>{};
-    final challenge = Challenge.fromJson(data);
-    appLog.i('[Challenge] Loaded $_challengeId revealed=${challenge.revealed} '
-        'answered=${challenge.answered}');
-    return challenge;
+    try {
+      final dio = ref.read(dioProvider);
+      final response =
+          await dio.get<dynamic>('/api/v1/challenges/$_challengeId');
+      final raw = response.data;
+      final data = raw is Map
+          ? Map<String, dynamic>.from(
+              raw['data'] is Map ? raw['data'] as Map : raw)
+          : <String, dynamic>{};
+      final challenge = Challenge.fromJson(data);
+      appLog.i('[Challenge] Loaded $_challengeId revealed=${challenge.revealed} '
+          'answered=${challenge.answered}');
+      return challenge;
+    } on DioException catch (e, st) {
+      appLog.e('[Challenge] fetch failed challengeId=$_challengeId '
+          'statusCode=${e.response?.statusCode}',
+          error: e, stackTrace: st);
+      throw PallyError.from(e);
+    } catch (e, st) {
+      appLog.e('[Challenge] unexpected error challengeId=$_challengeId',
+          error: e, stackTrace: st);
+      throw PallyError.unknown;
+    }
   }
 
   /// Submits the student's answer. A 409 means they already answered — we treat

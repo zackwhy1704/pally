@@ -15,7 +15,9 @@ enum PallyErrorKind {
   notFound,
   unauthorized,
   upgradeRequired,
+  permissionDenied,
   slotLocked,
+  rateLimited,
   aiBusy,
   unknown,
 }
@@ -42,6 +44,12 @@ class PallyError {
   static const upgradeRequired = PallyError(
       PallyErrorKind.upgradeRequired,
       'This needs Apalchi Premium.');
+  static const permissionDenied = PallyError(
+      PallyErrorKind.permissionDenied,
+      "You don't have permission to do that.");
+  static const rateLimited = PallyError(
+      PallyErrorKind.rateLimited,
+      "Mochi's a bit busy. Try again in a moment.");
   static const slotLocked = PallyError(
       PallyErrorKind.slotLocked,
       'This Mochi is locked — activate a slot to use it.');
@@ -83,7 +91,9 @@ class PallyError {
         if (code == 404) return notFound;
         if (code == 401) return unauthorized;
         if (code == 402) return upgradeRequired;
+        if (code == 403) return permissionDenied;
         if (code == 409) return slotLocked;
+        if (code == 429) return rateLimited;
         if (code == 503) return aiBusy;
         if (code == 504) return compileTimeout;
         final backend = _safeBackendMessage(e.response?.data);

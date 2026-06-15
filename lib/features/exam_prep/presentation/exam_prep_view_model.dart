@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/shared/models/exam_prep.dart';
 
@@ -36,8 +37,13 @@ class ExamPrepViewModel extends _$ExamPrepViewModel {
         appLog.d('[ExamPrep] No exam prep data (404)');
         return const ExamPrep();
       }
-      appLog.e('[ExamPrep] fetchExamPrep failed', error: e, stackTrace: st);
-      rethrow;
+      appLog.e('[ExamPrep] fetchExamPrep failed statusCode=${e.response?.statusCode}',
+          error: e, stackTrace: st);
+      throw PallyError.from(e);
+    } catch (e, st) {
+      appLog.e('[ExamPrep] unexpected error fetching exam prep',
+          error: e, stackTrace: st);
+      throw PallyError.unknown;
     }
   }
 

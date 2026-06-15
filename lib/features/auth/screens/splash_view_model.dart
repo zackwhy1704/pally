@@ -37,6 +37,10 @@ Future<String> resolveStartRoute(Ref ref) async {
     }
   } on DioException catch (e) {
     appLog.w('[Splash] Profile refresh failed (cached state): ${e.type}');
+  } catch (e) {
+    // SharedPreferences failure, null deref, or any other non-network error —
+    // fall back to the last-known cached auth state rather than crashing.
+    appLog.w('[Splash] Startup error, using cached auth state: $e');
   }
 
   if (!auth.isSetupComplete) return '/auth/setup';

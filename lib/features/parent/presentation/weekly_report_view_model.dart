@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/utils/logger.dart';
 
 part 'weekly_report_view_model.g.dart';
@@ -126,13 +127,12 @@ class WeeklyReportListViewModel extends _$WeeklyReportListViewModel {
           .map(WeeklyReportSummary.fromJson)
           .toList();
     } on DioException catch (e, st) {
-      appLog.w('[Parent] /reports failed', error: e, stackTrace: st);
-      final isNetwork = e.type == DioExceptionType.connectionError ||
-          e.type == DioExceptionType.unknown;
-      // Propagate so the screen renders a retry UI instead of an
-      // empty-looking list that's actually broken.
-      throw Exception(
-          isNetwork ? 'No internet connection' : 'Could not load reports');
+      appLog.e('[Parent] /reports failed statusCode=${e.response?.statusCode}',
+          error: e, stackTrace: st);
+      throw PallyError.from(e);
+    } catch (e, st) {
+      appLog.e('[Parent] /reports unexpected error', error: e, stackTrace: st);
+      throw PallyError.unknown;
     }
   }
 
