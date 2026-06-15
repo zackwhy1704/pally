@@ -10,6 +10,8 @@ import 'package:pally/features/auth/screens/child_setup_screen.dart';
 import 'package:pally/features/auth/screens/parent_onboarding_screen.dart';
 import 'package:pally/features/avatar_picker/screens/avatar_picker_screen.dart';
 import 'package:pally/features/home/presentation/home_screen.dart';
+import 'package:pally/features/home/presentation/home_view_model.dart';
+import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/features/create_tutor/presentation/create_tutor_screen.dart';
 import 'package:pally/features/upload/presentation/upload_screen.dart';
 import 'package:pally/features/chat/presentation/chat_screen.dart';
@@ -216,6 +218,22 @@ class ProgressRoute extends GoRouteData {
 class UploadRoute extends GoRouteData {
   const UploadRoute({required this.avatarId});
   final String avatarId;
+
+  @override
+  String? redirect(BuildContext context, GoRouterState state) {
+    // Block centre-class avatars at the route level — students cannot upload
+    // to a centre-managed Mochi. Belt-and-suspenders: entry points already hide
+    // the affordance, and UploadScreen also pops on centre config. This redirect
+    // prevents any blank-screen flash.
+    final container = ProviderScope.containerOf(context, listen: false);
+    final avatars = container.read(homeViewModelProvider);
+    final avatar =
+        avatars.valueOrNull?.where((a) => a.id == avatarId).firstOrNull;
+    if (avatar != null && avatar.kind == AvatarKind.centreClass) {
+      return '/';
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>

@@ -18,10 +18,13 @@ class GetItCheckedSheet extends ConsumerWidget {
     super.key,
     required this.avatarId,
     required this.page,
+    this.canEditNotes = true,
   });
 
   final String avatarId;
   final WikiPage page;
+  // Centre classes: notes are managed by the teacher, not the student.
+  final bool canEditNotes;
 
   Future<void> _shareLink(BuildContext context, WidgetRef ref) async {
     final url = await ref
@@ -126,16 +129,17 @@ class GetItCheckedSheet extends ConsumerWidget {
               ),
             if (parentLinked) const SizedBox(height: AppSpacing.sm),
 
-            _SheetAction(
-              icon: Icons.edit_note_rounded,
-              label: 'Fix my notes',
-              subtitle: 'Add or re-upload content for this page',
-              onTap: () {
-                Navigator.of(context).pop();
-                // Route to the avatar's content upload/edit flow.
-                context.go('/avatar/$avatarId/upload');
-              },
-            ),
+            // Centre classes: notes are managed by the teacher, not the student.
+            if (canEditNotes)
+              _SheetAction(
+                icon: Icons.edit_note_rounded,
+                label: 'Fix my notes',
+                subtitle: 'Add or re-upload content for this page',
+                onTap: () {
+                  Navigator.of(context).pop();
+                  context.go('/avatar/$avatarId/upload');
+                },
+              ),
           ],
         ),
       ),

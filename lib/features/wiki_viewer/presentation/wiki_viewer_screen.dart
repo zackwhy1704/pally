@@ -248,6 +248,8 @@ class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen>
                                   : _PagesList(
                                       pages: vmState.filteredPages,
                                       avatarId: widget.avatarId,
+                                      isCentreClass: vmState.avatar?.kind ==
+                                          AvatarKind.centreClass,
                                     ),
                             ),
                           ),
@@ -498,9 +500,14 @@ class _SearchBar extends StatelessWidget {
 // ── Pages list ─────────────────────────────────────────────────────────────
 
 class _PagesList extends StatelessWidget {
-  const _PagesList({required this.pages, required this.avatarId});
+  const _PagesList({
+    required this.pages,
+    required this.avatarId,
+    this.isCentreClass = false,
+  });
   final List<WikiPage> pages;
   final String avatarId;
+  final bool isCentreClass;
 
   @override
   Widget build(BuildContext context) {
@@ -513,16 +520,25 @@ class _PagesList extends StatelessWidget {
             style: AppTextStyles.label
                 .copyWith(color: AppColors.text3, letterSpacing: 0.8)),
         const SizedBox(height: AppSpacing.sm),
-        ...pages.map((p) => _PageTile(page: p, avatarId: avatarId)),
+        ...pages.map((p) => _PageTile(
+              page: p,
+              avatarId: avatarId,
+              isCentreClass: isCentreClass,
+            )),
       ],
     );
   }
 }
 
 class _PageTile extends ConsumerStatefulWidget {
-  const _PageTile({required this.page, required this.avatarId});
+  const _PageTile({
+    required this.page,
+    required this.avatarId,
+    this.isCentreClass = false,
+  });
   final WikiPage page;
   final String avatarId;
+  final bool isCentreClass;
 
   @override
   ConsumerState<_PageTile> createState() => _PageTileState();
@@ -687,6 +703,7 @@ class _PageTileState extends ConsumerState<_PageTile> {
       builder: (_) => GetItCheckedSheet(
         avatarId: widget.avatarId,
         page: widget.page,
+        canEditNotes: !widget.isCentreClass,
       ),
     );
   }
