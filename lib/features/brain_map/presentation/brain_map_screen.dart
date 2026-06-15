@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pally/core/ui/no_notes_cta.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/widgets/loading/pally_skeleton.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -79,7 +80,7 @@ class _BrainMapScreenState extends ConsumerState<BrainMapScreen>
         ),
         data: (state) {
           if (state.nodes.isEmpty) {
-            return const _EmptyState();
+            return _EmptyState(avatarId: widget.avatarId);
           }
           // Restart the entrance animation whenever the set of new nodes
           // changes (e.g. after a fresh compile while the screen is open).
@@ -515,10 +516,15 @@ class _SheetButton extends StatelessWidget {
   }
 }
 
-class _EmptyState extends StatelessWidget {
-  const _EmptyState();
+class _EmptyState extends ConsumerWidget {
+  const _EmptyState({required this.avatarId});
+
+  final String avatarId;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isCentre =
+        ref.watch(avatarIsCentreClassProvider(avatarId)).valueOrNull ?? false;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
@@ -531,10 +537,13 @@ class _EmptyState extends StatelessWidget {
             Text('No topics yet',
                 style: AppTextStyles.title.copyWith(color: Colors.white)),
             const SizedBox(height: AppSpacing.xs),
-            const Text(
-              'Upload some notes — Mochi will fill the map for you.',
+            Text(
+              isCentre
+                  ? 'Your teacher hasn\'t added notes for this class yet — '
+                      'ask them to upload some! 📚'
+                  : 'Upload some notes — Mochi will fill the map for you.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white70),
+              style: const TextStyle(color: Colors.white70),
             ),
           ],
         ),

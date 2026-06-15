@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/ui/no_notes_cta.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
 // pally_loading_spinner removed — replaced by _GeneratingView inline
@@ -486,22 +486,10 @@ class _EmptyState extends StatelessWidget {
               Text('No flashcards yet',
                   style: AppTextStyles.title, textAlign: TextAlign.center),
               const SizedBox(height: AppSpacing.xs),
-              Text(
-                'Upload notes or a document for this Mochi and cards will be made automatically.',
-                style: AppTextStyles.body.copyWith(color: AppColors.text2),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              FilledButton.icon(
-                onPressed: () =>
-                    UploadRoute(avatarId: avatarId).push(context),
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.purple,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
-                ),
-                icon: const Icon(Icons.upload_file_rounded, size: 18),
-                label: const Text('Upload notes'),
+              NoNotesCta(
+                avatarId: avatarId,
+                personalDescription:
+                    'Upload notes or a document for this Mochi and cards will be made automatically.',
               ),
             ],
           ),

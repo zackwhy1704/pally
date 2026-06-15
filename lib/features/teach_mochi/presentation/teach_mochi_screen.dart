@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/ui/no_notes_cta.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/features/progress/presentation/level_up_controller.dart';
 import 'package:pally/features/teach_mochi/presentation/teach_mochi_view_model.dart';
@@ -60,7 +61,7 @@ class TeachMochiScreen extends ConsumerWidget {
         onSubmit: notifier.submit,
       );
     } else if (state.topics.isEmpty) {
-      body = const _NoTopicsState();
+      body = _NoTopicsState(avatarId: avatarId);
     } else {
       body = _TopicSelectView(
         topics: state.topics,
@@ -524,7 +525,10 @@ class _ConceptList extends StatelessWidget {
 }
 
 class _NoTopicsState extends StatelessWidget {
-  const _NoTopicsState();
+  const _NoTopicsState({required this.avatarId});
+
+  final String avatarId;
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -539,11 +543,10 @@ class _NoTopicsState extends StatelessWidget {
             Text('No topics to teach yet',
                 style: AppTextStyles.title),
             const SizedBox(height: AppSpacing.xs),
-            Text(
-              'Upload some notes first so Mochi has something to learn from!',
-              textAlign: TextAlign.center,
-              style: AppTextStyles.body
-                  .copyWith(color: AppColors.text2),
+            NoNotesCta(
+              avatarId: avatarId,
+              personalDescription:
+                  'Upload some notes first so Mochi has something to learn from!',
             ),
           ],
         ),

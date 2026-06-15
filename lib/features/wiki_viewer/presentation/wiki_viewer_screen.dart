@@ -240,6 +240,8 @@ class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen>
                                           hasFiles: vmState.files.isNotEmpty,
                                           isCompiling: vmState.isCompiling,
                                           avatarName: vmState.avatar?.name,
+                                          isCentreClass: vmState.avatar?.kind ==
+                                              AvatarKind.centreClass,
                                         ),
                                       ],
                                     )
@@ -1104,20 +1106,26 @@ class _EmptyBrainView extends StatelessWidget {
     this.hasFiles = false,
     this.isCompiling = false,
     this.avatarName,
+    this.isCentreClass = false,
   });
 
   final bool hasFiles;
   final bool isCompiling;
   final String? avatarName;
+  final bool isCentreClass;
 
   @override
   Widget build(BuildContext context) {
     // The amber banner above already covers the compiling case — stay silent.
     if (isCompiling) return const SizedBox.shrink();
     final name = avatarName ?? 'Mochi';
-    final msg = hasFiles
-        ? "No pages yet — add more notes to rebuild $name's brain."
-        : "Upload notes to start building $name's brain.";
+    // Centre classes are filled by the teacher/centre — never tell a student to
+    // upload; point them at their teacher instead.
+    final msg = isCentreClass
+        ? "This class doesn't have notes yet. Ask your teacher to add some! 📚"
+        : hasFiles
+            ? "No pages yet — add more notes to rebuild $name's brain."
+            : "Upload notes to start building $name's brain.";
     return _EmptyView(message: msg);
   }
 }

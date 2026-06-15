@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pally/core/ui/no_notes_cta.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -149,7 +150,7 @@ class QuizScreen extends ConsumerWidget {
                       .restart(),
                 )
               : quizState.questions.isEmpty
-                  ? const _NoQuestionsView()
+                  ? _NoQuestionsView(avatarId: avatarId)
                   : quizState.isComplete
                   ? _CompletionView(
                       score: quizState.score,
@@ -1067,7 +1068,9 @@ class _QuizLoadingViewState extends State<_QuizLoadingView> {
 
 // ── No questions empty state ──────────────────────────────────────────────────
 class _NoQuestionsView extends StatelessWidget {
-  const _NoQuestionsView();
+  const _NoQuestionsView({required this.avatarId});
+
+  final String avatarId;
 
   @override
   Widget build(BuildContext context) {
@@ -1085,10 +1088,10 @@ class _NoQuestionsView extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.sm),
-            Text(
-              'Upload some notes so Mochi can build your first quiz!',
-              style: AppTextStyles.body.copyWith(color: AppColors.text2),
-              textAlign: TextAlign.center,
+            NoNotesCta(
+              avatarId: avatarId,
+              personalDescription:
+                  'Upload some notes so Mochi can build your first quiz!',
             ),
           ],
         ),
