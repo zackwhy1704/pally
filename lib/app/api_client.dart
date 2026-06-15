@@ -232,14 +232,14 @@ class _ServerErrorInterceptor extends Interceptor {
         return; // _handleAiConsentRequired owns the handler from here on.
       }
 
-      // SSE chat requests send Accept: text/event-stream, which causes
-      // Spring's exception handler to fail serialising JSON, returning an
-      // empty 403 body. We can't parse the code, so fall back to path-based
-      // detection: the only reason the /chat SSE endpoint returns 403 is
-      // AI_DATA_TRANSFER consent. Session-end/start are excluded (they're
-      // JSON endpoints that return their own errors).
+      // SSE chat requests send Accept: text/event-stream. Even though the
+      // backend now writes JSON directly to HttpServletResponse, Dio keeps
+      // the 403 body as a raw ResponseBody (stream) because the request
+      // used ResponseType.stream — body is never Map for SSE errors.
+      // Fall back to path-based detection: the only non-session 403 on
+      // the /chat SSE endpoint is AI_DATA_TRANSFER consent.
       final path = err.requestOptions.path;
-      final isConsentlessSSE = body == null &&
+      final isConsentlessSSE = (body == null || body is ResponseBody) &&
           path.contains('/chat') &&
           !path.contains('/chat/session-');
       if (isConsentlessSSE) {

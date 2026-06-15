@@ -746,6 +746,11 @@ class ChatViewModel extends _$ChatViewModel {
         ? 'guide'
         : 'answer');
 
+    // Declared outside the try so the DioException catch can set it and we
+    // can re-throw after the block (Dart doesn't allow throw-from-catch to
+    // propagate through a finally without losing the stack).
+    PallyError? sseConsentError;
+
     try {
       final response = await dio.post<ResponseBody>(
         '/api/v1/avatars/$_avatarId/chat',
@@ -877,14 +882,37 @@ class ChatViewModel extends _$ChatViewModel {
       span.setData('chars_out', buffer.length);
       span.finish(statusCode: 200);
     } on DioException catch (e, st) {
-      appLog.w('[Chat] SSE stream failed', error: e, stackTrace: st);
-      _markStreamingMessageAsError(streamId, e);
-      span.finish(statusCode: e.type == DioExceptionType.receiveTimeout ? 408 : 500);
+      // SSE requests use ResponseType.stream, so Dio never decodes the body
+      // even when the server returns JSON (e.g. the consent 403). Read the
+      // raw bytes manually and check for the consent code before falling
+      // through to the generic error path.
+      if (e.type == DioExceptionType.badResponse &&
+          e.response?.statusCode == 403 &&
+          e.response?.data is ResponseBody) {
+        try {
+          final rb = e.response!.data as ResponseBody;
+          final bytes = await rb.stream.expand((c) => c).toList();
+          final decoded = jsonDecode(utf8.decode(bytes));
+          if (decoded is Map && decoded['data'] is Map) {
+            final code = (decoded['data'] as Map)['code'] as String?;
+            if (code == 'AI_CONSENT_REQUIRED' || code == 'CONSENT_REQUIRED') {
+              sseConsentError = PallyError.consentRequired;
+              span.finish(statusCode: 403);
+            }
+          }
+        } catch (_) {}
+      }
+      if (sseConsentError == null) {
+        appLog.w('[Chat] SSE stream failed', error: e, stackTrace: st);
+        _markStreamingMessageAsError(streamId, e);
+        span.finish(statusCode: e.type == DioExceptionType.receiveTimeout ? 408 : 500);
+      }
     } catch (e, st) {
       appLog.e('[Chat] SSE unexpected error', error: e, stackTrace: st);
       _markStreamingMessageAsError(streamId, null);
       span.finish(statusCode: 500);
     }
+    if (sseConsentError != null) throw sseConsentError;
   }
 
   /// Converts the in-flight streaming placeholder into an inline retry pill.

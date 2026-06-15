@@ -455,22 +455,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.md),
-                  // Direct-student onboarding shortcut
-                  Center(
-                    child: TextButton(
-                      onPressed: () => context.push('/onboarding/direct'),
-                      style: TextButton.styleFrom(
-                        foregroundColor: AppColors.teal,
-                      ),
-                      child: Text(
-                        "I'm studying on my own",
-                        style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.teal,
-                            fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: AppSpacing.xl),
                 ],
               ),
