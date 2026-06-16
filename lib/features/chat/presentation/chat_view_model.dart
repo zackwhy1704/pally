@@ -439,8 +439,7 @@ class ChatViewModel extends _$ChatViewModel {
     } catch (e, st) {
       appLog.e('[Chat] sendMessage failed', error: e, stackTrace: st);
       final pallyError = PallyError.from(e);
-      if (pallyError.kind == PallyErrorKind.consentRequired ||
-          pallyError.kind == PallyErrorKind.unauthorized) {
+      if (pallyError.kind == PallyErrorKind.unauthorized) {
         // Recoverable: remove the streaming placeholder so no broken bubble
         // appears, then surface the error as a toast via state.error.
         _removeStreamingMessage(streamId);
@@ -746,11 +745,6 @@ class ChatViewModel extends _$ChatViewModel {
         ? 'guide'
         : 'answer');
 
-    // Declared outside the try so the DioException catch can set it and we
-    // can re-throw after the block (Dart doesn't allow throw-from-catch to
-    // propagate through a finally without losing the stack).
-    PallyError? sseConsentError;
-
     try {
       final response = await dio.post<ResponseBody>(
         '/api/v1/avatars/$_avatarId/chat',
@@ -882,10 +876,11 @@ class ChatViewModel extends _$ChatViewModel {
       span.setData('chars_out', buffer.length);
       span.finish(statusCode: 200);
     } on DioException catch (e, st) {
-      // SSE requests use ResponseType.stream, so Dio never decodes the body
+      // SSE requests use ResponseType.stream — Dio never decodes the body
       // even when the server returns JSON (e.g. the consent 403). Read the
-      // raw bytes manually and check for the consent code before falling
-      // through to the generic error path.
+      // raw bytes to check for the consent code so we can show the user
+      // a clear error with a tap-to-retry CTA that re-triggers the consent
+      // disclosure screen (via the interceptor on the next attempt).
       if (e.type == DioExceptionType.badResponse &&
           e.response?.statusCode == 403 &&
           e.response?.data is ResponseBody) {
@@ -896,23 +891,25 @@ class ChatViewModel extends _$ChatViewModel {
           if (decoded is Map && decoded['data'] is Map) {
             final code = (decoded['data'] as Map)['code'] as String?;
             if (code == 'AI_CONSENT_REQUIRED' || code == 'CONSENT_REQUIRED') {
-              sseConsentError = PallyError.consentRequired;
+              appLog.w('[Chat] Consent required for SSE stream (under-13 gate)');
+              _markStreamingMessageWithText(
+                streamId,
+                'Mochi needs your consent to chat. Tap to give consent.',
+              );
               span.finish(statusCode: 403);
+              return;
             }
           }
         } catch (_) {}
       }
-      if (sseConsentError == null) {
-        appLog.w('[Chat] SSE stream failed', error: e, stackTrace: st);
-        _markStreamingMessageAsError(streamId, e);
-        span.finish(statusCode: e.type == DioExceptionType.receiveTimeout ? 408 : 500);
-      }
+      appLog.w('[Chat] SSE stream failed', error: e, stackTrace: st);
+      _markStreamingMessageAsError(streamId, e);
+      span.finish(statusCode: e.type == DioExceptionType.receiveTimeout ? 408 : 500);
     } catch (e, st) {
       appLog.e('[Chat] SSE unexpected error', error: e, stackTrace: st);
       _markStreamingMessageAsError(streamId, null);
       span.finish(statusCode: 500);
     }
-    if (sseConsentError != null) throw sseConsentError;
   }
 
   /// Converts the in-flight streaming placeholder into an inline retry pill.
@@ -926,6 +923,19 @@ class ChatViewModel extends _$ChatViewModel {
     final msg = isNetwork
         ? 'No internet connection. Tap to retry.'
         : 'Something went wrong. Tap to retry.';
+    final updated = state.messages.map((m) {
+      if (m.id != streamId) return m;
+      return m.copyWith(
+        content: msg,
+        isStreaming: false,
+        isError: true,
+        error: msg,
+      );
+    }).toList();
+    state = state.copyWith(messages: updated, isTyping: false);
+  }
+
+  void _markStreamingMessageWithText(String streamId, String msg) {
     final updated = state.messages.map((m) {
       if (m.id != streamId) return m;
       return m.copyWith(
