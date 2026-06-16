@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/features/onboarding/presentation/feature_tour.dart';
 
@@ -25,46 +23,33 @@ class TabSpec {
   final bool visible;
 }
 
-/// Nav order: Home(0) | Library(1) | Groups(2) | Tuition(3, admin-only) | Me(4)
+/// Nav order: Home(0) | Library(1) | Groups(2) | Me(3)
 ///
 /// Chat tab has been removed from the nav — chat is reachable via Home and
-/// Library (tap any Mochi avatar). The Chat branch (index 5) is still declared
+/// Library (tap any Mochi avatar). The Chat branch (index 4) is still declared
 /// in the router for backward-compatibility with any existing deep links.
-///
-/// Groups is now open to all users (no feature flag required).
-/// Tuition is hidden from the nav bar for non-admin users (is_admin flag).
-List<TabSpec> buildTabs({required bool isAdmin}) {
-  return [
-    const TabSpec(
+List<TabSpec> buildTabs() {
+  return const [
+    TabSpec(
       branchIndex: 0,
       icon: Icons.home_outlined,
       selectedIcon: Icons.home_rounded,
       label: 'Home',
     ),
-    const TabSpec(
+    TabSpec(
       branchIndex: 1,
       icon: Icons.menu_book_outlined,
       selectedIcon: Icons.menu_book_rounded,
       label: 'Library',
     ),
-    const TabSpec(
+    TabSpec(
       branchIndex: 2,
       icon: Icons.groups_outlined,
       selectedIcon: Icons.groups_rounded,
       label: 'Groups',
     ),
-    // Tuition — visible only to admin users (platform administrators).
-    // Regular users never see this tab; the screen itself also checks
-    // the flag and shows an access-denied view for any direct navigation.
-    if (isAdmin)
-      const TabSpec(
-        branchIndex: 3,
-        icon: Icons.school_outlined,
-        selectedIcon: Icons.school_rounded,
-        label: 'Tuition',
-      ),
-    const TabSpec(
-      branchIndex: 4,
+    TabSpec(
+      branchIndex: 3,
       icon: Icons.person_outline_rounded,
       selectedIcon: Icons.person_rounded,
       label: 'Me',
@@ -72,19 +57,14 @@ List<TabSpec> buildTabs({required bool isAdmin}) {
   ];
 }
 
-class ScaffoldShell extends ConsumerWidget {
+class ScaffoldShell extends StatelessWidget {
   const ScaffoldShell({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Read flags state explicitly so we can treat loading as non-admin.
-    // isFlagEnabled already returns false when flags are loading (valueOrNull is null),
-    // but being explicit here makes the security intent clear in code review.
-    final flagsState = ref.watch(featureFlagsProvider);
-    final isAdmin = flagsState.valueOrNull?[FeatureFlags.isAdmin] == true;
-    final tabs = buildTabs(isAdmin: isAdmin);
+  Widget build(BuildContext context) {
+    final tabs = buildTabs();
 
     // Map the shell's current branch index → visible tab index. Defaults to 0
     // if the active branch has no visible tab (e.g. deep-link to the hidden

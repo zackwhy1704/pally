@@ -98,14 +98,6 @@ RouteBase get $appShellRouteData => StatefulShellRouteData.$route(
         StatefulShellBranchData.$branch(
           routes: [
             GoRouteData.$route(
-              path: '/tuition',
-              factory: $TuitionTabRouteExtension._fromState,
-            ),
-          ],
-        ),
-        StatefulShellBranchData.$branch(
-          routes: [
-            GoRouteData.$route(
               path: '/progress',
               factory: $ProgressRouteExtension._fromState,
             ),
@@ -185,24 +177,6 @@ extension $GroupsTabRouteExtension on GroupsTabRoute {
 
   String get location => GoRouteData.$location(
         '/groups',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  void replace(BuildContext context) => context.replace(location);
-}
-
-extension $TuitionTabRouteExtension on TuitionTabRoute {
-  static TuitionTabRoute _fromState(GoRouterState state) =>
-      const TuitionTabRoute();
-
-  String get location => GoRouteData.$location(
-        '/tuition',
       );
 
   void go(BuildContext context) => context.go(location);
