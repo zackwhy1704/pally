@@ -144,6 +144,8 @@ class GroupDetail {
 
 @riverpod
 class GroupListViewModel extends _$GroupListViewModel {
+  bool _pendingAction = false;
+
   @override
   Future<List<StudyGroup>> build() async => _fetch();
 
@@ -175,6 +177,8 @@ class GroupListViewModel extends _$GroupListViewModel {
     required String name,
     String? subject,
   }) async {
+    if (_pendingAction) return null;
+    _pendingAction = true;
     try {
       final dio = ref.read(dioProvider);
       final response = await dio.post<Map<String, dynamic>>(
@@ -189,10 +193,14 @@ class GroupListViewModel extends _$GroupListViewModel {
     } on DioException catch (e) {
       appLog.w('[Groups] create failed: ${e.message}');
       return null;
+    } finally {
+      _pendingAction = false;
     }
   }
 
   Future<StudyGroup?> join(String inviteCode) async {
+    if (_pendingAction) return null;
+    _pendingAction = true;
     try {
       final dio = ref.read(dioProvider);
       final response = await dio.post<Map<String, dynamic>>(
@@ -207,16 +215,22 @@ class GroupListViewModel extends _$GroupListViewModel {
     } on DioException catch (e) {
       appLog.w('[Groups] join failed: ${e.message}');
       return null;
+    } finally {
+      _pendingAction = false;
     }
   }
 
   Future<void> leave(String groupId) async {
+    if (_pendingAction) return;
+    _pendingAction = true;
     try {
       final dio = ref.read(dioProvider);
       await dio.delete<void>('/api/v1/groups/$groupId/leave');
       await refresh();
     } on DioException catch (e) {
       appLog.w('[Groups] leave failed: ${e.message}');
+    } finally {
+      _pendingAction = false;
     }
   }
 
@@ -227,6 +241,8 @@ class GroupListViewModel extends _$GroupListViewModel {
     required String wikiPageId,
     required String title,
   }) async {
+    if (_pendingAction) throw StateError('Action already in progress');
+    _pendingAction = true;
     try {
       final dio = ref.read(dioProvider);
       final response = await dio.post<Map<String, dynamic>>(
@@ -245,12 +261,16 @@ class GroupListViewModel extends _$GroupListViewModel {
     } on DioException catch (e) {
       appLog.w('[Groups] shareToGroup failed: ${e.message}');
       rethrow;
+    } finally {
+      _pendingAction = false;
     }
   }
 }
 
 @riverpod
 class GroupDetailViewModel extends _$GroupDetailViewModel {
+  bool _pendingAction = false;
+
   @override
   Future<GroupDetail> build(String groupId) async {
     final dio = ref.read(dioProvider);
@@ -301,6 +321,8 @@ class GroupDetailViewModel extends _$GroupDetailViewModel {
     required String wikiPageId,
     required String title,
   }) async {
+    if (_pendingAction) return;
+    _pendingAction = true;
     try {
       final dio = ref.read(dioProvider);
       await dio.post<Map<String, dynamic>>(
@@ -311,6 +333,8 @@ class GroupDetailViewModel extends _$GroupDetailViewModel {
     } on DioException catch (e) {
       appLog.w('[Groups] share failed: ${e.message}');
       rethrow;
+    } finally {
+      _pendingAction = false;
     }
   }
 }

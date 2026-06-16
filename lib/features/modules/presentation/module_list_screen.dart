@@ -6,7 +6,6 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/no_notes_cta.dart';
-import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/modules/presentation/module_list_view_model.dart';
 import 'package:pally/shared/models/learning_module.dart';
 
@@ -53,24 +52,9 @@ class ModuleListScreen extends ConsumerWidget {
                 // action; Generate only appears once notes exist; personal with
                 // no notes gets Upload (the only place upload is offered here).
                 info: ref.watch(moduleAvatarInfoProvider(avatarId)),
-                onGenerate: () async {
-                  final result = await ref
-                      .read(moduleListViewModelProvider(avatarId).notifier)
-                      .generateModules();
-                  if (!context.mounted) return;
-                  switch (result) {
-                    case ModuleGenResult.success:
-                      break; // list refreshes via the provider
-                    case ModuleGenResult.noNotes:
-                      // Defensive only: Generate is offered solely when notes
-                      // exist, so we never push the (blocked) upload screen here.
-                      PallyToast.error(
-                          context, 'No notes to build lessons from yet.');
-                    case ModuleGenResult.error:
-                      PallyToast.error(context,
-                          'Could not build lessons just now — try again.');
-                  }
-                },
+                onGenerate: () => ref
+                    .read(moduleListViewModelProvider(avatarId).notifier)
+                    .generateModules(),
               )
             : _ModuleList(avatarId: avatarId, modules: modules),
       ),
@@ -113,7 +97,7 @@ class _ErrorBody extends StatelessWidget {
   }
 }
 
-class _EmptyBody extends StatelessWidget {
+class _EmptyBody extends StatefulWidget {
   const _EmptyBody({
     required this.avatarId,
     required this.info,
@@ -121,13 +105,42 @@ class _EmptyBody extends StatelessWidget {
   });
 
   final String avatarId;
-
   final ModuleAvatarInfo? info;
-  final VoidCallback onGenerate;
+  final Future<ModuleGenResult> Function() onGenerate;
+
+  @override
+  State<_EmptyBody> createState() => _EmptyBodyState();
+}
+
+class _EmptyBodyState extends State<_EmptyBody> {
+  bool _isGenerating = false;
+  String? _errorMessage;
+
+  Future<void> _handleGenerate() async {
+    if (_isGenerating) return;
+    setState(() {
+      _isGenerating = true;
+      _errorMessage = null;
+    });
+    final result = await widget.onGenerate();
+    if (!mounted) return;
+    setState(() => _isGenerating = false);
+    switch (result) {
+      case ModuleGenResult.success:
+        break;
+      case ModuleGenResult.noNotes:
+        setState(() => _errorMessage = 'No notes to build lessons from yet.');
+      case ModuleGenResult.error:
+        setState(
+          () => _errorMessage =
+              'Could not build lessons. Check your connection and try again.',
+        );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final loaded = info;
+    final loaded = widget.info;
     final notes = loaded?.hasNotes ?? false;
     final isCentre = loaded?.isCentreClass ?? false;
 
@@ -161,15 +174,37 @@ class _EmptyBody extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.lg),
               FilledButton.icon(
-                onPressed: onGenerate,
-                icon: const Icon(Icons.auto_awesome_rounded, size: 18),
-                label:
-                    Text(isCentre ? 'Generate lessons' : 'Build my first lesson'),
+                onPressed: _isGenerating ? null : _handleGenerate,
+                icon: _isGenerating
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Icon(Icons.auto_awesome_rounded, size: 18),
+                label: Text(
+                    isCentre ? 'Generate lessons' : 'Build my first lesson'),
                 style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
               ),
+              if (_errorMessage != null) ...[
+                const SizedBox(height: AppSpacing.md),
+                Text(
+                  _errorMessage!,
+                  style: AppTextStyles.body.copyWith(color: AppColors.coral),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                TextButton(
+                  onPressed: _handleGenerate,
+                  child: const Text('Try again'),
+                ),
+              ],
             ] else
               NoNotesCta(
-                avatarId: avatarId,
+                avatarId: widget.avatarId,
                 personalDescription:
                     'Add your notes and I\'ll build your first lesson from them.',
               ),

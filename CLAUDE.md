@@ -64,6 +64,27 @@ Spacing (`AppSpacing`): xs 4, sm 8, md 16, lg 24, xl 32, xxl 48.
   `ref.read()` in `build()` · hardcoded colours/spacing/text styles · skipping `super.key` · using
   GetX or the `provider` package (Riverpod only) · hardcoded API keys (use `--dart-define`).
 
+## API CALL UX CONTRACT (mandatory on every button that fires a network call)
+Three phases every action button must implement:
+1. **LOADING** — disable the button (`onPressed: null` or guard via `_isGenerating`); show an inline
+   spinner or progress text. Never toast "loading".
+2. **SUCCESS** — refresh data (re-watch the provider or call `ref.invalidateSelf()`). No toast unless
+   the action earns XP/stars.
+3. **ERROR** — show a **persistent inline error message** with a Retry button. Never use toast-only for
+   a primary action; toasts vanish before the user reads them.
+
+**Re-entry guard** — every action method in a view model must return early when already in flight:
+```dart
+if (state.isLoading) return;      // AsyncNotifier
+if (_pendingAction) return;       // instance flag for fire-and-forget / non-AsyncValue actions
+```
+**Timeout** — every `dio.post / dio.put / dio.delete` that may be slow (generation, upload, AI calls)
+must pass `Options(receiveTimeout: Duration(...), sendTimeout: Duration(...))`.
+
+## DON'T (additions)
+- `VoidCallback` wrapping an async action that can fail · toast-only error for a primary action ·
+  re-entrant write method with no guard · slow `dio` call with no explicit timeout.
+
 ## Common commands
 ```
 dart analyze lib/

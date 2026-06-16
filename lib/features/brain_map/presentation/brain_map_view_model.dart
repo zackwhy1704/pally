@@ -209,6 +209,7 @@ class BrainMapViewModel extends _$BrainMapViewModel {
   }
 
   Future<void> refresh(String avatarId) async {
+    if (state.isLoading) return;
     state = const AsyncLoading();
     state = AsyncValue.data(await _fetch(avatarId));
   }

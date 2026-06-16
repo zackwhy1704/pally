@@ -107,6 +107,7 @@ class ModuleListViewModel extends _$ModuleListViewModel {
       final dio = ref.read(dioProvider);
       await dio.post<dynamic>(
         '/api/v1/avatars/$_avatarId/modules/generate',
+        options: Options(receiveTimeout: const Duration(seconds: 60)),
       );
       appLog.i('[Modules] Generation triggered, refreshing list');
       await refresh();

@@ -9,6 +9,7 @@ class SelfConsentViewModel extends _$SelfConsentViewModel {
   FutureOr<void> build() {}
 
   Future<void> submitConsent() async {
+    if (state.isLoading) return;
     state = const AsyncLoading();
     final dio = ref.read(dioProvider);
     try {

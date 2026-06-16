@@ -557,6 +557,10 @@ class UploadViewModel extends _$UploadViewModel {
       final response = await dio.post<Map<String, dynamic>>(
         '/api/v1/avatars/$_avatarId/files',
         data: formData,
+        options: Options(
+          receiveTimeout: const Duration(minutes: 3),
+          sendTimeout: const Duration(minutes: 2),
+        ),
       );
       final data = response.data ?? const <String, dynamic>{};
       final titlesRaw = data['wikiPageTitles'];
