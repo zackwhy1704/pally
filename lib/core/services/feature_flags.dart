@@ -10,7 +10,7 @@ class FeatureFlags {
   /// Groups tab — open to all users (server always returns true).
   static const groupsEnabled = 'groups_enabled';
 
-  /// Tuition marketplace tab — admin-only.
+  /// Admin-only flag (admin demo mode, admin settings).
   /// Set server-side from ADMIN_EMAILS env var only. Never set client-side.
   static const isAdmin = 'is_admin';
 }
