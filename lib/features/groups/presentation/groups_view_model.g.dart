@@ -24,7 +24,7 @@ final groupListViewModelProvider = AutoDisposeAsyncNotifierProvider<
 
 typedef _$GroupListViewModel = AutoDisposeAsyncNotifier<List<StudyGroup>>;
 String _$groupDetailViewModelHash() =>
-    r'258a914831c5ea731d4516d8c111eff19881001b';
+    r'546816945ce36d4ea658fa5643648dfc38f63234';
 
 /// Copied from Dart SDK
 class _SystemHash {

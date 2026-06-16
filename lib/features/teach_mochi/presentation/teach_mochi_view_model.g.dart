@@ -7,7 +7,7 @@ part of 'teach_mochi_view_model.dart';
 // **************************************************************************
 
 String _$teachMochiViewModelHash() =>
-    r'5373b515a5951307d46b0853050d7caad351c211';
+    r'ace2bf5b0a01f0474aab84bc2684bbdeadc49153';
 
 /// Copied from Dart SDK
 class _SystemHash {

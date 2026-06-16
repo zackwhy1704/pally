@@ -6,7 +6,7 @@ part of 'family_status_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$familyStatusHash() => r'b35a49b0ecdc7aefef229fce33e451823f3cf0b1';
+String _$familyStatusHash() => r'8393f6a259107d2aa8dcd5dd862a96e106895891';
 
 /// See also [familyStatus].
 @ProviderFor(familyStatus)
