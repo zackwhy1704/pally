@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/auth/auth_state.dart';
+import 'package:pally/features/auth/services/auth_service.dart';
 
 part 'splash_view_model.g.dart';
 
@@ -21,6 +22,12 @@ Future<String> resolveStartRoute(Ref ref) async {
     final response = await dio.get<Map<String, dynamic>>('/api/v1/auth/me');
     final data = response.data;
     if (data != null) {
+      final isCentreStaff = data['isCentreStaff'] as bool? ?? false;
+      final role = data['role'] as String? ?? '';
+      if (isCentreStaff || role == 'ADMIN') {
+        await AuthService.instance.signOut();
+        return '/auth/centre-block';
+      }
       if (data['setupComplete'] == true && !auth.isSetupComplete) {
         await AuthNotifier.instance.markSetupComplete();
       }

@@ -61,6 +61,7 @@ import 'package:pally/features/modules/presentation/module_list_screen.dart';
 import 'package:pally/features/modules/presentation/module_player_screen.dart';
 import 'package:pally/features/exam_prep/presentation/exam_prep_screen.dart';
 import 'package:pally/features/assignments/presentation/assignment_compare_screen.dart';
+import 'package:pally/features/auth/screens/centre_block_screen.dart';
 import 'package:pally/features/auth/screens/consent_waiting_screen.dart';
 import 'package:pally/features/auth/screens/parent_consent_screen.dart';
 import 'package:pally/features/auth/screens/self_consent_screen.dart';
@@ -630,6 +631,15 @@ class SignUpRoute extends GoRouteData {
       const SignUpScreen();
 }
 
+@TypedGoRoute<CentreBlockRoute>(path: '/auth/centre-block')
+class CentreBlockRoute extends GoRouteData {
+  const CentreBlockRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const CentreBlockScreen();
+}
+
 @TypedGoRoute<ChildSetupRoute>(path: '/auth/setup')
 class ChildSetupRoute extends GoRouteData {
   const ChildSetupRoute();
@@ -747,6 +757,7 @@ const _publicPaths = {
   '/auth/signup',
   '/auth/setup',
   '/auth/avatar',
+  '/auth/centre-block',
   '/onboarding',
   '/onboarding/direct',
   '/consent/', // all consent sub-paths are accessible after login (auth token present)

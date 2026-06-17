@@ -49,6 +49,7 @@ List<RouteBase> get $appRoutes => [
       $splashRoute,
       $signInRoute,
       $signUpRoute,
+      $centreBlockRoute,
       $childSetupRoute,
       $avatarPickerRoute,
       $onboardingRoute,
@@ -1213,6 +1214,29 @@ extension $SignUpRouteExtension on SignUpRoute {
 
   String get location => GoRouteData.$location(
         '/auth/signup',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $centreBlockRoute => GoRouteData.$route(
+      path: '/auth/centre-block',
+      factory: $CentreBlockRouteExtension._fromState,
+    );
+
+extension $CentreBlockRouteExtension on CentreBlockRoute {
+  static CentreBlockRoute _fromState(GoRouterState state) =>
+      const CentreBlockRoute();
+
+  String get location => GoRouteData.$location(
+        '/auth/centre-block',
       );
 
   void go(BuildContext context) => context.go(location);

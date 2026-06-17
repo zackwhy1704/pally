@@ -64,6 +64,20 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     super.dispose();
   }
 
+  Future<bool> _isCentreAccount(String token) async {
+    try {
+      final res = await ref.read(dioProvider).get<Map<String, dynamic>>(
+            '/api/v1/auth/me',
+          );
+      final data = res.data ?? {};
+      final isCentreStaff = data['isCentreStaff'] as bool? ?? false;
+      final role = data['role'] as String? ?? '';
+      return isCentreStaff || role == 'ADMIN';
+    } catch (_) {
+      return false;
+    }
+  }
+
   Future<void> _signIn() async {
     final email = _emailCtrl.text.trim();
     final password = _passCtrl.text;
@@ -82,6 +96,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         onboardingComplete: result.setupComplete,
         accountType: result.accountType,
       );
+      if (await _isCentreAccount(result.token)) {
+        await AuthService.instance.signOut();
+        if (mounted) context.go('/auth/centre-block');
+        return;
+      }
       ref.read(analyticsProvider).identify(result.userId, props: {
         'email': email,
       });
@@ -144,6 +163,14 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         setupComplete: result.setupComplete,
         onboardingComplete: result.setupComplete,
       );
+      if (await _isCentreAccount(result.token)) {
+        await AuthService.instance.signOut();
+        if (mounted) {
+          Navigator.of(context).pop();
+          context.go('/auth/centre-block');
+        }
+        return;
+      }
       // Fire-and-forget FCM token registration.
       FcmTokenService(ref.read(dioProvider)).registerToken();
       _bioStateCtrl.add(_BiometricState.success);
