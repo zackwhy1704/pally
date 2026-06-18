@@ -37,8 +37,8 @@ const _plans = [
     id: 'pro_monthly',
     title: 'Pro',
     subtitle: '1 student · all AI features',
-    price: r'$9.99/mo',
-    annualPrice: r'$79/yr',
+    price: r'S$8.90/mo',
+    annualPrice: r'S$89/yr',
     features: [
       '100 AI messages / day',
       'Up to 5 Mochis',
@@ -50,8 +50,8 @@ const _plans = [
     id: 'max_monthly',
     title: 'Max',
     subtitle: '1 student · smarter AI for hard problems',
-    price: r'$19.99/mo',
-    annualPrice: r'$159/yr',
+    price: r'S$14.90/mo',
+    annualPrice: r'S$149/yr',
     features: [
       'Unlimited AI messages',
       'Unlimited Mochis',
@@ -65,8 +65,8 @@ const _plans = [
     id: 'family_monthly',
     title: 'Family',
     subtitle: 'Up to 4 students',
-    price: r'$34.99/mo',
-    annualPrice: r'$279/yr',
+    price: r'S$24.90/mo',
+    annualPrice: r'S$249/yr',
     features: [
       'Everything in Max',
       'Up to 4 child accounts',
@@ -75,26 +75,12 @@ const _plans = [
     ],
     badge: 'Most popular',
   ),
-  _Plan(
-    id: 'centre_monthly',
-    title: 'Centre',
-    subtitle: 'Up to 15 students · for learning centres',
-    price: r'$89.99/mo',
-    annualPrice: r'$720/yr',
-    features: [
-      'Up to 15 student accounts',
-      'Admin dashboard',
-      'All Family features',
-      'Priority support',
-    ],
-  ),
 ];
 
 // Map from backend plan string to plan ID used above.
 String? _planIdFromBackend(String? planKey) {
   if (planKey == null) return null;
   final lower = planKey.toLowerCase();
-  if (lower.contains('centre')) return 'centre_monthly';
   if (lower.contains('family')) return 'family_monthly';
   if (lower.contains('max')) return 'max_monthly';
   if (lower.contains('pro')) return 'pro_monthly';
@@ -107,7 +93,6 @@ String? _planIdFromHighlightTier(String? tier) => switch (tier) {
       'pro' => 'pro_monthly',
       'max' => 'max_monthly',
       'family' => 'family_monthly',
-      'centre' => 'centre_monthly',
       _ => null,
     };
 
@@ -123,7 +108,7 @@ String? _planIdFromHighlightTier(String? tier) => switch (tier) {
 class SubscriptionPlansScreen extends ConsumerStatefulWidget {
   const SubscriptionPlansScreen({super.key, this.highlightTier});
 
-  /// Short tier name to pre-select: 'pro', 'max', 'family', 'centre'.
+  /// Short tier name to pre-select: 'pro', 'max', 'family'.
   /// If null or unrecognised, the screen defaults to 'max_monthly'.
   final String? highlightTier;
 
@@ -203,6 +188,7 @@ class _SubscriptionPlansScreenState
         final tier = trialData?.subscriptionTier;
         final isOnTrial = trialData?.isOnTrial ?? false;
         final trialDaysLeft = trialData?.trialDaysLeft ?? 0;
+        final isCentreSourced = trialData?.source == 'CENTRE';
 
         // Default selection — honour highlightTier from the paywall, or the
         // user's current plan, falling back to 'max_monthly'.
@@ -234,13 +220,15 @@ class _SubscriptionPlansScreenState
                       children: [
                         // Header copy
                         Text(
-                          isOnTrial
-                              ? 'Your free trial ends in $trialDaysLeft day${trialDaysLeft == 1 ? '' : 's'}.'
-                                  ' Subscribe to keep all your Mochis.'
-                              : isPremium
-                                  ? 'You\'re on ${tier ?? ent.plan ?? 'Premium'}.'
-                                      ' Switch plans below or manage billing to cancel.'
-                                  : 'Start with a 7-day free trial. Cancel anytime.',
+                          isCentreSourced
+                              ? 'Your Premium comes from your centre. Enjoy unlimited chat and Mochis!'
+                              : isOnTrial
+                                  ? 'Your free trial ends in $trialDaysLeft day${trialDaysLeft == 1 ? '' : 's'}.'
+                                      ' Subscribe to keep all your Mochis.'
+                                  : isPremium
+                                      ? 'You\'re on ${tier ?? ent.plan ?? 'Premium'}.'
+                                          ' Switch plans below or manage billing to cancel.'
+                                      : 'Start with a 7-day free trial. Cancel anytime.',
                           style: AppTextStyles.body
                               .copyWith(color: AppColors.text2),
                         ),
@@ -281,6 +269,7 @@ class _SubscriptionPlansScreenState
                 _CtaArea(
                   isPremium: isPremium,
                   isOnTrial: isOnTrial,
+                  isCentreSourced: isCentreSourced,
                   selected: _selected,
                   currentPlanId: currentPlanId,
                   loading: _loading,
@@ -535,6 +524,7 @@ class _CtaArea extends StatelessWidget {
   const _CtaArea({
     required this.isPremium,
     required this.isOnTrial,
+    required this.isCentreSourced,
     required this.selected,
     required this.currentPlanId,
     required this.loading,
@@ -545,6 +535,7 @@ class _CtaArea extends StatelessWidget {
 
   final bool isPremium;
   final bool isOnTrial;
+  final bool isCentreSourced;
   final String? selected;
   final String? currentPlanId;
   final bool loading;
@@ -570,7 +561,26 @@ class _CtaArea extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (isPremium && isOnTrial) ...[
+          if (isCentreSourced) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: AppColors.tealL,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.teal),
+              ),
+              child: Center(
+                child: Text(
+                  '⭐ Premium via your centre',
+                  style: AppTextStyles.body.copyWith(
+                    color: AppColors.teal,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+          ] else if (isPremium && isOnTrial) ...[
             _PrimaryButton(
               label: 'Subscribe now',
               loading: loading,
@@ -610,8 +620,9 @@ class _CtaArea extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
           ],
-          // Manage billing — not shown for active trial users (no Stripe sub yet)
-          if (isPremium && !isOnTrial)
+          // Manage billing — not shown for trial users (no Stripe sub yet)
+          // and not shown for centre-sourced students (their org pays)
+          if (isPremium && !isOnTrial && !isCentreSourced)
             TextButton(
               onPressed: portalLoading ? null : onPortal,
               child: portalLoading

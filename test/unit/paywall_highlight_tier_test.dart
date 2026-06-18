@@ -16,7 +16,6 @@ String? planIdFromHighlightTier(String? tier) => switch (tier) {
       'pro' => 'pro_monthly',
       'max' => 'max_monthly',
       'family' => 'family_monthly',
-      'centre' => 'centre_monthly',
       _ => null,
     };
 
@@ -65,10 +64,6 @@ void main() {
 
     test('family maps to family_monthly plan id', () {
       expect(planIdFromHighlightTier('family'), 'family_monthly');
-    });
-
-    test('centre maps to centre_monthly plan id', () {
-      expect(planIdFromHighlightTier('centre'), 'centre_monthly');
     });
 
     test('null or unrecognised returns null — fallback to default', () {

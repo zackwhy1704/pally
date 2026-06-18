@@ -967,7 +967,7 @@ class _SubscriptionTile extends ConsumerWidget {
                         padding:
                             const EdgeInsets.symmetric(vertical: 10),
                       ),
-                      child: const Text('Keep Premium from S\$7.99/mo'),
+                      child: const Text('Keep Premium from S\$14.90/mo'),
                     ),
                   ),
                 ],
