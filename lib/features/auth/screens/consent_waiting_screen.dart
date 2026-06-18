@@ -128,103 +128,117 @@ class _ConsentWaitingScreenState extends ConsumerState<ConsentWaitingScreen> {
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: AppSpacing.xl),
-              const Text('📬', style: TextStyle(fontSize: 56)),
-              const SizedBox(height: AppSpacing.md),
-              Text('Waiting for your grown-up!',
-                  style: AppTextStyles.heading1),
-              const SizedBox(height: AppSpacing.sm),
-              if (_parentEmail != null)
-                Text(
-                  'We emailed $_parentEmail — they just need to tap one button to approve.',
-                  style:
-                      AppTextStyles.body.copyWith(color: AppColors.text2),
-                )
-              else
-                Text(
-                  'We emailed your parent or guardian. They just need to tap one button.',
-                  style:
-                      AppTextStyles.body.copyWith(color: AppColors.text2),
-                ),
-              const SizedBox(height: AppSpacing.lg),
-
-              // Status indicator
-              Container(
-                padding: AppSpacing.card,
-                decoration: BoxDecoration(
-                  color: AppColors.amberL,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                      color: AppColors.amber.withValues(alpha: 0.4)),
-                ),
-                child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(
-                      width: AppSizing.spinnerSm,
-                      height: AppSizing.spinnerSm,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: AppColors.amber),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: Text(
-                        'Waiting for approval… checking every 15 seconds.',
+                    const SizedBox(height: AppSpacing.xl),
+                    const Text('📬', style: TextStyle(fontSize: 56)),
+                    const SizedBox(height: AppSpacing.md),
+                    Text('Waiting for your grown-up!',
+                        style: AppTextStyles.heading1),
+                    const SizedBox(height: AppSpacing.sm),
+                    if (_parentEmail != null)
+                      Text(
+                        'We emailed $_parentEmail — they just need to tap one button to approve.',
                         style:
-                            AppTextStyles.bodySmall.copyWith(color: AppColors.amber),
+                            AppTextStyles.body.copyWith(color: AppColors.text2),
+                      )
+                    else
+                      Text(
+                        'We emailed your parent or guardian. They just need to tap one button.',
+                        style:
+                            AppTextStyles.body.copyWith(color: AppColors.text2),
+                      ),
+                    const SizedBox(height: AppSpacing.lg),
+
+                    // Status indicator
+                    Container(
+                      padding: AppSpacing.card,
+                      decoration: BoxDecoration(
+                        color: AppColors.amberL,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                            color: AppColors.amber.withValues(alpha: 0.4)),
+                      ),
+                      child: Row(
+                        children: [
+                          const SizedBox(
+                            width: AppSizing.spinnerSm,
+                            height: AppSizing.spinnerSm,
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2, color: AppColors.amber),
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            child: Text(
+                              'Waiting for approval… checking every 15 seconds.',
+                              style: AppTextStyles.bodySmall
+                                  .copyWith(color: AppColors.amber),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+
+                    // Resend
+                    OutlinedButton.icon(
+                      onPressed: _resending ? null : _resend,
+                      icon: _resending
+                          ? const SizedBox(
+                              width: AppSizing.iconSm,
+                              height: AppSizing.iconSm,
+                              child: CircularProgressIndicator(strokeWidth: 2))
+                          : const Icon(Icons.send_rounded, size: 16),
+                      label: const Text('Remind my grown-up'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.purple,
+                        side: const BorderSide(color: AppColors.purple),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 12),
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: AppSpacing.md),
+            ),
 
-              // Resend
-              OutlinedButton.icon(
-                onPressed: _resending ? null : _resend,
-                icon: _resending
-                    ? const SizedBox(
-                        width: AppSizing.iconSm,
-                        height: AppSizing.iconSm,
-                        child:
-                            CircularProgressIndicator(strokeWidth: 2))
-                    : const Icon(Icons.send_rounded, size: 16),
-                label: const Text('Remind my grown-up'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.purple,
-                  side: const BorderSide(color: AppColors.purple),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 12),
-                ),
+            // Demo CTA pinned at bottom — funnel doesn't dead-end
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  FilledButton.icon(
+                    onPressed: () => context.go('/onboarding'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.teal,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    icon: const Icon(Icons.auto_stories_rounded, size: 18),
+                    label: const Text('Try a demo while waiting →'),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    'You can explore Apalchi now. Your progress saves once approved.',
+                    style: AppTextStyles.caption,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-              const Spacer(),
-
-              // Demo CTA — funnel doesn't dead-end
-              FilledButton.icon(
-                onPressed: () => context.go('/onboarding'),
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.teal,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-                icon: const Icon(Icons.auto_stories_rounded, size: 18),
-                label: const Text('Try a demo while waiting →'),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                'You can explore Apalchi now. Your progress saves once approved.',
-                style: AppTextStyles.caption,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

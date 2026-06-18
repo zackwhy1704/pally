@@ -76,104 +76,121 @@ class _FamilyConsentScreenState extends ConsumerState<FamilyConsentScreen> {
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: AppSpacing.xxl),
-              Container(
-                width: AppSizing.iconContainer,
-                height: AppSizing.iconContainer,
-                decoration: const BoxDecoration(
-                  color: AppColors.purpleL,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.visibility_rounded,
-                    color: AppColors.purple, size: 32),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Text(
-                'Can $parent see your progress?',
-                style: AppTextStyles.heading1,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                '$parent will be able to see your study progress, '
-                'concept mastery, and weekly reports. Is that okay?',
-                style: AppTextStyles.body.copyWith(color: AppColors.text2),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Container(
-                padding: AppSpacing.card,
-                decoration: BoxDecoration(
-                  color: AppColors.surf2,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.outline),
-                ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text('$parent will see:',
-                        style: AppTextStyles.body
-                            .copyWith(fontWeight: FontWeight.w700)),
-                    const SizedBox(height: AppSpacing.sm),
-                    const _InfoRow(text: 'Study progress and streaks'),
-                    const _InfoRow(text: 'Subject mastery levels'),
-                    const _InfoRow(text: 'Weekly learning reports'),
-                    const SizedBox(height: AppSpacing.sm),
-                    Text(
-                      '$parent will NOT see your chat messages.',
-                      style: AppTextStyles.bodySmall
-                          .copyWith(color: AppColors.green),
+                    const SizedBox(height: AppSpacing.xxl),
+                    Container(
+                      width: AppSizing.iconContainer,
+                      height: AppSizing.iconContainer,
+                      decoration: const BoxDecoration(
+                        color: AppColors.purpleL,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.visibility_rounded,
+                          color: AppColors.purple, size: 32),
                     ),
+                    const SizedBox(height: AppSpacing.lg),
+                    Text(
+                      'Can $parent see your progress?',
+                      style: AppTextStyles.heading1,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    Text(
+                      '$parent will be able to see your study progress, '
+                      'concept mastery, and weekly reports. Is that okay?',
+                      style: AppTextStyles.body.copyWith(color: AppColors.text2),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    Container(
+                      padding: AppSpacing.card,
+                      decoration: BoxDecoration(
+                        color: AppColors.surf2,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.outline),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('$parent will see:',
+                              style: AppTextStyles.body
+                                  .copyWith(fontWeight: FontWeight.w700)),
+                          const SizedBox(height: AppSpacing.sm),
+                          const _InfoRow(text: 'Study progress and streaks'),
+                          const _InfoRow(text: 'Subject mastery levels'),
+                          const _InfoRow(text: 'Weekly learning reports'),
+                          const SizedBox(height: AppSpacing.sm),
+                          Text(
+                            '$parent will NOT see your chat messages.',
+                            style: AppTextStyles.bodySmall
+                                .copyWith(color: AppColors.green),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
                   ],
                 ),
               ),
-              const Spacer(),
-              SizedBox(
-                height: AppSizing.buttonHeight,
-                child: ElevatedButton(
-                  onPressed: _loading ? null : _accept,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.purple,
-                    foregroundColor: Colors.white,
-                    disabledBackgroundColor:
-                        AppColors.purple.withValues(alpha: 0.4),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14)),
-                    elevation: 0,
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                0,
+                AppSpacing.lg,
+                MediaQuery.of(context).padding.bottom + AppSpacing.md,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(
+                    height: AppSizing.buttonHeight,
+                    child: ElevatedButton(
+                      onPressed: _loading ? null : _accept,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.purple,
+                        foregroundColor: Colors.white,
+                        disabledBackgroundColor:
+                            AppColors.purple.withValues(alpha: 0.4),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
+                        elevation: 0,
+                      ),
+                      child: _loading
+                          ? const SizedBox(
+                              width: AppSizing.spinnerSm,
+                              height: AppSizing.spinnerSm,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: Colors.white),
+                            )
+                          : Text("Yes, that's okay",
+                              style: AppTextStyles.body.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700)),
+                    ),
                   ),
-                  child: _loading
-                      ? const SizedBox(
-                          width: AppSizing.spinnerSm,
-                          height: AppSizing.spinnerSm,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white),
-                        )
-                      : Text("Yes, that's okay",
-                          style: AppTextStyles.body.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700)),
-                ),
+                  const SizedBox(height: AppSpacing.sm),
+                  Center(
+                    child: TextButton(
+                      onPressed: _decline,
+                      style: TextButton.styleFrom(
+                          foregroundColor: AppColors.text2),
+                      child: Text("No, don't share",
+                          style: AppTextStyles.bodySmall),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: AppSpacing.sm),
-              Center(
-                child: TextButton(
-                  onPressed: _decline,
-                  style:
-                      TextButton.styleFrom(foregroundColor: AppColors.text2),
-                  child:
-                      Text("No, don't share", style: AppTextStyles.bodySmall),
-                ),
-              ),
-              SizedBox(
-                  height:
-                      MediaQuery.of(context).padding.bottom + AppSpacing.md),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

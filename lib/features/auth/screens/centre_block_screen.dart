@@ -15,55 +15,62 @@ class CentreBlockScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.lg, vertical: AppSpacing.xl),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text('🏫', style: TextStyle(fontSize: 64),
-                  textAlign: TextAlign.center),
-              const SizedBox(height: AppSpacing.lg),
-              Text(
-                'This is a Centre account',
-                style: AppTextStyles.heading1,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                'The Apalchi app is for students only. '
-                'Centre teachers and owners manage their classes at apalchi.com.',
-                style: AppTextStyles.body.copyWith(color: AppColors.text2),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSpacing.xl),
-              FilledButton(
-                onPressed: () => launchUrl(
-                  Uri.parse(_webLoginUrl),
-                  mode: LaunchMode.externalApplication,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.vertical -
+                  AppSpacing.xl * 2,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text('🏫', style: TextStyle(fontSize: 64),
+                    textAlign: TextAlign.center),
+                const SizedBox(height: AppSpacing.lg),
+                Text(
+                  'This is a Centre account',
+                  style: AppTextStyles.heading1,
+                  textAlign: TextAlign.center,
                 ),
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.purple,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: Text(
-                  'Log in at apalchi.com',
-                  style: AppTextStyles.body.copyWith(
-                      color: Colors.white, fontWeight: FontWeight.w700),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              TextButton(
-                onPressed: () => context.go('/auth/signin'),
-                child: Text(
-                  'Back to Sign In',
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  'The Apalchi app is for students only. '
+                  'Centre teachers and owners manage their classes at apalchi.com.',
                   style: AppTextStyles.body.copyWith(color: AppColors.text2),
+                  textAlign: TextAlign.center,
                 ),
-              ),
-            ],
+                const SizedBox(height: AppSpacing.xl),
+                FilledButton(
+                  onPressed: () => launchUrl(
+                    Uri.parse(_webLoginUrl),
+                    mode: LaunchMode.externalApplication,
+                  ),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.purple,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14)),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: Text(
+                    'Log in at apalchi.com',
+                    style: AppTextStyles.body.copyWith(
+                        color: Colors.white, fontWeight: FontWeight.w700),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TextButton(
+                  onPressed: () => context.go('/auth/signin'),
+                  child: Text(
+                    'Back to Sign In',
+                    style: AppTextStyles.body.copyWith(color: AppColors.text2),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

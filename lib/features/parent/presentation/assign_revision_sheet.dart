@@ -63,10 +63,10 @@ class _AssignRevisionSheetState extends ConsumerState<AssignRevisionSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final sheetHeight =
-        (MediaQuery.of(context).size.height * 0.6).clamp(360.0, 520.0);
     return Container(
-      height: sheetHeight,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.9,
+      ),
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),

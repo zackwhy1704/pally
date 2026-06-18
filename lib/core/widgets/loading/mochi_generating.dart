@@ -118,11 +118,16 @@ class _MochiGeneratingState extends State<MochiGenerating>
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.vertical,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
               // Mochi: 45% of shortest dimension, capped at 160 — scales across
               // phones (360dp) and tablets without overflowing small screens.
               LayoutBuilder(builder: (context, constraints) {
@@ -183,6 +188,7 @@ class _MochiGeneratingState extends State<MochiGenerating>
           ),
         ),
       ),
+    ),
     );
   }
 }

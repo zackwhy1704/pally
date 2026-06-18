@@ -42,10 +42,10 @@ class _WeeklyGoalSheetState extends ConsumerState<WeeklyGoalSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final sheetHeight =
-        (MediaQuery.of(context).size.height * 0.5).clamp(340.0, 460.0);
     return Container(
-      height: sheetHeight,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.9,
+      ),
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),

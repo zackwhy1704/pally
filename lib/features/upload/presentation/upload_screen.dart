@@ -1231,53 +1231,60 @@ class _TerminalScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.xl),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: AppSizing.iconContainer, color: iconColor),
-              const SizedBox(height: AppSpacing.lg),
-              Text(title,
-                  style: AppTextStyles.heading1, textAlign: TextAlign.center),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                message,
-                style: AppTextStyles.body.copyWith(color: AppColors.text2),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSpacing.xl),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: onPrimary,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.purple,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: AppSpacing.md),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14)),
-                  ),
-                  child: Text(primaryLabel),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.vertical -
+                  AppSpacing.xl * 2,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: AppSizing.iconContainer, color: iconColor),
+                const SizedBox(height: AppSpacing.lg),
+                Text(title,
+                    style: AppTextStyles.heading1, textAlign: TextAlign.center),
+                const SizedBox(height: AppSpacing.md),
+                Text(
+                  message,
+                  style: AppTextStyles.body.copyWith(color: AppColors.text2),
+                  textAlign: TextAlign.center,
                 ),
-              ),
-              if (secondaryLabel != null && onSecondary != null) ...[
-                const SizedBox(height: AppSpacing.sm),
+                const SizedBox(height: AppSpacing.xl),
                 SizedBox(
                   width: double.infinity,
-                  child: OutlinedButton(
-                    onPressed: onSecondary,
-                    style: OutlinedButton.styleFrom(
+                  child: FilledButton(
+                    onPressed: onPrimary,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.purple,
                       padding: const EdgeInsets.symmetric(
                           vertical: AppSpacing.md),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14)),
                     ),
-                    child: Text(secondaryLabel!),
+                    child: Text(primaryLabel),
                   ),
                 ),
+                if (secondaryLabel != null && onSecondary != null) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      onPressed: onSecondary,
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: AppSpacing.md),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
+                      ),
+                      child: Text(secondaryLabel!),
+                    ),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),

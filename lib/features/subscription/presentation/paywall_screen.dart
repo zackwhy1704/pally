@@ -87,80 +87,95 @@ class PaywallScreen extends ConsumerWidget {
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-              AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.lg),
-          child: Column(
-            children: [
-              const SizedBox(height: AppSpacing.md),
-              if (feature == 'CREATE_TUTOR')
-                Image.asset('assets/images/mochi.png',
-                    width: 110, height: 110, fit: BoxFit.contain)
-              else
-                Container(
-                  width: 88,
-                  height: 88,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppColors.purple, AppColors.purpleC],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.lg, 0, AppSpacing.lg, 0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: AppSpacing.md),
+                    if (feature == 'CREATE_TUTOR')
+                      Image.asset('assets/images/mochi.png',
+                          width: 110, height: 110, fit: BoxFit.contain)
+                    else
+                      Container(
+                        width: 88,
+                        height: 88,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [AppColors.purple, AppColors.purpleC],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                                color: AppColors.purple.withValues(alpha: 0.35),
+                                blurRadius: 24),
+                          ],
+                        ),
+                        child: const Center(
+                            child: Text('⭐', style: TextStyle(fontSize: 44))),
+                      ),
+                    const SizedBox(height: AppSpacing.lg),
+                    Text(_headline,
+                        style: AppTextStyles.heading1,
+                        textAlign: TextAlign.center),
+                    const SizedBox(height: AppSpacing.sm),
+                    Text(_subhead,
+                        style:
+                            AppTextStyles.body.copyWith(color: AppColors.text2),
+                        textAlign: TextAlign.center),
+                    const SizedBox(height: AppSpacing.lg),
+                    const _PremiumPerks(),
+                    const SizedBox(height: AppSpacing.lg),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  FilledButton(
+                    onPressed: () {
+                      final highlight = _highlightTierForFeature(feature);
+                      if (highlight != null) {
+                        context.push(
+                            '/subscription/plans?highlightTier=$highlight');
+                      } else {
+                        context.push('/subscription/plans');
+                      }
+                    },
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.purple,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16)),
                     ),
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                          color: AppColors.purple.withValues(alpha: 0.35),
-                          blurRadius: 24),
-                    ],
+                    child: const Text('See plans'),
                   ),
-                  child: const Center(
-                      child: Text('⭐', style: TextStyle(fontSize: 44))),
-                ),
-              const SizedBox(height: AppSpacing.lg),
-              Text(_headline,
-                  style: AppTextStyles.heading1, textAlign: TextAlign.center),
-              const SizedBox(height: AppSpacing.sm),
-              Text(_subhead,
-                  style: AppTextStyles.body
-                      .copyWith(color: AppColors.text2),
-                  textAlign: TextAlign.center),
-              const SizedBox(height: AppSpacing.lg),
-              const _PremiumPerks(),
-              const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () {
-                    final highlight = _highlightTierForFeature(feature);
-                    if (highlight != null) {
-                      context.push(
-                          '/subscription/plans?highlightTier=$highlight');
-                    } else {
-                      context.push('/subscription/plans');
-                    }
-                  },
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.purple,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
+                  const SizedBox(height: AppSpacing.sm),
+                  Center(
+                    child: TextButton(
+                      onPressed: () {
+                        if (Navigator.of(context).canPop()) {
+                          Navigator.of(context).pop();
+                        } else {
+                          context.go('/progress');
+                        }
+                      },
+                      child: const Text('Maybe later'),
+                    ),
                   ),
-                  child: const Text('See plans'),
-                ),
+                ],
               ),
-              const SizedBox(height: AppSpacing.sm),
-              TextButton(
-                onPressed: () {
-                  if (Navigator.of(context).canPop()) {
-                    Navigator.of(context).pop();
-                  } else {
-                    context.go('/progress');
-                  }
-                },
-                child: const Text('Maybe later'),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

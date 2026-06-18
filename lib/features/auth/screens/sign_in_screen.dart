@@ -544,7 +544,7 @@ class _HeaderBand extends StatelessWidget {
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
     return Container(
-      height: MediaQuery.of(context).size.height * 0.32,
+      height: (MediaQuery.of(context).size.height * 0.32).clamp(150.0, 260.0),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
