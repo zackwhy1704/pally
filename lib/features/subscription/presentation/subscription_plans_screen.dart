@@ -199,7 +199,10 @@ class _SubscriptionPlansScreenState
       data: (ent) {
         final isPremium = ent.isPremium;
         final currentPlanId = _planIdFromBackend(ent.plan);
-        final tier = trialAsync.whenOrNull(data: (t) => t.subscriptionTier);
+        final trialData = trialAsync.valueOrNull;
+        final tier = trialData?.subscriptionTier;
+        final isOnTrial = trialData?.isOnTrial ?? false;
+        final trialDaysLeft = trialData?.trialDaysLeft ?? 0;
 
         // Default selection — honour highlightTier from the paywall, or the
         // user's current plan, falling back to 'max_monthly'.
@@ -231,10 +234,13 @@ class _SubscriptionPlansScreenState
                       children: [
                         // Header copy
                         Text(
-                          isPremium
-                              ? 'You\'re on ${tier ?? ent.plan ?? 'Premium'}.'
-                                  ' Switch plans below or manage billing to cancel.'
-                              : 'Start with a 7-day free trial. Cancel anytime.',
+                          isOnTrial
+                              ? 'Your free trial ends in $trialDaysLeft day${trialDaysLeft == 1 ? '' : 's'}.'
+                                  ' Subscribe to keep all your Mochis.'
+                              : isPremium
+                                  ? 'You\'re on ${tier ?? ent.plan ?? 'Premium'}.'
+                                      ' Switch plans below or manage billing to cancel.'
+                                  : 'Start with a 7-day free trial. Cancel anytime.',
                           style: AppTextStyles.body
                               .copyWith(color: AppColors.text2),
                         ),
@@ -274,6 +280,7 @@ class _SubscriptionPlansScreenState
                 // Bottom CTA area
                 _CtaArea(
                   isPremium: isPremium,
+                  isOnTrial: isOnTrial,
                   selected: _selected,
                   currentPlanId: currentPlanId,
                   loading: _loading,
@@ -527,6 +534,7 @@ class _Badge extends StatelessWidget {
 class _CtaArea extends StatelessWidget {
   const _CtaArea({
     required this.isPremium,
+    required this.isOnTrial,
     required this.selected,
     required this.currentPlanId,
     required this.loading,
@@ -536,6 +544,7 @@ class _CtaArea extends StatelessWidget {
   });
 
   final bool isPremium;
+  final bool isOnTrial;
   final String? selected;
   final String? currentPlanId;
   final bool loading;
@@ -561,7 +570,14 @@ class _CtaArea extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (isPremium && selected != currentPlanId) ...[
+          if (isPremium && isOnTrial) ...[
+            _PrimaryButton(
+              label: 'Subscribe now',
+              loading: loading,
+              onPressed: onSubscribe,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+          ] else if (isPremium && selected != currentPlanId) ...[
             _PrimaryButton(
               label: 'Switch to this plan',
               loading: loading,
@@ -594,8 +610,8 @@ class _CtaArea extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
           ],
-          // Manage billing always available for premium
-          if (isPremium)
+          // Manage billing — not shown for active trial users (no Stripe sub yet)
+          if (isPremium && !isOnTrial)
             TextButton(
               onPressed: portalLoading ? null : onPortal,
               child: portalLoading

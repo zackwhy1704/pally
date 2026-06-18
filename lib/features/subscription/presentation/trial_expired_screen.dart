@@ -8,7 +8,8 @@ import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const _kKeeperKey = 'trial_expired_keeper_avatar_id';
+const _kKeeperKey    = 'trial_expired_keeper_avatar_id';
+const _kDismissedKey = 'trial_expired_dismissed_v1';
 
 /// PR4 — Trial-expired paywall.
 ///
@@ -24,6 +25,11 @@ class TrialExpiredScreen extends ConsumerStatefulWidget {
 
   /// When opened by tapping a locked Mochi, pass its ID to pre-select it.
   final String? avatarId;
+
+  static Future<bool> shouldShow() async {
+    final prefs = await SharedPreferences.getInstance();
+    return !(prefs.getBool(_kDismissedKey) ?? false);
+  }
 
   @override
   ConsumerState<TrialExpiredScreen> createState() =>
@@ -56,6 +62,8 @@ class _TrialExpiredScreenState extends ConsumerState<TrialExpiredScreen> {
 
   void _continueFree() async {
     await _savePick();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_kDismissedKey, true);
     if (mounted) context.go('/');
   }
 

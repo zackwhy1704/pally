@@ -20,6 +20,7 @@ import 'package:pally/features/home/widgets/empty_home_state.dart';
 import 'package:pally/features/home/widgets/module_progress_banner.dart';
 import 'package:pally/features/progress/presentation/progress_view_model.dart';
 import 'package:pally/features/subscription/presentation/trial_countdown_banner.dart';
+import 'package:pally/features/subscription/presentation/trial_expired_screen.dart';
 import 'package:pally/features/subscription/presentation/trial_welcome_screen.dart';
 import 'package:pally/features/subscription/trial_status_provider.dart';
 import 'package:pally/features/onboarding/presentation/feature_tour.dart';
@@ -41,7 +42,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       final trial = ref.read(trialStatusProvider).valueOrNull;
-      if (trial?.isOnTrial == true) {
+      if (trial?.isTrialExpired == true) {
+        final show = await TrialExpiredScreen.shouldShow();
+        if (show && mounted) {
+          const TrialExpiredRoute().go(context);
+          return;
+        }
+      } else if (trial?.isOnTrial == true) {
         TrialWelcomeScreen.maybeShow(context);
       }
       // Show the 5-step feature tour once after the first home render.

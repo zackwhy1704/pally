@@ -35,6 +35,7 @@ import 'package:pally/features/centre/presentation/centre_join_screen.dart';
 import 'package:pally/features/subscription/presentation/paywall_screen.dart';
 import 'package:pally/features/subscription/presentation/subscription_plans_screen.dart';
 import 'package:pally/features/subscription/presentation/subscription_return_screen.dart';
+import 'package:pally/features/subscription/presentation/trial_expired_screen.dart';
 import 'package:pally/features/collection/presentation/collection_screen.dart';
 import 'package:pally/features/debug/presentation/painter_gallery_screen.dart';
 import 'package:pally/features/shop/presentation/shop_screen.dart';
@@ -473,6 +474,16 @@ class PaywallRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       PaywallScreen(feature: feature);
+}
+
+@TypedGoRoute<TrialExpiredRoute>(path: '/trial/expired')
+class TrialExpiredRoute extends GoRouteData {
+  const TrialExpiredRoute({this.avatarId});
+  final String? avatarId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      TrialExpiredScreen(avatarId: avatarId);
 }
 
 @TypedGoRoute<SubscriptionPlansRoute>(path: '/subscription/plans')

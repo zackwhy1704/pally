@@ -34,6 +34,7 @@ List<RouteBase> get $appRoutes => [
       $achievementsRoute,
       $subscriptionReturnRoute,
       $paywallRoute,
+      $trialExpiredRoute,
       $subscriptionPlansRoute,
       $familyLinkCodeRoute,
       $familyClaimRoute,
@@ -855,6 +856,33 @@ extension $PaywallRouteExtension on PaywallRoute {
         '/paywall',
         queryParams: {
           if (feature != null) 'feature': feature,
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $trialExpiredRoute => GoRouteData.$route(
+      path: '/trial/expired',
+      factory: $TrialExpiredRouteExtension._fromState,
+    );
+
+extension $TrialExpiredRouteExtension on TrialExpiredRoute {
+  static TrialExpiredRoute _fromState(GoRouterState state) => TrialExpiredRoute(
+        avatarId: state.uri.queryParameters['avatar-id'],
+      );
+
+  String get location => GoRouteData.$location(
+        '/trial/expired',
+        queryParams: {
+          if (avatarId != null) 'avatar-id': avatarId,
         },
       );
 
