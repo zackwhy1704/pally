@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/ui/adaptive_center.dart';
 import 'package:pally/features/chat/presentation/chat_view_model.dart';
 import 'package:pally/features/photo_question/models/ocr_confidence_result.dart';
 import 'package:pally/features/photo_question/presentation/photo_preview_view_model.dart';
@@ -148,7 +149,7 @@ class _DetectingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return const AdaptiveCenter(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -409,14 +410,13 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline_rounded,
-                color: AppColors.coral, size: 64),
+    return AdaptiveCenter(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.error_outline_rounded,
+              color: AppColors.coral, size: 64),
             const SizedBox(height: AppSpacing.md),
             Text('Could not read photo',
                 style: AppTextStyles.title.copyWith(color: Colors.white)),
@@ -435,7 +435,6 @@ class _ErrorView extends StatelessWidget {
             ),
           ],
         ),
-      ),
     );
   }
 }

@@ -8,6 +8,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/ui/adaptive_center.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 
 /// C3 — "Waiting for approval"
@@ -127,18 +128,13 @@ class _ConsentWaitingScreenState extends ConsumerState<ConsentWaitingScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.bg,
-      body: SafeArea(
+      body: AdaptiveCenter(
+        padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const SizedBox(height: AppSpacing.xl),
-                    const Text('📬', style: TextStyle(fontSize: 56)),
+            const SizedBox(height: AppSpacing.xl),
+            const Text('📬', style: TextStyle(fontSize: 56)),
                     const SizedBox(height: AppSpacing.md),
                     Text('Waiting for your grown-up!',
                         style: AppTextStyles.heading1),
@@ -206,41 +202,29 @@ class _ConsentWaitingScreenState extends ConsumerState<ConsentWaitingScreen> {
                             const EdgeInsets.symmetric(vertical: 12),
                       ),
                     ),
+
+                    // Demo CTA — funnel doesn't dead-end
+                    const SizedBox(height: AppSpacing.xl),
+                    FilledButton.icon(
+                      onPressed: () => context.go('/onboarding'),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: AppColors.teal,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      icon: const Icon(Icons.auto_stories_rounded, size: 18),
+                      label: const Text('Try a demo while waiting →'),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Text(
+                      'You can explore Apalchi now. Your progress saves once approved.',
+                      style: AppTextStyles.caption,
+                      textAlign: TextAlign.center,
+                    ),
                   ],
                 ),
               ),
-            ),
-
-            // Demo CTA pinned at bottom — funnel doesn't dead-end
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  FilledButton.icon(
-                    onPressed: () => context.go('/onboarding'),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.teal,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14)),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    icon: const Icon(Icons.auto_stories_rounded, size: 18),
-                    label: const Text('Try a demo while waiting →'),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    'You can explore Apalchi now. Your progress saves once approved.',
-                    style: AppTextStyles.caption,
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

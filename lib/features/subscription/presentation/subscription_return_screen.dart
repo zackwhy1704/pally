@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/ui/adaptive_center.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
 
 /// Polls entitlement after the user returns from Stripe checkout. The
@@ -76,13 +77,12 @@ class _SubscriptionReturnScreenState
         title: Text('Subscription', style: AppTextStyles.title),
         centerTitle: true,
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (_done) ...[
+      body: AdaptiveCenter(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (_done) ...[
                 const Text('🎉', style: TextStyle(fontSize: 56)),
                 const SizedBox(height: AppSpacing.sm),
                 Text('You are premium!', style: AppTextStyles.heading1),
@@ -129,7 +129,6 @@ class _SubscriptionReturnScreenState
               ],
             ],
           ),
-        ),
       ),
     );
   }

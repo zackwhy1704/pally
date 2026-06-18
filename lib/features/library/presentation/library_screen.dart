@@ -8,6 +8,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/error/pally_error.dart';
+import 'package:pally/core/ui/adaptive_center.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_delete_tutor_dialog.dart';
@@ -509,24 +510,22 @@ class _ActionChip extends StatelessWidget {
 class _EmptyLibraryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.menu_book_outlined,
-                size: 64, color: AppColors.text3),
-            const SizedBox(height: AppSpacing.md),
-            Text('No Mochis yet', style: AppTextStyles.title),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              'Create a Mochi from the Home tab to see it here.',
-              style: AppTextStyles.body.copyWith(color: AppColors.text2),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+    return AdaptiveCenter(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.menu_book_outlined,
+              size: 64, color: AppColors.text3),
+          const SizedBox(height: AppSpacing.md),
+          Text('No Mochis yet', style: AppTextStyles.title),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            'Create a Mochi from the Home tab to see it here.',
+            style: AppTextStyles.body.copyWith(color: AppColors.text2),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }

@@ -6,6 +6,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/ui/adaptive_center.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/ui/pally_relevance_warning_dialog.dart';
 import 'package:pally/core/widgets/loading/mochi_generating.dart';
@@ -1230,19 +1231,12 @@ class _TerminalScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bg,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height -
-                  MediaQuery.of(context).padding.vertical -
-                  AppSpacing.xl * 2,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, size: AppSizing.iconContainer, color: iconColor),
+      body: AdaptiveCenter(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: AppSizing.iconContainer, color: iconColor),
                 const SizedBox(height: AppSpacing.lg),
                 Text(title,
                     style: AppTextStyles.heading1, textAlign: TextAlign.center),
@@ -1285,8 +1279,6 @@ class _TerminalScreen extends StatelessWidget {
                 ],
               ],
             ),
-          ),
-        ),
       ),
     );
   }

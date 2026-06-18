@@ -5,6 +5,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/ui/adaptive_center.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/family/family_service.dart';
@@ -73,13 +74,9 @@ class _ParentOnboardingScreenState
 
     return Scaffold(
       backgroundColor: AppColors.bg,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-          child: _step == 0
-              ? _buildWelcomeStep(displayName)
-              : _buildLinkStep(),
-        ),
+      body: AdaptiveCenter(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+        child: _step == 0 ? _buildWelcomeStep(displayName) : _buildLinkStep(),
       ),
     );
   }
@@ -88,75 +85,53 @@ class _ParentOnboardingScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: AppSpacing.xxl),
-                Container(
-                  width: AppSizing.iconContainer,
-                  height: AppSizing.iconContainer,
-                  decoration: const BoxDecoration(
-                    color: AppColors.purpleL,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.family_restroom_rounded,
-                      color: AppColors.purple, size: 32),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                Text(
-                  'Welcome, parent!',
-                  style: AppTextStyles.heading1,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  'Your parent account is ready. Next, link your child so '
-                  'you can track their learning progress.',
-                  style: AppTextStyles.body.copyWith(color: AppColors.text2),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-              ],
+        const SizedBox(height: AppSpacing.xxl),
+        Container(
+          width: AppSizing.iconContainer,
+          height: AppSizing.iconContainer,
+          decoration: const BoxDecoration(
+            color: AppColors.purpleL,
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(Icons.family_restroom_rounded,
+              color: AppColors.purple, size: 32),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        Text(
+          'Welcome, parent!',
+          style: AppTextStyles.heading1,
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          'Your parent account is ready. Next, link your child so '
+          'you can track their learning progress.',
+          style: AppTextStyles.body.copyWith(color: AppColors.text2),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: AppSpacing.xl),
+        SizedBox(
+          height: AppSizing.buttonHeight,
+          child: ElevatedButton(
+            onPressed: () => setState(() => _step = 1),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.purple,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
+              elevation: 0,
             ),
+            child: Text('Link your child',
+                style: AppTextStyles.body.copyWith(
+                    color: Colors.white, fontWeight: FontWeight.w700)),
           ),
         ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(
-            0,
-            0,
-            0,
-            MediaQuery.of(context).padding.bottom + AppSpacing.md,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(
-                height: AppSizing.buttonHeight,
-                child: ElevatedButton(
-                  onPressed: () => setState(() => _step = 1),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.purple,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14)),
-                    elevation: 0,
-                  ),
-                  child: Text('Link your child',
-                      style: AppTextStyles.body.copyWith(
-                          color: Colors.white, fontWeight: FontWeight.w700)),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Center(
-                child: TextButton(
-                  onPressed: () => context.go('/parent-home'),
-                  style: TextButton.styleFrom(foregroundColor: AppColors.text2),
-                  child: Text('Link later', style: AppTextStyles.bodySmall),
-                ),
-              ),
-            ],
+        const SizedBox(height: AppSpacing.sm),
+        Center(
+          child: TextButton(
+            onPressed: () => context.go('/parent-home'),
+            style: TextButton.styleFrom(foregroundColor: AppColors.text2),
+            child: Text('Link later', style: AppTextStyles.bodySmall),
           ),
         ),
       ],
@@ -167,114 +142,91 @@ class _ParentOnboardingScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: AppSpacing.xl),
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => setState(() => _step = 0),
-                      child: Container(
-                        width: AppSizing.avatarMd,
-                        height: AppSizing.avatarMd,
-                        decoration: const BoxDecoration(
-                          color: AppColors.purpleL,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.arrow_back_ios_new_rounded,
-                            size: 16, color: AppColors.purple),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text('Link your child',
-                          style: AppTextStyles.title.copyWith(fontSize: 20)),
-                    ),
-                  ],
+        const SizedBox(height: AppSpacing.xl),
+        Row(
+          children: [
+            GestureDetector(
+              onTap: () => setState(() => _step = 0),
+              child: Container(
+                width: AppSizing.avatarMd,
+                height: AppSizing.avatarMd,
+                decoration: const BoxDecoration(
+                  color: AppColors.purpleL,
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  'Ask your child to open Apalchi, go to Me tab, '
-                  'tap "Link a grown-up", and read you their 6-character code.',
-                  style: AppTextStyles.body.copyWith(color: AppColors.text2),
-                ),
-                const SizedBox(height: AppSpacing.xl),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(6, (i) {
-                    return Padding(
-                      padding: EdgeInsets.only(right: i == 5 ? 0 : 8),
-                      child: _OnboardingCodeBox(
-                        controller: _codeControllers[i],
-                        focusNode: _codeFocusNodes[i],
-                        onFilled: () {
-                          if (i < 5) {
-                            _codeFocusNodes[i + 1].requestFocus();
-                          } else {
-                            _codeFocusNodes[i].unfocus();
-                          }
-                        },
-                        onCleared: () {
-                          if (i > 0) _codeFocusNodes[i - 1].requestFocus();
-                        },
-                      ),
-                    );
-                  }),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-              ],
+                child: const Icon(Icons.arrow_back_ios_new_rounded,
+                    size: 16, color: AppColors.purple),
+              ),
             ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text('Link your child',
+                  style: AppTextStyles.title.copyWith(fontSize: 20)),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          'Ask your child to open Apalchi, go to Me tab, '
+          'tap "Link a grown-up", and read you their 6-character code.',
+          style: AppTextStyles.body.copyWith(color: AppColors.text2),
+        ),
+        const SizedBox(height: AppSpacing.xl),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(6, (i) {
+            return Padding(
+              padding: EdgeInsets.only(right: i == 5 ? 0 : 8),
+              child: _OnboardingCodeBox(
+                controller: _codeControllers[i],
+                focusNode: _codeFocusNodes[i],
+                onFilled: () {
+                  if (i < 5) {
+                    _codeFocusNodes[i + 1].requestFocus();
+                  } else {
+                    _codeFocusNodes[i].unfocus();
+                  }
+                },
+                onCleared: () {
+                  if (i > 0) _codeFocusNodes[i - 1].requestFocus();
+                },
+              ),
+            );
+          }),
+        ),
+        const SizedBox(height: AppSpacing.xl),
+        SizedBox(
+          height: AppSizing.buttonHeight,
+          child: ElevatedButton(
+            onPressed: _loading ? null : _linkChild,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.purple,
+              foregroundColor: Colors.white,
+              disabledBackgroundColor:
+                  AppColors.purple.withValues(alpha: 0.4),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
+              elevation: 0,
+            ),
+            child: _loading
+                ? const SizedBox(
+                    width: AppSizing.spinnerSm,
+                    height: AppSizing.spinnerSm,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white),
+                  )
+                : Text('Link account',
+                    style: AppTextStyles.body.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700)),
           ),
         ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(
-            0,
-            0,
-            0,
-            MediaQuery.of(context).padding.bottom + AppSpacing.md,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(
-                height: AppSizing.buttonHeight,
-                child: ElevatedButton(
-                  onPressed: _loading ? null : _linkChild,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.purple,
-                    foregroundColor: Colors.white,
-                    disabledBackgroundColor:
-                        AppColors.purple.withValues(alpha: 0.4),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14)),
-                    elevation: 0,
-                  ),
-                  child: _loading
-                      ? const SizedBox(
-                          width: AppSizing.spinnerSm,
-                          height: AppSizing.spinnerSm,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white),
-                        )
-                      : Text('Link account',
-                          style: AppTextStyles.body.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700)),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Center(
-                child: TextButton(
-                  onPressed: () => context.go('/parent-home'),
-                  style:
-                      TextButton.styleFrom(foregroundColor: AppColors.text2),
-                  child: Text('Skip for now', style: AppTextStyles.bodySmall),
-                ),
-              ),
-            ],
+        const SizedBox(height: AppSpacing.sm),
+        Center(
+          child: TextButton(
+            onPressed: () => context.go('/parent-home'),
+            style: TextButton.styleFrom(foregroundColor: AppColors.text2),
+            child: Text('Skip for now', style: AppTextStyles.bodySmall),
           ),
         ),
       ],

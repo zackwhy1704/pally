@@ -7,6 +7,7 @@ import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/ui/adaptive_center.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/widgets/loading/splash_lines.dart';
 import 'package:pally/features/quiz/presentation/quiz_view_model.dart';
@@ -1011,14 +1012,13 @@ class _QuizLoadingViewState extends State<_QuizLoadingView> {
   @override
   Widget build(BuildContext context) {
     final line = kSplashLines[_lineIndex];
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/images/mochi.png',
+    return AdaptiveCenter(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/images/mochi.png',
               width: MediaQuery.of(context).size.shortestSide * 0.28,
               height: MediaQuery.of(context).size.shortestSide * 0.28,
               fit: BoxFit.contain,
@@ -1061,7 +1061,6 @@ class _QuizLoadingViewState extends State<_QuizLoadingView> {
             ),
           ],
         ),
-      ),
     );
   }
 }
@@ -1074,27 +1073,25 @@ class _NoQuestionsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('🧠', style: TextStyle(fontSize: 56)),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              'No quiz today',
-              style: AppTextStyles.title,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            NoNotesCta(
-              avatarId: avatarId,
-              personalDescription:
-                  'Upload some notes so Mochi can build your first quiz!',
-            ),
-          ],
-        ),
+    return AdaptiveCenter(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text('🧠', style: TextStyle(fontSize: 56)),
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            'No quiz today',
+            style: AppTextStyles.title,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          NoNotesCta(
+            avatarId: avatarId,
+            personalDescription:
+                'Upload some notes so Mochi can build your first quiz!',
+          ),
+        ],
       ),
     );
   }

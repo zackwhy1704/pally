@@ -4,6 +4,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/no_notes_cta.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/ui/adaptive_center.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
 // pally_loading_spinner removed — replaced by _GeneratingView inline
 import 'package:pally/features/flashcards/presentation/flashcard_view_model.dart';
@@ -396,24 +397,21 @@ class _GeneratingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const CircularProgressIndicator(color: AppColors.purple),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              isGenerating
-                  ? 'Making flashcards from your notes...'
-                  : 'Loading...',
-              style:
-                  AppTextStyles.body.copyWith(color: AppColors.text2),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+    return AdaptiveCenter(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const CircularProgressIndicator(color: AppColors.purple),
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            isGenerating
+                ? 'Making flashcards from your notes...'
+                : 'Loading...',
+            style: AppTextStyles.body.copyWith(color: AppColors.text2),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
@@ -454,80 +452,74 @@ class _EmptyState extends StatelessWidget {
           ),
         _ => (Icons.style_rounded, 'No cards in this filter.'),
       };
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 56, color: AppColors.text3),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                message,
-                style: AppTextStyles.body.copyWith(color: AppColors.text2),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+      return AdaptiveCenter(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 56, color: AppColors.text3),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              message,
+              style: AppTextStyles.body.copyWith(color: AppColors.text2),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       );
     }
 
     // Case 2: No cards at all AND no wiki pages — needs an upload first.
     if (hasWikiPages == false) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('📚', style: TextStyle(fontSize: 56)),
-              const SizedBox(height: AppSpacing.md),
-              Text('No flashcards yet',
-                  style: AppTextStyles.title, textAlign: TextAlign.center),
-              const SizedBox(height: AppSpacing.xs),
-              NoNotesCta(
-                avatarId: avatarId,
-                personalDescription:
-                    'Upload notes or a document for this Mochi and cards will be made automatically.',
-              ),
-            ],
-          ),
+      return AdaptiveCenter(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('📚', style: TextStyle(fontSize: 56)),
+            const SizedBox(height: AppSpacing.md),
+            Text('No flashcards yet',
+                style: AppTextStyles.title, textAlign: TextAlign.center),
+            const SizedBox(height: AppSpacing.xs),
+            NoNotesCta(
+              avatarId: avatarId,
+              personalDescription:
+                  'Upload notes or a document for this Mochi and cards will be made automatically.',
+            ),
+          ],
         ),
       );
     }
 
     // Case 3: Has wiki pages but 0 cards — silent generation failure.
     // hasWikiPages == true OR null (still unknown / checking).
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('✨', style: TextStyle(fontSize: 56)),
-            const SizedBox(height: AppSpacing.md),
-            Text('Ready to make cards',
-                style: AppTextStyles.title, textAlign: TextAlign.center),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              'Your Mochi has notes but no cards yet.\nTap the button below to generate them.',
-              style: AppTextStyles.body.copyWith(color: AppColors.text2),
-              textAlign: TextAlign.center,
+    return AdaptiveCenter(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text('✨', style: TextStyle(fontSize: 56)),
+          const SizedBox(height: AppSpacing.md),
+          Text('Ready to make cards',
+              style: AppTextStyles.title, textAlign: TextAlign.center),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            'Your Mochi has notes but no cards yet.\nTap the button below to generate them.',
+            style: AppTextStyles.body.copyWith(color: AppColors.text2),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          FilledButton.icon(
+            onPressed: onGenerate,
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.purple,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
             ),
-            const SizedBox(height: AppSpacing.lg),
-            FilledButton.icon(
-              onPressed: onGenerate,
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.purple,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
-              ),
-              icon: const Icon(Icons.auto_fix_high_rounded, size: 18),
-              label: const Text('Generate flashcards'),
-            ),
-          ],
-        ),
+            icon: const Icon(Icons.auto_fix_high_rounded, size: 18),
+            label: const Text('Generate flashcards'),
+          ),
+        ],
       ),
     );
   }

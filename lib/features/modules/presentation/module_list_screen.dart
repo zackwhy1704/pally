@@ -5,6 +5,7 @@ import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/ui/adaptive_center.dart';
 import 'package:pally/core/ui/no_notes_cta.dart';
 import 'package:pally/features/modules/presentation/module_list_view_model.dart';
 import 'package:pally/shared/models/learning_module.dart';
@@ -68,30 +69,28 @@ class _ErrorBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.wifi_off_rounded,
-                size: 48, color: AppColors.text3),
-            const SizedBox(height: AppSpacing.md),
-            Text('Could not load modules.',
-                style: AppTextStyles.title, textAlign: TextAlign.center),
-            const SizedBox(height: AppSpacing.xs),
-            Text('Check your connection and try again.',
-                style: AppTextStyles.body.copyWith(color: AppColors.text2),
-                textAlign: TextAlign.center),
-            const SizedBox(height: AppSpacing.lg),
-            FilledButton(
-              onPressed: onRetry,
-              style:
-                  FilledButton.styleFrom(backgroundColor: AppColors.purple),
-              child: const Text('Try again'),
-            ),
-          ],
-        ),
+    return AdaptiveCenter(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.wifi_off_rounded,
+              size: 48, color: AppColors.text3),
+          const SizedBox(height: AppSpacing.md),
+          Text('Could not load modules.',
+              style: AppTextStyles.title, textAlign: TextAlign.center),
+          const SizedBox(height: AppSpacing.xs),
+          Text('Check your connection and try again.',
+              style: AppTextStyles.body.copyWith(color: AppColors.text2),
+              textAlign: TextAlign.center),
+          const SizedBox(height: AppSpacing.lg),
+          FilledButton(
+            onPressed: onRetry,
+            style:
+                FilledButton.styleFrom(backgroundColor: AppColors.purple),
+            child: const Text('Try again'),
+          ),
+        ],
       ),
     );
   }
@@ -144,14 +143,13 @@ class _EmptyBodyState extends State<_EmptyBody> {
     final notes = loaded?.hasNotes ?? false;
     final isCentre = loaded?.isCentreClass ?? false;
 
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.auto_stories_rounded,
-                size: 56, color: AppColors.purpleC),
+    return AdaptiveCenter(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.auto_stories_rounded,
+              size: 56, color: AppColors.purpleC),
             const SizedBox(height: AppSpacing.md),
             Text('No lessons yet',
                 style: AppTextStyles.title, textAlign: TextAlign.center),
@@ -210,7 +208,6 @@ class _EmptyBodyState extends State<_EmptyBody> {
               ),
           ],
         ),
-      ),
     );
   }
 }

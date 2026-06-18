@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/ui/adaptive_center.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/family/family_service.dart';
 import 'package:pally/features/family/family_status_provider.dart';
@@ -81,12 +82,11 @@ class _FamilyClaimScreenState extends ConsumerState<FamilyClaimScreen> {
         title: Text('Add your child', style: AppTextStyles.title),
         centerTitle: true,
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            children: [
-              const SizedBox(height: AppSpacing.md),
+      body: AdaptiveCenter(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          children: [
+            const SizedBox(height: AppSpacing.md),
               Text(
                 'Ask your child to open Apalchi → Me tab → "Link a grown-up" '
                 'and read you their code.',
@@ -116,7 +116,7 @@ class _FamilyClaimScreenState extends ConsumerState<FamilyClaimScreen> {
                   );
                 }),
               ),
-              const Spacer(),
+              const SizedBox(height: AppSpacing.xl),
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
@@ -148,7 +148,6 @@ class _FamilyClaimScreenState extends ConsumerState<FamilyClaimScreen> {
             ],
           ),
         ),
-      ),
     );
   }
 }

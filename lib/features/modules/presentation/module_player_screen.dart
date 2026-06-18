@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/ui/adaptive_center.dart';
 import 'package:pally/features/modules/presentation/module_player_view_model.dart';
 import 'package:pally/features/modules/presentation/widgets/learn_body.dart';
 import 'package:pally/features/modules/presentation/widgets/test_body.dart';
@@ -155,14 +156,13 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
     }
 
     if (playerState.error != null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline_rounded,
-                  size: 48, color: AppColors.coral),
+      return AdaptiveCenter(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline_rounded,
+                size: 48, color: AppColors.coral),
               const SizedBox(height: AppSpacing.md),
               Text(
                 playerState.error!.userMessage,
@@ -182,7 +182,6 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
               ),
             ],
           ),
-        ),
       );
     }
 
