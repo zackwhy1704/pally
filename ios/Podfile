@@ -1,0 +1,88 @@
+# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+platform :ios, '15.5'
+
+# Apalchi: iOS uses Apple Vision Framework for text recognition (see
+# Runner/VisionTextRecognitionChannel.swift). google_mlkit_* plugins are
+# Android-only — their iOS pods have no arm64-simulator slice and break the
+# build on Apple Silicon + Xcode 26. Strip them from the iOS plugin list so
+# neither pods nor GeneratedPluginRegistrant registrations get added on iOS.
+require 'json'
+plugins_dependencies = File.expand_path('../.flutter-plugins-dependencies', __dir__)
+if File.exist?(plugins_dependencies)
+  begin
+    deps = JSON.parse(File.read(plugins_dependencies))
+    ios_plugins = deps.dig('plugins', 'ios')
+    if ios_plugins.is_a?(Array)
+      filtered = ios_plugins.reject { |p| p['name'].to_s.start_with?('google_mlkit_') }
+      if filtered.length != ios_plugins.length
+        deps['plugins']['ios'] = filtered
+        File.write(plugins_dependencies, JSON.pretty_generate(deps))
+        puts "[Apalchi] Stripped google_mlkit_* from iOS plugin list (Android-only)."
+      end
+    end
+  rescue => e
+    puts "[Apalchi] Warning: failed to filter .flutter-plugins-dependencies: #{e}"
+  end
+end
+
+registrant_m = File.expand_path('Runner/GeneratedPluginRegistrant.m', __dir__)
+if File.exist?(registrant_m)
+  original = File.read(registrant_m)
+  patched = original
+    .gsub(/#if __has_include\(<google_mlkit_[^>]+>\).*?#endif\n\n/m, '')
+    .gsub(/^\s*\[GoogleMlKit\w+Plugin registerWithRegistrar:.*\];\n/, '')
+  if patched != original
+    File.write(registrant_m, patched)
+    puts "[Apalchi] Patched GeneratedPluginRegistrant.m to drop google_mlkit_* registrations."
+  end
+end
+
+project 'Runner', {
+  'Debug' => :debug,
+  'Profile' => :release,
+  'Release' => :release,
+}
+
+def flutter_root
+  generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+  unless File.exist?(generated_xcode_build_settings_path)
+    raise "#{generated_xcode_build_settings_path} must exist. If you're running pod install manually, make sure flutter pub get is executed first"
+  end
+
+  File.foreach(generated_xcode_build_settings_path) do |line|
+    matches = line.match(/FLUTTER_ROOT\=(.*)/)
+    return matches[1].strip if matches
+  end
+  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
+end
+
+require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+
+flutter_ios_podfile_setup
+
+target 'Runner' do
+  use_frameworks!
+
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  target 'RunnerTests' do
+    inherit! :search_paths
+  end
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.5'
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphoneos*]'] = 'armv7'
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'armv7'
+      defs = config.build_settings['GCC_PREPROCESSOR_DEFINITIONS']
+      defs = ['$(inherited)'] if defs.nil?
+      defs = [defs] unless defs.is_a?(Array)
+      defs |= %w[PERMISSION_CAMERA=1 PERMISSION_PHOTOS=1 PERMISSION_NOTIFICATIONS=1]
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = defs
+    end
+  end
+end
