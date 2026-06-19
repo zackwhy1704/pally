@@ -46,7 +46,6 @@ abstract class AnalyticsEvents {
   static const errorShown         = 'error_shown';
   static const retryTapped        = 'retry_tapped';
   static const guideModeToggle    = 'guide_mode_toggle';
-  static const brainMapView       = 'brain_map_view';
   static const photoQuestion      = 'photo_question';
   static const moduleStarted       = 'module_started';
   static const moduleStageCompleted = 'module_stage_completed';

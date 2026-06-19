@@ -7,7 +7,7 @@ part of 'photo_preview_view_model.dart';
 // **************************************************************************
 
 String _$photoPreviewViewModelHash() =>
-    r'842773e0670cdeacc5c94677c52018ae3872eb78';
+    r'c3197cb8e9e1f2446cd7a71eef7e9beb39504474';
 
 /// Copied from Dart SDK
 class _SystemHash {

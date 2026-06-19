@@ -18,13 +18,9 @@ import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/features/quiz/providers/quiz_status_provider.dart';
 import 'package:pally/shared/models/avatar.dart';
-import 'package:pally/shared/models/mochi_character.dart';
-import 'package:pally/features/centre/centre_mode.dart';
+enum _LibraryItemType { header, avatar }
 
-enum _LibraryItemType { header, avatar, demoCard }
-
-/// A single positioned row in the library list: a section header, an avatar
-/// row, or the demo-centre marketing card.
+/// A single positioned row in the library list: a section header or avatar row.
 class _LibraryItem {
   const _LibraryItem.header(String label)
       : type = _LibraryItemType.header,
@@ -34,10 +30,6 @@ class _LibraryItem {
       : type = _LibraryItemType.avatar,
         headerLabel = null,
         avatar = a;
-  const _LibraryItem.demoCard()
-      : type = _LibraryItemType.demoCard,
-        headerLabel = null,
-        avatar = null;
 
   final _LibraryItemType type;
   final String? headerLabel;
@@ -75,13 +67,7 @@ class LibraryScreen extends ConsumerWidget {
                 onRefresh: () =>
                     ref.read(libraryViewModelProvider.notifier).refresh(),
                 child: Builder(builder: (context) {
-                  // Build an ordered list of rows: "My classes" header + class
-                  // avatars first (when any), then personal tutor rows, then
-                  // the optional demo-centre marketing card.
-                  final items = _buildLibraryItems(
-                    avatars,
-                    showDemo: showDemoCentreCard(ref),
-                  );
+                  final items = _buildLibraryItems(avatars);
                   return ListView.builder(
                     padding: const EdgeInsets.all(AppSpacing.md),
                     itemCount: items.length,
@@ -95,12 +81,8 @@ class LibraryScreen extends ConsumerWidget {
   }
 
   /// Orders library rows so class avatars are grouped under a "My classes"
-  /// header above personal tutors. Personal avatars never get a header (their
-  /// rows read as the default library list).
-  List<_LibraryItem> _buildLibraryItems(
-    List<Avatar> avatars, {
-    required bool showDemo,
-  }) {
+  /// header above personal tutors.
+  List<_LibraryItem> _buildLibraryItems(List<Avatar> avatars) {
     final classAvatars = avatars.where((a) => a.isCentreClass);
     final personalAvatars = avatars.where((a) => !a.isCentreClass);
     return [
@@ -109,7 +91,6 @@ class LibraryScreen extends ConsumerWidget {
         for (final a in classAvatars) _LibraryItem.avatar(a),
       ],
       for (final a in personalAvatars) _LibraryItem.avatar(a),
-      if (showDemo) const _LibraryItem.demoCard(),
     ];
   }
 
@@ -129,8 +110,6 @@ class LibraryScreen extends ConsumerWidget {
                 .copyWith(letterSpacing: 1.2, color: AppColors.text2),
           ),
         );
-      case _LibraryItemType.demoCard:
-        return const _DemoCentreLibraryRow();
       case _LibraryItemType.avatar:
         final avatar = item.avatar!;
         // Centre-class avatars are provisioned by a centre and can't be DELETED
@@ -378,18 +357,6 @@ class _AvatarRow extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     _QuizChipForAvatar(avatar: avatar),
-                    const SizedBox(width: AppSpacing.xs),
-                    _ActionChip(
-                      label: 'Map',
-                      icon: Icons.bubble_chart_rounded,
-                      color: avatar.hasKnowledge
-                          ? AppColors.teal
-                          : AppColors.text3,
-                      onTap: avatar.hasKnowledge
-                          ? () =>
-                              BrainMapRoute(avatarId: avatar.id).push(context)
-                          : null,
-                    ),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.xs),
@@ -576,120 +543,3 @@ class _QuizChipForAvatar extends ConsumerWidget {
   }
 }
 
-// ── Demo centre row (admin-only) ──────────────────────────────────────────────
-
-class _DemoCentreLibraryRow extends StatefulWidget {
-  const _DemoCentreLibraryRow();
-
-  @override
-  State<_DemoCentreLibraryRow> createState() => _DemoCentreLibraryRowState();
-}
-
-class _DemoCentreLibraryRowState extends State<_DemoCentreLibraryRow> {
-  late final MochiCharacter _character;
-
-  /// Released collectible Mochis the demo row can preview. The
-  /// aroundTheWorld series was scrapped product-wide, so the admin demo
-  /// now cycles the shipped school series instead.
-  static const _demoPool = [
-    MochiCharacter.pencil,
-    MochiCharacter.science,
-    MochiCharacter.pe,
-    MochiCharacter.art,
-    MochiCharacter.lunchbox,
-    MochiCharacter.library,
-    MochiCharacter.headmaster,
-    MochiCharacter.goldstar,
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _character =
-        _demoPool[DateTime.now().millisecondsSinceEpoch % _demoPool.length];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final bgColor = _character.bgColor;
-    final accentColor = _character.accentColor;
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: accentColor, width: 2),
-        ),
-        padding: AppSpacing.card,
-        child: Row(
-          children: [
-            Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                color: bgColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: Image.asset(
-                  _character.assetPath,
-                  width: 40,
-                  height: 40,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          _character.displayName,
-                          style: AppTextStyles.body
-                              .copyWith(fontWeight: FontWeight.w700),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.xs),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: accentColor,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        constraints: const BoxConstraints(maxWidth: 60),
-                        child: Text(
-                          'DEMO',
-                          style: AppTextStyles.caption
-                              .copyWith(color: Colors.white),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    '🏫 Centre-provisioned · read-only',
-                    style: AppTextStyles.caption
-                        .copyWith(color: AppColors.text2),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

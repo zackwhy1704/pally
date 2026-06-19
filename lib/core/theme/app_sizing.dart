@@ -80,10 +80,6 @@ abstract class AppSizing {
   /// Standard AppBar / top-bar height (56 dp).
   static const double appBarHeight = 56;
 
-  // ── Brain-map canvas ─────────────────────────────────────────────────────
-  /// Topic node circle size on the brain-map canvas (38 dp).
-  static const double brainMapNode = 38;
-
   // ── Skeleton / placeholder ───────────────────────────────────────────────
   /// Avatar skeleton placeholder (52 × 52 dp).
   static const double skeletonAvatar = 52;

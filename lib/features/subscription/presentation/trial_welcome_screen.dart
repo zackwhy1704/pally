@@ -28,7 +28,7 @@ class _TrialWelcomeSheet extends StatelessWidget {
   static const _perks = [
     ('🐾', 'Unlimited Mochis', 'One Mochi for every subject you study'),
     ('💬', 'Unlimited chat', 'Ask anything, any time — no daily limit'),
-    ('🧠', 'Full brain map & flashcards', 'Every feature, zero restrictions'),
+    ('📚', 'Full flashcards & quizzes', 'Every feature, zero restrictions'),
   ];
 
   @override

@@ -197,7 +197,7 @@ class _ClassChallengesViewModelProviderElement
 }
 
 String _$challengeViewModelHash() =>
-    r'59b2badab70b048b72731db62b056e34d9598677';
+    r'48cefd8efff755aa15765ddbbbdf9e06d538dd57';
 
 abstract class _$ChallengeViewModel
     extends BuildlessAutoDisposeAsyncNotifier<Challenge> {

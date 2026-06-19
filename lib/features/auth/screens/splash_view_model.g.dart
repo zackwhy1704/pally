@@ -6,7 +6,7 @@ part of 'splash_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$resolveStartRouteHash() => r'f905f98d6451d38fcc8eb6897c8bcf0c00d8db53';
+String _$resolveStartRouteHash() => r'9a206cc019f79f0faf4bc1d830f59fef44c63fe0';
 
 /// Resolves the route the app should navigate to after the splash screen:
 /// runs the /auth/me check, syncs any missing auth flags, and returns the

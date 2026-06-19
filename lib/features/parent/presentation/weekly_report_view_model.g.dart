@@ -7,7 +7,7 @@ part of 'weekly_report_view_model.dart';
 // **************************************************************************
 
 String _$weeklyReportListViewModelHash() =>
-    r'5d508a95f26ad1f54431e6d5ef121b1316c3afa6';
+    r'20f6276eb1f444535698073e5a9759b796d60044';
 
 /// See also [WeeklyReportListViewModel].
 @ProviderFor(WeeklyReportListViewModel)

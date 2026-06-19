@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
+import 'package:pally/core/services/text_recognition_service.dart';
 import 'package:pally/shared/models/photo_question.dart';
 
 part 'photo_preview_view_model.g.dart';
@@ -52,12 +52,8 @@ class PhotoPreviewViewModel extends _$PhotoPreviewViewModel {
 
   Future<void> _runDetection(String photoPath) async {
     try {
-      final inputImage = InputImage.fromFilePath(photoPath);
-      final recognizer = TextRecognizer(script: TextRecognitionScript.latin);
-      final recognised = await recognizer.processImage(inputImage);
-      await recognizer.close();
-
-      final questions = _parseQuestions(recognised.text);
+      final text = await TextRecognitionService.recognize(photoPath);
+      final questions = _parseQuestions(text);
       state = PhotoPreviewDetected(questions: questions, photoPath: photoPath);
     } catch (_) {
       // Never leak raw exception text — on-device OCR errors are mostly

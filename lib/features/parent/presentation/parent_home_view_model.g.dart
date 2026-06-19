@@ -7,7 +7,7 @@ part of 'parent_home_view_model.dart';
 // **************************************************************************
 
 String _$parentHomeViewModelHash() =>
-    r'1ff5f75e791e099c223ee794f1723bce84e4c1df';
+    r'b4690da9caeb60254d1542e2df4cda4df7c93120';
 
 /// See also [ParentHomeViewModel].
 @ProviderFor(ParentHomeViewModel)

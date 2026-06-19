@@ -24,8 +24,6 @@ import 'package:pally/features/subscription/presentation/trial_expired_screen.da
 import 'package:pally/features/subscription/presentation/trial_welcome_screen.dart';
 import 'package:pally/features/subscription/trial_status_provider.dart';
 import 'package:pally/features/onboarding/presentation/feature_tour.dart';
-import 'package:pally/features/centre/centre_mode.dart';
-import 'package:pally/shared/models/mochi_character.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -339,7 +337,6 @@ class _AvatarSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final showDemo = showDemoCentreCard(ref);
     // Centre classes and personal tutors are two distinct systems; group
     // class avatars under their own header above the personal "YOUR MOCHIS".
     final classAvatars =
@@ -367,13 +364,9 @@ class _AvatarSection extends ConsumerWidget {
             mainAxisSpacing: 12,
             childAspectRatio: 178 / 160,
           ),
-          itemCount: personalAvatars.length + (showDemo ? 1 : 0),
-          itemBuilder: (context, index) {
-            if (index < personalAvatars.length) {
-              return _AvatarCard(avatar: personalAvatars[index]);
-            }
-            return const _DemoCentreCard();
-          },
+          itemCount: personalAvatars.length,
+          itemBuilder: (context, index) =>
+              _AvatarCard(avatar: personalAvatars[index]),
         ),
       ],
     );
@@ -549,141 +542,6 @@ class _AvatarCard extends ConsumerWidget {
 }
 
 // ── Demo centre card (admin-only, visual preview only) ────────────────────────
-
-/// A read-only preview card showing a randomly selected released Mochi.
-/// Shown ONLY when an admin has the "Centre-mode (demo)" toggle on.
-/// The character is picked once at creation time and stays stable for the
-/// widget's lifetime (no re-randomise on rebuild).
-class _DemoCentreCard extends StatefulWidget {
-  const _DemoCentreCard();
-
-  @override
-  State<_DemoCentreCard> createState() => _DemoCentreCardState();
-}
-
-class _DemoCentreCardState extends State<_DemoCentreCard> {
-  late final MochiCharacter _character;
-
-  /// Released collectible Mochis the demo card can preview. The
-  /// aroundTheWorld series was scrapped product-wide, so the admin demo
-  /// now cycles the shipped school series instead.
-  static const _demoPool = [
-    MochiCharacter.pencil,
-    MochiCharacter.science,
-    MochiCharacter.pe,
-    MochiCharacter.art,
-    MochiCharacter.lunchbox,
-    MochiCharacter.library,
-    MochiCharacter.headmaster,
-    MochiCharacter.goldstar,
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _character =
-        _demoPool[DateTime.now().millisecondsSinceEpoch % _demoPool.length];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final bgColor = _character.bgColor;
-    final accentColor = _character.accentColor;
-
-    return GestureDetector(
-      onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-              'Demo: ${_character.displayName} — centre Mochi preview.'),
-          duration: const Duration(seconds: 2),
-        ),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: accentColor, width: 2),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  child: Container(
-                    color: bgColor,
-                    width: double.infinity,
-                    child: Center(
-                      child: Image.asset(
-                        _character.assetPath,
-                        width: 80,
-                        height: 80,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: bgColor,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          'CENTRE',
-                          style: AppTextStyles.caption.copyWith(
-                            color: accentColor,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        _character.displayName,
-                        style: AppTextStyles.label.copyWith(
-                          color: AppColors.text1,
-                          fontWeight: FontWeight.w700,
-                        ),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            // Admin demo badge — top-left
-            Positioned(
-              top: 6,
-              left: 6,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                decoration: BoxDecoration(
-                  color: accentColor,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  'DEMO',
-                  style: AppTextStyles.caption
-                      .copyWith(color: Colors.white, fontSize: 8),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 // ── Locked Mochi slot sheet ───────────────────────────────────────────────────
 

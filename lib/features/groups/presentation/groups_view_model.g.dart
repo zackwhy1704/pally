@@ -7,7 +7,7 @@ part of 'groups_view_model.dart';
 // **************************************************************************
 
 String _$groupListViewModelHash() =>
-    r'021aa33b0fe5d80015e6f855edcb6c36bca680db';
+    r'e3b55d0e41f8f6ded0e18d4ce058cc2df09cebae';
 
 /// See also [GroupListViewModel].
 @ProviderFor(GroupListViewModel)
@@ -24,7 +24,7 @@ final groupListViewModelProvider = AutoDisposeAsyncNotifierProvider<
 
 typedef _$GroupListViewModel = AutoDisposeAsyncNotifier<List<StudyGroup>>;
 String _$groupDetailViewModelHash() =>
-    r'546816945ce36d4ea658fa5643648dfc38f63234';
+    r'be7c99904b077c8d557fa2e9b65a66af9195e55c';
 
 /// Copied from Dart SDK
 class _SystemHash {

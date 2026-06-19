@@ -1024,7 +1024,7 @@ class _UploadLoadingScreen extends StatelessWidget {
         iconColor: AppColors.green,
         title: 'Brain updated!',
         message: 'Mochi has read your notes and added them to the brain. '
-            'You can now chat, quiz, and explore the brain map.',
+            'You can now chat, quiz, and review your notes.',
         primaryLabel: 'Start chatting',
         onPrimary: () => const HomeRoute().go(context),
         secondaryLabel: 'Add more notes',
@@ -1193,7 +1193,7 @@ class _BrainCompilingBanner extends StatelessWidget {
           Text(
             isChunked
                 ? 'Your document is large — Mochi splits it into sections for better accuracy. Expected: $eta. You can close this screen; the brain updates automatically.'
-                : 'New pages will appear in your brain map shortly. Expected: $eta.',
+                : 'New pages will appear in your library shortly. Expected: $eta.',
             style: AppTextStyles.bodySmall.copyWith(
               color: isChunked ? AppColors.amber : AppColors.teal,
             ),

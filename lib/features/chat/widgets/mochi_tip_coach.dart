@@ -231,7 +231,7 @@ class _MochiTipCoachState extends ConsumerState<MochiTipCoach>
     ),
     _ChatTip(
       id: 'weak-topics',
-      text: "Tap a red topic in your Brain Map to drill what's shaky.",
+      text: "Ask me to quiz you on weak topics to drill what's shaky.",
       emoji: '🔴',
     ),
     _ChatTip(

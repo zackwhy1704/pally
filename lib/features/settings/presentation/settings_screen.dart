@@ -20,11 +20,10 @@ import 'package:pally/features/subscription/entitlement_provider.dart';
 import 'package:pally/features/subscription/trial_status_provider.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/shared/models/entitlement.dart';
 import 'package:pally/features/home/widgets/how_pally_is_different.dart';
 import 'package:pally/features/settings/presentation/learning_style_screen.dart';
 import 'package:pally/features/onboarding/presentation/feature_tour.dart';
-import 'package:pally/core/services/feature_flags.dart';
-import 'package:pally/features/centre/centre_mode.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -305,28 +304,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
             ],
           ),
-          // Admin-only: centre-mode demo toggle (never visible to non-admins)
-          if (isFlagEnabled(ref, FeatureFlags.isAdmin)) ...[
-            const SizedBox(height: AppSpacing.sm),
-            _SettingsCard(
-              children: [
-                SwitchListTile(
-                  secondary: const Icon(Icons.business_center_outlined,
-                      color: AppColors.purple),
-                  title: const Text('Centre-mode (demo)'),
-                  subtitle: const Text(
-                    'Admin only — preview the locked-down, centre-branded '
-                    'experience on your active avatar.',
-                  ),
-                  value: ref.watch(centreModeDemoOverrideProvider),
-                  activeColor: AppColors.purple,
-                  onChanged: (v) => ref
-                      .read(centreModeDemoOverrideProvider.notifier)
-                      .state = v,
-                ),
-              ],
-            ),
-          ],
           const SizedBox(height: AppSpacing.md),
           const _SectionHeader(title: 'Referral'),
           const _ReferralTile(),
@@ -979,7 +956,7 @@ class _SubscriptionTile extends ConsumerWidget {
         final planLabel = isPremium
             ? (ent.source == 'PARENT'
                 ? 'Family plan — managed by parent'
-                : (ent.plan ?? 'Premium'))
+                : prettyTier(ent.plan))
             : 'Free plan';
         return _SettingsCard(
           children: [

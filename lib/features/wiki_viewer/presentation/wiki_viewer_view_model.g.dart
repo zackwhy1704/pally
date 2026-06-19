@@ -7,7 +7,7 @@ part of 'wiki_viewer_view_model.dart';
 // **************************************************************************
 
 String _$wikiViewerViewModelHash() =>
-    r'1470cd388293bba14f28025a40af4b32775883c4';
+    r'e4cc381e2bb285cafc6e7ca893c41b73db919198';
 
 /// Copied from Dart SDK
 class _SystemHash {

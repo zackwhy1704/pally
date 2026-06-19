@@ -6,7 +6,7 @@ part of 'module_list_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$moduleAvatarInfoHash() => r'83dcf26618903407319c42bb35f72764288c7f23';
+String _$moduleAvatarInfoHash() => r'f6eaa90db48989c4479028cd4160dec31f54b7dc';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,34 +29,34 @@ class _SystemHash {
   }
 }
 
-/// Reads avatar info (notes presence + centre/personal kind) synchronously from
-/// the home cache so the module-list empty state renders in one frame with no
-/// extra network round-trip. Returns null only while the home list is still
-/// loading (extremely rare — the user navigated through home to get here).
+/// Reads avatar info (notes presence + centre/personal kind) reactively from
+/// the home cache so the module-list empty state renders correctly and updates
+/// when the home list refreshes. Returns null while loading or on error so the
+/// empty state never flashes an incorrect centre/personal guess.
 ///
 /// Copied from [moduleAvatarInfo].
 @ProviderFor(moduleAvatarInfo)
 const moduleAvatarInfoProvider = ModuleAvatarInfoFamily();
 
-/// Reads avatar info (notes presence + centre/personal kind) synchronously from
-/// the home cache so the module-list empty state renders in one frame with no
-/// extra network round-trip. Returns null only while the home list is still
-/// loading (extremely rare — the user navigated through home to get here).
+/// Reads avatar info (notes presence + centre/personal kind) reactively from
+/// the home cache so the module-list empty state renders correctly and updates
+/// when the home list refreshes. Returns null while loading or on error so the
+/// empty state never flashes an incorrect centre/personal guess.
 ///
 /// Copied from [moduleAvatarInfo].
 class ModuleAvatarInfoFamily extends Family<ModuleAvatarInfo?> {
-  /// Reads avatar info (notes presence + centre/personal kind) synchronously from
-  /// the home cache so the module-list empty state renders in one frame with no
-  /// extra network round-trip. Returns null only while the home list is still
-  /// loading (extremely rare — the user navigated through home to get here).
+  /// Reads avatar info (notes presence + centre/personal kind) reactively from
+  /// the home cache so the module-list empty state renders correctly and updates
+  /// when the home list refreshes. Returns null while loading or on error so the
+  /// empty state never flashes an incorrect centre/personal guess.
   ///
   /// Copied from [moduleAvatarInfo].
   const ModuleAvatarInfoFamily();
 
-  /// Reads avatar info (notes presence + centre/personal kind) synchronously from
-  /// the home cache so the module-list empty state renders in one frame with no
-  /// extra network round-trip. Returns null only while the home list is still
-  /// loading (extremely rare — the user navigated through home to get here).
+  /// Reads avatar info (notes presence + centre/personal kind) reactively from
+  /// the home cache so the module-list empty state renders correctly and updates
+  /// when the home list refreshes. Returns null while loading or on error so the
+  /// empty state never flashes an incorrect centre/personal guess.
   ///
   /// Copied from [moduleAvatarInfo].
   ModuleAvatarInfoProvider call(
@@ -91,17 +91,17 @@ class ModuleAvatarInfoFamily extends Family<ModuleAvatarInfo?> {
   String? get name => r'moduleAvatarInfoProvider';
 }
 
-/// Reads avatar info (notes presence + centre/personal kind) synchronously from
-/// the home cache so the module-list empty state renders in one frame with no
-/// extra network round-trip. Returns null only while the home list is still
-/// loading (extremely rare — the user navigated through home to get here).
+/// Reads avatar info (notes presence + centre/personal kind) reactively from
+/// the home cache so the module-list empty state renders correctly and updates
+/// when the home list refreshes. Returns null while loading or on error so the
+/// empty state never flashes an incorrect centre/personal guess.
 ///
 /// Copied from [moduleAvatarInfo].
 class ModuleAvatarInfoProvider extends AutoDisposeProvider<ModuleAvatarInfo?> {
-  /// Reads avatar info (notes presence + centre/personal kind) synchronously from
-  /// the home cache so the module-list empty state renders in one frame with no
-  /// extra network round-trip. Returns null only while the home list is still
-  /// loading (extremely rare — the user navigated through home to get here).
+  /// Reads avatar info (notes presence + centre/personal kind) reactively from
+  /// the home cache so the module-list empty state renders correctly and updates
+  /// when the home list refreshes. Returns null while loading or on error so the
+  /// empty state never flashes an incorrect centre/personal guess.
   ///
   /// Copied from [moduleAvatarInfo].
   ModuleAvatarInfoProvider(
@@ -189,7 +189,7 @@ class _ModuleAvatarInfoProviderElement
 }
 
 String _$moduleListViewModelHash() =>
-    r'6a2452822163368d1042b0408d851208dc97891b';
+    r'9d2929a13f2ac845a6b4a54ad97f6996d0ebb7b4';
 
 abstract class _$ModuleListViewModel
     extends BuildlessAutoDisposeAsyncNotifier<List<LearningModule>> {

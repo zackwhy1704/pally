@@ -122,7 +122,7 @@ class _TrialExpiredScreenState extends ConsumerState<TrialExpiredScreen> {
                         )),
                     const SizedBox(height: 4),
                     Text(
-                      'Unlimited Mochis, unlimited chat, full flashcards & brain map.',
+                      'Unlimited Mochis, unlimited chat, full flashcards & quizzes.',
                       style: TextStyle(
                           fontFamily: 'Nunito',
                           fontSize: 13,

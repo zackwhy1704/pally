@@ -6,8 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/app/api_client.dart';
-import 'package:pally/features/brain_map/presentation/brain_map_screen.dart';
-import 'package:pally/features/brain_map/presentation/brain_map_view_model.dart';
 import 'package:pally/features/consent/data/consent_service.dart';
 import 'package:pally/features/consent/presentation/ai_disclosure_screen.dart';
 import 'package:pally/features/progress/presentation/daily_goal_provider.dart';
@@ -96,40 +94,6 @@ class _StubUnlocked extends UnlockedCharactersNotifier {
   @override
   Future<Set<MochiCharacter>> build() async =>
       {MochiCharacter.mochi, MochiCharacter.pencil};
-}
-
-class _StubBrainMap extends BrainMapViewModel {
-  @override
-  Future<BrainMapState> build(String avatarId) async => const BrainMapState(
-        isLoading: false,
-        subject: 'Science',
-        newSlugs: {'cells'},
-        newTitles: {'Cells'},
-        nodes: [
-          TopicNode(
-            slug: 'photosynthesis',
-            title: 'Photosynthesis and the very long topic name',
-            mastery: 0.8,
-            attempts: 4,
-            certainty: 'VERIFIED',
-            certaintyScore: 0.9,
-            quizUseCount: 6,
-            hasConflict: true,
-            conflictNote: 'You wrote leaves are blue, but earlier notes '
-                'say green — which is right?',
-          ),
-          TopicNode(
-            slug: 'cells',
-            title: 'Cells',
-            mastery: -1,
-            attempts: 0,
-            certainty: 'UNCERTAIN',
-            certaintyScore: 0.2,
-            quizUseCount: 0,
-            prerequisiteSlugs: ['photosynthesis'],
-          ),
-        ],
-      );
 }
 
 /// Released assignment with long answers + per-concept evaluation to stress
@@ -299,7 +263,6 @@ List<Override> _overrides() => [
       mysteryBoxOddsNotifierProvider.overrideWith(_StubOdds.new),
       unlockedCharactersProvider.overrideWith(_StubUnlocked.new),
       consentServiceProvider.overrideWithValue(_FakeConsentService()),
-      brainMapViewModelProvider('a1').overrideWith(_StubBrainMap.new),
     ];
 
 /// Pumps [child] at [size] with [scale] text scaling and asserts the build
@@ -347,7 +310,6 @@ void main() {
     'DailyGoalRing': () => const DailyGoalRing(),
     'ShopScreen': () => const ShopScreen(),
     'AiDisclosureScreen': () => const AiDisclosureScreen(),
-    'BrainMapScreen': () => const BrainMapScreen(avatarId: 'a1'),
     'ClassUniformAvatar': () => const Center(
           child: ClassUniformAvatar(
             appearance: ClassAppearance(

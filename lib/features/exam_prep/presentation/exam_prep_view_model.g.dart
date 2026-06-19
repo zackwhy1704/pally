@@ -6,7 +6,7 @@ part of 'exam_prep_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$examPrepViewModelHash() => r'd29256b6f474a9ead568e5fca62060b44155ed01';
+String _$examPrepViewModelHash() => r'c73a6ad5e7f136997de194c878b467acc19c12bc';
 
 /// Copied from Dart SDK
 class _SystemHash {

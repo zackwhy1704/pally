@@ -52,7 +52,7 @@ import 'package:pally/features/photo_question/presentation/photo_preview_screen.
 import 'package:pally/features/photo_question/presentation/homework_scan_detail_screen.dart';
 import 'package:pally/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:pally/features/onboarding/presentation/direct_onboarding_screen.dart';
-import 'package:pally/features/brain_map/presentation/brain_map_screen.dart';
+
 import 'package:pally/features/groups/presentation/create_group_screen.dart';
 import 'package:pally/features/groups/presentation/group_detail_screen.dart';
 import 'package:pally/features/groups/presentation/group_list_screen.dart';
@@ -393,15 +393,6 @@ class StudyGroupDetailRoute extends GoRouteData {
       GroupDetailScreen(groupId: groupId);
 }
 
-@TypedGoRoute<BrainMapRoute>(path: '/avatar/:avatarId/brain-map')
-class BrainMapRoute extends GoRouteData {
-  const BrainMapRoute({required this.avatarId});
-  final String avatarId;
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      BrainMapScreen(avatarId: avatarId);
-}
 
 @TypedGoRoute<TeachMochiRoute>(path: '/avatar/:avatarId/teach')
 class TeachMochiRoute extends GoRouteData {

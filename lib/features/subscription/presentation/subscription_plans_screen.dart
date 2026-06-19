@@ -6,6 +6,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
+import 'package:pally/shared/models/entitlement.dart';
 import 'package:pally/features/subscription/subscription_service.dart';
 import 'package:pally/features/subscription/trial_status_provider.dart';
 
@@ -226,7 +227,7 @@ class _SubscriptionPlansScreenState
                                   ? 'Your free trial ends in $trialDaysLeft day${trialDaysLeft == 1 ? '' : 's'}.'
                                       ' Subscribe to keep all your Mochis.'
                                   : isPremium
-                                      ? 'You\'re on ${tier ?? ent.plan ?? 'Premium'}.'
+                                      ? 'You\'re on ${tier ?? prettyTier(ent.plan)}.'
                                           ' Switch plans below or manage billing to cancel.'
                                       : 'Start with a 7-day free trial. Cancel anytime.',
                           style: AppTextStyles.body

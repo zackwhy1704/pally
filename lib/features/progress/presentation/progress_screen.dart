@@ -100,11 +100,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                 const SizedBox(height: AppSpacing.md),
                 const StreakCard(),
                 const SizedBox(height: AppSpacing.md),
-                MasteryCard(
-                  onOpenBrainMap: () => _BrainMapCard.openFor(context, ref),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                const _BrainMapCard(),
+                const MasteryCard(),
                 const SizedBox(height: AppSpacing.md),
                 _StatsRow(progress: progress),
                 const SizedBox(height: AppSpacing.md),
@@ -802,101 +798,9 @@ class _NavButtons extends ConsumerWidget {
   }
 }
 
-/// Gradient entry card to the Brain Map. Hidden when the user has no
-/// avatars yet (nothing to map). With one avatar, tap goes straight in;
-/// with several, a bottom-sheet picker lets the user choose which tutor.
-class _BrainMapCard extends ConsumerWidget {
-  const _BrainMapCard();
-
-  /// Shared entry point so other cards (MasteryCard) can route through the
-  /// same avatar-pick flow without duplicating the bottom-sheet logic.
-  static void openFor(BuildContext context, WidgetRef ref) {
-    final avatars = ref.read(libraryViewModelProvider).maybeWhen(
-          data: (list) => list,
-          orElse: () => const <Avatar>[],
-        );
-    if (avatars.isEmpty) return;
-    if (avatars.length == 1) {
-      BrainMapRoute(avatarId: avatars.first.id).push(context);
-      return;
-    }
-    _pickAvatarStatic(context, avatars);
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final avatarsAsync = ref.watch(libraryViewModelProvider);
-    final avatars = avatarsAsync.maybeWhen(
-      data: (list) => list,
-      orElse: () => const <Avatar>[],
-    );
-    if (avatars.isEmpty) return const SizedBox.shrink();
-
-    return Material(
-      color: Colors.transparent,
-      child: Ink(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF7042ED), Color(0xFF8F66FA)],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(20),
-          onTap: () {
-            if (avatars.length == 1) {
-              BrainMapRoute(avatarId: avatars.first.id).push(context);
-            } else {
-              _pickAvatar(context, avatars);
-            }
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.sm + 4),
-            child: Row(
-              children: [
-                const Text('🧠', style: TextStyle(fontSize: 28)),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Brain Map',
-                          style: AppTextStyles.body.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700)),
-                      Text(
-                        avatars.length == 1
-                            ? 'See ${avatars.first.name}\'s knowledge as a visual map'
-                            : 'See your Mochis\' knowledge as a visual map',
-                        style: AppTextStyles.caption
-                            .copyWith(color: Colors.white70),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-                const Icon(Icons.arrow_forward_ios_rounded,
-                    color: Colors.white70, size: 16),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _pickAvatar(BuildContext context, List<Avatar> avatars) =>
-      _pickAvatarStatic(context, avatars);
-}
-
 /// Routes to the daily quiz for the correct Mochi.
 /// Single avatar → goes straight in.
-/// Multiple avatars → shows the same bottom-sheet picker used by the brain map.
+/// Multiple avatars → shows a bottom-sheet picker.
 /// Never uses the literal string "all" as an avatarId — the backend has no
 /// such route and would return an empty quiz.
 void _launchQuiz(BuildContext context, WidgetRef ref) {
@@ -956,51 +860,6 @@ void _pickAvatarForQuiz(BuildContext context, List<Avatar> avatars) {
   );
 }
 
-void _pickAvatarStatic(BuildContext context, List<Avatar> avatars) {
-  showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (sheetCtx) => SafeArea(
-        child: Container(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.sizeOf(sheetCtx).height * 0.85,
-          ),
-          decoration: const BoxDecoration(
-            color: AppColors.surface,
-            borderRadius:
-                BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Choose Mochi', style: AppTextStyles.title),
-                const SizedBox(height: AppSpacing.md),
-                for (final a in avatars)
-                  ListTile(
-                    leading: CharacterWidget.forAvatar(a, 36),
-                    title: Text(a.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis),
-                    subtitle: Text(a.subject,
-                        style: AppTextStyles.caption
-                            .copyWith(color: AppColors.text2),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis),
-                    onTap: () {
-                      Navigator.pop(context);
-                      BrainMapRoute(avatarId: a.id).push(context);
-                    },
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ),
-  );
-}
 
 /// "⭐ Go Premium" banner above _NavButtons. Hidden when premium so the
 /// Me tab stays clean for paying users.
