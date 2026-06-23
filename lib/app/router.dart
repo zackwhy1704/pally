@@ -6,6 +6,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/scaffold_shell.dart';
 import 'package:pally/features/auth/auth_state.dart';
+import 'package:pally/features/app_update/force_update_screen.dart';
 import 'package:pally/features/auth/screens/splash_screen.dart';
 import 'package:pally/features/auth/screens/sign_in_screen.dart';
 import 'package:pally/features/auth/screens/sign_up_screen.dart';
@@ -755,6 +756,7 @@ class PhotoPreviewRoute extends GoRouteData {
 
 // Public routes that never require authentication
 const _publicPaths = {
+  '/force-update', // forced-update gate — reachable regardless of auth state
   '/auth/signin',
   '/auth/signup',
   '/auth/setup',
@@ -816,7 +818,15 @@ GoRouter buildAppRouter({
 
       return null;
     },
-    routes: $appRoutes,
+    routes: [
+      ...$appRoutes,
+      // Plain (non-typed) route for the forced-update gate — a dead-end blocking
+      // screen reached only via resolveStartRoute when the client is too old.
+      GoRoute(
+        path: '/force-update',
+        builder: (context, state) => const ForceUpdateScreen(),
+      ),
+    ],
   );
 }
 

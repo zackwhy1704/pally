@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/features/app_update/version_gate.dart';
 import 'package:pally/features/auth/auth_state.dart';
 part 'splash_view_model.g.dart';
 
@@ -12,6 +13,10 @@ part 'splash_view_model.g.dart';
 /// navigation; this provider owns the auth logic.
 @riverpod
 Future<String> resolveStartRoute(Ref ref) async {
+  // Forced-update gate (CA-16): block a too-old client before anything else.
+  // Fails open inside forceUpdateProvider, so a backend blip never locks users out.
+  if (await ref.read(forceUpdateProvider.future)) return '/force-update';
+
   var auth = ref.read(authStateProvider);
   if (!auth.isSignedIn) return '/auth/signin';
 
