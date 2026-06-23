@@ -161,5 +161,39 @@ void main() {
       expect(find.text('Year you were born'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
+
+    testWidgets('student cannot create account without a birth year (PDPA gate)',
+        (tester) async {
+      tester.view.physicalSize = const Size(400, 1600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(home: SignUpScreen()),
+        ),
+      );
+      await tester.pump();
+
+      await tester.enterText(find.byType(TextFormField).at(0), 'Test User');
+      await tester.enterText(find.byType(TextFormField).at(1), 'kid@example.com');
+      await tester.enterText(find.byType(TextFormField).at(2), 'password123');
+      await tester.enterText(find.byType(TextFormField).at(3), 'password123');
+      await tester.pump();
+      await tester.tap(find.byType(Checkbox));
+      await tester.pump();
+      await tester.ensureVisible(find.text('Continue'));
+      await tester.tap(find.text('Continue'));
+      await tester.pumpAndSettle();
+
+      // Student is the default role; submit with the birth-year field left empty.
+      await tester.ensureVisible(find.text('Create account'));
+      await tester.tap(find.text('Create account'));
+      await tester.pumpAndSettle();
+
+      // The required-birth-year gate blocks submission with an inline error.
+      expect(find.text('Please enter the year you were born'), findsOneWidget);
+    });
   });
 }

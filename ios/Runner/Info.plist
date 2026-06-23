@@ -45,6 +45,12 @@
 		<string>Apalchi needs camera access to read your homework questions</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>Apalchi needs photo access to load homework images</string>
+		<key>NSFaceIDUsageDescription</key>
+		<string>Apalchi uses Face ID to unlock your account quickly and securely</string>
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>remote-notification</string>
+		</array>
 		<key>CADisableMinimumFrameDurationOnPhone</key>
 		<true/>
 		<key>UIApplicationSupportsIndirectInputEvents</key>

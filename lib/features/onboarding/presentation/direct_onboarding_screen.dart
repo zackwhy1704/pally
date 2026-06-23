@@ -250,14 +250,18 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
             ),
             const SizedBox(height: AppSpacing.md),
             _Field(
-              label: 'Year you were born (optional)',
+              label: 'Year you were born',
               hint: 'e.g. 2014',
               controller: widget.birthYearCtrl,
               keyboardType: TextInputType.number,
               textInputAction: TextInputAction.done,
               maxLength: 4,
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return null; // optional
+                // Required (PDPA/PDPC): the server derives under-13 from this to
+                // route minors into the parental-consent gate. Cannot be skipped.
+                if (v == null || v.trim().isEmpty) {
+                  return 'Please enter the year you were born';
+                }
                 final year = int.tryParse(v.trim());
                 if (year == null || v.trim().length != 4) {
                   return 'Enter a 4-digit year, like 2014';

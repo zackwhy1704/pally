@@ -52,15 +52,19 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     super.dispose();
   }
 
-  /// Parses and validates the optional birth year. Returns the year as an int
-  /// when valid and in-bounds, or null when the field is empty. Sets
-  /// [_birthYearError] for any invalid (non-empty) input and returns null.
+  /// Parses and validates the REQUIRED student birth year. Returns the year as
+  /// an int when valid and in-bounds, or null (with [_birthYearError] set) when
+  /// empty or invalid.
   ///
-  /// Bounds: 1950..currentYear. Future years are rejected with a friendly
-  /// message — a child can't have been born in the future.
+  /// Required (PDPA/PDPC): the server derives under-13 from this to route minors
+  /// into the parental-consent gate, so it must not be skippable.
+  /// Bounds: 1950..currentYear. Future years are rejected with a friendly message.
   int? _parseBirthYear() {
     final raw = _birthYearCtrl.text.trim();
-    if (raw.isEmpty) return null; // optional — empty is fine
+    if (raw.isEmpty) {
+      _birthYearError = 'Please enter the year you were born';
+      return null;
+    }
     final year = int.tryParse(raw);
     final currentYear = DateTime.now().year;
     if (year == null || raw.length != 4) {
@@ -426,9 +430,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             isSelected: _selectedRole == 'parent',
             onTap: () => setState(() => _selectedRole = 'parent'),
           ),
-          // Birth-year field — STUDENT path only. Determines whether the child
-          // needs a grown-up to link their account, so we encourage (but don't
-          // force) filling it in.
+          // Birth-year field — STUDENT path only. REQUIRED: determines whether
+          // the child needs a grown-up to link their account (server derives
+          // under-13 from it), so it cannot be skipped.
           if (_selectedRole == 'student') ...[
             const SizedBox(height: AppSpacing.lg),
             Text('Year you were born',
