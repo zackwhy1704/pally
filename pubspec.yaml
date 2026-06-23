@@ -63,6 +63,7 @@ dependencies:
   cunning_document_scanner: ^1.2.3
   just_audio: ^0.10.5
   posthog_flutter: ^5.26.0
+  purchases_flutter: ^8.0.0
 
 dev_dependencies:
   flutter_test:

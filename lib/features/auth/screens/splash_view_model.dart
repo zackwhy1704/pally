@@ -5,6 +5,7 @@ import 'package:pally/app/api_client.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/app_update/version_gate.dart';
 import 'package:pally/features/auth/auth_state.dart';
+import 'package:pally/features/subscription/iap_service.dart';
 part 'splash_view_model.g.dart';
 
 /// Resolves the route the app should navigate to after the splash screen:
@@ -36,6 +37,12 @@ Future<String> resolveStartRoute(Ref ref) async {
           childName.isNotEmpty &&
           childName != auth.childName) {
         await AuthNotifier.instance.setChildName(childName);
+      }
+      // Bind RevenueCat (IAP) purchases to this user so the backend webhook's
+      // app_user_id matches. No-op until the RevenueCat keys are provided.
+      final uid = data['userId'] as String?;
+      if (uid != null && uid.isNotEmpty) {
+        await IapService.instance.configure(uid);
       }
       auth = ref.read(authStateProvider);
     }

@@ -6,6 +6,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
+import 'package:pally/features/subscription/iap_service.dart';
 import 'package:pally/shared/models/entitlement.dart';
 import 'package:pally/features/subscription/subscription_service.dart';
 import 'package:pally/features/subscription/trial_status_provider.dart';
@@ -131,17 +132,48 @@ class _SubscriptionPlansScreenState
     // Swap monthly ↔ annual id if toggle is on
     final planId = _annual ? plan.replaceAll('_monthly', '_annual') : plan;
     setState(() => _loading = true);
-    final service = ref.read(subscriptionServiceProvider);
     try {
-      final url = await service.startCheckout(planId);
-      if (!mounted) return;
-      final opened = await service.launchExternal(url);
-      if (!opened && mounted) {
-        PallyToast.error(context,
-            'Could not open browser. Copy this URL to continue:\n$url');
+      if (IapService.instance.isConfigured) {
+        // Native in-app purchase (Apple StoreKit / Google Play Billing). The
+        // backend grants entitlement via the RevenueCat webhook keyed on userId.
+        final ok = await IapService.instance.purchasePlan(planId);
+        if (!mounted) return;
+        if (ok) {
+          ref.invalidate(entitlementVmProvider);
+          PallyToast.success(context, "You're all set — welcome to Premium!");
+          Navigator.of(context).maybePop();
+        }
+      } else {
+        // Fallback before RevenueCat is provisioned: existing web checkout.
+        // NOTE: this path must NOT ship to the App Store (Apple 3.1.1 / CA-15).
+        final service = ref.read(subscriptionServiceProvider);
+        final url = await service.startCheckout(planId);
+        if (!mounted) return;
+        final opened = await service.launchExternal(url);
+        if (!opened && mounted) {
+          PallyToast.error(context,
+              'Could not open browser. Copy this URL to continue:\n$url');
+        }
       }
     } on SubscriptionError catch (e) {
       if (mounted) PallyToast.error(context, e.message);
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  /// Apple requires a "Restore purchases" affordance. Shown only when IAP is live.
+  Future<void> _restore() async {
+    setState(() => _loading = true);
+    try {
+      final restored = await IapService.instance.restore();
+      if (!mounted) return;
+      if (restored) {
+        ref.invalidate(entitlementVmProvider);
+        PallyToast.success(context, 'Purchases restored.');
+      } else {
+        PallyToast.error(context, 'No previous purchases found.');
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -278,6 +310,15 @@ class _SubscriptionPlansScreenState
                   onSubscribe: _subscribe,
                   onPortal: _openPortal,
                 ),
+
+                // Apple requires a Restore-purchases affordance (IAP only).
+                if (IapService.instance.isConfigured && !isPremium)
+                  TextButton(
+                    onPressed: _loading ? null : _restore,
+                    child: Text('Restore purchases',
+                        style: AppTextStyles.bodySmall
+                            .copyWith(color: AppColors.text2)),
+                  ),
               ],
             ),
           ),
