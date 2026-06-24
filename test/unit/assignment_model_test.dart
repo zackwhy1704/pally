@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/shared/models/assignment.dart';
+import 'package:pally/shared/models/assignment_detail.dart';
 
 void main() {
   group('Assignment', () {
@@ -113,6 +114,34 @@ void main() {
       expect(restored.id, module.id);
       expect(restored.title, module.title);
       expect(restored.stage, module.stage);
+    });
+  });
+
+  group('AssignmentDetail', () {
+    test('parses moduleIds from the backend comma-separated STRING (resolved set)', () {
+      // Phase 5 regression: backend sends moduleIds as CSV, not a JSON array —
+      // the old `as List?` cast threw and failed the whole detail load.
+      final d = AssignmentDetail.fromJson({
+        'id': 'a1',
+        'moduleIds': 'mod-1,mod-2 , mod-3',
+        'personalized': true,
+      });
+      expect(d.moduleIds, ['mod-1', 'mod-2', 'mod-3']);
+      expect(d.personalized, isTrue);
+    });
+
+    test('still parses moduleIds from a List, and defaults personalized to false', () {
+      final d = AssignmentDetail.fromJson({
+        'id': 'a2',
+        'moduleIds': ['mod-1', 'mod-2'],
+      });
+      expect(d.moduleIds, ['mod-1', 'mod-2']);
+      expect(d.personalized, isFalse);
+    });
+
+    test('an unexpected moduleIds type degrades to empty rather than throwing', () {
+      final d = AssignmentDetail.fromJson({'id': 'a3', 'moduleIds': 42});
+      expect(d.moduleIds, isEmpty);
     });
   });
 }

@@ -60,6 +60,10 @@ class AssignmentCompareScreen extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(
                 AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.xl),
             children: [
+              if (detail.personalized) ...[
+                const _PickedForYouChip(),
+                const SizedBox(height: AppSpacing.sm),
+              ],
               if (!detail.answersReleased)
                 const _NotReleasedHint()
               else
@@ -78,6 +82,36 @@ class AssignmentCompareScreen extends ConsumerWidget {
                     )),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Personalized affordance ──────────────────────────────────────────────────
+
+class _PickedForYouChip extends StatelessWidget {
+  const _PickedForYouChip();
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+        decoration: BoxDecoration(
+          color: AppColors.purpleL,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('✨', style: TextStyle(fontSize: 12)),
+            const SizedBox(width: AppSpacing.xs),
+            Text('Picked for you',
+                style: AppTextStyles.label.copyWith(color: AppColors.purple)),
+          ],
         ),
       ),
     );

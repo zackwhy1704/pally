@@ -24,6 +24,7 @@ class AssignmentDetail {
     required this.answersReleased,
     required this.answersReleasedAt,
     required this.moduleIds,
+    required this.personalized,
     required this.questions,
   });
 
@@ -35,7 +36,14 @@ class AssignmentDetail {
   final String? dueDate;
   final bool answersReleased;
   final String? answersReleasedAt;
+
+  /// The student's targeted modules. For a personalized assignment the backend
+  /// resolves this to THIS student's set; otherwise it's the class-wide list.
   final List<String> moduleIds;
+
+  /// True when the backend differentiated this assignment per student. Drives a
+  /// "Picked for you" affordance.
+  final bool personalized;
 
   /// Per-question compare rows. Empty when the backend doesn't break the
   /// assignment into discrete questions (we then fall back to a single
@@ -53,11 +61,25 @@ class AssignmentDetail {
     // safe `false` default rather than throwing on a transient bad payload.
     final released = j.optional<bool>('answersReleased', false);
 
-    // moduleIds — list of strings, tolerant of nulls / non-strings.
-    final moduleIds = ((j['moduleIds'] as List?) ?? const [])
-        .map((e) => e?.toString() ?? '')
-        .where((s) => s.isNotEmpty)
-        .toList(growable: false);
+    // moduleIds — the backend sends a comma-separated STRING (the per-student
+    // resolved set for personalized assignments). Tolerate a List too, and never
+    // throw on an unexpected type — a bad payload must degrade, not crash the load.
+    final rawModules = j['moduleIds'];
+    final List<String> moduleIds;
+    if (rawModules is String) {
+      moduleIds = rawModules
+          .split(',')
+          .map((s) => s.trim())
+          .where((s) => s.isNotEmpty)
+          .toList(growable: false);
+    } else if (rawModules is List) {
+      moduleIds = rawModules
+          .map((e) => e?.toString() ?? '')
+          .where((s) => s.isNotEmpty)
+          .toList(growable: false);
+    } else {
+      moduleIds = const [];
+    }
 
     return AssignmentDetail(
       // id is the one field the UI genuinely cannot work without.
@@ -70,6 +92,7 @@ class AssignmentDetail {
       answersReleased: released,
       answersReleasedAt: j['answersReleasedAt'] as String?,
       moduleIds: moduleIds,
+      personalized: j.optional<bool>('personalized', false),
       questions: _parseQuestions(j, released),
     );
   }
