@@ -27,6 +27,9 @@ mixin _$LearningModule {
   double get masteryPct => throw _privateConstructorUsedError;
   Map<String, int> get itemCounts => throw _privateConstructorUsedError;
 
+  /// C3 — true when a teacher has reviewed/approved this centre content.
+  bool get teacherReviewed => throw _privateConstructorUsedError;
+
   /// Serializes this LearningModule to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -49,7 +52,8 @@ abstract class $LearningModuleCopyWith<$Res> {
       String wikiSlug,
       String stage,
       double masteryPct,
-      Map<String, int> itemCounts});
+      Map<String, int> itemCounts,
+      bool teacherReviewed});
 }
 
 /// @nodoc
@@ -73,6 +77,7 @@ class _$LearningModuleCopyWithImpl<$Res, $Val extends LearningModule>
     Object? stage = null,
     Object? masteryPct = null,
     Object? itemCounts = null,
+    Object? teacherReviewed = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -99,6 +104,10 @@ class _$LearningModuleCopyWithImpl<$Res, $Val extends LearningModule>
           ? _value.itemCounts
           : itemCounts // ignore: cast_nullable_to_non_nullable
               as Map<String, int>,
+      teacherReviewed: null == teacherReviewed
+          ? _value.teacherReviewed
+          : teacherReviewed // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -117,7 +126,8 @@ abstract class _$$LearningModuleImplCopyWith<$Res>
       String wikiSlug,
       String stage,
       double masteryPct,
-      Map<String, int> itemCounts});
+      Map<String, int> itemCounts,
+      bool teacherReviewed});
 }
 
 /// @nodoc
@@ -139,6 +149,7 @@ class __$$LearningModuleImplCopyWithImpl<$Res>
     Object? stage = null,
     Object? masteryPct = null,
     Object? itemCounts = null,
+    Object? teacherReviewed = null,
   }) {
     return _then(_$LearningModuleImpl(
       id: null == id
@@ -165,6 +176,10 @@ class __$$LearningModuleImplCopyWithImpl<$Res>
           ? _value._itemCounts
           : itemCounts // ignore: cast_nullable_to_non_nullable
               as Map<String, int>,
+      teacherReviewed: null == teacherReviewed
+          ? _value.teacherReviewed
+          : teacherReviewed // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -178,7 +193,8 @@ class _$LearningModuleImpl implements _LearningModule {
       this.wikiSlug = '',
       this.stage = 'LEARN',
       this.masteryPct = 0,
-      final Map<String, int> itemCounts = const {}})
+      final Map<String, int> itemCounts = const {},
+      this.teacherReviewed = false})
       : _itemCounts = itemCounts;
 
   factory _$LearningModuleImpl.fromJson(Map<String, dynamic> json) =>
@@ -206,9 +222,14 @@ class _$LearningModuleImpl implements _LearningModule {
     return EqualUnmodifiableMapView(_itemCounts);
   }
 
+  /// C3 — true when a teacher has reviewed/approved this centre content.
+  @override
+  @JsonKey()
+  final bool teacherReviewed;
+
   @override
   String toString() {
-    return 'LearningModule(id: $id, title: $title, wikiSlug: $wikiSlug, stage: $stage, masteryPct: $masteryPct, itemCounts: $itemCounts)';
+    return 'LearningModule(id: $id, title: $title, wikiSlug: $wikiSlug, stage: $stage, masteryPct: $masteryPct, itemCounts: $itemCounts, teacherReviewed: $teacherReviewed)';
   }
 
   @override
@@ -224,13 +245,22 @@ class _$LearningModuleImpl implements _LearningModule {
             (identical(other.masteryPct, masteryPct) ||
                 other.masteryPct == masteryPct) &&
             const DeepCollectionEquality()
-                .equals(other._itemCounts, _itemCounts));
+                .equals(other._itemCounts, _itemCounts) &&
+            (identical(other.teacherReviewed, teacherReviewed) ||
+                other.teacherReviewed == teacherReviewed));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, title, wikiSlug, stage,
-      masteryPct, const DeepCollectionEquality().hash(_itemCounts));
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      title,
+      wikiSlug,
+      stage,
+      masteryPct,
+      const DeepCollectionEquality().hash(_itemCounts),
+      teacherReviewed);
 
   /// Create a copy of LearningModule
   /// with the given fields replaced by the non-null parameter values.
@@ -256,7 +286,8 @@ abstract class _LearningModule implements LearningModule {
       final String wikiSlug,
       final String stage,
       final double masteryPct,
-      final Map<String, int> itemCounts}) = _$LearningModuleImpl;
+      final Map<String, int> itemCounts,
+      final bool teacherReviewed}) = _$LearningModuleImpl;
 
   factory _LearningModule.fromJson(Map<String, dynamic> json) =
       _$LearningModuleImpl.fromJson;
@@ -273,6 +304,10 @@ abstract class _LearningModule implements LearningModule {
   double get masteryPct;
   @override
   Map<String, int> get itemCounts;
+
+  /// C3 — true when a teacher has reviewed/approved this centre content.
+  @override
+  bool get teacherReviewed;
 
   /// Create a copy of LearningModule
   /// with the given fields replaced by the non-null parameter values.

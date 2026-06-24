@@ -12,6 +12,8 @@ class LearningModule with _$LearningModule {
     @Default('LEARN') String stage,
     @Default(0) double masteryPct,
     @Default({}) Map<String, int> itemCounts,
+    /// C3 — true when a teacher has reviewed/approved this centre content.
+    @Default(false) bool teacherReviewed,
   }) = _LearningModule;
 
   factory LearningModule.fromJson(Map<String, dynamic> json) =>

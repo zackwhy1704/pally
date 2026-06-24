@@ -140,6 +140,34 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
       ),
       body: Column(
         children: [
+          // C3 — student-facing trust marker: a teacher has reviewed this content.
+          if (playerState.module?.teacherReviewed == true && !playerState.isComplete)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.md, AppSpacing.sm, AppSpacing.md, 0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+                  decoration: BoxDecoration(
+                    color: AppColors.tealL,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.verified_rounded,
+                          size: 13, color: AppColors.teal),
+                      const SizedBox(width: AppSpacing.xs),
+                      Text('Teacher-reviewed',
+                          style: AppTextStyles.label
+                              .copyWith(color: AppColors.teal)),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           if (playerState.isRevision && !playerState.isComplete)
             const RevisionBanner(),
           Expanded(child: _buildBody(playerState)),

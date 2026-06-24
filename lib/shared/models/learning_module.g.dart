@@ -17,6 +17,7 @@ _$LearningModuleImpl _$$LearningModuleImplFromJson(Map<String, dynamic> json) =>
             (k, e) => MapEntry(k, (e as num).toInt()),
           ) ??
           const {},
+      teacherReviewed: json['teacherReviewed'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$LearningModuleImplToJson(
@@ -28,6 +29,7 @@ Map<String, dynamic> _$$LearningModuleImplToJson(
       'stage': instance.stage,
       'masteryPct': instance.masteryPct,
       'itemCounts': instance.itemCounts,
+      'teacherReviewed': instance.teacherReviewed,
     };
 
 _$ModuleContentItemImpl _$$ModuleContentItemImplFromJson(
