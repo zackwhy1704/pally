@@ -6,7 +6,7 @@ part of 'entitlement_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$entitlementVmHash() => r'8e610d6cc253e2847f64dbaec4debfcdda762fec';
+String _$entitlementVmHash() => r'93972c6d23ea4c730a529b3ed6ad6b0a9c642a6e';
 
 /// Premium gate state. Refreshed on app resume + after returning from
 /// Stripe checkout. Defensive unwrap mirrors the working view models.

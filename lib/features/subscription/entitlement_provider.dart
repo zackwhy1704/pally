@@ -34,4 +34,24 @@ class EntitlementVm extends _$EntitlementVm {
     state = const AsyncLoading();
     state = await AsyncValue.guard(_fetch);
   }
+
+  /// Polls the backend entitlement until it flips to premium, or [timeout]
+  /// elapses. Entitlement truth stays server-side: after a successful IAP the
+  /// backend only flips once the RevenueCat webhook lands (async, seconds later),
+  /// so a single re-fetch races ahead and shows the user "still free". This
+  /// updates [state] each poll and returns whether premium was reached. Bounded —
+  /// no infinite loop, no busy-wait.
+  Future<bool> pollUntilPremium({
+    Duration timeout = const Duration(seconds: 20),
+    Duration interval = const Duration(seconds: 2),
+  }) async {
+    final deadline = DateTime.now().add(timeout);
+    while (true) {
+      final ent = await _fetch();
+      state = AsyncData(ent);
+      if (ent.isPremium) return true;
+      if (!DateTime.now().isBefore(deadline)) return false;
+      await Future<void>.delayed(interval);
+    }
+  }
 }

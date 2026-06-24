@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -139,13 +141,29 @@ class _SubscriptionPlansScreenState
         final ok = await IapService.instance.purchasePlan(planId);
         if (!mounted) return;
         if (ok) {
-          ref.invalidate(entitlementVmProvider);
-          PallyToast.success(context, "You're all set — welcome to Premium!");
+          // Entitlement flips only when the RevenueCat webhook lands (async,
+          // seconds later). Poll the backend — the button stays in its loading
+          // state ("activating") — instead of a single re-fetch that races the
+          // webhook and shows the user "still free" right after paying.
+          final becamePremium =
+              await ref.read(entitlementVmProvider.notifier).pollUntilPremium();
+          if (!mounted) return;
+          PallyToast.success(
+            context,
+            becamePremium
+                ? "You're all set — welcome to Premium!"
+                : 'Payment received — your subscription will activate shortly.',
+          );
           Navigator.of(context).maybePop();
         }
+      } else if (Platform.isIOS) {
+        // iOS must NEVER open web/Stripe checkout (App Store 3.1.1). On a correct
+        // release build isConfigured is true and IAP runs above; this branch is
+        // the safety net for a build shipped without RevenueCat keys.
+        PallyToast.error(context,
+            'Subscriptions are temporarily unavailable — please try again shortly.');
       } else {
-        // Fallback before RevenueCat is provisioned: existing web checkout.
-        // NOTE: this path must NOT ship to the App Store (Apple 3.1.1 / CA-15).
+        // Android only: web-checkout fallback before RevenueCat is provisioned.
         final service = ref.read(subscriptionServiceProvider);
         final url = await service.startCheckout(planId);
         if (!mounted) return;
@@ -169,8 +187,16 @@ class _SubscriptionPlansScreenState
       final restored = await IapService.instance.restore();
       if (!mounted) return;
       if (restored) {
-        ref.invalidate(entitlementVmProvider);
-        PallyToast.success(context, 'Purchases restored.');
+        // Poll the backend until the restored entitlement is reflected server-side.
+        final becamePremium =
+            await ref.read(entitlementVmProvider.notifier).pollUntilPremium();
+        if (!mounted) return;
+        PallyToast.success(
+          context,
+          becamePremium
+              ? 'Purchases restored.'
+              : 'Purchases restored — activating shortly.',
+        );
       } else {
         PallyToast.error(context, 'No previous purchases found.');
       }
@@ -180,6 +206,9 @@ class _SubscriptionPlansScreenState
   }
 
   Future<void> _openPortal() async {
+    // iOS users manage subscriptions through Apple, never a Stripe portal (3.1.1).
+    // The affordance is hidden on iOS too — this is defense in depth.
+    if (Platform.isIOS) return;
     setState(() => _portalLoading = true);
     final service = ref.read(subscriptionServiceProvider);
     try {
@@ -663,22 +692,34 @@ class _CtaArea extends StatelessWidget {
             const SizedBox(height: AppSpacing.xs),
           ],
           // Manage billing — not shown for trial users (no Stripe sub yet)
-          // and not shown for centre-sourced students (their org pays)
+          // and not shown for centre-sourced students (their org pays).
           if (isPremium && !isOnTrial && !isCentreSourced)
-            TextButton(
-              onPressed: portalLoading ? null : onPortal,
-              child: portalLoading
-                  ? const SizedBox(
-                      height: AppSizing.spinnerSm,
-                      width: AppSizing.spinnerSm,
-                      child: CircularProgressIndicator(
-                          color: AppColors.purple, strokeWidth: 2),
-                    )
-                  : const Text(
-                      'Manage billing / Cancel subscription',
-                      style: TextStyle(color: AppColors.text2),
-                    ),
-            ),
+            if (Platform.isIOS)
+              // iOS: subscriptions are managed by Apple, never a Stripe portal
+              // (App Store 3.1.1). Point the user at the system settings instead.
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                child: Text(
+                  'Manage or cancel in Settings → Apple Account → Subscriptions.',
+                  style: AppTextStyles.caption.copyWith(color: AppColors.text2),
+                  textAlign: TextAlign.center,
+                ),
+              )
+            else
+              TextButton(
+                onPressed: portalLoading ? null : onPortal,
+                child: portalLoading
+                    ? const SizedBox(
+                        height: AppSizing.spinnerSm,
+                        width: AppSizing.spinnerSm,
+                        child: CircularProgressIndicator(
+                            color: AppColors.purple, strokeWidth: 2),
+                      )
+                    : const Text(
+                        'Manage billing / Cancel subscription',
+                        style: TextStyle(color: AppColors.text2),
+                      ),
+              ),
         ],
       ),
     );

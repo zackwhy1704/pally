@@ -52,14 +52,25 @@ class IapService {
       if (current == null || current.availablePackages.isEmpty) return false;
 
       final lower = planId.toLowerCase();
-      final pkg = current.availablePackages.firstWhere(
-        (p) =>
-            p.identifier == planId ||
-            p.storeProduct.identifier.toLowerCase().contains(lower),
-        orElse: () => current.availablePackages.first,
-      );
+      // Match by exact package identifier, or product id containing the planId.
+      // NO fallback to availablePackages.first — buying an unmatched package would
+      // charge the user for the WRONG tier (tap "Family", get billed "Pro"). On no
+      // match we refuse and return false so the caller surfaces a clean failure.
+      Package? matched;
+      for (final p in current.availablePackages) {
+        if (p.identifier == planId ||
+            p.storeProduct.identifier.toLowerCase().contains(lower)) {
+          matched = p;
+          break;
+        }
+      }
+      if (matched == null) {
+        appLog.w('[IAP] no package matches planId=$planId — refusing purchase. '
+            'available=${current.availablePackages.map((p) => p.identifier).toList()}');
+        return false;
+      }
 
-      final info = await Purchases.purchasePackage(pkg);
+      final info = await Purchases.purchasePackage(matched);
       return info.entitlements.active.isNotEmpty;
     } on PlatformException catch (e) {
       final code = PurchasesErrorHelper.getErrorCode(e);
