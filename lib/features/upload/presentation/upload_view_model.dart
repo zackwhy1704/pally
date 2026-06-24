@@ -509,8 +509,9 @@ class UploadViewModel extends _$UploadViewModel {
         pendingRelevance: relevance,
       );
 
-      if (relevance.isRelevant) await uploadFile(file);
-      // Otherwise UI shows the warning dialog
+      // A2: upload straight through only when it's on-topic AND looks like study
+      // material; otherwise the UI shows the (gentle) add-anyway warning dialog.
+      if (relevance.isRelevant && relevance.studyMaterial) await uploadFile(file);
     } on DioException catch (e, st) {
       // Relevance check failing → upload anyway (fail-open: better to
       // upload and let Claude judge than to silently block the user)

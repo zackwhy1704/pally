@@ -460,6 +460,9 @@ mixin _$RelevanceCheckResponse {
   double get score => throw _privateConstructorUsedError;
   String? get reason => throw _privateConstructorUsedError;
 
+  /// A2: false when the upload isn't study material at all (receipt/selfie/blank).
+  bool get studyMaterial => throw _privateConstructorUsedError;
+
   /// Serializes this RelevanceCheckResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -476,7 +479,8 @@ abstract class $RelevanceCheckResponseCopyWith<$Res> {
           $Res Function(RelevanceCheckResponse) then) =
       _$RelevanceCheckResponseCopyWithImpl<$Res, RelevanceCheckResponse>;
   @useResult
-  $Res call({bool isRelevant, double score, String? reason});
+  $Res call(
+      {bool isRelevant, double score, String? reason, bool studyMaterial});
 }
 
 /// @nodoc
@@ -498,6 +502,7 @@ class _$RelevanceCheckResponseCopyWithImpl<$Res,
     Object? isRelevant = null,
     Object? score = null,
     Object? reason = freezed,
+    Object? studyMaterial = null,
   }) {
     return _then(_value.copyWith(
       isRelevant: null == isRelevant
@@ -512,6 +517,10 @@ class _$RelevanceCheckResponseCopyWithImpl<$Res,
           ? _value.reason
           : reason // ignore: cast_nullable_to_non_nullable
               as String?,
+      studyMaterial: null == studyMaterial
+          ? _value.studyMaterial
+          : studyMaterial // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -525,7 +534,8 @@ abstract class _$$RelevanceCheckResponseImplCopyWith<$Res>
       __$$RelevanceCheckResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool isRelevant, double score, String? reason});
+  $Res call(
+      {bool isRelevant, double score, String? reason, bool studyMaterial});
 }
 
 /// @nodoc
@@ -546,6 +556,7 @@ class __$$RelevanceCheckResponseImplCopyWithImpl<$Res>
     Object? isRelevant = null,
     Object? score = null,
     Object? reason = freezed,
+    Object? studyMaterial = null,
   }) {
     return _then(_$RelevanceCheckResponseImpl(
       isRelevant: null == isRelevant
@@ -560,6 +571,10 @@ class __$$RelevanceCheckResponseImplCopyWithImpl<$Res>
           ? _value.reason
           : reason // ignore: cast_nullable_to_non_nullable
               as String?,
+      studyMaterial: null == studyMaterial
+          ? _value.studyMaterial
+          : studyMaterial // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -568,7 +583,10 @@ class __$$RelevanceCheckResponseImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$RelevanceCheckResponseImpl implements _RelevanceCheckResponse {
   const _$RelevanceCheckResponseImpl(
-      {this.isRelevant = true, this.score = 1.0, this.reason});
+      {this.isRelevant = true,
+      this.score = 1.0,
+      this.reason,
+      this.studyMaterial = true});
 
   factory _$RelevanceCheckResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$RelevanceCheckResponseImplFromJson(json);
@@ -582,9 +600,14 @@ class _$RelevanceCheckResponseImpl implements _RelevanceCheckResponse {
   @override
   final String? reason;
 
+  /// A2: false when the upload isn't study material at all (receipt/selfie/blank).
+  @override
+  @JsonKey()
+  final bool studyMaterial;
+
   @override
   String toString() {
-    return 'RelevanceCheckResponse(isRelevant: $isRelevant, score: $score, reason: $reason)';
+    return 'RelevanceCheckResponse(isRelevant: $isRelevant, score: $score, reason: $reason, studyMaterial: $studyMaterial)';
   }
 
   @override
@@ -595,12 +618,15 @@ class _$RelevanceCheckResponseImpl implements _RelevanceCheckResponse {
             (identical(other.isRelevant, isRelevant) ||
                 other.isRelevant == isRelevant) &&
             (identical(other.score, score) || other.score == score) &&
-            (identical(other.reason, reason) || other.reason == reason));
+            (identical(other.reason, reason) || other.reason == reason) &&
+            (identical(other.studyMaterial, studyMaterial) ||
+                other.studyMaterial == studyMaterial));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, isRelevant, score, reason);
+  int get hashCode =>
+      Object.hash(runtimeType, isRelevant, score, reason, studyMaterial);
 
   /// Create a copy of RelevanceCheckResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -623,7 +649,8 @@ abstract class _RelevanceCheckResponse implements RelevanceCheckResponse {
   const factory _RelevanceCheckResponse(
       {final bool isRelevant,
       final double score,
-      final String? reason}) = _$RelevanceCheckResponseImpl;
+      final String? reason,
+      final bool studyMaterial}) = _$RelevanceCheckResponseImpl;
 
   factory _RelevanceCheckResponse.fromJson(Map<String, dynamic> json) =
       _$RelevanceCheckResponseImpl.fromJson;
@@ -634,6 +661,10 @@ abstract class _RelevanceCheckResponse implements RelevanceCheckResponse {
   double get score;
   @override
   String? get reason;
+
+  /// A2: false when the upload isn't study material at all (receipt/selfie/blank).
+  @override
+  bool get studyMaterial;
 
   /// Create a copy of RelevanceCheckResponse
   /// with the given fields replaced by the non-null parameter values.

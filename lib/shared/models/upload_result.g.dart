@@ -57,6 +57,7 @@ _$RelevanceCheckResponseImpl _$$RelevanceCheckResponseImplFromJson(
       isRelevant: json['isRelevant'] as bool? ?? true,
       score: (json['score'] as num?)?.toDouble() ?? 1.0,
       reason: json['reason'] as String?,
+      studyMaterial: json['studyMaterial'] as bool? ?? true,
     );
 
 Map<String, dynamic> _$$RelevanceCheckResponseImplToJson(
@@ -65,4 +66,5 @@ Map<String, dynamic> _$$RelevanceCheckResponseImplToJson(
       'isRelevant': instance.isRelevant,
       'score': instance.score,
       'reason': instance.reason,
+      'studyMaterial': instance.studyMaterial,
     };

@@ -36,6 +36,8 @@ class RelevanceCheckResponse with _$RelevanceCheckResponse {
     @Default(true) bool isRelevant,
     @Default(1.0) double score,
     String? reason,
+    /// A2: false when the upload isn't study material at all (receipt/selfie/blank).
+    @Default(true) bool studyMaterial,
   }) = _RelevanceCheckResponse;
 
   factory RelevanceCheckResponse.fromJson(Map<String, dynamic> json) =>

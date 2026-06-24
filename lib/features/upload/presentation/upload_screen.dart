@@ -86,14 +86,20 @@ class UploadScreen extends ConsumerWidget {
     // Show relevance warning when check completes and result is not relevant
     ref.listen(uploadViewModelProvider(avatarId), (prev, next) async {
       if (next.pendingRelevance != null &&
-          !next.pendingRelevance!.isRelevant &&
+          (!next.pendingRelevance!.isRelevant ||
+              !next.pendingRelevance!.studyMaterial) &&
           next.pendingFile != null &&
           context.mounted) {
         final subject = next.avatar?.subject ?? 'this subject';
+        // A2 (origin-aware / gentle): a "not study material" verdict gets a soft,
+        // non-judgemental message rather than the off-topic one.
+        final reason = !next.pendingRelevance!.studyMaterial
+            ? "This doesn't look like study material. Add it anyway?"
+            : next.pendingRelevance!.reason;
         final addAnyway = await PallyRelevanceWarningDialog.show(
           context: context,
           subject: subject,
-          reason: next.pendingRelevance!.reason,
+          reason: reason,
         );
         if (addAnyway == true && next.pendingFile != null) {
           await vm.uploadFile(next.pendingFile!, skipRelevance: true);
