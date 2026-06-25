@@ -136,8 +136,8 @@ class _EmptyHomeStateState extends State<EmptyHomeState>
                         textAlign: TextAlign.center),
                     const SizedBox(height: AppSpacing.md),
                     TextButton(
-                      onPressed: () => const CentreJoinRoute().push(context),
-                      child: Text('🏫  Got a class code? Join your class',
+                      onPressed: () => const JoinRoute().push(context),
+                      child: Text('🎟️  Have a code? Enter or scan it',
                           style: AppTextStyles.body.copyWith(
                               color: AppColors.purple,
                               fontWeight: FontWeight.w700)),

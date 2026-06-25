@@ -40,6 +40,7 @@ List<RouteBase> get $appRoutes => [
       $familyDashboardRoute,
       $referralRoute,
       $centreJoinRoute,
+      $joinRoute,
       $homeworkScanDetailRoute,
       $brainHealthRoute,
       $moduleListRoute,
@@ -1001,6 +1002,28 @@ extension $CentreJoinRouteExtension on CentreJoinRoute {
 
   String get location => GoRouteData.$location(
         '/centre/join',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $joinRoute => GoRouteData.$route(
+      path: '/join',
+      factory: $JoinRouteExtension._fromState,
+    );
+
+extension $JoinRouteExtension on JoinRoute {
+  static JoinRoute _fromState(GoRouterState state) => const JoinRoute();
+
+  String get location => GoRouteData.$location(
+        '/join',
       );
 
   void go(BuildContext context) => context.go(location);

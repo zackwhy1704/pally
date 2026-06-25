@@ -33,6 +33,7 @@ import 'package:pally/features/family/presentation/family_dashboard_screen.dart'
 import 'package:pally/features/family/presentation/family_link_code_screen.dart';
 import 'package:pally/features/referral/presentation/referral_screen.dart';
 import 'package:pally/features/centre/presentation/centre_join_screen.dart';
+import 'package:pally/features/join/presentation/join_screen.dart';
 import 'package:pally/features/subscription/presentation/paywall_screen.dart';
 import 'package:pally/features/subscription/presentation/subscription_plans_screen.dart';
 import 'package:pally/features/subscription/presentation/subscription_return_screen.dart';
@@ -534,6 +535,16 @@ class CentreJoinRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const CentreJoinScreen();
+}
+
+/// Inbound Join surface (class OR group; QR or manual). Generalises the old
+/// class-only centre-join entry.
+@TypedGoRoute<JoinRoute>(path: '/join')
+class JoinRoute extends GoRouteData {
+  const JoinRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => const JoinScreen();
 }
 
 @TypedGoRoute<HomeworkScanDetailRoute>(path: '/homework-scan')
