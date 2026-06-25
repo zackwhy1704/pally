@@ -7,9 +7,14 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/features/auth/screens/self_consent_view_model.dart';
 
-/// C5 — "Before you start" (13–17 self-consent)
-/// Child-readable disclosure cards + single checkbox. Withdrawal as easy
-/// as giving consent (one-tap delete in Settings).
+/// C5 — 13–17 self-consent, consolidated into ONE informed agreement.
+///
+/// Still a real consent gate: the four plain-language disclosures stay VISIBLE
+/// inline (not behind a "read terms" link), the "I'm 13 or older" age
+/// affirmation stays (it's what distinguishes 13–17 self-consent from <13
+/// parental consent), and tapping Agree still records the consent artifact via
+/// `POST /api/v1/consent/self`. We only dropped the "30-second read" framing and
+/// collapsed four full cards into one compact list — not the consent itself.
 class SelfConsentScreen extends ConsumerStatefulWidget {
   const SelfConsentScreen({super.key});
 
@@ -20,15 +25,14 @@ class SelfConsentScreen extends ConsumerStatefulWidget {
 class _SelfConsentScreenState extends ConsumerState<SelfConsentScreen> {
   bool _agreed = false;
 
+  // Plain-language disclosures, one concise line each. Kept inline + visible:
+  // notes ownership · chat/quiz memory + parent visibility · never sold/trained
+  // (Anthropic AI) · delete-anytime.
   static const _disclosures = [
-    ('📝', 'Your notes stay yours',
-        'We keep notes and flashcards you upload to power your Mochi. You can delete them anytime.'),
-    ('💬', 'We remember chats & quizzes',
-        'Your conversations and quiz results help Mochi get smarter. A linked parent can see these to keep you safe.'),
-    ('🚫', 'Never sold, never trained on',
-        "Your data is never sold. We use Anthropic's AI — your chats aren't used to train AI models."),
-    ('🗑️', 'Delete everything, anytime',
-        'You can delete all your data in Settings → Delete account. No questions asked.'),
+    ('📝', 'Your notes & flashcards stay yours — delete them anytime.'),
+    ('💬', 'Mochi remembers your chats & quizzes to get smarter — a linked parent can see them to keep you safe.'),
+    ('🚫', "Never sold, never used to train AI. We use Anthropic's AI; your chats don't train AI models."),
+    ('🗑️', 'Delete everything, anytime, in Settings → Delete account.'),
   ];
 
   Future<void> _agree() async {
@@ -48,54 +52,49 @@ class _SelfConsentScreenState extends ConsumerState<SelfConsentScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: AppSpacing.md),
-              Text('Before you start 📋',
-                  style: AppTextStyles.heading1),
+              Text('One quick agreement 🤝', style: AppTextStyles.heading1),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                'Quick read — 30 seconds, we promise.',
+                "Here's how Mochi uses your stuff. Agree to start learning.",
                 style: AppTextStyles.body.copyWith(color: AppColors.text2),
               ),
               const SizedBox(height: AppSpacing.lg),
 
-              ..._disclosures.map((d) {
-                final (emoji, title, body) = d;
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                  child: Container(
-                    padding: AppSpacing.card,
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.outline),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(emoji, style: const TextStyle(fontSize: 20)),
-                        const SizedBox(width: AppSpacing.sm),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(title,
-                                  style: AppTextStyles.body
-                                      .copyWith(fontWeight: FontWeight.w700)),
-                              const SizedBox(height: 2),
-                              Text(body,
-                                  style: AppTextStyles.bodySmall
-                                      .copyWith(color: AppColors.text2)),
-                            ],
+              // All four disclosures consolidated into one compact card.
+              Container(
+                padding: AppSpacing.card,
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.outline),
+                ),
+                child: Column(
+                  children: [
+                    for (var i = 0; i < _disclosures.length; i++) ...[
+                      if (i > 0) const SizedBox(height: AppSpacing.sm),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(_disclosures[i].$1,
+                              style: const TextStyle(fontSize: 18)),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            child: Text(
+                              _disclosures[i].$2,
+                              style: AppTextStyles.bodySmall
+                                  .copyWith(color: AppColors.text1),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
 
-              const SizedBox(height: AppSpacing.md),
+              const SizedBox(height: AppSpacing.lg),
 
-              // Agreement checkbox
+              // Age affirmation — load-bearing: distinguishes 13–17 self-consent.
               GestureDetector(
                 onTap: () => setState(() => _agreed = !_agreed),
                 child: Row(
@@ -108,8 +107,7 @@ class _SelfConsentScreenState extends ConsumerState<SelfConsentScreen> {
                         color: _agreed ? AppColors.purple : Colors.transparent,
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(
-                          color:
-                              _agreed ? AppColors.purple : AppColors.outline,
+                          color: _agreed ? AppColors.purple : AppColors.outline,
                           width: 2,
                         ),
                       ),

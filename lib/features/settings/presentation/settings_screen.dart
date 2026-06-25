@@ -289,22 +289,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const _SectionHeader(title: 'Subscription'),
           const _SubscriptionTile(),
           const SizedBox(height: AppSpacing.md),
-          const _SectionHeader(title: 'School'),
-          _SettingsCard(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.school_rounded,
-                    color: AppColors.teal),
-                title: const Text('Join a class'),
-                subtitle: const Text(
-                    'Enter a 6-character code from your tuition centre.'),
-                trailing: const Icon(Icons.chevron_right_rounded,
-                    color: AppColors.text3),
-                onTap: () => context.push('/centre/join'),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
+          // 'Join a class' tile removed — class/group join lives in the Home
+          // empty state and the persistent "Join a class or group" handle on
+          // the Me tab. Referral (outbound) stays below; this is its home.
           const _SectionHeader(title: 'Referral'),
           const _ReferralTile(),
           const SizedBox(height: AppSpacing.md),
