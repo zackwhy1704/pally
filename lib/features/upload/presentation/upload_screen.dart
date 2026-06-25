@@ -923,11 +923,14 @@ class _CollapsedFileCount extends StatelessWidget {
           const Icon(Icons.check_circle_rounded,
               size: 16, color: AppColors.teal),
           const SizedBox(width: AppSpacing.sm),
-          Text(
-            '$count file${count != 1 ? 's' : ''} uploaded',
-            style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.teal,
-              fontWeight: FontWeight.w600,
+          Flexible(
+            child: Text(
+              '$count file${count != 1 ? 's' : ''} uploaded',
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.teal,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],

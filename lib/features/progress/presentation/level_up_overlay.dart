@@ -55,12 +55,18 @@ class _CelebrationLayer extends StatelessWidget {
         // don't drag in a dependency for a one-shot effect.
         Positioned.fill(child: _ConfettiBurst(progress: anim)),
         Center(
-          child: ScaleTransition(
+          child: Padding(
+            // Horizontal margin so the card can't touch/exceed the edges on a
+            // narrow (≤320 dp) screen.
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: ScaleTransition(
             scale: CurvedAnimation(parent: anim, curve: Curves.elasticOut),
             child: Material(
               color: Colors.transparent,
               child: Container(
-                width: 300,
+                // Was a fixed width: 300 — caps the same but SHRINKS below it on
+                // narrow screens instead of overflowing.
+                constraints: const BoxConstraints(maxWidth: 300),
                 padding: const EdgeInsets.all(32),
                 decoration: BoxDecoration(
                   color: AppColors.surface,
@@ -128,6 +134,7 @@ class _CelebrationLayer extends StatelessWidget {
                 ),
               ),
             ),
+          ),
           ),
         ),
       ],

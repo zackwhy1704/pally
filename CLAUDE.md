@@ -58,6 +58,23 @@ Type (`AppTextStyles`, font **Nunito**): heading1 22/w800, title 18/w700, body 1
 label 11/w600, caption 9/w400.
 Spacing (`AppSpacing`): xs 4, sm 8, md 16, lg 24, xl 32, xxl 48.
 
+## LAYOUT / OVERFLOW — MANDATORY (this class of bug keeps recurring)
+Overflows are **dynamic** — they appear at large accessibility text scale (up to 2.0×), on narrow
+devices (320 dp), with long dynamic strings (names, counts), or with the keyboard up. They pass at 1.0×
+on a wide device, so eyeballing isn't enough. Rules:
+- **A screen with a `TextField` (or any tall content) → its body must be scrollable** (`SingleChildScrollView`/`ListView`),
+  never a bare `Column`. Otherwise it overflows vertically with the keyboard up or at large text.
+- **A `Text` inside a `Row` must be wrapped in `Flexible`/`Expanded` with `overflow: TextOverflow.ellipsis`**
+  (or use `Wrap` for chip groups). Never let intrinsic text width drive a `Row` wider than the viewport.
+  (Safe exception: a `mainAxisSize: MainAxisSize.min` chip of icon + short static label.)
+- **A fixed `width:` ≥ ~200 in a padded/row context needs a `maxWidth` constraint instead** (so it shrinks
+  on a 320 dp screen), or a justification. Decorative `Positioned` blobs, avatars, icons, and the scanner
+  frame are exempt. Prefer `minHeight` over a fixed `height:` around text.
+- **Large screens (iPad/web):** wrap a form/reading screen's body in `AdaptiveBody` (`core/ui/adaptive_body.dart`)
+  so it caps + centres instead of stretching edge-to-edge.
+- **Test it:** new high-traffic entry screens get a case in `test/widget/overflow_textscale_test.dart`
+  (rendered at 320 dp + `textScaler: 2.0`, asserting `takeException()` is null).
+
 ## DON'T
 - network call in a screen widget · god-widget (>600 lines) · inline-duplicated empty/no-notes states ·
   offering upload/generate on an empty centre class · logic in `build()` · `Navigator.push` ·

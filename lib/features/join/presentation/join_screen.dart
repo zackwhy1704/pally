@@ -7,6 +7,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/ui/adaptive_body.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/join/data/join_code.dart';
 import 'package:pally/features/join/data/join_resolve_service.dart';
@@ -180,13 +181,17 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
         foregroundColor: AppColors.text1,
         title: Text('Join', style: AppTextStyles.title.copyWith(color: AppColors.text1)),
       ),
-      body: _scanning ? _buildScanner() : _buildManual(),
+      // Manual form is capped + centred so it doesn't stretch on iPad; the
+      // scanner stays full-bleed (it's a camera viewfinder).
+      body: _scanning ? _buildScanner() : AdaptiveBody(child: _buildManual()),
     );
   }
 
   Widget _buildManual() {
     return SafeArea(
-      child: Padding(
+      // Scrollable: with the keyboard up or at large accessibility text scale
+      // the fixed column would otherwise overflow vertically (RenderFlex).
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

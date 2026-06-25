@@ -900,9 +900,13 @@ class _SubscriptionTile extends ConsumerWidget {
                     const Icon(Icons.workspace_premium_rounded,
                         color: AppColors.purple, size: 20),
                     const SizedBox(width: 8),
-                    Text('⭐ Premium Trial · $days day${days == 1 ? '' : 's'} left',
-                        style: AppTextStyles.body
-                            .copyWith(fontWeight: FontWeight.w700)),
+                    Expanded(
+                      child: Text(
+                          '⭐ Premium Trial · $days day${days == 1 ? '' : 's'} left',
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.body
+                              .copyWith(fontWeight: FontWeight.w700)),
+                    ),
                   ]),
                   const SizedBox(height: 4),
                   Text('Ends $endsLabel',

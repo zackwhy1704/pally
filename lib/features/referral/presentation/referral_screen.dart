@@ -169,10 +169,13 @@ class _TierProgress extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
-                '${summary.activatedCount} of $target friends activated',
-                style: AppTextStyles.body
-                    .copyWith(fontWeight: FontWeight.w700),
+              Flexible(
+                child: Text(
+                  '${summary.activatedCount} of $target friends activated',
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.body
+                      .copyWith(fontWeight: FontWeight.w700),
+                ),
               ),
               const Spacer(),
               Container(
