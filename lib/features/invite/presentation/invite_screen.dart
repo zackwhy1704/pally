@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,13 +9,10 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_toast.dart';
-import 'package:pally/core/utils/logger.dart';
-import 'package:pally/features/family/family_service.dart';
 import 'package:pally/features/referral/referral_service.dart';
 
-/// Outbound Invite surface: the user's OWN codes to give away. Two cards —
-/// invite a friend (referral) and connect a parent (family link) — each with a
-/// QR for in-person sharing. Both are benefit-framed and confirm by code/expiry.
+/// Outbound Invite surface: the user's OWN code to give away. Invite a friend
+/// (referral) with a benefit-framed share message + a QR for in-person sharing.
 class InviteScreen extends ConsumerWidget {
   const InviteScreen({super.key});
 
@@ -36,8 +32,6 @@ class InviteScreen extends ConsumerWidget {
           padding: const EdgeInsets.all(AppSpacing.lg),
           children: const [
             _InviteFriendCard(),
-            SizedBox(height: AppSpacing.lg),
-            _ConnectParentCard(),
           ],
         ),
       ),
@@ -127,120 +121,6 @@ class _InviteFriendCardState extends ConsumerState<_InviteFriendCard> {
   }
 }
 
-// ── Connect a parent (one-time, expiring family link) ───────────────────────
-class _ConnectParentCard extends ConsumerStatefulWidget {
-  const _ConnectParentCard();
-
-  @override
-  ConsumerState<_ConnectParentCard> createState() => _ConnectParentCardState();
-}
-
-class _ConnectParentCardState extends ConsumerState<_ConnectParentCard> {
-  FamilyLinkCode? _code;
-  Duration _remaining = Duration.zero;
-  Timer? _timer;
-  bool _loading = false;
-  String? _error;
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  Future<void> _issue() async {
-    if (_loading) return;
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-    try {
-      final c = await ref.read(familyServiceProvider).issueLinkCode();
-      final expires = DateTime.parse(c.expiresAt).toLocal();
-      _timer?.cancel();
-      setState(() {
-        _code = c;
-        _remaining = expires.difference(DateTime.now());
-      });
-      _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-        final left = expires.difference(DateTime.now());
-        if (!mounted) return;
-        setState(() => _remaining = left.isNegative ? Duration.zero : left);
-        if (left.isNegative) _timer?.cancel();
-      });
-    } catch (e) {
-      appLog.w('[Invite] issueLinkCode failed: $e');
-      if (mounted) setState(() => _error = 'Could not create a link code — try again');
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
-  }
-
-  String get _countdown {
-    final m = _remaining.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final s = _remaining.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return '$m:$s';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final expired = _code != null && _remaining == Duration.zero;
-    return _CardShell(
-      icon: '👨‍👩‍👧',
-      title: 'Connect a parent',
-      subtitle: 'Let a parent see your progress. The code is one-time and expires.',
-      child: _code == null
-          ? Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              if (_error != null) ...[
-                Text(_error!, style: AppTextStyles.bodySmall.copyWith(color: AppColors.coral)),
-                const SizedBox(height: AppSpacing.sm),
-              ],
-              FilledButton(
-                onPressed: _loading ? null : _issue,
-                style: FilledButton.styleFrom(backgroundColor: AppColors.teal),
-                child: _loading
-                    ? const SizedBox(
-                        width: 18, height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                    : const Text('Create a parent link code'),
-              ),
-            ])
-          : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              _CodePill(code: _code!.code, dimmed: expired),
-              const SizedBox(height: AppSpacing.md),
-              if (!expired) ...[
-                _QrBox(data: 'APX:PARENTCLAIM:${_code!.code}'),
-                const SizedBox(height: AppSpacing.xs),
-                Text('Your parent scans this in their Apalchi app',
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.caption.copyWith(color: AppColors.text3)),
-                const SizedBox(height: AppSpacing.sm),
-                Center(
-                  child: Text('Expires in $_countdown',
-                      style: AppTextStyles.label.copyWith(
-                          color: _remaining.inSeconds < 60 ? AppColors.coral : AppColors.text2)),
-                ),
-              ] else
-                Center(
-                  child: Text('This code expired — create a new one',
-                      style: AppTextStyles.label.copyWith(color: AppColors.coral)),
-                ),
-              const SizedBox(height: AppSpacing.md),
-              OutlinedButton.icon(
-                onPressed: _loading ? null : _issue,
-                icon: const Icon(Icons.refresh_rounded, size: 18, color: AppColors.teal),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.teal,
-                  side: const BorderSide(color: AppColors.teal),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                label: Text(expired ? 'New code' : 'Refresh code'),
-              ),
-            ]),
-    );
-  }
-}
-
 // ── Shared building blocks ──────────────────────────────────────────────────
 class _CardShell extends StatelessWidget {
   const _CardShell({
@@ -283,10 +163,9 @@ class _CardShell extends StatelessWidget {
 }
 
 class _CodePill extends StatelessWidget {
-  const _CodePill({required this.code, this.dimmed = false});
+  const _CodePill({required this.code});
 
   final String code;
-  final bool dimmed;
 
   @override
   Widget build(BuildContext context) {
@@ -308,7 +187,7 @@ class _CodePill extends StatelessWidget {
           Text(
             code.isEmpty ? '——————' : code,
             style: AppTextStyles.heading1.copyWith(
-              color: dimmed ? AppColors.text3 : AppColors.text1,
+              color: AppColors.text1,
               letterSpacing: 4,
             ),
           ),

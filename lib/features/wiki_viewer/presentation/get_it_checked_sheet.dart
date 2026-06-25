@@ -6,7 +6,6 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_toast.dart';
-import 'package:pally/features/family/family_status_provider.dart';
 import 'package:pally/features/wiki_viewer/data/review_service.dart';
 import 'package:pally/features/wiki_viewer/presentation/review_view_model.dart';
 import 'package:pally/shared/models/wiki_page.dart';
@@ -45,9 +44,6 @@ class GetItCheckedSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(reviewViewModelProvider(page.id));
-    final familyAsync = ref.watch(familyStatusProvider);
-    // "Ask my parent" is only shown when a parent is actually linked.
-    final parentLinked = familyAsync.valueOrNull?.parentLinked ?? false;
     final pending = state.pending;
 
     return Container(
@@ -108,26 +104,6 @@ class GetItCheckedSheet extends ConsumerWidget {
               onTap: state.isCreating ? null : () => _shareLink(context, ref),
             ),
             const SizedBox(height: AppSpacing.sm),
-
-            if (parentLinked)
-              _SheetAction(
-                icon: state.askedParent
-                    ? Icons.hourglass_top_rounded
-                    : Icons.family_restroom_rounded,
-                label: state.askedParent
-                    ? 'Asked ✓ — waiting'
-                    : 'Ask my parent',
-                subtitle: state.askedParent
-                    ? "We've notified your parent"
-                    : "We'll notify your linked parent",
-                busy: state.isCreating && !state.askedParent,
-                onTap: (state.askedParent || state.isCreating)
-                    ? null
-                    : () => ref
-                        .read(reviewViewModelProvider(page.id).notifier)
-                        .askParent(),
-              ),
-            if (parentLinked) const SizedBox(height: AppSpacing.sm),
 
             // Centre classes: notes are managed by the teacher, not the student.
             if (canEditNotes)

@@ -18,30 +18,11 @@ class ChildSetupScreen extends ConsumerStatefulWidget {
 
 class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
   final _nameCtrl = TextEditingController();
-  // Age as integer (13–22; 22 represents "21+").
-  // Defaulting to 13+ path — under-13 parent-email flow kept dormant.
-  int? _selectedAge;
   String? _selectedExamSystem;
   bool _loading = false;
 
-  // Age options for the dropdown: 13 … 21, 21+.
-  // "21+" maps to integer 22 so the backend receives a numeric yearLevel.
-  static const _ageOptions = [
-    (label: '13', value: 13),
-    (label: '14', value: 14),
-    (label: '15', value: 15),
-    (label: '16', value: 16),
-    (label: '17', value: 17),
-    (label: '18', value: 18),
-    (label: '19', value: 19),
-    (label: '20', value: 20),
-    (label: '21', value: 21),
-    (label: '21+', value: 22),
-  ];
-
-  // Under-13 consent infrastructure kept present but dormant.
-  // The current default always routes to 13+ self-consent.
-  bool get _isUnder13 => (_selectedAge ?? 99) < 13;
+  // 13+-only app: no age is collected here. Age is self-attested at the
+  // self-consent gate that follows this screen.
 
   static const _examSystems = [
     ('📝', 'Examination Preparation', 'EXAM_PREP', 'O-Level, A-Level, IB, SPM, GCSE, AP…'),
@@ -52,9 +33,7 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
   ];
 
   bool get _canContinue =>
-      _nameCtrl.text.trim().isNotEmpty &&
-      _selectedAge != null &&
-      _selectedExamSystem != null;
+      _nameCtrl.text.trim().isNotEmpty && _selectedExamSystem != null;
 
   @override
   void dispose() {
@@ -70,20 +49,15 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
         '/api/v1/auth/setup',
         data: {
           'childName': _nameCtrl.text.trim(),
-          'yearLevel': _selectedAge,
           'curriculum': _selectedExamSystem,
         },
       );
       await AuthNotifier.instance.setChildName(_nameCtrl.text.trim());
       await AuthNotifier.instance.markSetupComplete();
       if (!mounted) return;
-      // Default: 13+ self-consent path.
-      // Under-13 parent-email flow remains in code but is not the default route.
-      if (_isUnder13) {
-        context.go('/consent/parent-email'); // dormant — age dropdown starts at 13
-      } else {
-        context.go('/consent/self');
-      }
+      // 13+-only: everyone goes to the single self-consent gate (age 13+
+      // affirmation + recorded consent).
+      context.go('/consent/self');
     } on DioException {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -141,32 +115,6 @@ class _ChildSetupScreenState extends ConsumerState<ChildSetupScreen> {
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-
-              const _SectionLabel('How old are you?'),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<int>(
-                value: _selectedAge,
-                hint: Text('Select your age',
-                    style: AppTextStyles.body.copyWith(color: AppColors.text3)),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: const Color(0xFFEDE8F5),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                ),
-                items: _ageOptions
-                    .map((opt) => DropdownMenuItem<int>(
-                          value: opt.value,
-                          child: Text(opt.label, style: AppTextStyles.body),
-                        ))
-                    .toList(),
-                onChanged: (v) => setState(() => _selectedAge = v),
               ),
               const SizedBox(height: AppSpacing.lg),
 

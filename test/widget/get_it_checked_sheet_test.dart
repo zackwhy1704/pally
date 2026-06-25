@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pally/features/family/family_status_provider.dart';
 import 'package:pally/features/wiki_viewer/presentation/get_it_checked_sheet.dart';
 import 'package:pally/features/wiki_viewer/presentation/review_view_model.dart';
 import 'package:pally/shared/models/wiki_page.dart';
@@ -19,17 +18,11 @@ const _stubPage = WikiPage(
   content: 'Some content',
 );
 
-Widget _wrap({required bool canEditNotes, bool parentLinked = false}) =>
+Widget _wrap({required bool canEditNotes}) =>
     ProviderScope(
       overrides: [
         reviewViewModelProvider(_stubPage.id).overrideWith(
           () => _FakeReviewNotifier(),
-        ),
-        familyStatusProvider.overrideWith(
-          (ref) async => FamilyStatus(
-            accountType: AccountType.solo,
-            parentLinked: parentLinked,
-          ),
         ),
       ],
       child: MaterialApp(

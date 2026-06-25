@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/features/auth/screens/centre_block_screen.dart';
-import 'package:pally/features/auth/screens/consent_waiting_screen.dart';
 import 'package:pally/features/upload/presentation/upload_screen.dart';
 import 'package:pally/features/upload/presentation/upload_view_model.dart';
 
@@ -87,17 +86,6 @@ void main() {
     });
     testWidgets('does not overflow at large text scale', (tester) async {
       await _pumpAt(tester, const CentreBlockScreen(),
-          size: tallText, scale: 1.5);
-    });
-  });
-
-  group('ConsentWaitingScreen', () {
-    testWidgets('does not overflow in landscape', (tester) async {
-      await _pumpAt(tester, const ConsentWaitingScreen(),
-          size: landscape, scale: 1.0);
-    });
-    testWidgets('does not overflow at large text scale', (tester) async {
-      await _pumpAt(tester, const ConsentWaitingScreen(),
           size: tallText, scale: 1.5);
     });
   });

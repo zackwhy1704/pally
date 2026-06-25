@@ -54,21 +54,18 @@ class AuthService {
   Future<AuthResult> signUpWithEmail(
     String email,
     String password,
-    String name, {
-    String? role,
-    int? birthYear,
-  }) async {
+    String name,
+  ) async {
     try {
+      // 13+-only app: no DOB collected, no role (everyone is a student). Age is
+      // self-attested at the self-consent gate. Backend treats absent birthYear
+      // as 13+, so nothing extra is sent here.
       final res = await _http.post<Map<String, dynamic>>(
         '/api/v1/auth/register',
         data: {
           'email': email,
           'password': password,
           'displayName': name,
-          if (role != null) 'role': role,
-          // Student-only signal; the backend derives under-13 from this. Never
-          // sent for the parent path (caller passes null there).
-          if (birthYear != null) 'birthYear': birthYear,
         },
       );
       return _parseAuthResponse(res.data!);

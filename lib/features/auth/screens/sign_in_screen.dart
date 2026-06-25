@@ -89,11 +89,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       // Fire-and-forget FCM token registration.
       FcmTokenService(ref.read(dioProvider)).registerToken();
       if (mounted) {
-        if (result.accountType == 'PARENT') {
-          context.go('/parent-home');
-        } else {
-          context.go(result.setupComplete ? '/' : '/auth/setup');
-        }
+        // 13+-only app: no parent accounts. A stale PARENT token routes like a
+        // student (never into the removed parent screens).
+        context.go(result.setupComplete ? '/' : '/auth/setup');
       }
     } on AuthException catch (e) {
       if (mounted) _showError(e.message);

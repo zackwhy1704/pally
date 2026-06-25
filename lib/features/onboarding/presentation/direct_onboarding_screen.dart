@@ -29,15 +29,12 @@ class _DirectOnboardingScreenState
   final _nameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
-  // Optional student birth year — determines if they need a grown-up.
-  final _birthYearCtrl = TextEditingController();
 
   @override
   void dispose() {
     _nameCtrl.dispose();
     _emailCtrl.dispose();
     _passCtrl.dispose();
-    _birthYearCtrl.dispose();
     super.dispose();
   }
 
@@ -79,13 +76,11 @@ class _DirectOnboardingScreenState
                       nameCtrl: _nameCtrl,
                       emailCtrl: _emailCtrl,
                       passCtrl: _passCtrl,
-                      birthYearCtrl: _birthYearCtrl,
                     ),
                   2 => _Step2SubjectLevel(
                       nameCtrl: _nameCtrl,
                       emailCtrl: _emailCtrl,
                       passCtrl: _passCtrl,
-                      birthYearCtrl: _birthYearCtrl,
                     ),
                   3 => _Step3Upload(
                       avatarId: vm.avatarId,
@@ -144,13 +139,11 @@ class _Step1SignUp extends ConsumerStatefulWidget {
     required this.nameCtrl,
     required this.emailCtrl,
     required this.passCtrl,
-    required this.birthYearCtrl,
   });
 
   final TextEditingController nameCtrl;
   final TextEditingController emailCtrl;
   final TextEditingController passCtrl;
-  final TextEditingController birthYearCtrl;
 
   @override
   ConsumerState<_Step1SignUp> createState() => _Step1SignUpState();
@@ -249,39 +242,6 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
                 return null;
               },
             ),
-            const SizedBox(height: AppSpacing.md),
-            _Field(
-              label: 'Year you were born',
-              hint: 'e.g. 2014',
-              controller: widget.birthYearCtrl,
-              keyboardType: TextInputType.number,
-              textInputAction: TextInputAction.done,
-              maxLength: 4,
-              validator: (v) {
-                // Required (PDPA/PDPC): the server derives under-13 from this to
-                // route minors into the parental-consent gate. Cannot be skipped.
-                if (v == null || v.trim().isEmpty) {
-                  return 'Please enter the year you were born';
-                }
-                final year = int.tryParse(v.trim());
-                if (year == null || v.trim().length != 4) {
-                  return 'Enter a 4-digit year, like 2014';
-                }
-                if (year > DateTime.now().year) {
-                  return "That year hasn't happened yet!";
-                }
-                if (year < 1950) {
-                  return 'Please enter a year after 1950';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              'This helps us know if you need a grown-up to help set up '
-              'your account.',
-              style: AppTextStyles.caption.copyWith(color: AppColors.text3),
-            ),
             const SizedBox(height: AppSpacing.xl),
             SizedBox(
               height: AppSizing.buttonHeight,
@@ -323,13 +283,11 @@ class _Step2SubjectLevel extends ConsumerWidget {
     required this.nameCtrl,
     required this.emailCtrl,
     required this.passCtrl,
-    required this.birthYearCtrl,
   });
 
   final TextEditingController nameCtrl;
   final TextEditingController emailCtrl;
   final TextEditingController passCtrl;
-  final TextEditingController birthYearCtrl;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -437,7 +395,6 @@ class _Step2SubjectLevel extends ConsumerWidget {
                         displayName: nameCtrl.text.trim(),
                         subject: vm.selectedSubject!,
                         level: vm.selectedLevel!,
-                        birthYear: int.tryParse(birthYearCtrl.text.trim()),
                       );
                     },
               style: FilledButton.styleFrom(
@@ -1006,7 +963,6 @@ class _Field extends StatelessWidget {
     this.textInputAction,
     this.validator,
     this.suffix,
-    this.maxLength,
   });
 
   final String label;
@@ -1017,7 +973,6 @@ class _Field extends StatelessWidget {
   final TextInputAction? textInputAction;
   final FormFieldValidator<String>? validator;
   final Widget? suffix;
-  final int? maxLength;
 
   @override
   Widget build(BuildContext context) {
@@ -1034,7 +989,6 @@ class _Field extends StatelessWidget {
           keyboardType: keyboardType,
           textInputAction: textInputAction,
           validator: validator,
-          maxLength: maxLength,
           style: AppTextStyles.body,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           decoration: InputDecoration(

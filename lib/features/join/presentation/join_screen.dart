@@ -8,7 +8,6 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_toast.dart';
-import 'package:pally/app/router.dart';
 import 'package:pally/features/join/data/join_code.dart';
 import 'package:pally/features/join/data/join_resolve_service.dart';
 import 'package:pally/features/join/presentation/join_controller.dart';
@@ -78,9 +77,9 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
       return;
     }
 
-    // Parent-claim keeps its own claim screen + named confirmation.
+    // Parent links are no longer supported (13+-only app, no parent accounts).
     if (parsed.kind == JoinKind.parentClaim) {
-      const FamilyClaimRoute().push(context);
+      PallyToast.error(context, 'Parent links are no longer supported');
       return;
     }
 

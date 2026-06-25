@@ -19,7 +19,6 @@ import 'package:pally/features/progress/presentation/progress_view_model.dart';
 import 'package:pally/features/progress/presentation/streak_card.dart';
 import 'package:pally/features/progress/presentation/streak_milestone_controller.dart';
 import 'package:pally/features/progress/presentation/streak_status_provider.dart';
-import 'package:pally/features/family/family_status_provider.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
 import 'package:pally/features/subscription/trial_status_provider.dart';
 import 'package:pally/shared/models/achievement.dart';
@@ -116,8 +115,6 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                 const _AchievementsPreview(),
                 const SizedBox(height: AppSpacing.md),
                 const _JoinCodeRow(),
-                const SizedBox(height: AppSpacing.sm),
-                const _FamilyConnectionRow(),
                 const SizedBox(height: AppSpacing.sm),
                 const _InviteFriendsRow(),
                 const SizedBox(height: AppSpacing.md),
@@ -757,16 +754,10 @@ class _AchievementPreviewRow extends StatelessWidget {
   }
 }
 
-/// Nav buttons row. "Parent Mode" is only shown when the signed-in account
-/// is a PARENT type AND has at least one child linked — never shown to child
-/// or solo accounts. The Character Shop is always visible.
-class _NavButtons extends ConsumerWidget {
+/// Nav buttons row. 13+-only app — no Parent Mode. Character Shop only.
+class _NavButtons extends StatelessWidget {
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final familyAsync = ref.watch(familyStatusProvider);
-    final canAccessParent =
-        familyAsync.valueOrNull?.canAccessParentMode ?? false;
-
+  Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(
@@ -781,22 +772,6 @@ class _NavButtons extends ConsumerWidget {
             ),
           ),
         ),
-        // Parent Mode: only shown to verified PARENT accounts with children
-        if (canAccessParent) ...[
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: OutlinedButton.icon(
-              onPressed: () => const ParentRoute().push(context),
-              icon: const Icon(Icons.shield_outlined, size: 18),
-              label: const Text('Parent Mode'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.teal,
-                side: const BorderSide(color: AppColors.teal),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-            ),
-          ),
-        ],
       ],
     );
   }
@@ -930,139 +905,6 @@ class _GoPremiumBanner extends ConsumerWidget {
 ///   own account and they have a child's device).
 /// • CHILD with parent linked → shows "Connected to [name]" confirmation.
 /// • PARENT → row is hidden (they use Parent Mode button in _NavButtons).
-class _FamilyConnectionRow extends ConsumerWidget {
-  const _FamilyConnectionRow();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final status = ref.watch(familyStatusProvider).valueOrNull;
-
-    // PARENT accounts: hide this row entirely — their entry is Parent Mode.
-    if (status?.isParent == true) return const SizedBox.shrink();
-
-    // CHILD with an active parent link → show confirmation only.
-    if (status?.isChild == true && status!.parentLinked) {
-      return Container(
-        padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
-        decoration: BoxDecoration(
-          color: AppColors.greenL,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.green.withValues(alpha: 0.4)),
-        ),
-        child: Row(
-          children: [
-            const Icon(Icons.check_circle_rounded,
-                color: AppColors.green, size: 20),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: Text(
-                status.parentName != null
-                    ? 'Connected to ${status.parentName}'
-                    : 'Connected to a parent',
-                style: AppTextStyles.body
-                    .copyWith(fontWeight: FontWeight.w600,
-                        color: AppColors.green),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    // SOLO or CHILD without parent → two-option card.
-    return Column(
-      children: [
-        // Option 1: I'm a learner → generate a code my parent can claim.
-        _FamilyOptionTile(
-          icon: Icons.family_restroom_rounded,
-          iconColor: AppColors.teal,
-          label: 'Link a parent',
-          sub: 'Get a code your parent enters on their device',
-          onTap: () {
-            ref.invalidate(familyStatusProvider);
-            // Route parent-connect through the unified Invite surface.
-            const InviteRoute().push(context);
-          },
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        // Option 2: I'm a parent → enter the code my child generated.
-        _FamilyOptionTile(
-          icon: Icons.child_care_rounded,
-          iconColor: AppColors.purple,
-          label: "I'm a parent — add my child's account",
-          sub: 'Enter the code from your child\'s Apalchi',
-          onTap: () {
-            ref.invalidate(familyStatusProvider);
-            const FamilyClaimRoute().push(context);
-          },
-        ),
-      ],
-    );
-  }
-}
-
-class _FamilyOptionTile extends StatelessWidget {
-  const _FamilyOptionTile({
-    required this.icon,
-    required this.iconColor,
-    required this.label,
-    required this.sub,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final Color iconColor;
-  final String label;
-  final String sub;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: onTap,
-        child: Ink(
-          padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.outline),
-          ),
-          child: Row(
-            children: [
-              Icon(icon, color: iconColor, size: 22),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(label,
-                        style: AppTextStyles.body
-                            .copyWith(fontWeight: FontWeight.w700),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis),
-                    Text(sub,
-                        style: AppTextStyles.caption
-                            .copyWith(color: AppColors.text2),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis),
-                  ],
-                ),
-              ),
-              const Icon(Icons.chevron_right_rounded,
-                  color: AppColors.text3),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 /// Inbound Join handle on the Me tab — discoverable, not a nav slot.
 class _JoinCodeRow extends StatelessWidget {
   const _JoinCodeRow();
