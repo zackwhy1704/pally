@@ -34,6 +34,7 @@ import 'package:pally/features/family/presentation/family_link_code_screen.dart'
 import 'package:pally/features/referral/presentation/referral_screen.dart';
 import 'package:pally/features/centre/presentation/centre_join_screen.dart';
 import 'package:pally/features/join/presentation/join_screen.dart';
+import 'package:pally/features/invite/presentation/invite_screen.dart';
 import 'package:pally/features/subscription/presentation/paywall_screen.dart';
 import 'package:pally/features/subscription/presentation/subscription_plans_screen.dart';
 import 'package:pally/features/subscription/presentation/subscription_return_screen.dart';
@@ -545,6 +546,15 @@ class JoinRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) => const JoinScreen();
+}
+
+/// Outbound Invite surface (referral + parent link, both with QR).
+@TypedGoRoute<InviteRoute>(path: '/invite')
+class InviteRoute extends GoRouteData {
+  const InviteRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => const InviteScreen();
 }
 
 @TypedGoRoute<HomeworkScanDetailRoute>(path: '/homework-scan')

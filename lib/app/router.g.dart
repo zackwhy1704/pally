@@ -41,6 +41,7 @@ List<RouteBase> get $appRoutes => [
       $referralRoute,
       $centreJoinRoute,
       $joinRoute,
+      $inviteRoute,
       $homeworkScanDetailRoute,
       $brainHealthRoute,
       $moduleListRoute,
@@ -1024,6 +1025,28 @@ extension $JoinRouteExtension on JoinRoute {
 
   String get location => GoRouteData.$location(
         '/join',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $inviteRoute => GoRouteData.$route(
+      path: '/invite',
+      factory: $InviteRouteExtension._fromState,
+    );
+
+extension $InviteRouteExtension on InviteRoute {
+  static InviteRoute _fromState(GoRouterState state) => const InviteRoute();
+
+  String get location => GoRouteData.$location(
+        '/invite',
       );
 
   void go(BuildContext context) => context.go(location);

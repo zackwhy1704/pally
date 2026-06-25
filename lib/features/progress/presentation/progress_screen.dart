@@ -9,6 +9,7 @@ import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
+import 'package:pally/features/invite/presentation/milestone_invite_nudge.dart';
 import 'package:pally/features/progress/presentation/achievements_provider.dart';
 import 'package:pally/features/progress/presentation/coverage_provider.dart';
 import 'package:pally/features/progress/presentation/daily_goal_provider.dart';
@@ -98,6 +99,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                 const SizedBox(height: AppSpacing.md),
                 const DailyGoalRing(),
                 const SizedBox(height: AppSpacing.md),
+                MilestoneInviteNudge(streakDays: progress.streakDays),
                 const StreakCard(),
                 const SizedBox(height: AppSpacing.md),
                 const MasteryCard(),
@@ -113,6 +115,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                   ),
                 const _AchievementsPreview(),
                 const SizedBox(height: AppSpacing.md),
+                const _JoinCodeRow(),
+                const SizedBox(height: AppSpacing.sm),
                 const _FamilyConnectionRow(),
                 const SizedBox(height: AppSpacing.sm),
                 const _InviteFriendsRow(),
@@ -977,7 +981,8 @@ class _FamilyConnectionRow extends ConsumerWidget {
           sub: 'Get a code your parent enters on their device',
           onTap: () {
             ref.invalidate(familyStatusProvider);
-            const FamilyLinkCodeRoute().push(context);
+            // Route parent-connect through the unified Invite surface.
+            const InviteRoute().push(context);
           },
         ),
         const SizedBox(height: AppSpacing.xs),
@@ -1058,6 +1063,50 @@ class _FamilyOptionTile extends StatelessWidget {
   }
 }
 
+/// Inbound Join handle on the Me tab — discoverable, not a nav slot.
+class _JoinCodeRow extends StatelessWidget {
+  const _JoinCodeRow();
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => const JoinRoute().push(context),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.outline),
+          ),
+          child: Row(
+            children: [
+              const Text('🎟️', style: TextStyle(fontSize: 22)),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Join a class or group',
+                        style: AppTextStyles.body
+                            .copyWith(fontWeight: FontWeight.w700)),
+                    Text('Enter or scan a code someone gave you',
+                        style: AppTextStyles.caption),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded, color: AppColors.text3),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _InviteFriendsRow extends StatelessWidget {
   const _InviteFriendsRow();
 
@@ -1067,7 +1116,7 @@ class _InviteFriendsRow extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => const ReferralRoute().push(context),
+        onTap: () => const InviteRoute().push(context),
         child: Ink(
           padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),

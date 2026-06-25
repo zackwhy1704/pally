@@ -13,6 +13,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/onboarding/presentation/direct_onboarding_view_model.dart';
+import 'package:pally/app/router.dart';
 
 class DirectOnboardingScreen extends ConsumerStatefulWidget {
   const DirectOnboardingScreen({super.key});
@@ -786,6 +787,17 @@ class _UploadIdleViewState extends ConsumerState<_UploadIdleView> {
                   const SizedBox(height: AppSpacing.md),
                 ],
               ),
+            ),
+          ),
+          // Highest-leverage join capture: a centre/group-referred student is
+          // holding their code right now. Skippable — never blocks onboarding.
+          TextButton(
+            onPressed: () => const JoinRoute().push(context),
+            child: Text(
+              '🎟️  Have a class or group code? Enter or scan it',
+              style: AppTextStyles.body.copyWith(
+                  color: AppColors.purple, fontWeight: FontWeight.w700),
+              textAlign: TextAlign.center,
             ),
           ),
           // Skip option
