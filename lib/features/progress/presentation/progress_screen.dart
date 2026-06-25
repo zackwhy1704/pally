@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/widgets/loading/pally_skeleton.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/ui/adaptive_content_width.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/error/pally_error.dart';
@@ -64,7 +65,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
           ),
         ],
       ),
-      body: progressAsync.when(
+      body: AdaptiveContentWidth(
+        child: progressAsync.when(
         loading: () => const Padding(
           padding: EdgeInsets.all(AppSpacing.md),
           child: Column(children: [
@@ -125,6 +127,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
             ),
           ),
         ),
+      ),
       ),
     );
   }

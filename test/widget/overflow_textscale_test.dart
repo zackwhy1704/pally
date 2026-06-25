@@ -49,6 +49,14 @@ void main() {
       await _pumpScreen(tester, const JoinScreen(), size: narrow, textScale: 1.0);
       expect(tester.takeException(), isNull);
     });
+
+    testWidgets('content clamps (≤560 dp) on a wide iPad-class viewport', (tester) async {
+      await _pumpScreen(tester, const JoinScreen(),
+          size: const Size(1024, 768), textScale: 1.0);
+      // The form must NOT stretch to 1024 — the content column is capped.
+      final field = tester.getSize(find.byType(TextField).first);
+      expect(field.width, lessThanOrEqualTo(560));
+    });
   });
 
   group('SignUpScreen — no overflow under narrow + large-text', () {

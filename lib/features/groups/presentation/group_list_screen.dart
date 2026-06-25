@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/ui/adaptive_content_width.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/error/pally_error.dart';
@@ -48,7 +49,8 @@ class GroupListScreen extends ConsumerWidget {
             style: TextStyle(color: Colors.white)),
         onPressed: () => const CreateGroupRoute().push(context),
       ),
-      body: groupsAsync.when(
+      body: AdaptiveContentWidth(
+        child: groupsAsync.when(
         loading: () => const PallyLoadingSpinner(),
         error: (e, _) => PallyErrorCard(
           message: PallyError.from(e).userMessage,
@@ -79,6 +81,7 @@ class GroupListScreen extends ConsumerWidget {
             ),
           );
         },
+      ),
       ),
     );
   }

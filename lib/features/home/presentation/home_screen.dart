@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/ui/adaptive_content_width.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
@@ -78,7 +79,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.bg,
-      body: SafeArea(
+      body: AdaptiveContentWidth(
+        child: SafeArea(
         child: Column(
           children: [
             _HomeHeader(
@@ -131,6 +133,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

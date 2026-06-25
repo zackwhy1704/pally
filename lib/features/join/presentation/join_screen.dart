@@ -7,7 +7,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
-import 'package:pally/core/ui/adaptive_body.dart';
+import 'package:pally/core/ui/adaptive_content_width.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/join/data/join_code.dart';
 import 'package:pally/features/join/data/join_resolve_service.dart';
@@ -183,7 +183,7 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
       ),
       // Manual form is capped + centred so it doesn't stretch on iPad; the
       // scanner stays full-bleed (it's a camera viewfinder).
-      body: _scanning ? _buildScanner() : AdaptiveBody(child: _buildManual()),
+      body: _scanning ? _buildScanner() : AdaptiveContentWidth(child: _buildManual()),
     );
   }
 
