@@ -82,7 +82,7 @@ class _InviteFriendCardState extends ConsumerState<_InviteFriendCard> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _CodePill(code: code),
-              if (_showQr) ...[
+              if (_showQr && code.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.md),
                 _QrBox(data: code),
                 const SizedBox(height: AppSpacing.xs),
@@ -94,7 +94,9 @@ class _InviteFriendCardState extends ConsumerState<_InviteFriendCard> {
               Row(children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () => setState(() => _showQr = !_showQr),
+                    onPressed: code.isEmpty
+                        ? null
+                        : () => setState(() => _showQr = !_showQr),
                     icon: Icon(_showQr ? Icons.qr_code_2_rounded : Icons.qr_code_rounded,
                         size: 18, color: AppColors.purple),
                     style: OutlinedButton.styleFrom(
