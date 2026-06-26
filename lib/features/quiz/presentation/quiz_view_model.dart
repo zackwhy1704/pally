@@ -35,6 +35,23 @@ class MasteryMatrix {
       knownGap.isNotEmpty;
 }
 
+/// Per-question outcome returned POST-submit. For a teacher-graded (centre)
+/// quiz this is the ONLY place [correctIndex] and [explanation] appear — they're
+/// withheld from the served question by design, revealed here after submitting.
+@immutable
+class QuizFeedback {
+  const QuizFeedback({
+    required this.questionId,
+    required this.wasCorrect,
+    this.correctIndex,
+    this.explanation,
+  });
+  final String questionId;
+  final bool wasCorrect;
+  final int? correctIndex;
+  final String? explanation;
+}
+
 @immutable
 class QuizState {
   const QuizState({
@@ -52,6 +69,7 @@ class QuizState {
     this.levelledUp = false,
     this.newLevel = 0,
     this.masteryMatrix,
+    this.feedback = const [],
     this.error,
   });
 
@@ -69,6 +87,7 @@ class QuizState {
   final bool levelledUp;
   final int newLevel;
   final MasteryMatrix? masteryMatrix;
+  final List<QuizFeedback> feedback;
   final PallyError? error;
 
   /// True when the student can lock in their answer this turn — they must
@@ -96,6 +115,7 @@ class QuizState {
     bool? levelledUp,
     int? newLevel,
     Object? masteryMatrix = _sentinel,
+    List<QuizFeedback>? feedback,
     Object? error = _sentinel,
   }) {
     return QuizState(
@@ -119,6 +139,7 @@ class QuizState {
       masteryMatrix: masteryMatrix == _sentinel
           ? this.masteryMatrix
           : masteryMatrix as MasteryMatrix?,
+      feedback: feedback ?? this.feedback,
       error: error == _sentinel ? this.error : error as PallyError?,
     );
   }
@@ -316,6 +337,19 @@ class QuizViewModel extends _$QuizViewModel {
               priorityReview: matrixJson['priorityReview'] as String?,
             );
 
+      // Post-submit feedback — the ONLY place a teacher-graded quiz reveals the
+      // correct answer + explanation (both withheld from the served question).
+      final feedback = (data['feedback'] as List?)
+              ?.whereType<Map>()
+              .map((f) => QuizFeedback(
+                    questionId: (f['questionId'] ?? '').toString(),
+                    wasCorrect: f['wasCorrect'] == true,
+                    correctIndex: (f['correctIndex'] as num?)?.toInt(),
+                    explanation: f['explanation'] as String?,
+                  ))
+              .toList() ??
+          const <QuizFeedback>[];
+
       appLog.i(
           '[Quiz] submitted answers=${_answers.length} correct=${state.score} '
           'backendXp=$backendXp levelledUp=$levelledUp newLevel=$newLevel '
@@ -330,6 +364,7 @@ class QuizViewModel extends _$QuizViewModel {
         levelledUp: levelledUp,
         newLevel: newLevel,
         masteryMatrix: matrix,
+        feedback: feedback,
       );
       span.setData('xp_earned', backendXp);
       span.finish(statusCode: 200);

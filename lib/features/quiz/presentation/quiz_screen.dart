@@ -160,6 +160,7 @@ class QuizScreen extends ConsumerWidget {
                       avatarId: avatarId,
                       matrix: quizState.masteryMatrix,
                       questions: quizState.questions,
+                      feedback: quizState.feedback,
                     )
                   : _QuizBody(
                       avatarId: avatarId,
@@ -606,6 +607,7 @@ class _CompletionView extends StatelessWidget {
     required this.xpEarned,
     required this.avatarId,
     required this.questions,
+    required this.feedback,
     this.matrix,
   });
 
@@ -614,6 +616,7 @@ class _CompletionView extends StatelessWidget {
   final int xpEarned;
   final String avatarId;
   final List<QuizQuestion> questions;
+  final List<QuizFeedback> feedback;
   final MasteryMatrix? matrix;
 
   @override
@@ -696,6 +699,24 @@ class _CompletionView extends StatelessWidget {
               const SizedBox(height: AppSpacing.md),
               _MasteryMatrixCard(matrix: matrix!, questions: questions),
             ],
+            // Per-question review — for a teacher-graded quiz this is the ONLY
+            // place the correct answer + explanation appear (both withheld from
+            // the quiz itself by design, revealed here post-submit).
+            if (feedback.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.lg),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text('Review', style: AppTextStyles.title),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              ...feedback.map((f) => Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                    child: _ReviewCard(
+                      feedback: f,
+                      questions: questions,
+                    ),
+                  )),
+            ],
             const SizedBox(height: AppSpacing.xl),
             SizedBox(
               width: double.infinity,
@@ -718,6 +739,73 @@ class _CompletionView extends StatelessWidget {
   }
 }
 
+
+/// One question's post-submit review: the question text, a correct/incorrect
+/// badge, the correct option (revealed here), and the explanation (which a
+/// teacher-graded quiz withheld until now).
+class _ReviewCard extends StatelessWidget {
+  const _ReviewCard({required this.feedback, required this.questions});
+
+  final QuizFeedback feedback;
+  final List<QuizQuestion> questions;
+
+  @override
+  Widget build(BuildContext context) {
+    final q = questions.firstWhere(
+      (q) => q.id == feedback.questionId,
+      orElse: () => const QuizQuestion(),
+    );
+    final ci = feedback.correctIndex;
+    final correctOption =
+        (ci != null && ci >= 0 && ci < q.options.length) ? q.options[ci] : null;
+    final ok = feedback.wasCorrect;
+    final accent = ok ? AppColors.green : AppColors.coral;
+
+    return Container(
+      width: double.infinity,
+      padding: AppSpacing.card,
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.outline),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(ok ? Icons.check_circle_rounded : Icons.cancel_rounded,
+                  color: accent, size: 20),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  q.question.isNotEmpty
+                      ? q.question
+                      : questionLabel(feedback.questionId, questions),
+                  style: AppTextStyles.body
+                      .copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
+          if (correctOption != null) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text('Answer: $correctOption',
+                style: AppTextStyles.bodySmall
+                    .copyWith(color: AppColors.green, fontWeight: FontWeight.w700)),
+          ],
+          if (feedback.explanation != null &&
+              feedback.explanation!.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(feedback.explanation!,
+                style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2)),
+          ],
+        ],
+      ),
+    );
+  }
+}
 
 /// Three-button row asking the student to self-rate how sure they are BEFORE
 /// they answer. Drives the mastery-matrix classification shown on completion.

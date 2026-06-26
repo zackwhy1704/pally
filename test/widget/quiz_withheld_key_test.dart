@@ -67,4 +67,39 @@ void main() {
     expect(find.byIcon(Icons.check_circle_rounded), findsWidgets);
     expect(find.textContaining('Answer locked in'), findsNothing);
   });
+
+  testWidgets(
+      'results screen reveals the withheld answer + explanation post-submit',
+      (tester) async {
+    // A completed centre quiz: the question carried no key (correctIndex null),
+    // and the post-submit feedback carries the revealed answer + why.
+    final state = QuizState(
+      isComplete: true,
+      score: 0,
+      questions: const [
+        QuizQuestion(
+          id: 'q-1',
+          question: 'Which gas do plants absorb?',
+          options: ['Oxygen', 'Carbon dioxide', 'Nitrogen'],
+          correctIndex: null,
+        ),
+      ],
+      feedback: const [
+        QuizFeedback(
+          questionId: 'q-1',
+          wasCorrect: false,
+          correctIndex: 1,
+          explanation: 'Plants take in carbon dioxide.',
+        ),
+      ],
+    );
+    await tester.pumpWidget(_wrap(state));
+    await tester.pump();
+
+    // The review section reveals BOTH the answer and the explanation — the only
+    // place they appear for a teacher-graded quiz.
+    expect(find.text('Review'), findsOneWidget);
+    expect(find.textContaining('Answer: Carbon dioxide'), findsOneWidget);
+    expect(find.textContaining('Plants take in carbon dioxide'), findsOneWidget);
+  });
 }
