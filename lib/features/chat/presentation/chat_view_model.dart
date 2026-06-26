@@ -17,6 +17,7 @@ import 'package:pally/core/local_db/pally_database.dart';
 import 'package:pally/features/chat/data/local/chat_local_data_source.dart';
 import 'package:pally/features/chat/data/local/chat_message_mapper.dart';
 import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
+import 'package:pally/features/consent/presentation/parental_consent_pending_sheet.dart';
 
 import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/observability/observability_providers.dart';
@@ -889,7 +890,32 @@ class ChatViewModel extends _$ChatViewModel {
           final bytes = await rb.stream.expand((c) => c).toList();
           final decoded = jsonDecode(utf8.decode(bytes));
           if (decoded is Map && decoded['data'] is Map) {
-            final code = (decoded['data'] as Map)['code'] as String?;
+            final data = decoded['data'] as Map;
+            final code = data['code'] as String?;
+            if (code == 'PARENTAL_CONSENT_PENDING') {
+              appLog.w('[Chat] Parental consent pending for SSE stream');
+              _markStreamingMessageWithText(
+                streamId,
+                'Your account is waiting for a grown-up to approve it. '
+                'Ask them to check their email.',
+              );
+              final masked = data['parentEmailMasked']?.toString();
+              final secs = data['resendAvailableInSeconds'];
+              final ctx =
+                  ref.read(globalNavigatorKeyProvider)?.currentContext;
+              if (ctx != null && ctx.mounted) {
+                showParentalConsentPendingSheet(
+                  context: ctx,
+                  ref: ref,
+                  maskedEmail: (masked == null || masked.isEmpty)
+                      ? 'your grown-up'
+                      : masked,
+                  cooldownSeconds: secs is num ? secs.toInt() : 0,
+                );
+              }
+              span.finish(statusCode: 403);
+              return;
+            }
             if (code == 'AI_CONSENT_REQUIRED' || code == 'CONSENT_REQUIRED') {
               appLog.w('[Chat] Consent required for SSE stream (under-13 gate)');
               _markStreamingMessageWithText(

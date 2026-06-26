@@ -8,6 +8,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/features/consent/presentation/parental_consent_pending_sheet.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -173,6 +174,7 @@ class _ServerErrorInterceptor extends Interceptor {
   static DateTime? _lastShown;
   static DateTime? _lastPaywallRoute;
   static DateTime? _lastParentLinkRoute;
+  static DateTime? _lastConsentPendingSheet;
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
@@ -248,6 +250,24 @@ class _ServerErrorInterceptor extends Interceptor {
       }
     }
 
+    // 403 PARENTAL_CONSENT_PENDING → an under-13 user whose parent has been
+    // emailed but hasn't approved yet tried a gated ingress (upload / photo /
+    // chat). Show the actionable "waiting for your grown-up" sheet with the
+    // masked parent email + a working resend, instead of a dead-end error.
+    if (status == 403) {
+      final body = err.response?.data;
+      if (body is Map) {
+        final dataNode = body['data'];
+        if (dataNode is Map &&
+            dataNode['code']?.toString() == 'PARENTAL_CONSENT_PENDING') {
+          _handleParentalConsentPending(dataNode);
+          // Still propagate so the calling view-model clears its loading state.
+          handler.next(err);
+          return;
+        }
+      }
+    }
+
     // 403 PARENT_LINK_REQUIRED → an under-13 user tried a gated action (chat /
     // upload) with no parent linked. Route them to the existing "link a
     // grown-up" code screen as a blocking step instead of a raw error toast.
@@ -313,6 +333,36 @@ class _ServerErrorInterceptor extends Interceptor {
       }
     }
     handler.next(err);
+  }
+
+  /// Shows the half-elevated consent-pending sheet (masked email + working
+  /// resend) on a 403 `PARENTAL_CONSENT_PENDING`. Rate-limited to once per
+  /// second so a refresh storm can't stack the sheet.
+  void _handleParentalConsentPending(Map<dynamic, dynamic> data) {
+    final now = DateTime.now();
+    final allowed = _lastConsentPendingSheet == null ||
+        now.difference(_lastConsentPendingSheet!) > const Duration(seconds: 1);
+    if (!allowed) return;
+    _lastConsentPendingSheet = now;
+
+    final ctx = _ref.read(globalNavigatorKeyProvider)?.currentContext;
+    if (ctx == null || !ctx.mounted) return;
+
+    final masked = data['parentEmailMasked']?.toString();
+    final secs = data['resendAvailableInSeconds'];
+    final cooldown = secs is num ? secs.toInt() : 0;
+    try {
+      showParentalConsentPendingSheet(
+        context: ctx,
+        ref: _ref,
+        maskedEmail: (masked == null || masked.isEmpty)
+            ? 'your grown-up'
+            : masked,
+        cooldownSeconds: cooldown,
+      );
+    } catch (_) {
+      // Fall through; the view model will surface the original error.
+    }
   }
 
   /// Routes an under-13 user to the existing "link a grown-up" code screen on
