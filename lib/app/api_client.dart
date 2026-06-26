@@ -306,12 +306,27 @@ class _ServerErrorInterceptor extends Interceptor {
         final ctx = _ref.read(globalNavigatorKeyProvider)?.currentContext;
         if (ctx != null && ctx.mounted) {
           try {
-            // Show a friendly bottom sheet instead of a raw error
+            // Show a friendly bottom sheet instead of a raw error. "Remind my
+            // grown-up" opens the working resend affordance (the old
+            // /consent/waiting route was never registered — a dead-end).
             showModalBottomSheet<void>(
               context: ctx,
               isScrollControlled: true,
               backgroundColor: Colors.transparent,
-              builder: (_) => _ConsentGateSheet(reason: reason ?? 'general'),
+              builder: (_) => _ConsentGateSheet(
+                reason: reason ?? 'general',
+                onRemind: () {
+                  final c =
+                      _ref.read(globalNavigatorKeyProvider)?.currentContext;
+                  if (c == null || !c.mounted) return;
+                  showParentalConsentPendingSheet(
+                    context: c,
+                    ref: _ref,
+                    maskedEmail: 'your grown-up',
+                    cooldownSeconds: 0,
+                  );
+                },
+              ),
             );
           } catch (_) {}
         }
@@ -365,9 +380,12 @@ class _ServerErrorInterceptor extends Interceptor {
     }
   }
 
-  /// Routes an under-13 user to the existing "link a grown-up" code screen on
-  /// a 403 `PARENT_LINK_REQUIRED`, with a friendly one-line explanation. Rate-
-  /// limited to once per second so a refresh storm can't stack the screen.
+  /// Routes a user to the account-setup screen on a 403 `PARENT_LINK_REQUIRED`.
+  /// Server-side this code is raised only when the birth year is unknown
+  /// (`AGE_DECLARATION_REQUIRED`) — so the fix is to declare your age in setup,
+  /// not to nag a parent. Routes to the registered `/auth/setup` (the old
+  /// `/family/link-code` was never a real route). Rate-limited to once per
+  /// second so a refresh storm can't stack the screen.
   void _handleParentLinkRequired() {
     final now = DateTime.now();
     final allowed = _lastParentLinkRoute == null ||
@@ -380,9 +398,9 @@ class _ServerErrorInterceptor extends Interceptor {
     try {
       PallyToast.success(
         ctx,
-        'Ask a grown-up to link your account so you can start learning',
+        "Let's finish setting up your account so you can start learning",
       );
-      ctx.push('/family/link-code');
+      ctx.go('/auth/setup');
     } catch (_) {
       // Fall through; the view model will surface the original error.
     }
@@ -468,8 +486,13 @@ class _SessionExpiredInterceptor extends Interceptor {
 // Shown instead of a raw 403 error when a PENDING account attempts a gated action.
 
 class _ConsentGateSheet extends StatelessWidget {
-  const _ConsentGateSheet({required this.reason});
+  const _ConsentGateSheet({required this.reason, required this.onRemind});
   final String reason;
+
+  /// Opens the working resend affordance. Replaces the old navigation to the
+  /// never-registered `/consent/waiting` route, which dead-ended on the error
+  /// screen — the exact failure this consent UX exists to kill.
+  final VoidCallback onRemind;
 
   String get _title => switch (reason) {
         'UPLOAD' => 'Upload notes',
@@ -525,7 +548,7 @@ class _ConsentGateSheet extends StatelessWidget {
             FilledButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                context.go('/consent/waiting');
+                onRemind();
               },
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.purple,

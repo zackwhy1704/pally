@@ -135,7 +135,7 @@ class _PhotoReviewScreenState extends ConsumerState<PhotoReviewScreen> {
             if (mounted) context.pop();
             if (mounted) {
               context.push(
-                '/photo-preview',
+                '/avatar/${widget.avatarId}/photo-preview',
                 extra: {'photoPath': picked.path, 'avatarId': widget.avatarId},
               );
             }

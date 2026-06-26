@@ -118,6 +118,10 @@ class _ParentalConsentPendingSheetState
   int _cooldown = 0;
   Timer? _timer;
 
+  /// Mutable so a successful resend can reveal the real masked address when the
+  /// caller only had a generic placeholder (e.g. the CONSENT_REQUIRED gate).
+  late String _maskedEmail = widget.maskedEmail;
+
   @override
   void initState() {
     super.initState();
@@ -153,7 +157,11 @@ class _ParentalConsentPendingSheetState
     if (!mounted) return;
     switch (result.outcome) {
       case ResendOutcome.sent:
-        setState(() => _ui = _ResendUi.sent);
+        setState(() {
+          _ui = _ResendUi.sent;
+          final m = result.maskedEmail;
+          if (m != null && m.isNotEmpty) _maskedEmail = m;
+        });
         _startCooldown(result.cooldownSeconds);
       case ResendOutcome.cooldown:
         setState(() => _ui = _ResendUi.idle);
@@ -165,7 +173,7 @@ class _ParentalConsentPendingSheetState
 
   String get _statusLine => switch (_ui) {
         _ResendUi.sent =>
-          'Approval email re-sent to ${widget.maskedEmail} — check inbox and spam.',
+          'Approval email re-sent to $_maskedEmail — check inbox and spam.',
         _ResendUi.failed => "Couldn't resend just now — try again shortly.",
         _ => '',
       };
@@ -226,7 +234,7 @@ class _ParentalConsentPendingSheetState
                           'Your account is waiting for a grown-up to approve it. '
                           'Ask them to check their email at '),
                   TextSpan(
-                    text: widget.maskedEmail,
+                    text: _maskedEmail,
                     style: AppTextStyles.body.copyWith(
                         color: AppColors.text1, fontWeight: FontWeight.w700),
                   ),

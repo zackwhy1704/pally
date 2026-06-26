@@ -77,7 +77,7 @@ class _PhotoPreviewScreenState extends ConsumerState<PhotoPreviewScreen> {
           // Pop back to chat and push new preview with gallery photo
           context.pop();
           context.push(
-            '/photo-preview',
+            '/avatar/${widget.avatarId}/photo-preview',
             extra: {'photoPath': picked.path, 'avatarId': widget.avatarId},
           );
         }
