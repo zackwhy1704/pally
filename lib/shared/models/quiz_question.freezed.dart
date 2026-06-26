@@ -22,8 +22,14 @@ QuizQuestion _$QuizQuestionFromJson(Map<String, dynamic> json) {
 mixin _$QuizQuestion {
   String get id => throw _privateConstructorUsedError;
   String get question => throw _privateConstructorUsedError;
-  List<String> get options => throw _privateConstructorUsedError;
-  int get correctIndex => throw _privateConstructorUsedError;
+  List<String> get options =>
+      throw _privateConstructorUsedError; // Nullable BY CONTRACT: the backend WITHHOLDS the answer key for
+// teacher-graded (centre) quizzes — `correctIndex` is null then, and the
+// correct answer is revealed only post-submit (QuizResult.feedback). A
+// `@Default(0)` here would collapse "withheld" into "index 0" and make the
+// UI confidently highlight option A as correct — the exact bug this
+// nullability prevents. Non-null = B2C daily quiz (instant feedback OK).
+  int? get correctIndex => throw _privateConstructorUsedError;
   String get sourcePage => throw _privateConstructorUsedError;
   String get explanation => throw _privateConstructorUsedError;
 
@@ -47,7 +53,7 @@ abstract class $QuizQuestionCopyWith<$Res> {
       {String id,
       String question,
       List<String> options,
-      int correctIndex,
+      int? correctIndex,
       String sourcePage,
       String explanation});
 }
@@ -70,7 +76,7 @@ class _$QuizQuestionCopyWithImpl<$Res, $Val extends QuizQuestion>
     Object? id = null,
     Object? question = null,
     Object? options = null,
-    Object? correctIndex = null,
+    Object? correctIndex = freezed,
     Object? sourcePage = null,
     Object? explanation = null,
   }) {
@@ -87,10 +93,10 @@ class _$QuizQuestionCopyWithImpl<$Res, $Val extends QuizQuestion>
           ? _value.options
           : options // ignore: cast_nullable_to_non_nullable
               as List<String>,
-      correctIndex: null == correctIndex
+      correctIndex: freezed == correctIndex
           ? _value.correctIndex
           : correctIndex // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       sourcePage: null == sourcePage
           ? _value.sourcePage
           : sourcePage // ignore: cast_nullable_to_non_nullable
@@ -115,7 +121,7 @@ abstract class _$$QuizQuestionImplCopyWith<$Res>
       {String id,
       String question,
       List<String> options,
-      int correctIndex,
+      int? correctIndex,
       String sourcePage,
       String explanation});
 }
@@ -136,7 +142,7 @@ class __$$QuizQuestionImplCopyWithImpl<$Res>
     Object? id = null,
     Object? question = null,
     Object? options = null,
-    Object? correctIndex = null,
+    Object? correctIndex = freezed,
     Object? sourcePage = null,
     Object? explanation = null,
   }) {
@@ -153,10 +159,10 @@ class __$$QuizQuestionImplCopyWithImpl<$Res>
           ? _value._options
           : options // ignore: cast_nullable_to_non_nullable
               as List<String>,
-      correctIndex: null == correctIndex
+      correctIndex: freezed == correctIndex
           ? _value.correctIndex
           : correctIndex // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       sourcePage: null == sourcePage
           ? _value.sourcePage
           : sourcePage // ignore: cast_nullable_to_non_nullable
@@ -176,7 +182,7 @@ class _$QuizQuestionImpl implements _QuizQuestion {
       {this.id = '',
       this.question = '',
       final List<String> options = const [],
-      this.correctIndex = 0,
+      this.correctIndex,
       this.sourcePage = '',
       this.explanation = ''})
       : _options = options;
@@ -199,9 +205,14 @@ class _$QuizQuestionImpl implements _QuizQuestion {
     return EqualUnmodifiableListView(_options);
   }
 
+// Nullable BY CONTRACT: the backend WITHHOLDS the answer key for
+// teacher-graded (centre) quizzes — `correctIndex` is null then, and the
+// correct answer is revealed only post-submit (QuizResult.feedback). A
+// `@Default(0)` here would collapse "withheld" into "index 0" and make the
+// UI confidently highlight option A as correct — the exact bug this
+// nullability prevents. Non-null = B2C daily quiz (instant feedback OK).
   @override
-  @JsonKey()
-  final int correctIndex;
+  final int? correctIndex;
   @override
   @JsonKey()
   final String sourcePage;
@@ -263,7 +274,7 @@ abstract class _QuizQuestion implements QuizQuestion {
       {final String id,
       final String question,
       final List<String> options,
-      final int correctIndex,
+      final int? correctIndex,
       final String sourcePage,
       final String explanation}) = _$QuizQuestionImpl;
 
@@ -275,9 +286,15 @@ abstract class _QuizQuestion implements QuizQuestion {
   @override
   String get question;
   @override
-  List<String> get options;
+  List<String>
+      get options; // Nullable BY CONTRACT: the backend WITHHOLDS the answer key for
+// teacher-graded (centre) quizzes — `correctIndex` is null then, and the
+// correct answer is revealed only post-submit (QuizResult.feedback). A
+// `@Default(0)` here would collapse "withheld" into "index 0" and make the
+// UI confidently highlight option A as correct — the exact bug this
+// nullability prevents. Non-null = B2C daily quiz (instant feedback OK).
   @override
-  int get correctIndex;
+  int? get correctIndex;
   @override
   String get sourcePage;
   @override

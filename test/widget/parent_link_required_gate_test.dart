@@ -29,8 +29,13 @@ class _ParentLinkAdapter implements HttpClientAdapter {
 
 void main() {
   testWidgets(
-      '403 PARENT_LINK_REQUIRED routes the child to the link-a-grown-up screen',
+      '403 PARENT_LINK_REQUIRED routes the child to /auth/setup (declare age)',
       (tester) async {
+    // Server-side, PARENT_LINK_REQUIRED is raised ONLY for an unknown birth year
+    // (AGE_DECLARATION_REQUIRED) — so the fix is to finish account setup, not to
+    // nag a parent. The old /family/link-code route never existed (it dead-ended
+    // on the error screen); the interceptor now routes to the registered
+    // /auth/setup. See route_references_exist_test for the guard that caught it.
     final navKey = GlobalKey<NavigatorState>();
 
     final router = GoRouter(
@@ -42,11 +47,10 @@ void main() {
           builder: (_, __) => const Scaffold(body: Text('Home')),
         ),
         GoRoute(
-          path: '/family/link-code',
-          // Lightweight stand-in for the real FamilyLinkCodeScreen (which runs
-          // a periodic countdown Timer). We only assert that the interceptor
-          // *navigates here*, so a stub keeps the test free of pending timers.
-          builder: (_, __) => const Scaffold(body: Text('Link a grown-up')),
+          path: '/auth/setup',
+          // Lightweight stand-in for the real setup screen — we only assert the
+          // interceptor *navigates here*.
+          builder: (_, __) => const Scaffold(body: Text('Account setup')),
         ),
       ],
     );
@@ -90,8 +94,8 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 3));
 
-    // The child landed on the "link a grown-up" screen as a blocking step.
-    expect(find.text('Link a grown-up'), findsOneWidget);
+    // The child landed on the account-setup screen as a blocking step.
+    expect(find.text('Account setup'), findsOneWidget);
     expect(find.text('Home'), findsNothing);
   });
 }

@@ -231,8 +231,14 @@ class QuizViewModel extends _$QuizViewModel {
     // their answer — that's the whole point of the metacognitive check.
     if (state.confidenceMode && state.selectedConfidence == null) return;
 
+    final correctIndex = question.correctIndex; // null = key withheld (centre)
     _answers[question.id] = answerIndex;
-    _correctMap[question.id] = question.correctIndex;
+    // Only send a client key when we have one. The server now grades from its
+    // own persisted key and ignores this map, but keep it for B2C/legacy. Never
+    // fabricate a 0 for a withheld key.
+    if (correctIndex != null) {
+      _correctMap[question.id] = correctIndex;
+    }
     if (question.sourcePage.isNotEmpty) {
       _topicMap[question.id] = question.sourcePage;
     }
@@ -241,12 +247,16 @@ class QuizViewModel extends _$QuizViewModel {
           state.selectedConfidence!.name.toUpperCase();
     }
 
-    final isCorrect = answerIndex == question.correctIndex;
+    // Local instant scoring ONLY when the key is known (B2C daily quiz). For a
+    // teacher-graded quiz the key is withheld, so we can't know correctness
+    // here — the server is authoritative and fills score/XP in post-submit.
+    final knownCorrect =
+        correctIndex == null ? null : answerIndex == correctIndex;
     state = state.copyWith(
       selectedAnswer: answerIndex,
       isAnswered: true,
-      score: isCorrect ? state.score + 1 : state.score,
-      xpEarned: isCorrect ? state.xpEarned + 20 : state.xpEarned,
+      score: knownCorrect == true ? state.score + 1 : state.score,
+      xpEarned: knownCorrect == true ? state.xpEarned + 20 : state.xpEarned,
     );
   }
 
@@ -289,6 +299,10 @@ class QuizViewModel extends _$QuizViewModel {
       final data =
           (body['data'] is Map ? body['data'] : body) as Map<String, dynamic>;
       final backendXp = (data['xpEarned'] as num?)?.toInt() ?? state.xpEarned;
+      // Server score is authoritative — and the ONLY score we have for a
+      // teacher-graded quiz, whose key was withheld so we couldn't grade
+      // locally. Falls back to the local estimate for legacy responses.
+      final backendScore = (data['score'] as num?)?.toInt() ?? state.score;
       final levelledUp = data['levelledUp'] == true;
       final newLevel = (data['newLevel'] as num?)?.toInt() ?? 0;
       final matrixJson = data['masteryMatrix'] as Map<String, dynamic>?;
@@ -311,6 +325,7 @@ class QuizViewModel extends _$QuizViewModel {
       ref.invalidate(progressViewModelProvider);
 
       state = state.copyWith(
+        score: backendScore,
         xpEarned: backendXp,
         levelledUp: levelledUp,
         newLevel: newLevel,

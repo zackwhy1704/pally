@@ -14,7 +14,7 @@ _$QuizQuestionImpl _$$QuizQuestionImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList() ??
           const [],
-      correctIndex: (json['correctIndex'] as num?)?.toInt() ?? 0,
+      correctIndex: (json['correctIndex'] as num?)?.toInt(),
       sourcePage: json['sourcePage'] as String? ?? '',
       explanation: json['explanation'] as String? ?? '',
     );

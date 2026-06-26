@@ -225,7 +225,10 @@ class _QuizBody extends StatelessWidget {
                 index: index,
                 isSelected: quizState.selectedAnswer == index,
                 isAnswered: quizState.isAnswered,
-                isCorrect: index == question.correctIndex,
+                // null = key withheld (centre quiz) → no instant verdict colour.
+                verdict: question.correctIndex == null
+                    ? null
+                    : index == question.correctIndex,
                 disabled: quizState.confidenceMode &&
                     quizState.selectedConfidence == null,
                 onTap: () => onAnswer(index),
@@ -234,14 +237,22 @@ class _QuizBody extends StatelessWidget {
           }),
           if (quizState.isAnswered) ...[
             const SizedBox(height: AppSpacing.md),
-            _ExplanationCard(
-              question: question,
-              isCorrect: quizState.selectedAnswer == question.correctIndex,
-              avatarId: avatarId,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            const _XpBadge(xp: 20),
-            const SizedBox(height: AppSpacing.md),
+            // B2C daily quiz (key known) → instant verdict + explanation.
+            // Teacher-graded quiz (key withheld) → no pre-submit reveal; the
+            // result + correct answer arrive post-submit on the results screen.
+            if (question.correctIndex != null) ...[
+              _ExplanationCard(
+                question: question,
+                isCorrect: quizState.selectedAnswer == question.correctIndex,
+                avatarId: avatarId,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              const _XpBadge(xp: 20),
+              const SizedBox(height: AppSpacing.md),
+            ] else ...[
+              const _AnswerLockedNote(),
+              const SizedBox(height: AppSpacing.md),
+            ],
             FilledButton(
               onPressed: onNext,
               style: FilledButton.styleFrom(
@@ -331,7 +342,7 @@ class _OptionButton extends StatelessWidget {
     required this.index,
     required this.isSelected,
     required this.isAnswered,
-    required this.isCorrect,
+    required this.verdict,
     required this.onTap,
     this.disabled = false,
   });
@@ -340,34 +351,44 @@ class _OptionButton extends StatelessWidget {
   final int index;
   final bool isSelected;
   final bool isAnswered;
-  final bool isCorrect;
+
+  /// Whether this option is the correct answer: true/false for a B2C quiz with
+  /// a known key, or NULL when the key is withheld (teacher-graded centre quiz)
+  /// — in which case the answered state shows NO correct/incorrect colour, just
+  /// the neutral "your pick" highlight. Never collapse null into a false verdict.
+  final bool? verdict;
   final VoidCallback onTap;
   final bool disabled;
 
+  bool get _isCorrect => verdict == true;
+  bool get _showVerdict => isAnswered && verdict != null;
+
   Color get _bgColor {
-    if (!isAnswered) {
+    // Unanswered, OR answered with no verdict to show (key withheld): the only
+    // signal is which option the student picked.
+    if (!_showVerdict) {
       return isSelected ? AppColors.purpleL : AppColors.surface;
     }
-    if (isCorrect) return AppColors.greenL;
-    if (isSelected && !isCorrect) return AppColors.coralL;
+    if (_isCorrect) return AppColors.greenL;
+    if (isSelected && !_isCorrect) return AppColors.coralL;
     return AppColors.surface;
   }
 
   Color get _borderColor {
-    if (!isAnswered) {
+    if (!_showVerdict) {
       return isSelected ? AppColors.purple : AppColors.outline;
     }
-    if (isCorrect) return AppColors.green;
-    if (isSelected && !isCorrect) return AppColors.coral;
+    if (_isCorrect) return AppColors.green;
+    if (isSelected && !_isCorrect) return AppColors.coral;
     return AppColors.outline;
   }
 
   Color get _textColor {
-    if (!isAnswered) {
+    if (!_showVerdict) {
       return isSelected ? AppColors.purple : AppColors.text1;
     }
-    if (isCorrect) return AppColors.green;
-    if (isSelected && !isCorrect) return AppColors.coral;
+    if (_isCorrect) return AppColors.green;
+    if (isSelected && !_isCorrect) return AppColors.coral;
     return AppColors.text2;
   }
 
@@ -412,15 +433,49 @@ class _OptionButton extends StatelessWidget {
                 style: AppTextStyles.body.copyWith(color: _textColor),
               ),
             ),
-            if (isAnswered && isCorrect)
+            if (_showVerdict && _isCorrect)
               const Icon(Icons.check_circle_rounded,
                   color: AppColors.green, size: 20),
-            if (isAnswered && isSelected && !isCorrect)
+            if (_showVerdict && isSelected && !_isCorrect)
               const Icon(Icons.cancel_rounded,
                   color: AppColors.coral, size: 20),
           ],
         ),
         ),
+      ),
+    );
+  }
+}
+
+/// Shown after answering a teacher-graded (centre) question, where the answer
+/// key is withheld by design — so there is no instant correct/incorrect reveal.
+/// Neutral on purpose: the result + correct answer arrive on the results screen
+/// after the whole quiz is submitted.
+class _AnswerLockedNote extends StatelessWidget {
+  const _AnswerLockedNote();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: AppSpacing.card,
+      decoration: BoxDecoration(
+        color: AppColors.surf2,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.outline),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.lock_clock_rounded,
+              color: AppColors.text2, size: 20),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Text(
+              "Answer locked in — you'll see your results at the end.",
+              style: AppTextStyles.body.copyWith(color: AppColors.text2),
+            ),
+          ),
+        ],
       ),
     );
   }
