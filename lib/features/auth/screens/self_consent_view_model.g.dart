@@ -7,7 +7,7 @@ part of 'self_consent_view_model.dart';
 // **************************************************************************
 
 String _$selfConsentViewModelHash() =>
-    r'efd0740991974d7f93c8667bd5b29437519c2f17';
+    r'c2bb11a2f0057d3e0acc711962de44dc81864b06';
 
 /// See also [SelfConsentViewModel].
 @ProviderFor(SelfConsentViewModel)
