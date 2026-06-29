@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "390174524136",
+    "project_id": "apalchi",
+    "storage_bucket": "apalchi.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:390174524136:android:caf85da20fe345eaef3f5d",
+        "android_client_info": {
+          "package_name": "com.apalchi.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVnljAs-3VupaONPY2WN2LDtnybnnTWfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
