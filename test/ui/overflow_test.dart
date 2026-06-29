@@ -29,7 +29,6 @@ import 'package:pally/features/wiki_viewer/data/review_service.dart';
 import 'package:pally/features/wiki_viewer/presentation/review_view_model.dart';
 import 'package:pally/features/wiki_viewer/presentation/review_status_widgets.dart';
 import 'package:pally/features/wiki_viewer/presentation/get_it_checked_sheet.dart';
-import 'package:pally/features/family/family_status_provider.dart';
 import 'package:pally/shared/models/wiki_page.dart';
 import 'package:pally/shared/models/assignment_detail.dart';
 import 'package:pally/shared/models/avatar.dart';
@@ -110,6 +109,7 @@ class _StubAssignmentDetail extends AssignmentDetailViewModel {
         dueDate: null,
         answersReleased: true,
         answersReleasedAt: null,
+        personalized: false,
         moduleIds: const ['m1'],
         questions: const [
           AssignmentQuestion(
@@ -155,6 +155,7 @@ class _StubAssignmentDetailLocked extends AssignmentDetailViewModel {
         dueDate: null,
         answersReleased: false,
         answersReleasedAt: null,
+        personalized: false,
         moduleIds: ['m1'],
         questions: [
           AssignmentQuestion(
@@ -554,37 +555,29 @@ void main() {
   });
 
   group('GetItCheckedSheet', () {
-    final withParent = [
+    final overrides = [
       reviewViewModelProvider('wp1').overrideWith(_StubReviewVm.new),
-      familyStatusProvider.overrideWith((ref) async =>
-          const FamilyStatus(accountType: AccountType.child, parentLinked: true)),
-    ];
-    final noParent = [
-      reviewViewModelProvider('wp1').overrideWith(_StubReviewVm.new),
-      familyStatusProvider.overrideWith((ref) async => FamilyStatus.empty),
     ];
 
-    testWidgets('no overflow with parent linked @ 320x568 textScale 1.3',
-        (tester) async {
+    testWidgets('no overflow @ 320x568 textScale 1.3', (tester) async {
       await _pumpAt(
         tester,
         GetItCheckedSheet(avatarId: 'a1', page: flaggedPage()),
         size: small,
         scale: 1.3,
-        extraOverrides: withParent,
+        extraOverrides: overrides,
       );
-      expect(find.text('Ask my parent'), findsOneWidget);
+      expect(find.text('Share review link'), findsOneWidget);
     });
 
-    testWidgets('"Ask my parent" hidden when unlinked', (tester) async {
+    testWidgets('no overflow @ 360x690 textScale 1.0', (tester) async {
       await _pumpAt(
         tester,
         GetItCheckedSheet(avatarId: 'a1', page: flaggedPage()),
         size: medium,
         scale: 1.0,
-        extraOverrides: noParent,
+        extraOverrides: overrides,
       );
-      expect(find.text('Ask my parent'), findsNothing);
       expect(find.text('Share review link'), findsOneWidget);
     });
   });
