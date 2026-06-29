@@ -54,5 +54,12 @@ app.*.map.json
 
 # Secrets — never commit (Firebase config + Admin SDK private key)
 android/app/google-services.json
+/google-services.json
 # Local eval/test fixtures + the Firebase admin key dumped under assets/documents
 assets/documents/
+
+# Golden test failure artifacts (regenerated on every failing run)
+test/golden/failures/
+
+# Xcode SwiftPM workspace state (Flutter-generated, not the .swiftpm/ dir)
+**/xcshareddata/swiftpm/
