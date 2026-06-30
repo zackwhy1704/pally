@@ -67,6 +67,11 @@ class _MochiGeneratingState extends State<MochiGenerating>
 
     // Phased step labels when no real progress
     if (widget.progress == null && (widget.stepLabels?.length ?? 0) > 1) {
+      // Seed a non-zero first-step value so the bar is determinate from the
+      // very first frame — otherwise a 0 value renders the indeterminate
+      // Material sweep (bar slides left→right and bounces) until the first
+      // phase tick, which reads as a broken, off-centre loading animation.
+      _timedProgress = 1 / widget.stepLabels!.length;
       _startPhaseTimer();
     }
   }
@@ -79,7 +84,7 @@ class _MochiGeneratingState extends State<MochiGenerating>
       if (_stepIndex < total - 1) {
         setState(() {
           _stepIndex++;
-          _timedProgress = _stepIndex / (total - 1);
+          _timedProgress = (_stepIndex + 1) / total;
         });
       }
     });
@@ -149,8 +154,10 @@ class _MochiGeneratingState extends State<MochiGenerating>
                   tween: Tween(begin: 0, end: _currentProgress),
                   duration: const Duration(milliseconds: 600),
                   curve: Curves.easeOut,
+                  // Always determinate — never fall back to `null`, which
+                  // triggers the indeterminate left→right sweep animation.
                   builder: (_, v, __) => LinearProgressIndicator(
-                    value: v > 0 ? v : null,
+                    value: v,
                     minHeight: AppSizing.progressBarHeight + 2, // 8dp — slightly taller for visibility
                     backgroundColor: AppColors.outline,
                     valueColor:
