@@ -20,6 +20,7 @@ import 'package:pally/features/progress/presentation/progress_view_model.dart';
 import 'package:pally/features/progress/presentation/streak_card.dart';
 import 'package:pally/features/progress/presentation/streak_milestone_controller.dart';
 import 'package:pally/features/progress/presentation/streak_status_provider.dart';
+import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
 import 'package:pally/features/subscription/trial_status_provider.dart';
 import 'package:pally/shared/models/achievement.dart';
@@ -47,7 +48,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
     ref.listen(streakStatusVmProvider, (_, next) {
       next.whenData((s) {
         StreakMilestoneController.maybeCelebrate(context,
-            milestonesReached: s.milestonesReached);
+            milestonesReached: s.milestonesReached,
+            userId: ref.read(authStateProvider).userId);
       });
     });
 
@@ -100,7 +102,10 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                 const SizedBox(height: AppSpacing.md),
                 const DailyGoalRing(),
                 const SizedBox(height: AppSpacing.md),
-                MilestoneInviteNudge(streakDays: progress.streakDays),
+                MilestoneInviteNudge(
+                  streakDays: progress.streakDays,
+                  userId: ref.read(authStateProvider).userId,
+                ),
                 const StreakCard(),
                 const SizedBox(height: AppSpacing.md),
                 const MasteryCard(),

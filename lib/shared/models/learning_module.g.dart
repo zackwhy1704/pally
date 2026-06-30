@@ -36,10 +36,10 @@ _$ModuleContentItemImpl _$$ModuleContentItemImplFromJson(
         Map<String, dynamic> json) =>
     _$ModuleContentItemImpl(
       id: json['id'] as String,
-      stage: json['stage'] as String,
+      stage: json['stage'] as String? ?? 'LEARN',
       type: json['type'] as String,
-      contentJson: json['contentJson'] as Map<String, dynamic>,
-      answerJson: json['answerJson'] as Map<String, dynamic>?,
+      contentJson: _contentJsonFromJson(json['contentJson']),
+      answerJson: _answerJsonFromJson(json['answerJson']),
       sortOrder: (json['sortOrder'] as num?)?.toInt() ?? 0,
     );
 

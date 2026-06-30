@@ -10,9 +10,18 @@ import 'package:pally/core/theme/app_text_styles.dart';
 /// milestone) — never an interruptive pop-up. Shows at most once per milestone
 /// (persisted), is dismissible, and renders nothing off-milestone or once seen.
 class MilestoneInviteNudge extends StatefulWidget {
-  const MilestoneInviteNudge({super.key, required this.streakDays});
+  const MilestoneInviteNudge({
+    super.key,
+    required this.streakDays,
+    this.userId,
+  });
 
   final int streakDays;
+
+  /// Scopes the per-milestone "seen" flag to the signed-in user so a reinstall,
+  /// logout→login, or another account on the same device doesn't inherit (or
+  /// leak) this user's dismissals.
+  final String? userId;
 
   /// Streak lengths worth celebrating with an invite ask.
   static const List<int> milestones = [3, 7, 14, 30, 60, 100];
@@ -45,6 +54,10 @@ class _MilestoneInviteNudgeState extends State<MilestoneInviteNudge> {
     final prefs = await SharedPreferences.getInstance();
     final seen = prefs.getBool(_key(milestone)) ?? false;
     if (!seen && mounted) {
+      // Persist "seen" the moment we show it — not only on dismiss — so
+      // navigating away without tapping Invite/✕ doesn't re-show it next visit.
+      await prefs.setBool(_key(milestone), true);
+      if (!mounted) return;
       setState(() {
         _milestone = milestone;
         _visible = true;
@@ -52,7 +65,8 @@ class _MilestoneInviteNudgeState extends State<MilestoneInviteNudge> {
     }
   }
 
-  String _key(int milestone) => 'invite_nudge_streak_$milestone';
+  String _key(int milestone) =>
+      'invite_nudge_streak_${widget.userId ?? 'anon'}_$milestone';
 
   Future<void> _markSeen() async {
     final prefs = await SharedPreferences.getInstance();

@@ -7,7 +7,7 @@ part of 'homework_submit_view_model.dart';
 // **************************************************************************
 
 String _$homeworkSubmitViewModelHash() =>
-    r'a4de878956123790bafc1ff4f737d6ae9d0c56a8';
+    r'd2ca900e1299aec688bce6ea09889841754a037d';
 
 /// Copied from Dart SDK
 class _SystemHash {

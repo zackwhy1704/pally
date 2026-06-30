@@ -323,10 +323,14 @@ ModuleContentItem _$ModuleContentItemFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ModuleContentItem {
-  String get id => throw _privateConstructorUsedError;
+  String get id =>
+      throw _privateConstructorUsedError; // The per-item stage is informational on mobile (rendering keys off the
+// response-level stage), so default it for resilience if a server omits it.
   String get stage => throw _privateConstructorUsedError;
   String get type => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _contentJsonFromJson)
   Map<String, dynamic> get contentJson => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _answerJsonFromJson)
   Map<String, dynamic>? get answerJson => throw _privateConstructorUsedError;
   int get sortOrder => throw _privateConstructorUsedError;
 
@@ -350,8 +354,8 @@ abstract class $ModuleContentItemCopyWith<$Res> {
       {String id,
       String stage,
       String type,
-      Map<String, dynamic> contentJson,
-      Map<String, dynamic>? answerJson,
+      @JsonKey(fromJson: _contentJsonFromJson) Map<String, dynamic> contentJson,
+      @JsonKey(fromJson: _answerJsonFromJson) Map<String, dynamic>? answerJson,
       int sortOrder});
 }
 
@@ -418,8 +422,8 @@ abstract class _$$ModuleContentItemImplCopyWith<$Res>
       {String id,
       String stage,
       String type,
-      Map<String, dynamic> contentJson,
-      Map<String, dynamic>? answerJson,
+      @JsonKey(fromJson: _contentJsonFromJson) Map<String, dynamic> contentJson,
+      @JsonKey(fromJson: _answerJsonFromJson) Map<String, dynamic>? answerJson,
       int sortOrder});
 }
 
@@ -477,9 +481,11 @@ class __$$ModuleContentItemImplCopyWithImpl<$Res>
 class _$ModuleContentItemImpl implements _ModuleContentItem {
   const _$ModuleContentItemImpl(
       {required this.id,
-      required this.stage,
+      this.stage = 'LEARN',
       required this.type,
+      @JsonKey(fromJson: _contentJsonFromJson)
       required final Map<String, dynamic> contentJson,
+      @JsonKey(fromJson: _answerJsonFromJson)
       final Map<String, dynamic>? answerJson,
       this.sortOrder = 0})
       : _contentJson = contentJson,
@@ -490,12 +496,16 @@ class _$ModuleContentItemImpl implements _ModuleContentItem {
 
   @override
   final String id;
+// The per-item stage is informational on mobile (rendering keys off the
+// response-level stage), so default it for resilience if a server omits it.
   @override
+  @JsonKey()
   final String stage;
   @override
   final String type;
   final Map<String, dynamic> _contentJson;
   @override
+  @JsonKey(fromJson: _contentJsonFromJson)
   Map<String, dynamic> get contentJson {
     if (_contentJson is EqualUnmodifiableMapView) return _contentJson;
     // ignore: implicit_dynamic_type
@@ -504,6 +514,7 @@ class _$ModuleContentItemImpl implements _ModuleContentItem {
 
   final Map<String, dynamic>? _answerJson;
   @override
+  @JsonKey(fromJson: _answerJsonFromJson)
   Map<String, dynamic>? get answerJson {
     final value = _answerJson;
     if (value == null) return null;
@@ -568,9 +579,11 @@ class _$ModuleContentItemImpl implements _ModuleContentItem {
 abstract class _ModuleContentItem implements ModuleContentItem {
   const factory _ModuleContentItem(
       {required final String id,
-      required final String stage,
+      final String stage,
       required final String type,
+      @JsonKey(fromJson: _contentJsonFromJson)
       required final Map<String, dynamic> contentJson,
+      @JsonKey(fromJson: _answerJsonFromJson)
       final Map<String, dynamic>? answerJson,
       final int sortOrder}) = _$ModuleContentItemImpl;
 
@@ -578,14 +591,18 @@ abstract class _ModuleContentItem implements ModuleContentItem {
       _$ModuleContentItemImpl.fromJson;
 
   @override
-  String get id;
+  String
+      get id; // The per-item stage is informational on mobile (rendering keys off the
+// response-level stage), so default it for resilience if a server omits it.
   @override
   String get stage;
   @override
   String get type;
   @override
+  @JsonKey(fromJson: _contentJsonFromJson)
   Map<String, dynamic> get contentJson;
   @override
+  @JsonKey(fromJson: _answerJsonFromJson)
   Map<String, dynamic>? get answerJson;
   @override
   int get sortOrder;

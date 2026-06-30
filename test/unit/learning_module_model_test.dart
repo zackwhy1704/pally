@@ -82,6 +82,53 @@ void main() {
       expect(item.sortOrder, 0);
       expect(item.answerJson, isNull);
     });
+
+    // Regression: the backend stores content_json/answer_json as serialized
+    // JSON *strings*, and the /start endpoint emits them as strings. The parser
+    // must decode a string into a Map instead of hard-casting (which threw and
+    // emptied the lesson → "Something went wrong loading this lesson").
+    test('fromJson decodes contentJson/answerJson when sent as JSON strings', () {
+      final json = {
+        'id': 'item-3',
+        'stage': 'LEARN',
+        'type': 'MICRO_CARD',
+        'contentJson': '{"title":"Intro","body":"Hello"}',
+        'answerJson': '{"correct":true}',
+        'sortOrder': 1,
+      };
+      final item = ModuleContentItem.fromJson(json);
+
+      expect(item.contentJson['title'], 'Intro');
+      expect(item.contentJson['body'], 'Hello');
+      expect(item.answerJson?['correct'], true);
+    });
+
+    // Regression: the /start path historically omitted `stage`. A missing or
+    // null stage must default rather than throw, since rendering keys off the
+    // response-level stage, not the per-item one.
+    test('fromJson defaults stage to LEARN when missing', () {
+      final json = {
+        'id': 'item-4',
+        'type': 'MICRO_CARD',
+        'contentJson': {'title': 'No stage here'},
+      };
+      final item = ModuleContentItem.fromJson(json);
+
+      expect(item.stage, 'LEARN');
+      expect(item.contentJson['title'], 'No stage here');
+    });
+
+    test('fromJson degrades a malformed contentJson string to empty map '
+        'instead of throwing', () {
+      final json = {
+        'id': 'item-5',
+        'type': 'MICRO_CARD',
+        'contentJson': 'not-json-at-all',
+      };
+      final item = ModuleContentItem.fromJson(json);
+
+      expect(item.contentJson, isEmpty);
+    });
   });
 
   group('ModuleResults', () {
