@@ -9,8 +9,6 @@ import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/app_update/force_update_screen.dart';
 import 'package:pally/features/auth/screens/splash_screen.dart';
 import 'package:pally/features/auth/screens/sign_in_screen.dart';
-import 'package:pally/features/auth/screens/sign_up_screen.dart';
-import 'package:pally/features/auth/screens/child_setup_screen.dart';
 import 'package:pally/features/avatar_picker/screens/avatar_picker_screen.dart';
 import 'package:pally/features/home/presentation/home_screen.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
@@ -56,7 +54,6 @@ import 'package:pally/features/modules/presentation/module_player_screen.dart';
 import 'package:pally/features/exam_prep/presentation/exam_prep_screen.dart';
 import 'package:pally/features/assignments/presentation/assignment_compare_screen.dart';
 import 'package:pally/features/auth/screens/centre_block_screen.dart';
-import 'package:pally/features/auth/screens/self_consent_screen.dart';
 import 'package:pally/features/consent/presentation/ai_disclosure_screen.dart';
 import 'package:pally/features/ocr_awareness/screens/ocr_what_can_read.dart';
 import 'package:pally/shared/models/photo_question.dart';
@@ -541,15 +538,6 @@ class SignInRoute extends GoRouteData {
       const SignInScreen();
 }
 
-@TypedGoRoute<SignUpRoute>(path: '/auth/signup')
-class SignUpRoute extends GoRouteData {
-  const SignUpRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const SignUpScreen();
-}
-
 @TypedGoRoute<CentreBlockRoute>(path: '/auth/centre-block')
 class CentreBlockRoute extends GoRouteData {
   const CentreBlockRoute();
@@ -557,15 +545,6 @@ class CentreBlockRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const CentreBlockScreen();
-}
-
-@TypedGoRoute<ChildSetupRoute>(path: '/auth/setup')
-class ChildSetupRoute extends GoRouteData {
-  const ChildSetupRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const ChildSetupScreen();
 }
 
 @TypedGoRoute<AvatarPickerRoute>(path: '/auth/avatar')
@@ -614,15 +593,6 @@ class OcrGuideRoute extends GoRouteData {
       const OcrWhatCanReadScreen();
 }
 
-@TypedGoRoute<SelfConsentRoute>(path: '/consent/self')
-class SelfConsentRoute extends GoRouteData {
-  const SelfConsentRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const SelfConsentScreen();
-}
-
 @TypedGoRoute<AiDisclosureRoute>(path: '/consent/ai-disclosure')
 class AiDisclosureRoute extends GoRouteData {
   const AiDisclosureRoute({this.info = false});
@@ -656,8 +626,6 @@ class PhotoPreviewRoute extends GoRouteData {
 const _publicPaths = {
   '/force-update', // forced-update gate — reachable regardless of auth state
   '/auth/signin',
-  '/auth/signup',
-  '/auth/setup',
   '/auth/avatar',
   '/auth/centre-block',
   '/onboarding',
@@ -705,8 +673,14 @@ GoRouter buildAppRouter({
         return '/auth/signin';
       }
 
+      if (auth.isSignedIn && auth.awaitingConsent &&
+          !path.startsWith('/onboarding/direct') &&
+          !path.startsWith('/auth/')) {
+        return '/onboarding/direct';
+      }
+
       if (auth.isSignedIn && path == '/') {
-        if (!auth.isSetupComplete) return '/auth/setup';
+        if (!auth.isSetupComplete) return '/onboarding/direct';
         if (!auth.isOnboardingComplete) return '/onboarding';
       }
 

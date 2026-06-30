@@ -380,12 +380,10 @@ class _ServerErrorInterceptor extends Interceptor {
     }
   }
 
-  /// Routes a user to the account-setup screen on a 403 `PARENT_LINK_REQUIRED`.
-  /// Server-side this code is raised only when the birth year is unknown
-  /// (`AGE_DECLARATION_REQUIRED`) — so the fix is to declare your age in setup,
-  /// not to nag a parent. Routes to the registered `/auth/setup` (the old
-  /// `/family/link-code` was never a real route). Rate-limited to once per
-  /// second so a refresh storm can't stack the screen.
+  /// Routes a user to the direct onboarding screen on a 403
+  /// `PARENT_LINK_REQUIRED` / `AGE_DECLARATION_REQUIRED`. Both indicate that
+  /// the user needs to complete or retry the age + consent step, which now
+  /// lives in `/onboarding/direct`. Rate-limited to once per second.
   void _handleParentLinkRequired() {
     final now = DateTime.now();
     final allowed = _lastParentLinkRoute == null ||
@@ -400,7 +398,7 @@ class _ServerErrorInterceptor extends Interceptor {
         ctx,
         "Let's finish setting up your account so you can start learning",
       );
-      ctx.go('/auth/setup');
+      ctx.go('/onboarding/direct');
     } catch (_) {
       // Fall through; the view model will surface the original error.
     }

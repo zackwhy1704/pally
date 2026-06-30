@@ -54,7 +54,8 @@ Future<String> resolveStartRoute(Ref ref) async {
     appLog.w('[Splash] Startup error, using cached auth state: $e');
   }
 
-  if (!auth.isSetupComplete) return '/auth/setup';
+  if (auth.awaitingConsent) return '/onboarding/direct';
+  if (!auth.isSetupComplete) return '/onboarding/direct';
   if (!auth.isOnboardingComplete) return '/onboarding';
   return '/';
 }

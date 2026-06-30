@@ -29,12 +29,14 @@ class _DirectOnboardingScreenState
   final _nameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
+  final _parentEmailCtrl = TextEditingController();
 
   @override
   void dispose() {
     _nameCtrl.dispose();
     _emailCtrl.dispose();
     _passCtrl.dispose();
+    _parentEmailCtrl.dispose();
     super.dispose();
   }
 
@@ -61,6 +63,19 @@ class _DirectOnboardingScreenState
       },
     );
 
+    // Under-13 waiting for parental consent — overrides the normal step flow.
+    if (vm.awaitingConsent) {
+      return Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: AppColors.bg,
+        body: SafeArea(
+          child: _ParentConsentPending(
+            maskedParentEmail: vm.maskedParentEmail ?? '',
+          ),
+        ),
+      );
+    }
+
     return PopScope(
       canPop: vm.step <= 1,
       child: Scaffold(
@@ -76,6 +91,7 @@ class _DirectOnboardingScreenState
                       nameCtrl: _nameCtrl,
                       emailCtrl: _emailCtrl,
                       passCtrl: _passCtrl,
+                      parentEmailCtrl: _parentEmailCtrl,
                     ),
                   2 => _Step2SubjectLevel(
                       nameCtrl: _nameCtrl,
@@ -139,11 +155,13 @@ class _Step1SignUp extends ConsumerStatefulWidget {
     required this.nameCtrl,
     required this.emailCtrl,
     required this.passCtrl,
+    required this.parentEmailCtrl,
   });
 
   final TextEditingController nameCtrl;
   final TextEditingController emailCtrl;
   final TextEditingController passCtrl;
+  final TextEditingController parentEmailCtrl;
 
   @override
   ConsumerState<_Step1SignUp> createState() => _Step1SignUpState();
@@ -155,12 +173,37 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
 
   void _next() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    // Move to step 2 — we don't call quickOnboard yet; that happens in step 2.
-    ref.read(directOnboardingViewModelProvider.notifier).goToStep(2);
+    final notifier =
+        ref.read(directOnboardingViewModelProvider.notifier);
+    final isUnder13 =
+        ref.read(directOnboardingViewModelProvider).isUnder13;
+    if (isUnder13 == null) {
+      // Force user to select an age group before proceeding.
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Please select your age group to continue.',
+            style: AppTextStyles.bodySmall.copyWith(color: Colors.white),
+          ),
+          backgroundColor: AppColors.coral,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+      return;
+    }
+    if (isUnder13) {
+      notifier.setParentEmail(widget.parentEmailCtrl.text.trim());
+    }
+    notifier.goToStep(2);
   }
 
   @override
   Widget build(BuildContext context) {
+    final vm = ref.watch(directOnboardingViewModelProvider);
+    final isUnder13 = vm.isUnder13;
+    final notifier = ref.read(directOnboardingViewModelProvider.notifier);
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
       child: Form(
@@ -242,6 +285,49 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
                 return null;
               },
             ),
+            const SizedBox(height: AppSpacing.lg),
+            // Age group selection — required for legal consent.
+            Text(
+              'Age group',
+              style: AppTextStyles.label.copyWith(fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            _AgeGroupTile(
+              label: 'I am 13 or older',
+              selected: isUnder13 == false,
+              onTap: () => notifier.setAgeGroup(isUnder13: false),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            _AgeGroupTile(
+              label: 'I am under 13',
+              selected: isUnder13 == true,
+              onTap: () => notifier.setAgeGroup(isUnder13: true),
+            ),
+            // Parent email field — only shown for under-13.
+            if (isUnder13 == true) ...[
+              const SizedBox(height: AppSpacing.md),
+              _Field(
+                label: "Parent's email address",
+                hint: 'parent@example.com',
+                controller: widget.parentEmailCtrl,
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.done,
+                validator: (v) {
+                  if (v == null ||
+                      !v.contains('@') ||
+                      !v.contains('.')) {
+                    return 'Please enter a valid parent email';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                "We'll email your parent to approve your account before you can use AI features.",
+                style: AppTextStyles.bodySmall
+                    .copyWith(color: AppColors.text2),
+              ),
+            ],
             const SizedBox(height: AppSpacing.xl),
             SizedBox(
               height: AppSizing.buttonHeight,
@@ -269,6 +355,62 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
               ),
             ),
             const SizedBox(height: AppSpacing.xl),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AgeGroupTile extends StatelessWidget {
+  const _AgeGroupTile({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm + 2,
+        ),
+        decoration: BoxDecoration(
+          color: selected ? AppColors.purpleL : AppColors.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: selected ? AppColors.purple : AppColors.outline,
+            width: selected ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              selected
+                  ? Icons.radio_button_checked_rounded
+                  : Icons.radio_button_off_rounded,
+              color: selected ? AppColors.purple : AppColors.text3,
+              size: 20,
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Flexible(
+              child: Text(
+                label,
+                style: AppTextStyles.body.copyWith(
+                  color: selected ? AppColors.purple : AppColors.text1,
+                  fontWeight:
+                      selected ? FontWeight.w700 : FontWeight.w400,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
       ),
@@ -945,6 +1087,121 @@ class _ReadyView extends StatelessWidget {
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Parent consent pending ──────────────────────────────────────────────────
+
+class _ParentConsentPending extends ConsumerWidget {
+  const _ParentConsentPending({required this.maskedParentEmail});
+
+  final String maskedParentEmail;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final vm = ref.watch(directOnboardingViewModelProvider);
+    final notifier = ref.read(directOnboardingViewModelProvider.notifier);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(height: AppSpacing.xl),
+          Center(
+            child: Image.asset(
+              'assets/images/mochi.png',
+              width: AppSizing.heroMochiSize,
+              height: AppSizing.heroMochiSize,
+              fit: BoxFit.contain,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          Text(
+            'Check your parent\'s email!',
+            style: AppTextStyles.heading1,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            'We sent a consent request to:',
+            style: AppTextStyles.body.copyWith(color: AppColors.text2),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            maskedParentEmail,
+            style: AppTextStyles.body.copyWith(
+              fontWeight: FontWeight.w700,
+              color: AppColors.text1,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            'Ask a parent or guardian to click the link in the email. Your account will unlock as soon as they approve.',
+            style: AppTextStyles.body.copyWith(color: AppColors.text2),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppSpacing.xl),
+          if (vm.consentResendError != null) ...[
+            Container(
+              padding: AppSpacing.card,
+              decoration: BoxDecoration(
+                color: AppColors.coralL,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                vm.consentResendError!,
+                style: AppTextStyles.body.copyWith(color: AppColors.coral),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
+          SizedBox(
+            height: AppSizing.buttonHeight,
+            child: OutlinedButton(
+              onPressed: vm.isLoading ? null : notifier.resendParentConsent,
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: AppColors.purple),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14)),
+              ),
+              child: vm.isLoading
+                  ? const SizedBox(
+                      width: AppSizing.spinnerSm,
+                      height: AppSizing.spinnerSm,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: AppColors.purple),
+                    )
+                  : Text(
+                      'Resend consent email',
+                      style: AppTextStyles.body.copyWith(
+                          color: AppColors.purple,
+                          fontWeight: FontWeight.w600),
+                    ),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Center(
+            child: TextButton(
+              onPressed: () async {
+                await notifier.signOutFromConsentScreen();
+                if (context.mounted) context.go('/auth/signin');
+              },
+              style: TextButton.styleFrom(foregroundColor: AppColors.text2),
+              child: Text(
+                'Sign out and use a different account',
+                style: AppTextStyles.bodySmall,
+              ),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xl),
         ],
       ),
     );

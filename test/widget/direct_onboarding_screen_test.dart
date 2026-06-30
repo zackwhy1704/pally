@@ -28,6 +28,54 @@ void main() {
       expect(find.text('Next'), findsOneWidget);
       expect(find.text('Already have an account? Sign in'), findsOneWidget);
       expect(find.text('Step 1 of 3'), findsOneWidget);
+      // Age group selectors are present
+      expect(find.text('I am 13 or older'), findsOneWidget);
+      expect(find.text('I am under 13'), findsOneWidget);
+    });
+
+    testWidgets('step 1 parent email hidden when 13+', (tester) async {
+      await tester.pumpWidget(_wrap(
+        const DirectOnboardingScreen(),
+        overrides: [
+          directOnboardingViewModelProvider
+              .overrideWith(() => _Step1AgeKnownVM(isUnder13: false)),
+        ],
+      ));
+
+      expect(find.text("Parent's email address"), findsNothing);
+    });
+
+    testWidgets('step 1 parent email shown when under 13', (tester) async {
+      await tester.pumpWidget(_wrap(
+        const DirectOnboardingScreen(),
+        overrides: [
+          directOnboardingViewModelProvider
+              .overrideWith(() => _Step1AgeKnownVM(isUnder13: true)),
+        ],
+      ));
+
+      expect(find.text("Parent's email address"), findsOneWidget);
+      expect(
+        find.text(
+            "We'll email your parent to approve your account before you can use AI features."),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('consent-pending screen shows masked email and resend button',
+        (tester) async {
+      await tester.pumpWidget(_wrap(
+        const DirectOnboardingScreen(),
+        overrides: [
+          directOnboardingViewModelProvider
+              .overrideWith(() => _ConsentPendingVM()),
+        ],
+      ));
+
+      expect(find.text("Check your parent's email!"), findsOneWidget);
+      expect(find.text('j***e@gmail.com'), findsOneWidget);
+      expect(find.text('Resend consent email'), findsOneWidget);
+      expect(find.text('Sign out and use a different account'), findsOneWidget);
     });
 
     testWidgets('step 2 renders subject and level pickers', (tester) async {
@@ -135,5 +183,22 @@ class _Step3ReadyVM extends DirectOnboardingViewModel {
         uploadStage: DirectUploadStage.ready,
         firstModuleId: 'mod-1',
         firstModuleTitle: 'Fractions',
+      );
+}
+
+class _Step1AgeKnownVM extends DirectOnboardingViewModel {
+  _Step1AgeKnownVM({required this.isUnder13});
+  final bool isUnder13;
+
+  @override
+  DirectOnboardingState build() =>
+      DirectOnboardingState(step: 1, isUnder13: isUnder13);
+}
+
+class _ConsentPendingVM extends DirectOnboardingViewModel {
+  @override
+  DirectOnboardingState build() => const DirectOnboardingState(
+        awaitingConsent: true,
+        maskedParentEmail: 'j***e@gmail.com',
       );
 }

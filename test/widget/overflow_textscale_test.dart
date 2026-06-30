@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/features/join/presentation/join_screen.dart';
-import 'package:pally/features/auth/screens/sign_up_screen.dart';
+import 'package:pally/features/onboarding/presentation/direct_onboarding_screen.dart';
 
 /// Prevention harness for the recurring overflow class: render key entry screens
 /// on a NARROW surface (320 dp) AND at a large accessibility text scale (2.0×) —
@@ -59,9 +59,10 @@ void main() {
     });
   });
 
-  group('SignUpScreen — no overflow under narrow + large-text', () {
+  group('DirectOnboardingScreen — no overflow under narrow + large-text', () {
     testWidgets('320 dp @ 2.0× text scale', (tester) async {
-      await _pumpScreen(tester, const SignUpScreen(), size: narrow, textScale: 2.0);
+      await _pumpScreen(tester, const DirectOnboardingScreen(),
+          size: narrow, textScale: 2.0);
       expect(tester.takeException(), isNull);
     });
   });

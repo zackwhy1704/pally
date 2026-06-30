@@ -29,13 +29,11 @@ class _ParentLinkAdapter implements HttpClientAdapter {
 
 void main() {
   testWidgets(
-      '403 PARENT_LINK_REQUIRED routes the child to /auth/setup (declare age)',
+      '403 PARENT_LINK_REQUIRED routes the child to /onboarding/direct',
       (tester) async {
-    // Server-side, PARENT_LINK_REQUIRED is raised ONLY for an unknown birth year
-    // (AGE_DECLARATION_REQUIRED) — so the fix is to finish account setup, not to
-    // nag a parent. The old /family/link-code route never existed (it dead-ended
-    // on the error screen); the interceptor now routes to the registered
-    // /auth/setup. See route_references_exist_test for the guard that caught it.
+    // PARENT_LINK_REQUIRED / AGE_DECLARATION_REQUIRED both land the user at
+    // /onboarding/direct so they can complete or retry the age + consent step.
+    // Flow B (/auth/setup) was deleted; /onboarding/direct is the sole entry.
     final navKey = GlobalKey<NavigatorState>();
 
     final router = GoRouter(
@@ -47,9 +45,7 @@ void main() {
           builder: (_, __) => const Scaffold(body: Text('Home')),
         ),
         GoRoute(
-          path: '/auth/setup',
-          // Lightweight stand-in for the real setup screen — we only assert the
-          // interceptor *navigates here*.
+          path: '/onboarding/direct',
           builder: (_, __) => const Scaffold(body: Text('Account setup')),
         ),
       ],

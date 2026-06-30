@@ -89,9 +89,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       // Fire-and-forget FCM token registration.
       FcmTokenService(ref.read(dioProvider)).registerToken();
       if (mounted) {
-        // 13+-only app: no parent accounts. A stale PARENT token routes like a
-        // student (never into the removed parent screens).
-        context.go(result.setupComplete ? '/' : '/auth/setup');
+        context.go(result.setupComplete ? '/' : '/onboarding/direct');
       }
     } on AuthException catch (e) {
       if (mounted) _showError(e.message);
@@ -148,7 +146,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       await Future.delayed(const Duration(milliseconds: 1200));
       if (mounted) {
         Navigator.of(context).pop();
-        context.go(result.setupComplete ? '/' : '/auth/setup');
+        context.go(result.setupComplete ? '/' : '/onboarding/direct');
       }
     } on AuthException catch (e) {
       _bioStateCtrl.add(_BiometricState.failed);
@@ -435,7 +433,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                           style: AppTextStyles.bodySmall),
                       const SizedBox(width: 8),
                       GestureDetector(
-                        onTap: () => context.push('/auth/signup'),
+                        onTap: () => context.push('/onboarding/direct'),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 14, vertical: 6),

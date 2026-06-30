@@ -40,15 +40,12 @@ List<RouteBase> get $appRoutes => [
       $examPrepRoute,
       $splashRoute,
       $signInRoute,
-      $signUpRoute,
       $centreBlockRoute,
-      $childSetupRoute,
       $avatarPickerRoute,
       $onboardingRoute,
       $directOnboardingRoute,
       $cameraRoute,
       $ocrGuideRoute,
-      $selfConsentRoute,
       $aiDisclosureRoute,
       $photoPreviewRoute,
     ];
@@ -1004,28 +1001,6 @@ extension $SignInRouteExtension on SignInRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $signUpRoute => GoRouteData.$route(
-      path: '/auth/signup',
-      factory: $SignUpRouteExtension._fromState,
-    );
-
-extension $SignUpRouteExtension on SignUpRoute {
-  static SignUpRoute _fromState(GoRouterState state) => const SignUpRoute();
-
-  String get location => GoRouteData.$location(
-        '/auth/signup',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  void replace(BuildContext context) => context.replace(location);
-}
-
 RouteBase get $centreBlockRoute => GoRouteData.$route(
       path: '/auth/centre-block',
       factory: $CentreBlockRouteExtension._fromState,
@@ -1037,29 +1012,6 @@ extension $CentreBlockRouteExtension on CentreBlockRoute {
 
   String get location => GoRouteData.$location(
         '/auth/centre-block',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $childSetupRoute => GoRouteData.$route(
-      path: '/auth/setup',
-      factory: $ChildSetupRouteExtension._fromState,
-    );
-
-extension $ChildSetupRouteExtension on ChildSetupRoute {
-  static ChildSetupRoute _fromState(GoRouterState state) =>
-      const ChildSetupRoute();
-
-  String get location => GoRouteData.$location(
-        '/auth/setup',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -1199,29 +1151,6 @@ extension $OcrGuideRouteExtension on OcrGuideRoute {
 
   String get location => GoRouteData.$location(
         '/ocr-guide',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $selfConsentRoute => GoRouteData.$route(
-      path: '/consent/self',
-      factory: $SelfConsentRouteExtension._fromState,
-    );
-
-extension $SelfConsentRouteExtension on SelfConsentRoute {
-  static SelfConsentRoute _fromState(GoRouterState state) =>
-      const SelfConsentRoute();
-
-  String get location => GoRouteData.$location(
-        '/consent/self',
       );
 
   void go(BuildContext context) => context.go(location);

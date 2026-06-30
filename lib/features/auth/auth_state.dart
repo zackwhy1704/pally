@@ -12,6 +12,8 @@ class AuthState {
     this.isOnboardingComplete = false,
     this.childName,
     this.accountType,
+    this.awaitingConsent = false,
+    this.maskedParentEmail,
   });
 
   final String? userId;
@@ -22,6 +24,13 @@ class AuthState {
 
   /// Account role: "PARENT" or "STUDENT" (null = unknown / legacy).
   final String? accountType;
+
+  /// True when this account is waiting for parental consent (under-13 flow).
+  /// Persisted so the app reopens on the waiting screen, not the main app.
+  final bool awaitingConsent;
+
+  /// Masked parent email shown on the consent-pending screen (e.g. "j***@gmail.com").
+  final String? maskedParentEmail;
 
   bool get isSignedIn => userId != null && token != null;
 
@@ -35,6 +44,8 @@ class AuthState {
     bool? isOnboardingComplete,
     String? childName,
     Object? accountType = _authSentinel,
+    bool? awaitingConsent,
+    Object? maskedParentEmail = _authSentinel,
   }) {
     return AuthState(
       userId: userId ?? this.userId,
@@ -45,6 +56,10 @@ class AuthState {
       accountType: accountType == _authSentinel
           ? this.accountType
           : accountType as String?,
+      awaitingConsent: awaitingConsent ?? this.awaitingConsent,
+      maskedParentEmail: maskedParentEmail == _authSentinel
+          ? this.maskedParentEmail
+          : maskedParentEmail as String?,
     );
   }
 }
@@ -67,6 +82,8 @@ class AuthNotifier extends ChangeNotifier {
   static const _keyAccountType = 'auth_account_type';
   static const _keyBiometricRegistered = 'biometric_registered';
   static const _keyLastUserId = 'auth_last_user_id';
+  static const _keyAwaitingConsent = 'auth_awaiting_consent';
+  static const _keyMaskedParentEmail = 'auth_masked_parent_email';
 
   AuthState _state = const AuthState();
   AuthState get state => _state;
@@ -78,6 +95,8 @@ class AuthNotifier extends ChangeNotifier {
     final onboardingRaw = await _storage.read(key: _keyOnboardingComplete);
     final childName = await _storage.read(key: _keyChildName);
     final accountType = await _storage.read(key: _keyAccountType);
+    final awaitingConsentRaw = await _storage.read(key: _keyAwaitingConsent);
+    final maskedParentEmail = await _storage.read(key: _keyMaskedParentEmail);
     _state = AuthState(
       userId: userId,
       token: token,
@@ -85,6 +104,8 @@ class AuthNotifier extends ChangeNotifier {
       isOnboardingComplete: onboardingRaw == 'true',
       childName: childName,
       accountType: accountType,
+      awaitingConsent: awaitingConsentRaw == 'true',
+      maskedParentEmail: maskedParentEmail,
     );
     notifyListeners();
   }
@@ -143,6 +164,26 @@ class AuthNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setAwaitingConsent({required String maskedParentEmail}) async {
+    await _storage.write(key: _keyAwaitingConsent, value: 'true');
+    await _storage.write(key: _keyMaskedParentEmail, value: maskedParentEmail);
+    _state = _state.copyWith(
+      awaitingConsent: true,
+      maskedParentEmail: maskedParentEmail,
+    );
+    notifyListeners();
+  }
+
+  Future<void> clearAwaitingConsent() async {
+    await _storage.delete(key: _keyAwaitingConsent);
+    await _storage.delete(key: _keyMaskedParentEmail);
+    _state = _state.copyWith(
+      awaitingConsent: false,
+      maskedParentEmail: null,
+    );
+    notifyListeners();
+  }
+
   Future<void> markBiometricRegistered() async {
     await _storage.write(key: _keyBiometricRegistered, value: 'true');
   }
@@ -170,6 +211,8 @@ class AuthNotifier extends ChangeNotifier {
     await _storage.delete(key: _keyOnboardingComplete);
     await _storage.delete(key: _keyChildName);
     await _storage.delete(key: _keyAccountType);
+    await _storage.delete(key: _keyAwaitingConsent);
+    await _storage.delete(key: _keyMaskedParentEmail);
     _state = const AuthState();
     notifyListeners();
   }

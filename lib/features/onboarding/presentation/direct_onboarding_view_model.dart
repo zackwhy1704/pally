@@ -70,6 +70,11 @@ class DirectOnboardingState {
     this.uploadStage = DirectUploadStage.idle,
     this.firstModuleId,
     this.firstModuleTitle,
+    this.isUnder13,
+    this.parentEmail,
+    this.awaitingConsent = false,
+    this.maskedParentEmail,
+    this.consentResendError,
   });
 
   final int step;
@@ -82,6 +87,21 @@ class DirectOnboardingState {
   final String? firstModuleId;
   final String? firstModuleTitle;
 
+  /// null = not yet selected; true = under 13; false = 13+.
+  final bool? isUnder13;
+
+  /// Parent email entered by an under-13 user before account creation.
+  final String? parentEmail;
+
+  /// True when account was created and we're waiting for parental consent.
+  final bool awaitingConsent;
+
+  /// Masked parent email returned by the backend (e.g. "j***@gmail.com").
+  final String? maskedParentEmail;
+
+  /// Inline error shown only on the consent-pending screen.
+  final String? consentResendError;
+
   DirectOnboardingState copyWith({
     int? step,
     bool? isLoading,
@@ -92,6 +112,11 @@ class DirectOnboardingState {
     DirectUploadStage? uploadStage,
     Object? firstModuleId = _sentinel,
     Object? firstModuleTitle = _sentinel,
+    Object? isUnder13 = _sentinel,
+    Object? parentEmail = _sentinel,
+    bool? awaitingConsent,
+    Object? maskedParentEmail = _sentinel,
+    Object? consentResendError = _sentinel,
   }) {
     return DirectOnboardingState(
       step: step ?? this.step,
@@ -107,6 +132,16 @@ class DirectOnboardingState {
       firstModuleTitle: firstModuleTitle == _sentinel
           ? this.firstModuleTitle
           : firstModuleTitle as String?,
+      isUnder13: isUnder13 == _sentinel ? this.isUnder13 : isUnder13 as bool?,
+      parentEmail:
+          parentEmail == _sentinel ? this.parentEmail : parentEmail as String?,
+      awaitingConsent: awaitingConsent ?? this.awaitingConsent,
+      maskedParentEmail: maskedParentEmail == _sentinel
+          ? this.maskedParentEmail
+          : maskedParentEmail as String?,
+      consentResendError: consentResendError == _sentinel
+          ? this.consentResendError
+          : consentResendError as String?,
     );
   }
 }
@@ -132,6 +167,15 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
       _poller?.cancel();
       _poller = null;
     });
+    // App reopened while awaiting parental consent → jump straight to the
+    // waiting screen without repeating sign-up steps.
+    final auth = AuthNotifier.instance.state;
+    if (auth.isSignedIn && auth.awaitingConsent) {
+      return DirectOnboardingState(
+        awaitingConsent: true,
+        maskedParentEmail: auth.maskedParentEmail,
+      );
+    }
     return const DirectOnboardingState();
   }
 
@@ -147,17 +191,60 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
     state = state.copyWith(selectedLevel: level);
   }
 
+  void setAgeGroup({required bool isUnder13}) {
+    state = state.copyWith(isUnder13: isUnder13);
+  }
+
+  void setParentEmail(String email) {
+    state = state.copyWith(parentEmail: email);
+  }
+
+  Future<void> resendParentConsent() async {
+    if (state.isLoading) return;
+    state = state.copyWith(isLoading: true, consentResendError: null);
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.post<dynamic>('/api/v1/consent/resend');
+      state = state.copyWith(isLoading: false);
+    } on DioException catch (e) {
+      final status = e.response?.statusCode;
+      final msg = status == 429
+          ? 'Please wait 60 seconds before resending.'
+          : 'Could not resend. Try again shortly.';
+      state = state.copyWith(isLoading: false, consentResendError: msg);
+    } catch (_) {
+      state = state.copyWith(
+        isLoading: false,
+        consentResendError: 'Could not resend. Try again shortly.',
+      );
+    }
+  }
+
+  Future<void> signOutFromConsentScreen() async {
+    _poller?.cancel();
+    _poller = null;
+    await AuthNotifier.instance.signOut();
+  }
+
   /// Step 1+2: Quick onboard — create account + avatar in one call.
+  /// If the user is under 13, also fires the parental consent request.
   Future<void> quickOnboard({
     required String email,
     required String password,
     required String displayName,
     required String subject,
     required String level,
-    int? birthYear,
   }) async {
+    if (state.isLoading) return;
     appLog.i('[DirectOnboard] Starting quick onboard for $email');
     state = state.copyWith(isLoading: true, error: null);
+
+    final isUnder13 = state.isUnder13 == true;
+    // Pass birth year so the backend knows to mark account PENDING_CONSENT.
+    // Under-13: use current year - 12 (safely under the threshold).
+    // 13+: pass current year - 13 so the backend confirms they are 13+.
+    final birthYear =
+        isUnder13 ? DateTime.now().year - 12 : DateTime.now().year - 13;
 
     try {
       // Use the unauthenticated Dio since user isn't signed in yet.
@@ -179,8 +266,7 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
           'displayName': displayName,
           'subject': subject,
           'level': level,
-          // Optional student birth year (year only); backend derives under-13.
-          if (birthYear != null) 'birthYear': birthYear,
+          'birthYear': birthYear,
         },
       );
 
@@ -200,7 +286,7 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
       );
 
       appLog.i(
-          '[DirectOnboard] Quick onboard success: userId=$userId avatarId=$avatarId');
+          '[DirectOnboard] Quick onboard success: userId=$userId avatarId=$avatarId under13=$isUnder13');
 
       ref.read(analyticsProvider).identify(userId, props: {
         'email': email,
@@ -216,6 +302,12 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
           'level': level,
         },
       );
+
+      // Under-13 branch: request parental consent then show waiting screen.
+      if (isUnder13) {
+        await _requestParentalConsent(authenticatedDio: ref.read(dioProvider));
+        return;
+      }
 
       state = state.copyWith(
         isLoading: false,
@@ -234,6 +326,63 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
         error: 'Something went wrong. Please try again.',
       );
     }
+  }
+
+  Future<void> _requestParentalConsent({required Dio authenticatedDio}) async {
+    final parentEmail = state.parentEmail;
+    if (parentEmail == null || parentEmail.isEmpty) {
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Please enter your parent\'s email address.',
+      );
+      return;
+    }
+    try {
+      final res = await authenticatedDio.post<Map<String, dynamic>>(
+        '/api/v1/consent/request-parent',
+        data: {'parentEmail': parentEmail},
+        options: Options(receiveTimeout: const Duration(seconds: 15)),
+      );
+      final body = res.data ?? {};
+      final inner =
+          body['data'] is Map ? body['data'] as Map<String, dynamic> : body;
+      final masked =
+          inner['maskedParentEmail'] as String? ?? _maskEmail(parentEmail);
+
+      await AuthNotifier.instance
+          .setAwaitingConsent(maskedParentEmail: masked);
+
+      appLog.i('[DirectOnboard] Parental consent requested; masked=$masked');
+      state = state.copyWith(
+        isLoading: false,
+        awaitingConsent: true,
+        maskedParentEmail: masked,
+      );
+    } on DioException catch (e, st) {
+      appLog.e('[DirectOnboard] Consent request failed', error: e, stackTrace: st);
+      state = state.copyWith(
+        isLoading: false,
+        error: _friendlyError(e),
+      );
+    } catch (e, st) {
+      appLog.e('[DirectOnboard] Consent request unexpected error',
+          error: e, stackTrace: st);
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Could not send consent email. Please try again.',
+      );
+    }
+  }
+
+  /// Crude email mask for display when the backend omits maskedParentEmail.
+  String _maskEmail(String email) {
+    final parts = email.split('@');
+    if (parts.length != 2) return email;
+    final name = parts[0];
+    final masked = name.length <= 2
+        ? '${name[0]}***'
+        : '${name[0]}***${name[name.length - 1]}';
+    return '$masked@${parts[1]}';
   }
 
   /// Step 3: Upload file, poll for compile, generate modules.
