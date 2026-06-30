@@ -105,7 +105,7 @@ void main() {
     });
 
     testWidgets(
-        "shows free trial CTA for non-premium student (no CENTRE source)",
+        "shows web upgrade CTA for non-premium student (no CENTRE source)",
         (tester) async {
       await tester.pumpWidget(_wrap([
         entitlementVmProvider
@@ -114,8 +114,8 @@ void main() {
       ]));
       await tester.pumpAndSettle();
 
-      // Free user sees the trial start button
-      expect(find.text("Start 7-day free trial"), findsOneWidget);
+      // Free user sees the web-only upgrade CTA (purchasing happens on the web).
+      expect(find.text("Continue on web"), findsOneWidget);
       // No centre badge
       expect(find.textContaining("Premium via your centre"), findsNothing);
     });

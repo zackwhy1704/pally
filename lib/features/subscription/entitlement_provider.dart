@@ -13,7 +13,9 @@ class EntitlementVm extends _$EntitlementVm {
   @override
   Future<Entitlement> build() async => _fetch();
 
-  Future<Entitlement> _fetch() async {
+  /// Fetches entitlement, returning null on a transient network failure so
+  /// callers can choose to keep the last-known value instead of downgrading.
+  Future<Entitlement?> _fetchOrNull() async {
     try {
       final dio = ref.read(dioProvider);
       final res = await dio.get<dynamic>('/api/v1/subscription/entitlement');
@@ -24,15 +26,28 @@ class EntitlementVm extends _$EntitlementVm {
       return Entitlement.fromJson(body);
     } on DioException catch (e) {
       appLog.w('[Entitlement] /entitlement failed: ${e.message}');
-      // Default to free rather than throwing so a transient failure
-      // doesn't show the user a broken paywall.
-      return const Entitlement(isPremium: false, source: 'NONE');
+      return null;
     }
   }
+
+  /// Always resolves to an Entitlement — a transient failure reads as free so a
+  /// blip never shows the user a broken paywall.
+  Future<Entitlement> _fetch() async =>
+      await _fetchOrNull() ?? const Entitlement(isPremium: false, source: 'NONE');
 
   Future<void> refresh() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(_fetch);
+  }
+
+  /// Silent re-fetch for app-resume: updates [state] WITHOUT an AsyncLoading
+  /// flash (so screens watching entitlement don't flicker), and IGNORES a
+  /// transient failure (so a momentary network blip never downgrades a premium
+  /// user to free). This is how a purchase completed on the web unlocks the app
+  /// the next time it comes to the foreground.
+  Future<void> reconcile() async {
+    final ent = await _fetchOrNull();
+    if (ent != null) state = AsyncData(ent);
   }
 
   /// Polls the backend entitlement until it flips to premium, or [timeout]

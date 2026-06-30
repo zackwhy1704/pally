@@ -63,7 +63,6 @@ dependencies:
   cunning_document_scanner: ^1.2.3
   just_audio: ^0.10.5
   posthog_flutter: ^5.26.0
-  purchases_flutter: ^8.0.0
   mobile_scanner: ^7.2.0
   qr_flutter: ^4.1.0
 
