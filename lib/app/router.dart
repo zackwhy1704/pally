@@ -673,12 +673,6 @@ GoRouter buildAppRouter({
         return '/auth/signin';
       }
 
-      if (auth.isSignedIn && auth.awaitingConsent &&
-          !path.startsWith('/onboarding/direct') &&
-          !path.startsWith('/auth/')) {
-        return '/onboarding/direct';
-      }
-
       if (auth.isSignedIn && path == '/') {
         if (!auth.isSetupComplete) return '/onboarding/direct';
         if (!auth.isOnboardingComplete) return '/onboarding';

@@ -15,6 +15,7 @@ void main() {
       expect(state.uploadStage, DirectUploadStage.idle);
       expect(state.firstModuleId, isNull);
       expect(state.firstModuleTitle, isNull);
+      expect(state.goHome, false);
     });
 
     test('copyWith updates step correctly', () {
@@ -72,6 +73,32 @@ void main() {
 
       expect(updated.error, isNull);
       expect(updated.avatarId, isNull);
+    });
+
+    test('goHome defaults false and can be set to true via copyWith', () {
+      const state = DirectOnboardingState();
+      expect(state.goHome, false);
+
+      final withGoHome = state.copyWith(goHome: true);
+      expect(withGoHome.goHome, true);
+
+      // Resetting is explicit.
+      final reset = withGoHome.copyWith(goHome: false);
+      expect(reset.goHome, false);
+    });
+
+    test('under-13 account creation: goHome set after consent request', () {
+      // Simulate state after successful under-13 quickOnboard + consent request.
+      const state = DirectOnboardingState(
+        awaitingConsent: true,
+        maskedParentEmail: 'j***e@gmail.com',
+        goHome: true,
+      );
+
+      expect(state.awaitingConsent, true);
+      expect(state.goHome, true);
+      expect(state.maskedParentEmail, 'j***e@gmail.com');
+      expect(state.step, 1); // onboarding screen step is irrelevant once goHome fires
     });
   });
 

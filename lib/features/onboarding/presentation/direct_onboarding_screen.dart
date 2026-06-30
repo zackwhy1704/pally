@@ -60,26 +60,15 @@ class _DirectOnboardingScreenState
             ),
           );
         }
+        // Under-13 registration succeeded → go to dashboard.
+        // The home screen shows the consent-pending banner.
+        if (next.goHome && !(prev?.goHome ?? false)) {
+          context.go('/');
+        }
       },
     );
 
     final notifier = ref.read(directOnboardingViewModelProvider.notifier);
-
-    // Under-13 waiting for parental consent — overrides the normal step flow.
-    if (vm.awaitingConsent) {
-      return PopScope(
-        canPop: false,
-        child: Scaffold(
-          resizeToAvoidBottomInset: true,
-          backgroundColor: AppColors.bg,
-          body: SafeArea(
-            child: _ParentConsentPending(
-              maskedParentEmail: vm.maskedParentEmail ?? '',
-            ),
-          ),
-        ),
-      );
-    }
 
     return PopScope(
       // Step 1: allow system back (returns to sign-in).
@@ -1157,121 +1146,6 @@ class _ReadyView extends StatelessWidget {
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Parent consent pending ──────────────────────────────────────────────────
-
-class _ParentConsentPending extends ConsumerWidget {
-  const _ParentConsentPending({required this.maskedParentEmail});
-
-  final String maskedParentEmail;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final vm = ref.watch(directOnboardingViewModelProvider);
-    final notifier = ref.read(directOnboardingViewModelProvider.notifier);
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md, vertical: AppSpacing.lg),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: AppSpacing.xl),
-          Center(
-            child: Image.asset(
-              'assets/images/mochi.png',
-              width: AppSizing.heroMochiSize,
-              height: AppSizing.heroMochiSize,
-              fit: BoxFit.contain,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Text(
-            'Check your parent\'s email!',
-            style: AppTextStyles.heading1,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            'We sent a consent request to:',
-            style: AppTextStyles.body.copyWith(color: AppColors.text2),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            maskedParentEmail,
-            style: AppTextStyles.body.copyWith(
-              fontWeight: FontWeight.w700,
-              color: AppColors.text1,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            'Ask a parent or guardian to click the link in the email. Your account will unlock as soon as they approve.',
-            style: AppTextStyles.body.copyWith(color: AppColors.text2),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: AppSpacing.xl),
-          if (vm.consentResendError != null) ...[
-            Container(
-              padding: AppSpacing.card,
-              decoration: BoxDecoration(
-                color: AppColors.coralL,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                vm.consentResendError!,
-                style: AppTextStyles.body.copyWith(color: AppColors.coral),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-          ],
-          SizedBox(
-            height: AppSizing.buttonHeight,
-            child: OutlinedButton(
-              onPressed: vm.isLoading ? null : notifier.resendParentConsent,
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppColors.purple),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
-              ),
-              child: vm.isLoading
-                  ? const SizedBox(
-                      width: AppSizing.spinnerSm,
-                      height: AppSizing.spinnerSm,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: AppColors.purple),
-                    )
-                  : Text(
-                      'Resend consent email',
-                      style: AppTextStyles.body.copyWith(
-                          color: AppColors.purple,
-                          fontWeight: FontWeight.w600),
-                    ),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Center(
-            child: TextButton(
-              onPressed: () async {
-                await notifier.signOutFromConsentScreen();
-                if (context.mounted) context.go('/auth/signin');
-              },
-              style: TextButton.styleFrom(foregroundColor: AppColors.text2),
-              child: Text(
-                'Sign out and use a different account',
-                style: AppTextStyles.bodySmall,
-              ),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xl),
         ],
       ),
     );

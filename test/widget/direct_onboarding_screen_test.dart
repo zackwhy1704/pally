@@ -62,8 +62,9 @@ void main() {
       );
     });
 
-    testWidgets('consent-pending screen shows masked email and resend button',
-        (tester) async {
+    testWidgets(
+        'awaitingConsent state does not show full-screen consent blocker — '
+        'under-13 users go straight to the dashboard', (tester) async {
       await tester.pumpWidget(_wrap(
         const DirectOnboardingScreen(),
         overrides: [
@@ -72,10 +73,10 @@ void main() {
         ],
       ));
 
-      expect(find.text("Check your parent's email!"), findsOneWidget);
-      expect(find.text('j***e@gmail.com'), findsOneWidget);
-      expect(find.text('Resend consent email'), findsOneWidget);
-      expect(find.text('Sign out and use a different account'), findsOneWidget);
+      // The full-screen consent UI is now on the home screen banner, not here.
+      expect(find.text("Check your parent's email!"), findsNothing);
+      // The normal step-1 UI should be rendered instead.
+      expect(find.text('Create your account'), findsOneWidget);
     });
 
     testWidgets('step 2 renders subject and level pickers', (tester) async {

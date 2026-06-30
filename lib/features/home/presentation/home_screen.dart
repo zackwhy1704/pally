@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -25,6 +26,7 @@ import 'package:pally/features/subscription/presentation/trial_expired_screen.da
 import 'package:pally/features/subscription/presentation/trial_welcome_screen.dart';
 import 'package:pally/features/subscription/trial_status_provider.dart';
 import 'package:pally/features/onboarding/presentation/feature_tour.dart';
+import 'package:pally/features/onboarding/presentation/direct_onboarding_view_model.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -91,6 +93,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               maxLevel: maxLevel,
             ),
             const TrialCountdownBanner(),
+            const _ConsentPendingBanner(),
             Expanded(
               child: avatarsAsync.when(
                 loading: () => const Center(
@@ -964,6 +967,143 @@ class _NudgeCard extends StatelessWidget {
           GestureDetector(
             onTap: onDismiss,
             child: Icon(Icons.close_rounded, size: 14, color: data.color),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Consent-pending banner ──────────────────────────────────────────────────
+
+/// Shown on the home screen when an under-13 user's parental consent is still
+/// pending. Provides a resend link and sign-out escape hatch but does NOT block
+/// access to centre-class content, rewards, or other non-AI features.
+class _ConsentPendingBanner extends ConsumerStatefulWidget {
+  const _ConsentPendingBanner();
+
+  @override
+  ConsumerState<_ConsentPendingBanner> createState() =>
+      _ConsentPendingBannerState();
+}
+
+class _ConsentPendingBannerState extends ConsumerState<_ConsentPendingBanner> {
+  bool _dismissed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final auth = ref.watch(authStateProvider);
+    if (!auth.awaitingConsent || _dismissed) return const SizedBox.shrink();
+
+    final consentVm = ref.watch(directOnboardingViewModelProvider);
+    final consentNotifier =
+        ref.read(directOnboardingViewModelProvider.notifier);
+
+    return Container(
+      margin: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md, AppSpacing.sm, AppSpacing.sm, AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: AppColors.amberL,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.amber.withValues(alpha: 0.4)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.mail_outline_rounded,
+                  size: 18, color: AppColors.amberText),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Waiting for parental approval',
+                      style: AppTextStyles.body.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.amberText,
+                      ),
+                    ),
+                    if (auth.maskedParentEmail != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        'A consent email was sent to ${auth.maskedParentEmail}. '
+                        'AI features unlock once your parent approves.',
+                        style: AppTextStyles.bodySmall
+                            .copyWith(color: AppColors.amberText),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: () => setState(() => _dismissed = true),
+                child: const Icon(Icons.close_rounded,
+                    size: 18, color: AppColors.amberText),
+              ),
+            ],
+          ),
+          if (consentVm.consentResendError != null) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              consentVm.consentResendError!,
+              style:
+                  AppTextStyles.bodySmall.copyWith(color: AppColors.coral),
+            ),
+          ],
+          const SizedBox(height: AppSpacing.sm),
+          Row(
+            children: [
+              TextButton(
+                onPressed: consentVm.isLoading
+                    ? null
+                    : consentNotifier.resendParentConsent,
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  foregroundColor: AppColors.amberText,
+                ),
+                child: consentVm.isLoading
+                    ? const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: AppColors.amberText),
+                      )
+                    : Text('Resend email',
+                        style: AppTextStyles.bodySmall.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.amberText,
+                          decoration: TextDecoration.underline,
+                          decorationColor: AppColors.amberText,
+                        )),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              TextButton(
+                onPressed: () async {
+                  await consentNotifier.signOutFromConsentScreen();
+                  if (context.mounted) context.go('/auth/signin');
+                },
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  foregroundColor: AppColors.text2,
+                ),
+                child: Text('Sign out',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.text2,
+                      decoration: TextDecoration.underline,
+                      decorationColor: AppColors.text2,
+                    )),
+              ),
+            ],
           ),
         ],
       ),

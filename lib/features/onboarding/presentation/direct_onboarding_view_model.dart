@@ -87,6 +87,7 @@ class DirectOnboardingState {
     this.awaitingConsent = false,
     this.maskedParentEmail,
     this.consentResendError,
+    this.goHome = false,
   });
 
   final int step;
@@ -114,6 +115,10 @@ class DirectOnboardingState {
   /// Inline error shown only on the consent-pending screen.
   final String? consentResendError;
 
+  /// Fires once after a successful under-13 registration; the screen listens
+  /// and navigates to the dashboard. Resets to false on rebuild.
+  final bool goHome;
+
   DirectOnboardingState copyWith({
     int? step,
     bool? isLoading,
@@ -129,6 +134,7 @@ class DirectOnboardingState {
     bool? awaitingConsent,
     Object? maskedParentEmail = _sentinel,
     Object? consentResendError = _sentinel,
+    bool? goHome,
   }) {
     return DirectOnboardingState(
       step: step ?? this.step,
@@ -154,6 +160,7 @@ class DirectOnboardingState {
       consentResendError: consentResendError == _sentinel
           ? this.consentResendError
           : consentResendError as String?,
+      goHome: goHome ?? this.goHome,
     );
   }
 }
@@ -179,15 +186,6 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
       _poller?.cancel();
       _poller = null;
     });
-    // App reopened while awaiting parental consent → jump straight to the
-    // waiting screen without repeating sign-up steps.
-    final auth = AuthNotifier.instance.state;
-    if (auth.isSignedIn && auth.awaitingConsent) {
-      return DirectOnboardingState(
-        awaitingConsent: true,
-        maskedParentEmail: auth.maskedParentEmail,
-      );
-    }
     return const DirectOnboardingState();
   }
 
@@ -279,6 +277,8 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
           'subject': subject,
           'level': level,
           'birthYear': birthYear,
+          // Required by the backend when birthYear implies under-13.
+          if (isUnder13) 'parentEmail': state.parentEmail,
         },
       );
 
@@ -315,9 +315,14 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
         },
       );
 
-      // Under-13 branch: request parental consent then show waiting screen.
+      // Under-13: request parental consent (persists to AuthNotifier) then go
+      // to the dashboard. The home screen shows a dismissible consent banner.
       if (isUnder13) {
         await _requestParentalConsent(authenticatedDio: ref.read(dioProvider));
+        // Only navigate home when the consent request succeeded (no error set).
+        if (state.error == null) {
+          state = state.copyWith(isLoading: false, goHome: true);
+        }
         return;
       }
 
