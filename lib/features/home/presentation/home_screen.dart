@@ -961,7 +961,9 @@ class _NudgeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 280),
+      child: Container(
       padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
       decoration: BoxDecoration(
@@ -974,11 +976,15 @@ class _NudgeCard extends StatelessWidget {
         children: [
           Text(data.emoji, style: const TextStyle(fontSize: 14)),
           const SizedBox(width: 4),
-          Text(
-            data.message,
-            style: AppTextStyles.caption.copyWith(
-              color: data.color,
-              fontWeight: FontWeight.w700,
+          Flexible(
+            child: Text(
+              data.message,
+              style: AppTextStyles.caption.copyWith(
+                color: data.color,
+                fontWeight: FontWeight.w700,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
           const SizedBox(width: 4),
@@ -987,6 +993,7 @@ class _NudgeCard extends StatelessWidget {
             child: Icon(Icons.close_rounded, size: 14, color: data.color),
           ),
         ],
+      ),
       ),
     );
   }

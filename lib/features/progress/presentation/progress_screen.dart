@@ -598,7 +598,13 @@ class _TopicBar extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(topic.topic, style: AppTextStyles.bodySmall),
+              Expanded(
+                child: Text(topic.topic,
+                    style: AppTextStyles.bodySmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis),
+              ),
+              const SizedBox(width: AppSpacing.sm),
               Text('$pct%',
                   style: AppTextStyles.label.copyWith(color: AppColors.amber)),
             ],

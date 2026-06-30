@@ -843,8 +843,15 @@ class _InfoTile extends StatelessWidget {
           Icon(icon, color: AppColors.text2, size: 20),
           const SizedBox(width: AppSpacing.sm),
           Expanded(child: Text(label, style: AppTextStyles.body)),
-          Text(value,
-              style: AppTextStyles.bodySmall.copyWith(color: AppColors.text3)),
+          const SizedBox(width: AppSpacing.sm),
+          Flexible(
+            child: Text(value,
+                style:
+                    AppTextStyles.bodySmall.copyWith(color: AppColors.text3),
+                textAlign: TextAlign.right,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis),
+          ),
         ],
       ),
     );

@@ -276,9 +276,13 @@ class _CardFace extends StatelessWidget {
                 const Icon(Icons.source_rounded,
                     size: 12, color: AppColors.text3),
                 const SizedBox(width: 4),
-                Text(sourceFile!,
-                    style: AppTextStyles.caption
-                        .copyWith(fontStyle: FontStyle.italic)),
+                Flexible(
+                  child: Text(sourceFile!,
+                      style: AppTextStyles.caption
+                          .copyWith(fontStyle: FontStyle.italic),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
+                ),
               ],
             ),
           ],
