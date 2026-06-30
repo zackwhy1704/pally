@@ -7,10 +7,10 @@ import 'package:pally/features/subscription/presentation/subscription_plans_scre
 import 'package:pally/features/subscription/trial_status_provider.dart';
 import 'package:pally/shared/models/entitlement.dart';
 
-// Tests run on the host (non-iOS), so the screen takes the default/Android
-// billing-management path — the Stripe "Manage billing" affordance. (The iOS
-// gating swaps this for an Apple-Settings hint; that branch is host-dependent
-// and exercised manually per the Phase 3 sandbox checklist.)
+// Purchasing is web-only. Tests run on the host (Platform.isIOS == false), so
+// the WebUpgradeCta renders its launch button — here the manage variant's
+// "Manage on web". (On real iOS the launch button is hidden and only the
+// copiable link shows; that dart:io branch is exercised manually.)
 final _router = GoRouter(
   routes: [GoRoute(path: '/', builder: (_, __) => const SubscriptionPlansScreen())],
 );
@@ -45,7 +45,7 @@ const _paidEntitlement = Entitlement(isPremium: true, source: 'IAP', plan: 'MAX'
 
 void main() {
   testWidgets(
-      'premium (non-trial, non-centre) user sees the Stripe manage-billing affordance on the default platform',
+      'premium (non-trial, non-centre) user sees the web manage-subscription affordance on the default platform',
       (tester) async {
     await tester.pumpWidget(_wrap([
       entitlementVmProvider.overrideWith(() => _FakeEntitlementVm(_paidEntitlement)),
@@ -53,6 +53,6 @@ void main() {
     ]));
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Manage billing'), findsOneWidget);
+    expect(find.text('Manage on web'), findsOneWidget);
   });
 }

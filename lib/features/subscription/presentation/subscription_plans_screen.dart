@@ -1,17 +1,13 @@
-import 'dart:io' show Platform;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/theme/app_colors.dart';
-import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
-import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
-import 'package:pally/features/subscription/iap_service.dart';
-import 'package:pally/shared/models/entitlement.dart';
-import 'package:pally/features/subscription/subscription_service.dart';
 import 'package:pally/features/subscription/trial_status_provider.dart';
+import 'package:pally/shared/models/entitlement.dart';
+import 'package:pally/features/subscription/web_billing.dart';
+import 'package:pally/features/subscription/widgets/web_upgrade_cta.dart';
 
 // Plan descriptor — all data needed to render a card.
 class _Plan {
@@ -124,102 +120,7 @@ class SubscriptionPlansScreen extends ConsumerStatefulWidget {
 class _SubscriptionPlansScreenState
     extends ConsumerState<SubscriptionPlansScreen> {
   String? _selected;
-  bool _loading = false;
-  bool _portalLoading = false;
   bool _annual = false;
-
-  Future<void> _subscribe() async {
-    final plan = _selected;
-    if (plan == null) return;
-    // Swap monthly ↔ annual id if toggle is on
-    final planId = _annual ? plan.replaceAll('_monthly', '_annual') : plan;
-    setState(() => _loading = true);
-    try {
-      if (IapService.instance.isConfigured) {
-        // Native in-app purchase (Apple StoreKit / Google Play Billing). The
-        // backend grants entitlement via the RevenueCat webhook keyed on userId.
-        final ok = await IapService.instance.purchasePlan(planId);
-        if (!mounted) return;
-        if (ok) {
-          // Entitlement flips only when the RevenueCat webhook lands (async,
-          // seconds later). Poll the backend — the button stays in its loading
-          // state ("activating") — instead of a single re-fetch that races the
-          // webhook and shows the user "still free" right after paying.
-          final becamePremium =
-              await ref.read(entitlementVmProvider.notifier).pollUntilPremium();
-          if (!mounted) return;
-          PallyToast.success(
-            context,
-            becamePremium
-                ? "You're all set — welcome to Premium!"
-                : 'Payment received — your subscription will activate shortly.',
-          );
-          Navigator.of(context).maybePop();
-        }
-      } else if (Platform.isIOS) {
-        // iOS must NEVER open web/Stripe checkout (App Store 3.1.1). On a correct
-        // release build isConfigured is true and IAP runs above; this branch is
-        // the safety net for a build shipped without RevenueCat keys.
-        PallyToast.error(context,
-            'Subscriptions are temporarily unavailable — please try again shortly.');
-      } else {
-        // Android only: web-checkout fallback before RevenueCat is provisioned.
-        final service = ref.read(subscriptionServiceProvider);
-        final url = await service.startCheckout(planId);
-        if (!mounted) return;
-        final opened = await service.launchExternal(url);
-        if (!opened && mounted) {
-          PallyToast.error(context,
-              'Could not open browser. Copy this URL to continue:\n$url');
-        }
-      }
-    } on SubscriptionError catch (e) {
-      if (mounted) PallyToast.error(context, e.message);
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
-  }
-
-  /// Apple requires a "Restore purchases" affordance. Shown only when IAP is live.
-  Future<void> _restore() async {
-    setState(() => _loading = true);
-    try {
-      final restored = await IapService.instance.restore();
-      if (!mounted) return;
-      if (restored) {
-        // Poll the backend until the restored entitlement is reflected server-side.
-        final becamePremium =
-            await ref.read(entitlementVmProvider.notifier).pollUntilPremium();
-        if (!mounted) return;
-        PallyToast.success(
-          context,
-          becamePremium
-              ? 'Purchases restored.'
-              : 'Purchases restored — activating shortly.',
-        );
-      } else {
-        PallyToast.error(context, 'No previous purchases found.');
-      }
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
-  }
-
-  Future<void> _openPortal() async {
-    // iOS users manage subscriptions through Apple, never a Stripe portal (3.1.1).
-    // The affordance is hidden on iOS too — this is defense in depth.
-    if (Platform.isIOS) return;
-    setState(() => _portalLoading = true);
-    final service = ref.read(subscriptionServiceProvider);
-    try {
-      final url = await service.openPortal();
-      await service.launchExternal(url);
-    } on SubscriptionError catch (e) {
-      if (mounted) PallyToast.error(context, e.message);
-    } finally {
-      if (mounted) setState(() => _portalLoading = false);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -289,7 +190,7 @@ class _SubscriptionPlansScreenState
                                       ' Subscribe to keep all your Mochis.'
                                   : isPremium
                                       ? 'You\'re on ${tier ?? prettyTier(ent.plan)}.'
-                                          ' Switch plans below or manage billing to cancel.'
+                                          ' Manage or cancel anytime on the web.'
                                       : 'Start with a 7-day free trial. Cancel anytime.',
                           style: AppTextStyles.body
                               .copyWith(color: AppColors.text2),
@@ -327,27 +228,12 @@ class _SubscriptionPlansScreenState
                   ),
                 ),
 
-                // Bottom CTA area
-                _CtaArea(
+                // Bottom action area — purchasing is web-only.
+                _ActionArea(
                   isPremium: isPremium,
                   isOnTrial: isOnTrial,
                   isCentreSourced: isCentreSourced,
-                  selected: _selected,
-                  currentPlanId: currentPlanId,
-                  loading: _loading,
-                  portalLoading: _portalLoading,
-                  onSubscribe: _subscribe,
-                  onPortal: _openPortal,
                 ),
-
-                // Apple requires a Restore-purchases affordance (IAP only).
-                if (IapService.instance.isConfigured && !isPremium)
-                  TextButton(
-                    onPressed: _loading ? null : _restore,
-                    child: Text('Restore purchases',
-                        style: AppTextStyles.bodySmall
-                            .copyWith(color: AppColors.text2)),
-                  ),
               ],
             ),
           ),
@@ -589,173 +475,81 @@ class _Badge extends StatelessWidget {
   }
 }
 
-// ── Bottom CTA area ───────────────────────────────────────────────────────────
+// ── Bottom action area (web-only purchasing) ─────────────────────────────────
 
-class _CtaArea extends StatelessWidget {
-  const _CtaArea({
+class _ActionArea extends StatelessWidget {
+  const _ActionArea({
     required this.isPremium,
     required this.isOnTrial,
     required this.isCentreSourced,
-    required this.selected,
-    required this.currentPlanId,
-    required this.loading,
-    required this.portalLoading,
-    required this.onSubscribe,
-    required this.onPortal,
   });
 
   final bool isPremium;
   final bool isOnTrial;
   final bool isCentreSourced;
-  final String? selected;
-  final String? currentPlanId;
-  final bool loading;
-  final bool portalLoading;
-  final VoidCallback onSubscribe;
-  final VoidCallback onPortal;
 
   @override
   Widget build(BuildContext context) {
+    // Premium via the centre/org — the org pays; nothing for the student to do.
+    // Already paying for themselves (not a trial) → manage/cancel on the web.
+    final showManage = !isCentreSourced && isPremium && !isOnTrial;
+    // Free, or still on the trial → upgrade on the web.
+    final showUpgrade = !isCentreSourced && (!isPremium || isOnTrial);
+
     return Container(
       padding: EdgeInsets.fromLTRB(
         AppSpacing.md,
-        AppSpacing.sm,
+        AppSpacing.md,
         AppSpacing.md,
         MediaQuery.of(context).padding.bottom + AppSpacing.sm,
       ),
       decoration: const BoxDecoration(
         color: AppColors.surface,
-        border:
-            Border(top: BorderSide(color: AppColors.outline)),
+        border: Border(top: BorderSide(color: AppColors.outline)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (isCentreSourced) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: AppColors.tealL,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.teal),
-              ),
-              child: Center(
-                child: Text(
-                  '⭐ Premium via your centre',
-                  style: AppTextStyles.body.copyWith(
-                    color: AppColors.teal,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-          ] else if (isPremium && isOnTrial) ...[
-            _PrimaryButton(
-              label: 'Subscribe now',
-              loading: loading,
-              onPressed: onSubscribe,
-            ),
-            const SizedBox(height: AppSpacing.xs),
-          ] else if (isPremium && selected != currentPlanId) ...[
-            _PrimaryButton(
-              label: 'Switch to this plan',
-              loading: loading,
-              onPressed: onSubscribe,
-            ),
-            const SizedBox(height: AppSpacing.xs),
-          ] else if (isPremium) ...[
-            OutlinedButton(
-              onPressed: null,
-              style: OutlinedButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
-              ),
-              child: const Text('Current plan'),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-          ] else ...[
-            _PrimaryButton(
-              label: 'Start 7-day free trial',
-              loading: loading,
-              onPressed: onSubscribe,
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              'No charge during trial. Cancel anytime.',
-              style: AppTextStyles.caption,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.xs),
-          ],
-          // Manage billing — not shown for trial users (no Stripe sub yet)
-          // and not shown for centre-sourced students (their org pays).
-          if (isPremium && !isOnTrial && !isCentreSourced)
-            if (Platform.isIOS)
-              // iOS: subscriptions are managed by Apple, never a Stripe portal
-              // (App Store 3.1.1). Point the user at the system settings instead.
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                child: Text(
-                  'Manage or cancel in Settings → Apple Account → Subscriptions.',
-                  style: AppTextStyles.caption.copyWith(color: AppColors.text2),
-                  textAlign: TextAlign.center,
-                ),
-              )
-            else
-              TextButton(
-                onPressed: portalLoading ? null : onPortal,
-                child: portalLoading
-                    ? const SizedBox(
-                        height: AppSizing.spinnerSm,
-                        width: AppSizing.spinnerSm,
-                        child: CircularProgressIndicator(
-                            color: AppColors.purple, strokeWidth: 2),
-                      )
-                    : const Text(
-                        'Manage billing / Cancel subscription',
-                        style: TextStyle(color: AppColors.text2),
-                      ),
-              ),
+          if (isCentreSourced)
+            const _CentreBanner()
+          else if (showManage)
+            const WebUpgradeCta(
+              url: kWebAccountUrl,
+              displayUrl: kWebAccountDisplay,
+              intro: 'Manage your plan, update your card, or cancel anytime on '
+                  'the Apalchi website.',
+              launchLabel: 'Manage on web',
+              showRefresh: false,
+            )
+          else if (showUpgrade)
+            const WebUpgradeCta(),
         ],
       ),
     );
   }
 }
 
-class _PrimaryButton extends StatelessWidget {
-  const _PrimaryButton({
-    required this.label,
-    required this.loading,
-    required this.onPressed,
-  });
-  final String label;
-  final bool loading;
-  final VoidCallback onPressed;
+class _CentreBanner extends StatelessWidget {
+  const _CentreBanner();
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton(
-        onPressed: loading ? null : onPressed,
-        style: FilledButton.styleFrom(
-          backgroundColor: AppColors.purple,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16)),
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.tealL,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.teal),
+      ),
+      child: Center(
+        child: Text(
+          '⭐ Premium via your centre',
+          style: AppTextStyles.body.copyWith(
+            color: AppColors.teal,
+            fontWeight: FontWeight.w700,
+          ),
         ),
-        child: loading
-            ? const SizedBox(
-                height: AppSizing.spinnerSm,
-                width: AppSizing.spinnerSm,
-                child: CircularProgressIndicator(
-                    color: Colors.white, strokeWidth: 2),
-              )
-            : Text(label),
       ),
     );
   }

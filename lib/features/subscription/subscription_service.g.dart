@@ -7,12 +7,17 @@ part of 'subscription_service.dart';
 // **************************************************************************
 
 String _$subscriptionServiceHash() =>
-    r'3df7a5735f4a058f91c58e1e682a5f97a036a496';
+    r'08f145933608d07f7d311b22eb1df6ac2cf92f58';
 
-/// Thin client for /api/v1/subscription/{checkout,portal}. Returns the URL
-/// the backend's Stripe layer hands us; opening the URL is the caller's
-/// job so the UI can push the return-route first to avoid a race where
-/// the webhook lands before the screen is ready to poll.
+/// Opens the public web checkout in an EXTERNAL browser.
+///
+/// Purchasing happens entirely on the Apalchi website — the app never
+/// runs in-app billing (no Stripe-in-webview, no store IAP). This keeps us
+/// onside with App Store anti-steering (iOS shows a copiable link instead of
+/// a launch button) and Google Play (an external-browser link-out is treated
+/// far more leniently than an embedded payment WebView). After the user pays
+/// on the web, the backend webhook grants premium and [EntitlementVm] unlocks
+/// the app by polling — see entitlement_provider.dart.
 ///
 /// Copied from [subscriptionService].
 @ProviderFor(subscriptionService)
