@@ -56,7 +56,34 @@ String _subjectFromJson(Object? json) {
   }
 }
 
-String _subjectToJson(String s) => s.toUpperCase().replaceAll(' ', '_');
+/// The subject enum the backend accepts. The UI subject field is free-text
+/// (and some quick-picks like "PE" differ from the enum), so any value outside
+/// this set must be mapped or it triggers a 400 (e.g. "Accounting" → ACCOUNTING).
+const _backendSubjects = {
+  'PHYSICAL_EDUCATION', 'ART', 'SCIENCE', 'MUSIC', 'GENERAL', 'CODING',
+  'MATHS', 'ENGLISH', 'LITERATURE', 'LANGUAGES', 'HISTORY', 'HEALTH',
+  'GEOGRAPHY',
+};
+
+/// Common UI labels that don't match the backend enum spelling.
+const _subjectAliases = {
+  'PE': 'PHYSICAL_EDUCATION',
+  'PHYS_ED': 'PHYSICAL_EDUCATION',
+  'PHYSICAL_ED': 'PHYSICAL_EDUCATION',
+  'MATH': 'MATHS',
+  'MATHEMATICS': 'MATHS',
+  'GEOG': 'GEOGRAPHY',
+  'LIT': 'LITERATURE',
+  'LANGUAGE': 'LANGUAGES',
+};
+
+String _subjectToJson(String s) {
+  final norm = s.trim().toUpperCase().replaceAll(' ', '_');
+  final mapped = _subjectAliases[norm] ?? norm;
+  // Free-text subjects the backend can't model fall back to the GENERAL
+  // catch-all so avatar creation never 400s on an unknown subject.
+  return _backendSubjects.contains(mapped) ? mapped : 'GENERAL';
+}
 
 int _wikiPageCountFromJson(Object? count) => (count as int?) ?? 0;
 

@@ -104,11 +104,15 @@ class CharacterPickerStep extends ConsumerWidget {
     return GridView.builder(
       padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
+      // Fixed card height (not a width-derived aspect ratio): the card's tallest
+      // variant is image + name + rarity badge + "unlock" price. A width-derived
+      // height left non-base cards ~22px short on wide devices (iPhone Pro Max),
+      // overflowing every card except the base Mochi (which hides its badge).
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 200,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
-        childAspectRatio: 181 / 178,
+        mainAxisExtent: 172,
       ),
       itemCount: cards.length,
       itemBuilder: (context, index) {
