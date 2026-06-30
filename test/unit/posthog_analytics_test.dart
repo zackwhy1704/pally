@@ -82,7 +82,7 @@ void main() {
       expect(AnalyticsEvents.assignmentStarted, 'assignment_started');
       expect(AnalyticsEvents.assignmentCompleted, 'assignment_completed');
       expect(AnalyticsEvents.examPrepViewed, 'exam_prep_viewed');
-      expect(AnalyticsEvents.narrationPlayed, 'narration_played');
+      expect(AnalyticsEvents.modulePlayerParseError, 'module_player_parse_error');
       expect(AnalyticsEvents.onboardingCompleted, 'onboarding_completed');
     });
 

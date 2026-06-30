@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/error/pally_error.dart';
@@ -8,7 +7,6 @@ import 'package:pally/core/observability/observability.dart';
 import 'package:pally/core/observability/observability_providers.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/shared/models/learning_module.dart';
-import 'package:pally/shared/models/narration.dart';
 
 part 'module_player_view_model.g.dart';
 
@@ -28,11 +26,6 @@ class ModulePlayerState {
     this.error,
     this.answers = const {},
     this.revealedItems = const {},
-    this.narration,
-    this.narrationLoading = false,
-    this.isPlaying = false,
-    this.isPlayingAll = false,
-    this.currentPlayingCard = -1,
   });
 
   final LearningModule? module;
@@ -57,21 +50,6 @@ class ModulePlayerState {
   /// Items whose answer has been revealed (for TEST stage feedback).
   final Set<String> revealedItems;
 
-  /// Narration data for the current module (null if not fetched yet).
-  final Narration? narration;
-
-  /// True while narration is being fetched or generated.
-  final bool narrationLoading;
-
-  /// True when audio is actively playing.
-  final bool isPlaying;
-
-  /// True when playing all cards sequentially.
-  final bool isPlayingAll;
-
-  /// Index of the card whose narration is currently playing (-1 = none).
-  final int currentPlayingCard;
-
   ModuleContentItem? get currentItem =>
       items.isEmpty || currentIndex >= items.length
           ? null
@@ -94,11 +72,6 @@ class ModulePlayerState {
     Object? error = _sentinel,
     Map<String, String>? answers,
     Set<String>? revealedItems,
-    Object? narration = _sentinel,
-    bool? narrationLoading,
-    bool? isPlaying,
-    bool? isPlayingAll,
-    int? currentPlayingCard,
   }) {
     return ModulePlayerState(
       module: module ?? this.module,
@@ -114,12 +87,6 @@ class ModulePlayerState {
       error: error == _sentinel ? this.error : error as PallyError?,
       answers: answers ?? this.answers,
       revealedItems: revealedItems ?? this.revealedItems,
-      narration:
-          narration == _sentinel ? this.narration : narration as Narration?,
-      narrationLoading: narrationLoading ?? this.narrationLoading,
-      isPlaying: isPlaying ?? this.isPlaying,
-      isPlayingAll: isPlayingAll ?? this.isPlayingAll,
-      currentPlayingCard: currentPlayingCard ?? this.currentPlayingCard,
     );
   }
 }
@@ -130,7 +97,6 @@ const _sentinel = Object();
 class ModulePlayerViewModel extends _$ModulePlayerViewModel {
   late String _avatarId;
   late String _moduleId;
-  AudioPlayer? _audioPlayer;
 
   /// Wall-clock the current stage's items rendered, read again on submit to
   /// report real active time. Reset on every [startStage].
@@ -153,10 +119,6 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
   ModulePlayerState build(String avatarId, String moduleId) {
     _avatarId = avatarId;
     _moduleId = moduleId;
-    ref.onDispose(() {
-      _audioPlayer?.dispose();
-      _audioPlayer = null;
-    });
     _loadModule();
     return const ModulePlayerState(isLoading: true);
   }
@@ -209,6 +171,17 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
               ? data['items'] as List<dynamic>
               : const <dynamic>[]);
 
+      if (rawItems.isEmpty) {
+        state = state.copyWith(
+          isLoading: false,
+          error: const PallyError(
+            PallyErrorKind.notFound,
+            'No content yet — your teacher needs to upload notes for this topic.',
+          ),
+        );
+        return;
+      }
+
       final items = <ModuleContentItem>[];
       for (final e in rawItems) {
         try {
@@ -219,6 +192,25 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
           appLog.e('[ModulePlayer] Failed to parse item',
               error: err, stackTrace: st);
         }
+      }
+
+      if (items.isEmpty) {
+        ref.read(analyticsProvider).event(
+          AnalyticsEvents.modulePlayerParseError,
+          props: {
+            'module_id': _moduleId,
+            'avatar_id': _avatarId,
+            'raw_count': rawItems.length,
+          },
+        );
+        state = state.copyWith(
+          isLoading: false,
+          error: const PallyError(
+            PallyErrorKind.server,
+            'Something went wrong loading this lesson. Try again or contact support.',
+          ),
+        );
+        return;
       }
 
       // Sort by sortOrder
@@ -428,165 +420,5 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
   void skipMuddiest() {
     appLog.d('[ModulePlayer] Muddiest point skipped for $_moduleId');
     state = state.copyWith(muddiestSubmitted: true);
-  }
-
-  // ── Narration ─────────────────────────────────────────────────────────────
-
-  /// Fetch narration data for this module. If not ready, trigger generation.
-  Future<void> fetchNarration() async {
-    if (state.narrationLoading) return;
-    if (state.narration != null && state.narration!.status == 'READY') return;
-
-    appLog.i('[ModulePlayer] Fetching narration for $_moduleId');
-    state = state.copyWith(narrationLoading: true);
-
-    try {
-      final dio = ref.read(dioProvider);
-      final response = await dio.get<dynamic>(
-        '/api/v1/avatars/$_avatarId/modules/$_moduleId/narration',
-      );
-      final data = response.data is Map<String, dynamic>
-          ? response.data as Map<String, dynamic>
-          : <String, dynamic>{};
-
-      final narration = Narration.fromJson(data);
-      appLog.i('[ModulePlayer] Narration status=${narration.status} '
-          'segments=${narration.segments.length}');
-
-      if (narration.status == 'READY' && narration.segments.isNotEmpty) {
-        state = state.copyWith(narration: narration, narrationLoading: false);
-      } else {
-        // Trigger generation and mark as loading.
-        await _triggerNarrationGeneration();
-      }
-    } on DioException catch (e, st) {
-      if (e.response?.statusCode == 404) {
-        // No narration exists yet — trigger generation.
-        appLog.d('[ModulePlayer] No narration yet, generating');
-        await _triggerNarrationGeneration();
-      } else {
-        appLog.e('[ModulePlayer] Narration fetch failed',
-            error: e, stackTrace: st);
-        state = state.copyWith(narrationLoading: false);
-      }
-    } catch (e, st) {
-      appLog.e('[ModulePlayer] Narration fetch error',
-          error: e, stackTrace: st);
-      state = state.copyWith(narrationLoading: false);
-    }
-  }
-
-  Future<void> _triggerNarrationGeneration() async {
-    try {
-      final dio = ref.read(dioProvider);
-      await dio.post<dynamic>(
-        '/api/v1/avatars/$_avatarId/modules/$_moduleId/narration/generate',
-      );
-      appLog.i('[ModulePlayer] Narration generation triggered');
-      state = state.copyWith(narrationLoading: false);
-    } catch (e, st) {
-      appLog.w('[ModulePlayer] Narration generation failed',
-          error: e, stackTrace: st);
-      state = state.copyWith(narrationLoading: false);
-    }
-  }
-
-  /// Play narration for a single card by index.
-  Future<void> playCard(int cardIndex) async {
-    final narration = state.narration;
-    if (narration == null || narration.status != 'READY') {
-      await fetchNarration();
-      if (state.narration == null || state.narration!.status != 'READY') return;
-    }
-
-    final segments = state.narration!.segments;
-    final segment = segments.where((s) => s.cardIndex == cardIndex).firstOrNull;
-    if (segment == null || segment.audioUrl.isEmpty) {
-      appLog.w('[ModulePlayer] No narration segment for card $cardIndex');
-      return;
-    }
-
-    appLog.i('[ModulePlayer] Playing narration for card $cardIndex');
-    ref.read(analyticsProvider).event(
-      AnalyticsEvents.narrationPlayed,
-      props: {
-        'module_id': _moduleId,
-        'avatar_id': _avatarId,
-        'card_index': cardIndex,
-      },
-    );
-    _audioPlayer ??= AudioPlayer();
-
-    try {
-      await _audioPlayer!.setUrl(segment.audioUrl);
-      state = state.copyWith(
-        isPlaying: true,
-        currentPlayingCard: cardIndex,
-      );
-      _audioPlayer!.play();
-
-      // Wait for completion.
-      await _audioPlayer!.playerStateStream.firstWhere(
-        (s) => s.processingState == ProcessingState.completed,
-      );
-
-      state = state.copyWith(isPlaying: false, currentPlayingCard: -1);
-    } catch (e, st) {
-      appLog.e('[ModulePlayer] Audio playback error', error: e, stackTrace: st);
-      state = state.copyWith(isPlaying: false, currentPlayingCard: -1);
-    }
-  }
-
-  /// Play all cards sequentially.
-  Future<void> playAll() async {
-    final narration = state.narration;
-    if (narration == null || narration.status != 'READY') {
-      await fetchNarration();
-      if (state.narration == null || state.narration!.status != 'READY') return;
-    }
-
-    final segments = List<NarrationSegment>.from(state.narration!.segments);
-    segments.sort((a, b) => a.cardIndex.compareTo(b.cardIndex));
-
-    if (segments.isEmpty) return;
-
-    appLog
-        .i('[ModulePlayer] Playing all ${segments.length} narration segments');
-    state = state.copyWith(isPlayingAll: true, isPlaying: true);
-    _audioPlayer ??= AudioPlayer();
-
-    for (final segment in segments) {
-      if (!state.isPlayingAll) break; // User paused or navigated away.
-      if (segment.audioUrl.isEmpty) continue;
-
-      try {
-        state = state.copyWith(currentPlayingCard: segment.cardIndex);
-        await _audioPlayer!.setUrl(segment.audioUrl);
-        _audioPlayer!.play();
-
-        await _audioPlayer!.playerStateStream.firstWhere(
-          (s) => s.processingState == ProcessingState.completed,
-        );
-      } catch (e) {
-        appLog.w('[ModulePlayer] Skipping segment ${segment.cardIndex}: $e');
-      }
-    }
-
-    state = state.copyWith(
-      isPlaying: false,
-      isPlayingAll: false,
-      currentPlayingCard: -1,
-    );
-  }
-
-  /// Pause playback.
-  Future<void> pauseNarration() async {
-    appLog.d('[ModulePlayer] Pausing narration');
-    await _audioPlayer?.pause();
-    state = state.copyWith(
-      isPlaying: false,
-      isPlayingAll: false,
-      currentPlayingCard: -1,
-    );
   }
 }

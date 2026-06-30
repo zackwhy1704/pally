@@ -53,6 +53,6 @@ abstract class AnalyticsEvents {
   static const assignmentStarted    = 'assignment_started';
   static const assignmentCompleted  = 'assignment_completed';
   static const examPrepViewed       = 'exam_prep_viewed';
-  static const narrationPlayed      = 'narration_played';
+  static const modulePlayerParseError = 'module_player_parse_error';
   static const onboardingCompleted  = 'onboarding_completed';
 }

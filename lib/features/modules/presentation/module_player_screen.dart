@@ -264,31 +264,6 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
           },
           isLast: playerState.isLastItem,
           isSubmitting: playerState.isSubmitting,
-          narration: playerState.narration,
-          narrationLoading: playerState.narrationLoading,
-          isPlaying: playerState.isPlaying,
-          isPlayingAll: playerState.isPlayingAll,
-          currentPlayingCard: playerState.currentPlayingCard,
-          onPlayCard: (index) => ref
-              .read(modulePlayerViewModelProvider(
-                      widget.avatarId, widget.moduleId)
-                  .notifier)
-              .playCard(index),
-          onPlayAll: () => ref
-              .read(modulePlayerViewModelProvider(
-                      widget.avatarId, widget.moduleId)
-                  .notifier)
-              .playAll(),
-          onPause: () => ref
-              .read(modulePlayerViewModelProvider(
-                      widget.avatarId, widget.moduleId)
-                  .notifier)
-              .pauseNarration(),
-          onFetchNarration: () => ref
-              .read(modulePlayerViewModelProvider(
-                      widget.avatarId, widget.moduleId)
-                  .notifier)
-              .fetchNarration(),
         ),
       'TEST' => TestBody(
           item: playerState.currentItem,
