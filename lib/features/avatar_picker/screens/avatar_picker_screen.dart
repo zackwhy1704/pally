@@ -457,6 +457,8 @@ class _AvatarCard extends StatelessWidget {
                     fontSize: 11,
                   ),
                   textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   avatar.subject,
@@ -464,6 +466,8 @@ class _AvatarCard extends StatelessWidget {
                     color: AppColors.text3,
                   ),
                   textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

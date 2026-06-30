@@ -52,18 +52,24 @@ class AchievementsScreen extends ConsumerWidget {
     if (earned.isNotEmpty) {
       widgets.add(Text('Recently earned', style: AppTextStyles.title));
       widgets.add(const SizedBox(height: AppSpacing.sm));
-      widgets.add(SizedBox(
-        height: 132,
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          itemCount: earned.length.clamp(0, 6),
-          separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
-          itemBuilder: (_, i) => SizedBox(
-            width: 120,
-            child: _AchievementTile(a: earned[i]),
+      // Height scales with the user's text-size setting so the tile's fixed +
+      // Expanded content never overflows the shelf at large accessibility scale.
+      widgets.add(Builder(builder: (context) {
+        final scale =
+            MediaQuery.textScalerOf(context).scale(1.0).clamp(1.0, 1.6);
+        return SizedBox(
+          height: 132 * scale,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: earned.length.clamp(0, 6),
+            separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
+            itemBuilder: (_, i) => SizedBox(
+              width: 120,
+              child: _AchievementTile(a: earned[i]),
+            ),
           ),
-        ),
-      ));
+        );
+      }));
       widgets.add(const SizedBox(height: AppSpacing.md));
     }
 

@@ -46,7 +46,14 @@ class PallyButton extends StatelessWidget {
                 icon!,
                 const SizedBox(width: AppSpacing.xs),
               ],
-              Text(label),
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ],
           );
 
