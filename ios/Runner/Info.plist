@@ -30,10 +30,10 @@
 	<string>Apalchi needs camera access to read your homework questions</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Apalchi uses Face ID to unlock your account quickly and securely</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Apalchi does not use your location for any feature. This permission is only referenced by an analytics SDK and your location is never collected or shared.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Apalchi needs photo access to load homework images</string>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>Apalchi uses analytics to understand how students use the app and improve the learning experience. No personal data is sold or shared with advertisers.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
