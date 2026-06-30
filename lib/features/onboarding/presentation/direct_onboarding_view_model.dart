@@ -250,6 +250,16 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
     state = state.copyWith(isLoading: true, error: null);
 
     final isUnder13 = state.isUnder13 == true;
+
+    // Guard: parentEmail must be set before we hit the network.
+    if (isUnder13 && (state.parentEmail == null || state.parentEmail!.trim().isEmpty)) {
+      state = state.copyWith(
+        isLoading: false,
+        error: "Please enter your parent's email address.",
+      );
+      return;
+    }
+
     // Pass birth year so the backend knows to mark account PENDING_CONSENT.
     // Under-13: use current year - 12 (safely under the threshold).
     // 13+: pass current year - 13 so the backend confirms they are 13+.
@@ -564,6 +574,8 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
     }
 
     return switch (status) {
+      401 =>
+        "Wrong password. Already have an account? Tap 'Already have an account? Sign in' below.",
       409 =>
         'An account with this email already exists. Try signing in instead.',
       400 when msgLow.contains('valid address') ||
