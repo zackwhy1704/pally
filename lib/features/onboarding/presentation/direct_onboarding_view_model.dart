@@ -386,7 +386,8 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
           error: e, stackTrace: st);
       state = state.copyWith(
         isLoading: false,
-        error: 'Could not send consent email. Please try again.',
+        error:
+            'Could not send the parental consent email. Please ask your parent to check their inbox for a confirmation link.',
       );
     }
   }
@@ -555,15 +556,31 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
     final status = e.response?.statusCode;
     final body = e.response?.data;
     final serverMsg = body is Map ? body['error'] as String? : null;
+    final msgLow = serverMsg?.toLowerCase() ?? '';
+
+    if (e.type == DioExceptionType.connectionError ||
+        e.type == DioExceptionType.connectionTimeout) {
+      return 'No internet connection. Check your WiFi and try again.';
+    }
 
     return switch (status) {
       409 =>
         'An account with this email already exists. Try signing in instead.',
+      400 when msgLow.contains('valid address') ||
+              msgLow.contains('valid email') =>
+        'Please enter a valid email address.',
+      400 when msgLow.contains('parent') || msgLow.contains('guardian') =>
+        'A valid parent email is required. Please go back and correct it.',
+      403 =>
+        'Your account is pending parental approval. Ask your parent to check their email.',
       422 => serverMsg ?? 'Please check your details and try again.',
       429 => 'Too many requests. Wait a moment and try again.',
-      _ when e.type == DioExceptionType.connectionError ||
-              e.type == DioExceptionType.connectionTimeout =>
-        'No internet connection. Check your WiFi and try again.',
+      500 =>
+        'Account setup hit a temporary error. If you already have an account, please try signing in instead.',
+      _ when msgLow.contains('pending') ||
+              msgLow.contains('consent') ||
+              msgLow.contains('elevation') =>
+        'Your account is pending parental approval. Ask your parent to check their email.',
       _ => serverMsg ?? 'Something went wrong. Please try again.',
     };
   }

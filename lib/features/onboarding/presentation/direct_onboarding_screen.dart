@@ -15,6 +15,10 @@ import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/onboarding/presentation/direct_onboarding_view_model.dart';
 import 'package:pally/app/router.dart';
 
+// Requires TLD ≥ 2 chars; rejects single-char TLDs like .c
+final _kEmailRegex =
+    RegExp(r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$');
+
 class DirectOnboardingScreen extends ConsumerStatefulWidget {
   const DirectOnboardingScreen({super.key});
 
@@ -280,8 +284,11 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
               validator: (v) {
-                if (v == null || !v.contains('@') || !v.contains('.')) {
-                  return 'Please enter a valid email';
+                if (v == null || v.trim().isEmpty) {
+                  return 'Please enter your email';
+                }
+                if (!_kEmailRegex.hasMatch(v.trim())) {
+                  return 'Please enter a valid email (e.g. you@example.com)';
                 }
                 return null;
               },
@@ -338,10 +345,11 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.done,
                 validator: (v) {
-                  if (v == null ||
-                      !v.contains('@') ||
-                      !v.contains('.')) {
-                    return 'Please enter a valid parent email';
+                  if (v == null || v.trim().isEmpty) {
+                    return "Please enter your parent's email";
+                  }
+                  if (!_kEmailRegex.hasMatch(v.trim())) {
+                    return "Please enter your parent's valid email (e.g. parent@example.com)";
                   }
                   return null;
                 },

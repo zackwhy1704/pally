@@ -79,6 +79,60 @@ void main() {
       expect(find.text('Create your account'), findsOneWidget);
     });
 
+    testWidgets(
+        'email field rejects single-char TLD and shows inline error', (tester) async {
+      await tester.pumpWidget(_wrap(
+        const DirectOnboardingScreen(),
+        overrides: [
+          directOnboardingViewModelProvider
+              .overrideWith(() => _Step1AgeKnownVM(isUnder13: false)),
+        ],
+      ));
+
+      // Name, Email, Password fields are indices 0, 1, 2
+      await tester.enterText(find.byType(TextFormField).at(0), 'Alice');
+      await tester.enterText(
+          find.byType(TextFormField).at(1), 'jsja@hshs.c');
+      await tester.enterText(find.byType(TextFormField).at(2), 'password123');
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.pump();
+
+      expect(
+        find.text('Please enter a valid email (e.g. you@example.com)'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets(
+        'parent email field rejects single-char TLD and shows inline error',
+        (tester) async {
+      await tester.pumpWidget(_wrap(
+        const DirectOnboardingScreen(),
+        overrides: [
+          directOnboardingViewModelProvider
+              .overrideWith(() => _Step1AgeKnownVM(isUnder13: true)),
+        ],
+      ));
+
+      // Under-13: Name=0, Email=1, Password=2, ParentEmail=3
+      await tester.enterText(find.byType(TextFormField).at(0), 'Bob');
+      await tester.enterText(
+          find.byType(TextFormField).at(1), 'bob@school.com');
+      await tester.enterText(find.byType(TextFormField).at(2), 'password123');
+      await tester.enterText(
+          find.byType(TextFormField).at(3), 'parent@home.c');
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.pump();
+
+      expect(
+        find.text(
+            "Please enter your parent's valid email (e.g. parent@example.com)"),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('step 2 renders subject and level pickers', (tester) async {
       await tester.pumpWidget(_wrap(
         const DirectOnboardingScreen(),
