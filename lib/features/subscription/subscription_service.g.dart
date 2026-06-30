@@ -7,7 +7,7 @@ part of 'subscription_service.dart';
 // **************************************************************************
 
 String _$subscriptionServiceHash() =>
-    r'08f145933608d07f7d311b22eb1df6ac2cf92f58';
+    r'51735c64ba02ea645c4d45a45a371f10db29c18e';
 
 /// Opens the public web checkout in an EXTERNAL browser.
 ///
@@ -35,5 +35,27 @@ final subscriptionServiceProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SubscriptionServiceRef = AutoDisposeProviderRef<SubscriptionService>;
+String _$upgradeLinkSenderHash() => r'9883ab39ed2764c0931459baa5dfae2c1b77010b';
+
+/// Asks the backend to send the web billing link to the signed-in user by
+/// email AND push notification, so they can finish checkout in their phone's
+/// browser. The primary affordance on iOS, where we can't show a launch button.
+///
+/// Copied from [upgradeLinkSender].
+@ProviderFor(upgradeLinkSender)
+final upgradeLinkSenderProvider =
+    AutoDisposeProvider<UpgradeLinkSender>.internal(
+  upgradeLinkSender,
+  name: r'upgradeLinkSenderProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$upgradeLinkSenderHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef UpgradeLinkSenderRef = AutoDisposeProviderRef<UpgradeLinkSender>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 
+import 'package:dio/dio.dart' show DioException;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,6 +37,7 @@ class WebUpgradeCta extends ConsumerStatefulWidget {
     this.intro = _defaultIntro,
     this.launchLabel = 'Continue on web',
     this.showRefresh = true,
+    this.showEmailLink = true,
   });
 
   /// Destination opened/copied. Defaults to the public checkout entry; pass
@@ -49,6 +51,10 @@ class WebUpgradeCta extends ConsumerStatefulWidget {
   /// upgrade flow, false for manage (nothing to unlock).
   final bool showRefresh;
 
+  /// Whether to show "Email me the link" (emails + pushes the billing link).
+  /// True for the upgrade flow; false for the manage variant.
+  final bool showEmailLink;
+
   @override
   ConsumerState<WebUpgradeCta> createState() => _WebUpgradeCtaState();
 }
@@ -57,7 +63,10 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
   bool _copied = false;
   bool _launching = false;
   bool _refreshing = false;
+  bool _emailing = false;
   String? _statusMsg; // persistent inline message (not a toast)
+  String? _emailMsg; // persistent result of the "Email me the link" action
+  bool _emailOk = false; // colours _emailMsg green on success, coral on error
 
   Future<void> _copyLink() async {
     await Clipboard.setData(ClipboardData(text: widget.url));
@@ -84,6 +93,43 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
       }
     } finally {
       if (mounted) setState(() => _launching = false);
+    }
+  }
+
+  Future<void> _sendEmailLink() async {
+    if (_emailing) return; // re-entry guard
+    setState(() {
+      _emailing = true;
+      _emailMsg = null;
+      _statusMsg = null;
+    });
+    try {
+      final result = await ref.read(upgradeLinkSenderProvider).send();
+      if (!mounted) return;
+      setState(() {
+        _emailOk = result.anySent;
+        if (!result.anySent) {
+          _emailMsg = "Couldn't send right now — copy the link above instead.";
+        } else if (result.emailSent && result.pushSent) {
+          _emailMsg =
+              'Sent! Check your email — we also pushed a notification with the link.';
+        } else if (result.emailSent) {
+          _emailMsg = 'Sent! Check your email for the link.';
+        } else {
+          _emailMsg = 'Sent you a notification with the link.';
+        }
+      });
+    } on DioException catch (e) {
+      if (!mounted) return;
+      final tooMany = e.response?.statusCode == 429;
+      setState(() {
+        _emailOk = false;
+        _emailMsg = tooMany
+            ? "You've requested this a few times — try again in a little while."
+            : "Couldn't send the link. Check your connection and try again.";
+      });
+    } finally {
+      if (mounted) setState(() => _emailing = false);
     }
   }
 
@@ -158,6 +204,41 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
+
+        // Send the billing link to email + a push notification. Works on every
+        // platform (a network action, not an external launch) so it's the
+        // primary continue affordance on iOS, where the launch button is hidden.
+        if (widget.showEmailLink) ...[
+          OutlinedButton.icon(
+            onPressed: _emailing ? null : _sendEmailLink,
+            icon: _emailing
+                ? const SizedBox(
+                    height: AppSizing.spinnerSm,
+                    width: AppSizing.spinnerSm,
+                    child: CircularProgressIndicator(
+                        color: AppColors.purple, strokeWidth: 2),
+                  )
+                : const Icon(Icons.mail_outline_rounded, size: 18),
+            label: Text(_emailing ? 'Sending…' : 'Email me the link'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.purple,
+              side: const BorderSide(color: AppColors.outline),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape:
+                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            ),
+          ),
+          if (_emailMsg != null) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              _emailMsg!,
+              style: AppTextStyles.caption.copyWith(
+                  color: _emailOk ? AppColors.green : AppColors.coral),
+              textAlign: TextAlign.center,
+            ),
+          ],
+          const SizedBox(height: AppSpacing.sm),
+        ],
 
         // Android (and host): a real one-tap launch. Hidden on iOS unless the
         // Apple External Link Account Entitlement has been granted (gated by the

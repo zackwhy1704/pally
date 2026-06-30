@@ -521,6 +521,7 @@ class _ActionArea extends StatelessWidget {
                   'the Apalchi website.',
               launchLabel: 'Manage on web',
               showRefresh: false,
+              showEmailLink: false,
             )
           else if (showUpgrade)
             const WebUpgradeCta(),
