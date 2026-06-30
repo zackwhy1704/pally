@@ -7,6 +7,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
 import 'package:pally/features/subscription/subscription_service.dart';
 import 'package:pally/features/subscription/web_billing.dart';
@@ -109,6 +110,11 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
 
   @override
   Widget build(BuildContext context) {
+    // On iOS the one-tap launch is hidden (App Store 3.1.1) UNTIL Apple grants
+    // the External Link Account Entitlement, at which point the server flips
+    // ios_external_link_enabled and the button appears. Android/host always show it.
+    final allowLaunch = !Platform.isIOS ||
+        isFlagEnabled(ref, FeatureFlags.iosExternalLinkEnabled);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -153,9 +159,11 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
         ),
         const SizedBox(height: AppSpacing.sm),
 
-        // Android (and host): a real one-tap launch. Hidden on iOS, where a
-        // tappable external-purchase button violates App Store 3.1.1.
-        if (!Platform.isIOS) ...[
+        // Android (and host): a real one-tap launch. Hidden on iOS unless the
+        // Apple External Link Account Entitlement has been granted (gated by the
+        // ios_external_link_enabled server flag), since otherwise a tappable
+        // external-purchase button violates App Store 3.1.1.
+        if (allowLaunch) ...[
           FilledButton(
             onPressed: _launching ? null : _continueOnWeb,
             style: FilledButton.styleFrom(

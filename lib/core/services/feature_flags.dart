@@ -13,6 +13,12 @@ class FeatureFlags {
   /// Admin-only flag (admin demo mode, admin settings).
   /// Set server-side from ADMIN_EMAILS env var only. Never set client-side.
   static const isAdmin = 'is_admin';
+
+  /// iOS external-purchase link allowed. Defaults absent → false, so iOS shows
+  /// a copy-only billing link (App Store anti-steering compliant). Flip this on
+  /// server-side ONLY after Apple grants the External Link Account Entitlement;
+  /// then the web upgrade CTA reveals a tappable "Continue on web" button on iOS.
+  static const iosExternalLinkEnabled = 'ios_external_link_enabled';
 }
 
 /// Server-controlled per-user feature flags.
