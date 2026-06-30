@@ -44,19 +44,31 @@ String subjectLabel(String subject) => switch (subject) {
       _ => subject,
     };
 
-/// Singapore-specific level options.
+/// Global education stages sent as the `level` field to the backend.
 const directOnboardingLevels = [
-  'P3',
-  'P4',
-  'P5',
-  'P6',
-  'Sec 1',
-  'Sec 2',
-  'Sec 3',
-  'Sec 4',
-  'JC1',
-  'JC2',
+  'PRIMARY',
+  'SECONDARY',
+  'HIGH_SCHOOL',
+  'UNIVERSITY',
 ];
+
+/// Human-readable label for a level value.
+String levelLabel(String level) => switch (level) {
+      'PRIMARY' => 'Primary School',
+      'SECONDARY' => 'Secondary School',
+      'HIGH_SCHOOL' => 'High School',
+      'UNIVERSITY' => 'University / Adult',
+      _ => level,
+    };
+
+/// Age-range hint shown under each stage tile.
+String levelSubtitle(String level) => switch (level) {
+      'PRIMARY' => 'Ages ~6–11',
+      'SECONDARY' => 'Ages ~11–16',
+      'HIGH_SCHOOL' => 'Ages ~16–18',
+      'UNIVERSITY' => 'Ages 18+',
+      _ => '',
+    };
 
 @immutable
 class DirectOnboardingState {

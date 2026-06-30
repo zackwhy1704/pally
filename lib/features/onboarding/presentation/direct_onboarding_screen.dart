@@ -63,28 +63,42 @@ class _DirectOnboardingScreenState
       },
     );
 
+    final notifier = ref.read(directOnboardingViewModelProvider.notifier);
+
     // Under-13 waiting for parental consent — overrides the normal step flow.
     if (vm.awaitingConsent) {
-      return Scaffold(
-        resizeToAvoidBottomInset: true,
-        backgroundColor: AppColors.bg,
-        body: SafeArea(
-          child: _ParentConsentPending(
-            maskedParentEmail: vm.maskedParentEmail ?? '',
+      return PopScope(
+        canPop: false,
+        child: Scaffold(
+          resizeToAvoidBottomInset: true,
+          backgroundColor: AppColors.bg,
+          body: SafeArea(
+            child: _ParentConsentPending(
+              maskedParentEmail: vm.maskedParentEmail ?? '',
+            ),
           ),
         ),
       );
     }
 
     return PopScope(
-      canPop: vm.step <= 1,
+      // Step 1: allow system back (returns to sign-in).
+      // Step 2: intercept and go back to step 1.
+      // Step 3: block — account already created, user uses "Skip for now".
+      canPop: vm.step == 1,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && vm.step == 2) notifier.goToStep(1);
+      },
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         backgroundColor: AppColors.bg,
         body: SafeArea(
           child: Column(
             children: [
-              _StepProgressBar(step: vm.step),
+              _StepProgressBar(
+                step: vm.step,
+                onBack: vm.step == 2 ? () => notifier.goToStep(1) : null,
+              ),
               Expanded(
                 child: switch (vm.step) {
                   1 => _Step1SignUp(
@@ -118,30 +132,52 @@ class _DirectOnboardingScreenState
 // ── Progress bar ──────────────────────────────────────────────────────────────
 
 class _StepProgressBar extends StatelessWidget {
-  const _StepProgressBar({required this.step});
+  const _StepProgressBar({required this.step, this.onBack});
   final int step;
+  final VoidCallback? onBack;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-      child: Column(
+          horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
+      child: Row(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(3),
-            child: LinearProgressIndicator(
-              value: step / 3,
-              minHeight: 6,
-              backgroundColor: AppColors.outline,
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.purple),
+          SizedBox(
+            width: 40,
+            child: onBack != null
+                ? IconButton(
+                    icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
+                    color: AppColors.text1,
+                    onPressed: onBack,
+                    padding: EdgeInsets.zero,
+                    constraints:
+                        const BoxConstraints(minWidth: 40, minHeight: 40),
+                  )
+                : null,
+          ),
+          Expanded(
+            child: Column(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(3),
+                  child: LinearProgressIndicator(
+                    value: step / 3,
+                    minHeight: 6,
+                    backgroundColor: AppColors.outline,
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(AppColors.purple),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Step $step of 3',
+                  style: AppTextStyles.caption.copyWith(color: AppColors.text2),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 6),
-          Text(
-            'Step $step of 3',
-            style: AppTextStyles.caption.copyWith(color: AppColors.text2),
-          ),
+          const SizedBox(width: 40), // mirror back button for symmetry
         ],
       ),
     );
@@ -493,35 +529,69 @@ class _Step2SubjectLevel extends ConsumerWidget {
             }).toList(),
           ),
           const SizedBox(height: AppSpacing.lg),
-          // Level picker
-          Text('Level',
+          // Education stage picker (replaces Singapore-specific levels)
+          Text('Education stage',
               style: AppTextStyles.label
                   .copyWith(fontWeight: FontWeight.w700)),
           const SizedBox(height: AppSpacing.sm),
-          Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: directOnboardingLevels.map((l) {
-              final selected = vm.selectedLevel == l;
-              return ChoiceChip(
-                label: Text(l),
-                selected: selected,
-                onSelected: (_) => notifier.setLevel(l),
-                selectedColor: AppColors.purpleL,
-                labelStyle: AppTextStyles.body.copyWith(
-                  color: selected ? AppColors.purple : AppColors.text1,
-                  fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(
-                    color: selected ? AppColors.purple : AppColors.outline,
+          ...directOnboardingLevels.map((l) {
+            final selected = vm.selectedLevel == l;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+              child: GestureDetector(
+                onTap: () => notifier.setLevel(l),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.sm + 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: selected ? AppColors.purpleL : AppColors.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: selected ? AppColors.purple : AppColors.outline,
+                      width: selected ? 1.5 : 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        selected
+                            ? Icons.radio_button_checked_rounded
+                            : Icons.radio_button_off_rounded,
+                        color: selected ? AppColors.purple : AppColors.text3,
+                        size: 20,
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              levelLabel(l),
+                              style: AppTextStyles.body.copyWith(
+                                color: selected
+                                    ? AppColors.purple
+                                    : AppColors.text1,
+                                fontWeight: selected
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              levelSubtitle(l),
+                              style: AppTextStyles.bodySmall
+                                  .copyWith(color: AppColors.text3),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                backgroundColor: AppColors.surface,
-              );
-            }).toList(),
-          ),
+              ),
+            );
+          }),
           const SizedBox(height: AppSpacing.xl),
           SizedBox(
             height: AppSizing.buttonHeight,

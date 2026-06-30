@@ -29,11 +29,11 @@ void main() {
       const state = DirectOnboardingState();
       final updated = state.copyWith(
         selectedSubject: 'MATHS',
-        selectedLevel: 'P5',
+        selectedLevel: 'SECONDARY',
       );
 
       expect(updated.selectedSubject, 'MATHS');
-      expect(updated.selectedLevel, 'P5');
+      expect(updated.selectedLevel, 'SECONDARY');
     });
 
     test('copyWith can set avatarId and move to step 3', () {
@@ -106,10 +106,25 @@ void main() {
   });
 
   group('directOnboardingLevels', () {
-    test('contains expected levels', () {
-      expect(directOnboardingLevels, contains('P3'));
-      expect(directOnboardingLevels, contains('Sec 1'));
-      expect(directOnboardingLevels, contains('JC2'));
+    test('contains global education stages', () {
+      expect(directOnboardingLevels, contains('PRIMARY'));
+      expect(directOnboardingLevels, contains('SECONDARY'));
+      expect(directOnboardingLevels, contains('HIGH_SCHOOL'));
+      expect(directOnboardingLevels, contains('UNIVERSITY'));
+      expect(directOnboardingLevels.length, 4);
+    });
+  });
+
+  group('levelLabel', () {
+    test('returns human-readable labels', () {
+      expect(levelLabel('PRIMARY'), 'Primary School');
+      expect(levelLabel('SECONDARY'), 'Secondary School');
+      expect(levelLabel('HIGH_SCHOOL'), 'High School');
+      expect(levelLabel('UNIVERSITY'), 'University / Adult');
+    });
+
+    test('returns raw value for unknown stage', () {
+      expect(levelLabel('GRADUATE'), 'GRADUATE');
     });
   });
 }

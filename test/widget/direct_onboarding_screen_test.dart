@@ -89,15 +89,16 @@ void main() {
 
       expect(find.text('What are you studying?'), findsOneWidget);
       expect(find.text('Subject'), findsOneWidget);
-      expect(find.text('Level'), findsOneWidget);
+      expect(find.text('Education stage'), findsOneWidget);
       expect(find.text('Create account'), findsOneWidget);
       expect(find.text('Step 2 of 3'), findsOneWidget);
-      // Verify some subject chips are present
+      // Subject chips
       expect(find.text('Maths'), findsOneWidget);
       expect(find.text('Science'), findsOneWidget);
-      // Verify some level chips are present
-      expect(find.text('P3'), findsOneWidget);
-      expect(find.text('Sec 1'), findsOneWidget);
+      // Education stage tiles (global, not Singapore-specific)
+      expect(find.text('Primary School'), findsOneWidget);
+      expect(find.text('High School'), findsOneWidget);
+      expect(find.text('University / Adult'), findsOneWidget);
     });
 
     testWidgets('step 3 renders upload prompt', (tester) async {
