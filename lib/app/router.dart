@@ -53,6 +53,9 @@ import 'package:pally/features/modules/presentation/module_list_screen.dart';
 import 'package:pally/features/modules/presentation/module_player_screen.dart';
 import 'package:pally/features/exam_prep/presentation/exam_prep_screen.dart';
 import 'package:pally/features/assignments/presentation/assignment_compare_screen.dart';
+import 'package:pally/features/homework/presentation/homework_list_screen.dart';
+import 'package:pally/features/homework/presentation/homework_submit_screen.dart';
+import 'package:pally/features/homework/presentation/homework_detail_screen.dart';
 import 'package:pally/features/auth/screens/centre_block_screen.dart';
 import 'package:pally/features/consent/presentation/ai_disclosure_screen.dart';
 import 'package:pally/features/ocr_awareness/screens/ocr_what_can_read.dart';
@@ -517,6 +520,61 @@ class AssignmentCompareRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       AssignmentCompareScreen(avatarId: avatarId, assignmentId: assignmentId);
+}
+
+/// Homework is a centre-class feature. The redirect sends a personal Mochi
+/// away; an unknown avatar (cold cache / deep link) is allowed through because
+/// the backend still guards class membership.
+String? _homeworkCentreGuard(BuildContext context, String avatarId) {
+  final container = ProviderScope.containerOf(context, listen: false);
+  final avatars = container.read(homeViewModelProvider);
+  final avatar =
+      avatars.valueOrNull?.where((a) => a.id == avatarId).firstOrNull;
+  if (avatar != null && avatar.kind != AvatarKind.centreClass) {
+    return '/';
+  }
+  return null;
+}
+
+@TypedGoRoute<HomeworkListRoute>(path: '/avatar/:avatarId/homework')
+class HomeworkListRoute extends GoRouteData {
+  const HomeworkListRoute({required this.avatarId});
+  final String avatarId;
+
+  @override
+  String? redirect(BuildContext context, GoRouterState state) =>
+      _homeworkCentreGuard(context, avatarId);
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      HomeworkListScreen(avatarId: avatarId);
+}
+
+@TypedGoRoute<HomeworkSubmitRoute>(path: '/avatar/:avatarId/homework-submit')
+class HomeworkSubmitRoute extends GoRouteData {
+  const HomeworkSubmitRoute({required this.avatarId});
+  final String avatarId;
+
+  @override
+  String? redirect(BuildContext context, GoRouterState state) =>
+      _homeworkCentreGuard(context, avatarId);
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      HomeworkSubmitScreen(avatarId: avatarId);
+}
+
+@TypedGoRoute<HomeworkDetailRoute>(
+    path: '/avatar/:avatarId/homework/:submissionId')
+class HomeworkDetailRoute extends GoRouteData {
+  const HomeworkDetailRoute(
+      {required this.avatarId, required this.submissionId});
+  final String avatarId;
+  final String submissionId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      HomeworkDetailScreen(avatarId: avatarId, submissionId: submissionId);
 }
 
 @TypedGoRoute<ExamPrepRoute>(path: '/avatar/:avatarId/exam-prep')

@@ -36,6 +36,18 @@ class ModuleListScreen extends ConsumerWidget {
         ),
         title: Text('Modules', style: AppTextStyles.title),
         centerTitle: true,
+        actions: [
+          // Homework is a centre-class feature: show the entry point only once
+          // we positively know this is a centre class (null while loading →
+          // never flash it to a personal Mochi).
+          if (ref.watch(moduleAvatarInfoProvider(avatarId))?.isCentreClass ??
+              false)
+            IconButton(
+              icon: const Icon(Icons.assignment_turned_in_outlined),
+              tooltip: 'Homework',
+              onPressed: () => HomeworkListRoute(avatarId: avatarId).push(context),
+            ),
+        ],
       ),
       body: modulesAsync.when(
         loading: () => const Center(

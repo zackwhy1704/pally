@@ -25,6 +25,8 @@ void main() {
           moduleListViewModelProvider('test-avatar').overrideWith(
             () => _LoadingModuleListVM(),
           ),
+          moduleAvatarInfoProvider('test-avatar').overrideWith((ref) =>
+              const ModuleAvatarInfo(hasNotes: true, isCentreClass: false)),
         ],
       ));
       // Pump once to render the initial loading state (don't settle —
@@ -122,6 +124,8 @@ void main() {
         overrides: [
           moduleListViewModelProvider('test-avatar')
               .overrideWith(() => _LoadedModuleListVM()),
+          moduleAvatarInfoProvider('test-avatar').overrideWith((ref) =>
+              const ModuleAvatarInfo(hasNotes: true, isCentreClass: false)),
         ],
       ));
       await tester.pumpAndSettle();
@@ -136,6 +140,8 @@ void main() {
         overrides: [
           moduleListViewModelProvider('test-avatar')
               .overrideWith(() => _LoadedModuleListVM()),
+          moduleAvatarInfoProvider('test-avatar').overrideWith((ref) =>
+              const ModuleAvatarInfo(hasNotes: true, isCentreClass: false)),
         ],
       ));
       await tester.pumpAndSettle();
@@ -150,6 +156,8 @@ void main() {
         overrides: [
           moduleListViewModelProvider('test-avatar')
               .overrideWith(() => _ErrorModuleListVM()),
+          moduleAvatarInfoProvider('test-avatar').overrideWith((ref) =>
+              const ModuleAvatarInfo(hasNotes: true, isCentreClass: false)),
         ],
       ));
       await tester.pumpAndSettle();

@@ -37,6 +37,9 @@ List<RouteBase> get $appRoutes => [
       $moduleListRoute,
       $modulePlayerRoute,
       $assignmentCompareRoute,
+      $homeworkListRoute,
+      $homeworkSubmitRoute,
+      $homeworkDetailRoute,
       $examPrepRoute,
       $splashRoute,
       $signInRoute,
@@ -921,6 +924,81 @@ extension $AssignmentCompareRouteExtension on AssignmentCompareRoute {
 
   String get location => GoRouteData.$location(
         '/avatar/${Uri.encodeComponent(avatarId)}/assignments/${Uri.encodeComponent(assignmentId)}',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $homeworkListRoute => GoRouteData.$route(
+      path: '/avatar/:avatarId/homework',
+      factory: $HomeworkListRouteExtension._fromState,
+    );
+
+extension $HomeworkListRouteExtension on HomeworkListRoute {
+  static HomeworkListRoute _fromState(GoRouterState state) => HomeworkListRoute(
+        avatarId: state.pathParameters['avatarId']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/avatar/${Uri.encodeComponent(avatarId)}/homework',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $homeworkSubmitRoute => GoRouteData.$route(
+      path: '/avatar/:avatarId/homework-submit',
+      factory: $HomeworkSubmitRouteExtension._fromState,
+    );
+
+extension $HomeworkSubmitRouteExtension on HomeworkSubmitRoute {
+  static HomeworkSubmitRoute _fromState(GoRouterState state) =>
+      HomeworkSubmitRoute(
+        avatarId: state.pathParameters['avatarId']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/avatar/${Uri.encodeComponent(avatarId)}/homework-submit',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $homeworkDetailRoute => GoRouteData.$route(
+      path: '/avatar/:avatarId/homework/:submissionId',
+      factory: $HomeworkDetailRouteExtension._fromState,
+    );
+
+extension $HomeworkDetailRouteExtension on HomeworkDetailRoute {
+  static HomeworkDetailRoute _fromState(GoRouterState state) =>
+      HomeworkDetailRoute(
+        avatarId: state.pathParameters['avatarId']!,
+        submissionId: state.pathParameters['submissionId']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/avatar/${Uri.encodeComponent(avatarId)}/homework/${Uri.encodeComponent(submissionId)}',
       );
 
   void go(BuildContext context) => context.go(location);
