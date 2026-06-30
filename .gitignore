@@ -63,3 +63,6 @@ test/golden/failures/
 
 # Xcode SwiftPM workspace state (Flutter-generated, not the .swiftpm/ dir)
 **/xcshareddata/swiftpm/
+
+# Claude Code agent worktrees (never commit)
+.claude/worktrees/
