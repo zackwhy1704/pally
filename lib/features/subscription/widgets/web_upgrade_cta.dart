@@ -172,38 +172,45 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
         ),
         const SizedBox(height: AppSpacing.sm),
 
-        // Selectable, copiable address (the only purchase affordance on iOS).
-        Container(
-          padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-          decoration: BoxDecoration(
-            color: AppColors.surf2,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.outline),
-          ),
-          child: Row(
-            children: [
-              const Icon(Icons.link_rounded, size: 18, color: AppColors.text2),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: SelectableText(
-                  widget.displayUrl,
-                  style: AppTextStyles.body
-                      .copyWith(fontWeight: FontWeight.w700, color: AppColors.text1),
+        // Selectable, copiable web address. Shown ONLY where a launch is allowed
+        // (Android/host, or iOS once the External Link Account Entitlement is
+        // granted via ios_external_link_enabled). On iOS without the entitlement
+        // we must not surface ANY web-billing URL — App Store 3.1.1 anti-steering
+        // — so the email button below is the sole continue affordance.
+        if (allowLaunch) ...[
+          Container(
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+            decoration: BoxDecoration(
+              color: AppColors.surf2,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.outline),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.link_rounded,
+                    size: 18, color: AppColors.text2),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: SelectableText(
+                    widget.displayUrl,
+                    style: AppTextStyles.body.copyWith(
+                        fontWeight: FontWeight.w700, color: AppColors.text1),
+                  ),
                 ),
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              TextButton(
-                onPressed: _copyLink,
-                child: Text(_copied ? 'Copied' : 'Copy link',
-                    style: AppTextStyles.label.copyWith(
-                      color: _copied ? AppColors.green : AppColors.purple,
-                    )),
-              ),
-            ],
+                const SizedBox(width: AppSpacing.xs),
+                TextButton(
+                  onPressed: _copyLink,
+                  child: Text(_copied ? 'Copied' : 'Copy link',
+                      style: AppTextStyles.label.copyWith(
+                        color: _copied ? AppColors.green : AppColors.purple,
+                      )),
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: AppSpacing.sm),
+        ],
 
         // Send the billing link to email + a push notification. Works on every
         // platform (a network action, not an external launch) so it's the
