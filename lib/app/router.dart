@@ -150,6 +150,14 @@ class CreateTutorRoute extends GoRouteData {
   const CreateTutorRoute();
 
   @override
+  String? redirect(BuildContext context, GoRouterState state) {
+    final container = ProviderScope.containerOf(context, listen: false);
+    // Under-13 users awaiting parental consent cannot create a personal Mochi.
+    if (container.read(authStateProvider).awaitingConsent) return '/';
+    return null;
+  }
+
+  @override
   Widget build(BuildContext context, GoRouterState state) =>
       const CreateTutorScreen();
 }
@@ -195,15 +203,16 @@ class UploadRoute extends GoRouteData {
 
   @override
   String? redirect(BuildContext context, GoRouterState state) {
-    // Block centre-class avatars at the route level — students cannot upload
-    // to a centre-managed Mochi. Belt-and-suspenders: entry points already hide
-    // the affordance, and UploadScreen also pops on centre config. This redirect
-    // prevents any blank-screen flash.
     final container = ProviderScope.containerOf(context, listen: false);
     final avatars = container.read(homeViewModelProvider);
     final avatar =
         avatars.valueOrNull?.where((a) => a.id == avatarId).firstOrNull;
+    // Block uploads to centre-managed Mochis (teacher controls content).
     if (avatar != null && avatar.kind == AvatarKind.centreClass) {
+      return '/';
+    }
+    // Under-13 pending-consent users cannot upload their own notes.
+    if (container.read(authStateProvider).awaitingConsent) {
       return '/';
     }
     return null;
@@ -578,6 +587,15 @@ class DirectOnboardingRoute extends GoRouteData {
 @TypedGoRoute<CameraRoute>(path: '/camera')
 class CameraRoute extends GoRouteData {
   const CameraRoute();
+
+  @override
+  String? redirect(BuildContext context, GoRouterState state) {
+    final container = ProviderScope.containerOf(context, listen: false);
+    // Under-13 users awaiting parental consent cannot use the photo-question
+    // OCR flow (ingests new child-authored content via AI).
+    if (container.read(authStateProvider).awaitingConsent) return '/';
+    return null;
+  }
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>

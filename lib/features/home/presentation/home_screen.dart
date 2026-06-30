@@ -63,7 +63,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final avatarsAsync = ref.watch(homeViewModelProvider);
     final progressAsync = ref.watch(progressViewModelProvider);
-    final childName = ref.watch(authStateProvider).childName ?? '';
+    final auth = ref.watch(authStateProvider);
+    final childName = auth.childName ?? '';
 
     ref.listen<AsyncValue<List<Avatar>>>(homeViewModelProvider, (_, next) {
       if (next is AsyncError) {
@@ -86,7 +87,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: Column(
           children: [
             _HomeHeader(
-              onNewTutor: () => const CreateTutorRoute().go(context),
+              onNewTutor: () {
+                if (auth.awaitingConsent) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                      'Creating a Mochi requires parental approval. '
+                      'Check the banner above.',
+                      style: AppTextStyles.bodySmall
+                          .copyWith(color: Colors.white),
+                    ),
+                    backgroundColor: AppColors.amber,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ));
+                  return;
+                }
+                const CreateTutorRoute().go(context);
+              },
               level: level,
               xpInto: xpInto,
               xpSpan: xpSpan,
