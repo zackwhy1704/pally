@@ -13,6 +13,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/onboarding/presentation/direct_onboarding_view_model.dart';
+import 'package:pally/features/onboarding/presentation/widgets/onboarding_legal_footer.dart';
 import 'package:pally/app/router.dart';
 
 // Requires TLD ≥ 2 chars; rejects single-char TLDs like .c
@@ -114,6 +115,7 @@ class _DirectOnboardingScreenState
                   _ => const SizedBox.shrink(),
                 },
               ),
+              const OnboardingLegalFooter(),
             ],
           ),
         ),

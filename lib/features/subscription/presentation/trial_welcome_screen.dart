@@ -147,7 +147,7 @@ class _TrialWelcomeSheet extends StatelessWidget {
               Navigator.of(context).pop();
               context.push('/subscription/plans');
             },
-            child: Text('Subscribe now from S\$14.90/mo',
+            child: Text('Subscribe now from US\$9.99/mo',
                 style: TextStyle(
                     fontFamily: 'Nunito',
                     color: Colors.white.withValues(alpha: 0.7),

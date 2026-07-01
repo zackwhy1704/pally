@@ -4,6 +4,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/features/auth/auth_state.dart';
+import 'package:pally/features/onboarding/presentation/widgets/onboarding_legal_footer.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -52,6 +53,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ],
                 ),
               ),
+              const OnboardingLegalFooter(),
             ],
           ),
         ),

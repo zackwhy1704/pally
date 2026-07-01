@@ -107,7 +107,7 @@ class _TrialCountdownBannerState extends ConsumerState<TrialCountdownBanner> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                       ),
-                      child: const Text('Keep Premium — S\$14.90/mo',
+                      child: const Text('Keep Premium from US\$9.99/mo',
                           style: TextStyle(
                               fontFamily: 'Nunito',
                               fontWeight: FontWeight.w800,

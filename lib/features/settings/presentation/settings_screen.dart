@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/services/notification_service.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -40,6 +41,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _biometricEnabled = false;
   bool _biometricSupported = true;
   final _localAuth = LocalAuthentication();
+  String _versionLabel = '—';
 
   static const _kReminderEnabled = 'settings_daily_reminder_enabled';
   static const _kReminderHour = 'settings_daily_reminder_hour';
@@ -52,6 +54,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _nameController = TextEditingController(text: childName);
     _loadBiometricState();
     _loadReminderSettings();
+    _loadVersion();
+  }
+
+  Future<void> _loadVersion() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      if (!mounted) return;
+      setState(() => _versionLabel = '${info.version}+${info.buildNumber}');
+    } catch (_) {
+      // Leave the placeholder — a missing version string is not worth surfacing.
+    }
   }
 
   Future<void> _loadReminderSettings() async {
@@ -420,10 +433,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 onTap: () => HowPallyIsDifferent.show(context),
               ),
               const Divider(height: 1, color: AppColors.outline),
-              const _InfoTile(
+              _InfoTile(
                 icon: Icons.info_outline_rounded,
                 label: 'Version',
-                value: '1.0.0',
+                value: _versionLabel,
+              ),
+              const Divider(height: 1, color: AppColors.outline),
+              _TappableTile(
+                icon: Icons.public_rounded,
+                label: 'About Apalchi',
+                trailing: const Icon(Icons.open_in_new_rounded,
+                    size: 16, color: AppColors.text3),
+                onTap: () => launchUrl(
+                  Uri.parse('https://apalchi.com'),
+                  mode: LaunchMode.externalApplication,
+                ),
               ),
               const Divider(height: 1, color: AppColors.outline),
               _TappableTile(
@@ -454,7 +478,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 trailing: const Icon(Icons.open_in_new_rounded,
                     size: 16, color: AppColors.text3),
                 onTap: () => launchUrl(
-                  Uri.parse('mailto:support@apalchi.com'),
+                  Uri.parse('https://apalchi.com/support'),
+                  mode: LaunchMode.externalApplication,
+                ),
+              ),
+              const Divider(height: 1, color: AppColors.outline),
+              _TappableTile(
+                icon: Icons.mail_outline_rounded,
+                label: 'Email us',
+                trailing: const Icon(Icons.open_in_new_rounded,
+                    size: 16, color: AppColors.text3),
+                onTap: () => launchUrl(
+                  Uri.parse('mailto:hello@apalchi.com'),
                   mode: LaunchMode.externalApplication,
                 ),
               ),

@@ -37,8 +37,8 @@ const _plans = [
     id: 'pro_monthly',
     title: 'Pro',
     subtitle: '1 student · all AI features',
-    price: r'S$8.90/mo',
-    annualPrice: r'S$89/yr',
+    price: r'US$9.99/mo',
+    annualPrice: r'US$79/yr',
     features: [
       '100 AI messages / day',
       'Up to 5 Mochis',
@@ -50,8 +50,8 @@ const _plans = [
     id: 'max_monthly',
     title: 'Max',
     subtitle: '1 student · smarter AI for hard problems',
-    price: r'S$14.90/mo',
-    annualPrice: r'S$149/yr',
+    price: r'US$19.99/mo',
+    annualPrice: r'US$159/yr',
     features: [
       'Unlimited AI messages',
       'Unlimited Mochis',
@@ -65,8 +65,8 @@ const _plans = [
     id: 'family_monthly',
     title: 'Family',
     subtitle: 'Up to 4 students',
-    price: r'S$24.90/mo',
-    annualPrice: r'S$249/yr',
+    price: r'US$34.99/mo',
+    annualPrice: r'US$279/yr',
     features: [
       'Everything in Max',
       'Up to 4 child accounts',

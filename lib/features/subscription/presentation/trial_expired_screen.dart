@@ -135,7 +135,7 @@ class _TrialExpiredScreenState extends ConsumerState<TrialExpiredScreen> {
                         Expanded(
                           child: _PlanButton(
                             label: 'Max',
-                            price: 'S\$14.90/mo',
+                            price: 'US\$19.99/mo',
                             onTap: () => context.push('/subscription/plans'),
                           ),
                         ),
@@ -143,7 +143,7 @@ class _TrialExpiredScreenState extends ConsumerState<TrialExpiredScreen> {
                         Expanded(
                           child: _PlanButton(
                             label: 'Family',
-                            price: 'S\$24.90/mo',
+                            price: 'US\$34.99/mo',
                             subtitle: 'up to 4 kids',
                             onTap: () => context.push('/subscription/plans'),
                           ),
