@@ -615,6 +615,16 @@ class UploadViewModel extends _$UploadViewModel {
               '— double-check it looks right.',
         ));
       }
+      // Extraction-quality guard: a file that read as almost no text won't train
+      // well. -1 means the field is absent (older backend) → don't warn.
+      final extractedChars = (data['extractedChars'] as num?)?.toInt() ?? -1;
+      if (extractedChars >= 0 && extractedChars < 200) {
+        warnings.add(FileUploadWarning(
+          fileName: file.name,
+          message: "I couldn't read much text from this — re-upload a clearer "
+              "copy or type it. It won't train me well as-is.",
+        ));
+      }
 
       state = state.copyWith(
         isUploading: false,

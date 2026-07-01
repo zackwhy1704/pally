@@ -235,10 +235,12 @@ class _TipData {
 }
 
 const _kTips = [
+  _TipData('💻', 'Digital is best', 'A clear PDF or screenshot beats a photo'),
   _TipData('☀️', 'Good lighting', 'Bright, even light — avoid shadows on the page'),
   _TipData('📐', 'Flat and straight', 'Hold your phone directly above, not at an angle'),
   _TipData('🔍', 'Fill the frame', 'Get close enough so text is large and clear'),
-  _TipData('✋', 'Keep it steady', 'Hold still or rest your elbow on a surface'),
+  _TipData('📄', 'One topic per upload', 'Separate topics read better than a mixed dump'),
+  _TipData('🔢', 'Math? Type it', 'For equations, a typed copy or very clear photo reads best'),
 ];
 
 const _kReadableContent = [
