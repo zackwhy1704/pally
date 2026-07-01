@@ -1176,25 +1176,43 @@ class _QuizLoadingViewState extends State<_QuizLoadingView> {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 400),
-              child: Column(
-                key: ValueKey(_lineIndex),
-                children: [
-                  Text(
-                    line.hero,
-                    style: AppTextStyles.title
-                        .copyWith(color: AppColors.purple),
-                    textAlign: TextAlign.center,
+            // Reserve a constant footprint for the rotating tagline. The lines
+            // in kSplashLines differ in length (1 vs 2 rendered lines), so
+            // swapping them changed this block's height — and because the outer
+            // Column is centred, that reflow shifted the mochi + spinner every
+            // 3s (the "moving mochi" bug). A fixed-height box with the switcher
+            // centred inside keeps everything above rock-still; the marketing
+            // lines are decorative, so capping them at 2 lines + ellipsis is fine.
+            SizedBox(
+              height: AppSpacing.xxl * 2,
+              width: double.infinity,
+              child: Center(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 400),
+                  child: Column(
+                    key: ValueKey(_lineIndex),
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        line.hero,
+                        style: AppTextStyles.title
+                            .copyWith(color: AppColors.purple),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        line.sub,
+                        style: AppTextStyles.bodySmall
+                            .copyWith(color: AppColors.text2),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    line.sub,
-                    style: AppTextStyles.bodySmall
-                        .copyWith(color: AppColors.text2),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                ),
               ),
             ),
             const SizedBox(height: AppSpacing.md),
