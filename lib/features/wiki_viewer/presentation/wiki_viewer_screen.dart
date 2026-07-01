@@ -755,7 +755,9 @@ class _PageTileState extends ConsumerState<_PageTile> {
                         ),
                       ),
                       const SizedBox(width: AppSpacing.xs),
-                      _CertaintyBadge(certainty: widget.page.certainty),
+                      _CertaintyBadge(
+                          score: widget.page.certaintyScore,
+                          certainty: widget.page.certainty),
                       if (widget.page.hasConflict) ...[
                         const SizedBox(width: AppSpacing.xs),
                         _ConflictBadge(
@@ -937,32 +939,48 @@ class _PageTileState extends ConsumerState<_PageTile> {
   }
 }
 
+/// Friendly per-page confidence signal — word + colour + % from certaintyScore
+/// (0..1), refined by the certainty enum at the extremes. Same three bands as
+/// the web QualityBadge so students/teachers learn one mental model:
+/// good=green "Confident", fair=amber "Fairly sure", poor=coral "Less sure".
 class _CertaintyBadge extends StatelessWidget {
-  const _CertaintyBadge({required this.certainty});
+  const _CertaintyBadge({required this.score, required this.certainty});
+  final double score;
   final String certainty;
 
   @override
   Widget build(BuildContext context) {
-    final (bg, fg, label) = switch (certainty.toLowerCase()) {
-      'verified' => (AppColors.greenL, AppColors.green, 'fact'),
-      'uncertain' => (AppColors.coralL, AppColors.coral, 'uncertain'),
-      _ => (AppColors.purpleL, AppColors.purple, 'inferred'),
-    };
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      constraints: const BoxConstraints(maxWidth: 80),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        label,
-        style: AppTextStyles.caption.copyWith(
-          color: fg,
-          fontWeight: FontWeight.w600,
+    double s = score;
+    final e = certainty.toLowerCase();
+    if (e == 'verified' && s < 0.75) s = 0.95;
+    if ((e == 'uncertain' || e == 'conflicted') && s > 0.45) s = 0.35;
+
+    final pct = (s * 100).round();
+    final (bg, fg, label, tip) = s >= 0.75
+        ? (AppColors.greenL, AppColors.green, 'Confident',
+            'Mochi is confident about this page.')
+        : s >= 0.45
+            ? (AppColors.amber.withValues(alpha: 0.14), AppColors.amber, 'Fairly sure',
+                'Mochi is fairly sure — add clearer notes to strengthen this page.')
+            : (AppColors.coralL, AppColors.coral, 'Less sure',
+                'Mochi is less sure here — add clearer notes to improve.');
+    return Tooltip(
+      message: tip,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(20),
         ),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+        child: Text(
+          '$label · $pct%',
+          style: AppTextStyles.caption.copyWith(
+            color: fg,
+            fontWeight: FontWeight.w600,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
     );
   }
