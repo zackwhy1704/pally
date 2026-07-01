@@ -74,13 +74,13 @@ int _parseWaitSeconds(dynamic body) {
 /// Shows the half-elevated (under-13 awaiting parent) gate sheet centrally.
 /// Rate-limited by the caller; this just renders the actionable panel with a
 /// working resend wired to [resendParentConsent].
-void showParentalConsentPendingSheet({
+Future<void> showParentalConsentPendingSheet({
   required BuildContext context,
   required Ref ref,
   required String maskedEmail,
   required int cooldownSeconds,
 }) {
-  showModalBottomSheet<void>(
+  return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
@@ -287,6 +287,13 @@ class _ParentalConsentPendingSheetState
                   const TextSpan(text: ' and tap the approval link.'),
                 ],
               ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              "It can take a minute. If they don't see it, ask them to check "
+              "their spam or junk folder and tap 'Not spam' so the next one "
+              'arrives properly.',
+              style: AppTextStyles.bodySmall.copyWith(color: AppColors.text3),
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(

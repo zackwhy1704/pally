@@ -8,6 +8,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/features/consent/data/consent_gate_guard.dart';
 import 'package:pally/features/consent/presentation/parental_consent_pending_sheet.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -174,7 +175,11 @@ class _ServerErrorInterceptor extends Interceptor {
   static DateTime? _lastShown;
   static DateTime? _lastPaywallRoute;
   static DateTime? _lastParentLinkRoute;
-  static DateTime? _lastConsentPendingSheet;
+  // One shared guard so exactly one consent modal is ever visible.
+  // CONSENT_REQUIRED and PARENTAL_CONSENT_PENDING are the same conceptual gate;
+  // the dashboard fans out several parallel calls that each 403, so without this
+  // every 403 stacked another modal barrier — the flicker / swallowed-taps glitch.
+  static final ConsentGateGuard _consentGate = ConsentGateGuard();
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
@@ -305,30 +310,35 @@ class _ServerErrorInterceptor extends Interceptor {
       if (code == 'CONSENT_REQUIRED') {
         final ctx = _ref.read(globalNavigatorKeyProvider)?.currentContext;
         if (ctx != null && ctx.mounted) {
-          try {
-            // Show a friendly bottom sheet instead of a raw error. "Remind my
-            // grown-up" opens the working resend affordance (the old
-            // /consent/waiting route was never registered — a dead-end).
-            showModalBottomSheet<void>(
-              context: ctx,
-              isScrollControlled: true,
-              backgroundColor: Colors.transparent,
-              builder: (_) => _ConsentGateSheet(
-                reason: reason ?? 'general',
-                onRemind: () {
-                  final c =
-                      _ref.read(globalNavigatorKeyProvider)?.currentContext;
-                  if (c == null || !c.mounted) return;
-                  showParentalConsentPendingSheet(
-                    context: c,
-                    ref: _ref,
-                    maskedEmail: 'your grown-up',
-                    cooldownSeconds: 0,
-                  );
-                },
-              ),
-            );
-          } catch (_) {}
+          // Show a friendly bottom sheet instead of a raw error. "Remind my
+          // grown-up" opens the working resend affordance (the old
+          // /consent/waiting route was never registered — a dead-end).
+          _showConsentGateOnce(() => showModalBottomSheet<void>(
+                context: ctx,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (_) => _ConsentGateSheet(
+                  reason: reason ?? 'general',
+                  onRemind: () {
+                    final c =
+                        _ref.read(globalNavigatorKeyProvider)?.currentContext;
+                    if (c == null || !c.mounted) return;
+                    // Replace this gate with the pending sheet — never stack.
+                    // A deliberate single tap (not the parallel-403 storm), so
+                    // it shows directly; popping the gate resets the flag.
+                    Navigator.of(c).pop();
+                    final c2 =
+                        _ref.read(globalNavigatorKeyProvider)?.currentContext;
+                    if (c2 == null || !c2.mounted) return;
+                    showParentalConsentPendingSheet(
+                      context: c2,
+                      ref: _ref,
+                      maskedEmail: 'your grown-up',
+                      cooldownSeconds: 0,
+                    );
+                  },
+                ),
+              ));
         }
       }
     }
@@ -350,34 +360,31 @@ class _ServerErrorInterceptor extends Interceptor {
     handler.next(err);
   }
 
-  /// Shows the half-elevated consent-pending sheet (masked email + working
-  /// resend) on a 403 `PARENTAL_CONSENT_PENDING`. Rate-limited to once per
-  /// second so a refresh storm can't stack the sheet.
-  void _handleParentalConsentPending(Map<dynamic, dynamic> data) {
-    final now = DateTime.now();
-    final allowed = _lastConsentPendingSheet == null ||
-        now.difference(_lastConsentPendingSheet!) > const Duration(seconds: 1);
-    if (!allowed) return;
-    _lastConsentPendingSheet = now;
+  /// Shows a consent modal at most ONCE. Parallel 403s from the dashboard's
+  /// fan-out must not stack barriers, and CONSENT_REQUIRED + the pending sheet
+  /// (the same conceptual gate) must not both be open. The flag resets when the
+  /// sheet closes, so a later genuine gate can show again.
+  void _showConsentGateOnce(Future<void> Function() show) =>
+      _consentGate.runOnce(show);
 
+  /// Shows the half-elevated consent-pending sheet (masked email + working
+  /// resend) on a 403 `PARENTAL_CONSENT_PENDING`, guarded by the shared
+  /// consent-gate flag so a refresh storm can't stack the sheet.
+  void _handleParentalConsentPending(Map<dynamic, dynamic> data) {
     final ctx = _ref.read(globalNavigatorKeyProvider)?.currentContext;
     if (ctx == null || !ctx.mounted) return;
 
     final masked = data['parentEmailMasked']?.toString();
     final secs = data['resendAvailableInSeconds'];
     final cooldown = secs is num ? secs.toInt() : 0;
-    try {
-      showParentalConsentPendingSheet(
-        context: ctx,
-        ref: _ref,
-        maskedEmail: (masked == null || masked.isEmpty)
-            ? 'your grown-up'
-            : masked,
-        cooldownSeconds: cooldown,
-      );
-    } catch (_) {
-      // Fall through; the view model will surface the original error.
-    }
+    _showConsentGateOnce(() => showParentalConsentPendingSheet(
+          context: ctx,
+          ref: _ref,
+          maskedEmail: (masked == null || masked.isEmpty)
+              ? 'your grown-up'
+              : masked,
+          cooldownSeconds: cooldown,
+        ));
   }
 
   /// Routes a user to the direct onboarding screen on a 403

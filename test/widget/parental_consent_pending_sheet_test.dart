@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/consent/presentation/parental_consent_pending_sheet.dart';
 
 /// The half-elevated (under-13 awaiting parent) sheet must: show the MASKED
@@ -13,12 +15,17 @@ void main() {
     required int initialCooldownSeconds,
     required Future<ResendResult> Function() onResend,
   }) async {
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: ParentalConsentPendingSheet(
-          maskedEmail: maskedEmail,
-          initialCooldownSeconds: initialCooldownSeconds,
-          onResend: onResend,
+    await tester.pumpWidget(ProviderScope(
+      // Override with a constant so the sheet's authState listener doesn't
+      // instantiate (and, on teardown, dispose) the real AuthNotifier singleton.
+      overrides: [authStateProvider.overrideWith((ref) => const AuthState())],
+      child: MaterialApp(
+        home: Scaffold(
+          body: ParentalConsentPendingSheet(
+            maskedEmail: maskedEmail,
+            initialCooldownSeconds: initialCooldownSeconds,
+            onResend: onResend,
+          ),
         ),
       ),
     ));
