@@ -8,6 +8,8 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/features/auth/auth_state.dart';
+import 'package:pally/features/consent/data/consent_unlock.dart';
 
 /// The outcome of a single `/consent/resend` attempt, mapped from the backend.
 enum ResendOutcome { sent, cooldown, failed }
@@ -86,6 +88,7 @@ void showParentalConsentPendingSheet({
       maskedEmail: maskedEmail,
       initialCooldownSeconds: cooldownSeconds,
       onResend: () => resendParentConsent(ref),
+      onRefresh: () => ref.read(consentUnlockProvider).checkAndUnlock(),
     ),
   );
 }
@@ -93,30 +96,38 @@ void showParentalConsentPendingSheet({
 /// Actionable "waiting for your parent — resend" panel. Stateful so the resend
 /// button can move through idle → sending → sent/cooldown/failed and run a live
 /// countdown, never a silent no-op.
-class ParentalConsentPendingSheet extends StatefulWidget {
+class ParentalConsentPendingSheet extends ConsumerStatefulWidget {
   const ParentalConsentPendingSheet({
     super.key,
     required this.maskedEmail,
     required this.initialCooldownSeconds,
     required this.onResend,
+    this.onRefresh,
   });
 
   final String maskedEmail;
   final int initialCooldownSeconds;
   final Future<ResendResult> Function() onResend;
 
+  /// Manual "I've approved — refresh" fallback: fires a SINGLE consent re-check
+  /// and returns true if the account is now approved. Optional so existing
+  /// callers/tests without the unlock wiring still work.
+  final Future<bool> Function()? onRefresh;
+
   @override
-  State<ParentalConsentPendingSheet> createState() =>
+  ConsumerState<ParentalConsentPendingSheet> createState() =>
       _ParentalConsentPendingSheetState();
 }
 
 enum _ResendUi { idle, sending, sent, failed }
 
 class _ParentalConsentPendingSheetState
-    extends State<ParentalConsentPendingSheet> {
+    extends ConsumerState<ParentalConsentPendingSheet> {
   _ResendUi _ui = _ResendUi.idle;
   int _cooldown = 0;
   Timer? _timer;
+  bool _refreshing = false;
+  bool _dismissed = false;
 
   /// Mutable so a successful resend can reveal the real masked address when the
   /// caller only had a generic placeholder (e.g. the CONSENT_REQUIRED gate).
@@ -171,6 +182,36 @@ class _ParentalConsentPendingSheetState
     }
   }
 
+  Future<void> _refresh() async {
+    if (_refreshing || widget.onRefresh == null) return;
+    setState(() {
+      _refreshing = true;
+      _ui = _ResendUi.idle;
+    });
+    final unlocked = await widget.onRefresh!();
+    if (!mounted) return;
+    // On success the authState listener below dismisses the sheet; here we only
+    // message the not-yet case so a watching child gets clear feedback.
+    setState(() {
+      _refreshing = false;
+      if (!unlocked) _notYet = true;
+    });
+  }
+
+  bool _notYet = false;
+
+  /// Pops the sheet with a brief success cue once the parent's approval lands
+  /// (via push, resume-check, or the manual refresh) — awaitingConsent flips
+  /// false app-wide, so every unlock path dismisses this one sheet.
+  void _onUnlocked() {
+    if (_dismissed || !mounted) return;
+    _dismissed = true;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("You're all set! 🎉")),
+    );
+    Navigator.of(context).maybePop();
+  }
+
   String get _statusLine => switch (_ui) {
         _ResendUi.sent =>
           'Approval email re-sent to $_maskedEmail — check inbox and spam.',
@@ -191,6 +232,11 @@ class _ParentalConsentPendingSheetState
 
   @override
   Widget build(BuildContext context) {
+    // Any unlock path (push / resume / manual) flips awaitingConsent false —
+    // dismiss this sheet the moment it does.
+    ref.listen(authStateProvider, (prev, next) {
+      if (!next.awaitingConsent) _onUnlocked();
+    });
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.sizeOf(context).height * 0.85,
@@ -242,6 +288,20 @@ class _ParentalConsentPendingSheetState
                 ],
               ),
             ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              "We'll unlock automatically the moment they do — you can close the "
+              "app, it'll be ready when you're back.",
+              style: AppTextStyles.bodySmall.copyWith(color: AppColors.text3),
+            ),
+            if (_notYet) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                'Not approved yet — ask your grown-up to tap the link, then try again.',
+                style: AppTextStyles.body
+                    .copyWith(color: AppColors.text2, fontWeight: FontWeight.w600),
+              ),
+            ],
             if (_statusLine.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.md),
               Text(
@@ -251,6 +311,27 @@ class _ParentalConsentPendingSheetState
               ),
             ],
             const SizedBox(height: AppSpacing.lg),
+            if (widget.onRefresh != null) ...[
+              FilledButton(
+                onPressed: _refreshing ? null : _refresh,
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.teal,
+                  disabledBackgroundColor: AppColors.outline,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                child: _refreshing
+                    ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.white),
+                      )
+                    : const Text("I've approved — refresh"),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+            ],
             FilledButton(
               onPressed: _buttonEnabled ? _resend : null,
               style: FilledButton.styleFrom(

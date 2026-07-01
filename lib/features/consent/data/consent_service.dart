@@ -38,6 +38,28 @@ class ConsentService {
     await _dio.post<void>('/api/v1/consent/ai-data-transfer');
   }
 
+  /// True once the (under-13) account has been approved by a parent — i.e. the
+  /// backend has flipped accountStatus PENDING_CONSENT → ACTIVE. Drives the
+  /// event-driven unlock (push / resume-check / manual refresh).
+  Future<bool> isAccountActive() async {
+    final res = await _dio.get<dynamic>('/api/v1/consent/status');
+    final active = parseAccountActive(res.data);
+    appLog.d('[Consent] account status -> active=$active');
+    return active;
+  }
+
+  /// Parses `accountStatus == "ACTIVE"` from the /consent/status payload,
+  /// tolerating the wrapped envelope. Public + static for unit testing.
+  static bool parseAccountActive(dynamic body) {
+    Map<String, dynamic>? map;
+    if (body is Map<String, dynamic>) {
+      final inner = body['data'];
+      map = inner is Map<String, dynamic> ? inner : body;
+    }
+    final status = map?['accountStatus']?.toString().toUpperCase();
+    return status == 'ACTIVE';
+  }
+
   /// Defensive parse of the consent-status payload. Handles:
   ///   - the unwrapped object `{...}`
   ///   - the still-wrapped envelope `{"data": {...}}`
