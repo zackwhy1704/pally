@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:pally/core/services/firebase_ready.dart';
 import 'package:pally/core/utils/logger.dart';
 
 /// Registers the device FCM token with the backend so the server can send
@@ -9,6 +10,12 @@ class FcmTokenService {
   final Dio _dio;
 
   Future<void> registerToken() async {
+    // Skip entirely if Firebase never initialised — FirebaseMessaging.instance
+    // would throw [core/no-app]. Push simply stays unregistered; no crash.
+    if (!isFirebaseReady) {
+      appLog.w('[FCM] Firebase not ready — skipping token registration');
+      return;
+    }
     try {
       final messaging = FirebaseMessaging.instance;
       final settings = await messaging.requestPermission();

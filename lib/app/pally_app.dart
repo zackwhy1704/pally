@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/router.dart';
+import 'package:pally/core/services/firebase_ready.dart';
 import 'package:pally/core/theme/app_theme.dart';
+import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/consent/data/consent_unlock.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
 
@@ -37,6 +39,16 @@ class _PallyAppState extends ConsumerState<PallyApp>
   /// from background, and on cold-start-from-notification. Each fires a SINGLE
   /// consent re-check — never a poll.
   void _wireConsentPush() {
+    // Never touch FirebaseMessaging if Firebase failed to initialise —
+    // FirebaseMessaging.instance would throw [core/no-app] here in the startup
+    // widget path and red-screen the whole app. Push-based unlock degrades
+    // silently; the resume-check + launch-check backbone still unlocks.
+    if (!isFirebaseReady) {
+      appLog.w('[Consent] Firebase not ready — skipping push wiring '
+          '(resume/launch check still active)');
+      return;
+    }
+
     void handle(RemoteMessage? m) {
       if (m?.data['type'] == 'PARENTAL_CONSENT_APPROVED') {
         ref.read(consentUnlockProvider).checkAndUnlock();

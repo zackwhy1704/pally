@@ -9,6 +9,7 @@ import 'package:pally/core/local_db/pally_database.dart';
 import 'package:pally/core/observability/sentry_observability.dart';
 import 'package:pally/core/services/notification_service.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/firebase_options.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/chat/data/local/chat_local_data_source.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,9 +31,15 @@ void main() async {
 }
 
 Future<void> _bootstrap() async {
-  // Initialise Firebase — non-fatal so dev/CI builds work without config.
+  // Initialise Firebase with explicit options (firebase_options.dart) rather
+  // than the bare initializeApp() that reads the iOS bundle plist — that plist
+  // was never bundled on iOS, so bundle-based init failed silently there.
+  // Still non-fatal: if init fails, every FirebaseMessaging caller guards on
+  // isFirebaseReady and degrades instead of crashing.
   try {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
     // Handle foreground FCM messages via existing local-notification service.
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
