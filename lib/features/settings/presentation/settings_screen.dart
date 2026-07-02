@@ -61,7 +61,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     try {
       final info = await PackageInfo.fromPlatform();
       if (!mounted) return;
-      setState(() => _versionLabel = '${info.version}+${info.buildNumber}');
+      // Apple/industry-standard "version (build)" — never the raw Flutter "1.0.1+5".
+      setState(() => _versionLabel = '${info.version} (${info.buildNumber})');
     } catch (_) {
       // Leave the placeholder — a missing version string is not worth surfacing.
     }
