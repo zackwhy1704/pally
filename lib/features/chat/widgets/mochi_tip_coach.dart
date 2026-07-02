@@ -280,8 +280,12 @@ void _openUpload(BuildContext context, String avatarId) {
 }
 
 void _openLibrary(BuildContext context, String avatarId) {
-  // Library has the curriculum-attach affordance per-tutor.
-  const LibraryRoute().push(context);
+  // Library is a StatefulShellRoute BRANCH root — switch to it with go(), never
+  // push(). push()-ing a branch location stacks a duplicate '/library' Page on
+  // top of the always-live Library branch → two Pages with the same key →
+  // Navigator's _debugCheckDuplicatedPageKeys assertion (crash). go() activates
+  // the branch instead.
+  const LibraryRoute().go(context);
 }
 
 // ── Idle / collapsed Mochi ───────────────────────────────────────────────────
