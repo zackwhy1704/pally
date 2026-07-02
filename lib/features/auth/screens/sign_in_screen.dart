@@ -14,6 +14,7 @@ import 'package:pally/app/api_client.dart';
 import 'package:pally/core/services/fcm_token_service.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/auth/services/auth_service.dart';
+import 'package:pally/features/consent/data/consent_unlock.dart';
 
 enum _BiometricState { scanning, success, failed }
 
@@ -88,6 +89,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       ref.read(analyticsProvider).event(AnalyticsEvents.signIn);
       // Fire-and-forget FCM token registration.
       FcmTokenService(ref.read(dioProvider)).registerToken();
+      // Reconcile the consent gate from server truth — a child signing in fresh
+      // on this device never set the local awaiting-consent flag, so drive it
+      // from accountStatus (unlock if ACTIVE, show gate if PENDING).
+      ref.read(consentUnlockProvider).reconcile();
       if (mounted) {
         context.go(result.setupComplete ? '/' : '/onboarding/direct');
       }
@@ -142,6 +147,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       );
       // Fire-and-forget FCM token registration.
       FcmTokenService(ref.read(dioProvider)).registerToken();
+      // Reconcile the consent gate from server truth — a child signing in fresh
+      // on this device never set the local awaiting-consent flag, so drive it
+      // from accountStatus (unlock if ACTIVE, show gate if PENDING).
+      ref.read(consentUnlockProvider).reconcile();
       _bioStateCtrl.add(_BiometricState.success);
       await Future.delayed(const Duration(milliseconds: 1200));
       if (mounted) {

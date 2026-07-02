@@ -27,10 +27,12 @@ class _PallyAppState extends ConsumerState<PallyApp>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _wireConsentPush();
-    // Launch check (backbone): a parent may have approved while the app was
-    // fully closed. One check on startup — no loop. No-ops unless awaiting consent.
+    // Launch reconcile (backbone): drive the consent gate from the SERVER's
+    // accountStatus, not the local flag — so an approved child unlocks even if
+    // the local awaitingConsent flag desynced (reinstall / other device / normal
+    // sign-in). One authoritative check on startup — no loop. No-ops when signed out.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(consentUnlockProvider).checkAndUnlock();
+      ref.read(consentUnlockProvider).reconcile();
     });
   }
 

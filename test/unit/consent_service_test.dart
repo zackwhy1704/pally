@@ -43,4 +43,38 @@ void main() {
       expect(ConsentService.parseAiConsentGranted('nope'), isFalse);
     });
   });
+
+  // The authoritative reconcile relies on this parse to drive the gate from
+  // server truth (the fix for approved children staying locally gated).
+  group('ConsentService.parseConsentStatus', () {
+    test('ACTIVE → active, not pending (drives unlock regardless of local flag)', () {
+      final s = ConsentService.parseConsentStatus({'accountStatus': 'ACTIVE'});
+      expect(s.active, isTrue);
+      expect(s.pending, isFalse);
+    });
+
+    test('PENDING_CONSENT → pending with the parent email (restores the gate)', () {
+      final s = ConsentService.parseConsentStatus({
+        'accountStatus': 'PENDING_CONSENT',
+        'pendingRequest': {'parentEmail': 'mum@example.com'},
+      });
+      expect(s.active, isFalse);
+      expect(s.pending, isTrue);
+      expect(s.parentEmail, 'mum@example.com');
+    });
+
+    test('unwraps a still-enveloped ApiResponse payload', () {
+      final s = ConsentService.parseConsentStatus({
+        'data': {'accountStatus': 'ACTIVE'},
+      });
+      expect(s.active, isTrue);
+    });
+
+    test('null / malformed body → neither active nor pending (safe)', () {
+      final s = ConsentService.parseConsentStatus(null);
+      expect(s.active, isFalse);
+      expect(s.pending, isFalse);
+      expect(s.parentEmail, isNull);
+    });
+  });
 }

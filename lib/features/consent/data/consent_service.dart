@@ -14,6 +14,18 @@ part 'consent_service.g.dart';
 ConsentService consentService(Ref ref) =>
     ConsentService(ref.read(dioProvider));
 
+/// Server-truth consent snapshot from GET /consent/status.
+class ConsentStatus {
+  const ConsentStatus({
+    required this.active,
+    required this.pending,
+    this.parentEmail,
+  });
+  final bool active; // accountStatus == ACTIVE (approved / not gated)
+  final bool pending; // accountStatus == PENDING_CONSENT (awaiting a parent)
+  final String? parentEmail; // the pending request's parent email, if any
+}
+
 class ConsentService {
   const ConsentService(this._dio);
   final Dio _dio;
@@ -58,6 +70,37 @@ class ConsentService {
     }
     final status = map?['accountStatus']?.toString().toUpperCase();
     return status == 'ACTIVE';
+  }
+
+  /// Server-truth snapshot of the consent gate, used by the authoritative
+  /// reconcile so a stale/missing local `awaitingConsent` flag can never
+  /// suppress the check (the desync that left approved children still gated).
+  Future<ConsentStatus> fetchStatus() async {
+    final res = await _dio.get<dynamic>('/api/v1/consent/status');
+    final s = parseConsentStatus(res.data);
+    appLog.d('[Consent] status -> active=${s.active} pending=${s.pending}');
+    return s;
+  }
+
+  /// Parses accountStatus (ACTIVE / PENDING_CONSENT) + the pending parent email
+  /// from the /consent/status payload, tolerating the ApiResponse envelope.
+  static ConsentStatus parseConsentStatus(dynamic body) {
+    Map<String, dynamic>? map;
+    if (body is Map<String, dynamic>) {
+      final inner = body['data'];
+      map = inner is Map<String, dynamic> ? inner : body;
+    }
+    final status = map?['accountStatus']?.toString().toUpperCase();
+    String? parentEmail;
+    final pending = map?['pendingRequest'];
+    if (pending is Map) {
+      parentEmail = pending['parentEmail']?.toString();
+    }
+    return ConsentStatus(
+      active: status == 'ACTIVE',
+      pending: status == 'PENDING_CONSENT',
+      parentEmail: parentEmail,
+    );
   }
 
   /// Defensive parse of the consent-status payload. Handles:

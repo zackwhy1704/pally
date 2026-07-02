@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/services/fcm_token_service.dart';
 import 'package:pally/core/observability/observability.dart';
 import 'package:pally/core/observability/observability_providers.dart';
 import 'package:pally/core/utils/logger.dart';
@@ -307,6 +308,11 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
         setupComplete: true,
         onboardingComplete: true,
       );
+      // Register the push token for THIS (possibly under-13) account — the
+      // sign-in screen isn't traversed on the onboarding path, so without this
+      // the child never gets a push address and parental-approval push can't
+      // reach them. Fire-and-forget; no-ops if Firebase isn't ready.
+      FcmTokenService(ref.read(dioProvider)).registerToken();
 
       appLog.i(
           '[DirectOnboard] Quick onboard success: userId=$userId avatarId=$avatarId under13=$isUnder13');

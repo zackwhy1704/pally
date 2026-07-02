@@ -168,7 +168,7 @@ Future<void> showParentalConsentPendingSheet({
       maskedEmail: maskedEmail,
       initialCooldownSeconds: cooldownSeconds,
       onResend: () => resendParentConsent(ref),
-      onRefresh: () => ref.read(consentUnlockProvider).checkAndUnlock(),
+      onRefresh: () => ref.read(consentUnlockProvider).reconcile(),
       onChangeEmail: (email) => changeParentEmail(ref, email),
     ),
   );
