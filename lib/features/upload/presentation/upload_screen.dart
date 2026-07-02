@@ -14,6 +14,7 @@ import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/upload/presentation/upload_view_model.dart';
 import 'package:pally/features/upload/presentation/ocr_review_screen.dart';
+import 'package:pally/features/upload/presentation/widgets/upload_tips_banner.dart';
 import 'package:pally/features/centre/centre_mode.dart';
 
 class UploadScreen extends ConsumerWidget {
@@ -506,7 +507,7 @@ class _PhotoTab extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
       children: [
         const SizedBox(height: AppSpacing.sm),
-        const _TipBanner(),
+        const UploadTipsBanner(),
         const SizedBox(height: AppSpacing.sm),
         _ContextTagBar(
           topicTag: topicTag,
@@ -557,7 +558,7 @@ class _FileTab extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
       children: [
         const SizedBox(height: AppSpacing.sm),
-        const _TipBanner(),
+        const UploadTipsBanner(),
         const SizedBox(height: AppSpacing.sm),
         _ContextTagBar(
           topicTag: topicTag,
@@ -814,36 +815,6 @@ class _SpeechBubble extends StatelessWidget {
   }
 }
 
-class _TipBanner extends StatelessWidget {
-  const _TipBanner();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.amberL,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.amber.withValues(alpha: 0.4)),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.lightbulb_outline_rounded,
-              color: AppColors.amber, size: 20),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Text(
-              'Tip: Upload clear photos of your notes or textbook pages for the best results!',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.text1,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _UploadTile extends StatelessWidget {
   const _UploadTile({
