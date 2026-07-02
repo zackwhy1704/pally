@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 
@@ -22,7 +24,7 @@ class TrialWelcomeScreen {
   }
 }
 
-class _TrialWelcomeSheet extends StatelessWidget {
+class _TrialWelcomeSheet extends ConsumerWidget {
   const _TrialWelcomeSheet();
 
   static const _perks = [
@@ -32,7 +34,7 @@ class _TrialWelcomeSheet extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.sizeOf(context).height * 0.85,
@@ -147,7 +149,10 @@ class _TrialWelcomeSheet extends StatelessWidget {
               Navigator.of(context).pop();
               context.push('/subscription/plans');
             },
-            child: Text('Subscribe now from US\$9.99/mo',
+            child: Text(
+                allowPriceDisplay(ref)
+                    ? 'Subscribe now from US\$9.99/mo'
+                    : 'Subscribe now',
                 style: TextStyle(
                     fontFamily: 'Nunito',
                     color: Colors.white.withValues(alpha: 0.7),

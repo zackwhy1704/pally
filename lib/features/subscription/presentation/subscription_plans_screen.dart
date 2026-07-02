@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -159,6 +160,12 @@ class _SubscriptionPlansScreenState
             ?? _planIdFromHighlightTier(widget.highlightTier)
             ?? 'max_monthly';
 
+        // iOS anti-steering: on iOS without the external-link entitlement, the
+        // App Store forbids DISPLAYING subscription prices in-app (same rule
+        // that gates the buy URL). Hide price strings there; show plan names +
+        // features only. Same guard WebUpgradeCta uses for the launch button.
+        final allowPrice = allowPriceDisplay(ref);
+
         return Scaffold(
           backgroundColor: AppColors.bg,
           appBar: AppBar(
@@ -197,12 +204,15 @@ class _SubscriptionPlansScreenState
                         ),
                         const SizedBox(height: AppSpacing.md),
 
-                        // Monthly / Annual toggle
-                        _BillingToggle(
-                          annual: _annual,
-                          onToggle: (v) => setState(() => _annual = v),
-                        ),
-                        const SizedBox(height: AppSpacing.md),
+                        // Monthly / Annual toggle — only meaningful when prices
+                        // are shown (hidden on gated iOS).
+                        if (allowPrice) ...[
+                          _BillingToggle(
+                            annual: _annual,
+                            onToggle: (v) => setState(() => _annual = v),
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                        ],
 
                         // Free tier summary (always visible for free users)
                         if (!isPremium) ...[
@@ -217,6 +227,7 @@ class _SubscriptionPlansScreenState
                             annual: _annual,
                             selected: _selected == plan.id,
                             isCurrent: currentPlanId == plan.id,
+                            allowPrice: allowPrice,
                             onTap: () =>
                                 setState(() => _selected = plan.id),
                           ),
@@ -339,6 +350,7 @@ class _PlanCard extends StatelessWidget {
     required this.annual,
     required this.selected,
     required this.onTap,
+    required this.allowPrice,
     this.isCurrent = false,
   });
 
@@ -347,6 +359,8 @@ class _PlanCard extends StatelessWidget {
   final bool selected;
   final bool isCurrent;
   final VoidCallback onTap;
+  // When false (gated iOS), the price string is hidden for App Store compliance.
+  final bool allowPrice;
 
   @override
   Widget build(BuildContext context) {
@@ -403,13 +417,14 @@ class _PlanCard extends StatelessWidget {
                     _Badge(plan.badge!, AppColors.gold)
                   else if (plan.recommended)
                     const _Badge('Best value', AppColors.purple),
-                  // Price pushed to right
+                  // Price pushed to right — hidden on gated iOS (anti-steering).
                   const Spacer(),
-                  Text(
-                    annual ? plan.annualPrice : plan.price,
-                    style: AppTextStyles.body
-                        .copyWith(fontWeight: FontWeight.w800),
-                  ),
+                  if (allowPrice)
+                    Text(
+                      annual ? plan.annualPrice : plan.price,
+                      style: AppTextStyles.body
+                          .copyWith(fontWeight: FontWeight.w800),
+                    ),
                 ],
               ),
               const SizedBox(height: 4),

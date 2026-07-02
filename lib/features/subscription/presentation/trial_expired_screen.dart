@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -135,7 +136,7 @@ class _TrialExpiredScreenState extends ConsumerState<TrialExpiredScreen> {
                         Expanded(
                           child: _PlanButton(
                             label: 'Max',
-                            price: 'US\$19.99/mo',
+                            price: allowPriceDisplay(ref) ? 'US\$19.99/mo' : null,
                             onTap: () => context.push('/subscription/plans'),
                           ),
                         ),
@@ -143,7 +144,8 @@ class _TrialExpiredScreenState extends ConsumerState<TrialExpiredScreen> {
                         Expanded(
                           child: _PlanButton(
                             label: 'Family',
-                            price: 'US\$34.99/mo',
+                            price:
+                                allowPriceDisplay(ref) ? 'US\$34.99/mo' : null,
                             subtitle: 'up to 4 kids',
                             onTap: () => context.push('/subscription/plans'),
                           ),
@@ -229,7 +231,8 @@ class _PlanButton extends StatelessWidget {
   });
 
   final String label;
-  final String price;
+  // Null on gated iOS (anti-steering) — the button then shows the name only.
+  final String? price;
   final String? subtitle;
   final VoidCallback onTap;
 
@@ -254,13 +257,14 @@ class _PlanButton extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
                 )),
-            Text(price,
-                style: const TextStyle(
-                  fontFamily: 'Nunito',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                )),
+            if (price != null)
+              Text(price!,
+                  style: const TextStyle(
+                    fontFamily: 'Nunito',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  )),
             if (subtitle != null)
               Text(subtitle!,
                   style: TextStyle(

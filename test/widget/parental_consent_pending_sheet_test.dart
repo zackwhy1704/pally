@@ -14,6 +14,7 @@ void main() {
     required String maskedEmail,
     required int initialCooldownSeconds,
     required Future<ResendResult> Function() onResend,
+    Future<ResendResult> Function(String)? onChangeEmail,
   }) async {
     await tester.pumpWidget(ProviderScope(
       // Override with a constant so the sheet's authState listener doesn't
@@ -25,6 +26,7 @@ void main() {
             maskedEmail: maskedEmail,
             initialCooldownSeconds: initialCooldownSeconds,
             onResend: onResend,
+            onChangeEmail: onChangeEmail,
           ),
         ),
       ),
@@ -83,6 +85,50 @@ void main() {
     expect(find.text('Resend in 42s'), findsOneWidget);
     final button = tester.widget<FilledButton>(find.byType(FilledButton));
     expect(button.onPressed, isNull);
+  });
+
+  testWidgets('wrong-email recovery: change-email opens an entry dialog and re-points',
+      (tester) async {
+    String? changedTo;
+    await pump(
+      tester,
+      maskedEmail: 'w***@typo.com',
+      initialCooldownSeconds: 0,
+      onResend: () async => const ResendResult(ResendOutcome.sent),
+      onChangeEmail: (email) async {
+        changedTo = email;
+        return ResendResult(ResendOutcome.sent,
+            cooldownSeconds: 60, maskedEmail: 'r***@right.com');
+      },
+    );
+
+    // The recovery affordance is visible (a typo isn't a dead-end).
+    expect(find.text("Wrong grown-up's email? Change it"), findsOneWidget);
+    await tester.tap(find.text("Wrong grown-up's email? Change it"));
+    await tester.pump(); // open dialog
+    await tester.pump(const Duration(milliseconds: 300)); // settle dialog anim
+
+    // A dialog to enter the correct address appears.
+    expect(find.byType(TextField), findsOneWidget);
+    await tester.enterText(find.byType(TextField), 'right@right.com');
+    await tester.tap(find.text('Send'));
+    await tester.pump(); // close dialog + sending
+    await tester.pump(); // resolves
+
+    expect(changedTo, 'right@right.com');
+    // The masked address updates to the new inbox (shown in intro + status line).
+    expect(find.textContaining('r***@right.com'), findsWidgets);
+  });
+
+  testWidgets('change-email affordance is absent when no handler is wired',
+      (tester) async {
+    await pump(
+      tester,
+      maskedEmail: 'a***@x.com',
+      initialCooldownSeconds: 0,
+      onResend: () async => const ResendResult(ResendOutcome.sent),
+    );
+    expect(find.text("Wrong grown-up's email? Change it"), findsNothing);
   });
 
   testWidgets('a failed resend shows a visible retry-able error', (tester) async {

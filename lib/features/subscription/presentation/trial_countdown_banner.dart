@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -107,8 +108,11 @@ class _TrialCountdownBannerState extends ConsumerState<TrialCountdownBanner> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                       ),
-                      child: const Text('Keep Premium from US\$9.99/mo',
-                          style: TextStyle(
+                      child: Text(
+                          allowPriceDisplay(ref)
+                              ? 'Keep Premium from US\$9.99/mo'
+                              : 'Keep Premium',
+                          style: const TextStyle(
                               fontFamily: 'Nunito',
                               fontWeight: FontWeight.w800,
                               color: Colors.white)),

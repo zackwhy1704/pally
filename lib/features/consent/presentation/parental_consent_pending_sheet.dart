@@ -11,6 +11,52 @@ import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/consent/data/consent_unlock.dart';
 
+/// Small stateful dialog that owns its own TextEditingController lifecycle
+/// (created in initState, disposed in dispose) — pops the entered email.
+class _ChangeEmailDialog extends StatefulWidget {
+  const _ChangeEmailDialog();
+
+  @override
+  State<_ChangeEmailDialog> createState() => _ChangeEmailDialogState();
+}
+
+class _ChangeEmailDialogState extends State<_ChangeEmailDialog> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text("Your grown-up's email"),
+      content: TextField(
+        controller: _controller,
+        keyboardType: TextInputType.emailAddress,
+        autofocus: true,
+        decoration: const InputDecoration(
+          hintText: 'grownup@email.com',
+          helperText: "We'll send the approval link here instead.",
+        ),
+        onSubmitted: (v) => Navigator.of(context).pop(v.trim()),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.of(context).pop(_controller.text.trim()),
+          child: const Text('Send'),
+        ),
+      ],
+    );
+  }
+}
+
 /// The outcome of a single `/consent/resend` attempt, mapped from the backend.
 enum ResendOutcome { sent, cooldown, failed }
 
@@ -35,7 +81,9 @@ Future<ResendResult> resendParentConsent(Ref ref) async {
   final dio = ref.read(dioProvider);
   try {
     // _ApiResponseInterceptor unwraps the envelope, so `data` is the inner map.
-    final res = await dio.post<dynamic>('/consent/resend');
+    // NB: path MUST include /api/v1 (the backend is @RequestMapping /api/v1/consent);
+    // the bare '/consent/resend' was 404-ing, so the resend button never worked.
+    final res = await dio.post<dynamic>('/api/v1/consent/resend');
     final body = res.data;
     String? masked;
     int cooldown = 60;
@@ -55,6 +103,47 @@ Future<ResendResult> resendParentConsent(Ref ref) async {
   } catch (_) {
     return const ResendResult(ResendOutcome.failed);
   }
+}
+
+/// Re-points the pending consent request at a NEW parent email — the recovery
+/// path when a child typo'd the address (otherwise a permanent lockout, since
+/// resend only ever re-sends to the same wrong inbox). POSTs request-parent with
+/// the new address, which creates a fresh pending request + emails it. Returns
+/// [ResendOutcome.sent] with the new masked email on success.
+Future<ResendResult> changeParentEmail(Ref ref, String newEmail) async {
+  final dio = ref.read(dioProvider);
+  final email = newEmail.trim();
+  if (email.isEmpty || !email.contains('@') || !email.contains('.')) {
+    return const ResendResult(ResendOutcome.failed);
+  }
+  try {
+    final res = await dio.post<dynamic>(
+      '/api/v1/consent/request-parent',
+      data: {'parentEmail': email},
+    );
+    final body = res.data;
+    String? masked;
+    if (body is Map) {
+      masked = (body['parentEmailMasked'] ?? body['parentEmail'])?.toString();
+    }
+    // Fresh request → resend cooldown restarts.
+    return ResendResult(ResendOutcome.sent,
+        cooldownSeconds: 60, maskedEmail: masked ?? _maskEmail(email));
+  } on DioException {
+    return const ResendResult(ResendOutcome.failed);
+  } catch (_) {
+    return const ResendResult(ResendOutcome.failed);
+  }
+}
+
+/// Lightweight client-side email mask fallback ("jo***@gmail.com") when the
+/// backend didn't echo a masked address.
+String _maskEmail(String email) {
+  final at = email.indexOf('@');
+  if (at <= 1) return email;
+  final name = email.substring(0, at);
+  final keep = name.length <= 2 ? name.substring(0, 1) : name.substring(0, 2);
+  return '$keep***${email.substring(at)}';
 }
 
 /// Pulls the first integer out of a "Please wait 42s before resending" message,
@@ -89,6 +178,7 @@ Future<void> showParentalConsentPendingSheet({
       initialCooldownSeconds: cooldownSeconds,
       onResend: () => resendParentConsent(ref),
       onRefresh: () => ref.read(consentUnlockProvider).checkAndUnlock(),
+      onChangeEmail: (email) => changeParentEmail(ref, email),
     ),
   );
 }
@@ -103,6 +193,7 @@ class ParentalConsentPendingSheet extends ConsumerStatefulWidget {
     required this.initialCooldownSeconds,
     required this.onResend,
     this.onRefresh,
+    this.onChangeEmail,
   });
 
   final String maskedEmail;
@@ -113,6 +204,10 @@ class ParentalConsentPendingSheet extends ConsumerStatefulWidget {
   /// and returns true if the account is now approved. Optional so existing
   /// callers/tests without the unlock wiring still work.
   final Future<bool> Function()? onRefresh;
+
+  /// "Wrong grown-up's email? Change it" recovery — re-points the request at a
+  /// new address. Optional so existing callers/tests still work.
+  final Future<ResendResult> Function(String newEmail)? onChangeEmail;
 
   @override
   ConsumerState<ParentalConsentPendingSheet> createState() =>
@@ -212,6 +307,36 @@ class _ParentalConsentPendingSheetState
     Navigator.of(context).maybePop();
   }
 
+  /// Recovery for a typo'd parent email: ask for a new address and re-point the
+  /// request. Without this a wrong email is a permanent lockout.
+  Future<void> _changeEmail() async {
+    if (widget.onChangeEmail == null) return;
+    final newEmail = await showDialog<String>(
+      context: context,
+      builder: (ctx) => const _ChangeEmailDialog(),
+    );
+    if (newEmail == null || newEmail.isEmpty || !mounted) return;
+
+    setState(() {
+      _ui = _ResendUi.sending;
+      _notYet = false;
+    });
+    final result = await widget.onChangeEmail!(newEmail);
+    if (!mounted) return;
+    switch (result.outcome) {
+      case ResendOutcome.sent:
+        setState(() {
+          _ui = _ResendUi.sent;
+          final m = result.maskedEmail;
+          if (m != null && m.isNotEmpty) _maskedEmail = m;
+        });
+        _startCooldown(result.cooldownSeconds);
+      case ResendOutcome.cooldown:
+      case ResendOutcome.failed:
+        setState(() => _ui = _ResendUi.failed);
+    }
+  }
+
   String get _statusLine => switch (_ui) {
         _ResendUi.sent =>
           'Approval email re-sent to $_maskedEmail — check inbox and spam.',
@@ -266,25 +391,31 @@ class _ParentalConsentPendingSheetState
               ),
             ),
             const SizedBox(height: AppSpacing.md),
-            const Text('⏳', style: TextStyle(fontSize: 40)),
+            Center(
+              child: Image.asset('assets/images/mochi.png',
+                  width: 72, height: 72),
+            ),
             const SizedBox(height: AppSpacing.sm),
-            Text('Waiting for your grown-up',
+            Text('Almost there! 🎉',
+                textAlign: TextAlign.center,
                 style: AppTextStyles.heading1.copyWith(fontSize: 20)),
             const SizedBox(height: AppSpacing.xs),
+            Text('We just need a grown-up to say yes.',
+                textAlign: TextAlign.center,
+                style: AppTextStyles.body.copyWith(color: AppColors.text2)),
+            const SizedBox(height: AppSpacing.sm),
             Text.rich(
+              textAlign: TextAlign.center,
               TextSpan(
                 style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 children: [
-                  const TextSpan(
-                      text:
-                          'Your account is waiting for a grown-up to approve it. '
-                          'Ask them to check their email at '),
+                  const TextSpan(text: 'Ask them to check their email at '),
                   TextSpan(
                     text: _maskedEmail,
                     style: AppTextStyles.body.copyWith(
                         color: AppColors.text1, fontWeight: FontWeight.w700),
                   ),
-                  const TextSpan(text: ' and tap the approval link.'),
+                  const TextSpan(text: ' and tap the link.'),
                 ],
               ),
             ),
@@ -357,6 +488,15 @@ class _ParentalConsentPendingSheetState
                     )
                   : Text(_buttonLabel),
             ),
+            if (widget.onChangeEmail != null) ...[
+              const SizedBox(height: AppSpacing.xs),
+              TextButton(
+                onPressed: _ui == _ResendUi.sending ? null : _changeEmail,
+                child: Text("Wrong grown-up's email? Change it",
+                    style: AppTextStyles.body.copyWith(
+                        color: AppColors.purple, fontWeight: FontWeight.w600)),
+              ),
+            ],
             const SizedBox(height: AppSpacing.sm),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),

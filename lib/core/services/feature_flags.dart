@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/api_client.dart';
@@ -117,3 +119,10 @@ final featureFlagsProvider =
 /// the server has already confirmed admin status for this userId.
 bool isFlagEnabled(WidgetRef ref, String flag) =>
     ref.watch(featureFlagsProvider).valueOrNull?[flag] == true;
+
+/// Whether subscription PRICES may be displayed in-app. iOS anti-steering
+/// forbids showing subscription prices without the external-link entitlement
+/// (the same rule that gates the buy URL); Android is always allowed. Use this
+/// to hide every price string on gated iOS, mirroring WebUpgradeCta's launch gate.
+bool allowPriceDisplay(WidgetRef ref) =>
+    !Platform.isIOS || isFlagEnabled(ref, FeatureFlags.iosExternalLinkEnabled);
