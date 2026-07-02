@@ -85,6 +85,10 @@ String _subjectToJson(String s) {
   return _backendSubjects.contains(mapped) ? mapped : 'GENERAL';
 }
 
+/// Public accessor for the canonical free-text → backend subject-enum mapping,
+/// so callers (e.g. the weakness endpoint) send a value the backend accepts.
+String toBackendSubject(String uiSubject) => _subjectToJson(uiSubject);
+
 int _wikiPageCountFromJson(Object? count) => (count as int?) ?? 0;
 
 // ── Pedagogy mode ─────────────────────────────────────────────────────────────

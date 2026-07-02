@@ -15,6 +15,7 @@ import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/ui/pally_delete_tutor_dialog.dart';
 import 'package:pally/core/ui/typing_indicator.dart';
 import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/features/weakness/presentation/weakness_focus_card.dart';
 import 'package:pally/shared/models/chat_message.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/chat/presentation/chat_view_model.dart';
@@ -162,6 +163,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           children: [
             Column(
               children: [
+                // Weakness focus (pilot, flag-gated) — visibly closes the loop:
+                // what Mochi is focusing on + recently-improved wins. Renders
+                // nothing until the pilot is on and there's content.
+                if (state.avatar != null)
+                  WeaknessFocusCard(
+                      backendSubject: toBackendSubject(state.avatar!.subject)),
                 // Message list — tapping it dismisses the keyboard
                 Expanded(
                   child: GestureDetector(
