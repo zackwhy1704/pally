@@ -123,5 +123,15 @@ dart run build_runner build --delete-conflicting-outputs
 - **Branch navigation uses `.go()`, not `.push()`.** Pushing a StatefulShellRoute branch root stacks a
   duplicate Page → `_debugCheckDuplicatedPageKeys` crash. Switch branches with `go()`.
 - **Version display = `1.0.1 (5)`, never the raw `1.0.1+5`.**
+- **Native/iOS config gaps don't show in `analyze`/`test` — smoke-launch the iOS build before submitting.**
+  `flutter analyze` + `flutter test` all pass while the actual iOS BUILD is broken, because native config
+  (GoogleService-Info.plist bundling, `--dart-define` keys, Podfile) lives OUTSIDE the Dart the guards cover.
+  This has bitten twice: (1) iOS never bundled `GoogleService-Info.plist` (not in `project.pbxproj`) → bare
+  `Firebase.initializeApp()` failed silently → the new consent-push wiring called `FirebaseMessaging` at
+  startup → `[core/no-app]` red-screened the whole app; (2) the RevenueCat `--dart-define` keys. Rules:
+  init Firebase with `firebase_options.dart` (options-based, not the bundle plist); **guard every
+  `FirebaseMessaging` call on `isFirebaseReady`** so a config slip degrades (push off) instead of crashing;
+  never upload an iOS build until a real device/simulator launch shows the normal home screen, not the red one.
 - **CONSISTENCY over cleverness.** Every recurring bug here is a pattern applied to one instance but not its
-  family. Fix a pattern → grep all siblings → add a guard test.
+  family. Fix a pattern → grep all siblings → add a guard test. (A new caller must tolerate its dependency
+  being absent — the consent-push caller assumed Firebase was ready; every Firebase path must survive it not being.)
