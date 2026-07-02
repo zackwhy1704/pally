@@ -89,18 +89,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             _HomeHeader(
               onNewTutor: () {
                 if (auth.awaitingConsent) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(
-                      'Creating a Mochi requires parental approval. '
-                      'Check the banner above.',
-                      style: AppTextStyles.bodySmall
-                          .copyWith(color: Colors.white),
-                    ),
-                    backgroundColor: AppColors.amber,
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ));
+                  // Actionable, not spatial: the recovery action rides the error
+                  // itself (the banner may be collapsed), so a kid is never sent
+                  // to look at UI that isn't there.
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(SnackBar(
+                      content: Text(
+                        'Ask a grown-up to approve your account to make a Mochi.',
+                        style: AppTextStyles.bodySmall
+                            .copyWith(color: Colors.white),
+                      ),
+                      backgroundColor: AppColors.amber,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      action: SnackBarAction(
+                        label: 'Resend email',
+                        textColor: Colors.white,
+                        onPressed: () => ref
+                            .read(directOnboardingViewModelProvider.notifier)
+                            .resendParentConsent(),
+                      ),
+                    ));
                   return;
                 }
                 const CreateTutorRoute().go(context);
@@ -1013,12 +1024,47 @@ class _ConsentPendingBanner extends ConsumerStatefulWidget {
 }
 
 class _ConsentPendingBannerState extends ConsumerState<_ConsentPendingBanner> {
-  bool _dismissed = false;
+  bool _collapsed = false;
 
   @override
   Widget build(BuildContext context) {
     final auth = ref.watch(authStateProvider);
-    if (!auth.awaitingConsent || _dismissed) return const SizedBox.shrink();
+    // Only fully gone when consent is no longer pending. While awaiting, the
+    // status + recovery actions must stay reachable — collapse to a chip, never
+    // SizedBox.shrink (that was the dead-end: the error pointed at a vanished banner).
+    if (!auth.awaitingConsent) return const SizedBox.shrink();
+    if (_collapsed) {
+      return Align(
+        alignment: Alignment.centerLeft,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+          child: GestureDetector(
+            onTap: () => setState(() => _collapsed = false),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.amberL,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppColors.amber.withValues(alpha: 0.4)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.hourglass_bottom_rounded,
+                      size: 14, color: AppColors.amberText),
+                  const SizedBox(width: 6),
+                  Text('Awaiting parental approval — tap for options',
+                      style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.amberText,
+                          fontWeight: FontWeight.w600)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
 
     final consentVm = ref.watch(directOnboardingViewModelProvider);
     final consentNotifier =
@@ -1067,7 +1113,7 @@ class _ConsentPendingBannerState extends ConsumerState<_ConsentPendingBanner> {
                 ),
               ),
               GestureDetector(
-                onTap: () => setState(() => _dismissed = true),
+                onTap: () => setState(() => _collapsed = true),
                 child: const Icon(Icons.close_rounded,
                     size: 18, color: AppColors.amberText),
               ),
