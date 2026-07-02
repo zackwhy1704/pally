@@ -122,7 +122,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               maxLevel: maxLevel,
             ),
             const TrialCountdownBanner(),
-            const _ConsentPendingBanner(),
+            const ConsentPendingBanner(),
             Expanded(
               child: avatarsAsync.when(
                 loading: () => const Center(
@@ -1015,15 +1015,15 @@ class _NudgeCard extends StatelessWidget {
 /// Shown on the home screen when an under-13 user's parental consent is still
 /// pending. Provides a resend link and sign-out escape hatch but does NOT block
 /// access to centre-class content, rewards, or other non-AI features.
-class _ConsentPendingBanner extends ConsumerStatefulWidget {
-  const _ConsentPendingBanner();
+class ConsentPendingBanner extends ConsumerStatefulWidget {
+  const ConsentPendingBanner({super.key});
 
   @override
-  ConsumerState<_ConsentPendingBanner> createState() =>
-      _ConsentPendingBannerState();
+  ConsumerState<ConsentPendingBanner> createState() =>
+      ConsentPendingBannerState();
 }
 
-class _ConsentPendingBannerState extends ConsumerState<_ConsentPendingBanner> {
+class ConsentPendingBannerState extends ConsumerState<ConsentPendingBanner> {
   bool _collapsed = false;
 
   @override
