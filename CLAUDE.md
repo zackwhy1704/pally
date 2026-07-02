@@ -109,3 +109,19 @@ flutter test
 flutter build apk --debug
 dart run build_runner build --delete-conflicting-outputs
 ```
+
+## Hard-won lessons (enforce these)
+- **Screens render state; they do NOT fetch.** No Dio/API calls in `*_screen.dart` — put them in view
+  models. Enforced by `test/guard/layering_guard_test.dart` (allow-list only shrinks).
+- **Centralize error mapping.** `DioException`→user message belongs in the Dio interceptor / an ApiError
+  mapper, not copied into widgets/VMs (it drifts — cause of the consent-guard inconsistencies). Guarded.
+- **Recovery UI must never be destroyable while it's the only path.** Consent/blocking banners COLLAPSE to a
+  chip, they don't vanish; error messages carry the ACTION (a "Resend" button), never a spatial pointer
+  ("check the banner above") to dismissible UI.
+- **Event-driven, not polling, for async external events.** Parental approval = FCM push + resume-check,
+  never a poll loop.
+- **Branch navigation uses `.go()`, not `.push()`.** Pushing a StatefulShellRoute branch root stacks a
+  duplicate Page → `_debugCheckDuplicatedPageKeys` crash. Switch branches with `go()`.
+- **Version display = `1.0.1 (5)`, never the raw `1.0.1+5`.**
+- **CONSISTENCY over cleverness.** Every recurring bug here is a pattern applied to one instance but not its
+  family. Fix a pattern → grep all siblings → add a guard test.
