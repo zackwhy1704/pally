@@ -7,6 +7,7 @@ import 'package:pally/app/api_client.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/utils/text_format.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/consent/data/consent_unlock.dart';
@@ -128,22 +129,12 @@ Future<ResendResult> changeParentEmail(Ref ref, String newEmail) async {
     }
     // Fresh request → resend cooldown restarts.
     return ResendResult(ResendOutcome.sent,
-        cooldownSeconds: 60, maskedEmail: masked ?? _maskEmail(email));
+        cooldownSeconds: 60, maskedEmail: masked ?? maskEmail(email));
   } on DioException {
     return const ResendResult(ResendOutcome.failed);
   } catch (_) {
     return const ResendResult(ResendOutcome.failed);
   }
-}
-
-/// Lightweight client-side email mask fallback ("jo***@gmail.com") when the
-/// backend didn't echo a masked address.
-String _maskEmail(String email) {
-  final at = email.indexOf('@');
-  if (at <= 1) return email;
-  final name = email.substring(0, at);
-  final keep = name.length <= 2 ? name.substring(0, 1) : name.substring(0, 2);
-  return '$keep***${email.substring(at)}';
 }
 
 /// Pulls the first integer out of a "Please wait 42s before resending" message,

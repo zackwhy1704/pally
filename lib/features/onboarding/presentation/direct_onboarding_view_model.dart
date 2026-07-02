@@ -9,6 +9,7 @@ import 'package:pally/app/api_client.dart';
 import 'package:pally/core/observability/observability.dart';
 import 'package:pally/core/observability/observability_providers.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/core/utils/text_format.dart';
 import 'package:pally/features/auth/auth_state.dart';
 
 part 'direct_onboarding_view_model.g.dart';
@@ -374,7 +375,7 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
       final inner =
           body['data'] is Map ? body['data'] as Map<String, dynamic> : body;
       final masked =
-          inner['maskedParentEmail'] as String? ?? _maskEmail(parentEmail);
+          inner['maskedParentEmail'] as String? ?? maskEmail(parentEmail);
 
       await AuthNotifier.instance
           .setAwaitingConsent(maskedParentEmail: masked);
@@ -400,17 +401,6 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
             'Could not send the parental consent email. Please ask your parent to check their inbox for a confirmation link.',
       );
     }
-  }
-
-  /// Crude email mask for display when the backend omits maskedParentEmail.
-  String _maskEmail(String email) {
-    final parts = email.split('@');
-    if (parts.length != 2) return email;
-    final name = parts[0];
-    final masked = name.length <= 2
-        ? '${name[0]}***'
-        : '${name[0]}***${name[name.length - 1]}';
-    return '$masked@${parts[1]}';
   }
 
   /// Step 3: Upload file, poll for compile, generate modules.
