@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:uuid/uuid.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/error/pally_error.dart';
 
@@ -155,6 +156,10 @@ class QuizViewModel extends _$QuizViewModel {
   /// render, read again at submit to report real active study time. Server
   /// also clamps, but we cap client-side too (see [_durationSeconds]).
   DateTime? _startedAt;
+  // Minted ONCE when a quiz attempt's questions load; reused on every submit
+  // retry so the server dedups a retried/duplicated POST (returns the first
+  // result instead of re-crediting XP/stars). Regenerated on restart().
+  String? _idempotencyKey;
 
   /// Upper bound on a single quiz session's reported duration. A 1-hour cap
   /// stops a backgrounded/forgotten quiz from inflating study minutes.
@@ -203,8 +208,12 @@ class QuizViewModel extends _$QuizViewModel {
               (e) => QuizQuestion.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList();
       state = state.copyWith(questions: questions, isLoading: false);
-      // Start the active-time clock once the child can actually see questions.
-      if (questions.isNotEmpty) _startedAt = DateTime.now();
+      // Start the active-time clock + mint the per-attempt idempotency key once
+      // the child can actually see questions (the attempt has begun).
+      if (questions.isNotEmpty) {
+        _startedAt = DateTime.now();
+        _idempotencyKey = const Uuid().v4();
+      }
       span.setData('questions_count', questions.length);
       span.finish(statusCode: 200);
     } on DioException catch (e) {
@@ -316,6 +325,9 @@ class QuizViewModel extends _$QuizViewModel {
           // Real active time spent on the quiz (clamped client-side; backend
           // clamps again). Feeds the daily-minutes study metric.
           'durationSeconds': _durationSeconds,
+          // Per-attempt key → a retried/duplicated submit is deduped server-side
+          // (returns the first result, no double XP/stars).
+          if (_idempotencyKey != null) 'idempotencyKey': _idempotencyKey,
         },
       );
 
