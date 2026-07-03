@@ -14,6 +14,7 @@ class AuthState {
     this.accountType,
     this.awaitingConsent = false,
     this.maskedParentEmail,
+    this.justConsentUnlocked = false,
   });
 
   final String? userId;
@@ -32,6 +33,12 @@ class AuthState {
   /// Masked parent email shown on the consent-pending screen (e.g. "j***@gmail.com").
   final String? maskedParentEmail;
 
+  /// Transient one-shot: set true the moment a genuine awaiting→approved unlock
+  /// happens (via clearAwaitingConsent, from ANY route — push/resume/launch), so
+  /// the home shell can fire the "You're all set!" celebration ONCE. NOT persisted
+  /// (default false on reload) and never set on a plain sign-out/state reset.
+  final bool justConsentUnlocked;
+
   bool get isSignedIn => userId != null && token != null;
 
   /// True when this account was registered as a parent/guardian.
@@ -46,6 +53,7 @@ class AuthState {
     Object? accountType = _authSentinel,
     bool? awaitingConsent,
     Object? maskedParentEmail = _authSentinel,
+    bool? justConsentUnlocked,
   }) {
     return AuthState(
       userId: userId ?? this.userId,
@@ -60,6 +68,7 @@ class AuthState {
       maskedParentEmail: maskedParentEmail == _authSentinel
           ? this.maskedParentEmail
           : maskedParentEmail as String?,
+      justConsentUnlocked: justConsentUnlocked ?? this.justConsentUnlocked,
     );
   }
 }
@@ -177,10 +186,23 @@ class AuthNotifier extends ChangeNotifier {
   Future<void> clearAwaitingConsent() async {
     await _storage.delete(key: _keyAwaitingConsent);
     await _storage.delete(key: _keyMaskedParentEmail);
+    // Fire the celebration ONLY on a genuine gated→approved transition (was
+    // awaiting, now not). Sticky: preserve a pending true across a second
+    // clear (push + reconcile can both run) until the home shell consumes it.
+    final wasAwaiting = _state.awaitingConsent;
     _state = _state.copyWith(
       awaitingConsent: false,
       maskedParentEmail: null,
+      justConsentUnlocked: wasAwaiting || _state.justConsentUnlocked,
     );
+    notifyListeners();
+  }
+
+  /// The home shell calls this after showing the approval celebration, so it
+  /// fires exactly once and never re-fires on a rebuild.
+  void consumeConsentCelebration() {
+    if (!_state.justConsentUnlocked) return;
+    _state = _state.copyWith(justConsentUnlocked: false);
     notifyListeners();
   }
 

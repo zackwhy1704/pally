@@ -16,6 +16,7 @@ import 'package:pally/core/ui/pally_delete_tutor_dialog.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/features/auth/auth_state.dart';
+import 'package:pally/features/consent/presentation/consent_approved_overlay.dart';
 import 'package:pally/features/home/widgets/assignment_banner.dart';
 import 'package:pally/features/home/widgets/due_cards_banner.dart';
 import 'package:pally/features/home/widgets/empty_home_state.dart';
@@ -69,6 +70,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ref.listen<AsyncValue<List<Avatar>>>(homeViewModelProvider, (_, next) {
       if (next is AsyncError) {
         PallyToast.error(context, 'Could not load Mochis. Pull down to retry.');
+      }
+    });
+
+    // Consent-approved celebration: fires ONCE on the genuine awaiting→approved
+    // transition, hooked to the single chokepoint (justConsentUnlocked), so it
+    // looks identical whether unlock came via push or a resume/launch reconcile.
+    ref.listen<AuthState>(authStateProvider, (prev, next) {
+      if (next.justConsentUnlocked && !(prev?.justConsentUnlocked ?? false)) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!context.mounted) return;
+          ConsentApprovedOverlay.show(context);
+          ref.read(authNotifierProvider).consumeConsentCelebration();
+        });
       }
     });
 
