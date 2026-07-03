@@ -53,7 +53,7 @@ class _PallyAppState extends ConsumerState<PallyApp>
 
     void handle(RemoteMessage? m) {
       if (m?.data['type'] == 'PARENTAL_CONSENT_APPROVED') {
-        ref.read(consentUnlockProvider).checkAndUnlock();
+        ref.read(consentUnlockProvider).reconcile();
       }
     }
 
@@ -77,9 +77,10 @@ class _PallyAppState extends ConsumerState<PallyApp>
       // purchase unlocks the app with no manual refresh.
       ref.read(entitlementVmProvider.notifier).reconcile();
       // Consent unlock backbone: a parent may have approved while the app was
-      // backgrounded (e.g. overnight). One check per resume — never a poll.
-      // No-ops unless the child is awaiting consent.
-      ref.read(consentUnlockProvider).checkAndUnlock();
+      // backgrounded (e.g. overnight). Use the AUTHORITATIVE reconcile (server
+      // truth) — same as launch — so a resume unlocks even if the local
+      // awaiting-consent flag desynced. One check per resume — never a poll.
+      ref.read(consentUnlockProvider).reconcile();
     }
   }
 

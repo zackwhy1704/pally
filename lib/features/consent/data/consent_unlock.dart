@@ -5,14 +5,15 @@ import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/consent/data/consent_service.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
 
-/// Event-driven parental-consent unlock — NO polling. Exactly ONE status check
-/// per trigger (push on approval, app resume/launch, manual "I've approved"
-/// button). If the parent has approved, it flips the app out of the
-/// awaiting-consent gate and re-reads the freshly-granted 7-day trial.
+/// Event-driven parental-consent unlock — NO polling. Every trigger (push on
+/// approval, app launch, app resume, manual "I've approved" button) funnels
+/// through ONE authoritative entry: [reconcile]. It drives the gate from the
+/// SERVER's accountStatus, so no trigger can silently no-op on a desynced local
+/// flag (the "cold start works but resume doesn't" gap).
 ///
-/// Idempotent: a re-entry guard means push + resume can't double-run it, and it
-/// no-ops when the user isn't awaiting consent. A failed check is silent — the
-/// next trigger simply tries again; if none fire, the next app open unlocks it.
+/// Idempotent: a re-entry guard means push + resume + launch can't double-run
+/// it. A failed check is silent — the next trigger simply tries again; if none
+/// fire, the next app open reconciles it.
 final consentUnlockProvider =
     Provider<ConsentUnlock>((ref) => ConsentUnlock(ref));
 
@@ -20,31 +21,6 @@ class ConsentUnlock {
   ConsentUnlock(this._ref);
   final Ref _ref;
   bool _inFlight = false;
-
-  Future<bool> checkAndUnlock() async {
-    if (_inFlight) return false;
-    // Fast path (resume / push): only meaningful while the child is locally
-    // gated. The authoritative path is reconcile(), which does NOT depend on
-    // this flag — so a desynced flag can never permanently suppress the unlock.
-    if (!AuthNotifier.instance.state.awaitingConsent) return false;
-    _inFlight = true;
-    try {
-      final active = await _ref.read(consentServiceProvider).isAccountActive();
-      if (!active) return false;
-      // Unlock: clearAwaitingConsent() notifies listeners, so the router
-      // re-evaluates and the child lands in the normal app.
-      await AuthNotifier.instance.clearAwaitingConsent();
-      // Re-read the 7-day trial/entitlement granted at approval time.
-      _ref.read(entitlementVmProvider.notifier).reconcile();
-      appLog.i('[Consent] Approved — app unlocked.');
-      return true;
-    } catch (e) {
-      appLog.w('[Consent] unlock check failed (retry on next trigger): $e');
-      return false;
-    } finally {
-      _inFlight = false;
-    }
-  }
 
   /// AUTHORITATIVE reconcile — drives the gate from the SERVER's accountStatus,
   /// never from the local `awaitingConsent` flag. This is the fix for the desync
