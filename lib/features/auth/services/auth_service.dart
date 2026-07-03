@@ -89,16 +89,23 @@ class AuthService {
     }
   }
 
+  static String _biometricSecretKey(String deviceId) => 'biometric_secret_$deviceId';
+
   Future<AuthResult> verifyBiometric({
     required String userId,
     required String deviceId,
   }) async {
     try {
+      // Proof-of-possession: present the device secret issued at register time
+      // (stored only in this device's secure storage). Without it the server
+      // rejects — (userId, deviceId) alone no longer mint a token.
+      final secret = await _storage.read(key: _biometricSecretKey(deviceId));
       final res = await _http.post<Map<String, dynamic>>(
         '/api/v1/auth/biometric/verify',
         data: {
           'userId': userId,
           'deviceId': deviceId,
+          'deviceSecret': secret,
         },
       );
       return _parseAuthResponse(res.data!);
@@ -113,11 +120,17 @@ class AuthService {
   }) async {
     try {
       final token = await _storage.read(key: 'auth_token');
-      await _http.post<void>(
+      final res = await _http.post<Map<String, dynamic>>(
         '/api/v1/auth/biometric/register',
         data: {'deviceId': deviceId, 'deviceName': deviceName},
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
+      // Persist the one-time device secret to secure storage for later verify.
+      final inner = (res.data?['data'] as Map<String, dynamic>?) ?? res.data;
+      final secret = inner?['deviceSecret'] as String?;
+      if (secret != null && secret.isNotEmpty) {
+        await _storage.write(key: _biometricSecretKey(deviceId), value: secret);
+      }
     } catch (_) {}
   }
 
