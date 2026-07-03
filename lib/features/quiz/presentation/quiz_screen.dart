@@ -255,15 +255,24 @@ class _QuizBody extends StatelessWidget {
               const SizedBox(height: AppSpacing.md),
             ],
             FilledButton(
-              onPressed: onNext,
+              // Disable while a submit is in flight so a double-tap can't fire a
+              // second POST /quiz/answers (double XP/stars + inflated analytics).
+              onPressed: quizState.isSubmitting ? null : onNext,
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.purple,
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              child: Text(
-                quizState.isLastQuestion ? 'Finish Quiz' : 'Next Question',
-                style: AppTextStyles.body.copyWith(color: Colors.white),
-              ),
+              child: quizState.isSubmitting
+                  ? const SizedBox(
+                      height: 18,
+                      width: 18,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: Colors.white),
+                    )
+                  : Text(
+                      quizState.isLastQuestion ? 'Finish Quiz' : 'Next Question',
+                      style: AppTextStyles.body.copyWith(color: Colors.white),
+                    ),
             ),
           ],
         ],

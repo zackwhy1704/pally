@@ -295,6 +295,11 @@ class QuizViewModel extends _$QuizViewModel {
   }
 
   Future<void> _submitAnswers() async {
+    // Re-entry guard: a rapid double-tap of "Finish" (or a slow-network retry)
+    // must fire exactly ONE POST /quiz/answers — a second call double-counts XP,
+    // stars and the teacher's mastery analytics. (The button is also disabled
+    // while in flight; this is the belt to that suspenders.)
+    if (state.isSubmitting) return;
     state = state.copyWith(isSubmitting: true);
     final span = ref.read(perfMonitorProvider).startSpan('ai.quiz.submit',
         operation: 'ai', description: 'POST /quiz/answers');
