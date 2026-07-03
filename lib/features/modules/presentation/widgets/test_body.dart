@@ -106,11 +106,17 @@ class TestBody extends StatelessWidget {
 
   Widget _buildItemWidget(BuildContext context) {
     final content = item!.contentJson;
+    // The PROMPT lives in contentJson; the REVEAL (answer + explanation) lives in
+    // answerJson — the generators split them so contentJson never carries answers
+    // (a student sees contentJson before revealing). Read reveal fields from
+    // answerJson, not contentJson, or the reveal renders blank. Backend HOT_TAKE
+    // uses `isTrue`; the client card calls it `isCorrect`.
+    final reveal = item!.answerJson ?? const <String, dynamic>{};
     return switch (item!.type) {
       'HOT_TAKE' => HotTakeCard(
           statement: content['statement'] as String? ?? '',
-          explanation: content['explanation'] as String? ?? '',
-          isCorrect: content['isCorrect'] as bool? ?? true,
+          explanation: reveal['explanation'] as String? ?? '',
+          isCorrect: reveal['isTrue'] as bool? ?? true,
           isRevealed: isRevealed,
           answer: answer,
           onAnswer: (response) => onAnswer(item!.id, response),
@@ -118,14 +124,14 @@ class TestBody extends StatelessWidget {
       'SPOT_MISTAKE' => SpotMistakeCard(
           problem: content['problem'] as String? ?? '',
           wrongSolution: content['wrongSolution'] as String? ?? '',
-          errorDescription: content['errorDescription'] as String? ?? '',
-          correctSolution: content['correctSolution'] as String? ?? '',
+          errorDescription: reveal['errorDescription'] as String? ?? '',
+          correctSolution: reveal['correctSolution'] as String? ?? '',
           isRevealed: isRevealed,
           onReveal: () => onAnswer(item!.id, 'found'),
         ),
       'CHALLENGE' => ChallengeCard(
           question: content['question'] as String? ?? '',
-          explanation: content['explanation'] as String? ?? '',
+          explanation: reveal['explanation'] as String? ?? '',
           isRevealed: isRevealed,
           answer: answer ?? '',
           onSubmit: (response) => onAnswer(item!.id, response),
