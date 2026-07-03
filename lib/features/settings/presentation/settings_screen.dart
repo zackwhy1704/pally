@@ -8,6 +8,7 @@ import 'package:local_auth/local_auth.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/services/notification_service.dart';
+import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -978,7 +979,12 @@ class _SubscriptionTile extends ConsumerWidget {
                         padding:
                             const EdgeInsets.symmetric(vertical: 10),
                       ),
-                      child: const Text('Keep Premium from S\$14.90/mo'),
+                      // iOS App Store 3.1.1: no in-app price without the External
+                      // Link entitlement. Gate like every sibling surface, and quote
+                      // USD to match the plans screen + the actual (USD) charge.
+                      child: Text(allowPriceDisplay(ref)
+                          ? 'Keep Premium from US\$9.99/mo'
+                          : 'Keep Premium'),
                     ),
                   ),
                 ],
