@@ -138,9 +138,11 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
               ),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          // C3 — student-facing trust marker: a teacher has reviewed this content.
+      body: SafeArea(
+        top: false,
+        child: Column(
+          children: [
+            // C3 — student-facing trust marker: a teacher has reviewed this content.
           if (playerState.module?.teacherReviewed == true && !playerState.isComplete)
             Padding(
               padding: const EdgeInsets.fromLTRB(
@@ -172,6 +174,7 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
             const RevisionBanner(),
           Expanded(child: _buildBody(playerState)),
         ],
+      ),
       ),
     );
   }

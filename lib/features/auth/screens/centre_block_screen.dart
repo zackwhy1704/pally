@@ -15,7 +15,8 @@ class CentreBlockScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bg,
-      body: AdaptiveCenter(
+      body: SafeArea(
+        child: AdaptiveCenter(
         padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.lg, vertical: AppSpacing.xl),
         child: Column(
@@ -66,6 +67,7 @@ class CentreBlockScreen extends StatelessWidget {
               ],
             ),
           ),
+        ),
         );
   }
 }

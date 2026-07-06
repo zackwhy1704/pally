@@ -295,10 +295,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.bg,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _HeaderBand(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              _HeaderBand(),
             Padding(
               padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.md, vertical: AppSpacing.lg),
@@ -465,6 +466,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               ),
             ),
           ],
+        ),
         ),
       ),
     );
