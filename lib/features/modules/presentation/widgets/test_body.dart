@@ -411,10 +411,21 @@ class ChallengeCardState extends State<ChallengeCard> {
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.answer);
+    // Rebuild as the student types so the Submit button re-evaluates its enabled
+    // state. Without this the button gates on _controller.text read ONCE at first
+    // build (empty → disabled) and never re-enables — a student could type a full
+    // answer and never be able to submit, so a module ending in a Challenge could
+    // never be completed.
+    _controller.addListener(_onTextChanged);
+  }
+
+  void _onTextChanged() {
+    if (mounted) setState(() {});
   }
 
   @override
   void dispose() {
+    _controller.removeListener(_onTextChanged);
     _controller.dispose();
     super.dispose();
   }
