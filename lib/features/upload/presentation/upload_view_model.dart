@@ -521,7 +521,12 @@ class UploadViewModel extends _$UploadViewModel {
 
       // A2: upload straight through only when it's on-topic AND looks like study
       // material; otherwise the UI shows the (gentle) add-anyway warning dialog.
-      if (relevance.isRelevant && relevance.studyMaterial) await uploadFile(file);
+      // Either way the client has adjudicated relevance, so proceed with
+      // skipServerRelevance so the server does NOT re-run its (divergent) check.
+      final plan = planAfterRelevance(relevance);
+      if (plan.uploadNow) {
+        await uploadFile(file, skipRelevance: plan.skipServerRelevance);
+      }
     } on DioException catch (e, st) {
       // Relevance check failing → upload anyway (fail-open: better to
       // upload and let Claude judge than to silently block the user)
@@ -574,6 +579,25 @@ class UploadViewModel extends _$UploadViewModel {
         ),
       );
       final data = response.data ?? const <String, dynamic>{};
+
+      // Defect #2: a 200 can still be a RelevanceWarning (fail-open path — the client's
+      // own /relevance errored so the server re-checked and scored it off-topic). Surface
+      // the actionable add-anyway dialog instead of parsing it as a silent 0-page success.
+      final warning = relevanceWarningFrom(data);
+      if (warning != null) {
+        appLog.i('[Upload] Server relevance warning score=${warning.score} '
+            '— prompting add-anyway instead of silent 0-page success');
+        state = state.copyWith(
+          isUploading: false,
+          isCheckingRelevance: false,
+          uploadStage: UploadStage.checkingRelevance,
+          pendingFile: file,
+          pendingFileSizeBytes: file.size,
+          pendingRelevance: warning,
+        );
+        return;
+      }
+
       final titlesRaw = data['wikiPageTitles'];
       final wikiPageTitles = titlesRaw is List
           ? titlesRaw.whereType<String>().toList()
@@ -928,4 +952,36 @@ CompilePollAction decideCompilePoll({
     return CompilePollAction.stillWorkingBackground;
   }
   return CompilePollAction.keepPolling;
+}
+
+/// After the client's OWN `/relevance` check, decide what to do next. The client owns
+/// the relevance decision, so on EVERY path where we then proceed to upload we tell the
+/// server to skip its relevance re-check (`skipServerRelevance: true`). A server re-check
+/// is a second, non-deterministic Claude call that can diverge from the one we just ran:
+/// an on-topic file the client passed gets re-scored off-topic, marked IRRELEVANT, and
+/// silently never compiled (the sales-book false-block that showed "something went wrong").
+@visibleForTesting
+({bool uploadNow, bool skipServerRelevance, bool askAddAnyway}) planAfterRelevance(
+    RelevanceCheckResponse r) {
+  final passed = r.isRelevant && r.studyMaterial;
+  return (uploadNow: passed, skipServerRelevance: true, askAddAnyway: !passed);
+}
+
+/// A `POST /files` 200 body can be a Success OR a RelevanceWarning — the latter only when
+/// the server actually re-checked (the fail-open path: the client's own `/relevance` call
+/// errored, so the upload re-adjudicated). The warning uniquely carries (`reason`, `score`);
+/// a Success uses `qualityReason`/`pageCount`/`wikiPageTitles` and never a bare `reason`.
+/// Returns a warning-shaped [RelevanceCheckResponse] to drive the add-anyway dialog, or
+/// null for a normal Success — so a warning is NEVER parsed as a silent 0-page upload.
+@visibleForTesting
+RelevanceCheckResponse? relevanceWarningFrom(Map<String, dynamic> data) {
+  final reason = data['reason'];
+  final score = data['score'];
+  if (reason is! String || reason.isEmpty || score is! num) return null;
+  return RelevanceCheckResponse(
+    isRelevant: false,
+    studyMaterial: false,
+    score: score.toDouble(),
+    reason: reason,
+  );
 }
