@@ -220,10 +220,20 @@ class UploadViewModel extends _$UploadViewModel {
   late String _avatarId;
   Timer? _compilePoller;
   DateTime? _compileStartedAt;
+  // Progress-aware polling: the last page count the backend reported + when it
+  // last advanced. We keep polling while pages are still being ADDED (a large doc
+  // compiles for 5-7 min in the background) and only give up on a genuine stall or
+  // an absolute ceiling — never on a fixed wall-clock (which false-failed big
+  // files at 5 min even though the backend was still working).
+  int _lastCompileProgress = 0;
+  DateTime? _lastCompileProgressAt;
 
-  // 5-minute hard timeout: must exceed the backend's 4-min cap so the app only
-  // times out when the backend genuinely stalled (not while it's still working).
-  static const _compileTimeout = Duration(minutes: 5);
+  // Absolute backstop, far above the real worst case (~5-7 min for ~170 pages) —
+  // only trips if the job is truly wedged or status keeps erroring.
+  static const _compileHardCeiling = Duration(minutes: 15);
+  // Give up early ONLY if the page count hasn't advanced for this long (stalled),
+  // never while pages are still landing.
+  static const _compileStallGrace = Duration(minutes: 4);
   // Poll every 5s — fast enough to detect success, cheap enough not to flood.
   static const _pollInterval = Duration(seconds: 5);
 
@@ -695,23 +705,21 @@ class UploadViewModel extends _$UploadViewModel {
   void _startCompilePoller() {
     _compilePoller?.cancel();
     _compileStartedAt = DateTime.now();
-    appLog.d('[Upload] Compile poller started (timeout=${_compileTimeout.inSeconds}s)');
+    _lastCompileProgress = 0;
+    _lastCompileProgressAt = DateTime.now();
+    appLog.d('[Upload] Compile poller started '
+        '(stallGrace=${_compileStallGrace.inSeconds}s ceiling=${_compileHardCeiling.inSeconds}s)');
     _compilePoller = Timer.periodic(_pollInterval, (_) => _pollCompileStatus());
   }
 
   Future<void> _pollCompileStatus() async {
-    final elapsed = DateTime.now().difference(_compileStartedAt ?? DateTime.now());
-    if (elapsed >= _compileTimeout) {
-      _compilePoller?.cancel();
-      _compilePoller = null;
-      appLog.w('[Upload] Compile timed out after ${elapsed.inSeconds}s for avatar=$_avatarId');
-      state = state.copyWith(
-        uploadStage: UploadStage.compileTimeout,
-        compilingFileCount: 0,
-        error: 'Mochi is taking too long to read your notes. '
-            'The brain will continue updating in the background — '
-            'check back in a few minutes.',
-      );
+    final now = DateTime.now();
+    final elapsed = now.difference(_compileStartedAt ?? now);
+    // Absolute backstop only. We NO LONGER give up on a fixed wall-clock while the
+    // backend is still adding pages (that false-failed large files at 5 min) — the
+    // stall + READY checks below own the give-up decision.
+    if (elapsed >= _compileHardCeiling) {
+      _stopPollingStillWorking(elapsed);
       return;
     }
 
@@ -727,6 +735,14 @@ class UploadViewModel extends _$UploadViewModel {
           ' pagesCompiled=$pagesCompiled pagesTotal=$pagesTotal'
           ' elapsed=${elapsed.inSeconds}s');
 
+      // Track real progress: whenever the backend's page count advances, reset the
+      // stall clock. This is what lets a 6-7 min compile keep polling instead of
+      // false-failing on a fixed wall-clock.
+      final progress = pagesCompiled > wikiPageCount ? pagesCompiled : wikiPageCount;
+      if (progress > _lastCompileProgress) {
+        _lastCompileProgress = progress;
+        _lastCompileProgressAt = now;
+      }
       // Update partial progress display when the backend reports it.
       if (pagesCompiled > 0 && pagesTotal != null && pagesCompiled < pagesTotal) {
         state = state.copyWith(
@@ -734,35 +750,63 @@ class UploadViewModel extends _$UploadViewModel {
         );
       }
 
-      if (brainState == 'READY') {
+      final sinceProgress =
+          now.difference(_lastCompileProgressAt ?? _compileStartedAt ?? now);
+      final action = decideCompilePoll(
+        brainState: brainState,
+        wikiPageCount: wikiPageCount,
+        elapsed: elapsed,
+        sinceLastProgress: sinceProgress,
+        hardCeiling: _compileHardCeiling,
+        stallGrace: _compileStallGrace,
+      );
+      if (action == CompilePollAction.success) {
         _compilePoller?.cancel();
         _compilePoller = null;
-        if (wikiPageCount > 0) {
-          appLog.i('[Upload] Compile SUCCESS: $wikiPageCount pages for avatar=$_avatarId');
-          state = state.copyWith(
-            uploadStage: UploadStage.compileSuccess,
-            compilingFileCount: 0,
-          );
-          ref.invalidate(libraryViewModelProvider);
-          ref.invalidate(homeViewModelProvider);
-        } else {
-          // brainState == READY but 0 pages — compile ran and produced nothing
-          // (parse error, empty extract, etc.). Show error so user can retry.
-          appLog.w('[Upload] Compile finished but produced 0 pages for avatar=$_avatarId');
-          state = state.copyWith(
-            uploadStage: UploadStage.compileFailed,
-            compilingFileCount: 0,
-            error: 'Mochi couldn\'t process your notes. '
-                'Try uploading again — if the problem persists, '
-                'try a smaller file or a different format.',
-          );
-        }
+        appLog.i('[Upload] Compile SUCCESS: $wikiPageCount pages for avatar=$_avatarId');
+        state = state.copyWith(
+          uploadStage: UploadStage.compileSuccess,
+          compilingFileCount: 0,
+        );
+        ref.invalidate(libraryViewModelProvider);
+        ref.invalidate(homeViewModelProvider);
+      } else if (action == CompilePollAction.emptyFailed) {
+        // brainState == READY but 0 pages — compile ran and produced nothing
+        // (parse error, empty extract, etc.). Show error so user can retry.
+        _compilePoller?.cancel();
+        _compilePoller = null;
+        appLog.w('[Upload] Compile finished but produced 0 pages for avatar=$_avatarId');
+        state = state.copyWith(
+          uploadStage: UploadStage.compileFailed,
+          compilingFileCount: 0,
+          error: 'Mochi couldn\'t process your notes. '
+              'Try uploading again — if the problem persists, '
+              'try a smaller file or a different format.',
+        );
+      } else if (action == CompilePollAction.stillWorkingBackground) {
+        _stopPollingStillWorking(elapsed);
       }
-      // Still COMPILING or PENDING_RECOMPILE — keep polling
+      // else keepPolling — still building AND advancing, do nothing.
     } catch (e) {
       appLog.w('[Upload] Compile poll failed (non-fatal): $e');
-      // Don't stop polling on transient errors — let the timeout handle it
+      // Keep polling; the hard ceiling is the backstop for persistent errors.
     }
+  }
+
+  /// Stops the poller when the compile is still running past our client wait
+  /// (stall grace or hard ceiling). NOT a failure — the backend keeps compiling
+  /// in the background; framed as still-working, not an error.
+  void _stopPollingStillWorking(Duration elapsed) {
+    _compilePoller?.cancel();
+    _compilePoller = null;
+    appLog.w('[Upload] Compile poll stopped after ${elapsed.inSeconds}s — still '
+        'running in the background for avatar=$_avatarId');
+    state = state.copyWith(
+      uploadStage: UploadStage.compileTimeout,
+      compilingFileCount: 0,
+      error: 'Mochi is still building your brain — big files can take a few '
+          'minutes. It keeps going in the background; check back shortly.',
+    );
   }
 
   /// Calls POST /wiki/recompile to retry any FAILED files from prior outages.
@@ -853,4 +897,35 @@ class UploadViewModel extends _$UploadViewModel {
       reviewFileId: null,
     );
   }
+}
+
+/// What the compile poller should do given the latest status. Extracted as a pure
+/// function so the give-up policy is unit-testable without driving real Timers.
+enum CompilePollAction { keepPolling, success, emptyFailed, stillWorkingBackground }
+
+/// Decide the poller's next action.
+///
+/// The key fix: while the brain is still compiling, we keep polling as long as
+/// pages are still being added — we give up ONLY on a genuine stall (no new pages
+/// for [stallGrace]) or an absolute [hardCeiling]. The old code gave up on a fixed
+/// 5-minute wall-clock, which false-failed large files that legitimately take 5-7
+/// minutes in the background.
+@visibleForTesting
+CompilePollAction decideCompilePoll({
+  required String brainState,
+  required int wikiPageCount,
+  required Duration elapsed,
+  required Duration sinceLastProgress,
+  Duration hardCeiling = const Duration(minutes: 15),
+  Duration stallGrace = const Duration(minutes: 4),
+}) {
+  if (brainState == 'READY') {
+    return wikiPageCount > 0
+        ? CompilePollAction.success
+        : CompilePollAction.emptyFailed;
+  }
+  if (elapsed >= hardCeiling || sinceLastProgress >= stallGrace) {
+    return CompilePollAction.stillWorkingBackground;
+  }
+  return CompilePollAction.keepPolling;
 }
