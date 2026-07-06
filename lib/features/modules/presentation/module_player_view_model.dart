@@ -292,13 +292,16 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
         return {'itemId': item.id, 'response': response};
       }).toList();
 
-      // Body is a bare submissions list, so the active-time measurement rides
-      // as a query parameter. Backend reads + clamps durationSeconds to credit
-      // real study minutes for this stage.
+      // Backend binds @RequestBody SubmitModuleAnswersRequest{submissions, durationSeconds}
+      // — an OBJECT — and reads durationSeconds from the BODY (there is NO @RequestParam
+      // for it). A bare list 400s ("Cannot deserialize ... from Array value") and a query
+      // param is ignored, so the stage never advances. Wrap the body.
       final res = await dio.post<dynamic>(
         '/api/v1/avatars/$_avatarId/modules/$_moduleId/submit',
-        data: submissions,
-        queryParameters: {'durationSeconds': _stageDurationSeconds},
+        data: buildModuleSubmitBody(
+          submissions: submissions,
+          durationSeconds: _stageDurationSeconds,
+        ),
       );
 
       final data = res.data;
@@ -421,4 +424,19 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
     appLog.d('[ModulePlayer] Muddiest point skipped for $_moduleId');
     state = state.copyWith(muddiestSubmitted: true);
   }
+}
+
+/// Builds the module-submit request body. MUST be a JSON object (not a bare list):
+/// the backend binds `@RequestBody SubmitModuleAnswersRequest{submissions, durationSeconds}`
+/// and reads durationSeconds from the body. Extracted + pure so a test can pin the
+/// object shape (a bare list 400s "Cannot deserialize ... from Array value").
+@visibleForTesting
+Map<String, dynamic> buildModuleSubmitBody({
+  required List<Map<String, String>> submissions,
+  required int durationSeconds,
+}) {
+  return {
+    'submissions': submissions,
+    'durationSeconds': durationSeconds,
+  };
 }
