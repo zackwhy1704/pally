@@ -116,7 +116,7 @@ class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen>
         final by = p.verifiedBy ?? 'a reviewer';
         final more =
             verified.length > 1 ? ' (+${verified.length - 1} more)' : '';
-        ScaffoldMessenger.of(context).showSnackBar(
+        showAppSnackBar(
           SnackBar(
             content: Text('Checked by $by ✓$more'),
             backgroundColor: AppColors.green,
@@ -581,8 +581,6 @@ class _PageTileState extends ConsumerState<_PageTile> {
   }
 
   Future<void> _shareToGroup(BuildContext context) async {
-    // Capture before any async gap.
-    final scaffold = ScaffoldMessenger.of(context);
     final groups = ref.read(groupListViewModelProvider).valueOrNull ?? [];
     if (groups.isEmpty) {
       final goToGroups = await showDialog<bool>(
@@ -680,14 +678,14 @@ class _PageTileState extends ConsumerState<_PageTile> {
       if (mounted) setState(() => _isSharing = false);
     }
     if (successMsg != null) {
-      scaffold.showSnackBar(SnackBar(
+      showAppSnackBar(SnackBar(
         content: Text(successMsg),
         backgroundColor: AppColors.green,
         behavior: SnackBarBehavior.floating,
       ));
     }
     if (errorMsg != null) {
-      scaffold.showSnackBar(SnackBar(
+      showAppSnackBar(SnackBar(
         content: Text(errorMsg),
         backgroundColor: AppColors.coral,
         behavior: SnackBarBehavior.floating,
@@ -1482,7 +1480,7 @@ class _TeacherPreferencesSheetState
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        showAppSnackBar(
           const SnackBar(content: Text('Could not save — try again.')),
         );
       }

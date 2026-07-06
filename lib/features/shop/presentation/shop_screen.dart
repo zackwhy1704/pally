@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
+import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -31,7 +32,7 @@ class ShopScreen extends ConsumerWidget {
         );
       }
       if (next.lastFreezePurchase != null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        showAppSnackBar(SnackBar(
           duration: const Duration(seconds: 3),
           backgroundColor: AppColors.text1,
           behavior: SnackBarBehavior.floating,
@@ -49,7 +50,7 @@ class ShopScreen extends ConsumerWidget {
         // Surfaces "Not enough stars" / "Freezes are full" verbatim from
         // the backend. We deliberately don't celebrate failure (no
         // confetti) so the kid understands nothing was charged.
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        showAppSnackBar(SnackBar(
           duration: const Duration(seconds: 3),
           backgroundColor: AppColors.coral,
           behavior: SnackBarBehavior.floating,
@@ -369,7 +370,7 @@ class _PowerupShopCard extends ConsumerWidget {
 
     ref.listen<PowerupState>(powerupViewModelProvider, (_, next) {
       if (next.lastPurchase != null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        showAppSnackBar(SnackBar(
           duration: const Duration(seconds: 3),
           backgroundColor: AppColors.text1,
           behavior: SnackBarBehavior.floating,
@@ -383,7 +384,7 @@ class _PowerupShopCard extends ConsumerWidget {
         notifier.clearPurchase();
       }
       if (next.error != null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        showAppSnackBar(SnackBar(
           duration: const Duration(seconds: 3),
           backgroundColor: AppColors.coral,
           behavior: SnackBarBehavior.floating,

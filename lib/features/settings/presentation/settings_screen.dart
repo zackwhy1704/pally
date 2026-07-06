@@ -142,7 +142,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         await AuthNotifier.instance.markBiometricRegistered();
         if (mounted) {
           setState(() => _biometricEnabled = true);
-          ScaffoldMessenger.of(context).showSnackBar(
+          showAppSnackBar(
             SnackBar(
               content: const Text('Biometric login enabled'),
               backgroundColor: AppColors.green,
@@ -154,7 +154,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         }
       } catch (_) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
+          showAppSnackBar(
             SnackBar(
               content: const Text('Could not enable biometric login'),
               backgroundColor: AppColors.coral,
@@ -169,7 +169,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       await AuthNotifier.instance.clearBiometricRegistration();
       if (mounted) {
         setState(() => _biometricEnabled = false);
-        ScaffoldMessenger.of(context).showSnackBar(
+        showAppSnackBar(
           SnackBar(
             content: const Text('Biometric login disabled'),
             backgroundColor: AppColors.text2,
@@ -200,7 +200,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       );
       await AuthNotifier.instance.setChildName(name);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        showAppSnackBar(
           const SnackBar(
             content: Text('Name updated!'),
             backgroundColor: AppColors.green,
@@ -210,7 +210,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       }
     } on DioException {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        showAppSnackBar(
           const SnackBar(
             content: Text('Could not save name — check your connection'),
             backgroundColor: AppColors.coral,
@@ -276,7 +276,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       if (mounted) context.go('/auth/signin');
     } on DioException {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        showAppSnackBar(
           const SnackBar(
             content: Text('Could not delete account — try again later'),
             backgroundColor: AppColors.coral,
@@ -556,7 +556,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       // Refresh the avatar list so the new date appears everywhere.
       ref.invalidate(libraryViewModelProvider);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        showAppSnackBar(
           SnackBar(
             content: Text(
                 '${avatar.name} test date set for ${DateFormat('MMM d, yyyy').format(picked)}'),
@@ -567,7 +567,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       }
     } on DioException {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        showAppSnackBar(
           const SnackBar(
             content: Text('Could not save test date — check your connection'),
             backgroundColor: AppColors.coral,

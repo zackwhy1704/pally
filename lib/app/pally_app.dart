@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/services/firebase_ready.dart';
 import 'package:pally/core/theme/app_theme.dart';
+import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/consent/data/consent_unlock.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
@@ -89,6 +90,7 @@ class _PallyAppState extends ConsumerState<PallyApp>
     return MaterialApp.router(
       title: 'Pally',
       theme: AppTheme.light,
+      scaffoldMessengerKey: rootScaffoldMessengerKey,
       routerConfig: _router,
       debugShowCheckedModeBanner: false,
     );

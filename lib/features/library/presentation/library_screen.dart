@@ -520,7 +520,7 @@ class _QuizChipForAvatar extends ConsumerWidget {
         label: 'Quiz',
         icon: Icons.bolt_rounded,
         color: AppColors.text3,
-        onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+        onTap: () => showAppSnackBar(
           SnackBar(
             content: const Text('Upload notes first to unlock quizzes'),
             backgroundColor: AppColors.amber,

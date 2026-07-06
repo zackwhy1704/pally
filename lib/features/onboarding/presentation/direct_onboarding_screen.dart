@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -53,7 +54,7 @@ class _DirectOnboardingScreenState
       directOnboardingViewModelProvider,
       (prev, next) {
         if (next.error != null && next.error != prev?.error) {
-          ScaffoldMessenger.of(context).showSnackBar(
+          showAppSnackBar(
             SnackBar(
               content: Text(next.error!,
                   style:
@@ -210,7 +211,7 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
         ref.read(directOnboardingViewModelProvider).isUnder13;
     if (isUnder13 == null) {
       // Force user to select an age group before proceeding.
-      ScaffoldMessenger.of(context).showSnackBar(
+      showAppSnackBar(
         SnackBar(
           content: Text(
             'Please select your age group to continue.',

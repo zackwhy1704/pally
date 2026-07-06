@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -292,7 +293,7 @@ class _ParentalConsentPendingSheetState
   void _onUnlocked() {
     if (_dismissed || !mounted) return;
     _dismissed = true;
-    ScaffoldMessenger.of(context).showSnackBar(
+    showAppSnackBar(
       const SnackBar(content: Text("You're all set! 🎉")),
     );
     Navigator.of(context).maybePop();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/features/progress/presentation/streak_status_provider.dart';
@@ -171,7 +172,7 @@ class _FreezePill extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         HapticFeedback.selectionClick();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        showAppSnackBar(SnackBar(
           duration: const Duration(seconds: 3),
           content: Text(freezes > 0
               ? 'A freeze saves your streak if you miss one day.'

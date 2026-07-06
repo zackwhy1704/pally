@@ -106,9 +106,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   // Actionable, not spatial: the recovery action rides the error
                   // itself (the banner may be collapsed), so a kid is never sent
                   // to look at UI that isn't there.
-                  ScaffoldMessenger.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(SnackBar(
+                  showAppSnackBar(SnackBar(
                       content: Text(
                         'Ask a grown-up to approve your account to make a Mochi.',
                         style: AppTextStyles.bodySmall

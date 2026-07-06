@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -203,7 +204,7 @@ class _AvatarPickerScreenState extends ConsumerState<AvatarPickerScreen> {
     } on DioException catch (e) {
       appLog.e('[AvatarPicker] Create failed', error: e);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        showAppSnackBar(
           SnackBar(
             content: Text('Could not create Mochi — ${e.message}',
                 style: AppTextStyles.bodySmall.copyWith(color: Colors.white)),

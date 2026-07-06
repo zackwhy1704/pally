@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -241,7 +242,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                           await AuthService.instance.forgotPassword(email);
                           if (ctx.mounted) Navigator.of(ctx).pop();
                           if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
+                            showAppSnackBar(
                               SnackBar(
                                 content: const Text(
                                     'Check your email for a reset link'),
@@ -279,7 +280,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
+    showAppSnackBar(
       SnackBar(
         content: Text(message,
             style: AppTextStyles.bodySmall.copyWith(color: Colors.white)),

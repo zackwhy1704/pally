@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/features/chat/presentation/chat_screen.dart';
@@ -120,7 +121,7 @@ class _HomeworkScanDetailScreenState extends State<HomeworkScanDetailScreen> {
   void _share() {
     final answers = widget.result.answers;
     if (answers.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      showAppSnackBar(
         const SnackBar(content: Text('Nothing to share yet.')),
       );
       return;
