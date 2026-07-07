@@ -419,13 +419,22 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
       final matches = state.items.where((i) => i.id == itemId);
       final item = matches.isEmpty ? null : matches.first;
       final question = item?.contentJson['question'];
+      final reference = _readableReference(r['referenceAnswer']);
+      // Blank/invalid reference (legacy blank-content items): do NOT ask the
+      // student to self-grade against an empty model answer — skip self-assess so
+      // the item stays UNGRADED. The generation reaper owns fixing the blank item.
+      if (reference.trim().isEmpty) {
+        appLog.w('[ModulePlayer] PROVE item $itemId has blank reference — '
+            'skipping self-assess (stays UNGRADED)');
+        continue;
+      }
       out.add(SelfAssessItem(
         itemId: itemId,
         question: (question is String && question.isNotEmpty)
             ? question
             : 'Your answer',
         yourAnswer: state.answers[itemId] ?? '',
-        reference: _readableReference(r['referenceAnswer']),
+        reference: reference,
         feedback: r['feedback']?.toString(),
       ));
     }
@@ -456,18 +465,28 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
   /// Best-effort + non-blocking — the item already completed on submit, so a
   /// failure here never blocks the module. Re-entrancy: a re-tap replaces.
   Future<void> submitSelfReport(String itemId, String selfReport) async {
-    final updated = Map<String, String>.from(state.selfReports);
-    updated[itemId] = selfReport;
-    state = state.copyWith(selfReports: updated);
-    try {
-      final dio = ref.read(dioProvider);
-      await dio.post<dynamic>(
-        '/api/v1/avatars/$_avatarId/modules/$_moduleId/items/$itemId/self-report',
-        data: {'selfReport': selfReport},
-      );
-    } catch (e, st) {
-      appLog.w('[ModulePlayer] Self-report failed (non-blocking)',
-          error: e, stackTrace: st);
+    // Optimistic: reflect the choice immediately.
+    final optimistic = Map<String, String>.from(state.selfReports);
+    optimistic[itemId] = selfReport;
+    state = state.copyWith(selfReports: optimistic);
+
+    final dio = ref.read(dioProvider);
+    final path =
+        '/api/v1/avatars/$_avatarId/modules/$_moduleId/items/$itemId/self-report';
+    for (var attempt = 0; attempt < 2; attempt++) {
+      try {
+        await dio.post<dynamic>(path, data: {'selfReport': selfReport});
+        return; // recorded
+      } catch (e, st) {
+        if (attempt == 0) continue; // one retry before giving up
+        // Don't SILENTLY drop: revert the optimistic selection so the UI shows it
+        // as un-recorded (the choice de-highlights), and the student can re-tap.
+        appLog.w('[ModulePlayer] Self-report failed after retry — reverting so it '
+            'is not falsely shown as saved', error: e, stackTrace: st);
+        final reverted = Map<String, String>.from(state.selfReports);
+        reverted.remove(itemId);
+        state = state.copyWith(selfReports: reverted);
+      }
     }
   }
 
