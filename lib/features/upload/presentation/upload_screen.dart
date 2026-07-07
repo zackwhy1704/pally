@@ -110,6 +110,45 @@ class UploadScreen extends ConsumerWidget {
       }
     });
 
+    // Large-file PREFLIGHT: pre-empt the (genuinely slow) compile by setting
+    // expectations before the user commits. Mirrors the relevance-dialog idiom.
+    ref.listen(uploadViewModelProvider(avatarId), (prev, next) async {
+      if (next.uploadStage == UploadStage.awaitingLargeFileConfirm &&
+          prev?.uploadStage != UploadStage.awaitingLargeFileConfirm &&
+          next.pendingFile != null &&
+          context.mounted) {
+        final mb = (next.pendingFileSizeBytes / (1024 * 1024)).toStringAsFixed(1);
+        final proceed = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Large file — this takes a few minutes'),
+            content: Text(
+              'This is a large file (${mb}MB). Building your brain from it can '
+              'take about ${next.estimatedCompileTime}. You can leave this screen — '
+              'Mochi keeps building in the background and updates automatically '
+              'when it\'s ready.',
+              style: AppTextStyles.body,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: const Text('Build my brain'),
+              ),
+            ],
+          ),
+        );
+        if (proceed == true) {
+          await vm.confirmLargeFileUpload();
+        } else {
+          vm.cancelLargeFileUpload();
+        }
+      }
+    });
+
     // Full-screen loading overlay: blocks navigation during upload + compile.
     // Terminal states (success / failed / timeout) also show full-screen so
     // the user gets a clear outcome before continuing.
@@ -1017,18 +1056,29 @@ class _UploadLoadingScreen extends StatelessWidget {
     if (stage == UploadStage.compileFailed ||
         stage == UploadStage.compileTimeout) {
       final isTimeout = stage == UploadStage.compileTimeout;
+      // A large-file timeout is EXPECTED (big docs are slow), so frame it as
+      // reassuring progress, not a problem — distinct from a real failure.
+      final isLargeTimeout = isTimeout && state.isLargeFile;
       return _TerminalScreen(
         icon: isTimeout
             ? Icons.hourglass_disabled_rounded
             : Icons.error_outline_rounded,
         iconColor: AppColors.amber,
-        title: isTimeout ? 'Taking longer than expected...' : 'Something went wrong',
+        title: isLargeTimeout
+            ? 'Still building your brain'
+            : isTimeout
+                ? 'Taking longer than expected...'
+                : 'Something went wrong',
         message: state.error ??
-            (isTimeout
-                ? 'Mochi is still working on your notes in the background. '
-                    'Check back in a few minutes — the brain will update automatically.'
-                : 'Mochi couldn\'t process your notes. '
-                    'Try uploading again with a smaller file or different format.'),
+            (isLargeTimeout
+                ? 'Large files take a few minutes to compile. Mochi is still '
+                    'working on it in the background and will update your brain '
+                    'automatically when it\'s ready — no need to re-upload.'
+                : isTimeout
+                    ? 'Mochi is still working on your notes in the background. '
+                        'Check back in a few minutes — the brain will update automatically.'
+                    : 'Mochi couldn\'t process your notes. '
+                        'Try uploading again with a smaller file or different format.'),
         primaryLabel: 'Return to home',
         onPrimary: () => const HomeRoute().go(context),
         secondaryLabel: isTimeout ? 'Check brain later' : 'Try again',

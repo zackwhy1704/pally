@@ -39,6 +39,7 @@ enum UploadStage {
   idle,
   scanning,         // ML Kit document scanner open
   checkingSize,     // local validation
+  awaitingLargeFileConfirm, // large file — preflight confirm before committing
   checkingRelevance,
   uploading,
   extractingText,   // backend OCR/PDFBox
@@ -214,6 +215,10 @@ const _sentinel = Object();
 
 // ── Max file size enforced client-side (matches backend 25MB cap) ──
 const _maxFileSizeBytes = 25 * 1024 * 1024;
+/// Above this, warn the user UP FRONT that building the brain is slow (the compile
+/// is genuinely minutes for a big doc). Matches [UploadState.isLargeFile]'s size
+/// threshold so the preflight and the in-progress "large" copy agree.
+const _largeFileWarnBytes = 5 * 1024 * 1024;
 
 @riverpod
 class UploadViewModel extends _$UploadViewModel {
@@ -485,7 +490,26 @@ class UploadViewModel extends _$UploadViewModel {
     }
   }
 
-  Future<void> _checkRelevanceAndUpload(PlatformFile file) async {
+  Future<void> _checkRelevanceAndUpload(PlatformFile file,
+      {bool confirmedLarge = false}) async {
+    // PREFLIGHT (pre-empt the slow compile): a big file takes minutes to build
+    // into a brain, so set expectations BEFORE committing — and before we spend a
+    // relevance Claude call on a file the user may cancel. The screen watches this
+    // stage, shows a confirm dialog, and calls confirmLargeFileUpload / cancel.
+    if (!confirmedLarge && needsLargeFilePreflight(file.size)) {
+      appLog.i('[Upload] Large file preflight: ${file.name} size=${file.size}B');
+      state = state.copyWith(
+        isCheckingRelevance: false,
+        isUploading: false,
+        uploadStage: UploadStage.awaitingLargeFileConfirm,
+        pendingFile: file,
+        pendingFileSizeBytes: file.size,
+        pendingRelevance: null,
+        error: null,
+      );
+      return;
+    }
+
     appLog.i('[Upload] Relevance check: ${file.name} size=${file.size}B');
     state = state.copyWith(
       isCheckingRelevance: true,
@@ -877,6 +901,26 @@ class UploadViewModel extends _$UploadViewModel {
     state = state.copyWith(pendingFile: null, pendingRelevance: null);
   }
 
+  /// User confirmed the large-file preflight → proceed with the pending file
+  /// (relevance check + upload), skipping the preflight this time.
+  Future<void> confirmLargeFileUpload() async {
+    final file = state.pendingFile;
+    if (file == null) return;
+    await _checkRelevanceAndUpload(file, confirmedLarge: true);
+  }
+
+  /// User backed out of the large-file preflight → return to the idle pick state.
+  void cancelLargeFileUpload() {
+    state = state.copyWith(
+      uploadStage: UploadStage.idle,
+      isUploading: false,
+      isCheckingRelevance: false,
+      pendingFile: null,
+      pendingFileSizeBytes: 0,
+      pendingRelevance: null,
+    );
+  }
+
   void clearErrors() {
     state = state.copyWith(error: null, fileErrors: [], fileWarnings: []);
   }
@@ -960,6 +1004,12 @@ CompilePollAction decideCompilePoll({
 /// is a second, non-deterministic Claude call that can diverge from the one we just ran:
 /// an on-topic file the client passed gets re-scored off-topic, marked IRRELEVANT, and
 /// silently never compiled (the sales-book false-block that showed "something went wrong").
+/// Whether a file is large enough to warrant a PRE-UPLOAD confirm (the compile is
+/// genuinely slow for big docs, so we set expectations before the user commits).
+/// Pure + testable; the threshold matches [UploadState.isLargeFile]'s size cutoff.
+@visibleForTesting
+bool needsLargeFilePreflight(int sizeBytes) => sizeBytes > _largeFileWarnBytes;
+
 @visibleForTesting
 ({bool uploadNow, bool skipServerRelevance, bool askAddAnyway}) planAfterRelevance(
     RelevanceCheckResponse r) {
