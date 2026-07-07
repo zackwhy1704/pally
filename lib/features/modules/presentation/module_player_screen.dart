@@ -10,6 +10,7 @@ import 'package:pally/features/modules/presentation/module_player_view_model.dar
 import 'package:pally/features/modules/presentation/widgets/learn_body.dart';
 import 'package:pally/features/modules/presentation/widgets/test_body.dart';
 import 'package:pally/features/modules/presentation/widgets/prove_body.dart';
+import 'package:pally/features/modules/presentation/widgets/self_assess_body.dart';
 import 'package:pally/features/modules/presentation/widgets/muddiest_body.dart';
 import 'package:pally/features/modules/presentation/widgets/complete_body.dart';
 
@@ -216,6 +217,22 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
     }
 
     if (playerState.isComplete) {
+      final vmSelf = ref.read(
+        modulePlayerViewModelProvider(widget.avatarId, widget.moduleId).notifier,
+      );
+      // Post-PROVE self-assessment (Tier 2): the student marks their own
+      // open-ended answers against the reference. Shown once, before the
+      // muddiest-point check. Non-blocking — "Continue" always proceeds.
+      if (playerState.selfAssessItems.isNotEmpty &&
+          !playerState.selfAssessDone) {
+        return SelfAssessBody(
+          items: playerState.selfAssessItems,
+          reports: playerState.selfReports,
+          onReport: vmSelf.submitSelfReport,
+          onDone: vmSelf.finishSelfAssess,
+        );
+      }
+
       final concepts = playerState.results?.concepts ?? const [];
       // Post-PROVE muddiest-point check: one tap to flag the hardest concept,
       // shown once before the celebration. Skipped automatically when the

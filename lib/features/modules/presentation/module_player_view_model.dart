@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -9,6 +11,28 @@ import 'package:pally/core/utils/logger.dart';
 import 'package:pally/shared/models/learning_module.dart';
 
 part 'module_player_view_model.g.dart';
+
+/// One open-ended PROVE item awaiting the student's self-assessment. The server
+/// never asserts correctness for these; the student compares their answer to the
+/// reference and self-reports (recorded as a low-trust SELF_REPORT signal).
+@immutable
+class SelfAssessItem {
+  const SelfAssessItem({
+    required this.itemId,
+    required this.question,
+    required this.yourAnswer,
+    required this.reference,
+    this.feedback,
+  });
+
+  final String itemId;
+  final String question;
+  final String yourAnswer;
+
+  /// The reference answer / expected key points, for the student to compare.
+  final String reference;
+  final String? feedback;
+}
 
 @immutable
 class ModulePlayerState {
@@ -26,6 +50,9 @@ class ModulePlayerState {
     this.error,
     this.answers = const {},
     this.revealedItems = const {},
+    this.selfAssessItems = const [],
+    this.selfReports = const {},
+    this.selfAssessDone = false,
   });
 
   final LearningModule? module;
@@ -50,6 +77,17 @@ class ModulePlayerState {
   /// Items whose answer has been revealed (for TEST stage feedback).
   final Set<String> revealedItems;
 
+  /// Open-ended PROVE items awaiting self-assessment (populated from the PROVE
+  /// submit response). Shown once, after PROVE, before the completion screen.
+  final List<SelfAssessItem> selfAssessItems;
+
+  /// itemId -> self-report (YES/PARTLY/NO) already submitted this session.
+  final Map<String, String> selfReports;
+
+  /// True once the student has finished (or skipped) self-assessment, so the
+  /// overlay shows once and the completion flow follows.
+  final bool selfAssessDone;
+
   ModuleContentItem? get currentItem =>
       items.isEmpty || currentIndex >= items.length
           ? null
@@ -72,6 +110,9 @@ class ModulePlayerState {
     Object? error = _sentinel,
     Map<String, String>? answers,
     Set<String>? revealedItems,
+    List<SelfAssessItem>? selfAssessItems,
+    Map<String, String>? selfReports,
+    bool? selfAssessDone,
   }) {
     return ModulePlayerState(
       module: module ?? this.module,
@@ -87,6 +128,9 @@ class ModulePlayerState {
       error: error == _sentinel ? this.error : error as PallyError?,
       answers: answers ?? this.answers,
       revealedItems: revealedItems ?? this.revealedItems,
+      selfAssessItems: selfAssessItems ?? this.selfAssessItems,
+      selfReports: selfReports ?? this.selfReports,
+      selfAssessDone: selfAssessDone ?? this.selfAssessDone,
     );
   }
 }
@@ -305,6 +349,22 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
       );
 
       final data = res.data;
+
+      // Capture open-ended PROVE items for self-assessment. The server no longer
+      // asserts a correctness score for these; the student compares to the
+      // reference answer and self-reports. Populated BEFORE advancing so the
+      // overlay renders in the completion flow.
+      if (state.stage == 'PROVE') {
+        final assessItems = _extractSelfAssessItems(data);
+        if (assessItems.isNotEmpty) {
+          state = state.copyWith(
+            selfAssessItems: assessItems,
+            selfReports: const {},
+            selfAssessDone: false,
+          );
+        }
+      }
+
       final nextStage = _extractNextStage(data);
       appLog.i('[ModulePlayer] Submission complete, next stage: $nextStage');
       ref.read(analyticsProvider).event(
@@ -344,6 +404,76 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
           error: e, stackTrace: st);
       state = state.copyWith(isSubmitting: false, error: PallyError.from(e));
     }
+  }
+
+  /// Builds the self-assessment list from a PROVE submit response. Each result
+  /// carries `selfAssess:true`, a `referenceAnswer` (the answer_json), and
+  /// `feedback`. The question + the student's own answer come from local state.
+  List<SelfAssessItem> _extractSelfAssessItems(dynamic data) {
+    if (data is! Map || data['results'] is! List) return const [];
+    final out = <SelfAssessItem>[];
+    for (final r in data['results'] as List) {
+      if (r is! Map || r['selfAssess'] != true) continue;
+      final itemId = r['itemId']?.toString();
+      if (itemId == null) continue;
+      final matches = state.items.where((i) => i.id == itemId);
+      final item = matches.isEmpty ? null : matches.first;
+      final question = item?.contentJson['question'];
+      out.add(SelfAssessItem(
+        itemId: itemId,
+        question: (question is String && question.isNotEmpty)
+            ? question
+            : 'Your answer',
+        yourAnswer: state.answers[itemId] ?? '',
+        reference: _readableReference(r['referenceAnswer']),
+        feedback: r['feedback']?.toString(),
+      ));
+    }
+    return out;
+  }
+
+  /// Turns the raw answer_json into a readable reference for the student. Falls
+  /// back to the raw string if it isn't the expected shape.
+  String _readableReference(dynamic raw) {
+    if (raw is! String || raw.isEmpty) return '';
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is Map) {
+        final kp = decoded['expectedKeyPoints'];
+        if (kp is List && kp.isNotEmpty) {
+          return kp.map((e) => '• $e').join('\n');
+        }
+        final answer = decoded['answer'];
+        if (answer is String && answer.isNotEmpty) return answer;
+      }
+    } catch (_) {
+      // not JSON — show as-is
+    }
+    return raw;
+  }
+
+  /// Records the student's self-assessment of one open-ended PROVE answer.
+  /// Best-effort + non-blocking — the item already completed on submit, so a
+  /// failure here never blocks the module. Re-entrancy: a re-tap replaces.
+  Future<void> submitSelfReport(String itemId, String selfReport) async {
+    final updated = Map<String, String>.from(state.selfReports);
+    updated[itemId] = selfReport;
+    state = state.copyWith(selfReports: updated);
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.post<dynamic>(
+        '/api/v1/avatars/$_avatarId/modules/$_moduleId/items/$itemId/self-report',
+        data: {'selfReport': selfReport},
+      );
+    } catch (e, st) {
+      appLog.w('[ModulePlayer] Self-report failed (non-blocking)',
+          error: e, stackTrace: st);
+    }
+  }
+
+  /// Dismisses the self-assessment overlay so the completion flow proceeds.
+  void finishSelfAssess() {
+    state = state.copyWith(selfAssessDone: true);
   }
 
   String _extractNextStage(dynamic data) {
