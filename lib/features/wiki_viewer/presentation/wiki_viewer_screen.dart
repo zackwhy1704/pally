@@ -20,9 +20,7 @@ import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/wiki_page.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/shared/widgets/app_error_view.dart';
-import 'package:pally/features/chapters/domain/chapter.dart';
-import 'package:pally/features/chapters/presentation/chapter_picker_sheet.dart';
-import 'package:pally/features/chapters/presentation/chapter_picker_view_model.dart';
+import 'package:pally/features/chapters/presentation/chapter_lock_banner.dart';
 
 class WikiViewerScreen extends ConsumerStatefulWidget {
   const WikiViewerScreen({super.key, required this.avatarId});
@@ -193,7 +191,7 @@ class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen>
                   : Column(
                       children: [
                         // Return loop: chapters uploaded but not yet compiled.
-                        _ChapterLockBanner(avatarId: widget.avatarId),
+                        ChapterLockBanner(avatarId: widget.avatarId),
                         if (vmState.files.isNotEmpty)
                           _SourceDocumentsSection(
                             files: vmState.files,
@@ -1629,57 +1627,3 @@ class _TeacherPreferencesSheetState
 /// tappable → the SAME chapter picker the post-upload flow opens. Renders nothing
 /// when there are no locked chapters (or while loading / on error) so it never
 /// intrudes on the normal brain view. Copy stays honest ("Mochi hasn't read…").
-class _ChapterLockBanner extends ConsumerWidget {
-  const _ChapterLockBanner({required this.avatarId});
-
-  final String avatarId;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final async = ref.watch(chapterPickerViewModelProvider(avatarId));
-    final locked = async.maybeWhen(
-      data: (r) => r.locked,
-      orElse: () => const <Chapter>[],
-    );
-    if (locked.isEmpty) return const SizedBox.shrink();
-
-    final n = locked.length;
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.purpleL,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.outline),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('$n chapter${n == 1 ? '' : 's'} not compiled yet',
-                    style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w700)),
-                const SizedBox(height: 2),
-                Text(
-                  "Mochi hasn't read ${n == 1 ? 'this chapter' : 'these chapters'} yet "
-                  '— pick which to compile.',
-                  style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          ElevatedButton(
-            onPressed: () => showChapterPicker(context, avatarId: avatarId),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.purple,
-              foregroundColor: AppColors.surface,
-            ),
-            child: const Text('Choose'),
-          ),
-        ],
-      ),
-    );
-  }
-}
