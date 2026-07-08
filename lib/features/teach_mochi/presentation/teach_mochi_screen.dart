@@ -313,6 +313,13 @@ class _FeedbackView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final eval = state.evaluation!;
+
+    // EVAL_FAILED: the evaluator produced no grade — show a retry, never a
+    // 0/0 score card ("Great teaching!" on a failure is a lie).
+    if (eval.evalFailed) {
+      return TeachRetryView(feedback: eval.feedback, onTryAgain: onTryAgain);
+    }
+
     final ratio = eval.totalConcepts == 0
         ? 0.0
         : eval.score / eval.totalConcepts;
@@ -550,6 +557,52 @@ class _NoTopicsState extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Shown when the evaluator returned EVAL_FAILED (parse/blank/exception/too-short).
+/// A retry, never a score card — the system never claims a grade it didn't make.
+class TeachRetryView extends StatelessWidget {
+  const TeachRetryView({
+    super.key,
+    required this.feedback,
+    required this.onTryAgain,
+  });
+
+  final String feedback;
+  final VoidCallback onTryAgain;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text('🤔', style: TextStyle(fontSize: 48)),
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            "Mochi couldn't check this one",
+            style: AppTextStyles.title,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            feedback.isNotEmpty
+                ? feedback
+                : 'Something went wrong — give it another go.',
+            style: AppTextStyles.body.copyWith(color: AppColors.text2),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          FilledButton(
+            onPressed: onTryAgain,
+            style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
+            child: const Text('Try again'),
+          ),
+        ],
       ),
     );
   }

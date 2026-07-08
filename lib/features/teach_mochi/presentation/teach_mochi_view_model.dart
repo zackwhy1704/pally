@@ -20,6 +20,7 @@ class TeachEvaluation {
     required this.feedback,
     this.levelledUp = false,
     this.newLevel = 0,
+    this.status = 'OK',
   });
 
   final int score;
@@ -32,6 +33,11 @@ class TeachEvaluation {
   final bool levelledUp;
   final int newLevel;
 
+  /// 'OK' | 'EVAL_FAILED'. On EVAL_FAILED the evaluator produced no grade — the
+  /// UI shows a retry, never a 0/0 score card.
+  final String status;
+
+  bool get evalFailed => status == 'EVAL_FAILED';
   bool get isPerfect => totalConcepts > 0 && score == totalConcepts;
 
   static TeachEvaluation fromJson(Map<String, dynamic> json) => TeachEvaluation(
@@ -48,6 +54,7 @@ class TeachEvaluation {
         feedback: (json['feedback'] as String?) ?? '',
         levelledUp: json['levelledUp'] == true,
         newLevel: (json['newLevel'] as num?)?.toInt() ?? 0,
+        status: (json['status'] as String?) ?? 'OK',
       );
 }
 
