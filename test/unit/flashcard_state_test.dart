@@ -40,5 +40,15 @@ void main() {
       expect(generating.isGenerating, isTrue);
       expect(generating.isLoading, isFalse);
     });
+
+    test('needsCardConfirmation + pageCount survive copyWith (auto-gen threshold)', () {
+      const s = FlashCardState();
+      final deferred =
+          s.copyWith(needsCardConfirmation: true, cardPageCount: 42, isGenerating: false);
+      expect(deferred.needsCardConfirmation, isTrue);
+      expect(deferred.cardPageCount, 42);
+      // A later change that doesn't pass the flag preserves it.
+      expect(deferred.copyWith(isFlipped: true).needsCardConfirmation, isTrue);
+    });
   });
 }

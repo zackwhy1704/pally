@@ -23,6 +23,8 @@ class FlashCardState {
     this.isGenerating = false,
     this.isRating = false,
     this.hasWikiPages,
+    this.needsCardConfirmation = false,
+    this.cardPageCount = 0,
     this.error,
   });
 
@@ -37,6 +39,13 @@ class FlashCardState {
   /// null = unknown (not yet checked); true = avatar has wiki pages;
   /// false = no notes uploaded yet.
   final bool? hasWikiPages;
+
+  /// True when the corpus is large enough that auto-generate was deferred to an
+  /// explicit CTA (avoids the synchronous all-pages hang).
+  final bool needsCardConfirmation;
+
+  /// Number of wiki pages the "Generate cards (~N pages)" CTA would process.
+  final int cardPageCount;
   final String? error;
 
   List<FlashCard> get filteredCards {
@@ -71,6 +80,8 @@ class FlashCardState {
     bool? isGenerating,
     bool? isRating,
     Object? hasWikiPages = _sentinel,
+    bool? needsCardConfirmation,
+    int? cardPageCount,
     Object? error = _sentinel,
   }) {
     return FlashCardState(
@@ -84,6 +95,8 @@ class FlashCardState {
       hasWikiPages: hasWikiPages == _sentinel
           ? this.hasWikiPages
           : hasWikiPages as bool?,
+      needsCardConfirmation: needsCardConfirmation ?? this.needsCardConfirmation,
+      cardPageCount: cardPageCount ?? this.cardPageCount,
       error: error == _sentinel ? this.error : error as String?,
     );
   }
@@ -148,17 +161,39 @@ class FlashCardViewModel extends _$FlashCardViewModel {
   }
 
   /// Calls POST /flashcards/generate, updates hasWikiPages, then reloads.
-  /// [fromAutoBackfill] prevents re-triggering generate after reload.
-  Future<void> _generateCards({bool fromAutoBackfill = false}) async {
-    state = state.copyWith(isGenerating: true);
+  /// [fromAutoBackfill] prevents re-triggering generate after reload. When
+  /// [confirmed] is false (an auto-backfill) and the corpus is large, the server
+  /// returns needsConfirmation instead of running the synchronous all-pages loop
+  /// — we surface a "Generate cards (~N pages)" CTA rather than hang the screen.
+  Future<void> _generateCards({
+    bool fromAutoBackfill = false,
+    bool confirmed = false,
+  }) async {
+    state = state.copyWith(isGenerating: true, needsCardConfirmation: false);
     try {
       final dio = ref.read(dioProvider);
       final res = await dio.post<dynamic>(
-          '/api/v1/avatars/$_avatarId/flashcards/generate');
+          '/api/v1/avatars/$_avatarId/flashcards/generate',
+          queryParameters: {'confirmed': confirmed});
       final body = res.data is Map ? res.data as Map : {};
       final inner = body['data'] is Map ? body['data'] as Map : body;
       final generated = (inner['generated'] as num?)?.toInt() ?? 0;
       final hasPages = (inner['hasWikiPages'] as bool?) ?? false;
+      final needsConfirmation = (inner['needsConfirmation'] as bool?) ?? false;
+      final pageCount = (inner['pageCount'] as num?)?.toInt() ?? 0;
+
+      if (needsConfirmation) {
+        // Big corpus — don't auto-run. Show the CTA with its scope.
+        appLog.i('[Flashcards] deferring to CTA: $pageCount pages');
+        state = state.copyWith(
+          hasWikiPages: true,
+          isGenerating: false,
+          needsCardConfirmation: true,
+          cardPageCount: pageCount,
+        );
+        return;
+      }
+
       appLog.i('[Flashcards] generate result: $generated cards, hasPages=$hasPages');
       state = state.copyWith(hasWikiPages: hasPages, isGenerating: false);
       if (generated > 0) {
@@ -172,7 +207,9 @@ class FlashCardViewModel extends _$FlashCardViewModel {
     }
   }
 
-  Future<void> generateCards() => _generateCards();
+  /// The explicit "Generate cards" CTA — a confirmed run (bypasses the auto-gen
+  /// threshold) so the large-corpus generation proceeds on the user's choice.
+  Future<void> generateCards() => _generateCards(confirmed: true);
 
   /// Recomputes and re-arms the per-avatar SRS notification slot based on the
   /// current deck's `nextReview` dates. Best-effort — failures don't propagate.

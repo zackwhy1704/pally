@@ -48,7 +48,12 @@ class FlashcardScreen extends ConsumerWidget {
                   message: state.error ?? 'Something went wrong — try again.',
                   onRetry: notifier.refresh,
                 )
-              : Column(
+              : (state.needsCardConfirmation && !state.hasCards)
+                  ? _GenerateCtaView(
+                      pageCount: state.cardPageCount,
+                      onGenerate: notifier.generateCards,
+                    )
+                  : Column(
                   children: [
                     // Only show filters when there are cards to filter
                     if (state.cards.isNotEmpty)
@@ -529,3 +534,41 @@ class _EmptyState extends StatelessWidget {
   }
 }
 
+
+/// Shown when the corpus is large enough that auto-generation was deferred to a
+/// choice (2.2) — converts the old synchronous all-pages hang into a tap.
+class _GenerateCtaView extends StatelessWidget {
+  const _GenerateCtaView({required this.pageCount, required this.onGenerate});
+  final int pageCount;
+  final VoidCallback onGenerate;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text('🃏', style: TextStyle(fontSize: 48)),
+          const SizedBox(height: AppSpacing.md),
+          Text('Ready to make your cards',
+              style: AppTextStyles.title, textAlign: TextAlign.center),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            "That's about $pageCount page${pageCount == 1 ? '' : 's'} of notes. "
+            'It takes a moment — tap when you\'re ready.',
+            style: AppTextStyles.body.copyWith(color: AppColors.text2),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          FilledButton.icon(
+            onPressed: onGenerate,
+            icon: const Icon(Icons.auto_awesome_rounded, size: 18),
+            label: Text('Generate cards (~$pageCount page${pageCount == 1 ? '' : 's'})'),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
+          ),
+        ],
+      ),
+    );
+  }
+}
