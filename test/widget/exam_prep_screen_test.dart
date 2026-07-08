@@ -153,19 +153,19 @@ class _LoadedExamPrepVM extends ExamPrepViewModel {
           concepts: [
             ExamConceptMastery(
               concept: 'Fractions',
-              mastery: 0.82,
+              mastery: 82,
               moduleId: 'mod-1',
               moduleTitle: 'Fractions Basics',
             ),
             ExamConceptMastery(
               concept: 'Decimals',
-              mastery: 0.61,
+              mastery: 61,
               moduleId: 'mod-2',
               moduleTitle: 'Decimal Operations',
             ),
             ExamConceptMastery(
               concept: 'Geometry',
-              mastery: 0.31,
+              mastery: 31,
               moduleId: 'mod-3',
               moduleTitle: 'Shapes and Angles',
             ),

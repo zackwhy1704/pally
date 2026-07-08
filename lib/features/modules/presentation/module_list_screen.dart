@@ -292,7 +292,7 @@ class _ModuleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isComplete = module.stage == 'COMPLETE';
-    final masteryPct = (module.masteryPct * 100).round();
+    final masteryPct = module.masteryDisplayPct; // already 0–100 — do NOT ×100
 
     return GestureDetector(
       onTap: () =>
@@ -341,7 +341,7 @@ class _ModuleCard extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(3),
                     child: LinearProgressIndicator(
-                      value: module.masteryPct.clamp(0.0, 1.0),
+                      value: module.masteryFraction,
                       minHeight: 6,
                       backgroundColor: AppColors.outline,
                       valueColor:

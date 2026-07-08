@@ -198,7 +198,7 @@ class _ModuleProgressCard extends StatelessWidget {
                           const SizedBox(width: AppSpacing.xs),
                           Flexible(
                             child: Text(
-                              '${avatar.name} — ${(module.masteryPct * 100).round()}%',
+                              '${avatar.name} — ${module.masteryDisplayPct}%',
                               style: AppTextStyles.bodySmall
                                   .copyWith(color: AppColors.text2),
                               maxLines: 1,

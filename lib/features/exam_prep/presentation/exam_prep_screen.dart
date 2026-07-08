@@ -268,14 +268,14 @@ class _ConceptMasteryCard extends ConsumerWidget {
   final String avatarId;
 
   Color get _masteryColor {
-    final pct = concept.mastery * 100;
+    final pct = concept.mastery; // exam-prep mastery is already 0–100 — do NOT ×100
     if (pct >= 70) return AppColors.green;
     if (pct >= 40) return AppColors.amber;
     return AppColors.coral;
   }
 
   String get _masteryIcon {
-    final pct = concept.mastery * 100;
+    final pct = concept.mastery; // exam-prep mastery is already 0–100 — do NOT ×100
     if (pct >= 70) return '✓';
     if (pct >= 40) return '⚠';
     return '🔴';
@@ -283,7 +283,7 @@ class _ConceptMasteryCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final pct = (concept.mastery * 100).round();
+    final pct = concept.mastery.round(); // already 0–100
     final color = _masteryColor;
 
     return Padding(
@@ -324,7 +324,7 @@ class _ConceptMasteryCard extends ConsumerWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(3),
               child: LinearProgressIndicator(
-                value: concept.mastery.clamp(0.0, 1.0),
+                value: (concept.mastery / 100).clamp(0.0, 1.0),
                 minHeight: AppSizing.progressBarHeight,
                 backgroundColor: AppColors.outline,
                 valueColor: AlwaysStoppedAnimation<Color>(color),
@@ -344,7 +344,7 @@ class _ConceptMasteryCard extends ConsumerWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  if (concept.moduleId != null && concept.mastery < 0.7)
+                  if (concept.moduleId != null && concept.mastery < 70)
                     GestureDetector(
                       onTap: () async {
                         final ok = await ref

@@ -229,9 +229,20 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
       final items = <ModuleContentItem>[];
       for (final e in rawItems) {
         try {
-          items.add(ModuleContentItem.fromJson(
+          final parsed = ModuleContentItem.fromJson(
             Map<String, dynamic>.from(e as Map),
-          ));
+          );
+          // Blank-item client shield: a TEST item whose reveal content is
+          // substantively blank (a slipped-through generation defect) is SKIPPED so
+          // the student never sees an empty "The error:" / "Correct solution:" reveal.
+          // It contributes no signal (stays UNGRADED) — the exact sibling of the PROVE
+          // blank-reference guard below. The generation reaper owns fixing the item.
+          if (isBlankTestItem(parsed)) {
+            appLog.w('[ModulePlayer] TEST item ${parsed.id} (${parsed.type}) has a '
+                'blank reveal — skipping (stays UNGRADED)');
+            continue;
+          }
+          items.add(parsed);
         } catch (err, st) {
           appLog.e('[ModulePlayer] Failed to parse item',
               error: err, stackTrace: st);
@@ -587,5 +598,21 @@ Map<String, dynamic> buildModuleSubmitBody({
   return {
     'submissions': submissions,
     'durationSeconds': durationSeconds,
+  };
+}
+
+/// A TEST item whose reveal (answer) content is substantively blank — the same
+/// fields RulesOutputValidator enforces server-side. The module player SKIPS these
+/// (they stay UNGRADED, never render an empty reveal), mirroring the PROVE blank-
+/// reference guard. Top-level so it's directly unit-testable.
+bool isBlankTestItem(ModuleContentItem item) {
+  final reveal = item.answerJson ?? const <String, dynamic>{};
+  String field(String k) => (reveal[k] as String?)?.trim() ?? '';
+  return switch (item.type) {
+    'SPOT_MISTAKE' =>
+      field('errorDescription').isEmpty && field('correctSolution').isEmpty,
+    'HOT_TAKE' => field('explanation').isEmpty,
+    'CHALLENGE' => field('explanation').isEmpty,
+    _ => false, // LEARN micro-cards / PROVE handled elsewhere
   };
 }

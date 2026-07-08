@@ -44,6 +44,9 @@ class LearningModule with _$LearningModule {
     required String title,
     @Default('') String wikiSlug,
     @Default('LEARN') String stage,
+    /// Mastery on a 0–100 scale (the canonical backend contract; written at
+    /// ModuleProgressionService avg*100). NEVER multiply this by 100 to display —
+    /// use [masteryDisplayPct] for the "%" and [masteryFraction] for a 0–1 bar.
     @Default(0) double masteryPct,
     @Default({}) Map<String, int> itemCounts,
     /// C3 — true when a teacher has reviewed/approved this centre content.
@@ -52,6 +55,16 @@ class LearningModule with _$LearningModule {
 
   factory LearningModule.fromJson(Map<String, dynamic> json) =>
       _$LearningModuleFromJson(json);
+}
+
+/// Mastery is stored 0–100. These are the ONLY sanctioned ways to render it — they
+/// exist to kill the recurring "×100 on an already-0–100 value → 2600%" family bug.
+extension LearningModuleMastery on LearningModule {
+  /// The rounded whole-percent for a "N%" label (clamped 0–100).
+  int get masteryDisplayPct => masteryPct.round().clamp(0, 100);
+
+  /// The 0–1 fraction for a LinearProgressIndicator (clamped).
+  double get masteryFraction => (masteryPct / 100).clamp(0.0, 1.0);
 }
 
 @freezed
