@@ -175,6 +175,7 @@ class _ServerErrorInterceptor extends Interceptor {
   static DateTime? _lastShown;
   static DateTime? _lastPaywallRoute;
   static DateTime? _lastParentLinkRoute;
+  static DateTime? _lastProfileCompletionRoute;
   // One shared guard so exactly one consent modal is ever visible.
   // CONSENT_REQUIRED and PARENTAL_CONSENT_PENDING are the same conceptual gate;
   // the dashboard fans out several parallel calls that each 403, so without this
@@ -295,6 +296,27 @@ class _ServerErrorInterceptor extends Interceptor {
       }
     }
 
+    // 403 PROFILE_COMPLETION_REQUIRED → a social/legacy account missing a birth
+    // year hit a consent-gated action. Route to the birth-year collection step;
+    // once completed the account is re-tokenised and the next attempt passes.
+    if (status == 403) {
+      final body = err.response?.data;
+      String? profileCode;
+      if (body is Map) {
+        final dataNode = body['data'];
+        if (dataNode is Map) {
+          profileCode = dataNode['code']?.toString();
+        }
+      }
+      if (profileCode == 'PROFILE_COMPLETION_REQUIRED') {
+        _handleProfileCompletionRequired();
+        // Propagate so the calling view-model clears its loading state; the
+        // routing above is the user-facing action.
+        handler.next(err);
+        return;
+      }
+    }
+
     // 403 CONSENT_REQUIRED → show the consent-gate sheet / remind-grown-up flow.
     if (status == 403) {
       final body = err.response?.data;
@@ -406,6 +428,26 @@ class _ServerErrorInterceptor extends Interceptor {
         "Let's finish setting up your account so you can start learning",
       );
       ctx.go('/onboarding/direct');
+    } catch (_) {
+      // Fall through; the view model will surface the original error.
+    }
+  }
+
+  /// Routes a social/legacy account with a missing birth year to the birth-year
+  /// collection step on a 403 `PROFILE_COMPLETION_REQUIRED`. Rate-limited to
+  /// once per second so a fan-out of parallel gated calls can't stack routes.
+  void _handleProfileCompletionRequired() {
+    final now = DateTime.now();
+    final allowed = _lastProfileCompletionRoute == null ||
+        now.difference(_lastProfileCompletionRoute!) >
+            const Duration(seconds: 1);
+    if (!allowed) return;
+    _lastProfileCompletionRoute = now;
+
+    final ctx = _ref.read(globalNavigatorKeyProvider)?.currentContext;
+    if (ctx == null || !ctx.mounted) return;
+    try {
+      ctx.go('/profile/complete-birth-year');
     } catch (_) {
       // Fall through; the view model will surface the original error.
     }

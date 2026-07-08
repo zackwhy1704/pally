@@ -57,6 +57,7 @@ import 'package:pally/features/homework/presentation/homework_list_screen.dart';
 import 'package:pally/features/homework/presentation/homework_submit_screen.dart';
 import 'package:pally/features/homework/presentation/homework_detail_screen.dart';
 import 'package:pally/features/auth/screens/centre_block_screen.dart';
+import 'package:pally/features/auth/screens/complete_profile_screen.dart';
 import 'package:pally/features/consent/presentation/ai_disclosure_screen.dart';
 import 'package:pally/features/ocr_awareness/screens/ocr_what_can_read.dart';
 import 'package:pally/shared/models/photo_question.dart';
@@ -640,6 +641,15 @@ class DirectOnboardingRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const DirectOnboardingScreen();
+}
+
+@TypedGoRoute<CompleteProfileRoute>(path: '/profile/complete-birth-year')
+class CompleteProfileRoute extends GoRouteData {
+  const CompleteProfileRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const CompleteProfileScreen();
 }
 
 @TypedGoRoute<CameraRoute>(path: '/camera')

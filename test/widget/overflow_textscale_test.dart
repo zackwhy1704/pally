@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/features/auth/screens/complete_profile_screen.dart';
 import 'package:pally/features/join/presentation/join_screen.dart';
 import 'package:pally/features/onboarding/presentation/direct_onboarding_screen.dart';
 
@@ -63,6 +64,18 @@ void main() {
     testWidgets('320 dp @ 2.0× text scale', (tester) async {
       await _pumpScreen(tester, const DirectOnboardingScreen(),
           size: narrow, textScale: 2.0);
+      expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('CompleteProfileScreen — no overflow under narrow + large-text', () {
+    testWidgets('320 dp @ 2.0× text scale — under-13 (parent email visible)',
+        (tester) async {
+      await _pumpScreen(tester, const CompleteProfileScreen(),
+          size: narrow, textScale: 2.0);
+      // Reveal the parent-email field (the tallest layout) then re-pump.
+      await tester.tap(find.text('I am under 13'));
+      await tester.pump();
       expect(tester.takeException(), isNull);
     });
   });

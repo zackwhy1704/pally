@@ -47,6 +47,7 @@ List<RouteBase> get $appRoutes => [
       $avatarPickerRoute,
       $onboardingRoute,
       $directOnboardingRoute,
+      $completeProfileRoute,
       $cameraRoute,
       $ocrGuideRoute,
       $aiDisclosureRoute,
@@ -1185,6 +1186,29 @@ extension $DirectOnboardingRouteExtension on DirectOnboardingRoute {
 
   String get location => GoRouteData.$location(
         '/onboarding/direct',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $completeProfileRoute => GoRouteData.$route(
+      path: '/profile/complete-birth-year',
+      factory: $CompleteProfileRouteExtension._fromState,
+    );
+
+extension $CompleteProfileRouteExtension on CompleteProfileRoute {
+  static CompleteProfileRoute _fromState(GoRouterState state) =>
+      const CompleteProfileRoute();
+
+  String get location => GoRouteData.$location(
+        '/profile/complete-birth-year',
       );
 
   void go(BuildContext context) => context.go(location);

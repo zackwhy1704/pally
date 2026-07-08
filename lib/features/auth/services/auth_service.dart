@@ -78,6 +78,35 @@ class AuthService {
     await AuthNotifier.instance.signOut();
   }
 
+  /// Completes a missing birth year on a social/legacy account (backend 403
+  /// `PROFILE_COMPLETION_REQUIRED`). Returns a fresh [AuthResult] whose token
+  /// the caller must store. Requires the current session token, sent explicitly
+  /// because this service's Dio is otherwise unauthenticated.
+  Future<AuthResult> completeProfile({
+    required int birthYear,
+    String? parentEmail,
+  }) async {
+    try {
+      final token = await _storage.read(key: 'auth_token');
+      final res = await _http.post<Map<String, dynamic>>(
+        '/api/v1/auth/complete-profile',
+        data: {
+          'birthYear': birthYear,
+          if (parentEmail != null && parentEmail.trim().isNotEmpty)
+            'parentEmail': parentEmail.trim(),
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+          receiveTimeout: const Duration(seconds: 20),
+          sendTimeout: const Duration(seconds: 15),
+        ),
+      );
+      return _parseAuthResponse(res.data!);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
   Future<void> forgotPassword(String email) async {
     try {
       await _http.post<void>(
