@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/onboarding/presentation/direct_onboarding_screen.dart';
 import 'package:pally/features/onboarding/presentation/direct_onboarding_view_model.dart';
 
@@ -11,6 +13,44 @@ Widget _wrap(Widget child, {List<Override> overrides = const []}) =>
     );
 
 void main() {
+  // In-memory flutter_secure_storage so the AuthNotifier singleton (read by the
+  // screen's "already signed in" gate) works in tests without native channels.
+  const channel = MethodChannel('plugins.it_nomads.com/flutter_secure_storage');
+  final store = <String, String>{};
+
+  setUp(() async {
+    store.clear();
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (call) async {
+      final args = (call.arguments as Map?) ?? {};
+      switch (call.method) {
+        case 'read':
+          return store[args['key']];
+        case 'write':
+          store[args['key'] as String] = args['value'] as String;
+          return null;
+        case 'delete':
+          store.remove(args['key']);
+          return null;
+        case 'deleteAll':
+          store.clear();
+          return null;
+        case 'readAll':
+          return Map<String, String>.from(store);
+        case 'containsKey':
+          return store.containsKey(args['key']);
+      }
+      return null;
+    });
+    // Start every test from a signed-OUT singleton so the default flow renders
+    // the form; the two interstitial tests opt in with an explicit signIn.
+    await AuthNotifier.instance.signOut();
+  });
+
+  tearDown(() async {
+    await AuthNotifier.instance.signOut();
+  });
+
   group('DirectOnboardingScreen', () {
     testWidgets('step 1 renders sign-up fields', (tester) async {
       await tester.pumpWidget(_wrap(
@@ -133,6 +173,57 @@ void main() {
       );
     });
 
+    testWidgets(
+        'entering signup while already signed in shows the log-out '
+        'interstitial, NOT the sign-up form', (tester) async {
+      await AuthNotifier.instance
+          .signIn(userId: 'u1', token: 't1');
+      await AuthNotifier.instance.setChildName('Alex');
+
+      await tester.pumpWidget(_wrap(
+        const DirectOnboardingScreen(),
+        overrides: [
+          directOnboardingViewModelProvider.overrideWith(() => _Step1VM()),
+        ],
+      ));
+
+      // The explicit choice is shown first...
+      expect(find.text('Create a new account?'), findsOneWidget);
+      expect(
+        find.text(
+            "You're signed in as Alex. Log out to create a new account?"),
+        findsOneWidget,
+      );
+      expect(find.text('Log out & continue'), findsOneWidget);
+      expect(find.text('Cancel'), findsOneWidget);
+      // ...and the sign-up form is NOT (never silently continue).
+      expect(find.text('Create your account'), findsNothing);
+    });
+
+    testWidgets(
+        'tapping Log out & continue dismisses the interstitial and reveals '
+        'the sign-up form', (tester) async {
+      await AuthNotifier.instance
+          .signIn(userId: 'u1', token: 't1');
+      await AuthNotifier.instance.setChildName('Alex');
+
+      await tester.pumpWidget(_wrap(
+        const DirectOnboardingScreen(),
+        overrides: [
+          directOnboardingViewModelProvider.overrideWith(() => _NoopLogoutVM()),
+        ],
+      ));
+
+      expect(find.text('Create a new account?'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Log out & continue'));
+      await tester.pumpAndSettle();
+
+      // After an explicit logout the normal step-1 form appears.
+      expect(find.text('Create your account'), findsOneWidget);
+      expect(find.text('Create a new account?'), findsNothing);
+    });
+
     testWidgets('step 2 renders subject and level pickers', (tester) async {
       await tester.pumpWidget(_wrap(
         const DirectOnboardingScreen(),
@@ -206,6 +297,16 @@ void main() {
 class _Step1VM extends DirectOnboardingViewModel {
   @override
   DirectOnboardingState build() => const DirectOnboardingState(step: 1);
+}
+
+/// Step-1 VM whose logout is a no-op so the interstitial-dismissal test doesn't
+/// touch the AuthNotifier singleton / secure storage.
+class _NoopLogoutVM extends DirectOnboardingViewModel {
+  @override
+  DirectOnboardingState build() => const DirectOnboardingState(step: 1);
+
+  @override
+  Future<void> logOutForNewSignup() async {}
 }
 
 class _Step2VM extends DirectOnboardingViewModel {

@@ -13,6 +13,7 @@ import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/onboarding/presentation/direct_onboarding_view_model.dart';
 import 'package:pally/features/onboarding/presentation/widgets/onboarding_legal_footer.dart';
 import 'package:pally/app/router.dart';
@@ -37,6 +38,27 @@ class _DirectOnboardingScreenState
   final _passCtrl = TextEditingController();
   final _parentEmailCtrl = TextEditingController();
 
+  // Captured ONCE at entry: was a session already present when this flow was
+  // opened? If so, we must not silently continue into a new signup (which would
+  // previously log the user into another account). We show an explicit
+  // log-out-or-cancel choice first. Captured at entry (not watched) so the
+  // session that quickOnboard creates MID-flow never re-triggers the gate and
+  // block step 3 (upload), which legitimately runs while signed in.
+  bool _needsLogoutChoice = false;
+  String? _signedInName;
+
+  @override
+  void initState() {
+    super.initState();
+    // Read the AuthNotifier singleton directly (not via a provider) to snapshot
+    // the entry session. Going through authStateProvider would instantiate the
+    // ChangeNotifierProvider over the singleton, which Riverpod disposes on
+    // scope teardown — poisoning the shared singleton for later widgets/tests.
+    final auth = AuthNotifier.instance.state;
+    _needsLogoutChoice = auth.isSignedIn;
+    _signedInName = auth.childName;
+  }
+
   @override
   void dispose() {
     _nameCtrl.dispose();
@@ -48,6 +70,20 @@ class _DirectOnboardingScreenState
 
   @override
   Widget build(BuildContext context) {
+    if (_needsLogoutChoice) {
+      return _AlreadySignedInInterstitial(
+        signedInName: _signedInName,
+        onLogOut: () async {
+          await ref
+              .read(directOnboardingViewModelProvider.notifier)
+              .logOutForNewSignup();
+          if (!mounted) return;
+          setState(() => _needsLogoutChoice = false);
+        },
+        onCancel: () => context.go('/auth/signin'),
+      );
+    }
+
     final vm = ref.watch(directOnboardingViewModelProvider);
 
     ref.listen<DirectOnboardingState>(
@@ -117,6 +153,130 @@ class _DirectOnboardingScreenState
                 },
               ),
               const OnboardingLegalFooter(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Already-signed-in interstitial ──────────────────────────────────────────
+// Shown FIRST when a logged-in user enters the signup flow. Creating a new
+// account must never silently continue on top of an existing session — the user
+// explicitly logs out or cancels. (The register request uses a fresh
+// unauthenticated Dio, so it never carries the old token regardless — this gate
+// is the explicit-consent guarantee on top of that.)
+
+class _AlreadySignedInInterstitial extends StatefulWidget {
+  const _AlreadySignedInInterstitial({
+    required this.signedInName,
+    required this.onLogOut,
+    required this.onCancel,
+  });
+
+  final String? signedInName;
+  final Future<void> Function() onLogOut;
+  final VoidCallback onCancel;
+
+  @override
+  State<_AlreadySignedInInterstitial> createState() =>
+      _AlreadySignedInInterstitialState();
+}
+
+class _AlreadySignedInInterstitialState
+    extends State<_AlreadySignedInInterstitial> {
+  bool _busy = false;
+
+  Future<void> _logOut() async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    try {
+      await widget.onLogOut();
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final name = widget.signedInName;
+    final message = name != null && name.trim().isNotEmpty
+        ? "You're signed in as $name. Log out to create a new account?"
+        : "You're already signed in. Log out to create a new account?";
+
+    return Scaffold(
+      backgroundColor: AppColors.bg,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: AppSpacing.xl),
+              Center(
+                child: Image.asset(
+                  'assets/images/mochi.png',
+                  width: AppSizing.heroMochiSize,
+                  height: AppSizing.heroMochiSize,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Text(
+                'Create a new account?',
+                style: AppTextStyles.heading1,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                message,
+                style: AppTextStyles.body.copyWith(color: AppColors.text2),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              SizedBox(
+                height: AppSizing.buttonHeight,
+                child: FilledButton(
+                  onPressed: _busy ? null : _logOut,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.purple,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14)),
+                  ),
+                  child: _busy
+                      ? const SizedBox(
+                          width: AppSizing.spinnerSm,
+                          height: AppSizing.spinnerSm,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white),
+                        )
+                      : Text(
+                          'Log out & continue',
+                          style: AppTextStyles.body.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700),
+                        ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              SizedBox(
+                height: AppSizing.buttonHeight,
+                child: OutlinedButton(
+                  onPressed: _busy ? null : widget.onCancel,
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: AppColors.outline),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14)),
+                  ),
+                  child: Text(
+                    'Cancel',
+                    style: AppTextStyles.body.copyWith(
+                        color: AppColors.text2, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xl),
             ],
           ),
         ),

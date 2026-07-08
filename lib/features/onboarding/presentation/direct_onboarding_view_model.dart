@@ -238,6 +238,16 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
     await AuthNotifier.instance.signOut();
   }
 
+  /// Clears any pre-existing session so a fresh account can be created. Used by
+  /// the "already signed in" interstitial shown when a logged-in user enters the
+  /// signup flow — never silently switch accounts, always an explicit logout.
+  Future<void> logOutForNewSignup() async {
+    if (state.isLoading) return;
+    _poller?.cancel();
+    _poller = null;
+    await AuthNotifier.instance.signOut();
+  }
+
   /// Step 1+2: Quick onboard — create account + avatar in one call.
   /// If the user is under 13, also fires the parental consent request.
   Future<void> quickOnboard({
