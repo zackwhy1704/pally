@@ -27,7 +27,6 @@ import 'package:pally/features/chat/presentation/widgets/homework_scan_result_bu
 import 'package:pally/features/chat/widgets/mochi_tip_coach.dart';
 import 'package:pally/features/chat/widgets/mode_coach_mark.dart';
 import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
-import 'package:pally/features/onboarding/presentation/feature_tour.dart';
 import 'package:pally/features/chat/providers/chat_usage_provider.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
@@ -335,23 +334,18 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
           // is computed from actual available space, not MediaQuery.
           Expanded(
             flex: 2,
-            child: Builder(builder: (ctx) {
-              if (ModalRoute.of(ctx)?.isCurrent == true) {
-                TourAnchors.modeToggleCtx = ctx;
-              }
-              return TeachingModeToggle(
-                mode: chatState.teachingMode,
-                onToggle: () {
-                  ref
-                      .read(chatViewModelProvider(avatarId).notifier)
-                      .toggleMode();
-                  if (chatState.teachingMode == TeachingMode.direct) {
-                    resetAnswerOnlyStreak();
-                  }
-                },
-                enabled: chatState.canSend,
-              );
-            }),
+            child: TeachingModeToggle(
+              mode: chatState.teachingMode,
+              onToggle: () {
+                ref
+                    .read(chatViewModelProvider(avatarId).notifier)
+                    .toggleMode();
+                if (chatState.teachingMode == TeachingMode.direct) {
+                  resetAnswerOnlyStreak();
+                }
+              },
+              enabled: chatState.canSend,
+            ),
           ),
           // ⋮ overflow menu — school + upload moved here to keep the bar
           // within screen width on 360dp phones.

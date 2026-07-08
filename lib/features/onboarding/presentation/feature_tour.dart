@@ -5,7 +5,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 
-const _kSeenKey = 'seen_feature_tour_v1';
+const _kSeenKey = 'seen_feature_tour_v2';
 
 // ── Anchor GlobalKeys (home + shell — single-instance, safe) ─────────────────
 // These are attached as widget keys only to widgets that are always
@@ -21,11 +21,6 @@ final featureTourLibraryTabKey  = GlobalKey(debugLabel: 'tour_library_tab');
 // "Multiple widgets used the same GlobalKey" mount exception → white screen.
 // Instead, each ChatScreen's Builder registers its BuildContext here only
 // when its route is the current one, so at most one context is live.
-class TourAnchors {
-  TourAnchors._();
-  static BuildContext? modeToggleCtx;
-}
-
 // ── Tour step data ────────────────────────────────────────────────────────────
 
 class _TourStep {
@@ -35,7 +30,6 @@ class _TourStep {
     required this.body,
     this.cta,
     this.anchorKey,
-    this.anchorCtxGetter,
     this.anchorPosition = _AnchorPos.center,
   });
 
@@ -45,10 +39,6 @@ class _TourStep {
   final String? cta;
   // GlobalKey anchor — safe for single-instance widgets (home, shell).
   final GlobalKey? anchorKey;
-  // Context-getter anchor — used for widgets that can have multiple live
-  // instances (e.g. TeachingModeToggle inside ChatScreen) where a shared
-  // GlobalKey would cause a duplicate-key mount exception.
-  final BuildContext? Function()? anchorCtxGetter;
   final _AnchorPos anchorPosition;
 }
 
@@ -69,15 +59,13 @@ List<_TourStep> _buildSteps() => [
     anchorPosition: _AnchorPos.above,
   ),
   _TourStep(
-    emoji: '🧭',
-    title: 'Pick how I help',
-    body: 'Guide Me walks you step by step toward the answer — '
-        'you figure it out, you remember more.\n'
-        'Just answer gives you the worked solution for checking your work.',
-    // Use context registry instead of GlobalKey — toggle lives in ChatScreen
-    // which is pushed with .push(), so two instances can be co-mounted during
-    // route transition and a shared GlobalKey would cause a mount exception.
-    anchorCtxGetter: () => TourAnchors.modeToggleCtx,
+    emoji: '🎯',
+    title: 'Learn it. Test it. Prove it.',
+    body: 'Every topic becomes a mini-mission: quick cards to learn, '
+        'hot-takes to test yourself, and a challenge to prove it — '
+        'what you get wrong, I bring back until it sticks.',
+    // Modules live under the Library tab (single-instance shell → GlobalKey-safe).
+    anchorKey: featureTourLibraryTabKey,
     anchorPosition: _AnchorPos.above,
   ),
   _TourStep(
@@ -91,7 +79,8 @@ List<_TourStep> _buildSteps() => [
   const _TourStep(
     emoji: '🚀',
     title: 'Not a generic AI — a Mochi that knows yours.',
-    body: 'A Mochi that knows yours.',
+    body: 'Upload your notes and every answer, quiz, and challenge comes from '
+        'what YOUR teacher taught.',
     cta: 'Make my first Mochi',
   ),
 ];
@@ -173,8 +162,6 @@ class _FeatureTourPageState extends State<_FeatureTourPage>
     RenderObject? obj;
     if (step.anchorKey != null) {
       obj = step.anchorKey!.currentContext?.findRenderObject();
-    } else if (step.anchorCtxGetter != null) {
-      obj = step.anchorCtxGetter!()?.findRenderObject();
     }
     if (obj is! RenderBox || !obj.hasSize) return null;
     final pos = obj.localToGlobal(Offset.zero);

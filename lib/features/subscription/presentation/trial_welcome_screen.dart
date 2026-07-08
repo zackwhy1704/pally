@@ -10,17 +10,20 @@ const _kSeenKey = 'trial_welcome_seen_v1';
 
 /// PR1 — shown once after a new account's first launch.
 class TrialWelcomeScreen {
-  static Future<void> maybeShow(BuildContext context) async {
+  /// Returns true if the welcome sheet was shown this call (first launch), so the
+  /// caller can avoid stacking another overlay (e.g. the feature tour) on top.
+  static Future<bool> maybeShow(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool(_kSeenKey) ?? false) return;
+    if (prefs.getBool(_kSeenKey) ?? false) return false;
     await prefs.setBool(_kSeenKey, true);
-    if (!context.mounted) return;
+    if (!context.mounted) return false;
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => const _TrialWelcomeSheet(),
     );
+    return true;
   }
 }
 

@@ -51,7 +51,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           return;
         }
       } else if (trial?.isOnTrial == true) {
-        TrialWelcomeScreen.maybeShow(context);
+        // First-launch trial: show the welcome sheet ONLY. Skip the tour this
+        // launch so the two overlays don't stack — the tour's seen-flag is still
+        // unset, so it appears on the next home visit.
+        final shownWelcome = await TrialWelcomeScreen.maybeShow(context);
+        if (shownWelcome) return;
       }
       // Show the 5-step feature tour once after the first home render.
       // Slight delay so all anchor widgets are laid out.
