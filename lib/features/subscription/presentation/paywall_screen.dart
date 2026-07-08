@@ -30,6 +30,7 @@ class PaywallScreen extends ConsumerWidget {
   String get _headline => switch (feature) {
         'CREATE_TUTOR' => 'Want more Mochis?',
         'UPLOAD_DOC' => 'Need more uploads?',
+        'CHUNK_COMPILE' => 'Compiled all your chapters',
         'CHAT_DAILY' => 'Out of chats for today',
         'PARENT_DASHBOARD' => 'Parent dashboard is premium',
         'CURRICULUM' => 'Curriculum journey is premium',
@@ -47,6 +48,10 @@ class PaywallScreen extends ConsumerWidget {
         'UPLOAD_DOC' =>
             'Uploads are unlimited — free or premium. The gate is how many '
                 'Mochis you can have. Premium gives you one per subject.',
+        'CHUNK_COMPILE' =>
+            'Big documents split into chapters so you pick what Mochi reads. '
+                'Free plans include a handful of chapter compiles a month; '
+                'premium plans give you many more — reset on a rolling 30 days.',
         'CHAT_DAILY' =>
             'Free users get 20 chats a day. Pro lifts the cap to 100; '
                 'Max and above remove it entirely.',

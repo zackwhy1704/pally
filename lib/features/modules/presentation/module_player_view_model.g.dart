@@ -7,7 +7,7 @@ part of 'module_player_view_model.dart';
 // **************************************************************************
 
 String _$modulePlayerViewModelHash() =>
-    r'4d10ad4f040748ba9ce93bafb74799f01748356e';
+    r'5e822e26a59665f3931428c5fcb764a0cc07fa5e';
 
 /// Copied from Dart SDK
 class _SystemHash {

@@ -16,6 +16,7 @@ import 'package:pally/features/upload/presentation/upload_view_model.dart';
 import 'package:pally/features/upload/presentation/ocr_review_screen.dart';
 import 'package:pally/features/upload/presentation/widgets/upload_tips_banner.dart';
 import 'package:pally/features/centre/centre_mode.dart';
+import 'package:pally/features/chapters/presentation/chapter_picker_sheet.dart';
 
 class UploadScreen extends ConsumerWidget {
   const UploadScreen({super.key, required this.avatarId});
@@ -146,6 +147,19 @@ class UploadScreen extends ConsumerWidget {
         } else {
           vm.cancelLargeFileUpload();
         }
+      }
+    });
+
+    // Chapter picker: a large doc was segmented into chapters. Show the picker (the
+    // SAME UX the locked-chapter surface opens); nothing compiled until a pick.
+    ref.listen(uploadViewModelProvider(avatarId), (prev, next) async {
+      if (next.uploadStage == UploadStage.awaitingChapterPick &&
+          prev?.uploadStage != UploadStage.awaitingChapterPick &&
+          context.mounted) {
+        await showChapterPicker(context, avatarId: avatarId);
+        // Return the screen to idle whether they picked, compiled, or dismissed —
+        // the locked chapters live on the brain surface for the return loop.
+        if (context.mounted) vm.resetToIdle();
       }
     });
 

@@ -40,6 +40,7 @@ enum UploadStage {
   scanning,         // ML Kit document scanner open
   checkingSize,     // local validation
   awaitingLargeFileConfirm, // large file — preflight confirm before committing
+  awaitingChapterPick, // large doc segmented into chapters — show the picker
   checkingRelevance,
   uploading,
   extractingText,   // backend OCR/PDFBox
@@ -330,7 +331,10 @@ class UploadViewModel extends _$UploadViewModel {
     return switch (status) {
       400 => '"$fileName" couldn\'t be read — it may be empty or corrupted.',
       401 => 'Session expired. Please sign in again.',
-      402 => 'You\'ve hit the upload limit. Upgrade for unlimited uploads.',
+      // Neutral, iOS-safe: no price, no purchase CTA. A 402 routes to the gated
+      // paywall via the Dio interceptor, which is the only place an upgrade path
+      // may appear (App Store anti-steering). This inline string is a rare fallback.
+      402 => 'You\'ve reached a plan limit.',
       403 => 'You don\'t have permission to upload here.',
       409 when dupCode == 'DUPLICATE_FILE' =>
             '"$fileName" is identical to '
@@ -619,6 +623,22 @@ class UploadViewModel extends _$UploadViewModel {
           pendingFileSizeBytes: file.size,
           pendingRelevance: warning,
         );
+        return;
+      }
+
+      // Segmented upload: a large doc was split into pickable chapters and NOT
+      // compiled. Show the chapter picker instead of the compile overlay — nothing
+      // compiles until the student picks a chapter (the money rule). Same contract
+      // the memoly web client consumes; keep the two in lockstep.
+      final chunksRaw = data['chunks'];
+      if (chunksRaw is List && chunksRaw.isNotEmpty) {
+        appLog.i('[Upload] SEGMENTED: ${chunksRaw.length} chapters — showing picker');
+        state = state.copyWith(
+          isUploading: false,
+          isCheckingRelevance: false,
+          uploadStage: UploadStage.awaitingChapterPick,
+        );
+        ref.invalidate(libraryViewModelProvider);
         return;
       }
 
@@ -964,6 +984,11 @@ class UploadViewModel extends _$UploadViewModel {
       uploadExtractedText: null,
       reviewFileId: null,
     );
+  }
+
+  /// Return the upload flow to idle (e.g. after the chapter picker closes).
+  void resetToIdle() {
+    state = state.copyWith(uploadStage: UploadStage.idle, isUploading: false);
   }
 }
 
