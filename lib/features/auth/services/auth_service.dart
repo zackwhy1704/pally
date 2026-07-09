@@ -51,29 +51,6 @@ class AuthService {
     }
   }
 
-  Future<AuthResult> signUpWithEmail(
-    String email,
-    String password,
-    String name,
-  ) async {
-    try {
-      // 13+-only app: no DOB collected, no role (everyone is a student). Age is
-      // self-attested at the self-consent gate. Backend treats absent birthYear
-      // as 13+, so nothing extra is sent here.
-      final res = await _http.post<Map<String, dynamic>>(
-        '/api/v1/auth/register',
-        data: {
-          'email': email,
-          'password': password,
-          'displayName': name,
-        },
-      );
-      return _parseAuthResponse(res.data!);
-    } on DioException catch (e) {
-      throw _mapDioError(e);
-    }
-  }
-
   Future<void> signOut() async {
     await AuthNotifier.instance.signOut();
   }
