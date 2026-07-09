@@ -38,6 +38,7 @@ import 'package:pally/features/debug/presentation/painter_gallery_screen.dart';
 import 'package:pally/features/shop/presentation/shop_screen.dart';
 import 'package:pally/features/study_plan/presentation/study_plan_screen.dart';
 import 'package:pally/features/settings/presentation/settings_screen.dart';
+import 'package:pally/features/account_deletion/presentation/delete_account_screen.dart';
 import 'package:pally/features/photo_question/presentation/camera_screen.dart';
 import 'package:pally/features/photo_question/presentation/photo_preview_screen.dart';
 import 'package:pally/features/photo_question/presentation/homework_scan_detail_screen.dart';
@@ -356,6 +357,15 @@ class SettingsRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const SettingsScreen();
+}
+
+@TypedGoRoute<DeleteAccountRoute>(path: '/settings/delete-account')
+class DeleteAccountRoute extends GoRouteData {
+  const DeleteAccountRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const DeleteAccountScreen();
 }
 
 @TypedGoRoute<LevelRoadmapRoute>(path: '/progress/level-roadmap')

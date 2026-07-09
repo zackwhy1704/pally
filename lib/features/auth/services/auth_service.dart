@@ -51,29 +51,6 @@ class AuthService {
     }
   }
 
-  Future<AuthResult> signUpWithEmail(
-    String email,
-    String password,
-    String name,
-  ) async {
-    try {
-      // 13+-only app: no DOB collected, no role (everyone is a student). Age is
-      // self-attested at the self-consent gate. Backend treats absent birthYear
-      // as 13+, so nothing extra is sent here.
-      final res = await _http.post<Map<String, dynamic>>(
-        '/api/v1/auth/register',
-        data: {
-          'email': email,
-          'password': password,
-          'displayName': name,
-        },
-      );
-      return _parseAuthResponse(res.data!);
-    } on DioException catch (e) {
-      throw _mapDioError(e);
-    }
-  }
-
   Future<void> signOut() async {
     await AuthNotifier.instance.signOut();
   }
@@ -118,7 +95,8 @@ class AuthService {
     }
   }
 
-  static String _biometricSecretKey(String deviceId) => 'biometric_secret_$deviceId';
+  static String _biometricSecretKey(String deviceId) =>
+      'biometric_secret_$deviceId';
 
   Future<AuthResult> verifyBiometric({
     required String userId,
@@ -174,6 +152,28 @@ class AuthService {
     );
   }
 
+  /// Cancels a pending deletion during the grace window (unauthenticated: the
+  /// account has no valid session). Authorised by the emailed restore [token] OR
+  /// by [email] + [password] re-auth (the login-during-grace path).
+  Future<void> restoreAccount({
+    String? token,
+    String? email,
+    String? password,
+  }) async {
+    try {
+      await _http.post<Map<String, dynamic>>(
+        '/api/v1/account/restore',
+        data: {
+          if (token != null) 'token': token,
+          if (email != null) 'email': email,
+          if (password != null) 'password': password,
+        },
+      );
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
   AuthException _mapDioError(DioException e) {
     final status = e.response?.statusCode;
     final body = e.response?.data;
@@ -182,6 +182,18 @@ class AuthService {
     if (e.type == DioExceptionType.connectionError ||
         e.type == DioExceptionType.connectionTimeout) {
       return const AuthException('No internet connection — check your WiFi');
+    }
+
+    // Sign-in during the deletion grace window → the restore surface, not a
+    // generic error. The account is recoverable; never a dead-end toast.
+    if (status == 403 && body is Map) {
+      final data = body['data'];
+      if (data is Map && data['code'] == 'ACCOUNT_SCHEDULED_FOR_DELETION') {
+        final g = data['graceEndsAt'];
+        return AccountScheduledForDeletionException(
+          g is String ? DateTime.tryParse(g) : null,
+        );
+      }
     }
 
     switch (status) {
@@ -193,8 +205,7 @@ class AuthService {
       case 404:
         return const AuthException('No account found for this email');
       case 409:
-        return const AuthException(
-            'An account with this email already exists');
+        return const AuthException('An account with this email already exists');
       case 422:
         return AuthException(serverMsg ?? 'Please check your details');
       case 423:
@@ -213,4 +224,15 @@ class AuthException implements Exception {
 
   @override
   String toString() => message;
+}
+
+/// A sign-in was blocked because the account is in the deletion grace window
+/// (backend 403 `ACCOUNT_SCHEDULED_FOR_DELETION`). The sign-in screen catches
+/// this specifically and shows the restore surface (grace date + Restore) rather
+/// than a generic auth error. Carries [graceEndsAt] for display; the screen
+/// already holds the email + password to drive the restore.
+class AccountScheduledForDeletionException extends AuthException {
+  const AccountScheduledForDeletionException(this.graceEndsAt)
+      : super('This account is scheduled for deletion.');
+  final DateTime? graceEndsAt;
 }

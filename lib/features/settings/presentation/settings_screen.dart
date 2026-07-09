@@ -247,45 +247,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (mounted) context.go('/auth/signin');
   }
 
-  Future<void> _confirmDeleteAccount() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Delete Account?'),
-        content: const Text(
-          'This will permanently delete your account and all your Mochis. This cannot be undone.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => ctx.pop(false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => ctx.pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.coral),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true) return;
-    try {
-      final dio = ref.read(dioProvider);
-      await dio.delete<void>('/api/v1/auth/account');
-      await AuthService.instance.signOut();
-      if (mounted) context.go('/auth/signin');
-    } on DioException {
-      if (mounted) {
-        showAppSnackBar(
-          const SnackBar(
-            content: Text('Could not delete account — try again later'),
-            backgroundColor: AppColors.coral,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-    }
-  }
+  /// Opens the re-auth + grace deletion flow. (Replaces the old bearer-only
+  /// immediate DELETE /auth/account — now 410 GONE — which purged instantly with
+  /// no re-auth and no restore window.)
+  void _confirmDeleteAccount() => context.push('/settings/delete-account');
 
   @override
   Widget build(BuildContext context) {

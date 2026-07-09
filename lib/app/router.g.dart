@@ -22,6 +22,7 @@ List<RouteBase> get $appRoutes => [
       $teachMochiRoute,
       $studyPlanRoute,
       $settingsRoute,
+      $deleteAccountRoute,
       $levelRoadmapRoute,
       $achievementsRoute,
       $subscriptionReturnRoute,
@@ -554,6 +555,29 @@ extension $SettingsRouteExtension on SettingsRoute {
 
   String get location => GoRouteData.$location(
         '/settings',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $deleteAccountRoute => GoRouteData.$route(
+      path: '/settings/delete-account',
+      factory: $DeleteAccountRouteExtension._fromState,
+    );
+
+extension $DeleteAccountRouteExtension on DeleteAccountRoute {
+  static DeleteAccountRoute _fromState(GoRouterState state) =>
+      const DeleteAccountRoute();
+
+  String get location => GoRouteData.$location(
+        '/settings/delete-account',
       );
 
   void go(BuildContext context) => context.go(location);
