@@ -15,6 +15,7 @@ import 'package:pally/app/api_client.dart';
 import 'package:pally/core/services/fcm_token_service.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/auth/services/auth_service.dart';
+import 'package:pally/features/account_deletion/presentation/restore_account_sheet.dart';
 import 'package:pally/features/consent/data/consent_unlock.dart';
 
 enum _BiometricState { scanning, success, failed }
@@ -96,6 +97,17 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       ref.read(consentUnlockProvider).reconcile();
       if (mounted) {
         context.go(result.setupComplete ? '/' : '/onboarding/direct');
+      }
+    } on AccountScheduledForDeletionException catch (e) {
+      // The account is in the deletion grace window — offer restore, never a
+      // dead-end error. (Ordered before the generic AuthException catch.)
+      if (mounted) {
+        await showRestoreAccountSheet(
+          context,
+          email: email,
+          password: password,
+          graceEndsAt: e.graceEndsAt,
+        );
       }
     } on AuthException catch (e) {
       if (mounted) _showError(e.message);
