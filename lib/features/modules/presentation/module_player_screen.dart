@@ -186,6 +186,33 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
       );
     }
 
+    if (playerState.isContentUpdating) {
+      // Transient waiting state (module exists, no servable items yet): a
+      // friendly "check back soon" card — NOT a red error with a Retry the
+      // student would just bounce off, since retrying now won't help.
+      return AdaptiveCenter(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.hourglass_top_rounded,
+                size: 48, color: AppColors.purpleC),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              'This content is being updated — check back soon.',
+              style: AppTextStyles.body.copyWith(color: AppColors.text2),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            OutlinedButton(
+              onPressed: () => context.pop(),
+              child: const Text('Go back'),
+            ),
+          ],
+        ),
+      );
+    }
+
     if (playerState.error != null) {
       return AdaptiveCenter(
         padding: const EdgeInsets.all(AppSpacing.xl),
