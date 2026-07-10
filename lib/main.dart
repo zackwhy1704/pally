@@ -7,6 +7,7 @@ import 'package:pally/app/pally_app.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/local_db/pally_database.dart';
 import 'package:pally/core/observability/sentry_observability.dart';
+import 'package:pally/core/services/install_hygiene.dart';
 import 'package:pally/core/services/notification_service.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/firebase_options.dart';
@@ -52,13 +53,18 @@ Future<void> _bootstrap() async {
     appLog.w('[Firebase] Init failed (non-fatal): $e');
   }
 
+  final prefs = await SharedPreferences.getInstance();
+
+  // iOS Keychain survives uninstall — on the FIRST launch after a fresh install
+  // wipe secure storage BEFORE any token is read, so a reinstall can't resurrect
+  // a previous install's stale session. No-op on every later launch.
+  await wipeSecureStorageOnFirstLaunch(prefs: prefs);
+
   // Load persisted auth credentials before first frame.
   await AuthNotifier.instance.load();
 
   // Initialise local notifications. Non-fatal if it fails.
   await NotificationService.init();
-
-  final prefs = await SharedPreferences.getInstance();
 
   // Shared NavigatorState key so the global server-error interceptor can
   // reach a BuildContext for toasts when no screen owns the failed call.
