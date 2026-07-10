@@ -108,6 +108,25 @@ void main() {
       );
     });
 
+    testWidgets(
+        'labels a SELF_REPORT concept "Self-assessed" but not a DETERMINISTIC one',
+        (tester) async {
+      await tester.pumpWidget(_wrap(
+        const ExamPrepScreen(avatarId: 'test-avatar'),
+        overrides: [
+          examPrepViewModelProvider('test-avatar')
+              .overrideWith(() => _SignalTypeExamPrepVM()),
+        ],
+      ));
+      await tester.pumpAndSettle();
+
+      // Exactly one concept is self-reported → exactly one "Self-assessed" label,
+      // so the trust-weighted % isn't read as an objective graded score.
+      expect(find.text('Self-assessed'), findsOneWidget);
+      expect(find.text('SelfReported'), findsOneWidget); // the concept name
+      expect(find.text('Graded'), findsOneWidget); // the DETERMINISTIC concept name
+    });
+
     testWidgets('shows Re-do button only on weak concepts with moduleId',
         (tester) async {
       await tester.pumpWidget(_wrap(
@@ -142,6 +161,26 @@ class _EmptyExamPrepVM extends ExamPrepViewModel {
   @override
   Future<ExamPrep> build(String avatarId) =>
       Future.value(const ExamPrep());
+}
+
+class _SignalTypeExamPrepVM extends ExamPrepViewModel {
+  @override
+  Future<ExamPrep> build(String avatarId) => Future.value(
+        const ExamPrep(
+          concepts: [
+            ExamConceptMastery(
+              concept: 'SelfReported',
+              mastery: 30,
+              signalType: 'SELF_REPORT',
+            ),
+            ExamConceptMastery(
+              concept: 'Graded',
+              mastery: 80,
+              signalType: 'DETERMINISTIC',
+            ),
+          ],
+        ),
+      );
 }
 
 class _LoadedExamPrepVM extends ExamPrepViewModel {

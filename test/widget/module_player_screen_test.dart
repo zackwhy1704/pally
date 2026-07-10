@@ -110,6 +110,27 @@ void main() {
       expect(find.text('Module complete!'), findsNothing);
     });
 
+    testWidgets(
+        'empty servable stage shows "being updated" state, not a blank screen '
+        'or a red error/Retry', (tester) async {
+      await tester.pumpWidget(_wrap(
+        const ModulePlayerScreen(
+            avatarId: 'test-avatar', moduleId: 'test-mod'),
+        overrides: [
+          modulePlayerViewModelProvider('test-avatar', 'test-mod')
+              .overrideWith(() => _ContentUpdatingVM()),
+        ],
+      ));
+
+      // The friendly waiting card — NOT the red error + "Try again" (retrying
+      // now can't repopulate content that's mid-review).
+      expect(find.text('This content is being updated — check back soon.'),
+          findsOneWidget);
+      expect(find.text('Go back'), findsOneWidget);
+      expect(find.text('Try again'), findsNothing);
+      expect(find.byIcon(Icons.error_outline_rounded), findsNothing);
+    });
+
     testWidgets('error state shows error message and retry button',
         (tester) async {
       await tester.pumpWidget(_wrap(
@@ -244,6 +265,12 @@ class _MuddiestVM extends ModulePlayerViewModel {
           ],
         ),
       );
+}
+
+class _ContentUpdatingVM extends ModulePlayerViewModel {
+  @override
+  ModulePlayerState build(String avatarId, String moduleId) =>
+      const ModulePlayerState(isContentUpdating: true);
 }
 
 class _ErrorPlayerVM extends ModulePlayerViewModel {

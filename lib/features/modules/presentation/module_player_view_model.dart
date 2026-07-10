@@ -53,6 +53,7 @@ class ModulePlayerState {
     this.selfAssessItems = const [],
     this.selfReports = const {},
     this.selfAssessDone = false,
+    this.isContentUpdating = false,
   });
 
   final LearningModule? module;
@@ -88,6 +89,13 @@ class ModulePlayerState {
   /// overlay shows once and the completion flow follows.
   final bool selfAssessDone;
 
+  /// True when the module exists but the stage returned no SERVABLE items —
+  /// its content is being re-reviewed/updated (Phase 1a's servable filter, or
+  /// the content-health reaper). This is a transient waiting STATE, not an
+  /// error: retrying immediately won't help, so the screen shows a friendly
+  /// "check back soon" card, not a red error + Retry.
+  final bool isContentUpdating;
+
   ModuleContentItem? get currentItem =>
       items.isEmpty || currentIndex >= items.length
           ? null
@@ -113,6 +121,7 @@ class ModulePlayerState {
     List<SelfAssessItem>? selfAssessItems,
     Map<String, String>? selfReports,
     bool? selfAssessDone,
+    bool? isContentUpdating,
   }) {
     return ModulePlayerState(
       module: module ?? this.module,
@@ -131,6 +140,7 @@ class ModulePlayerState {
       selfAssessItems: selfAssessItems ?? this.selfAssessItems,
       selfReports: selfReports ?? this.selfReports,
       selfAssessDone: selfAssessDone ?? this.selfAssessDone,
+      isContentUpdating: isContentUpdating ?? this.isContentUpdating,
     );
   }
 }
@@ -202,7 +212,7 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
 
   Future<void> startStage() async {
     appLog.i('[ModulePlayer] Starting stage ${state.stage} for $_moduleId');
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true, error: null, isContentUpdating: false);
     try {
       final dio = ref.read(dioProvider);
       final response = await dio.post<dynamic>(
@@ -216,13 +226,12 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
               : const <dynamic>[]);
 
       if (rawItems.isEmpty) {
-        state = state.copyWith(
-          isLoading: false,
-          error: const PallyError(
-            PallyErrorKind.notFound,
-            'No content yet — your teacher needs to upload notes for this topic.',
-          ),
-        );
+        // The module exists (it was generated) but the stage returned zero
+        // SERVABLE items — its content is being re-reviewed/updated (Phase 1a's
+        // servable allow-list, or the content-health reaper quarantining a
+        // blank). Not "no notes uploaded" (that never mints a module) and not an
+        // error the student can retry away — a transient waiting state.
+        state = state.copyWith(isLoading: false, isContentUpdating: true);
         return;
       }
 

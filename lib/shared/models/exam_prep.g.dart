@@ -38,6 +38,7 @@ _$ExamConceptMasteryImpl _$$ExamConceptMasteryImplFromJson(
       mastery: (json['mastery'] as num?)?.toDouble() ?? 0,
       moduleId: json['moduleId'] as String?,
       moduleTitle: json['moduleTitle'] as String?,
+      signalType: json['signalType'] as String?,
     );
 
 Map<String, dynamic> _$$ExamConceptMasteryImplToJson(
@@ -47,4 +48,5 @@ Map<String, dynamic> _$$ExamConceptMasteryImplToJson(
       'mastery': instance.mastery,
       'moduleId': instance.moduleId,
       'moduleTitle': instance.moduleTitle,
+      'signalType': instance.signalType,
     };
