@@ -24,6 +24,10 @@ class ExamConceptMastery with _$ExamConceptMastery {
     @Default(0) double mastery,
     String? moduleId,
     String? moduleTitle,
+    // Trust class of the mastery signal (backend GradingSignal.name()): only
+    // 'SELF_REPORT' concepts carry a self-assessed (trust-weighted) %, so the UI
+    // labels them "self-assessed" instead of implying a graded score.
+    String? signalType,
   }) = _ExamConceptMastery;
 
   factory ExamConceptMastery.fromJson(Map<String, dynamic> json) =>

@@ -320,6 +320,16 @@ class _ConceptMasteryCard extends ConsumerWidget {
                 ),
               ],
             ),
+            // A SELF_REPORT concept's % is the student's own trust-weighted
+            // self-assessment, not a graded score — say so, so the number isn't
+            // read as an objective mark.
+            if (concept.signalType == 'SELF_REPORT') ...[
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                'Self-assessed',
+                style: AppTextStyles.caption.copyWith(color: AppColors.text3),
+              ),
+            ],
             const SizedBox(height: AppSpacing.sm),
             ClipRRect(
               borderRadius: BorderRadius.circular(3),

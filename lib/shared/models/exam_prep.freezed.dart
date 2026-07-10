@@ -283,7 +283,11 @@ mixin _$ExamConceptMastery {
   String get concept => throw _privateConstructorUsedError;
   double get mastery => throw _privateConstructorUsedError;
   String? get moduleId => throw _privateConstructorUsedError;
-  String? get moduleTitle => throw _privateConstructorUsedError;
+  String? get moduleTitle =>
+      throw _privateConstructorUsedError; // Trust class of the mastery signal (backend GradingSignal.name()): only
+// 'SELF_REPORT' concepts carry a self-assessed (trust-weighted) %, so the UI
+// labels them "self-assessed" instead of implying a graded score.
+  String? get signalType => throw _privateConstructorUsedError;
 
   /// Serializes this ExamConceptMastery to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -302,7 +306,11 @@ abstract class $ExamConceptMasteryCopyWith<$Res> {
       _$ExamConceptMasteryCopyWithImpl<$Res, ExamConceptMastery>;
   @useResult
   $Res call(
-      {String concept, double mastery, String? moduleId, String? moduleTitle});
+      {String concept,
+      double mastery,
+      String? moduleId,
+      String? moduleTitle,
+      String? signalType});
 }
 
 /// @nodoc
@@ -324,6 +332,7 @@ class _$ExamConceptMasteryCopyWithImpl<$Res, $Val extends ExamConceptMastery>
     Object? mastery = null,
     Object? moduleId = freezed,
     Object? moduleTitle = freezed,
+    Object? signalType = freezed,
   }) {
     return _then(_value.copyWith(
       concept: null == concept
@@ -342,6 +351,10 @@ class _$ExamConceptMasteryCopyWithImpl<$Res, $Val extends ExamConceptMastery>
           ? _value.moduleTitle
           : moduleTitle // ignore: cast_nullable_to_non_nullable
               as String?,
+      signalType: freezed == signalType
+          ? _value.signalType
+          : signalType // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -355,7 +368,11 @@ abstract class _$$ExamConceptMasteryImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String concept, double mastery, String? moduleId, String? moduleTitle});
+      {String concept,
+      double mastery,
+      String? moduleId,
+      String? moduleTitle,
+      String? signalType});
 }
 
 /// @nodoc
@@ -375,6 +392,7 @@ class __$$ExamConceptMasteryImplCopyWithImpl<$Res>
     Object? mastery = null,
     Object? moduleId = freezed,
     Object? moduleTitle = freezed,
+    Object? signalType = freezed,
   }) {
     return _then(_$ExamConceptMasteryImpl(
       concept: null == concept
@@ -393,6 +411,10 @@ class __$$ExamConceptMasteryImplCopyWithImpl<$Res>
           ? _value.moduleTitle
           : moduleTitle // ignore: cast_nullable_to_non_nullable
               as String?,
+      signalType: freezed == signalType
+          ? _value.signalType
+          : signalType // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -401,7 +423,11 @@ class __$$ExamConceptMasteryImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ExamConceptMasteryImpl implements _ExamConceptMastery {
   const _$ExamConceptMasteryImpl(
-      {this.concept = '', this.mastery = 0, this.moduleId, this.moduleTitle});
+      {this.concept = '',
+      this.mastery = 0,
+      this.moduleId,
+      this.moduleTitle,
+      this.signalType});
 
   factory _$ExamConceptMasteryImpl.fromJson(Map<String, dynamic> json) =>
       _$$ExamConceptMasteryImplFromJson(json);
@@ -416,10 +442,15 @@ class _$ExamConceptMasteryImpl implements _ExamConceptMastery {
   final String? moduleId;
   @override
   final String? moduleTitle;
+// Trust class of the mastery signal (backend GradingSignal.name()): only
+// 'SELF_REPORT' concepts carry a self-assessed (trust-weighted) %, so the UI
+// labels them "self-assessed" instead of implying a graded score.
+  @override
+  final String? signalType;
 
   @override
   String toString() {
-    return 'ExamConceptMastery(concept: $concept, mastery: $mastery, moduleId: $moduleId, moduleTitle: $moduleTitle)';
+    return 'ExamConceptMastery(concept: $concept, mastery: $mastery, moduleId: $moduleId, moduleTitle: $moduleTitle, signalType: $signalType)';
   }
 
   @override
@@ -432,13 +463,15 @@ class _$ExamConceptMasteryImpl implements _ExamConceptMastery {
             (identical(other.moduleId, moduleId) ||
                 other.moduleId == moduleId) &&
             (identical(other.moduleTitle, moduleTitle) ||
-                other.moduleTitle == moduleTitle));
+                other.moduleTitle == moduleTitle) &&
+            (identical(other.signalType, signalType) ||
+                other.signalType == signalType));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, concept, mastery, moduleId, moduleTitle);
+  int get hashCode => Object.hash(
+      runtimeType, concept, mastery, moduleId, moduleTitle, signalType);
 
   /// Create a copy of ExamConceptMastery
   /// with the given fields replaced by the non-null parameter values.
@@ -462,7 +495,8 @@ abstract class _ExamConceptMastery implements ExamConceptMastery {
       {final String concept,
       final double mastery,
       final String? moduleId,
-      final String? moduleTitle}) = _$ExamConceptMasteryImpl;
+      final String? moduleTitle,
+      final String? signalType}) = _$ExamConceptMasteryImpl;
 
   factory _ExamConceptMastery.fromJson(Map<String, dynamic> json) =
       _$ExamConceptMasteryImpl.fromJson;
@@ -474,7 +508,12 @@ abstract class _ExamConceptMastery implements ExamConceptMastery {
   @override
   String? get moduleId;
   @override
-  String? get moduleTitle;
+  String?
+      get moduleTitle; // Trust class of the mastery signal (backend GradingSignal.name()): only
+// 'SELF_REPORT' concepts carry a self-assessed (trust-weighted) %, so the UI
+// labels them "self-assessed" instead of implying a graded score.
+  @override
+  String? get signalType;
 
   /// Create a copy of ExamConceptMastery
   /// with the given fields replaced by the non-null parameter values.

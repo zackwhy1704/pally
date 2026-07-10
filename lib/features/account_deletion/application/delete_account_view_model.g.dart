@@ -7,7 +7,7 @@ part of 'delete_account_view_model.dart';
 // **************************************************************************
 
 String _$deleteAccountViewModelHash() =>
-    r'cd844802b86bc9246cfac3db2b94f2fc78f56579';
+    r'393abbd71e3e3caf35b3cce48ab17dea31341643';
 
 /// Drives the account-deletion request flow (grace/re-auth). All network access
 /// lives here, never in the screen. Deletion enters a 14-day restore window; the
