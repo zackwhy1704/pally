@@ -819,6 +819,15 @@ class _Step3Upload extends ConsumerWidget {
       return _ProcessingView(stage: uploadStage);
     }
 
+    // Server marked the upload irrelevant → the honest "use anyway?" question, NOT success.
+    if (uploadStage == DirectUploadStage.irrelevant) {
+      final st = ref.watch(directOnboardingViewModelProvider);
+      return _IrrelevantView(
+        subject: st.selectedSubject,
+        reason: st.irrelevantReason,
+      );
+    }
+
     // Ready — module generated
     if (uploadStage == DirectUploadStage.ready) {
       return _ReadyView(
@@ -1240,6 +1249,59 @@ class _PulsingMochiState extends State<_PulsingMochi>
 
 // ── Ready view ──────────────────────────────────────────────────────────────
 
+/// Honest override question when the server scored the upload irrelevant to the subject —
+/// reuses the main upload path's "use anyway?" decision instead of a fake success screen.
+class _IrrelevantView extends ConsumerWidget {
+  const _IrrelevantView({required this.subject, required this.reason});
+  final String? subject;
+  final String? reason;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final vm = ref.read(directOnboardingViewModelProvider.notifier);
+    final subjectLabel = (subject == null || subject!.isEmpty) ? 'this subject' : subject!;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.help_outline_rounded, size: 48, color: AppColors.amber),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              "This doesn't look like $subjectLabel material",
+              style: AppTextStyles.title,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              reason?.isNotEmpty == true
+                  ? reason!
+                  : "We couldn't match it to $subjectLabel. Use it anyway, or pick a different file.",
+              style: AppTextStyles.body.copyWith(color: AppColors.text2),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () => vm.useUploadedFileAnyway(),
+                style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
+                child: const Text('Use it anyway'),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            TextButton(
+              onPressed: () => vm.dismissIrrelevant(),
+              child: const Text('Choose a different file'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _ReadyView extends StatelessWidget {
   const _ReadyView({
     required this.avatarId,
@@ -1309,14 +1371,18 @@ class _ReadyView extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
-          TextButton(
-            onPressed: () => context.go('/'),
-            child: Text(
-              'Go to home',
-              style: AppTextStyles.body.copyWith(color: AppColors.text2),
+          // Secondary "Go to home" ONLY when the primary is "Start learning" — otherwise
+          // the primary already says "Go to home" and this was a duplicate CTA.
+          if (moduleId != null) ...[
+            const SizedBox(height: AppSpacing.md),
+            TextButton(
+              onPressed: () => context.go('/'),
+              child: Text(
+                'Go to home',
+                style: AppTextStyles.body.copyWith(color: AppColors.text2),
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );
