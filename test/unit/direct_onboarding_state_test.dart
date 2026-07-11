@@ -105,8 +105,9 @@ void main() {
   group('DirectUploadStage', () {
     test('all stages are distinct', () {
       final stages = DirectUploadStage.values;
-      expect(stages.length, 6);
-      expect(stages.toSet().length, 6);
+      // 7 since the 'irrelevant' override stage was added (was 6).
+      expect(stages.length, 7);
+      expect(stages.toSet().length, 7);
     });
   });
 
