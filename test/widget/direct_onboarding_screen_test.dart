@@ -295,6 +295,23 @@ void main() {
       expect(find.text('Start learning'), findsNothing);
     });
 
+    testWidgets('step 3 segmented (150+ page) upload shows chapter picker, NOT success',
+        (tester) async {
+      await tester.pumpWidget(_wrap(
+        const DirectOnboardingScreen(),
+        overrides: [
+          directOnboardingViewModelProvider
+              .overrideWith(() => _Step3SegmentedVM()),
+        ],
+      ));
+      await tester.pump();
+
+      // The chapter-pick surface — never the fake success/start screen.
+      expect(find.text('Your book is split into chapters'), findsOneWidget);
+      expect(find.text('Choose chapters'), findsOneWidget);
+      expect(find.text('Start learning'), findsNothing);
+    });
+
     testWidgets('step 3 ready shows success and start button', (tester) async {
       await tester.pumpWidget(_wrap(
         const DirectOnboardingScreen(),
@@ -347,6 +364,15 @@ class _Step3CompilingVM extends DirectOnboardingViewModel {
         step: 3,
         avatarId: 'test-avatar',
         uploadStage: DirectUploadStage.compiling,
+      );
+}
+
+class _Step3SegmentedVM extends DirectOnboardingViewModel {
+  @override
+  DirectOnboardingState build() => const DirectOnboardingState(
+        step: 3,
+        avatarId: 'test-avatar',
+        uploadStage: DirectUploadStage.awaitingChapterPick,
       );
 }
 

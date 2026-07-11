@@ -16,6 +16,7 @@ import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/onboarding/presentation/direct_onboarding_view_model.dart';
 import 'package:pally/features/onboarding/presentation/widgets/onboarding_legal_footer.dart';
+import 'package:pally/features/chapters/presentation/chapter_picker_sheet.dart';
 import 'package:pally/app/router.dart';
 
 // Requires TLD ≥ 2 chars; rejects single-char TLDs like .c
@@ -106,6 +107,19 @@ class _DirectOnboardingScreenState
         // The home screen shows the consent-pending banner.
         if (next.goHome && !(prev?.goHome ?? false)) {
           context.go('/');
+        }
+        // Segmented (150+ page) upload → open the chapter picker; when the user
+        // compiles at least one chapter, resume the onboarding compile flow.
+        if (next.uploadStage == DirectUploadStage.awaitingChapterPick &&
+            prev?.uploadStage != DirectUploadStage.awaitingChapterPick &&
+            next.avatarId != null) {
+          showChapterPicker(
+            context,
+            avatarId: next.avatarId!,
+            onCompiled: () => ref
+                .read(directOnboardingViewModelProvider.notifier)
+                .proceedAfterChapters(next.avatarId!),
+          );
         }
       },
     );
@@ -825,6 +839,41 @@ class _Step3Upload extends ConsumerWidget {
       return _IrrelevantView(
         subject: st.selectedSubject,
         reason: st.irrelevantReason,
+      );
+    }
+
+    // Segmented 150+ page upload — the picker sheet is opened by the screen listener;
+    // this is the surface behind it (and the re-open path if the sheet is dismissed).
+    if (uploadStage == DirectUploadStage.awaitingChapterPick) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.menu_book_rounded, size: 48, color: AppColors.purple),
+              const SizedBox(height: AppSpacing.md),
+              Text('Your book is split into chapters',
+                  style: AppTextStyles.title, textAlign: TextAlign.center),
+              const SizedBox(height: AppSpacing.sm),
+              Text('Pick the chapters you want Mochi to study first.',
+                  style: AppTextStyles.body.copyWith(color: AppColors.text2),
+                  textAlign: TextAlign.center),
+              const SizedBox(height: AppSpacing.lg),
+              FilledButton(
+                onPressed: () => showChapterPicker(
+                  context,
+                  avatarId: avatarId ?? '',
+                  onCompiled: () => ref
+                      .read(directOnboardingViewModelProvider.notifier)
+                      .proceedAfterChapters(avatarId ?? ''),
+                ),
+                style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
+                child: const Text('Choose chapters'),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
