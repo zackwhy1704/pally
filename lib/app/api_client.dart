@@ -281,14 +281,26 @@ class _ServerErrorInterceptor extends Interceptor {
     if (status == 403) {
       final body = err.response?.data;
       String? linkCode;
+      String? linkReason;
       if (body is Map) {
         final dataNode = body['data'];
         if (dataNode is Map) {
           linkCode = dataNode['code']?.toString();
+          linkReason = dataNode['reason']?.toString();
         }
       }
       if (linkCode == 'PARENT_LINK_REQUIRED') {
-        _handleParentLinkRequired();
+        // GuardianRequiredException collapses two cases into one code; the reason splits them.
+        // AGE_DECLARATION_REQUIRED = the account never declared a birth year (very often an
+        // ADULT who was simply never asked — e.g. a legacy account). Send them to the
+        // lightweight "what's your birth year?" prompt, NOT full re-onboarding (which reads
+        // as data loss for an established account with a streak). A real parent-link case
+        // keeps the onboarding/link route.
+        if (linkReason == 'AGE_DECLARATION_REQUIRED') {
+          _handleProfileCompletionRequired();
+        } else {
+          _handleParentLinkRequired();
+        }
         // Still propagate the original error so the calling view-model can
         // clear its loading state; the routing above is the user-facing action.
         handler.next(err);
