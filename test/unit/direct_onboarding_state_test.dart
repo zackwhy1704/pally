@@ -105,9 +105,9 @@ void main() {
   group('DirectUploadStage', () {
     test('all stages are distinct', () {
       final stages = DirectUploadStage.values;
-      // 7 since the 'irrelevant' override stage was added (was 6).
-      expect(stages.length, 7);
-      expect(stages.toSet().length, 7);
+      // 8: added 'irrelevant' (override) + 'awaitingChapterPick' (segmented 150+ page).
+      expect(stages.length, 8);
+      expect(stages.toSet().length, 8);
     });
   });
 

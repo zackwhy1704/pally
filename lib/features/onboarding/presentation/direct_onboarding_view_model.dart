@@ -191,6 +191,10 @@ enum DirectUploadStage {
   // subject — do NOT proceed to a fake success screen; ask "use anyway?" (the same
   // override the main upload path offers) so the student isn't left with empty Modules.
   irrelevant,
+  // A large doc (150+ pages) was SEGMENTED into pickable chapters and NOT compiled —
+  // show the chapter picker instead of polling for a compile that never comes (which
+  // timed out into a fake-success + empty Modules). Mirrors the main upload path.
+  awaitingChapterPick,
 }
 
 @riverpod
@@ -471,7 +475,9 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
       // A 200 can still be a server IRRELEVANT verdict (bare reason+score) — the SAME
       // marker the main upload path detects. Do NOT march on to a fake success screen;
       // surface the "use anyway?" override so the student isn't left with empty Modules.
-      final warning = relevanceWarningFrom(response.data ?? const {});
+      final data = response.data ?? const <String, dynamic>{};
+
+      final warning = relevanceWarningFrom(data);
       if (warning != null && !skipRelevance) {
         appLog.i('[DirectOnboard] Server marked upload IRRELEVANT '
             '(score=${warning.score}) — offering use-anyway override');
@@ -479,6 +485,17 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
           uploadStage: DirectUploadStage.irrelevant,
           irrelevantReason: warning.reason,
         );
+        return;
+      }
+
+      // SEGMENTED (150+ pages): the server split the doc into pickable chapters and
+      // compiled NOTHING. Polling for a compiled brain here would time out into a
+      // fake-success screen with empty Modules (the 150+ page sign-up bug). Show the
+      // chapter picker instead — same contract the main upload path consumes.
+      final chunks = data['chunks'];
+      if (chunks is List && chunks.isNotEmpty) {
+        appLog.i('[DirectOnboard] SEGMENTED: ${chunks.length} chapters — show picker');
+        state = state.copyWith(uploadStage: DirectUploadStage.awaitingChapterPick);
         return;
       }
 
@@ -516,6 +533,13 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
     _pendingFile = null;
     state = state.copyWith(
         uploadStage: DirectUploadStage.idle, irrelevantReason: null);
+  }
+
+  /// Called after the chapter picker has compiled at least one chapter — resume the
+  /// onboarding compile/generate flow (now there's real content, so the poll succeeds).
+  Future<void> proceedAfterChapters(String avatarId) async {
+    state = state.copyWith(uploadStage: DirectUploadStage.compiling);
+    await _pollUntilCompiled(avatarId);
   }
 
   Future<void> uploadFromCamera(String path) async {
