@@ -12,6 +12,8 @@ import 'package:pally/core/observability/observability_providers.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/core/utils/text_format.dart';
 import 'package:pally/features/auth/auth_state.dart';
+import 'package:pally/features/upload/presentation/upload_view_model.dart'
+    show relevanceWarningFrom;
 
 part 'direct_onboarding_view_model.g.dart';
 
@@ -90,6 +92,7 @@ class DirectOnboardingState {
     this.maskedParentEmail,
     this.consentResendError,
     this.goHome = false,
+    this.irrelevantReason,
   });
 
   final int step;
@@ -121,6 +124,10 @@ class DirectOnboardingState {
   /// and navigates to the dashboard. Resets to false on rebuild.
   final bool goHome;
 
+  /// Server's irrelevance reason when [uploadStage] == irrelevant (drives the
+  /// "doesn't look like <subject> material — use anyway?" question).
+  final String? irrelevantReason;
+
   DirectOnboardingState copyWith({
     int? step,
     bool? isLoading,
@@ -137,6 +144,7 @@ class DirectOnboardingState {
     Object? maskedParentEmail = _sentinel,
     Object? consentResendError = _sentinel,
     bool? goHome,
+    Object? irrelevantReason = _sentinel,
   }) {
     return DirectOnboardingState(
       step: step ?? this.step,
@@ -163,6 +171,9 @@ class DirectOnboardingState {
           ? this.consentResendError
           : consentResendError as String?,
       goHome: goHome ?? this.goHome,
+      irrelevantReason: irrelevantReason == _sentinel
+          ? this.irrelevantReason
+          : irrelevantReason as String?,
     );
   }
 }
@@ -176,11 +187,17 @@ enum DirectUploadStage {
   generatingModules,
   ready,
   failed,
+  // Server accepted the upload (200) but scored the content IRRELEVANT to the chosen
+  // subject — do NOT proceed to a fake success screen; ask "use anyway?" (the same
+  // override the main upload path offers) so the student isn't left with empty Modules.
+  irrelevant,
 }
 
 @riverpod
 class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
   Timer? _poller;
+  // Held so an "use anyway" override can re-upload the SAME file with skipRelevance.
+  PlatformFile? _pendingFile;
 
   @override
   DirectOnboardingState build() {
@@ -420,7 +437,8 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
   }
 
   /// Step 3: Upload file, poll for compile, generate modules.
-  Future<void> uploadFile(PlatformFile file) async {
+  Future<void> uploadFile(PlatformFile file, {bool skipRelevance = false}) async {
+    _pendingFile = file;
     final avatarId = state.avatarId;
     if (avatarId == null || avatarId.isEmpty) {
       state = state.copyWith(error: 'Please complete sign-up first.');
@@ -443,11 +461,26 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
       final dio = ref.read(dioProvider);
       final formData = FormData.fromMap({
         'file': await MultipartFile.fromFile(file.path!, filename: file.name),
+        if (skipRelevance) 'skipRelevance': 'true',
       });
-      await dio.post<dynamic>(
+      final response = await dio.post<Map<String, dynamic>>(
         '/api/v1/avatars/$avatarId/files',
         data: formData,
       );
+
+      // A 200 can still be a server IRRELEVANT verdict (bare reason+score) — the SAME
+      // marker the main upload path detects. Do NOT march on to a fake success screen;
+      // surface the "use anyway?" override so the student isn't left with empty Modules.
+      final warning = relevanceWarningFrom(response.data ?? const {});
+      if (warning != null && !skipRelevance) {
+        appLog.i('[DirectOnboard] Server marked upload IRRELEVANT '
+            '(score=${warning.score}) — offering use-anyway override');
+        state = state.copyWith(
+          uploadStage: DirectUploadStage.irrelevant,
+          irrelevantReason: warning.reason,
+        );
+        return;
+      }
 
       appLog.i('[DirectOnboard] Upload complete, polling for compile');
       state = state.copyWith(uploadStage: DirectUploadStage.compiling);
@@ -468,6 +501,21 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
         error: 'Upload failed. Please try again.',
       );
     }
+  }
+
+  /// "Use anyway" from the irrelevant-verdict question: re-upload the same file with
+  /// skipRelevance so the server ingests it despite the low subject-match score.
+  Future<void> useUploadedFileAnyway() async {
+    final file = _pendingFile;
+    if (file == null) return;
+    await uploadFile(file, skipRelevance: true);
+  }
+
+  /// "Choose a different file" from the irrelevant question — back to the idle upload state.
+  void dismissIrrelevant() {
+    _pendingFile = null;
+    state = state.copyWith(
+        uploadStage: DirectUploadStage.idle, irrelevantReason: null);
   }
 
   Future<void> uploadFromCamera(String path) async {

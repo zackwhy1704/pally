@@ -277,6 +277,24 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsWidgets);
     });
 
+    testWidgets('step 3 irrelevant upload shows the override question, NOT success',
+        (tester) async {
+      await tester.pumpWidget(_wrap(
+        const DirectOnboardingScreen(),
+        overrides: [
+          directOnboardingViewModelProvider
+              .overrideWith(() => _Step3IrrelevantVM()),
+        ],
+      ));
+
+      // The honest "use anyway?" override — never the fake success screen.
+      expect(find.textContaining("doesn't look like"), findsOneWidget);
+      expect(find.text('Use it anyway'), findsOneWidget);
+      expect(find.text('Choose a different file'), findsOneWidget);
+      // NOT the success/ready screen.
+      expect(find.text('Start learning'), findsNothing);
+    });
+
     testWidgets('step 3 ready shows success and start button', (tester) async {
       await tester.pumpWidget(_wrap(
         const DirectOnboardingScreen(),
@@ -329,6 +347,17 @@ class _Step3CompilingVM extends DirectOnboardingViewModel {
         step: 3,
         avatarId: 'test-avatar',
         uploadStage: DirectUploadStage.compiling,
+      );
+}
+
+class _Step3IrrelevantVM extends DirectOnboardingViewModel {
+  @override
+  DirectOnboardingState build() => const DirectOnboardingState(
+        step: 3,
+        avatarId: 'test-avatar',
+        selectedSubject: 'Maths',
+        uploadStage: DirectUploadStage.irrelevant,
+        irrelevantReason: 'This looks like coding material, not Maths.',
       );
 }
 
