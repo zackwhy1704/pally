@@ -310,7 +310,8 @@ class UploadViewModel extends _$UploadViewModel {
   // ── Specific server-error messages ─────────────────────────────────────────
 
   /// Maps HTTP status codes + response bodies to actionable user messages.
-  String _friendlyUploadError(DioException e, String fileName) {
+  @visibleForTesting
+  String friendlyUploadError(DioException e, String fileName) {
     final status = e.response?.statusCode;
     final body = e.response?.data;
     final serverMsg = body is Map
@@ -329,7 +330,12 @@ class UploadViewModel extends _$UploadViewModel {
     }
 
     return switch (status) {
-      400 => '"$fileName" couldn\'t be read — it may be empty or corrupted.',
+      // A 400 is often a server-side WRITE failure (e.g. a value-too-long on a chapter
+      // title) — surface the backend's honest, non-blaming message rather than blaming the
+      // user's file as "corrupted". Only a bodyless 400 falls back to the generic copy.
+      400 => serverMsg?.isNotEmpty == true
+            ? serverMsg!
+            : '"$fileName" couldn\'t be read — it may be empty or corrupted.',
       401 => 'Session expired. Please sign in again.',
       // Neutral, iOS-safe: no price, no purchase CTA. A 402 routes to the gated
       // paywall via the Dio interceptor, which is the only place an upgrade path
@@ -750,9 +756,12 @@ class UploadViewModel extends _$UploadViewModel {
         ref.invalidate(homeViewModelProvider);
       }
 
-      final msg = _friendlyUploadError(e, file.name);
+      final msg = friendlyUploadError(e, file.name);
       _appendFileError(FileUploadError(fileName: file.name, message: msg));
-      state = state.copyWith(isUploading: false, error: msg);
+      // Reset the stage: a failed POST left uploadStage==uploading, so the UI read a stuck
+      // "uploading" spinner behind the error. Back to idle — the error surface carries the state.
+      state = state.copyWith(
+          isUploading: false, uploadStage: UploadStage.idle, error: msg);
     } catch (e, st) {
       appLog.e('[Upload] Unexpected error: ${file.name}', error: e, stackTrace: st);
       final msg =
@@ -1048,7 +1057,8 @@ bool needsLargeFilePreflight(int sizeBytes) => sizeBytes > _largeFileWarnBytes;
 /// a Success uses `qualityReason`/`pageCount`/`wikiPageTitles` and never a bare `reason`.
 /// Returns a warning-shaped [RelevanceCheckResponse] to drive the add-anyway dialog, or
 /// null for a normal Success — so a warning is NEVER parsed as a silent 0-page upload.
-@visibleForTesting
+/// SHARED: both the main upload path and the onboarding path use this to detect a 200+
+/// irrelevant verdict (keep the two in lockstep — a divergence re-opens the fiction bug).
 RelevanceCheckResponse? relevanceWarningFrom(Map<String, dynamic> data) {
   final reason = data['reason'];
   final score = data['score'];
