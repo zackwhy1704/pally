@@ -17,7 +17,6 @@ import 'package:pally/core/widgets/loading/pally_skeleton.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
-import 'package:pally/features/quiz/providers/quiz_status_provider.dart';
 import 'package:pally/shared/models/avatar.dart';
 enum _LibraryItemType { header, avatar }
 
@@ -261,9 +260,10 @@ class _AvatarRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isCentre = avatar.centreManaged;
     return GestureDetector(
-      onTap: () => WikiViewerRoute(avatarId: avatar.id).push(context),
+      // The row is now a clean front door into the per-avatar Hub — the guided
+      // journey lives there. (Notes/Wiki is one row inside the hub.)
+      onTap: () => AvatarHubRoute(avatarId: avatar.id).push(context),
       child: Container(
         margin: const EdgeInsets.only(bottom: AppSpacing.sm),
         padding: AppSpacing.card,
@@ -340,69 +340,8 @@ class _AvatarRow extends ConsumerWidget {
                 ],
               ),
             ),
-            // Action buttons
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _ActionChip(
-                      label: 'Chat',
-                      icon: Icons.chat_bubble_rounded,
-                      color: AppColors.purple,
-                      onTap: () => ChatRoute(avatarId: avatar.id).push(context),
-                    ),
-                    const SizedBox(width: AppSpacing.xs),
-                    if (!isCentre)
-                      _ActionChip(
-                        label: 'Add',
-                        icon: Icons.add_rounded,
-                        color: AppColors.teal,
-                        onTap: () =>
-                            UploadRoute(avatarId: avatar.id).push(context),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _QuizChipForAvatar(avatar: avatar),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _ActionChip(
-                      label: 'Cards',
-                      icon: Icons.style_rounded,
-                      color: avatar.hasKnowledge
-                          ? AppColors.amber
-                          : AppColors.text3,
-                      onTap: avatar.hasKnowledge
-                          ? () => FlashcardRoute(avatarId: avatar.id)
-                              .push(context)
-                          : null,
-                    ),
-                    const SizedBox(width: AppSpacing.xs),
-                    if (!isCentre)
-                      _ActionChip(
-                        label: 'Teach',
-                        icon: Icons.school_rounded,
-                        color: avatar.hasKnowledge
-                            ? AppColors.pink
-                            : AppColors.text3,
-                        onTap: avatar.hasKnowledge
-                            ? () => TeachMochiRoute(avatarId: avatar.id)
-                                .push(context)
-                            : null,
-                      ),
-                  ],
-                ),
-              ],
-            ),
+            // Chevron — the whole row taps into the hub.
+            const Icon(Icons.chevron_right_rounded, color: AppColors.text3),
           ],
         ),
       ),
@@ -443,49 +382,6 @@ class _SubjectBadge extends StatelessWidget {
   }
 }
 
-class _ActionChip extends StatelessWidget {
-  const _ActionChip({
-    required this.label,
-    required this.icon,
-    required this.color,
-    required this.onTap,
-  });
-
-  final String label;
-  final IconData icon;
-  final Color color;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color.withValues(alpha: 0.3)),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 12, color: color),
-            const SizedBox(width: 3),
-            Text(
-              label,
-              style: AppTextStyles.caption.copyWith(
-                color: color,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _EmptyLibraryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -511,47 +407,4 @@ class _EmptyLibraryView extends StatelessWidget {
 }
 
 
-/// Quiz chip with daily-journey state baked in.
-///  • Knowledge empty → grey, "upload first" snackbar (legacy behaviour).
-///  • Already taken today → green tick, "Done today" label, tap reopens
-///    the quiz screen anyway (free-play) but the chip telegraphs that
-///    the streak is already locked in.
-///  • Available → amber lightning, label shows "X/Y" coverage when the
-///    avatar has any quiz history.
-class _QuizChipForAvatar extends ConsumerWidget {
-  const _QuizChipForAvatar({required this.avatar});
-  final Avatar avatar;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    if (!avatar.hasKnowledge) {
-      return _ActionChip(
-        label: 'Quiz',
-        icon: Icons.bolt_rounded,
-        color: AppColors.text3,
-        onTap: () => showAppSnackBar(
-          SnackBar(
-            content: const Text('Upload notes first to unlock quizzes'),
-            backgroundColor: AppColors.amber,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
-          ),
-        ),
-      );
-    }
-    final statusAsync = ref.watch(quizStatusProvider(avatar.id));
-    final status = statusAsync.valueOrNull;
-    final takenToday = status?.takenToday ?? false;
-    final coverageLabel = (status != null && status.totalTopics > 0)
-        ? ' ${status.masteredTopics}/${status.totalTopics}'
-        : '';
-    return _ActionChip(
-      label: takenToday ? 'Done today' : 'Quiz$coverageLabel',
-      icon: takenToday ? Icons.check_circle_rounded : Icons.bolt_rounded,
-      color: takenToday ? AppColors.green : AppColors.amber,
-      onTap: () => QuizRoute(avatarId: avatar.id).push(context),
-    );
-  }
-}
 
