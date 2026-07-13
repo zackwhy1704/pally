@@ -189,7 +189,9 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
     if (playerState.isContentUpdating) {
       // Transient waiting state (module exists, no servable items yet): a
       // friendly "check back soon" card — NOT a red error with a Retry the
-      // student would just bounce off, since retrying now won't help.
+      // student would just bounce off, since retrying /start won't help. Bounce
+      // to Library, where the "Mochi is reading" indicator surfaces the same
+      // refresh honestly, rather than stranding them on this dead-end stage.
       return AdaptiveCenter(
         padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
@@ -199,14 +201,15 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
                 size: 48, color: AppColors.purpleC),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'This content is being updated — check back soon.',
+              'Mochi is refreshing this lesson — check back soon.',
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.lg),
-            OutlinedButton(
-              onPressed: () => context.pop(),
-              child: const Text('Go back'),
+            FilledButton(
+              onPressed: () => context.go('/library'),
+              style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
+              child: const Text('Go to Library'),
             ),
           ],
         ),

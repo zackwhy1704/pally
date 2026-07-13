@@ -219,18 +219,28 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
         '/api/v1/avatars/$_avatarId/modules/$_moduleId/start',
       );
       final data = response.data;
+      // Server-authoritative playability signal (added with the empty-served
+      // guard): a stage with no servable items reports CONTENT_UPDATING (items
+      // exist but are non-servable — reaper-quarantined / DRAFT mid-heal) or
+      // CONTENT_UNAVAILABLE (a genuine gap). Either way it's a transient waiting
+      // state, NOT an error the student can retry away.
+      final String? contentStatus = data is Map && data['contentStatus'] is String
+          ? data['contentStatus'] as String
+          : null;
       final List<dynamic> rawItems = data is List
           ? data
           : (data is Map && data['items'] is List
               ? data['items'] as List<dynamic>
               : const <dynamic>[]);
 
-      if (rawItems.isEmpty) {
+      if (contentStatus == 'CONTENT_UPDATING' ||
+          contentStatus == 'CONTENT_UNAVAILABLE' ||
+          rawItems.isEmpty) {
         // The module exists (it was generated) but the stage returned zero
-        // SERVABLE items — its content is being re-reviewed/updated (Phase 1a's
-        // servable allow-list, or the content-health reaper quarantining a
-        // blank). Not "no notes uploaded" (that never mints a module) and not an
-        // error the student can retry away — a transient waiting state.
+        // SERVABLE items. Not "no notes uploaded" (that never mints a module) and
+        // not something a /start retry fixes — a transient "being refreshed" state
+        // that bounces to Library. (rawItems.isEmpty kept as a fallback for a
+        // server that predates the contentStatus field.)
         state = state.copyWith(isLoading: false, isContentUpdating: true);
         return;
       }
@@ -259,6 +269,12 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
       }
 
       if (items.isEmpty) {
+        // Items WERE served but every one was blank-skipped (a slipped-through
+        // blank TEST item, still LIVE pre-reaper). This is the same transient
+        // content-defect as an empty serve — treat it as "being refreshed", NOT a
+        // red error whose "Try again" re-POSTs /start into the identical blank
+        // result (the retry-spin the playability fix exists to kill). Still logged
+        // for observability.
         ref.read(analyticsProvider).event(
           AnalyticsEvents.modulePlayerParseError,
           props: {
@@ -267,13 +283,7 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
             'raw_count': rawItems.length,
           },
         );
-        state = state.copyWith(
-          isLoading: false,
-          error: const PallyError(
-            PallyErrorKind.server,
-            'Something went wrong loading this lesson. Try again or contact support.',
-          ),
-        );
+        state = state.copyWith(isLoading: false, isContentUpdating: true);
         return;
       }
 

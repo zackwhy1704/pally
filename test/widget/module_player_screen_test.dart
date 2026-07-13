@@ -123,10 +123,10 @@ void main() {
       ));
 
       // The friendly waiting card — NOT the red error + "Try again" (retrying
-      // now can't repopulate content that's mid-review).
-      expect(find.text('This content is being updated — check back soon.'),
+      // now can't repopulate content that's mid-review). Bounces to Library.
+      expect(find.text('Mochi is refreshing this lesson — check back soon.'),
           findsOneWidget);
-      expect(find.text('Go back'), findsOneWidget);
+      expect(find.text('Go to Library'), findsOneWidget);
       expect(find.text('Try again'), findsNothing);
       expect(find.byIcon(Icons.error_outline_rounded), findsNothing);
     });
