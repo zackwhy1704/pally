@@ -62,7 +62,8 @@ class ChapterLockBanner extends ConsumerWidget {
           ),
           const SizedBox(width: AppSpacing.sm),
           ElevatedButton(
-            onPressed: () => showChapterPicker(context, avatarId: avatarId),
+            onPressed: () => showChapterPicker(context,
+                avatarId: avatarId, pointToLibraryOnSuccess: true, ref: ref),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.purple,
               foregroundColor: AppColors.surface,
