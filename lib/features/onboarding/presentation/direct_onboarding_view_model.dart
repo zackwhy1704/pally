@@ -470,6 +470,13 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
       final response = await dio.post<Map<String, dynamic>>(
         '/api/v1/avatars/$avatarId/files',
         data: formData,
+        // A 19MB book cannot finish a SEND in the global BaseOptions sendTimeout (15s),
+        // so the onboarding upload died at 15s while the main+homework upload paths (which
+        // DO override) succeeded — the "manual always fails" root cause. Match the siblings.
+        options: Options(
+          receiveTimeout: const Duration(minutes: 3),
+          sendTimeout: const Duration(minutes: 2),
+        ),
       );
 
       // A 200 can still be a server IRRELEVANT verdict (bare reason+score) — the SAME
