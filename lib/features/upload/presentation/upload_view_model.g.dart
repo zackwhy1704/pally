@@ -6,7 +6,7 @@ part of 'upload_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$uploadViewModelHash() => r'15e30b44efc046e2277a125f5323408734c09441';
+String _$uploadViewModelHash() => r'd77bb68f010407890946e855ced4739162879447';
 
 /// Copied from Dart SDK
 class _SystemHash {

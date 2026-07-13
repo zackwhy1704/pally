@@ -50,6 +50,7 @@ import 'package:pally/features/groups/presentation/group_detail_screen.dart';
 import 'package:pally/features/groups/presentation/group_list_screen.dart';
 import 'package:pally/features/teach_mochi/presentation/teach_mochi_screen.dart';
 import 'package:pally/features/brain_health/presentation/brain_health_screen.dart';
+import 'package:pally/features/avatar_hub/presentation/avatar_hub_screen.dart';
 import 'package:pally/features/modules/presentation/module_list_screen.dart';
 import 'package:pally/features/modules/presentation/module_player_screen.dart';
 import 'package:pally/features/exam_prep/presentation/exam_prep_screen.dart';
@@ -497,6 +498,19 @@ class BrainHealthRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       BrainHealthScreen(avatarId: avatarId);
+}
+
+/// The per-avatar Hub — the single front door. Bare `/avatar/:avatarId` (no
+/// existing route occupies it; the feature routes are all deeper siblings). Deep
+/// links to /avatar/:avatarId/* keep working — this is an additive sibling.
+@TypedGoRoute<AvatarHubRoute>(path: '/avatar/:avatarId')
+class AvatarHubRoute extends GoRouteData {
+  const AvatarHubRoute({required this.avatarId});
+  final String avatarId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      AvatarHubScreen(avatarId: avatarId);
 }
 
 @TypedGoRoute<ModuleListRoute>(path: '/avatar/:avatarId/modules')

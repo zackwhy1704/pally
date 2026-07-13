@@ -7,7 +7,7 @@ part of 'chapter_picker_view_model.dart';
 // **************************************************************************
 
 String _$chapterPickerViewModelHash() =>
-    r'96dae99584fd27aa51318da560998288cd076d2f';
+    r'b5ee324b869984351f86eea8531b8f54af7d428b';
 
 /// Copied from Dart SDK
 class _SystemHash {

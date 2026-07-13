@@ -35,6 +35,7 @@ List<RouteBase> get $appRoutes => [
       $inviteRoute,
       $homeworkScanDetailRoute,
       $brainHealthRoute,
+      $avatarHubRoute,
       $moduleListRoute,
       $modulePlayerRoute,
       $assignmentCompareRoute,
@@ -874,6 +875,30 @@ extension $BrainHealthRouteExtension on BrainHealthRoute {
 
   String get location => GoRouteData.$location(
         '/avatar/${Uri.encodeComponent(avatarId)}/brain-health',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $avatarHubRoute => GoRouteData.$route(
+      path: '/avatar/:avatarId',
+      factory: $AvatarHubRouteExtension._fromState,
+    );
+
+extension $AvatarHubRouteExtension on AvatarHubRoute {
+  static AvatarHubRoute _fromState(GoRouterState state) => AvatarHubRoute(
+        avatarId: state.pathParameters['avatarId']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/avatar/${Uri.encodeComponent(avatarId)}',
       );
 
   void go(BuildContext context) => context.go(location);
