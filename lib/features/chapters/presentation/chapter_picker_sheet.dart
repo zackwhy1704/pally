@@ -1,37 +1,91 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/features/chapters/domain/chapter.dart';
 import 'package:pally/features/chapters/presentation/chapter_picker_view_model.dart';
+import 'package:pally/features/library/presentation/library_view_model.dart';
 
 /// Opens the chapter picker — the ONE place chunk-picking lives (shown after a large
 /// upload AND from the locked-chapter surface). Interaction design mirrors the memoly
 /// web picker screenshot-for-screenshot: chapter list, page counts, none pre-selected,
 /// a live "N of M compiles left this month" counter, compile-selected + compile-all.
+/// [pointToLibraryOnSuccess] — main-app callers (library lock banner, upload
+/// screen) set this so a successful compile confirms with a dialog pointing at
+/// the Library "Mochi is reading" indicator. Onboarding leaves it false: it has
+/// its own forward flow (`onCompiled` → `proceedAfterChapters`) and no Library
+/// tab yet, so a "Go to Library" dialog there would be a check it can't cash.
 Future<void> showChapterPicker(
   BuildContext context, {
   required String avatarId,
   VoidCallback? onCompiled,
-}) {
-  return showModalBottomSheet<void>(
+  bool pointToLibraryOnSuccess = false,
+  WidgetRef? ref,
+}) async {
+  // The sheet pops `true` ONLY on a confirmed compile; drag/barrier dismiss
+  // returns null, so onCompiled + the dialog fire only on real success.
+  final compiled = await showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
     backgroundColor: AppColors.surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
-    builder: (_) => ChapterPickerSheet(avatarId: avatarId, onCompiled: onCompiled),
+    builder: (_) => ChapterPickerSheet(avatarId: avatarId),
+  );
+  if (compiled != true) return;
+  onCompiled?.call();
+  // Library lives in a keep-alive shell branch, so its list is cached; invalidate
+  // it so the "Mochi is reading" indicator can actually appear when the dialog
+  // sends the user there (best-effort — the brain flips to COMPILING async, so a
+  // pull-to-refresh remains the belt-and-braces path).
+  ref?.invalidate(libraryViewModelProvider);
+  if (pointToLibraryOnSuccess && context.mounted) {
+    await _showCompilingDialog(context);
+  }
+}
+
+/// Success confirmation: the compile is an async server job, so this points the
+/// user to the honest progress surface (the Library "Mochi is reading" row)
+/// rather than pretending the work is already done.
+Future<void> _showCompilingDialog(BuildContext context) {
+  return showDialog<void>(
+    context: context,
+    builder: (dctx) => AlertDialog(
+      backgroundColor: AppColors.surface,
+      title: Text('Mochi is reading your chapters!', style: AppTextStyles.title),
+      content: Text(
+        'This takes a few minutes. You can follow along in Library — Mochi will '
+        'show which chapter it is reading, and your lessons unlock when it is done.',
+        style: AppTextStyles.body.copyWith(color: AppColors.text2),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(dctx).pop(),
+          child: Text('OK',
+              style: AppTextStyles.body.copyWith(color: AppColors.text2)),
+        ),
+        FilledButton(
+          onPressed: () {
+            Navigator.of(dctx).pop();
+            if (context.mounted) context.go('/library');
+          },
+          style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
+          child: const Text('Go to Library'),
+        ),
+      ],
+    ),
   );
 }
 
 class ChapterPickerSheet extends ConsumerStatefulWidget {
-  const ChapterPickerSheet({super.key, required this.avatarId, this.onCompiled});
+  const ChapterPickerSheet({super.key, required this.avatarId});
 
   final String avatarId;
-  final VoidCallback? onCompiled;
 
   @override
   ConsumerState<ChapterPickerSheet> createState() => _ChapterPickerSheetState();
@@ -41,6 +95,13 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
   final Set<String> _selected = {};
   String? _error;
 
+  /// Drives the button's disabled+spinner state REACTIVELY. The view model's own
+  /// `isCompiling` guard flips a plain field mid-`await` with no rebuild between
+  /// true→false, so the spinner never rendered; this sheet-local flag (mutated
+  /// via setState) is what the button actually watches. The VM guard stays as a
+  /// re-entry backstop.
+  bool _compiling = false;
+
   void _toggle(String id) {
     setState(() {
       if (!_selected.remove(id)) _selected.add(id);
@@ -48,17 +109,33 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
   }
 
   Future<void> _compile(List<String> ids) async {
-    setState(() => _error = null);
+    if (_compiling) return; // single-flight: ignore a second tap while in flight
+    setState(() {
+      _error = null;
+      _compiling = true;
+    });
     try {
       await ref
           .read(chapterPickerViewModelProvider(widget.avatarId).notifier)
           .compileSelected(ids);
       if (!mounted) return;
-      setState(_selected.clear);
-      widget.onCompiled?.call();
-    } catch (_) {
+      // Compile ACK'd (the request is fast — the LLM work is async server-side).
+      // Pop `true` so showChapterPicker fires onCompiled + the "Mochi is reading"
+      // dialog. A client timeout here does NOT mean the server failed — the
+      // per-cause copy below points to Library, and a retry is safe because the
+      // compile quota is success-based (a still-running/failed pick never burns
+      // an allowance), so no duplicate job or double-spend.
+      Navigator.of(context).pop(true);
+    } catch (e) {
+      // Per-cause copy so a dead spinner is impossible: every failure clears the
+      // spinner, re-enables the button, and shows an honest, retryable message.
+      // Mapping lives in the central PallyError.forCompile — the widget never
+      // inspects DioException itself (layering guard).
       if (mounted) {
-        setState(() => _error = "Couldn't compile — please try again.");
+        setState(() {
+          _compiling = false;
+          _error = PallyError.forCompile(e).userMessage;
+        });
       }
     }
   }
@@ -66,7 +143,6 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
   @override
   Widget build(BuildContext context) {
     final async = ref.watch(chapterPickerViewModelProvider(widget.avatarId));
-    final vm = ref.read(chapterPickerViewModelProvider(widget.avatarId).notifier);
 
     return SafeArea(
       child: ConstrainedBox(
@@ -103,7 +179,7 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
                 ),
               ],
             ),
-            data: (result) => _loaded(context, result, vm),
+            data: (result) => _loaded(context, result),
           ),
         ),
       ),
@@ -134,16 +210,16 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
         ],
       );
 
-  Widget _loaded(BuildContext context, ChaptersResult result, ChapterPickerViewModel vm) {
+  Widget _loaded(BuildContext context, ChaptersResult result) {
     final chapters = result.chapters;
     final locked = result.locked;
     final remaining = result.remaining;
     final selectedCount = _selected.length;
     final overLimit = !result.unlimited && selectedCount > remaining;
-    final canCompile = selectedCount > 0 && !overLimit && !vm.isCompiling;
+    final canCompile = selectedCount > 0 && !overLimit && !_compiling;
     final showCompileAll = locked.length >= 2 &&
         (result.unlimited || remaining >= locked.length) &&
-        !vm.isCompiling;
+        !_compiling;
 
     // Plain Column — the parent SingleChildScrollView provides the scroll, so a tall
     // list / large text scale scrolls instead of overflowing.
@@ -174,7 +250,7 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
           Text(_error!, style: AppTextStyles.bodySmall.copyWith(color: AppColors.coral)),
         ],
         const SizedBox(height: AppSpacing.md),
-        _footer(context, result, locked, showCompileAll, canCompile, overLimit, remaining, vm),
+        _footer(context, result, locked, showCompileAll, canCompile, overLimit, remaining),
       ],
     );
   }
@@ -256,7 +332,6 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
     bool canCompile,
     bool overLimit,
     int remaining,
-    ChapterPickerViewModel vm,
   ) {
     final selectedCount = _selected.length;
     // Hint on its own line, buttons in a Wrap — so a narrow screen or a large text
@@ -295,7 +370,7 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
                 foregroundColor: AppColors.surface,
                 disabledBackgroundColor: AppColors.outline,
               ),
-              child: vm.isCompiling
+              child: _compiling
                   ? const SizedBox(
                       width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                   : Text(selectedCount > 0 ? 'Compile ($selectedCount)' : 'Compile'),

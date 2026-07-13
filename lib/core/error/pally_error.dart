@@ -62,8 +62,11 @@ class PallyError {
       'Mochi is busy right now — try again in a moment.');
   static const compileTimeout = PallyError(
       PallyErrorKind.timeout,
-      'Mochi is still working on your notes in the background '
-      '— check back in a few minutes.');
+      'Mochi is still working on your chapters in the background — check '
+      'Library, or try again in a few minutes.');
+  static const compileInProgress = PallyError(
+      PallyErrorKind.rateLimited,
+      'Mochi is already reading these chapters — check Library for progress.');
   static const unknown = PallyError(
       PallyErrorKind.unknown,
       'Something went wrong. Please try again.');
@@ -71,6 +74,41 @@ class PallyError {
       PallyErrorKind.server,
       "Mochi got an unexpected reply — some info couldn't load. "
       'Please try again.');
+
+  /// Compile-flow mapping. A client timeout on a compile does NOT mean the
+  /// server failed — the compile runs async server-side — so timeouts point to
+  /// Library (the progress surface) rather than implying failure, and a 409
+  /// renders the friendly already-running note instead of the generic slot-lock
+  /// copy. The retry is safe: compile quota is success-based, so retrying a
+  /// still-running compile double-spends nothing. Keeps the DioException
+  /// type-switch here in the central mapper, never in the widget.
+  static PallyError forCompile(Object e) {
+    if (e is PallyError) return e;
+    if (e is DioException) {
+      switch (e.type) {
+        // send/receive timeout: the request reached the server, so the compile
+        // MAY be running — point to Library, don't imply failure.
+        case DioExceptionType.sendTimeout:
+        case DioExceptionType.receiveTimeout:
+          return compileTimeout;
+        // connectionTimeout/connectionError: server never reached → the compile
+        // never started → it's a connectivity problem (check WiFi), not Library.
+        case DioExceptionType.connectionTimeout:
+        case DioExceptionType.connectionError:
+          return offline;
+        case DioExceptionType.badResponse:
+          final code = e.response?.statusCode ?? 0;
+          if (code == 409) return compileInProgress;
+          if (code >= 500) return server;
+          return from(e); // 402 upgrade / 403 consent keep central handling
+        case DioExceptionType.cancel:
+        case DioExceptionType.badCertificate:
+        case DioExceptionType.unknown:
+          return from(e);
+      }
+    }
+    return from(e);
+  }
 
   /// Best-effort mapping from any thrown object to a user-safe message.
   /// Never reflects `toString()` directly — every branch lands on a

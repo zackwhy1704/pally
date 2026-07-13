@@ -313,17 +313,26 @@ class _AvatarRow extends ConsumerWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    avatar.hasKnowledge
-                        ? '🧠 ${avatar.wikiPageCount} brain page${avatar.wikiPageCount == 1 ? '' : 's'}'
-                        : avatar.fileCount > 0
-                            ? '⏳ Building brain from ${avatar.fileCount} file${avatar.fileCount == 1 ? '' : 's'}…'
-                            : '📂 No notes yet — teach me your material!',
+                    // Compiling takes priority over the knowledge count: after a
+                    // chapter pick the brain leaves READY (PENDING_RECOMPILE →
+                    // COMPILING) while it may already have pages, so this is the
+                    // honest "async job in flight" surface the compile dialog + the
+                    // compile timeout copy both point users to.
+                    avatar.isBrainCompiling
+                        ? '📖 Mochi is reading your chapters…'
+                        : avatar.hasKnowledge
+                            ? '🧠 ${avatar.wikiPageCount} brain page${avatar.wikiPageCount == 1 ? '' : 's'}'
+                            : avatar.fileCount > 0
+                                ? '⏳ Building brain from ${avatar.fileCount} file${avatar.fileCount == 1 ? '' : 's'}…'
+                                : '📂 No notes yet — teach me your material!',
                     style: AppTextStyles.caption.copyWith(
-                      color: avatar.hasKnowledge
+                      color: avatar.isBrainCompiling
                           ? AppColors.purple
-                          : avatar.fileCount > 0
-                              ? AppColors.amber
-                              : AppColors.text3,
+                          : avatar.hasKnowledge
+                              ? AppColors.purple
+                              : avatar.fileCount > 0
+                                  ? AppColors.amber
+                                  : AppColors.text3,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

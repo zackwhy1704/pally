@@ -156,7 +156,8 @@ class UploadScreen extends ConsumerWidget {
       if (next.uploadStage == UploadStage.awaitingChapterPick &&
           prev?.uploadStage != UploadStage.awaitingChapterPick &&
           context.mounted) {
-        await showChapterPicker(context, avatarId: avatarId);
+        await showChapterPicker(context,
+            avatarId: avatarId, pointToLibraryOnSuccess: true, ref: ref);
         // Return the screen to idle whether they picked, compiled, or dismissed —
         // the locked chapters live on the brain surface for the return loop.
         if (context.mounted) vm.resetToIdle();
