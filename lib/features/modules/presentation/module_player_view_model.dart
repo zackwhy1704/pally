@@ -321,6 +321,15 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
       // Sort by sortOrder
       items.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
 
+      // Adopt the SERVER's stage — it is authoritative. A revision start returns
+      // stage=PROVE while the client may still hold COMPLETE (the finished module the
+      // student re-opened); without adopting it the header chip shows "Complete" and the
+      // body falls through to the 'Unknown stage' arm. Fall back to the current stage
+      // when the response omits it (older server).
+      final servedStage = (data is Map && data['stage'] is String)
+          ? data['stage'] as String
+          : state.stage;
+
       // Detect revision mode from backend response
       final isRevision =
           (data is Map && data['revision'] == true) || state.isRevision;
@@ -328,19 +337,20 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
       // Start the active-time clock for this stage now that items are visible.
       _stageStartedAt = DateTime.now();
 
-      appLog.i('[ModulePlayer] Loaded ${items.length} items for ${state.stage}'
+      appLog.i('[ModulePlayer] Loaded ${items.length} items for $servedStage'
           '${isRevision ? ' (revision mode)' : ''}');
       ref.read(analyticsProvider).event(
         AnalyticsEvents.moduleStarted,
         props: {
           'module_id': _moduleId,
           'avatar_id': _avatarId,
-          'stage': state.stage,
+          'stage': servedStage,
           'is_revision': isRevision,
           'item_count': items.length,
         },
       );
       state = state.copyWith(
+        stage: servedStage,
         items: items,
         currentIndex: 0,
         isLoading: false,
