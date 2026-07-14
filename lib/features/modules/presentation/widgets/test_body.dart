@@ -122,8 +122,15 @@ class TestBody extends StatelessWidget {
     //    + explanation come from the per-item submit response, passed in as [verdict].
     // NB: answerJson is null for TEST at serve, so it is deliberately NOT read here.
     final reveal = item!.revealJson ?? const <String, dynamic>{};
+    // KEY every per-item card by the item id. Without it, Flutter reuses the same
+    // State for a same-type card at the same tree position across advances, so a
+    // stateful card (ChallengeCard's TextEditingController) carries its text/selection
+    // to the next item. A per-item key forces fresh State on item change while
+    // preserving it WITHIN an item (same id → same key as the user types).
+    final cardKey = ValueKey(item!.id);
     return switch (item!.type) {
       'HOT_TAKE' => HotTakeCard(
+          key: cardKey,
           statement: content['statement'] as String? ?? '',
           verdict: verdict,
           verdictPending: verdictPending,
@@ -132,6 +139,7 @@ class TestBody extends StatelessWidget {
           onAnswer: (response) => onAnswer(item!.id, response),
         ),
       'SPOT_MISTAKE' => SpotMistakeCard(
+          key: cardKey,
           problem: content['problem'] as String? ?? '',
           wrongSolution: content['wrongSolution'] as String? ?? '',
           errorDescription: reveal['errorDescription'] as String? ?? '',
@@ -140,6 +148,7 @@ class TestBody extends StatelessWidget {
           onReveal: () => onAnswer(item!.id, 'found'),
         ),
       'CHALLENGE' => ChallengeCard(
+          key: cardKey,
           question: content['question'] as String? ?? '',
           explanation: reveal['explanation'] as String? ?? '',
           isRevealed: isRevealed,
@@ -147,6 +156,7 @@ class TestBody extends StatelessWidget {
           onSubmit: (response) => onAnswer(item!.id, response),
         ),
       _ => GenericTestCard(
+          key: cardKey,
           content: content,
           isRevealed: isRevealed,
           onAnswer: (response) => onAnswer(item!.id, response),
