@@ -131,6 +131,27 @@ void main() {
       expect(find.byIcon(Icons.error_outline_rounded), findsNothing);
     });
 
+    testWidgets(
+        'revision PROVE stage renders the PROVE UI + revision banner + "Prove" chip, '
+        'never "Unknown stage"', (tester) async {
+      await tester.pumpWidget(_wrap(
+        const ModulePlayerScreen(
+            avatarId: 'test-avatar', moduleId: 'test-mod'),
+        overrides: [
+          modulePlayerViewModelProvider('test-avatar', 'test-mod')
+              .overrideWith(() => _RevisionProveVM()),
+        ],
+      ));
+
+      // The adopted PROVE stage renders ProveBody (the question) + revision banner,
+      // and the header chip reads "Prove" — NOT the pre-fix "Complete"/"Unknown stage".
+      expect(find.text('Explain in your own words'), findsOneWidget);
+      expect(find.textContaining('Revision mode'), findsOneWidget);
+      expect(find.text('Prove'), findsOneWidget);
+      expect(find.text('Unknown stage'), findsNothing);
+      expect(find.text('Complete'), findsNothing);
+    });
+
     testWidgets('error state shows error message and retry button',
         (tester) async {
       await tester.pumpWidget(_wrap(
@@ -264,6 +285,24 @@ class _MuddiestVM extends ModulePlayerViewModel {
             ),
           ],
         ),
+      );
+}
+
+class _RevisionProveVM extends ModulePlayerViewModel {
+  @override
+  ModulePlayerState build(String avatarId, String moduleId) =>
+      const ModulePlayerState(
+        stage: 'PROVE',
+        isRevision: true,
+        items: [
+          ModuleContentItem(
+            id: 'pv-1',
+            stage: 'PROVE',
+            type: 'PROVE_QUESTION',
+            contentJson: {'question': 'Explain in your own words'},
+          ),
+        ],
+        currentIndex: 0,
       );
 }
 
