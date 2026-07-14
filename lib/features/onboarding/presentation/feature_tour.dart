@@ -73,7 +73,9 @@ List<_TourStep> _buildSteps() => [
     body: 'Upload your notes and every answer, quiz, and challenge comes from '
         'what YOUR teacher taught.',
     illustration: TourIllustration.mascot,
-    cta: 'Make my first Mochi',
+    // 'Start' — a single short word so the final CTA never wraps to two lines at
+    // large text scale / on narrow devices (the equal-width Expandeds are fine).
+    cta: 'Start',
   ),
 ];
 

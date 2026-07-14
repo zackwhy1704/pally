@@ -56,7 +56,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Not a generic AI — a Mochi that knows yours.'), findsOneWidget);
-    expect(find.text('Make my first Mochi'), findsOneWidget);
+    expect(find.text('Start'), findsOneWidget); // final CTA — one short word, no wrap
   });
 
   // ── Back navigation (the v3 gap) ─────────────────────────────────────────────
