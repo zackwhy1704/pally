@@ -3,6 +3,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_sizing.dart';
+import 'package:pally/features/modules/presentation/module_player_view_model.dart';
 import 'package:pally/shared/models/learning_module.dart';
 
 // ── TEST stage: sequential items ────────────────────────────────────────────
@@ -19,6 +20,8 @@ class TestBody extends StatelessWidget {
     required this.onNext,
     required this.isLast,
     required this.isSubmitting,
+    this.verdict,
+    this.verdictPending = false,
   });
 
   final ModuleContentItem? item;
@@ -30,6 +33,12 @@ class TestBody extends StatelessWidget {
   final VoidCallback onNext;
   final bool isLast;
   final bool isSubmitting;
+
+  /// Server verdict for the current HOT_TAKE (null ⇒ no banner: pending or failed).
+  final HotTakeVerdict? verdict;
+
+  /// True while this HOT_TAKE's verdict fetch is in flight (shows "checking…").
+  final bool verdictPending;
 
   @override
   Widget build(BuildContext context) {
@@ -106,17 +115,18 @@ class TestBody extends StatelessWidget {
 
   Widget _buildItemWidget(BuildContext context) {
     final content = item!.contentJson;
-    // The PROMPT lives in contentJson; the REVEAL (answer + explanation) lives in
-    // answerJson — the generators split them so contentJson never carries answers
-    // (a student sees contentJson before revealing). Read reveal fields from
-    // answerJson, not contentJson, or the reveal renders blank. Backend HOT_TAKE
-    // uses `isTrue`; the client card calls it `isCorrect`.
-    final reveal = item!.answerJson ?? const <String, dynamic>{};
+    // The PROMPT lives in contentJson. The REVEAL is split by secrecy:
+    //  · SPOT_MISTAKE / CHALLENGE are UNGRADED — the server ships their non-secret
+    //    reveal at serve time in `revealJson` (field-filtered), read here.
+    //  · HOT_TAKE is the graded type — its key (isTrue) is NEVER served; the verdict
+    //    + explanation come from the per-item submit response, passed in as [verdict].
+    // NB: answerJson is null for TEST at serve, so it is deliberately NOT read here.
+    final reveal = item!.revealJson ?? const <String, dynamic>{};
     return switch (item!.type) {
       'HOT_TAKE' => HotTakeCard(
           statement: content['statement'] as String? ?? '',
-          explanation: reveal['explanation'] as String? ?? '',
-          isCorrect: reveal['isTrue'] as bool? ?? true,
+          verdict: verdict,
+          verdictPending: verdictPending,
           isRevealed: isRevealed,
           answer: answer,
           onAnswer: (response) => onAnswer(item!.id, response),
@@ -149,25 +159,26 @@ class HotTakeCard extends StatelessWidget {
   const HotTakeCard({
     super.key,
     required this.statement,
-    required this.explanation,
-    required this.isCorrect,
+    required this.verdict,
+    required this.verdictPending,
     required this.isRevealed,
     required this.answer,
     required this.onAnswer,
   });
 
   final String statement;
-  final String explanation;
-  final bool isCorrect;
+
+  /// Authoritative SERVER verdict (null ⇒ show the reveal WITHOUT a Correct!/Not quite
+  /// banner — we never fabricate correctness client-side, the old `?? true` bug).
+  final HotTakeVerdict? verdict;
+  final bool verdictPending;
   final bool isRevealed;
   final String? answer;
   final void Function(String) onAnswer;
 
   @override
   Widget build(BuildContext context) {
-    final userAgreed = answer == 'AGREE';
-    final wasRight =
-        isRevealed && ((userAgreed && isCorrect) || (!userAgreed && !isCorrect));
+    final wasRight = verdict?.correct ?? false;
 
     return Container(
       padding: AppSpacing.card,
@@ -206,41 +217,84 @@ class HotTakeCard extends StatelessWidget {
               ],
             ),
           if (isRevealed) ...[
-            Container(
-              width: double.infinity,
-              padding: AppSpacing.card,
-              decoration: BoxDecoration(
-                color: wasRight ? AppColors.greenL : AppColors.coralL,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        wasRight
-                            ? Icons.check_circle_rounded
-                            : Icons.cancel_rounded,
-                        color: wasRight ? AppColors.green : AppColors.coral,
-                        size: 20,
-                      ),
-                      const SizedBox(width: AppSpacing.xs),
-                      Text(
-                        wasRight ? 'Correct!' : 'Not quite',
-                        style: AppTextStyles.body.copyWith(
-                          color:
-                              wasRight ? AppColors.green : AppColors.coral,
-                          fontWeight: FontWeight.w700,
+            if (verdictPending)
+              // Verdict in flight — a neutral "checking" state so a normal load never
+              // flashes the failure copy. The Next button (in TestBody) is unaffected.
+              Container(
+                width: double.infinity,
+                padding: AppSpacing.card,
+                decoration: BoxDecoration(
+                  color: AppColors.surf2,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    const SizedBox(
+                      width: AppSizing.spinnerSm,
+                      height: AppSizing.spinnerSm,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: AppColors.purple),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Text('Checking your answer…',
+                        style: AppTextStyles.body
+                            .copyWith(color: AppColors.text2)),
+                  ],
+                ),
+              )
+            else if (verdict != null)
+              Container(
+                width: double.infinity,
+                padding: AppSpacing.card,
+                decoration: BoxDecoration(
+                  color: wasRight ? AppColors.greenL : AppColors.coralL,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          wasRight
+                              ? Icons.check_circle_rounded
+                              : Icons.cancel_rounded,
+                          color: wasRight ? AppColors.green : AppColors.coral,
+                          size: 20,
                         ),
-                      ),
+                        const SizedBox(width: AppSpacing.xs),
+                        Text(
+                          wasRight ? 'Correct!' : 'Not quite',
+                          style: AppTextStyles.body.copyWith(
+                            color:
+                                wasRight ? AppColors.green : AppColors.coral,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (verdict!.explanation.isNotEmpty) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      Text(verdict!.explanation, style: AppTextStyles.body),
                     ],
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(explanation, style: AppTextStyles.body),
-                ],
+                  ],
+                ),
+              )
+            else
+              // No verdict (fetch failed) — record the answer honestly WITHOUT a
+              // fabricated Correct!/Not quite. The item is still graded at end-of-stage.
+              Container(
+                width: double.infinity,
+                padding: AppSpacing.card,
+                decoration: BoxDecoration(
+                  color: AppColors.surf2,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  "Answer recorded — couldn't load feedback right now.",
+                  style: AppTextStyles.body.copyWith(color: AppColors.text2),
+                ),
               ),
-            ),
           ],
         ],
       ),

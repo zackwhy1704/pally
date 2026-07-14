@@ -40,6 +40,7 @@ _$ModuleContentItemImpl _$$ModuleContentItemImplFromJson(
       type: json['type'] as String,
       contentJson: _contentJsonFromJson(json['contentJson']),
       answerJson: _answerJsonFromJson(json['answerJson']),
+      revealJson: _revealJsonFromJson(json['revealJson']),
       sortOrder: (json['sortOrder'] as num?)?.toInt() ?? 0,
     );
 
@@ -51,6 +52,7 @@ Map<String, dynamic> _$$ModuleContentItemImplToJson(
       'type': instance.type,
       'contentJson': instance.contentJson,
       'answerJson': instance.answerJson,
+      'revealJson': instance.revealJson,
       'sortOrder': instance.sortOrder,
     };
 

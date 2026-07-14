@@ -21,6 +21,12 @@ Map<String, dynamic> _contentJsonFromJson(Object? value) {
 Map<String, dynamic>? _answerJsonFromJson(Object? value) =>
     _decodeMapOrNull(value);
 
+/// The serve path attaches a field-filtered, NON-secret `revealJson` for TEST items
+/// (SPOT_MISTAKE errorDescription+correctSolution, CHALLENGE explanation; HOT_TAKE
+/// none — its verdict comes from the per-item submit response). Decoded like the
+/// others; null when absent (old server) so the reveal degrades to blank, not a crash.
+Map<String, dynamic>? _revealJsonFromJson(Object? value) => _decodeMapOrNull(value);
+
 Map<String, dynamic>? _decodeMapOrNull(Object? value) {
   if (value == null) return null;
   if (value is Map) return Map<String, dynamic>.from(value);
@@ -78,6 +84,7 @@ class ModuleContentItem with _$ModuleContentItem {
     @JsonKey(fromJson: _contentJsonFromJson)
     required Map<String, dynamic> contentJson,
     @JsonKey(fromJson: _answerJsonFromJson) Map<String, dynamic>? answerJson,
+    @JsonKey(fromJson: _revealJsonFromJson) Map<String, dynamic>? revealJson,
     @Default(0) int sortOrder,
   }) = _ModuleContentItem;
 

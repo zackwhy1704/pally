@@ -24,6 +24,10 @@ mixin _$LearningModule {
   String get title => throw _privateConstructorUsedError;
   String get wikiSlug => throw _privateConstructorUsedError;
   String get stage => throw _privateConstructorUsedError;
+
+  /// Mastery on a 0–100 scale (the canonical backend contract; written at
+  /// ModuleProgressionService avg*100). NEVER multiply this by 100 to display —
+  /// use [masteryDisplayPct] for the "%" and [masteryFraction] for a 0–1 bar.
   double get masteryPct => throw _privateConstructorUsedError;
   Map<String, int> get itemCounts => throw _privateConstructorUsedError;
 
@@ -210,6 +214,10 @@ class _$LearningModuleImpl implements _LearningModule {
   @override
   @JsonKey()
   final String stage;
+
+  /// Mastery on a 0–100 scale (the canonical backend contract; written at
+  /// ModuleProgressionService avg*100). NEVER multiply this by 100 to display —
+  /// use [masteryDisplayPct] for the "%" and [masteryFraction] for a 0–1 bar.
   @override
   @JsonKey()
   final double masteryPct;
@@ -300,6 +308,10 @@ abstract class _LearningModule implements LearningModule {
   String get wikiSlug;
   @override
   String get stage;
+
+  /// Mastery on a 0–100 scale (the canonical backend contract; written at
+  /// ModuleProgressionService avg*100). NEVER multiply this by 100 to display —
+  /// use [masteryDisplayPct] for the "%" and [masteryFraction] for a 0–1 bar.
   @override
   double get masteryPct;
   @override
@@ -332,6 +344,8 @@ mixin _$ModuleContentItem {
   Map<String, dynamic> get contentJson => throw _privateConstructorUsedError;
   @JsonKey(fromJson: _answerJsonFromJson)
   Map<String, dynamic>? get answerJson => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _revealJsonFromJson)
+  Map<String, dynamic>? get revealJson => throw _privateConstructorUsedError;
   int get sortOrder => throw _privateConstructorUsedError;
 
   /// Serializes this ModuleContentItem to a JSON map.
@@ -356,6 +370,7 @@ abstract class $ModuleContentItemCopyWith<$Res> {
       String type,
       @JsonKey(fromJson: _contentJsonFromJson) Map<String, dynamic> contentJson,
       @JsonKey(fromJson: _answerJsonFromJson) Map<String, dynamic>? answerJson,
+      @JsonKey(fromJson: _revealJsonFromJson) Map<String, dynamic>? revealJson,
       int sortOrder});
 }
 
@@ -379,6 +394,7 @@ class _$ModuleContentItemCopyWithImpl<$Res, $Val extends ModuleContentItem>
     Object? type = null,
     Object? contentJson = null,
     Object? answerJson = freezed,
+    Object? revealJson = freezed,
     Object? sortOrder = null,
   }) {
     return _then(_value.copyWith(
@@ -402,6 +418,10 @@ class _$ModuleContentItemCopyWithImpl<$Res, $Val extends ModuleContentItem>
           ? _value.answerJson
           : answerJson // ignore: cast_nullable_to_non_nullable
               as Map<String, dynamic>?,
+      revealJson: freezed == revealJson
+          ? _value.revealJson
+          : revealJson // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
       sortOrder: null == sortOrder
           ? _value.sortOrder
           : sortOrder // ignore: cast_nullable_to_non_nullable
@@ -424,6 +444,7 @@ abstract class _$$ModuleContentItemImplCopyWith<$Res>
       String type,
       @JsonKey(fromJson: _contentJsonFromJson) Map<String, dynamic> contentJson,
       @JsonKey(fromJson: _answerJsonFromJson) Map<String, dynamic>? answerJson,
+      @JsonKey(fromJson: _revealJsonFromJson) Map<String, dynamic>? revealJson,
       int sortOrder});
 }
 
@@ -445,6 +466,7 @@ class __$$ModuleContentItemImplCopyWithImpl<$Res>
     Object? type = null,
     Object? contentJson = null,
     Object? answerJson = freezed,
+    Object? revealJson = freezed,
     Object? sortOrder = null,
   }) {
     return _then(_$ModuleContentItemImpl(
@@ -468,6 +490,10 @@ class __$$ModuleContentItemImplCopyWithImpl<$Res>
           ? _value._answerJson
           : answerJson // ignore: cast_nullable_to_non_nullable
               as Map<String, dynamic>?,
+      revealJson: freezed == revealJson
+          ? _value._revealJson
+          : revealJson // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
       sortOrder: null == sortOrder
           ? _value.sortOrder
           : sortOrder // ignore: cast_nullable_to_non_nullable
@@ -487,9 +513,12 @@ class _$ModuleContentItemImpl implements _ModuleContentItem {
       required final Map<String, dynamic> contentJson,
       @JsonKey(fromJson: _answerJsonFromJson)
       final Map<String, dynamic>? answerJson,
+      @JsonKey(fromJson: _revealJsonFromJson)
+      final Map<String, dynamic>? revealJson,
       this.sortOrder = 0})
       : _contentJson = contentJson,
-        _answerJson = answerJson;
+        _answerJson = answerJson,
+        _revealJson = revealJson;
 
   factory _$ModuleContentItemImpl.fromJson(Map<String, dynamic> json) =>
       _$$ModuleContentItemImplFromJson(json);
@@ -523,13 +552,24 @@ class _$ModuleContentItemImpl implements _ModuleContentItem {
     return EqualUnmodifiableMapView(value);
   }
 
+  final Map<String, dynamic>? _revealJson;
+  @override
+  @JsonKey(fromJson: _revealJsonFromJson)
+  Map<String, dynamic>? get revealJson {
+    final value = _revealJson;
+    if (value == null) return null;
+    if (_revealJson is EqualUnmodifiableMapView) return _revealJson;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
   @override
   @JsonKey()
   final int sortOrder;
 
   @override
   String toString() {
-    return 'ModuleContentItem(id: $id, stage: $stage, type: $type, contentJson: $contentJson, answerJson: $answerJson, sortOrder: $sortOrder)';
+    return 'ModuleContentItem(id: $id, stage: $stage, type: $type, contentJson: $contentJson, answerJson: $answerJson, revealJson: $revealJson, sortOrder: $sortOrder)';
   }
 
   @override
@@ -544,6 +584,8 @@ class _$ModuleContentItemImpl implements _ModuleContentItem {
                 .equals(other._contentJson, _contentJson) &&
             const DeepCollectionEquality()
                 .equals(other._answerJson, _answerJson) &&
+            const DeepCollectionEquality()
+                .equals(other._revealJson, _revealJson) &&
             (identical(other.sortOrder, sortOrder) ||
                 other.sortOrder == sortOrder));
   }
@@ -557,6 +599,7 @@ class _$ModuleContentItemImpl implements _ModuleContentItem {
       type,
       const DeepCollectionEquality().hash(_contentJson),
       const DeepCollectionEquality().hash(_answerJson),
+      const DeepCollectionEquality().hash(_revealJson),
       sortOrder);
 
   /// Create a copy of ModuleContentItem
@@ -585,6 +628,8 @@ abstract class _ModuleContentItem implements ModuleContentItem {
       required final Map<String, dynamic> contentJson,
       @JsonKey(fromJson: _answerJsonFromJson)
       final Map<String, dynamic>? answerJson,
+      @JsonKey(fromJson: _revealJsonFromJson)
+      final Map<String, dynamic>? revealJson,
       final int sortOrder}) = _$ModuleContentItemImpl;
 
   factory _ModuleContentItem.fromJson(Map<String, dynamic> json) =
@@ -604,6 +649,9 @@ abstract class _ModuleContentItem implements ModuleContentItem {
   @override
   @JsonKey(fromJson: _answerJsonFromJson)
   Map<String, dynamic>? get answerJson;
+  @override
+  @JsonKey(fromJson: _revealJsonFromJson)
+  Map<String, dynamic>? get revealJson;
   @override
   int get sortOrder;
 
