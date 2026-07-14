@@ -262,6 +262,14 @@ class _GoalSheetState extends State<_GoalSheet> {
                     label: Text('$v ${_unitOf(_type, v)}'),
                     selected: selected,
                     onSelected: (_) => setState(() => _target = v),
+                    // Explicit colours: the default theme combo rendered the selected
+                    // label near-invisible (purple-on-purple). White on the purple fill
+                    // when selected; text1 on the surface fill when not.
+                    selectedColor: AppColors.purple,
+                    labelStyle: AppTextStyles.body.copyWith(
+                      color: selected ? Colors.white : AppColors.text1,
+                      fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
+                    ),
                   );
                 }).toList(),
               ),
