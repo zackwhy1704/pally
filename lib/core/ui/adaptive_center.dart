@@ -16,7 +16,12 @@ class AdaptiveCenter extends StatelessWidget {
             padding: padding,
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: c.maxHeight),
-              child: IntrinsicHeight(child: child),
+              // Center on BOTH axes within the min-height (viewport-tall) box, so
+              // narrow content sits on the centre line instead of shrink-wrapping to
+              // the top-left. A full-width child (width:infinity) still expands to
+              // fill; padding stays owned by the scroll view, so there is no
+              // c.maxWidth arithmetic that could overflow by the padding amount.
+              child: IntrinsicHeight(child: Center(child: child)),
             ),
           ),
         ),
