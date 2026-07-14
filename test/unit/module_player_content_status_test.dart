@@ -79,9 +79,12 @@ void main() {
     expect(s.error, isNull);
   });
 
-  test('items served but ALL blank → isContentUpdating, NOT a retryable error', () async {
-    // A HOT_TAKE with an empty explanation is a blank reveal → skipped → items
-    // empty. Pre-fix this became a red "Try again" that re-POSTed forever.
+  test('items served but ALL blank CONTENT → isContentUpdating, NOT a retryable error',
+      () async {
+    // Blankness is judged on the PROMPT (contentJson), the field the client renders
+    // at serve. A HOT_TAKE with an empty statement is a dead card → skipped → items
+    // empty. Pre-fix this became a red "Try again" that re-POSTed forever. Note the
+    // reveal (answerJson) is deliberately absent — that's the real serve contract.
     final s = await _runStart({
       'stage': 'TEST',
       'items': [
@@ -89,10 +92,16 @@ void main() {
           'id': 'blank-1',
           'stage': 'TEST',
           'type': 'HOT_TAKE',
-          'contentJson': {'statement': 's', 'isTrue': true},
-          'answerJson': {'explanation': ''},
+          'contentJson': {'statement': '  '},
           'sortOrder': 0,
-        }
+        },
+        {
+          'id': 'blank-2',
+          'stage': 'TEST',
+          'type': 'SPOT_MISTAKE',
+          'contentJson': {'problem': '', 'wrongSolution': ''},
+          'sortOrder': 1,
+        },
       ],
     });
     expect(s.isContentUpdating, isTrue,
@@ -100,7 +109,48 @@ void main() {
     expect(s.error, isNull);
   });
 
-  test('normal servable items → plays, not the updating state', () async {
+  test('REGRESSION: 6 TEST items with NO answerJson (the real serve shape) all load',
+      () async {
+    // The bug: the shield read answerJson (which serve omits for TEST) → every item
+    // looked blank → whole stage false-emptied. With content-based judging, a full
+    // stage of real HOT_TAKE/SPOT_MISTAKE/CHALLENGE items — none carrying answerJson —
+    // must load and play, not bounce.
+    final s = await _runStart({
+      'stage': 'TEST',
+      'items': [
+        for (var i = 0; i < 2; i++)
+          {
+            'id': 'ht-$i',
+            'stage': 'TEST',
+            'type': 'HOT_TAKE',
+            'contentJson': {'statement': 'Statement $i'},
+            'sortOrder': i,
+          },
+        for (var i = 0; i < 2; i++)
+          {
+            'id': 'sm-$i',
+            'stage': 'TEST',
+            'type': 'SPOT_MISTAKE',
+            'contentJson': {'problem': 'Problem $i', 'wrongSolution': 'Wrong $i'},
+            'sortOrder': 2 + i,
+          },
+        for (var i = 0; i < 2; i++)
+          {
+            'id': 'ch-$i',
+            'stage': 'TEST',
+            'type': 'CHALLENGE',
+            'contentJson': {'question': 'Question $i'},
+            'sortOrder': 4 + i,
+          },
+      ],
+    });
+    expect(s.isContentUpdating, isFalse,
+        reason: 'real serve payloads (no answerJson) must NOT trip the shield');
+    expect(s.error, isNull);
+    expect(s.totalItems, 6);
+  });
+
+  test('normal servable item (content present, no answerJson) → plays', () async {
     final s = await _runStart({
       'stage': 'TEST',
       'items': [
@@ -108,8 +158,7 @@ void main() {
           'id': 'ok-1',
           'stage': 'TEST',
           'type': 'HOT_TAKE',
-          'contentJson': {'statement': 's', 'isTrue': true, 'explanation': 'e'},
-          'answerJson': {'explanation': 'because e'},
+          'contentJson': {'statement': 's'},
           'sortOrder': 0,
         }
       ],
