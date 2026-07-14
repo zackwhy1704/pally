@@ -324,14 +324,20 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
           answer: playerState.currentItem != null
               ? playerState.answers[playerState.currentItem!.id]
               : null,
+          verdict: playerState.currentItem != null
+              ? playerState.hotTakeVerdicts[playerState.currentItem!.id]
+              : null,
+          verdictPending: playerState.currentItem != null &&
+              playerState.hotTakeVerdictPending
+                  .contains(playerState.currentItem!.id),
           onAnswer: (itemId, response) {
-            final vm = ref.read(
-              modulePlayerViewModelProvider(
-                      widget.avatarId, widget.moduleId)
-                  .notifier,
-            );
-            vm.setAnswer(itemId, response);
-            vm.revealItem(itemId);
+            // answerTestItem records + reveals, and for HOT_TAKE fetches the server
+            // verdict (skipping the last item so it never triggers advancement).
+            ref
+                .read(modulePlayerViewModelProvider(
+                        widget.avatarId, widget.moduleId)
+                    .notifier)
+                .answerTestItem(itemId, response);
           },
           onNext: () {
             final vm = ref.read(

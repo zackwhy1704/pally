@@ -34,6 +34,17 @@ class SelfAssessItem {
   final String? feedback;
 }
 
+/// The server's verdict for one answered HOT_TAKE, fetched via the per-item submit
+/// (the only secret + graded TEST type). `correct` is the authoritative grade — never
+/// computed client-side. Absent from state ⇒ no verdict yet (pending or failed) ⇒ the
+/// reveal shows NO Correct!/Not quite banner (we never fabricate one).
+@immutable
+class HotTakeVerdict {
+  const HotTakeVerdict({required this.correct, required this.explanation});
+  final bool correct;
+  final String explanation;
+}
+
 @immutable
 class ModulePlayerState {
   const ModulePlayerState({
@@ -54,6 +65,8 @@ class ModulePlayerState {
     this.selfReports = const {},
     this.selfAssessDone = false,
     this.isContentUpdating = false,
+    this.hotTakeVerdicts = const {},
+    this.hotTakeVerdictPending = const {},
   });
 
   final LearningModule? module;
@@ -96,6 +109,14 @@ class ModulePlayerState {
   /// "check back soon" card, not a red error + Retry.
   final bool isContentUpdating;
 
+  /// itemId -> the server verdict for an answered HOT_TAKE (from its per-item submit).
+  /// Present only on a successful fetch; absence ⇒ no verdict banner (pending or failed).
+  final Map<String, HotTakeVerdict> hotTakeVerdicts;
+
+  /// HOT_TAKE itemIds whose per-item verdict fetch is in flight (shows a "checking…"
+  /// state so a normal load never flashes the failure copy).
+  final Set<String> hotTakeVerdictPending;
+
   ModuleContentItem? get currentItem =>
       items.isEmpty || currentIndex >= items.length
           ? null
@@ -122,6 +143,8 @@ class ModulePlayerState {
     Map<String, String>? selfReports,
     bool? selfAssessDone,
     bool? isContentUpdating,
+    Map<String, HotTakeVerdict>? hotTakeVerdicts,
+    Set<String>? hotTakeVerdictPending,
   }) {
     return ModulePlayerState(
       module: module ?? this.module,
@@ -141,6 +164,9 @@ class ModulePlayerState {
       selfReports: selfReports ?? this.selfReports,
       selfAssessDone: selfAssessDone ?? this.selfAssessDone,
       isContentUpdating: isContentUpdating ?? this.isContentUpdating,
+      hotTakeVerdicts: hotTakeVerdicts ?? this.hotTakeVerdicts,
+      hotTakeVerdictPending:
+          hotTakeVerdictPending ?? this.hotTakeVerdictPending,
     );
   }
 }
@@ -351,6 +377,89 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
     final updated = Set<String>.from(state.revealedItems);
     updated.add(itemId);
     state = state.copyWith(revealedItems: updated);
+  }
+
+  /// Handles a TEST-stage answer: records it, reveals the card, and — for the only
+  /// secret + graded type, HOT_TAKE — fetches the SERVER verdict + explanation via a
+  /// single-item submit (SPOT_MISTAKE/CHALLENGE render their reveal from the served
+  /// `revealJson`, no call). The verdict is authoritative; we NEVER fabricate one.
+  ///
+  /// ADVANCEMENT INVARIANT: the per-item fetch is skipped for the LAST item of the
+  /// stage, so a per-item call can never be the submission that completes the stage
+  /// (completedInStage ≤ N-1 < N always). End-of-stage [submitStage] — the single
+  /// hardened path — stays the sole owner of advancement. (Hot-takes sort before
+  /// SPOT_MISTAKE/CHALLENGE, so the last item is normally not a hot-take and every
+  /// hot-take still gets its verdict; the skip only guards the all-hot-take stage.)
+  Future<void> answerTestItem(String itemId, String response) async {
+    if (state.revealedItems.contains(itemId)) return; // already answered — no re-fire
+    setAnswer(itemId, response);
+    revealItem(itemId);
+
+    final matches = state.items.where((i) => i.id == itemId);
+    final item = matches.isEmpty ? null : matches.first;
+    if (item == null || item.type != 'HOT_TAKE') return; // only HOT_TAKE needs a call
+    if (state.isLastItem) return; // no-advance invariant: never submit the last item early
+
+    final pending = Set<String>.from(state.hotTakeVerdictPending)..add(itemId);
+    state = state.copyWith(hotTakeVerdictPending: pending);
+    try {
+      final dio = ref.read(dioProvider);
+      final res = await dio.post<dynamic>(
+        '/api/v1/avatars/$_avatarId/modules/$_moduleId/submit',
+        // Single-item body; durationSeconds 0 (the end-of-stage submit logs the real
+        // time). Upsert makes the later full-stage resubmit idempotent.
+        data: buildModuleSubmitBody(
+          submissions: [
+            {'itemId': itemId, 'response': response}
+          ],
+          durationSeconds: 0,
+        ),
+      );
+      final verdict = _parseHotTakeVerdict(res.data, itemId);
+      final donePending = Set<String>.from(state.hotTakeVerdictPending)..remove(itemId);
+      if (verdict != null) {
+        final verdicts = Map<String, HotTakeVerdict>.from(state.hotTakeVerdicts);
+        verdicts[itemId] = verdict;
+        state = state.copyWith(
+            hotTakeVerdicts: verdicts, hotTakeVerdictPending: donePending);
+      } else {
+        // Graded row but no parseable verdict (e.g. UNGRADED legacy) — no banner.
+        state = state.copyWith(hotTakeVerdictPending: donePending);
+      }
+    } catch (e, st) {
+      // NEVER fabricate a verdict. Drop the pending flag so the reveal renders
+      // bannerless (explanation unavailable); the item stays in the end-of-stage
+      // submit and is graded there. Logged, not surfaced as a blocking error.
+      appLog.w('[ModulePlayer] per-item HOT_TAKE verdict fetch failed for $itemId — '
+          'rendering reveal without a verdict banner', error: e, stackTrace: st);
+      final donePending = Set<String>.from(state.hotTakeVerdictPending)..remove(itemId);
+      state = state.copyWith(hotTakeVerdictPending: donePending);
+    }
+  }
+
+  /// Reads one HOT_TAKE verdict from a submit response: `results[i]` with a matching
+  /// itemId, `correct` (the server's deterministic grade) and the explanation decoded
+  /// from that row's `answerJson`. Returns null when the row isn't a gradeable verdict.
+  HotTakeVerdict? _parseHotTakeVerdict(dynamic data, String itemId) {
+    if (data is! Map || data['results'] is! List) return null;
+    for (final r in data['results'] as List) {
+      if (r is! Map || r['itemId']?.toString() != itemId) continue;
+      if (r['correct'] is! bool) return null; // UNGRADED / no key → no verdict
+      String explanation = '';
+      final rawAnswer = r['answerJson'];
+      if (rawAnswer is String && rawAnswer.isNotEmpty) {
+        try {
+          final decoded = jsonDecode(rawAnswer);
+          if (decoded is Map && decoded['explanation'] is String) {
+            explanation = decoded['explanation'] as String;
+          }
+        } catch (_) {/* leave explanation empty */}
+      } else if (rawAnswer is Map && rawAnswer['explanation'] is String) {
+        explanation = rawAnswer['explanation'] as String;
+      }
+      return HotTakeVerdict(correct: r['correct'] as bool, explanation: explanation);
+    }
+    return null;
   }
 
   Future<void> submitStage() async {
