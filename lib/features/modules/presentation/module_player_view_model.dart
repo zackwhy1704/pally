@@ -8,6 +8,9 @@ import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/observability/observability.dart';
 import 'package:pally/core/observability/observability_providers.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/features/avatar_hub/presentation/avatar_hub_view_model.dart';
+import 'package:pally/features/modules/presentation/module_list_view_model.dart';
+import 'package:pally/features/quiz/providers/quiz_status_provider.dart';
 import 'package:pally/shared/models/learning_module.dart';
 
 part 'module_player_view_model.g.dart';
@@ -504,6 +507,20 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
             selfAssessDone: false,
           );
         }
+      }
+
+      // Stage advanced on the server (list CTA/stage changed; mastery changed on
+      // COMPLETE). The module-list, avatar hub, and quiz-status providers live under
+      // the nav stack while the player is pushed and are never otherwise refreshed, so
+      // popping back showed pre-play state. Invalidate them ONLY on a real advance —
+      // gated on the raw server signal, so a non-advancing submit (or the per-item
+      // HOT_TAKE verdict fetch, which never advances) causes no refetch churn.
+      final advanced = data is Map &&
+          (data['stageComplete'] == true || data['nextStage'] != null);
+      if (advanced) {
+        ref.invalidate(moduleListViewModelProvider(_avatarId));
+        ref.invalidate(avatarHubViewModelProvider(_avatarId));
+        ref.invalidate(quizStatusProvider(_avatarId));
       }
 
       final nextStage = _extractNextStage(data);
