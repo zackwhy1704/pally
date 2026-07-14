@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/error/pally_error.dart';
-import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -1073,10 +1072,8 @@ class _ShareToGroupButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final flagsAsync = ref.watch(featureFlagsProvider);
-    final groupsEnabled =
-        flagsAsync.valueOrNull?[FeatureFlags.groupsEnabled] == true;
-    if (!groupsEnabled) return const SizedBox.shrink();
+    // Groups is public (server returns groups_enabled=true for all) — the old
+    // pilot gate that hid this button is gone; always offer share-to-group.
     return GestureDetector(
       onTap: isBusy ? null : onTap,
       child: Container(

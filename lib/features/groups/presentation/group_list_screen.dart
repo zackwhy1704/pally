@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
-import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/ui/adaptive_content_width.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -18,14 +17,10 @@ class GroupListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final flagAsync = ref.watch(featureFlagsProvider);
-    // Even when the user reaches the tab directly (deep link), respect the
-    // pilot gate. Render the coming-soon card until ops flips the flag.
-    final enabled =
-        flagAsync.valueOrNull?[FeatureFlags.groupsEnabled] == true;
-    if (!enabled) {
-      return const _ComingSoonScreen();
-    }
+    // Groups is public — the server returns groups_enabled=true for all users.
+    // The old client pilot gate was dead policy with a stuck-gate failure mode
+    // (one failed /me/flags fetch latched the coming-soon screen all session), so
+    // it's gone: render the real screen unconditionally.
     final groupsAsync = ref.watch(groupListViewModelProvider);
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -271,42 +266,3 @@ class _EmptyState extends StatelessWidget {
   }
 }
 
-class _ComingSoonScreen extends StatelessWidget {
-  const _ComingSoonScreen();
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.bg,
-      appBar: AppBar(
-        backgroundColor: AppColors.bg,
-        elevation: 0,
-        title: Text('Study Groups', style: AppTextStyles.title),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.lock_clock_rounded,
-                  size: 64, color: AppColors.text3),
-              const SizedBox(height: AppSpacing.md),
-              Text('Coming soon to your account',
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.title),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                'Study groups are in pilot. Ask your teacher to invite you to '
-                'the rollout — your account will unlock automatically.',
-                textAlign: TextAlign.center,
-                style: AppTextStyles.body
-                    .copyWith(color: AppColors.text2),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
