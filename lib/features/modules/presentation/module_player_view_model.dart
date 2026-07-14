@@ -251,11 +251,13 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
           final parsed = ModuleContentItem.fromJson(
             Map<String, dynamic>.from(e as Map),
           );
-          // Blank-item client shield: a TEST item whose reveal content is
-          // substantively blank (a slipped-through generation defect) is SKIPPED so
-          // the student never sees an empty "The error:" / "Correct solution:" reveal.
-          // It contributes no signal (stays UNGRADED) — the exact sibling of the PROVE
-          // blank-reference guard below. The generation reaper owns fixing the item.
+          // Blank-item client shield: a TEST item whose PROMPT content (what the
+          // client renders at serve — see isBlankTestItem) is substantively blank is
+          // SKIPPED so the student never sees an empty card. It contributes no signal
+          // (stays UNGRADED) — the sibling of the PROVE blank-reference guard below.
+          // The generation reaper owns fixing the item. NB: this judges contentJson,
+          // never answerJson (which serve omits for TEST — an answerJson check would
+          // skip every item and false-empty the whole stage).
           if (isBlankTestItem(parsed)) {
             appLog.w('[ModulePlayer] TEST item ${parsed.id} (${parsed.type}) has a '
                 'blank reveal — skipping (stays UNGRADED)');
@@ -620,18 +622,30 @@ Map<String, dynamic> buildModuleSubmitBody({
   };
 }
 
-/// A TEST item whose reveal (answer) content is substantively blank — the same
-/// fields RulesOutputValidator enforces server-side. The module player SKIPS these
-/// (they stay UNGRADED, never render an empty reveal), mirroring the PROVE blank-
-/// reference guard. Top-level so it's directly unit-testable.
+/// A TEST item the client cannot render into anything a student can act on — its
+/// PROMPT content is substantively blank. The module player SKIPS these (they stay
+/// UNGRADED, never render an empty card), mirroring the PROVE blank-reference guard.
+///
+/// Judges the fields the TEST renderers actually paint PRE-REVEAL, all of which live
+/// in `contentJson` (see test_body.dart): HOT_TAKE→statement, SPOT_MISTAKE→problem +
+/// wrongSolution, CHALLENGE→question. It MUST NOT consult `answerJson`: the serve
+/// contract omits answerJson for every TEST item (backend buildStageResponse attaches
+/// it only for LEARN), so an answerJson-based check sees null on EVERY served item and
+/// wrongly skips the entire stage → the "Mochi is refreshing this lesson" false-empty.
+/// The reveal (answerJson) arrives only in the submit response, never at serve.
+///
+/// Deliberately conservative — a false positive here re-strands a whole stage, which is
+/// the exact bug this guard caused before. SPOT_MISTAKE counts as blank only when BOTH
+/// its prompt fields are empty (a truly dead card); a partial item still renders and the
+/// generation reaper owns healing it. Top-level so it's directly unit-testable.
 bool isBlankTestItem(ModuleContentItem item) {
-  final reveal = item.answerJson ?? const <String, dynamic>{};
-  String field(String k) => (reveal[k] as String?)?.trim() ?? '';
+  final content = item.contentJson;
+  String field(String k) => (content[k] as String?)?.trim() ?? '';
   return switch (item.type) {
     'SPOT_MISTAKE' =>
-      field('errorDescription').isEmpty && field('correctSolution').isEmpty,
-    'HOT_TAKE' => field('explanation').isEmpty,
-    'CHALLENGE' => field('explanation').isEmpty,
+      field('problem').isEmpty && field('wrongSolution').isEmpty,
+    'HOT_TAKE' => field('statement').isEmpty,
+    'CHALLENGE' => field('question').isEmpty,
     _ => false, // LEARN micro-cards / PROVE handled elsewhere
   };
 }

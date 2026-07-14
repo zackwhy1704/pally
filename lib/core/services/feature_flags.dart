@@ -9,8 +9,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Known feature flags. Add a new entry here when introducing a new gated module.
 class FeatureFlags {
-  /// Groups tab — open to all users (server always returns true).
-  static const groupsEnabled = 'groups_enabled';
+  // NB: groups_enabled was removed — Groups is public and its client gate had a
+  // stuck-gate failure mode (a failed /me/flags fetch latched Coming-Soon all
+  // session). The server still returns the flag; the client no longer reads it.
 
   /// Admin-only flag (admin demo mode, admin settings).
   /// Set server-side from ADMIN_EMAILS env var only. Never set client-side.
