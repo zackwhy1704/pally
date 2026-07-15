@@ -42,6 +42,10 @@ _$ModuleContentItemImpl _$$ModuleContentItemImplFromJson(
       answerJson: _answerJsonFromJson(json['answerJson']),
       revealJson: _revealJsonFromJson(json['revealJson']),
       sortOrder: (json['sortOrder'] as num?)?.toInt() ?? 0,
+      sourcePageTitle: json['sourcePageTitle'] as String?,
+      sourcePageSlug: json['sourcePageSlug'] as String?,
+      targetConcept: json['targetConcept'] as String?,
+      priorScore: (json['priorScore'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$$ModuleContentItemImplToJson(
@@ -54,6 +58,10 @@ Map<String, dynamic> _$$ModuleContentItemImplToJson(
       'answerJson': instance.answerJson,
       'revealJson': instance.revealJson,
       'sortOrder': instance.sortOrder,
+      'sourcePageTitle': instance.sourcePageTitle,
+      'sourcePageSlug': instance.sourcePageSlug,
+      'targetConcept': instance.targetConcept,
+      'priorScore': instance.priorScore,
     };
 
 _$ModuleResultsImpl _$$ModuleResultsImplFromJson(Map<String, dynamic> json) =>

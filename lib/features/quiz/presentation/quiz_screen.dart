@@ -10,6 +10,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/adaptive_center.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/widgets/loading/splash_lines.dart';
+import 'package:pally/features/modules/presentation/widgets/proof_chips.dart';
 import 'package:pally/features/quiz/presentation/quiz_view_model.dart';
 import 'package:pally/features/progress/presentation/level_up_controller.dart';
 import 'package:pally/shared/models/quiz_question.dart';
@@ -209,7 +210,11 @@ class _QuizBody extends StatelessWidget {
             total: quizState.totalQuestions,
           ),
           const SizedBox(height: AppSpacing.lg),
-          _QuestionCard(question: question),
+          _QuestionCard(
+            question: question,
+            onOpenNotes: () =>
+                WikiViewerRoute(avatarId: avatarId).push(context),
+          ),
           if (quizState.confidenceMode && !quizState.isAnswered) ...[
             const SizedBox(height: AppSpacing.md),
             _ConfidencePicker(
@@ -247,6 +252,16 @@ class _QuizBody extends StatelessWidget {
                 isCorrect: quizState.selectedAnswer == question.correctIndex,
                 avatarId: avatarId,
               ),
+              // Comeback payoff: a correct answer on a weakness-tagged question.
+              if (quizState.selectedAnswer == question.correctIndex &&
+                  weakTopicConcept(question.selectionReason) != null) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: ComebackLine(
+                      concept: weakTopicConcept(question.selectionReason)!),
+                ),
+              ],
               const SizedBox(height: AppSpacing.md),
               const _XpBadge(xp: 20),
               const SizedBox(height: AppSpacing.md),
@@ -316,29 +331,50 @@ class _ProgressBar extends StatelessWidget {
 }
 
 class _QuestionCard extends StatelessWidget {
-  const _QuestionCard({required this.question});
+  const _QuestionCard({required this.question, this.onOpenNotes});
 
   final QuizQuestion question;
+  final VoidCallback? onOpenNotes;
 
   @override
   Widget build(BuildContext context) {
+    final weakConcept = weakTopicConcept(question.selectionReason);
     return Container(
       padding: AppSpacing.card,
       decoration: BoxDecoration(
         color: AppColors.purpleL,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.help_outline_rounded,
-              color: AppColors.purple, size: 24),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Text(
-              question.question,
-              style: AppTextStyles.title.copyWith(fontSize: 16),
+          // Provenance chip — "from your notes" trust marker (silent when absent).
+          if (question.pageTitle.isNotEmpty) ...[
+            Align(
+              alignment: Alignment.centerLeft,
+              child: ProvenanceChip(
+                  pageTitle: question.pageTitle, onTap: onOpenNotes),
             ),
+            const SizedBox(height: AppSpacing.sm),
+          ],
+          // Targeting badge — the weak-first picker chose this (pre-answer).
+          if (weakConcept != null) ...[
+            TargetingBadge(text: 'Reviewing your weak spot: $weakConcept.'),
+            const SizedBox(height: AppSpacing.sm),
+          ],
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.help_outline_rounded,
+                  color: AppColors.purple, size: 24),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  question.question,
+                  style: AppTextStyles.title.copyWith(fontSize: 16),
+                ),
+              ),
+            ],
           ),
         ],
       ),

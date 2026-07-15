@@ -3,6 +3,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_sizing.dart';
+import 'package:pally/features/modules/presentation/widgets/proof_chips.dart';
 import 'package:pally/shared/models/learning_module.dart';
 
 // ── PROVE stage: all short-answer questions ─────────────────────────────────
@@ -15,6 +16,7 @@ class ProveBody extends StatelessWidget {
     required this.onAnswerChanged,
     required this.onSubmit,
     required this.isSubmitting,
+    this.onOpenNotes,
   });
 
   final List<ModuleContentItem> items;
@@ -22,6 +24,10 @@ class ProveBody extends StatelessWidget {
   final void Function(String itemId, String response) onAnswerChanged;
   final VoidCallback onSubmit;
   final bool isSubmitting;
+
+  /// Opens the source wiki page for the provenance chip (provided by the screen,
+  /// which owns navigation). Null → the chip renders non-tappable.
+  final VoidCallback? onOpenNotes;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +51,10 @@ class ProveBody extends StatelessWidget {
                 question: question,
                 answer: answers[item.id] ?? '',
                 onChanged: (value) => onAnswerChanged(item.id, value),
+                sourcePageTitle: item.sourcePageTitle,
+                targetConcept: item.targetConcept,
+                priorScore: item.priorScore,
+                onOpenNotes: onOpenNotes,
               );
             },
           ),
@@ -89,12 +99,20 @@ class ProveQuestion extends StatefulWidget {
     required this.question,
     required this.answer,
     required this.onChanged,
+    this.sourcePageTitle,
+    this.targetConcept,
+    this.priorScore,
+    this.onOpenNotes,
   });
 
   final int questionNumber;
   final String question;
   final String answer;
   final ValueChanged<String> onChanged;
+  final String? sourcePageTitle;
+  final String? targetConcept;
+  final double? priorScore;
+  final VoidCallback? onOpenNotes;
 
   @override
   State<ProveQuestion> createState() => ProveQuestionState();
@@ -127,6 +145,26 @@ class ProveQuestionState extends State<ProveQuestion> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Provenance chip — grounded content trust marker (silent when absent).
+          if ((widget.sourcePageTitle ?? '').isNotEmpty) ...[
+            Align(
+              alignment: Alignment.centerLeft,
+              child: ProvenanceChip(
+                pageTitle: widget.sourcePageTitle!,
+                onTap: widget.onOpenNotes,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+          ],
+          // Targeting badge — this concept tripped you up in the Test (pre-answer).
+          if (isWeaknessScore(widget.priorScore) &&
+              (widget.targetConcept ?? '').isNotEmpty) ...[
+            TargetingBadge(
+              text:
+                  'Focusing on ${widget.targetConcept} — this tripped you up in the Test.',
+            ),
+            const SizedBox(height: AppSpacing.sm),
+          ],
           Text(
             'Question ${widget.questionNumber}',
             style: AppTextStyles.caption
