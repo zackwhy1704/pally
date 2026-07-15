@@ -4,7 +4,21 @@ import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/features/modules/presentation/module_player_view_model.dart';
+import 'package:pally/features/modules/presentation/widgets/proof_chips.dart';
 import 'package:pally/shared/models/learning_module.dart';
+
+/// Leading provenance chip for a TEST card — "From your notes: {title}" tapping to the
+/// wiki. Empty list when the item carries no source title (old content degrades silently).
+List<Widget> _provenancePrefix(String? title, VoidCallback? onOpenNotes) =>
+    (title == null || title.isEmpty)
+        ? const []
+        : [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: ProvenanceChip(pageTitle: title, onTap: onOpenNotes),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+          ];
 
 // ── TEST stage: sequential items ────────────────────────────────────────────
 
@@ -22,6 +36,7 @@ class TestBody extends StatelessWidget {
     required this.isSubmitting,
     this.verdict,
     this.verdictPending = false,
+    this.onOpenNotes,
   });
 
   final ModuleContentItem? item;
@@ -39,6 +54,9 @@ class TestBody extends StatelessWidget {
 
   /// True while this HOT_TAKE's verdict fetch is in flight (shows "checking…").
   final bool verdictPending;
+
+  /// Opens the source wiki page for the provenance chip (provided by the screen).
+  final VoidCallback? onOpenNotes;
 
   @override
   Widget build(BuildContext context) {
@@ -128,6 +146,7 @@ class TestBody extends StatelessWidget {
     // to the next item. A per-item key forces fresh State on item change while
     // preserving it WITHIN an item (same id → same key as the user types).
     final cardKey = ValueKey(item!.id);
+    final sourcePageTitle = item!.sourcePageTitle;
     return switch (item!.type) {
       'HOT_TAKE' => HotTakeCard(
           key: cardKey,
@@ -137,6 +156,8 @@ class TestBody extends StatelessWidget {
           isRevealed: isRevealed,
           answer: answer,
           onAnswer: (response) => onAnswer(item!.id, response),
+          sourcePageTitle: sourcePageTitle,
+          onOpenNotes: onOpenNotes,
         ),
       'SPOT_MISTAKE' => SpotMistakeCard(
           key: cardKey,
@@ -146,6 +167,8 @@ class TestBody extends StatelessWidget {
           correctSolution: reveal['correctSolution'] as String? ?? '',
           isRevealed: isRevealed,
           onReveal: () => onAnswer(item!.id, 'found'),
+          sourcePageTitle: sourcePageTitle,
+          onOpenNotes: onOpenNotes,
         ),
       'CHALLENGE' => ChallengeCard(
           key: cardKey,
@@ -154,6 +177,8 @@ class TestBody extends StatelessWidget {
           isRevealed: isRevealed,
           answer: answer ?? '',
           onSubmit: (response) => onAnswer(item!.id, response),
+          sourcePageTitle: sourcePageTitle,
+          onOpenNotes: onOpenNotes,
         ),
       _ => GenericTestCard(
           key: cardKey,
@@ -174,8 +199,12 @@ class HotTakeCard extends StatelessWidget {
     required this.isRevealed,
     required this.answer,
     required this.onAnswer,
+    this.sourcePageTitle,
+    this.onOpenNotes,
   });
 
+  final String? sourcePageTitle;
+  final VoidCallback? onOpenNotes;
   final String statement;
 
   /// Authoritative SERVER verdict (null ⇒ show the reveal WITHOUT a Correct!/Not quite
@@ -200,6 +229,7 @@ class HotTakeCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          ..._provenancePrefix(sourcePageTitle, onOpenNotes),
           Text('True or False?',
               style: AppTextStyles.label.copyWith(
                   color: AppColors.amber, fontWeight: FontWeight.w700)),
@@ -358,8 +388,12 @@ class SpotMistakeCard extends StatelessWidget {
     required this.correctSolution,
     required this.isRevealed,
     required this.onReveal,
+    this.sourcePageTitle,
+    this.onOpenNotes,
   });
 
+  final String? sourcePageTitle;
+  final VoidCallback? onOpenNotes;
   final String problem;
   final String wrongSolution;
   final String errorDescription;
@@ -379,6 +413,7 @@ class SpotMistakeCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          ..._provenancePrefix(sourcePageTitle, onOpenNotes),
           Text('Spot the mistake',
               style: AppTextStyles.label.copyWith(
                   color: AppColors.amber, fontWeight: FontWeight.w700)),
@@ -456,8 +491,12 @@ class ChallengeCard extends StatefulWidget {
     required this.isRevealed,
     required this.answer,
     required this.onSubmit,
+    this.sourcePageTitle,
+    this.onOpenNotes,
   });
 
+  final String? sourcePageTitle;
+  final VoidCallback? onOpenNotes;
   final String question;
   final String explanation;
   final bool isRevealed;
@@ -506,6 +545,7 @@ class ChallengeCardState extends State<ChallengeCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          ..._provenancePrefix(widget.sourcePageTitle, widget.onOpenNotes),
           Text('Challenge',
               style: AppTextStyles.label.copyWith(
                   color: AppColors.amber, fontWeight: FontWeight.w700)),

@@ -354,6 +354,8 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
           },
           isLast: playerState.isLastItem,
           isSubmitting: playerState.isSubmitting,
+          onOpenNotes: () =>
+              WikiViewerRoute(avatarId: widget.avatarId).push(context),
         ),
       'PROVE' => ProveBody(
           items: playerState.items,
