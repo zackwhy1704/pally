@@ -30,9 +30,12 @@ import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
 import 'package:pally/features/chat/providers/chat_usage_provider.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-  const ChatScreen({super.key, required this.avatarId});
+  const ChatScreen({super.key, required this.avatarId, this.seed});
 
   final String avatarId;
+
+  /// Optional composer PREFILL — pre-fills the message box (does NOT auto-send).
+  final String? seed;
 
   @override
   ConsumerState<ChatScreen> createState() => _ChatScreenState();
@@ -49,6 +52,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    // Prefill (NOT auto-send) the composer from a nudge seed, so the student reviews +
+    // taps send themselves — keeps their agency and doesn't fire an LLM call unprompted.
+    final seed = widget.seed;
+    if (seed != null && seed.trim().isNotEmpty) {
+      _textController.text = seed;
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _restoreScroll();
     });
