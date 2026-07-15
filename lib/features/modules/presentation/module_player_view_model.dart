@@ -26,6 +26,8 @@ class SelfAssessItem {
     required this.yourAnswer,
     required this.reference,
     this.feedback,
+    this.priorScore,
+    this.targetConcept,
   });
 
   final String itemId;
@@ -35,6 +37,11 @@ class SelfAssessItem {
   /// The reference answer / expected key points, for the student to compare.
   final String reference;
   final String? feedback;
+
+  /// The student's prior TEST score on this concept + the concept label (from the PROVE
+  /// serve). Drives the render-only comeback line when a weak concept is self-reported YES.
+  final double? priorScore;
+  final String? targetConcept;
 }
 
 /// The server's verdict for one answered HOT_TAKE, fetched via the per-item submit
@@ -604,6 +611,8 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
         yourAnswer: state.answers[itemId] ?? '',
         reference: reference,
         feedback: r['feedback']?.toString(),
+        priorScore: item?.priorScore,
+        targetConcept: item?.targetConcept,
       ));
     }
     return out;
