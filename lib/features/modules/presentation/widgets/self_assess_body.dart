@@ -4,6 +4,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/adaptive_content_width.dart';
 import 'package:pally/features/modules/presentation/module_player_view_model.dart';
+import 'package:pally/features/modules/presentation/widgets/proof_chips.dart';
 
 /// Post-PROVE self-assessment (Tier 2). For each open-ended answer the student
 /// compares theirs to the reference and reports Yes / Partly / No. The system
@@ -109,6 +110,15 @@ class _SelfAssessCard extends StatelessWidget {
               _choice('No', 'NO', AppColors.coral),
             ],
           ),
+          // Comeback payoff (render-only): a POSITIVE self-report on a concept the
+          // student got wrong in the Test (priorScore < 0.5). Never on Partly/No, never
+          // when the concept wasn't a prior weakness.
+          if (selected == 'YES' &&
+              isWeaknessScore(item.priorScore) &&
+              (item.targetConcept ?? '').isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.sm),
+            ComebackLine(concept: item.targetConcept!),
+          ],
         ],
       ),
     );
