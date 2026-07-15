@@ -929,6 +929,7 @@ class _NudgeCardsRowState extends ConsumerState<_NudgeCardsRow> {
           'quiz' => (AppColors.purple, AppColors.purpleL),
           'flashcard' => (AppColors.amber, AppColors.amberL),
           'content' => (AppColors.teal, AppColors.tealL),
+          'weak_concept' => (AppColors.purple, AppColors.purpleL),
           _ => (AppColors.text2, AppColors.surf2),
         };
         return _NudgeData(
@@ -936,6 +937,9 @@ class _NudgeCardsRowState extends ConsumerState<_NudgeCardsRow> {
           message: m['message'] as String? ?? '',
           color: color,
           bgColor: bgColor,
+          type: type,
+          avatarId: m['avatarId'] as String?,
+          concept: m['concept'] as String?,
         );
       }).where((n) => n.message.isNotEmpty).toList();
       if (mounted) setState(() => _nudges = parsed);
@@ -974,11 +978,20 @@ class _NudgeData {
     required this.message,
     required this.color,
     required this.bgColor,
+    this.type,
+    this.avatarId,
+    this.concept,
   });
   final String emoji;
   final String message;
   final Color color;
   final Color bgColor;
+
+  /// Server nudge type + (weak_concept only) the avatar + concept to deep-link a
+  /// pre-filled tutor-chat review.
+  final String? type;
+  final String? avatarId;
+  final String? concept;
 }
 
 class _NudgeCard extends StatelessWidget {
@@ -988,41 +1001,56 @@ class _NudgeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
+    final card = ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 280),
       child: Container(
-      padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
-      decoration: BoxDecoration(
-        color: data.bgColor,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: data.color.withValues(alpha: 0.35)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(data.emoji, style: const TextStyle(fontSize: 14)),
-          const SizedBox(width: 4),
-          Flexible(
-            child: Text(
-              data.message,
-              style: AppTextStyles.caption.copyWith(
-                color: data.color,
-                fontWeight: FontWeight.w700,
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+        decoration: BoxDecoration(
+          color: data.bgColor,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: data.color.withValues(alpha: 0.35)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(data.emoji, style: const TextStyle(fontSize: 14)),
+            const SizedBox(width: 4),
+            Flexible(
+              child: Text(
+                data.message,
+                style: AppTextStyles.caption.copyWith(
+                  color: data.color,
+                  fontWeight: FontWeight.w700,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
             ),
-          ),
-          const SizedBox(width: 4),
-          GestureDetector(
-            onTap: onDismiss,
-            child: Icon(Icons.close_rounded, size: 14, color: data.color),
-          ),
-        ],
-      ),
+            const SizedBox(width: 4),
+            GestureDetector(
+              onTap: onDismiss,
+              child: Icon(Icons.close_rounded, size: 14, color: data.color),
+            ),
+          ],
+        ),
       ),
     );
+
+    // Weak-concept nudge → tap opens the tutor chat pre-filled to review it (the inner
+    // close-button GestureDetector still wins its own hit area). Other nudges are
+    // display-only. Prefill copy (not auto-sent) is placeholder-final.
+    if (data.type == 'weak_concept' && (data.avatarId ?? '').isNotEmpty) {
+      return GestureDetector(
+        onTap: () => ChatRoute(
+          avatarId: data.avatarId!,
+          seed:
+              'Can we review ${data.concept ?? 'this'}? I keep getting it wrong',
+        ).push(context),
+        child: card,
+      );
+    }
+    return card;
   }
 }
 

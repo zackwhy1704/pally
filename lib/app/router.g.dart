@@ -249,10 +249,14 @@ RouteBase get $chatRoute => GoRouteData.$route(
 extension $ChatRouteExtension on ChatRoute {
   static ChatRoute _fromState(GoRouterState state) => ChatRoute(
         avatarId: state.pathParameters['avatarId']!,
+        seed: state.uri.queryParameters['seed'],
       );
 
   String get location => GoRouteData.$location(
         '/avatar/${Uri.encodeComponent(avatarId)}/chat',
+        queryParams: {
+          if (seed != null) 'seed': seed,
+        },
       );
 
   void go(BuildContext context) => context.go(location);

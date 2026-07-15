@@ -231,12 +231,16 @@ class UploadRoute extends GoRouteData {
 
 @TypedGoRoute<ChatRoute>(path: '/avatar/:avatarId/chat')
 class ChatRoute extends GoRouteData {
-  const ChatRoute({required this.avatarId});
+  const ChatRoute({required this.avatarId, this.seed});
   final String avatarId;
+
+  /// Optional composer PREFILL (query param) — pre-fills the message box but does NOT
+  /// send it (the student taps send). Used by the weak-concept re-teach nudge.
+  final String? seed;
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      ChatScreen(avatarId: avatarId);
+      ChatScreen(avatarId: avatarId, seed: seed);
 }
 
 @TypedGoRoute<WikiViewerRoute>(path: '/avatar/:avatarId/wiki')
