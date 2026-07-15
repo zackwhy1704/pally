@@ -17,6 +17,8 @@ _$QuizQuestionImpl _$$QuizQuestionImplFromJson(Map<String, dynamic> json) =>
       correctIndex: (json['correctIndex'] as num?)?.toInt(),
       sourcePage: json['sourcePage'] as String? ?? '',
       explanation: json['explanation'] as String? ?? '',
+      pageTitle: json['pageTitle'] as String? ?? '',
+      selectionReason: json['selectionReason'] as String?,
     );
 
 Map<String, dynamic> _$$QuizQuestionImplToJson(_$QuizQuestionImpl instance) =>
@@ -27,4 +29,6 @@ Map<String, dynamic> _$$QuizQuestionImplToJson(_$QuizQuestionImpl instance) =>
       'correctIndex': instance.correctIndex,
       'sourcePage': instance.sourcePage,
       'explanation': instance.explanation,
+      'pageTitle': instance.pageTitle,
+      'selectionReason': instance.selectionReason,
     };

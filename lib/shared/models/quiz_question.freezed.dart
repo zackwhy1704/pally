@@ -31,7 +31,12 @@ mixin _$QuizQuestion {
 // nullability prevents. Non-null = B2C daily quiz (instant feedback OK).
   int? get correctIndex => throw _privateConstructorUsedError;
   String get sourcePage => throw _privateConstructorUsedError;
-  String get explanation => throw _privateConstructorUsedError;
+  String get explanation =>
+      throw _privateConstructorUsedError; // Adaptive-provenance serve metadata (nullable/empty on old content → chips/badges
+// degrade silently): the source page title, and "WEAK_TOPIC:{concept}" when the
+// weak-first picker chose this question (else null).
+  String get pageTitle => throw _privateConstructorUsedError;
+  String? get selectionReason => throw _privateConstructorUsedError;
 
   /// Serializes this QuizQuestion to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -55,7 +60,9 @@ abstract class $QuizQuestionCopyWith<$Res> {
       List<String> options,
       int? correctIndex,
       String sourcePage,
-      String explanation});
+      String explanation,
+      String pageTitle,
+      String? selectionReason});
 }
 
 /// @nodoc
@@ -79,6 +86,8 @@ class _$QuizQuestionCopyWithImpl<$Res, $Val extends QuizQuestion>
     Object? correctIndex = freezed,
     Object? sourcePage = null,
     Object? explanation = null,
+    Object? pageTitle = null,
+    Object? selectionReason = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -105,6 +114,14 @@ class _$QuizQuestionCopyWithImpl<$Res, $Val extends QuizQuestion>
           ? _value.explanation
           : explanation // ignore: cast_nullable_to_non_nullable
               as String,
+      pageTitle: null == pageTitle
+          ? _value.pageTitle
+          : pageTitle // ignore: cast_nullable_to_non_nullable
+              as String,
+      selectionReason: freezed == selectionReason
+          ? _value.selectionReason
+          : selectionReason // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -123,7 +140,9 @@ abstract class _$$QuizQuestionImplCopyWith<$Res>
       List<String> options,
       int? correctIndex,
       String sourcePage,
-      String explanation});
+      String explanation,
+      String pageTitle,
+      String? selectionReason});
 }
 
 /// @nodoc
@@ -145,6 +164,8 @@ class __$$QuizQuestionImplCopyWithImpl<$Res>
     Object? correctIndex = freezed,
     Object? sourcePage = null,
     Object? explanation = null,
+    Object? pageTitle = null,
+    Object? selectionReason = freezed,
   }) {
     return _then(_$QuizQuestionImpl(
       id: null == id
@@ -171,6 +192,14 @@ class __$$QuizQuestionImplCopyWithImpl<$Res>
           ? _value.explanation
           : explanation // ignore: cast_nullable_to_non_nullable
               as String,
+      pageTitle: null == pageTitle
+          ? _value.pageTitle
+          : pageTitle // ignore: cast_nullable_to_non_nullable
+              as String,
+      selectionReason: freezed == selectionReason
+          ? _value.selectionReason
+          : selectionReason // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -184,7 +213,9 @@ class _$QuizQuestionImpl implements _QuizQuestion {
       final List<String> options = const [],
       this.correctIndex,
       this.sourcePage = '',
-      this.explanation = ''})
+      this.explanation = '',
+      this.pageTitle = '',
+      this.selectionReason})
       : _options = options;
 
   factory _$QuizQuestionImpl.fromJson(Map<String, dynamic> json) =>
@@ -219,10 +250,18 @@ class _$QuizQuestionImpl implements _QuizQuestion {
   @override
   @JsonKey()
   final String explanation;
+// Adaptive-provenance serve metadata (nullable/empty on old content → chips/badges
+// degrade silently): the source page title, and "WEAK_TOPIC:{concept}" when the
+// weak-first picker chose this question (else null).
+  @override
+  @JsonKey()
+  final String pageTitle;
+  @override
+  final String? selectionReason;
 
   @override
   String toString() {
-    return 'QuizQuestion(id: $id, question: $question, options: $options, correctIndex: $correctIndex, sourcePage: $sourcePage, explanation: $explanation)';
+    return 'QuizQuestion(id: $id, question: $question, options: $options, correctIndex: $correctIndex, sourcePage: $sourcePage, explanation: $explanation, pageTitle: $pageTitle, selectionReason: $selectionReason)';
   }
 
   @override
@@ -239,7 +278,11 @@ class _$QuizQuestionImpl implements _QuizQuestion {
             (identical(other.sourcePage, sourcePage) ||
                 other.sourcePage == sourcePage) &&
             (identical(other.explanation, explanation) ||
-                other.explanation == explanation));
+                other.explanation == explanation) &&
+            (identical(other.pageTitle, pageTitle) ||
+                other.pageTitle == pageTitle) &&
+            (identical(other.selectionReason, selectionReason) ||
+                other.selectionReason == selectionReason));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -251,7 +294,9 @@ class _$QuizQuestionImpl implements _QuizQuestion {
       const DeepCollectionEquality().hash(_options),
       correctIndex,
       sourcePage,
-      explanation);
+      explanation,
+      pageTitle,
+      selectionReason);
 
   /// Create a copy of QuizQuestion
   /// with the given fields replaced by the non-null parameter values.
@@ -276,7 +321,9 @@ abstract class _QuizQuestion implements QuizQuestion {
       final List<String> options,
       final int? correctIndex,
       final String sourcePage,
-      final String explanation}) = _$QuizQuestionImpl;
+      final String explanation,
+      final String pageTitle,
+      final String? selectionReason}) = _$QuizQuestionImpl;
 
   factory _QuizQuestion.fromJson(Map<String, dynamic> json) =
       _$QuizQuestionImpl.fromJson;
@@ -298,7 +345,14 @@ abstract class _QuizQuestion implements QuizQuestion {
   @override
   String get sourcePage;
   @override
-  String get explanation;
+  String
+      get explanation; // Adaptive-provenance serve metadata (nullable/empty on old content → chips/badges
+// degrade silently): the source page title, and "WEAK_TOPIC:{concept}" when the
+// weak-first picker chose this question (else null).
+  @override
+  String get pageTitle;
+  @override
+  String? get selectionReason;
 
   /// Create a copy of QuizQuestion
   /// with the given fields replaced by the non-null parameter values.

@@ -346,7 +346,14 @@ mixin _$ModuleContentItem {
   Map<String, dynamic>? get answerJson => throw _privateConstructorUsedError;
   @JsonKey(fromJson: _revealJsonFromJson)
   Map<String, dynamic>? get revealJson => throw _privateConstructorUsedError;
-  int get sortOrder => throw _privateConstructorUsedError;
+  int get sortOrder =>
+      throw _privateConstructorUsedError; // Adaptive-provenance serve metadata (all nullable — absent on old content, so the
+// chips/badges degrade silently): the source page this item came from, the concept it
+// targets, and (PROVE only) the student's prior TEST score on that concept.
+  String? get sourcePageTitle => throw _privateConstructorUsedError;
+  String? get sourcePageSlug => throw _privateConstructorUsedError;
+  String? get targetConcept => throw _privateConstructorUsedError;
+  double? get priorScore => throw _privateConstructorUsedError;
 
   /// Serializes this ModuleContentItem to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -371,7 +378,11 @@ abstract class $ModuleContentItemCopyWith<$Res> {
       @JsonKey(fromJson: _contentJsonFromJson) Map<String, dynamic> contentJson,
       @JsonKey(fromJson: _answerJsonFromJson) Map<String, dynamic>? answerJson,
       @JsonKey(fromJson: _revealJsonFromJson) Map<String, dynamic>? revealJson,
-      int sortOrder});
+      int sortOrder,
+      String? sourcePageTitle,
+      String? sourcePageSlug,
+      String? targetConcept,
+      double? priorScore});
 }
 
 /// @nodoc
@@ -396,6 +407,10 @@ class _$ModuleContentItemCopyWithImpl<$Res, $Val extends ModuleContentItem>
     Object? answerJson = freezed,
     Object? revealJson = freezed,
     Object? sortOrder = null,
+    Object? sourcePageTitle = freezed,
+    Object? sourcePageSlug = freezed,
+    Object? targetConcept = freezed,
+    Object? priorScore = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -426,6 +441,22 @@ class _$ModuleContentItemCopyWithImpl<$Res, $Val extends ModuleContentItem>
           ? _value.sortOrder
           : sortOrder // ignore: cast_nullable_to_non_nullable
               as int,
+      sourcePageTitle: freezed == sourcePageTitle
+          ? _value.sourcePageTitle
+          : sourcePageTitle // ignore: cast_nullable_to_non_nullable
+              as String?,
+      sourcePageSlug: freezed == sourcePageSlug
+          ? _value.sourcePageSlug
+          : sourcePageSlug // ignore: cast_nullable_to_non_nullable
+              as String?,
+      targetConcept: freezed == targetConcept
+          ? _value.targetConcept
+          : targetConcept // ignore: cast_nullable_to_non_nullable
+              as String?,
+      priorScore: freezed == priorScore
+          ? _value.priorScore
+          : priorScore // ignore: cast_nullable_to_non_nullable
+              as double?,
     ) as $Val);
   }
 }
@@ -445,7 +476,11 @@ abstract class _$$ModuleContentItemImplCopyWith<$Res>
       @JsonKey(fromJson: _contentJsonFromJson) Map<String, dynamic> contentJson,
       @JsonKey(fromJson: _answerJsonFromJson) Map<String, dynamic>? answerJson,
       @JsonKey(fromJson: _revealJsonFromJson) Map<String, dynamic>? revealJson,
-      int sortOrder});
+      int sortOrder,
+      String? sourcePageTitle,
+      String? sourcePageSlug,
+      String? targetConcept,
+      double? priorScore});
 }
 
 /// @nodoc
@@ -468,6 +503,10 @@ class __$$ModuleContentItemImplCopyWithImpl<$Res>
     Object? answerJson = freezed,
     Object? revealJson = freezed,
     Object? sortOrder = null,
+    Object? sourcePageTitle = freezed,
+    Object? sourcePageSlug = freezed,
+    Object? targetConcept = freezed,
+    Object? priorScore = freezed,
   }) {
     return _then(_$ModuleContentItemImpl(
       id: null == id
@@ -498,6 +537,22 @@ class __$$ModuleContentItemImplCopyWithImpl<$Res>
           ? _value.sortOrder
           : sortOrder // ignore: cast_nullable_to_non_nullable
               as int,
+      sourcePageTitle: freezed == sourcePageTitle
+          ? _value.sourcePageTitle
+          : sourcePageTitle // ignore: cast_nullable_to_non_nullable
+              as String?,
+      sourcePageSlug: freezed == sourcePageSlug
+          ? _value.sourcePageSlug
+          : sourcePageSlug // ignore: cast_nullable_to_non_nullable
+              as String?,
+      targetConcept: freezed == targetConcept
+          ? _value.targetConcept
+          : targetConcept // ignore: cast_nullable_to_non_nullable
+              as String?,
+      priorScore: freezed == priorScore
+          ? _value.priorScore
+          : priorScore // ignore: cast_nullable_to_non_nullable
+              as double?,
     ));
   }
 }
@@ -515,7 +570,11 @@ class _$ModuleContentItemImpl implements _ModuleContentItem {
       final Map<String, dynamic>? answerJson,
       @JsonKey(fromJson: _revealJsonFromJson)
       final Map<String, dynamic>? revealJson,
-      this.sortOrder = 0})
+      this.sortOrder = 0,
+      this.sourcePageTitle,
+      this.sourcePageSlug,
+      this.targetConcept,
+      this.priorScore})
       : _contentJson = contentJson,
         _answerJson = answerJson,
         _revealJson = revealJson;
@@ -566,10 +625,21 @@ class _$ModuleContentItemImpl implements _ModuleContentItem {
   @override
   @JsonKey()
   final int sortOrder;
+// Adaptive-provenance serve metadata (all nullable — absent on old content, so the
+// chips/badges degrade silently): the source page this item came from, the concept it
+// targets, and (PROVE only) the student's prior TEST score on that concept.
+  @override
+  final String? sourcePageTitle;
+  @override
+  final String? sourcePageSlug;
+  @override
+  final String? targetConcept;
+  @override
+  final double? priorScore;
 
   @override
   String toString() {
-    return 'ModuleContentItem(id: $id, stage: $stage, type: $type, contentJson: $contentJson, answerJson: $answerJson, revealJson: $revealJson, sortOrder: $sortOrder)';
+    return 'ModuleContentItem(id: $id, stage: $stage, type: $type, contentJson: $contentJson, answerJson: $answerJson, revealJson: $revealJson, sortOrder: $sortOrder, sourcePageTitle: $sourcePageTitle, sourcePageSlug: $sourcePageSlug, targetConcept: $targetConcept, priorScore: $priorScore)';
   }
 
   @override
@@ -587,7 +657,15 @@ class _$ModuleContentItemImpl implements _ModuleContentItem {
             const DeepCollectionEquality()
                 .equals(other._revealJson, _revealJson) &&
             (identical(other.sortOrder, sortOrder) ||
-                other.sortOrder == sortOrder));
+                other.sortOrder == sortOrder) &&
+            (identical(other.sourcePageTitle, sourcePageTitle) ||
+                other.sourcePageTitle == sourcePageTitle) &&
+            (identical(other.sourcePageSlug, sourcePageSlug) ||
+                other.sourcePageSlug == sourcePageSlug) &&
+            (identical(other.targetConcept, targetConcept) ||
+                other.targetConcept == targetConcept) &&
+            (identical(other.priorScore, priorScore) ||
+                other.priorScore == priorScore));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -600,7 +678,11 @@ class _$ModuleContentItemImpl implements _ModuleContentItem {
       const DeepCollectionEquality().hash(_contentJson),
       const DeepCollectionEquality().hash(_answerJson),
       const DeepCollectionEquality().hash(_revealJson),
-      sortOrder);
+      sortOrder,
+      sourcePageTitle,
+      sourcePageSlug,
+      targetConcept,
+      priorScore);
 
   /// Create a copy of ModuleContentItem
   /// with the given fields replaced by the non-null parameter values.
@@ -630,7 +712,11 @@ abstract class _ModuleContentItem implements ModuleContentItem {
       final Map<String, dynamic>? answerJson,
       @JsonKey(fromJson: _revealJsonFromJson)
       final Map<String, dynamic>? revealJson,
-      final int sortOrder}) = _$ModuleContentItemImpl;
+      final int sortOrder,
+      final String? sourcePageTitle,
+      final String? sourcePageSlug,
+      final String? targetConcept,
+      final double? priorScore}) = _$ModuleContentItemImpl;
 
   factory _ModuleContentItem.fromJson(Map<String, dynamic> json) =
       _$ModuleContentItemImpl.fromJson;
@@ -653,7 +739,17 @@ abstract class _ModuleContentItem implements ModuleContentItem {
   @JsonKey(fromJson: _revealJsonFromJson)
   Map<String, dynamic>? get revealJson;
   @override
-  int get sortOrder;
+  int get sortOrder; // Adaptive-provenance serve metadata (all nullable — absent on old content, so the
+// chips/badges degrade silently): the source page this item came from, the concept it
+// targets, and (PROVE only) the student's prior TEST score on that concept.
+  @override
+  String? get sourcePageTitle;
+  @override
+  String? get sourcePageSlug;
+  @override
+  String? get targetConcept;
+  @override
+  double? get priorScore;
 
   /// Create a copy of ModuleContentItem
   /// with the given fields replaced by the non-null parameter values.

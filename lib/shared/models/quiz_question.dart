@@ -18,6 +18,11 @@ class QuizQuestion with _$QuizQuestion {
     int? correctIndex,
     @Default('') String sourcePage,
     @Default('') String explanation,
+    // Adaptive-provenance serve metadata (nullable/empty on old content → chips/badges
+    // degrade silently): the source page title, and "WEAK_TOPIC:{concept}" when the
+    // weak-first picker chose this question (else null).
+    @Default('') String pageTitle,
+    String? selectionReason,
   }) = _QuizQuestion;
 
   factory QuizQuestion.fromJson(Map<String, dynamic> json) =>

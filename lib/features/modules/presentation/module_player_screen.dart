@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -372,6 +373,8 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
                 .submitStage();
           },
           isSubmitting: playerState.isSubmitting,
+          onOpenNotes: () =>
+              WikiViewerRoute(avatarId: widget.avatarId).push(context),
         ),
       _ => const Center(child: Text('Unknown stage')),
     };

@@ -86,6 +86,13 @@ class ModuleContentItem with _$ModuleContentItem {
     @JsonKey(fromJson: _answerJsonFromJson) Map<String, dynamic>? answerJson,
     @JsonKey(fromJson: _revealJsonFromJson) Map<String, dynamic>? revealJson,
     @Default(0) int sortOrder,
+    // Adaptive-provenance serve metadata (all nullable — absent on old content, so the
+    // chips/badges degrade silently): the source page this item came from, the concept it
+    // targets, and (PROVE only) the student's prior TEST score on that concept.
+    String? sourcePageTitle,
+    String? sourcePageSlug,
+    String? targetConcept,
+    double? priorScore,
   }) = _ModuleContentItem;
 
   factory ModuleContentItem.fromJson(Map<String, dynamic> json) =>
