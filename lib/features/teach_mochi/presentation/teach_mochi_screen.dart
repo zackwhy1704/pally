@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/shared/widgets/mochi_placeholder.dart';
 import 'package:pally/core/ui/no_notes_cta.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/features/progress/presentation/level_up_controller.dart';
@@ -541,21 +542,13 @@ class _NoTopicsState extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.menu_book_outlined,
-                size: 64, color: AppColors.text3),
-            const SizedBox(height: AppSpacing.md),
-            Text('No topics to teach yet',
-                style: AppTextStyles.title),
-            const SizedBox(height: AppSpacing.xs),
-            NoNotesCta(
-              avatarId: avatarId,
-              personalDescription:
-                  'Upload some notes first so Mochi has something to learn from!',
-            ),
-          ],
+        child: MochiPlaceholder(
+          title: 'No topics to teach yet',
+          action: NoNotesCta(
+            avatarId: avatarId,
+            personalDescription:
+                'Upload some notes first so Mochi has something to learn from!',
+          ),
         ),
       ),
     );

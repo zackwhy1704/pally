@@ -4,6 +4,7 @@ import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/shared/models/learning_module.dart';
+import 'package:pally/shared/widgets/mochi_placeholder.dart';
 
 // ── COMPLETE stage ──────────────────────────────────────────────────────────
 
@@ -30,19 +31,8 @@ class CompleteBody extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: AppSpacing.lg),
-          // Celebration
-          Container(
-            width: MediaQuery.of(context).size.shortestSide * 0.3,
-            height: MediaQuery.of(context).size.shortestSide * 0.3,
-            decoration: const BoxDecoration(
-              color: AppColors.greenL,
-              shape: BoxShape.circle,
-            ),
-            child: const Center(
-              child: Icon(Icons.celebration_rounded,
-                  size: 48, color: AppColors.green),
-            ),
-          ),
+          // Celebration — Mochi mascot flanked by inward-facing party-poppers.
+          const MochiPlaceholder(variant: MochiVariant.success),
           const SizedBox(height: AppSpacing.md),
           Text('Module complete!', style: AppTextStyles.heading1),
           if (xpEarned > 0) ...[

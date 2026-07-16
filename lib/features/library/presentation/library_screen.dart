@@ -6,6 +6,7 @@ import 'package:pally/app/api_client.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/shared/widgets/mochi_placeholder.dart';
 import 'package:pally/core/ui/adaptive_content_width.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/error/pally_error.dart';
@@ -62,7 +63,7 @@ class LibraryScreen extends ConsumerWidget {
           onRetry: () => ref.read(libraryViewModelProvider.notifier).refresh(),
         ),
         data: (avatars) => avatars.isEmpty
-            ? _EmptyLibraryView()
+            ? const EmptyLibraryView()
             : RefreshIndicator(
                 color: AppColors.purple,
                 onRefresh: () =>
@@ -382,25 +383,16 @@ class _SubjectBadge extends StatelessWidget {
   }
 }
 
-class _EmptyLibraryView extends StatelessWidget {
+class EmptyLibraryView extends StatelessWidget {
+  const EmptyLibraryView({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return AdaptiveCenter(
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.menu_book_outlined,
-              size: 64, color: AppColors.text3),
-          const SizedBox(height: AppSpacing.md),
-          Text('No Mochis yet', style: AppTextStyles.title),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            'Create a Mochi from the Home tab to see it here.',
-            style: AppTextStyles.body.copyWith(color: AppColors.text2),
-            textAlign: TextAlign.center,
-          ),
-        ],
+    return const AdaptiveCenter(
+      padding: EdgeInsets.all(AppSpacing.xl),
+      child: MochiPlaceholder(
+        title: 'No Mochis yet',
+        subtitle: 'Create a Mochi from the Home tab to see it here.',
       ),
     );
   }

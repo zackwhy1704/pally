@@ -4,6 +4,7 @@ import 'package:pally/app/router.dart';
 import 'package:pally/core/widgets/loading/pally_skeleton.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/shared/widgets/mochi_placeholder.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/ui/pally_toast.dart';
@@ -112,23 +113,12 @@ class _AvatarTile extends StatelessWidget {
 class _EmptyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.chat_bubble_outline_rounded,
-                size: 64, color: AppColors.text3),
-            const SizedBox(height: AppSpacing.md),
-            Text('No Mochis yet', style: AppTextStyles.title),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              'Create a Mochi from the Home tab first.',
-              style: AppTextStyles.body.copyWith(color: AppColors.text2),
-              textAlign: TextAlign.center,
-            ),
-          ],
+        padding: EdgeInsets.all(AppSpacing.xl),
+        child: MochiPlaceholder(
+          title: 'No Mochis yet',
+          subtitle: 'Create a Mochi from the Home tab first.',
         ),
       ),
     );
