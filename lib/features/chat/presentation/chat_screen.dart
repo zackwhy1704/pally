@@ -7,6 +7,7 @@ import 'package:pally/core/ui/adaptive_center.dart';
 import 'package:pally/core/ui/math_text.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/shared/widgets/mochi_placeholder.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:go_router/go_router.dart';
@@ -915,23 +916,12 @@ class _WelcomePrompt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AdaptiveCenter(
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.chat_bubble_outline_rounded,
-              size: 64, color: AppColors.text3),
-          const SizedBox(height: AppSpacing.md),
-          Text('Start the conversation!',
-              style: AppTextStyles.title, textAlign: TextAlign.center),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
+    return const AdaptiveCenter(
+      padding: EdgeInsets.all(AppSpacing.xl),
+      child: MochiPlaceholder(
+        title: 'Start the conversation!',
+        subtitle:
             'Ask your Mochi anything, or tap 📷 to snap a homework question!',
-            style: AppTextStyles.body.copyWith(color: AppColors.text2),
-            textAlign: TextAlign.center,
-          ),
-        ],
       ),
     );
   }

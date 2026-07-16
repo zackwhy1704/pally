@@ -5,6 +5,7 @@ import 'package:pally/app/router.dart';
 import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/shared/widgets/mochi_placeholder.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
@@ -1112,21 +1113,10 @@ class _EmptyView extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.psychology_outlined,
-                size: 64, color: AppColors.text3),
-            const SizedBox(height: AppSpacing.md),
-            Text('Brain is empty', style: AppTextStyles.title),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              message ??
-                  'Upload content from the Library tab to build the knowledge base.',
-              style: AppTextStyles.body.copyWith(color: AppColors.text2),
-              textAlign: TextAlign.center,
-            ),
-          ],
+        child: MochiPlaceholder(
+          title: 'Brain is empty',
+          subtitle: message ??
+              'Upload content from the Library tab to build the knowledge base.',
         ),
       ),
     );
