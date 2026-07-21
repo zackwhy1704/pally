@@ -77,6 +77,7 @@ class ModulePlayerState {
     this.isContentUpdating = false,
     this.hotTakeVerdicts = const {},
     this.hotTakeVerdictPending = const {},
+    this.spotMistakeSelfChecks = const {},
   });
 
   final LearningModule? module;
@@ -127,6 +128,11 @@ class ModulePlayerState {
   /// state so a normal load never flashes the failure copy).
   final Set<String> hotTakeVerdictPending;
 
+  /// SPOT_MISTAKE itemId -> the student's self-check after reveal ('YES' = "I was
+  /// right", 'NOT_QUITE'). Carried additively on the end-of-stage submit so the
+  /// server records a low-trust SELF_REPORT signal. Absent ⇒ legacy null-signal.
+  final Map<String, String> spotMistakeSelfChecks;
+
   ModuleContentItem? get currentItem =>
       items.isEmpty || currentIndex >= items.length
           ? null
@@ -155,6 +161,7 @@ class ModulePlayerState {
     bool? isContentUpdating,
     Map<String, HotTakeVerdict>? hotTakeVerdicts,
     Set<String>? hotTakeVerdictPending,
+    Map<String, String>? spotMistakeSelfChecks,
   }) {
     return ModulePlayerState(
       module: module ?? this.module,
@@ -177,6 +184,8 @@ class ModulePlayerState {
       hotTakeVerdicts: hotTakeVerdicts ?? this.hotTakeVerdicts,
       hotTakeVerdictPending:
           hotTakeVerdictPending ?? this.hotTakeVerdictPending,
+      spotMistakeSelfChecks:
+          spotMistakeSelfChecks ?? this.spotMistakeSelfChecks,
     );
   }
 }
@@ -364,6 +373,7 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
         isRevision: isRevision,
         answers: const {},
         revealedItems: const {},
+        spotMistakeSelfChecks: const {},
       );
     } on DioException catch (e, st) {
       appLog.e('[ModulePlayer] Start stage failed', error: e, stackTrace: st);
@@ -397,6 +407,14 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
     final updated = Set<String>.from(state.revealedItems);
     updated.add(itemId);
     state = state.copyWith(revealedItems: updated);
+  }
+
+  /// Records the student's SPOT_MISTAKE self-check ('YES' | 'NOT_QUITE') after the
+  /// reveal. Cached locally and carried on the end-of-stage submit (path a).
+  void setSpotMistakeSelfCheck(String itemId, String value) {
+    final updated = Map<String, String>.from(state.spotMistakeSelfChecks);
+    updated[itemId] = value;
+    state = state.copyWith(spotMistakeSelfChecks: updated);
   }
 
   /// Handles a TEST-stage answer: records it, reveals the card, and — for the only
@@ -494,7 +512,16 @@ class ModulePlayerViewModel extends _$ModulePlayerViewModel {
         } else {
           response = state.answers[item.id] ?? '';
         }
-        return {'itemId': item.id, 'response': response};
+        final submission = {'itemId': item.id, 'response': response};
+        // Path (a): carry the SPOT_MISTAKE self-check additively so the server
+        // records a SELF_REPORT signal. Absent ⇒ legacy null-signal (unchanged).
+        if (item.type == 'SPOT_MISTAKE') {
+          final selfCheck = state.spotMistakeSelfChecks[item.id];
+          if (selfCheck != null && selfCheck.isNotEmpty) {
+            submission['selfCheck'] = selfCheck;
+          }
+        }
+        return submission;
       }).toList();
 
       // Backend binds @RequestBody SubmitModuleAnswersRequest{submissions, durationSeconds}

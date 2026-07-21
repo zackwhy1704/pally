@@ -37,6 +37,8 @@ class TestBody extends StatelessWidget {
     this.verdict,
     this.verdictPending = false,
     this.onOpenNotes,
+    this.selfCheck,
+    this.onSelfCheck,
   });
 
   final ModuleContentItem? item;
@@ -48,6 +50,12 @@ class TestBody extends StatelessWidget {
   final VoidCallback onNext;
   final bool isLast;
   final bool isSubmitting;
+
+  /// SPOT_MISTAKE self-check for the current item ('YES' | 'NOT_QUITE' | null).
+  final String? selfCheck;
+
+  /// Records a SPOT_MISTAKE self-check (null for stages/types that don't use it).
+  final void Function(String itemId, String value)? onSelfCheck;
 
   /// Server verdict for the current HOT_TAKE (null ⇒ no banner: pending or failed).
   final HotTakeVerdict? verdict;
@@ -166,7 +174,10 @@ class TestBody extends StatelessWidget {
           errorDescription: reveal['errorDescription'] as String? ?? '',
           correctSolution: reveal['correctSolution'] as String? ?? '',
           isRevealed: isRevealed,
-          onReveal: () => onAnswer(item!.id, 'found'),
+          diagnosis: answer ?? '',
+          selfCheck: selfCheck,
+          onReveal: (diagnosis) => onAnswer(item!.id, diagnosis),
+          onSelfCheck: (value) => onSelfCheck?.call(item!.id, value),
           sourcePageTitle: sourcePageTitle,
           onOpenNotes: onOpenNotes,
         ),
@@ -379,7 +390,13 @@ class AnswerButton extends StatelessWidget {
   }
 }
 
-class SpotMistakeCard extends StatelessWidget {
+/// Spot-the-mistake: the student TYPES the error they believe is present (a
+/// commitment, same non-empty-required convention as ChallengeCard — we don't
+/// police length), reveals the answer, then self-checks "were you right?". The
+/// typed diagnosis + self-check are recorded as a low-trust SELF_REPORT signal —
+/// NEVER machine grading. Stateful (a per-item [ValueKey] gives fresh State per
+/// item, so the controller/selection never bleed across items).
+class SpotMistakeCard extends StatefulWidget {
   const SpotMistakeCard({
     super.key,
     required this.problem,
@@ -387,7 +404,10 @@ class SpotMistakeCard extends StatelessWidget {
     required this.errorDescription,
     required this.correctSolution,
     required this.isRevealed,
+    required this.diagnosis,
+    required this.selfCheck,
     required this.onReveal,
+    required this.onSelfCheck,
     this.sourcePageTitle,
     this.onOpenNotes,
   });
@@ -399,7 +419,46 @@ class SpotMistakeCard extends StatelessWidget {
   final String errorDescription;
   final String correctSolution;
   final bool isRevealed;
-  final VoidCallback onReveal;
+
+  /// The student's cached typed diagnosis (restored on re-entry to a revealed item).
+  final String diagnosis;
+
+  /// The cached self-check ('YES' | 'NOT_QUITE'), or null if not yet chosen.
+  final String? selfCheck;
+
+  /// Fired on reveal with the typed diagnosis (records it + reveals the answer).
+  final void Function(String diagnosis) onReveal;
+
+  /// Fired when the student self-checks after the reveal ('YES' | 'NOT_QUITE').
+  final void Function(String value) onSelfCheck;
+
+  @override
+  State<SpotMistakeCard> createState() => SpotMistakeCardState();
+}
+
+class SpotMistakeCardState extends State<SpotMistakeCard> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.diagnosis);
+    // Rebuild as the student types so "Reveal the error" re-evaluates its enabled
+    // state (same reason as ChallengeCard: a once-read empty gate would strand a
+    // module ending in a Spot-the-Mistake).
+    _controller.addListener(_onTextChanged);
+  }
+
+  void _onTextChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onTextChanged);
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -413,12 +472,12 @@ class SpotMistakeCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ..._provenancePrefix(sourcePageTitle, onOpenNotes),
+          ..._provenancePrefix(widget.sourcePageTitle, widget.onOpenNotes),
           Text('Spot the mistake',
               style: AppTextStyles.label.copyWith(
                   color: AppColors.amber, fontWeight: FontWeight.w700)),
           const SizedBox(height: AppSpacing.md),
-          Text(problem, style: AppTextStyles.body),
+          Text(widget.problem, style: AppTextStyles.body),
           const SizedBox(height: AppSpacing.sm),
           Container(
             width: double.infinity,
@@ -429,27 +488,52 @@ class SpotMistakeCard extends StatelessWidget {
               border: Border.all(
                   color: AppColors.coral.withValues(alpha: 0.3)),
             ),
-            child: Text(wrongSolution,
+            child: Text(widget.wrongSolution,
                 style: AppTextStyles.body.copyWith(
                     fontWeight: FontWeight.w600)),
           ),
           const SizedBox(height: AppSpacing.md),
-          if (!isRevealed)
+          if (!widget.isRevealed) ...[
+            TextField(
+              controller: _controller,
+              maxLines: 3,
+              decoration: InputDecoration(
+                hintText: "What's wrong here? Type what you spotted...",
+                hintStyle:
+                    AppTextStyles.body.copyWith(color: AppColors.text3),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.outline),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.outline),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.amber),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
             SizedBox(
               width: double.infinity,
               height: AppSizing.buttonHeight,
               child: OutlinedButton(
-                onPressed: onReveal,
+                onPressed: _controller.text.trim().isEmpty
+                    ? null
+                    : () => widget.onReveal(_controller.text.trim()),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.amber,
                   side: const BorderSide(color: AppColors.amber),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14)),
                 ),
-                child: const Text('I found it!'),
+                child: const Text('Reveal the error'),
               ),
             ),
-          if (isRevealed) ...[
+          ],
+          if (widget.isRevealed) ...[
             Container(
               width: double.infinity,
               padding: AppSpacing.card,
@@ -465,19 +549,87 @@ class SpotMistakeCard extends StatelessWidget {
                           color: AppColors.coral,
                           fontWeight: FontWeight.w700)),
                   const SizedBox(height: AppSpacing.xs),
-                  Text(errorDescription, style: AppTextStyles.body),
+                  Text(widget.errorDescription, style: AppTextStyles.body),
                   const SizedBox(height: AppSpacing.sm),
                   Text('Correct solution:',
                       style: AppTextStyles.label.copyWith(
                           color: AppColors.green,
                           fontWeight: FontWeight.w700)),
                   const SizedBox(height: AppSpacing.xs),
-                  Text(correctSolution, style: AppTextStyles.body),
+                  Text(widget.correctSolution, style: AppTextStyles.body),
                 ],
               ),
             ),
+            const SizedBox(height: AppSpacing.md),
+            // Self-check — the student marks their own diagnosis (low-trust
+            // SELF_REPORT, never a machine grade). Mirrors the PROVE self-assess row.
+            Text('Were you right?',
+                style: AppTextStyles.label.copyWith(color: AppColors.text2)),
+            const SizedBox(height: AppSpacing.xs),
+            Row(
+              children: [
+                _SelfCheckChoice(
+                  label: 'Yes',
+                  value: 'YES',
+                  color: AppColors.green,
+                  selected: widget.selfCheck == 'YES',
+                  onTap: () => widget.onSelfCheck('YES'),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                _SelfCheckChoice(
+                  label: 'Not quite',
+                  value: 'NOT_QUITE',
+                  color: AppColors.amber,
+                  selected: widget.selfCheck == 'NOT_QUITE',
+                  onTap: () => widget.onSelfCheck('NOT_QUITE'),
+                ),
+              ],
+            ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+/// A single self-check pill (reuses the PROVE self-assess selected-highlight look).
+class _SelfCheckChoice extends StatelessWidget {
+  const _SelfCheckChoice({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final String value;
+  final Color color;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+          decoration: BoxDecoration(
+            color: selected ? color : AppColors.surface,
+            borderRadius: BorderRadius.circular(AppSpacing.sm),
+            border: Border.all(
+                color: selected ? color : AppColors.outline, width: 1.5),
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyles.label.copyWith(
+              color: selected ? AppColors.surface : AppColors.text1,
+            ),
+          ),
+        ),
       ),
     );
   }

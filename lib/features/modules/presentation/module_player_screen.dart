@@ -331,6 +331,9 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
           verdictPending: playerState.currentItem != null &&
               playerState.hotTakeVerdictPending
                   .contains(playerState.currentItem!.id),
+          selfCheck: playerState.currentItem != null
+              ? playerState.spotMistakeSelfChecks[playerState.currentItem!.id]
+              : null,
           onAnswer: (itemId, response) {
             // answerTestItem records + reveals, and for HOT_TAKE fetches the server
             // verdict (skipping the last item so it never triggers advancement).
@@ -339,6 +342,13 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
                         widget.avatarId, widget.moduleId)
                     .notifier)
                 .answerTestItem(itemId, response);
+          },
+          onSelfCheck: (itemId, value) {
+            ref
+                .read(modulePlayerViewModelProvider(
+                        widget.avatarId, widget.moduleId)
+                    .notifier)
+                .setSpotMistakeSelfCheck(itemId, value);
           },
           onNext: () {
             final vm = ref.read(
