@@ -74,6 +74,14 @@ on a wide device, so eyeballing isn't enough. Rules:
   so it caps + centres instead of stretching edge-to-edge.
 - **Test it:** new high-traffic entry screens get a case in `test/widget/overflow_textscale_test.dart`
   (rendered at 320 dp + `textScaler: 2.0`, asserting `takeException()` is null).
+- **The small-screen smoke suite is the standing geometry gate.** `test/geometry/small_screen_smoke_test.dart`
+  pumps EVERY `lib/features/**/*_screen.dart` at 360×640 and 360×850 asserting `takeException()==null`, and
+  `cta_invariant_test.dart` asserts each critical-flow primary CTA is on-screen without a scroll gesture.
+  A registry-count guard fails the build unless every screen is ENROLLED or EXPLICITLY EXCLUDED (with a
+  reason) — **a new `*_screen.dart` must enroll in the registry or be excluded-with-reason; it cannot be
+  silently skipped.** Fix geometry findings with the two patterns only: (1) pin the primary CTA
+  (footer / `Expanded`-content above pinned actions), or (2) `Flexible`/`Wrap`/clamp an oversized fixed or
+  percentage dimension. This is the geometry equivalent of what the content reaper is for content.
 
 ## DON'T
 - network call in a screen widget · god-widget (>600 lines) · inline-duplicated empty/no-notes states ·

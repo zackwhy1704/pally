@@ -100,11 +100,14 @@ class _BrainQualityCard extends StatelessWidget {
             children: [
               const Text('🧠', style: TextStyle(fontSize: 16)),
               const SizedBox(width: AppSpacing.xs),
-              Text(
-                'Brain Quality Score',
-                style: AppTextStyles.label.copyWith(
-                  color: AppColors.text2,
-                  fontWeight: FontWeight.w700,
+              Flexible(
+                child: Text(
+                  'Brain Quality Score',
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.label.copyWith(
+                    color: AppColors.text2,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
               const Spacer(),

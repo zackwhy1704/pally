@@ -266,9 +266,9 @@ class _BillingToggle extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _tab('Monthly', !annual, () => onToggle(false)),
+        Flexible(child: _tab('Monthly', !annual, () => onToggle(false))),
         const SizedBox(width: AppSpacing.xs),
-        _tab('Annual  (save ~34%)', annual, () => onToggle(true)),
+        Flexible(child: _tab('Annual  (save ~34%)', annual, () => onToggle(true))),
       ],
     );
   }
@@ -288,6 +288,9 @@ class _BillingToggle extends StatelessWidget {
         ),
         child: Text(
           label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
           style: AppTextStyles.label.copyWith(
             color: active ? Colors.white : AppColors.text2,
             fontWeight: FontWeight.w700,

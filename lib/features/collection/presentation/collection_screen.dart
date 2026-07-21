@@ -93,9 +93,12 @@ class _ProgressBanner extends StatelessWidget {
             children: [
               const Text('🏆', style: TextStyle(fontSize: 24)),
               const SizedBox(width: 8),
-              Text(
-                'Collection',
-                style: AppTextStyles.heading1.copyWith(color: Colors.white),
+              Flexible(
+                child: Text(
+                  'Collection',
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.heading1.copyWith(color: Colors.white),
+                ),
               ),
               const Spacer(),
               Container(
