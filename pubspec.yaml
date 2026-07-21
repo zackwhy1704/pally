@@ -26,7 +26,12 @@ dependencies:
   google_fonts: ^6.2.1
 
   # Networking
-  dio: ^5.7.0
+  # Capped below 5.10.0: it added DioExceptionType.transformTimeout, which is not
+  # handled by the exhaustive DioException switches (api_client / pally_error) and
+  # broke compilation. The committed pubspec.lock is the real reproducibility fix;
+  # this ceiling documents the known-incompatible boundary. Lifting it means adding
+  # explicit handling for the new exception type first.
+  dio: ">=5.7.0 <5.10.0"
 
   # File picking / camera
   file_picker: ^8.1.2

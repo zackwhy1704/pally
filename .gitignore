@@ -30,7 +30,10 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 build/
-pubspec.lock
+# pubspec.lock is COMMITTED (an app, not a package): the store artifact must build
+# from a dependency set that exists in git, not from whatever `pub get` resolves at
+# CI time. (Removing it here previously let a fresh resolve pull dio 5.10.0, whose
+# new DioExceptionType.transformTimeout broke the switches → app wouldn't compile.)
 
 # Web related
 lib/generated_plugin_registrant.dart
