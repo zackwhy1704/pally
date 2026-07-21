@@ -448,38 +448,53 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                         ),
                       ),
                   ],
-                  const SizedBox(height: AppSpacing.xl),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Don't have an account?",
-                          style: AppTextStyles.bodySmall),
-                      const SizedBox(width: 8),
-                      GestureDetector(
-                        onTap: () => context.push('/onboarding/direct'),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: AppColors.purpleL,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            'Create Account ✨',
-                            style: AppTextStyles.label.copyWith(
-                                color: AppColors.purple,
-                                fontWeight: FontWeight.w700),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
                 ],
               ),
             ),
           ],
         ),
+        ),
+      ),
+      // Pin the "Create Account" CTA below the fold-independent form: it is the
+      // primary secondary-action of a sign-in screen and must always be reachable
+      // WITHOUT a scroll gesture. A persistent footer (not the scroll tail) is the
+      // invariant. Rides above the keyboard via the default resizeToAvoidBottomInset.
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Container(
+          color: AppColors.bg,
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md, vertical: AppSpacing.md),
+          // Wrap so the prompt + pill stay overflow-safe on a 320dp device or at
+          // large text scale (CLAUDE.md: never let intrinsic text width drive a
+          // Row wider than the viewport).
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 6,
+            children: [
+              Text("Don't have an account?",
+                  style: AppTextStyles.bodySmall),
+              GestureDetector(
+                onTap: () => context.push('/onboarding/direct'),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 14, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.purpleL,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    'Create Account ✨',
+                    style: AppTextStyles.label.copyWith(
+                        color: AppColors.purple,
+                        fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -535,9 +550,19 @@ class _BiometricIcon extends StatelessWidget {
 class _HeaderBand extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     final topPadding = MediaQuery.of(context).padding.top;
+    // Height budget only: tighter than the old (h*0.32).clamp(150,260) so the
+    // header + full form (through the biometric hint) fit above the fold on a
+    // ~780dp device. Gradient/rounding/content are unchanged.
+    final bandHeight = (size.height * 0.30).clamp(140.0, 220.0);
+    // Scale the Mochi WITHIN the band rather than growing the band: its natural
+    // size (shortestSide*0.38) is capped so it can never exceed the band at the
+    // 140 floor (short devices), keeping the height budget intact.
+    final mochiSize = (size.shortestSide * 0.38)
+        .clamp(0.0, (bandHeight - topPadding - 24).clamp(0.0, double.infinity));
     return Container(
-      height: (MediaQuery.of(context).size.height * 0.32).clamp(150.0, 260.0),
+      height: bandHeight,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -558,7 +583,8 @@ class _HeaderBand extends StatelessWidget {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  Image.asset('assets/images/mochi.png', width: MediaQuery.of(context).size.shortestSide * 0.38, height: MediaQuery.of(context).size.shortestSide * 0.38, fit: BoxFit.contain),
+                  Image.asset('assets/images/mochi.png',
+                      width: mochiSize, height: mochiSize, fit: BoxFit.contain),
                   const Positioned(right: -20, top: 0, child: Text('👋', style: TextStyle(fontSize: 26))),
                 ],
               ),
