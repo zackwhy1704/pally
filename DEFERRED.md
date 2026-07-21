@@ -7,6 +7,45 @@
 
 ---
 
+## Small-screen geometry audit (2026-07-21) — follow-ups from Phase A
+
+### ⚠️ LIVE: dio 5.10.0 breaks compilation on a fresh `pub get`
+- **What:** `pubspec.yaml` allows `dio: ^5.7.0` and `pubspec.lock` is **gitignored**, so a
+  fresh `flutter pub get` (CI, a new machine, a clean checkout) resolves **dio 5.10.0**, whose
+  new `DioExceptionType.transformTimeout` is not handled by the enum switches in
+  `lib/core/error/pally_error.dart` and `lib/app/api_client.dart` → **the whole app fails to
+  compile** (an existing test, `exam_prep_screen_test.dart`, also fails to build). Local dirs
+  survive only on a stale-locked 5.9.2.
+- **Why deferred (from the layout branch):** dependency/error-handling, NOT layout — kept out of
+  `fix/small-screen-invariants`. But this is a **pre-submission blocker** (any clean CI build breaks).
+- **Closes it:** its OWN tiny branch — either cap `dio: ">=5.7.0 <5.10.0"` in `pubspec.yaml`, or add
+  the `transformTimeout` case (and a `default`) to both switches, then restore `^5.7.0`. Do this SOON.
+
+### Onboarding CTAs below the fold at 360×640 (CONFIRMED, tests written + skipped)
+- **What:** `direct_onboarding` (steps 1-2) and `onboarding` (pages 1-3) render their primary CTA
+  ("Next"/"Create account"/"Let's go →") below the 640-fold — reachable only by scrolling. Confirmed
+  by `test/geometry/cta_invariant_test.dart` (the 5 tests are committed, `skip:`-ed with a DEFERRED ref).
+- **Why deferred:** the fix is pattern (1) (pin the CTA: `Column[Expanded(scroll), pinnedCTA]`), but it
+  restructures two AUTH-FLOW screens (`direct_onboarding_screen` is 1500+ lines) and deserves careful,
+  unhurried work + its own verification — not end-of-session bracket surgery. Stays strictly layout-only.
+- **Closes it:** pin each page/step CTA out of the scroll; un-skip the 5 CTA tests (they gate it green).
+
+### settings_screen — ListTile without a Material ancestor
+- **What:** a `ListTile` sits in a coloured `DecoratedBox` with no `Material` between (×2) →
+  "background/ink may be invisible" assertion. Surfaced + EXCLUDED (with reason) in the smoke registry.
+- **Why deferred:** a render-hierarchy fix (wrap in `Material`), not one of the 2 geometry patterns.
+- **Closes it:** add the `Material` ancestor; re-enroll `settings_screen` in the smoke registry.
+
+### subscription_return_screen — provider mutated during build
+- **What:** `initState` → `_poll()` → `ref.read(entitlementVmProvider.notifier).refresh()` mutates a
+  provider during first build ("Tried to modify a provider while the widget tree was building").
+  Surfaced + EXCLUDED (with reason) in the smoke registry.
+- **Why deferred:** a LOGIC/state fix (defer the poll to a post-frame callback), NOT layout — out of the
+  branch's scope rule ("a fix that can't stay layout-only → STOP + report").
+- **Closes it:** move the initial `_poll()` to `WidgetsBinding.addPostFrameCallback`; re-enroll the screen.
+
+---
+
 ## Avatar Hub (shipped 2026-07-14) — follow-ups
 
 ### Home avatar cards through the hub

@@ -242,12 +242,15 @@ class _DetectedView extends StatelessWidget {
                     children: [
                       Text('↺', style: TextStyle(color: Colors.white, fontSize: 13)),
                       SizedBox(width: 4),
-                      Text(
-                        'Retake',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600),
+                      Flexible(
+                        child: Text(
+                          'Retake',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600),
+                        ),
                       ),
                     ],
                   ),
