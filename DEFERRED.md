@@ -9,17 +9,23 @@
 
 ## Small-screen geometry audit (2026-07-21) — follow-ups from Phase A
 
-### ⚠️ LIVE: dio 5.10.0 breaks compilation on a fresh `pub get`
-- **What:** `pubspec.yaml` allows `dio: ^5.7.0` and `pubspec.lock` is **gitignored**, so a
-  fresh `flutter pub get` (CI, a new machine, a clean checkout) resolves **dio 5.10.0**, whose
-  new `DioExceptionType.transformTimeout` is not handled by the enum switches in
-  `lib/core/error/pally_error.dart` and `lib/app/api_client.dart` → **the whole app fails to
-  compile** (an existing test, `exam_prep_screen_test.dart`, also fails to build). Local dirs
-  survive only on a stale-locked 5.9.2.
-- **Why deferred (from the layout branch):** dependency/error-handling, NOT layout — kept out of
-  `fix/small-screen-invariants`. But this is a **pre-submission blocker** (any clean CI build breaks).
-- **Closes it:** its OWN tiny branch — either cap `dio: ">=5.7.0 <5.10.0"` in `pubspec.yaml`, or add
-  the `transformTimeout` case (and a `default`) to both switches, then restore `^5.7.0`. Do this SOON.
+### ✅ CLOSED (2026-07-21, fix/dependency-lock-and-dio): dio 5.10.0 fresh-`pub get` compile break
+- **Was:** `pubspec.lock` gitignored + `dio: ^5.7.0` → a fresh `flutter pub get` resolved dio 5.10.0,
+  whose new `DioExceptionType.transformTimeout` broke the exhaustive DioException switches
+  (`api_client.dart` switch expression, `pally_error._fromDio`) → whole app failed to compile.
+- **Fixed by:** committing `pubspec.lock` (un-gitignored; dio pinned 5.9.2 — the resolution that builds
+  today's passing APK) + capping `dio: ">=5.7.0 <5.10.0"` as the documented ceiling.
+- **Clean-checkout evidence (the fail-without-fix proof):** a detached worktree of the branch commit →
+  `pub get` → **dio 5.9.2 → analyze clean → APK builds**. A detached worktree of `main` (lock removed,
+  as it is gitignored there) → `pub get` → **dio 5.10.0 → 3 hard compile errors** in api_client +
+  pally_error. Branch reproducible, main broken-on-clean-build.
+- **Note on the switch DEFENSE (deliberately NOT done):** forward-compat `default`/`_` arms can't be
+  added cleanly — against the current (exhaustive) `DioExceptionType` they are
+  `unreachable_switch_case/default` warnings. The committed lock + cap are the correct protection;
+  a deliberate future move past 5.10 should add explicit handling for the new type then (the compile
+  error is the right forcing function). Also verified: the spec's named files
+  (create_tutor_view_model / auth_service / progress_view_model) have NO DioException switch;
+  `upload_view_model` already has a `_ =>` and is safe.
 
 ### Onboarding CTAs below the fold at 360×640 (CONFIRMED, tests written + skipped)
 - **What:** `direct_onboarding` (steps 1-2) and `onboarding` (pages 1-3) render their primary CTA
