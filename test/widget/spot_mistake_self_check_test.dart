@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/features/modules/presentation/widgets/test_body.dart';
 
 /// feat/sm-diagnosis-ui: Spot-the-Mistake becomes an honest interaction —
 /// read → TYPE the mistake (non-empty required) → reveal → self-check.
 void main() {
-  Widget wrap(Widget child) => MaterialApp(home: Scaffold(body: child));
+  // SpotMistakeCard's field now carries a VoiceInputButton (voice-input
+  // feature), which reads a Riverpod provider — every render needs a
+  // ProviderScope ancestor now, even though this widget itself has no other
+  // Riverpod dependency.
+  Widget wrap(Widget child) =>
+      ProviderScope(child: MaterialApp(home: Scaffold(body: child)));
 
   testWidgets('Reveal is disabled until the student types a diagnosis',
       (tester) async {

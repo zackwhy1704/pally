@@ -39,6 +39,12 @@ dependencies:
   camera: ^0.10.5+9
   permission_handler: ^11.3.1
   google_mlkit_text_recognition: ^0.13.0
+  # Voice input (mic → transcript). On-device recognition where the platform
+  # supports it, falling back to the platform recognizer otherwise — never
+  # disabled outright on devices without an on-device model. Apalchi never
+  # stores or transmits raw audio: this plugin streams audio to the OS
+  # recognizer and hands back text only; see lib/features/voice_input/.
+  speech_to_text: ^7.4.0
 
   # Utilities
   uuid: ^4.4.0

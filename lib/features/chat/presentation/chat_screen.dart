@@ -30,6 +30,7 @@ import 'package:pally/features/chat/widgets/mochi_tip_coach.dart';
 import 'package:pally/features/chat/widgets/mode_coach_mark.dart';
 import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
 import 'package:pally/features/chat/providers/chat_usage_provider.dart';
+import 'package:pally/features/voice_input/presentation/voice_input_button.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key, required this.avatarId, this.seed});
@@ -856,6 +857,10 @@ class _InputBar extends StatelessWidget {
               maxLines: null,
             ),
           ),
+          const SizedBox(width: AppSpacing.xs),
+
+          // Mic button — voice input for typing-averse students.
+          VoiceInputButton(controller: controller),
           const SizedBox(width: AppSpacing.xs),
 
           // Camera button — teal
