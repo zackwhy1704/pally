@@ -17,6 +17,7 @@ import 'package:pally/features/upload/presentation/ocr_review_screen.dart';
 import 'package:pally/features/upload/presentation/widgets/upload_tips_banner.dart';
 import 'package:pally/features/centre/centre_mode.dart';
 import 'package:pally/features/chapters/presentation/chapter_picker_sheet.dart';
+import 'package:pally/features/voice_input/presentation/voice_input_button.dart';
 
 class UploadScreen extends ConsumerWidget {
   const UploadScreen({super.key, required this.avatarId});
@@ -487,6 +488,7 @@ class _TypeTabState extends ConsumerState<_TypeTab>
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
             ),
+            VoiceInputButton(controller: _textCtrl),
             const Spacer(),
             Text(
               '$_charCount chars${_charCount < 50 ? ' (min 50)' : ''}',

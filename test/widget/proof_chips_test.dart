@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/features/modules/presentation/widgets/proof_chips.dart';
 import 'package:pally/features/modules/presentation/widgets/prove_body.dart';
@@ -6,8 +7,11 @@ import 'package:pally/features/modules/presentation/widgets/prove_body.dart';
 /// feat/proof-chips: provenance chip, targeting badge, comeback line — plus the
 /// silent-degrade rule (untagged content renders none of them).
 void main() {
-  Widget host(Widget child) =>
-      MaterialApp(home: Scaffold(body: Center(child: child)));
+  // ProveQuestion's field now carries a VoiceInputButton (voice-input
+  // feature), which reads a Riverpod provider — every render needs a
+  // ProviderScope ancestor now.
+  Widget host(Widget child) => ProviderScope(
+      child: MaterialApp(home: Scaffold(body: Center(child: child))));
 
   group('helpers', () {
     test('weakTopicConcept parses WEAK_TOPIC:{concept}, else null', () {

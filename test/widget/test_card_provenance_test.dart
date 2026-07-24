@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/features/modules/presentation/widgets/proof_chips.dart';
 import 'package:pally/features/modules/presentation/widgets/test_body.dart';
@@ -6,9 +7,14 @@ import 'package:pally/features/modules/presentation/widgets/test_body.dart';
 /// feat/test-provenance-chip: the ProvenanceChip renders on all three TEST cards when
 /// the item carries a sourcePageTitle, and is ABSENT on old content (null title).
 void main() {
-  Widget host(Widget child) => MaterialApp(
-        home: Scaffold(
-          body: SingleChildScrollView(child: child),
+  // SpotMistakeCard's field now carries a VoiceInputButton (voice-input
+  // feature), which reads a Riverpod provider — every render needs a
+  // ProviderScope ancestor now.
+  Widget host(Widget child) => ProviderScope(
+        child: MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(child: child),
+          ),
         ),
       );
 

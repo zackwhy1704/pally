@@ -4,6 +4,7 @@ import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/features/modules/presentation/widgets/proof_chips.dart';
+import 'package:pally/features/voice_input/presentation/voice_input_button.dart';
 import 'package:pally/shared/models/learning_module.dart';
 
 // ── PROVE stage: all short-answer questions ─────────────────────────────────
@@ -192,6 +193,14 @@ class ProveQuestionState extends State<ProveQuestion> {
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(color: AppColors.purple),
+              ),
+              // onChanged pass-through: mutating _controller.text from the
+              // mic does NOT fire the TextField's own onChanged, so the
+              // button is given widget.onChanged explicitly to keep this
+              // question's parent `answers` map in sync with a dictated answer.
+              suffixIcon: VoiceInputButton(
+                controller: _controller,
+                onChanged: widget.onChanged,
               ),
             ),
           ),

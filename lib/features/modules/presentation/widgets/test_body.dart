@@ -5,6 +5,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/features/modules/presentation/module_player_view_model.dart';
 import 'package:pally/features/modules/presentation/widgets/proof_chips.dart';
+import 'package:pally/features/voice_input/presentation/voice_input_button.dart';
 import 'package:pally/shared/models/learning_module.dart';
 
 /// Leading provenance chip for a TEST card — "From your notes: {title}" tapping to the
@@ -513,6 +514,7 @@ class SpotMistakeCardState extends State<SpotMistakeCard> {
                   borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(color: AppColors.amber),
                 ),
+                suffixIcon: VoiceInputButton(controller: _controller),
               ),
             ),
             const SizedBox(height: AppSpacing.md),

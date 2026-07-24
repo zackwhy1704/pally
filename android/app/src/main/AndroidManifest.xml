@@ -5,6 +5,10 @@
     <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!-- Voice input (mic → transcript, speech_to_text). Audio is never stored
+         or transmitted by Apalchi — it streams to the platform recognizer and
+         is discarded there; only the transcript is kept. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <application
         android:label="Apalchi"
         android:name="${applicationName}"
@@ -46,6 +50,12 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <!-- Lets the platform resolve an on-device or server speech recognizer
+             service for speech_to_text; without this query, Android 11+ package
+             visibility rules hide every recognizer from the app. -->
+        <intent>
+            <action android:name="android.speech.RecognitionService"/>
         </intent>
     </queries>
 </manifest>
