@@ -27,7 +27,11 @@ if (flutterVersionName == null) {
 android {
     namespace "com.apalchi.app"
     compileSdk 36
-    ndkVersion flutter.ndkVersion
+    // Pinned, NOT flutter.ndkVersion — the Flutter-default NDK floats with the SDK
+    // version, and a mismatch with what the plugins request (27.0.12077973) makes the
+    // release native-symbol strip fail (ships unstripped .so → bloated AAB). Every
+    // plugin in this app requests 27.0.12077973; pin it so any toolchain strips cleanly.
+    ndkVersion "27.0.12077973"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -45,7 +49,13 @@ android {
 
     defaultConfig {
         applicationId "com.apalchi.app"
-        minSdkVersion flutter.minSdkVersion
+        // Pinned, NOT flutter.minSdkVersion — that default floats with the Flutter version
+        // (21 on 3.32.1, 24 on 3.44.2), so the release build silently depended on the
+        // toolchain: 3.32.1 produced minSdk 21 which fails the mobile_scanner (minSdk 23)
+        // manifest merge. 24 is the floor the only shipped build actually exercised; it also
+        // clears mobile_scanner. Lower it deliberately (and test there) if a real API<24
+        // population appears.
+        minSdkVersion 24
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

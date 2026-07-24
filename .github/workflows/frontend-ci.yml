@@ -12,9 +12,16 @@ permissions:
 jobs:
   analyze-and-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
+
+      # Needed by the release-bundle gate below (Gradle build). Harmless for analyze/test.
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -45,6 +52,22 @@ jobs:
         # pixel-exact comparisons to fail. Run golden tests locally before
         # pushing if you change any visual widget.
         run: flutter test test/unit/ test/widget/ test/widget_test.dart
+
+      - name: Release-bundle build gate
+        # analyze + test NEVER run the Android release path, so a plugin that raises its
+        # minSdk floor (or an unbuildable NDK pin) stays green here while `flutter build
+        # appbundle --release` breaks — the exact gap that shipped a broken release path
+        # while CI looked green. This step exercises that path on every push: manifest
+        # merge, plugin minSdk floors, and the NDK native-symbol strip. A throwaway
+        # keystore lets --release package; the .aab is discarded (this is a BUILD gate,
+        # not a release artifact — real signing stays local/deferred to the CI-signing item).
+        run: |
+          keytool -genkeypair -noprompt -keystore "$RUNNER_TEMP/ci-upload.jks" \
+            -alias apalchi -storepass ci_dummy_pw -keypass ci_dummy_pw \
+            -keyalg RSA -keysize 2048 -validity 1 -dname "CN=ci, O=ci"
+          KEYSTORE_PATH="$RUNNER_TEMP/ci-upload.jks" \
+          KEYSTORE_PASSWORD=ci_dummy_pw KEY_PASSWORD=ci_dummy_pw \
+            flutter build appbundle --release --dart-define=APP_ENV=production
 
       - name: Upload test results
         if: always()
