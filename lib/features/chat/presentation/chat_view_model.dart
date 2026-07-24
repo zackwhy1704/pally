@@ -724,7 +724,7 @@ class ChatViewModel extends _$ChatViewModel {
       final dio = ref.read(dioProvider);
       await dio.post<void>(
         '/api/v1/avatars/$_avatarId/chat/$messageId/feedback',
-        data: {'type': type.name.toUpperCase()},
+        data: {'feedbackType': type.name.toUpperCase()},
       );
     } catch (e) {
       appLog.w('[Chat] Feedback sync failed: $e');
