@@ -36,7 +36,7 @@ dependencies:
   # File picking / camera
   file_picker: ^8.1.2
   image_picker: ^1.1.2
-  camera: ^0.10.5+9
+  camera: ^0.12.0+1
   permission_handler: ^11.3.1
   google_mlkit_text_recognition: ^0.13.0
 
