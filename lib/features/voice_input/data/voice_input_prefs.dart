@@ -14,11 +14,11 @@ const voiceInputExplainerShownPrefsKey = 'voice_input_explainer_shown_v1';
 /// single place that reads this flag — flipping it here hides the mic
 /// everywhere at once (e.g. if a legal/DPIA review comes back stricter).
 ///
-/// Defaults to `true` synchronously so widget tests never need to mock
-/// shared_preferences just to render a screen. The persisted local value is
-/// applied once at app bootstrap via `overrideWith` in main.dart (mirrors
-/// `pallyDatabaseProvider.overrideWithValue`), not read inside this provider,
-/// so no test accidentally hits a real platform channel.
+/// This synchronous `true` is a TEST-ONLY default so widget tests never need to
+/// mock shared_preferences just to render a screen. It is NOT the runtime
+/// default — at app bootstrap main.dart always overrides this provider with
+/// `readPersistedVoiceInputEnabled`, whose default is OFF (see below). So voice
+/// is DARK by default in the real app until it is explicitly enabled.
 final voiceInputEnabledProvider = StateProvider<bool>((ref) => true);
 
 /// Flips the off-switch and persists it locally. Not wired to any settings
@@ -32,8 +32,13 @@ Future<void> setVoiceInputEnabled(WidgetRef ref, bool enabled) async {
 
 /// Reads the persisted off-switch value, if any, for `main.dart` bootstrap to
 /// apply as a `ProviderScope` override before first frame.
+///
+/// Default is **OFF** (`?? false`): voice ships DARK until the DPIA/legal review
+/// on children's-voice-to-cloud-STT clears. Flip this ONE line to `?? true` (in
+/// a release whose notes announce it) to turn voice on by default. The
+/// asymmetry is the point — dictated audio can't be un-sent; a one-line flip can wait.
 Future<bool> readPersistedVoiceInputEnabled(SharedPreferences prefs) async {
-  return prefs.getBool(voiceInputEnabledPrefsKey) ?? true;
+  return prefs.getBool(voiceInputEnabledPrefsKey) ?? false;
 }
 
 /// The speech recognition engine. Overridden in tests with a fake so no test
