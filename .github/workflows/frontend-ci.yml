@@ -68,6 +68,11 @@ jobs:
           KEYSTORE_PATH="$RUNNER_TEMP/ci-upload.jks" \
           KEYSTORE_PASSWORD=ci_dummy_pw KEY_PASSWORD=ci_dummy_pw \
             flutter build appbundle --release --dart-define=APP_ENV=production
+          # Echo AAB size on every run → size-regression detector. Also the free test of the
+          # 'strip fails only on the macOS host' theory: this runs on Linux, so a size well
+          # below the local ~125MB (or no "failed to strip" line above) exonerates the host
+          # and points at the Flutter strip step; an identical failure confirms it's not host.
+          ls -lh build/app/outputs/bundle/release/*.aab
 
       - name: Upload test results
         if: always()

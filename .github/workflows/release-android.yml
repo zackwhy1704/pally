@@ -6,10 +6,15 @@ name: release-android
 # Triggered manually (for controlled releases) or on version tags.
 # For day-to-day development use frontend-ci.yml (analyze + test only).
 on:
-  workflow_dispatch:          # manual trigger from GitHub Actions UI
-  push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'   # e.g. v1.2.3
+  workflow_dispatch:          # manual trigger only — see note below
+  # TAG TRIGGER REMOVED (deliberately): this workflow runs `flutter build apk --release`,
+  # which needs the release keystore CI does not have, so it FAILS at signing on every
+  # tag — an alarm that always fires, which trains everyone to ignore a red X on the
+  # release workflow (the state in which a real failure goes unnoticed). Re-enable the
+  # tag trigger *together with* the keystore-secret signing step (deferred: CI-signing
+  # item). Until then, release builds are cut locally from the tagged SHA under the
+  # pinned toolchain, and buildability is covered on every push by frontend-ci.yml's
+  # release-bundle gate.
 
 permissions:
   contents: read
