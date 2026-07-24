@@ -24,6 +24,16 @@ enum MessageType { text, photo, homeworkResult }
 
 enum FeedbackType { helpful, wrong, confused, saveToBrain }
 
+/// Reasons a student/parent can report an assistant chat message. Wire values
+/// match the backend contract exactly (POST /avatars/{id}/chat/report).
+enum ReportReason { unsafe, wrongOrMisleading, other }
+
+String reportReasonToWire(ReportReason r) => switch (r) {
+      ReportReason.unsafe => 'UNSAFE',
+      ReportReason.wrongOrMisleading => 'WRONG_OR_MISLEADING',
+      ReportReason.other => 'OTHER',
+    };
+
 enum SyncStatus { pending, synced, failed }
 
 SyncStatus _syncStatusFromJson(dynamic value) {

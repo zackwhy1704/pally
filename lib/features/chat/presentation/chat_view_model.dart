@@ -41,6 +41,9 @@ class ChatState {
     this.error,
     this.pendingLevelUp = 0,
     this.historyParseWarning,
+    this.reportedMessageIds = const {},
+    this.isSubmittingReport = false,
+    this.reportError,
   });
 
   final Avatar? avatar;
@@ -62,6 +65,17 @@ class ChatState {
   // Non-null when ≥1 history message failed to parse (P3: non-silent drops).
   // Displayed as a soft banner — not a crash, not lost silently.
   final String? historyParseWarning;
+  // Message ids reported this session (child-safety report feature). Not
+  // persisted beyond the session — a fresh app launch can re-show the report
+  // action, but re-reporting the SAME rendered message within a session is
+  // suppressed so a child can't tap repeatedly.
+  final Set<String> reportedMessageIds;
+  // True while a report POST is in flight — disables the sheet's submit
+  // button so a double-tap can't fire two reports.
+  final bool isSubmittingReport;
+  // Non-null when the last report submission failed — the sheet shows this
+  // with a retry affordance and NEVER shows the success confirmation.
+  final String? reportError;
 
   bool get canSend => !isSending && !isTyping && !isProcessingPhoto;
 
@@ -93,6 +107,9 @@ class ChatState {
     Object? error = _sentinel,
     int? pendingLevelUp,
     Object? historyParseWarning = _sentinel,
+    Set<String>? reportedMessageIds,
+    bool? isSubmittingReport,
+    Object? reportError = _sentinel,
   }) {
     return ChatState(
       avatar: avatar ?? this.avatar,
@@ -112,6 +129,10 @@ class ChatState {
       historyParseWarning: historyParseWarning == _sentinel
           ? this.historyParseWarning
           : historyParseWarning as String?,
+      reportedMessageIds: reportedMessageIds ?? this.reportedMessageIds,
+      isSubmittingReport: isSubmittingReport ?? this.isSubmittingReport,
+      reportError:
+          reportError == _sentinel ? this.reportError : reportError as String?,
     );
   }
 }
@@ -590,6 +611,51 @@ class ChatViewModel extends _$ChatViewModel {
     appLog.i('[Chat] Feedback $type submitted for message $messageId');
   }
 
+  /// Reports an assistant chat message as unsafe/wrong/other (child-safety
+  /// feature). Sends the rendered message TEXT verbatim — the assistant
+  /// message id is a client-only temp id ('tutor-<timestamp>'), never
+  /// server-persisted, so it's carried best-effort only as `clientMessageId`
+  /// and must never be relied on for correctness.
+  Future<void> reportMessage({
+    required String messageId,
+    required String messageText,
+    required ReportReason reason,
+    String? comment,
+  }) async {
+    if (state.isSubmittingReport) return; // re-entry guard
+    state = state.copyWith(isSubmittingReport: true, reportError: null);
+    final trimmedComment = comment?.trim();
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.post<void>(
+        '/api/v1/avatars/$_avatarId/chat/report',
+        data: {
+          'reason': reportReasonToWire(reason),
+          'comment': (trimmedComment == null || trimmedComment.isEmpty)
+              ? null
+              : trimmedComment,
+          'messageText': messageText,
+          'clientMessageId': messageId,
+        },
+        options: Options(
+          receiveTimeout: const Duration(seconds: 15),
+          sendTimeout: const Duration(seconds: 15),
+        ),
+      );
+      appLog.i('[Chat] Reported message $messageId (reason=$reason)');
+      state = state.copyWith(
+        isSubmittingReport: false,
+        reportedMessageIds: {...state.reportedMessageIds, messageId},
+      );
+    } catch (e, st) {
+      appLog.w('[Chat] Report message failed', error: e, stackTrace: st);
+      state = state.copyWith(
+        isSubmittingReport: false,
+        reportError: "Couldn't send your report. Please try again.",
+      );
+    }
+  }
+
   Future<void> saveScrollOffset(double offset) async {
     await _localDb.saveScrollOffset(_avatarId, offset);
   }
@@ -724,7 +790,7 @@ class ChatViewModel extends _$ChatViewModel {
       final dio = ref.read(dioProvider);
       await dio.post<void>(
         '/api/v1/avatars/$_avatarId/chat/$messageId/feedback',
-        data: {'type': type.name.toUpperCase()},
+        data: {'feedbackType': type.name.toUpperCase()},
       );
     } catch (e) {
       appLog.w('[Chat] Feedback sync failed: $e');

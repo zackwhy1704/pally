@@ -25,6 +25,7 @@ import 'package:pally/features/progress/presentation/level_up_controller.dart';
 import 'package:pally/features/chat/presentation/widgets/photo_message_bubble.dart';
 import 'package:pally/features/chat/presentation/widgets/photo_processing_bubble.dart';
 import 'package:pally/features/chat/presentation/widgets/homework_scan_result_bubble.dart';
+import 'package:pally/features/chat/presentation/widgets/report_message_sheet.dart';
 import 'package:pally/features/chat/widgets/mochi_tip_coach.dart';
 import 'package:pally/features/chat/widgets/mode_coach_mark.dart';
 import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
@@ -538,6 +539,12 @@ class _TextBubble extends ConsumerWidget {
 
   bool get _isUser => message.role == MessageRole.user;
 
+  // Report is available on completed assistant messages only — never on the
+  // student's own messages, and never while still streaming (nothing final
+  // to report yet). The isError bubble is a separate render path below.
+  bool get _canReport =>
+      !_isUser && !message.isStreaming && message.content.isNotEmpty;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Failed-stream pill: tap to retry the last user message.
@@ -579,6 +586,66 @@ class _TextBubble extends ConsumerWidget {
         ),
       );
     }
+    final isReported = _canReport &&
+        ref.watch(chatViewModelProvider(avatarId)
+            .select((s) => s.reportedMessageIds.contains(message.id)));
+
+    Widget bubbleContent = Container(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: _isUser ? AppColors.purple : AppColors.purpleL,
+        borderRadius: BorderRadius.only(
+          topLeft:
+              _isUser ? const Radius.circular(18) : const Radius.circular(4),
+          topRight:
+              _isUser ? const Radius.circular(4) : const Radius.circular(18),
+          bottomLeft: const Radius.circular(18),
+          bottomRight: const Radius.circular(18),
+        ),
+      ),
+      child: message.content.isEmpty && message.isStreaming
+          ? const SizedBox(
+              width: 40,
+              height: 16,
+              child: Center(
+                child: LinearProgressIndicator(
+                  color: AppColors.purple,
+                  backgroundColor: AppColors.purpleL,
+                ),
+              ),
+            )
+          : message.content.isEmpty
+              ? Text(
+                  'Hmm, I lost my train of thought. Ask me again!',
+                  style: AppTextStyles.body.copyWith(
+                    color: AppColors.text2,
+                    fontStyle: FontStyle.italic,
+                  ),
+                )
+              : MathText(
+                  text: message.content,
+                  style: AppTextStyles.body,
+                  textColor: _isUser ? Colors.white : AppColors.text1,
+                ),
+    );
+
+    // Discoverable but not prominent: long-press an assistant bubble to
+    // report it (child-safety). Composes with — does not replace — any
+    // other gesture on this bubble; there is none on the normal (non-error)
+    // path today.
+    if (_canReport) {
+      bubbleContent = GestureDetector(
+        onLongPress: () => showReportMessageSheet(
+          context,
+          avatarId: avatarId,
+          messageId: message.id,
+          messageText: message.content,
+        ),
+        child: bubbleContent,
+      );
+    }
+
     return Column(
       crossAxisAlignment:
           _isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -589,53 +656,18 @@ class _TextBubble extends ConsumerWidget {
             constraints: BoxConstraints(
               maxWidth: MediaQuery.of(context).size.width * 0.75,
             ),
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-              decoration: BoxDecoration(
-                color: _isUser ? AppColors.purple : AppColors.purpleL,
-                borderRadius: BorderRadius.only(
-                  topLeft: _isUser
-                      ? const Radius.circular(18)
-                      : const Radius.circular(4),
-                  topRight: _isUser
-                      ? const Radius.circular(4)
-                      : const Radius.circular(18),
-                  bottomLeft: const Radius.circular(18),
-                  bottomRight: const Radius.circular(18),
-                ),
-              ),
-              child: message.content.isEmpty && message.isStreaming
-                  ? const SizedBox(
-                      width: 40,
-                      height: 16,
-                      child: Center(
-                        child: LinearProgressIndicator(
-                          color: AppColors.purple,
-                          backgroundColor: AppColors.purpleL,
-                        ),
-                      ),
-                    )
-                  : message.content.isEmpty
-                      ? Text(
-                          'Hmm, I lost my train of thought. Ask me again!',
-                          style: AppTextStyles.body.copyWith(
-                            color: AppColors.text2,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        )
-                      : MathText(
-                          text: message.content,
-                          style: AppTextStyles.body,
-                          textColor: _isUser ? Colors.white : AppColors.text1,
-                        ),
-            ),
+            child: bubbleContent,
           ),
         ),
         if (!_isUser && message.sources.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(top: 4, left: 4),
             child: _SourceBadge(sources: message.sources),
+          ),
+        if (isReported)
+          const Padding(
+            padding: EdgeInsets.only(top: 4, left: 4),
+            child: _ReportedIndicator(),
           ),
         if (message.syncStatus == SyncStatus.failed)
           Padding(
@@ -682,6 +714,22 @@ class _TextBubble extends ConsumerWidget {
               ],
             ),
           ),
+      ],
+    );
+  }
+}
+
+class _ReportedIndicator extends StatelessWidget {
+  const _ReportedIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Icon(Icons.flag_rounded, size: 12, color: AppColors.text3),
+        const SizedBox(width: 3),
+        Text('Reported', style: AppTextStyles.caption),
       ],
     );
   }
