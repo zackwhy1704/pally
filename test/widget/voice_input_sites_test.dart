@@ -49,6 +49,13 @@ List<Override> _authOverrides() => [
       )),
     ];
 
+/// Voice enabled — the provider now defaults fail-CLOSED (off), so PLACEMENT
+/// tests must turn it on explicitly. A fresh Override per call (Riverpod forbids
+/// reusing one Override object across containers). Excluded-site tests use this
+/// too, so "no mic" is proven WITH voice on (the real invariant), not trivially
+/// because the flag was off.
+Override _voiceOn() => voiceInputEnabledProvider.overrideWith((ref) => true);
+
 /// Settles a real screen's first frame, then unmounts + advances the fake
 /// clock so any lingering provider-owned Timer (e.g. ChatScreen's
 /// weaknessFocusProvider Dio call) fires and clears before the test ends —
@@ -89,6 +96,7 @@ void main() {
   group('test_body.dart — SpotMistakeCard only', () {
     testWidgets('SpotMistakeCard (unrevealed) renders the mic', (tester) async {
       await tester.pumpWidget(ProviderScope(
+        overrides: [_voiceOn()],
         child: MaterialApp(
           home: Scaffold(
             body: SpotMistakeCard(
@@ -112,6 +120,7 @@ void main() {
         'ChallengeCard and HotTakeCard — NOT in the four sites — have no mic',
         (tester) async {
       await tester.pumpWidget(ProviderScope(
+        overrides: [_voiceOn()],
         child: MaterialApp(
           home: Scaffold(
             body: Column(children: [
@@ -144,6 +153,7 @@ void main() {
       String? synced;
       final controller = TextEditingController();
       await tester.pumpWidget(ProviderScope(
+        overrides: [_voiceOn()],
         child: MaterialApp(
           home: Scaffold(
             body: ProveQuestion(
@@ -174,6 +184,7 @@ void main() {
       await tester.pumpWidget(ProviderScope(
         overrides: [
           ..._authOverrides(),
+          _voiceOn(),
           uploadViewModelProvider('test-avatar').overrideWith(() => _IdleUploadVM()),
         ],
         child: const MaterialApp(home: UploadScreen(avatarId: 'test-avatar')),
@@ -199,7 +210,7 @@ void main() {
     testWidgets('renders the mic as a sibling of the camera button',
         (tester) async {
       await tester.pumpWidget(ProviderScope(
-        overrides: _authOverrides(),
+        overrides: [..._authOverrides(), _voiceOn()],
         child: const MaterialApp(home: ChatScreen(avatarId: 'test-avatar')),
       ));
       await _settleAndDrain(tester);
@@ -213,7 +224,7 @@ void main() {
   group('excluded surface — auth/profile fields never get a mic', () {
     testWidgets('CompleteProfileScreen has no mic anywhere', (tester) async {
       await tester.pumpWidget(ProviderScope(
-        overrides: _authOverrides(),
+        overrides: [..._authOverrides(), _voiceOn()],
         child: const MaterialApp(home: CompleteProfileScreen()),
       ));
       await _settleAndDrain(tester);

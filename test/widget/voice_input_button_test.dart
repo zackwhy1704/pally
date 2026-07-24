@@ -113,12 +113,15 @@ void main() {
       expect(find.byKey(_voiceKey), findsNothing);
     });
 
-    testWidgets('voiceInputEnabled=true (the default) renders the mic',
+    testWidgets('voiceInputEnabled=true renders the mic (fail-closed: OFF is the default)',
         (tester) async {
       final controller = TextEditingController();
       await tester.pumpWidget(wrap(
         VoiceInputButton(controller: controller),
-        overrides: [speechRecognizerProvider.overrideWithValue(fakeRecognizer)],
+        overrides: [
+          voiceInputEnabledProvider.overrideWith((ref) => true),
+          speechRecognizerProvider.overrideWithValue(fakeRecognizer),
+        ],
       ));
 
       expect(find.byKey(_voiceKey), findsOneWidget);
@@ -132,7 +135,10 @@ void main() {
       final controller = TextEditingController();
       await tester.pumpWidget(wrap(
         VoiceInputButton(controller: controller),
-        overrides: [speechRecognizerProvider.overrideWithValue(fakeRecognizer)],
+        overrides: [
+          voiceInputEnabledProvider.overrideWith((ref) => true),
+          speechRecognizerProvider.overrideWithValue(fakeRecognizer),
+        ],
       ));
 
       await tester.tap(find.byKey(_voiceKey));
@@ -160,7 +166,10 @@ void main() {
       final synced = <String>[];
       await tester.pumpWidget(wrap(
         VoiceInputButton(controller: controller, onChanged: synced.add),
-        overrides: [speechRecognizerProvider.overrideWithValue(fakeRecognizer)],
+        overrides: [
+          voiceInputEnabledProvider.overrideWith((ref) => true),
+          speechRecognizerProvider.overrideWithValue(fakeRecognizer),
+        ],
       ));
 
       await tester.tap(find.byKey(_voiceKey));
@@ -187,7 +196,10 @@ void main() {
           TextField(controller: controller),
           VoiceInputButton(controller: controller),
         ]),
-        overrides: [speechRecognizerProvider.overrideWithValue(fakeRecognizer)],
+        overrides: [
+          voiceInputEnabledProvider.overrideWith((ref) => true),
+          speechRecognizerProvider.overrideWithValue(fakeRecognizer),
+        ],
       ));
 
       await tester.tap(find.byKey(_voiceKey));
@@ -219,7 +231,10 @@ void main() {
       final controller = TextEditingController();
       await tester.pumpWidget(wrap(
         VoiceInputButton(controller: controller),
-        overrides: [speechRecognizerProvider.overrideWithValue(fakeRecognizer)],
+        overrides: [
+          voiceInputEnabledProvider.overrideWith((ref) => true),
+          speechRecognizerProvider.overrideWithValue(fakeRecognizer),
+        ],
       ));
 
       await tester.tap(find.byKey(_voiceKey));

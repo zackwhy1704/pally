@@ -14,12 +14,16 @@ const voiceInputExplainerShownPrefsKey = 'voice_input_explainer_shown_v1';
 /// single place that reads this flag — flipping it here hides the mic
 /// everywhere at once (e.g. if a legal/DPIA review comes back stricter).
 ///
-/// This synchronous `true` is a TEST-ONLY default so widget tests never need to
-/// mock shared_preferences just to render a screen. It is NOT the runtime
-/// default — at app bootstrap main.dart always overrides this provider with
-/// `readPersistedVoiceInputEnabled`, whose default is OFF (see below). So voice
-/// is DARK by default in the real app until it is explicitly enabled.
-final voiceInputEnabledProvider = StateProvider<bool>((ref) => true);
+/// FAIL-CLOSED: defaults OFF. Voice is dark unless something EXPLICITLY enables
+/// it, so NO path can silently get voice ON — not a second ProviderScope, a
+/// widget preview, a differently-bootstrapped entry (deep-link/background), nor a
+/// test asserting "off by default" (which would otherwise pass while testing the
+/// wrong default). main.dart applies the persisted value at bootstrap
+/// (`readPersistedVoiceInputEnabled`, also OFF); the handful of tests that
+/// exercise the mic override this to `true` explicitly (as they must, since they
+/// assert the mic renders). Same fail-open lesson as isUnder13(null) /
+/// CacheInvalidationService — do not rely on "a guard always runs".
+final voiceInputEnabledProvider = StateProvider<bool>((ref) => false);
 
 /// Flips the off-switch and persists it locally. Not wired to any settings
 /// UI yet (the task treats a visible toggle as optional polish) — this is
