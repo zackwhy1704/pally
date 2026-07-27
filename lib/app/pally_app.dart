@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/router.dart';
+import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/services/firebase_ready.dart';
+import 'package:pally/features/voice_input/data/voice_input_prefs.dart';
 import 'package:pally/core/theme/app_theme.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/utils/logger.dart';
@@ -87,6 +89,16 @@ class _PallyAppState extends ConsumerState<PallyApp>
 
   @override
   Widget build(BuildContext context) {
+    // Server-controlled voice-input kill-switch: mirror the `voice_input` feature
+    // flag (Railway VOICE_INPUT_ENABLED) into voiceInputEnabledProvider from the ONE
+    // place flags are already loaded, so mic-bearing widgets don't each pull the async
+    // flags/auth graph. Fail-closed: stays false until a confirmed server flag turns it on.
+    ref.listen(featureFlagsProvider, (prev, next) {
+      final on = voiceEnabledFromFlags(next.valueOrNull);
+      if (ref.read(voiceInputEnabledProvider) != on) {
+        ref.read(voiceInputEnabledProvider.notifier).state = on;
+      }
+    });
     return MaterialApp.router(
       title: 'Pally',
       theme: AppTheme.light,

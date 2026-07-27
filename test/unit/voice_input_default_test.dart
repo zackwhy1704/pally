@@ -1,29 +1,34 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/features/voice_input/data/voice_input_prefs.dart';
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
-  group('voice input RUNTIME default (readPersistedVoiceInputEnabled)', () {
-    test('no persisted value → OFF (voice ships DARK pending the DPIA/legal review)',
-        () async {
-      // Fail-without-fix: the default was `?? true`; flipped to `?? false` so a
-      // child's voice cannot reach cloud STT by default before legal clears.
-      // main.dart applies THIS value as the bootstrap override, so it is the
-      // real runtime default (not the test-only synchronous provider default).
-      SharedPreferences.setMockInitialValues({});
-      final prefs = await SharedPreferences.getInstance();
-
-      expect(await readPersistedVoiceInputEnabled(prefs), isFalse);
+  group('voiceEnabledFromFlags — server flag → mic, fail-closed', () {
+    test('voice_input == true → enabled', () {
+      expect(voiceEnabledFromFlags({'voice_input': true}), isTrue);
     });
 
-    test('persisted true → ON (the enable path a future "flip on" release uses)',
-        () async {
-      SharedPreferences.setMockInitialValues({voiceInputEnabledPrefsKey: true});
-      final prefs = await SharedPreferences.getInstance();
+    test('flag absent → OFF (fail-closed)', () {
+      // Fail-without-fix: pins the exact flag key and the fail-closed default. A typo
+      // in the key or a truthy-on-absent mapping would let the mic light up without the
+      // server saying so — the child-data path must never default on.
+      expect(voiceEnabledFromFlags({}), isFalse);
+    });
 
-      expect(await readPersistedVoiceInputEnabled(prefs), isTrue);
+    test('null flags (not yet loaded / fetch failed) → OFF', () {
+      expect(voiceEnabledFromFlags(null), isFalse);
+    });
+
+    test('voice_input == false → OFF', () {
+      expect(voiceEnabledFromFlags({'voice_input': false}), isFalse);
+    });
+  });
+
+  group('voiceInputEnabledProvider default', () {
+    test('defaults OFF (fail-closed) until the app-root sync sets it from the server', () {
+      final c = ProviderContainer();
+      addTearDown(c.dispose);
+      expect(c.read(voiceInputEnabledProvider), isFalse);
     });
   });
 }

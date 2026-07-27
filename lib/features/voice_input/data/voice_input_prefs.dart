@@ -1,51 +1,35 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/features/voice_input/data/platform_speech_recognizer.dart';
 import 'package:pally/features/voice_input/domain/speech_recognizer.dart';
 
-/// Local (per-device) shared_preferences key for the voice-input off-switch.
-const voiceInputEnabledPrefsKey = 'voice_input_enabled_v1';
-
-/// shared_preferences key marking the first-use explainer as shown.
+/// shared_preferences key marking the first-use explainer as shown (per device).
 const voiceInputExplainerShownPrefsKey = 'voice_input_explainer_shown_v1';
 
-/// Per-account off-switch for the ENTIRE voice-input feature. All four mic
-/// affordances render through the one VoiceInputButton widget, which is the
-/// single place that reads this flag — flipping it here hides the mic
-/// everywhere at once (e.g. if a legal/DPIA review comes back stricter).
+/// Whether the voice-input mic is enabled. SERVER-CONTROLLED: synced from the
+/// `voice_input` feature flag (backend `FeatureFlagService.getFlags` ← Railway
+/// `VOICE_INPUT_ENABLED` env var) by an app-root `ref.listen` in PallyApp — see
+/// `syncVoiceInputFlag`. Flipping the Railway env var toggles the mic on every
+/// device with NO client redeploy (the kill-switch for children's-voice-to-cloud-STT
+/// pending the DPIA).
 ///
-/// FAIL-CLOSED: defaults OFF. Voice is dark unless something EXPLICITLY enables
-/// it, so NO path can silently get voice ON — not a second ProviderScope, a
-/// widget preview, a differently-bootstrapped entry (deep-link/background), nor a
-/// test asserting "off by default" (which would otherwise pass while testing the
-/// wrong default). main.dart applies the persisted value at bootstrap
-/// (`readPersistedVoiceInputEnabled`, also OFF); the handful of tests that
-/// exercise the mic override this to `true` explicitly (as they must, since they
-/// assert the mic renders). Same fail-open lesson as isUnder13(null) /
-/// CacheInvalidationService — do not rely on "a guard always runs".
+/// FAIL-CLOSED: defaults `false` — the mic stays DARK unless the app-root sync sets
+/// it true from a confirmed server flag. Kept a plain [StateProvider] (not derived
+/// from featureFlagsProvider) so a mic-bearing widget does NOT transitively pull the
+/// async auth/flags graph into every widget test — the sync happens in ONE place.
+///
+/// (Replaced the former local shared_preferences off-switch: a device-local flag
+/// would DESYNC from server truth and couldn't be flipped remotely.) All four mic
+/// affordances render through the one VoiceInputButton, which reads this.
 final voiceInputEnabledProvider = StateProvider<bool>((ref) => false);
 
-/// Flips the off-switch and persists it locally. Not wired to any settings
-/// UI yet (the task treats a visible toggle as optional polish) — this is
-/// the hook a future settings screen would call.
-Future<void> setVoiceInputEnabled(WidgetRef ref, bool enabled) async {
-  ref.read(voiceInputEnabledProvider.notifier).state = enabled;
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.setBool(voiceInputEnabledPrefsKey, enabled);
-}
+/// Pure flag→bool mapping (fail-closed): the mic is enabled ONLY when the server
+/// explicitly returns `voice_input == true`. Absent/null/false → OFF. PallyApp's
+/// `ref.listen(featureFlagsProvider, ...)` mirrors this into [voiceInputEnabledProvider].
+bool voiceEnabledFromFlags(Map<String, bool>? flags) =>
+    flags?[FeatureFlags.voiceInputEnabled] == true;
 
-/// Reads the persisted off-switch value, if any, for `main.dart` bootstrap to
-/// apply as a `ProviderScope` override before first frame.
-///
-/// Default is **OFF** (`?? false`): voice ships DARK until the DPIA/legal review
-/// on children's-voice-to-cloud-STT clears. Flip this ONE line to `?? true` (in
-/// a release whose notes announce it) to turn voice on by default. The
-/// asymmetry is the point — dictated audio can't be un-sent; a one-line flip can wait.
-Future<bool> readPersistedVoiceInputEnabled(SharedPreferences prefs) async {
-  return prefs.getBool(voiceInputEnabledPrefsKey) ?? false;
-}
-
-/// The speech recognition engine. Overridden in tests with a fake so no test
-/// ever drives a real platform channel or microphone.
+/// The speech recognition engine. Overridden in tests with a fake so no test ever
+/// drives a real platform channel or microphone.
 final speechRecognizerProvider =
     Provider<SpeechRecognizer>((ref) => PlatformSpeechRecognizer());

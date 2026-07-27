@@ -22,6 +22,12 @@ class FeatureFlags {
   /// server-side ONLY after Apple grants the External Link Account Entitlement;
   /// then the web upgrade CTA reveals a tappable "Continue on web" button on iOS.
   static const iosExternalLinkEnabled = 'ios_external_link_enabled';
+
+  /// Voice-input mic enabled. Server-controlled from the Railway
+  /// VOICE_INPUT_ENABLED env var (default absent → false, fail-closed), so the mic
+  /// can be toggled on/off remotely with no client redeploy — the kill-switch for
+  /// children's-voice-to-cloud-STT pending the DPIA. Never set client-side.
+  static const voiceInputEnabled = 'voice_input';
 }
 
 /// Server-controlled per-user feature flags.

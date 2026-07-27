@@ -13,7 +13,6 @@ import 'package:pally/core/utils/logger.dart';
 import 'package:pally/firebase_options.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/chat/data/local/chat_local_data_source.dart';
-import 'package:pally/features/voice_input/data/voice_input_prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -75,17 +74,15 @@ Future<void> _bootstrap() async {
   final db = PallyDatabase();
   _runDailyMaintenanceIfNeeded(db, prefs);
 
-  // Local per-device off-switch for the voice-input mic affordances (default
-  // ON). Read once here so every VoiceInputButton across the app reflects the
-  // same flag from first frame — see voice_input_prefs.dart.
-  final voiceInputEnabled = await readPersistedVoiceInputEnabled(prefs);
+  // Voice-input mic is gated by the server `voice_input` feature flag (Railway
+  // VOICE_INPUT_ENABLED) — see voice_input_prefs.dart. No bootstrap override
+  // needed: voiceInputEnabledProvider derives from featureFlagsProvider (fail-closed).
 
   runApp(
     ProviderScope(
       overrides: [
         pallyDatabaseProvider.overrideWithValue(db),
         globalNavigatorKeyProvider.overrideWithValue(navigatorKey),
-        voiceInputEnabledProvider.overrideWith((ref) => voiceInputEnabled),
       ],
       child: PallyApp(router: router),
     ),
