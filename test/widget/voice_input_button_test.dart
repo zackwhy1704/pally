@@ -128,61 +128,115 @@ void main() {
     });
   });
 
-  group('transcription', () {
-    testWidgets(
-        'tapping the mic starts listening; partial + final transcripts land '
-        'in the controller, which stays editable afterwards', (tester) async {
-      final controller = TextEditingController();
+  group('interim vs final', () {
+    const previewKey = ValueKey('voiceInputPreview');
+
+    Future<void> pumpButton(WidgetTester tester, TextEditingController controller,
+        {ValueChanged<String>? onChanged}) async {
       await tester.pumpWidget(wrap(
-        VoiceInputButton(controller: controller),
+        VoiceInputButton(controller: controller, onChanged: onChanged),
         overrides: [
           voiceInputEnabledProvider.overrideWith((ref) => true),
           speechRecognizerProvider.overrideWithValue(fakeRecognizer),
         ],
       ));
-
       await tester.tap(find.byKey(_voiceKey));
       await tester.pumpAndSettle();
-      expect(fakeRecognizer.isListening, isTrue);
+    }
+
+    testWidgets(
+        'an interim result shows in the pending preview but is NOT committed to the field',
+        (tester) async {
+      final controller = TextEditingController();
+      await pumpButton(tester, controller);
 
       fakeRecognizer.emit('hello mochi', isFinal: false);
       await tester.pump();
-      expect(controller.text, 'hello mochi');
 
+      // Fail-without-fix: on current main (:113) every result — interim included —
+      // was written into controller.text, so the field visibly churned as the
+      // recognizer revised its hypothesis. Interim must NOT reach the field.
+      expect(controller.text, isEmpty);
+      // …it appears in the muted pending-preview pill instead.
+      expect(find.byKey(previewKey), findsOneWidget);
+      expect(find.text('hello mochi'), findsOneWidget);
+    });
+
+    testWidgets('a final result commits to the editable field and clears the preview',
+        (tester) async {
+      final controller = TextEditingController();
+      await pumpButton(tester, controller);
+
+      fakeRecognizer.emit('hello mochi', isFinal: false);
+      await tester.pump();
       fakeRecognizer.emit('hello mochi it is sunny', isFinal: true);
       await tester.pump();
-      expect(controller.text, 'hello mochi it is sunny');
 
-      // Fail-without-fix: a version that locked the field (readOnly / disabled
-      // while "confirming" the dictation) would make this assignment a no-op.
+      expect(controller.text, 'hello mochi it is sunny');
+      expect(find.byKey(previewKey), findsNothing);
+
+      // Committed text stays fully editable (fail-without-fix: a readOnly/disabled
+      // "confirming" state would make this assignment a no-op).
       controller.text = 'a student edit after dictation';
       await tester.pump();
       expect(controller.text, 'a student edit after dictation');
     });
 
-    testWidgets('onChanged fires on every transcript update (prove_body sync)',
+    testWidgets('segmented dictation APPENDS across taps rather than replacing',
+        (tester) async {
+      final controller = TextEditingController();
+      await pumpButton(tester, controller);
+
+      fakeRecognizer.emit('the cat sat', isFinal: true);
+      await tester.pump();
+      await tester.tap(find.byKey(_voiceKey)); // stop segment 1
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(_voiceKey)); // start segment 2
+      await tester.pumpAndSettle();
+      fakeRecognizer.emit('on the mat', isFinal: true);
+      await tester.pump();
+
+      // Fail-without-fix: committing against the LIVE controller (or replacing)
+      // would drop segment 1 → 'on the mat'. Appending to the session base yields
+      // both, space-joined.
+      expect(controller.text, 'the cat sat on the mat');
+    });
+
+    testWidgets('stop finalizes a trailing interim the engine never marked final',
+        (tester) async {
+      final controller = TextEditingController();
+      await pumpButton(tester, controller);
+
+      // Batch engines only finalize at stop — here only interim results arrive.
+      fakeRecognizer.emit('batch only text', isFinal: false);
+      await tester.pump();
+      expect(controller.text, isEmpty); // not committed yet
+
+      await tester.tap(find.byKey(_voiceKey)); // stop
+      await tester.pumpAndSettle();
+
+      expect(controller.text, 'batch only text'); // trailing interim finalized
+      expect(find.byKey(previewKey), findsNothing);
+    });
+
+    testWidgets('onChanged fires ONLY on commit — never on interim (no interim→submit path)',
         (tester) async {
       final controller = TextEditingController();
       final synced = <String>[];
-      await tester.pumpWidget(wrap(
-        VoiceInputButton(controller: controller, onChanged: synced.add),
-        overrides: [
-          voiceInputEnabledProvider.overrideWith((ref) => true),
-          speechRecognizerProvider.overrideWithValue(fakeRecognizer),
-        ],
-      ));
+      await pumpButton(tester, controller, onChanged: synced.add);
 
-      await tester.tap(find.byKey(_voiceKey));
-      await tester.pumpAndSettle();
+      fakeRecognizer.emit('par', isFinal: false);
       fakeRecognizer.emit('partial', isFinal: false);
       await tester.pump();
+      // Interim never reaches the parent's committed state (e.g. ProveBody's
+      // answers map, which gates submit) — so nothing dictated-but-unfinalized
+      // can be submitted.
+      expect(synced, isEmpty);
+
       fakeRecognizer.emit('partial final', isFinal: true);
       await tester.pump();
-
-      // Fail-without-fix: setting controller.text directly does NOT fire a
-      // TextField's own onChanged, so without this explicit pass-through the
-      // parent (e.g. ProveBody's `answers` map) never sees a dictated answer.
-      expect(synced, ['partial', 'partial final']);
+      expect(synced, ['partial final']);
     });
   });
 
