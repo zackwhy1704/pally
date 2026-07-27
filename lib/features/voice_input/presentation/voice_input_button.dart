@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/features/voice_input/data/voice_input_prefs.dart';
 import 'package:pally/features/voice_input/domain/speech_recognizer.dart';
 
@@ -16,20 +18,25 @@ import 'package:pally/features/voice_input/domain/speech_recognizer.dart';
 ///    all render THIS widget, so there is exactly one place to check);
 ///  - shows a one-time plain-language explainer before the FIRST listen ever
 ///    (persisted in shared_preferences so it never repeats);
-///  - writes live partial + final transcripts into [controller] — never
-///    audio, only text, and the field stays fully editable throughout and
-///    after; nothing here ever auto-submits;
+///  - INTERIM vs FINAL split: while listening, the recognizer streams revised
+///    interim hypotheses (isFinal=false) that rewrite themselves token-by-token.
+///    Those are shown ONLY in a muted "pending" preview pill above the mic —
+///    NEVER written to [controller] — so the field never visibly churns. A FINAL
+///    result (or the trailing interim at stop) is COMMITTED into the editable
+///    field, APPENDED to whatever was already there so a user can dictate in
+///    segments across taps. Only text ever leaves the recognizer, never audio;
+///    the field stays fully editable, and nothing here EVER auto-submits;
 ///  - degrades to typing on permission-denied or any recognizer error —
 ///    the keyboard path always keeps working.
 ///
 /// [onChanged] is for callers whose parent state is driven by the TextField's
-/// own `onChanged` (e.g. prove_body.dart, which pushes into a parent
-/// `answers` map) — setting `controller.text` programmatically does NOT fire
-/// a TextField's `onChanged`, so this widget calls [onChanged] explicitly
-/// after every transcript update to keep such parents in sync. Sites that
-/// read the controller directly (test_body.dart, upload_screen.dart via a
-/// controller listener; chat_screen.dart via `controller.text` at send time)
-/// don't need it.
+/// own `onChanged` (e.g. prove_body.dart, which pushes into a parent `answers`
+/// map) — setting `controller.text` programmatically does NOT fire a TextField's
+/// `onChanged`, so this widget calls [onChanged] explicitly on each COMMIT (final
+/// only, never interim). Sites that read the controller directly (test_body.dart,
+/// upload_screen.dart via a controller listener; chat_screen.dart via
+/// `controller.text` at send time) don't need it — and, like onChanged, only ever
+/// see COMMITTED text, never interim.
 class VoiceInputButton extends ConsumerStatefulWidget {
   const VoiceInputButton({
     super.key,
@@ -56,11 +63,17 @@ class VoiceInputButtonState extends ConsumerState<VoiceInputButton> {
   // re-resolved from the provider during teardown.
   SpeechRecognizer? _activeRecognizer;
 
-  // Deliberately NOT an animated/repeating indicator: an infinite ticker
-  // would keep scheduling frames for as long as the mic is listening, which
-  // hangs `tester.pumpAndSettle()` on every screen this button sits on (it
-  // waits for scheduled frames to stop) and burns battery on a real device.
-  // "Visible recording state" is satisfied with a plain colour swap instead.
+  // Interim/final split. `_sessionBase` is the committed field text captured at
+  // listen-start; finals append to it (segmented dictation). `_interim` is the
+  // current unfinalized hypothesis — shown in the preview pill, NEVER in the field.
+  String _sessionBase = '';
+  String _interim = '';
+  final LayerLink _previewLink = LayerLink();
+  OverlayEntry? _previewOverlay;
+
+  // Deliberately NOT an animated/repeating indicator: an infinite ticker would
+  // keep scheduling frames while listening (hangs tester.pumpAndSettle + burns
+  // battery). "Visible recording state" is the coral mic + the preview pill.
   void _setListening(bool value) {
     if (!mounted) return;
     setState(() => _isListening = value);
@@ -68,13 +81,11 @@ class VoiceInputButtonState extends ConsumerState<VoiceInputButton> {
 
   @override
   void dispose() {
-    // Fail-without-fix: this used to call ref.read(speechRecognizerProvider)
-    // here, which throws a StateError during widget-tree teardown — e.g. a
-    // student navigating away mid-dictation would have crashed the app.
     if (_isListening) {
-      // Best-effort stop; no audio is ever buffered here to worry about.
-      _activeRecognizer?.stop();
+      _activeRecognizer?.stop(); // best-effort; no audio is ever buffered here
     }
+    _previewOverlay?.remove();
+    _previewOverlay = null;
     super.dispose();
   }
 
@@ -105,24 +116,30 @@ class VoiceInputButtonState extends ConsumerState<VoiceInputButton> {
       final localeId = pickPreferredLocale(locales);
 
       if (!mounted) return;
+      // New session: capture the already-committed text so finals append to it.
+      _sessionBase = widget.controller.text;
+      _interim = '';
       _setListening(true);
+      _showOrUpdatePreview(); // immediate "Listening…" feedback (covers batch case)
 
       await recognizer.listen(
         onResult: (text, isFinal) {
           if (!mounted) return;
-          widget.controller.text = text;
-          widget.controller.selection =
-              TextSelection.collapsed(offset: text.length);
-          widget.onChanged?.call(text);
+          if (isFinal) {
+            _commit(text);
+          } else {
+            _interim = text;
+            _showOrUpdatePreview();
+          }
         },
         onError: (message) {
           if (!mounted) return;
-          _setListening(false);
+          _finalizeSession(commitTrailing: false); // discard the trailing hypothesis
           _showTransientMessage("Didn't catch that — you can type instead.");
         },
         onDone: () {
           if (!mounted) return;
-          _setListening(false);
+          _finalizeSession(commitTrailing: true);
         },
         preferOnDevice: true,
         localeId: localeId,
@@ -134,11 +151,111 @@ class VoiceInputButtonState extends ConsumerState<VoiceInputButton> {
 
   Future<void> _stopListening() async {
     await _activeRecognizer?.stop();
+    // Commit any trailing interim the engine never marked final (batch engines
+    // only finalize at stop). onDone may also fire this — it is idempotent.
+    _finalizeSession(commitTrailing: true);
+  }
+
+  /// Ends the session: optionally commits any trailing interim, tears down the
+  /// preview, clears listening. Idempotent — safe from both stop() and onDone
+  /// (after a commit, `_interim` is empty so a second call only cleans up).
+  void _finalizeSession({required bool commitTrailing}) {
+    if (commitTrailing && _interim.isNotEmpty) {
+      _commit(_interim); // clears _interim + removes the preview
+    } else {
+      _interim = '';
+      _removePreview();
+    }
     _setListening(false);
   }
 
-  /// One-time, per-account (per-device local storage) plain-language
-  /// explainer shown before the very first listen. Never shown again once
+  /// Commit finalized text into the editable field, appended to the session base.
+  /// Uses `_sessionBase` (NOT the live controller) so a cumulative final replaces
+  /// this session's contribution rather than duplicating it; across taps, each new
+  /// session's base is the prior committed text, so segments accumulate.
+  void _commit(String text) {
+    _interim = '';
+    _removePreview();
+    final t = text.trim();
+    if (t.isEmpty) return;
+    final base = _sessionBase;
+    final needsSpace =
+        base.isNotEmpty && !base.endsWith(' ') && !base.endsWith('\n');
+    final next = needsSpace ? '$base $t' : '$base$t';
+    widget.controller.text = next;
+    widget.controller.selection =
+        TextSelection.collapsed(offset: next.length);
+    widget.onChanged?.call(next);
+  }
+
+  // ── Pending-preview overlay (interim text, never the field) ────────────────
+  void _showOrUpdatePreview() {
+    if (!mounted) return;
+    final overlay = Overlay.maybeOf(context);
+    if (overlay == null) return; // no Overlay ancestor — degrade silently
+    if (_previewOverlay == null) {
+      _previewOverlay = _buildPreviewOverlay();
+      overlay.insert(_previewOverlay!);
+    } else {
+      _previewOverlay!.markNeedsBuild();
+    }
+  }
+
+  void _removePreview() {
+    _previewOverlay?.remove();
+    _previewOverlay = null;
+  }
+
+  OverlayEntry _buildPreviewOverlay() => OverlayEntry(
+        builder: (ctx) => CompositedTransformFollower(
+          link: _previewLink,
+          targetAnchor: Alignment.topRight,
+          followerAnchor: Alignment.bottomRight,
+          offset: const Offset(0, -8),
+          child: Align(
+            alignment: Alignment.bottomRight,
+            child: Material(
+              color: Colors.transparent,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 260),
+                child: Container(
+                  key: const ValueKey('voiceInputPreview'),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+                  decoration: BoxDecoration(
+                    color: AppColors.surf2,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.outline),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.mic_rounded,
+                          size: 14, color: AppColors.coral),
+                      const SizedBox(width: AppSpacing.xs),
+                      Flexible(
+                        child: Text(
+                          _interim.isEmpty ? 'Listening…' : _interim,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          // Muted + italic = clearly "pending, not committed".
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.text3,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+  /// One-time, per-account (per-device local storage) plain-language explainer
+  /// shown before the very first listen. Never shown again once
   /// [voiceInputExplainerShownPrefsKey] is persisted.
   Future<void> _maybeShowExplainer() async {
     final prefs = await SharedPreferences.getInstance();
@@ -220,16 +337,19 @@ class VoiceInputButtonState extends ConsumerState<VoiceInputButton> {
     final enabled = ref.watch(voiceInputEnabledProvider);
     if (!enabled) return const SizedBox.shrink();
 
-    return Tooltip(
-      message: _isListening ? 'Stop' : 'Speak your answer',
-      child: IconButton(
-        key: const ValueKey('voiceInputButton'),
-        visualDensity: VisualDensity.compact,
-        onPressed: _isStarting ? null : _handleTap,
-        icon: Icon(
-          _isListening ? Icons.mic_rounded : Icons.mic_none_rounded,
-          size: widget.iconSize,
-          color: _isListening ? AppColors.coral : AppColors.text2,
+    return CompositedTransformTarget(
+      link: _previewLink,
+      child: Tooltip(
+        message: _isListening ? 'Stop' : 'Speak your answer',
+        child: IconButton(
+          key: const ValueKey('voiceInputButton'),
+          visualDensity: VisualDensity.compact,
+          onPressed: _isStarting ? null : _handleTap,
+          icon: Icon(
+            _isListening ? Icons.mic_rounded : Icons.mic_none_rounded,
+            size: widget.iconSize,
+            color: _isListening ? AppColors.coral : AppColors.text2,
+          ),
         ),
       ),
     );
