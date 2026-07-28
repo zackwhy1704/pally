@@ -1,0 +1,9 @@
+# gen-l10n config. ARB files live in lib/l10n; the generated AppLocalizations
+# is emitted next to them (import: package:pally/l10n/app_localizations.dart).
+# gen-l10n warns to stdout about any untranslated key, so missing translations
+# surface at build time rather than silently falling back mid-screen.
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+nullable-getter: false

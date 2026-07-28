@@ -10,6 +10,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/i18n/app_languages.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/auth/auth_state.dart';
 
 // ── Screens under audit (all 57 lib/features/**/*_screen.dart) ───────────────
@@ -245,7 +247,8 @@ List<Override> _globalOverrides() => [
 /// cancelled before teardown — otherwise a pending periodic Timer would fail the
 /// test for a reason unrelated to geometry. Any dispose-time async noise from
 /// that unmount is discarded (it is not a geometry finding).
-Future<Object?> _pumpAt(WidgetTester tester, _Enrolled c, Size size) async {
+Future<Object?> _pumpAt(
+    WidgetTester tester, _Enrolled c, Size size, Locale locale) async {
   tester.view.devicePixelRatio = 1.0;
   tester.view.physicalSize = size;
   addTearDown(tester.view.reset);
@@ -253,7 +256,16 @@ Future<Object?> _pumpAt(WidgetTester tester, _Enrolled c, Size size) async {
   await tester.pumpWidget(
     ProviderScope(
       overrides: [..._globalOverrides(), ...c.overrides],
-      child: MaterialApp(home: c.build()),
+      // Localizations wired from the registry so every screen is smoked at each
+      // language: CJK text metrics differ (line-breaking, glyph advance), so an
+      // overflow that only appears in zh is caught here, and the Global*
+      // delegates must resolve or a MaterialLocalizations.of(context) call throws.
+      child: MaterialApp(
+        locale: locale,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: c.build(),
+      ),
     ),
   );
   // First frame builds the tree (a RenderFlex overflow throws during this
@@ -328,21 +340,28 @@ void main() {
     });
   });
 
-  group('small_screen_smoke @360x640', () {
-    for (final c in _enrolled) {
-      testWidgets(c.name, (tester) async {
-        expect(await _pumpAt(tester, c, small), isNull,
-            reason: '${c.name} threw (RenderFlex overflow?) at 360x640');
-      });
-    }
-  });
+  // Locale axis: iterate the registry (B-EXT.4), NOT a hardcoded [en, zh]. When a
+  // language is appended to AppLanguages, its layout coverage appears here
+  // automatically — the newest language is never silently under-covered.
+  for (final lang in AppLanguages.all) {
+    group('small_screen_smoke @360x640 [${lang.code}]', () {
+      for (final c in _enrolled) {
+        testWidgets(c.name, (tester) async {
+          expect(await _pumpAt(tester, c, small, lang.locale), isNull,
+              reason:
+                  '${c.name} threw (RenderFlex overflow?) at 360x640 [${lang.code}]');
+        });
+      }
+    });
 
-  group('small_screen_smoke @360x850', () {
-    for (final c in _enrolled) {
-      testWidgets(c.name, (tester) async {
-        expect(await _pumpAt(tester, c, tall), isNull,
-            reason: '${c.name} threw (RenderFlex overflow?) at 360x850');
-      });
-    }
-  });
+    group('small_screen_smoke @360x850 [${lang.code}]', () {
+      for (final c in _enrolled) {
+        testWidgets(c.name, (tester) async {
+          expect(await _pumpAt(tester, c, tall, lang.locale), isNull,
+              reason:
+                  '${c.name} threw (RenderFlex overflow?) at 360x850 [${lang.code}]');
+        });
+      }
+    });
+  }
 }

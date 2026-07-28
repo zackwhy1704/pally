@@ -1,0 +1,11 @@
+{
+  "@@locale": "en",
+  "language": "Language",
+  "@language": {
+    "description": "Settings row label and the title of the language-picker sheet. UI chrome."
+  },
+  "languagePickerSubtitle": "Choose the language for the app's buttons and menus. This does not change the language your Mochi teaches in.",
+  "@languagePickerSubtitle": {
+    "description": "Shown under the title in the language picker. States that the UI language (a person's preferred_locale) is separate from the avatar's teaching/content language, so switching the UI does not re-translate existing lessons. 'Mochi' is the mascot name and must NOT be translated."
+  }
+}

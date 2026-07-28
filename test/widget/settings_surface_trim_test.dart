@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/settings/presentation/settings_screen.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// FIX B/C: the settings surface trim removes the (broken) 'Replay feature tour' row
@@ -53,7 +54,11 @@ void main() {
         authStateProvider
             .overrideWith((ref) => const AuthState(childName: 'Test')),
       ],
-      child: const MaterialApp(home: SettingsScreen()),
+      child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: SettingsScreen(),
+      ),
     ));
     // Let initState async loads settle without pumpAndSettle (subscription sections spin).
     await tester.pump();

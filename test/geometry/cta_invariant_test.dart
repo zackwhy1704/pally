@@ -9,6 +9,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/i18n/app_languages.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/auth/screens/complete_profile_screen.dart';
 import 'package:pally/features/centre/presentation/centre_join_screen.dart';
@@ -38,6 +40,12 @@ const _viewportW = 360.0;
 const _small = 640.0;
 const _tall = 850.0;
 const _photoPath = '/tmp/fake.jpg';
+
+// The locale the current test group pumps under. Set in each locale group's
+// setUp (see main), read by _pump — avoids threading a locale arg through every
+// one of the ~15 concrete CTA tests while still exercising each at every
+// registry language.
+Locale _activeLocale = AppLanguages.fallback.locale;
 
 // ── Shared harness (mirrors small_screen_smoke_test) ─────────────────────────
 class _StubAdapter implements HttpClientAdapter {
@@ -80,7 +88,12 @@ Future<ProviderContainer> _pump(
 
   await tester.pumpWidget(UncontrolledProviderScope(
     container: container,
-    child: MaterialApp(home: screen),
+    child: MaterialApp(
+      locale: _activeLocale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: screen,
+    ),
   ));
   // Advance the clock so the stubbed Dio's internal zero-duration Timer fires
   // (a bare pump() never fires it), otherwise it leaks and fails the test for a
@@ -152,6 +165,14 @@ void main() {
   tearDown(() async {
     await AuthNotifier.instance.signOut();
   });
+
+  // Locale axis: every CTA-placement assertion runs at each registry language
+  // (B-EXT.4 — iterate AppLanguages.all, not a hardcoded [en, zh]). CJK strings
+  // wrap and measure differently, so a CTA pushed below the fold ONLY in zh is a
+  // real defect this catches. Adding a language extends this coverage for free.
+  for (final lang in AppLanguages.all) {
+    group('locale=${lang.code}', () {
+      setUp(() => _activeLocale = lang.locale);
 
   // ── direct_onboarding: primary CTA per step ────────────────────────────────
   // SKIPPED pending the fix (CONFIRMED below-fold in Phase A). Pinning the CTA in
@@ -306,6 +327,8 @@ void main() {
     );
     _expectCtaOnScreen(tester, find.textContaining('Send'), 'photo_review');
   });
+    }); // group('locale=…')
+  } // for (lang in AppLanguages.all)
 }
 
 class _DetectedPhotoPreviewVM extends PhotoPreviewViewModel {
