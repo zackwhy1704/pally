@@ -56,7 +56,13 @@ android {
         // clears mobile_scanner. Lower it deliberately (and test there) if a real API<24
         // population appears.
         minSdkVersion 24
-        targetSdkVersion flutter.targetSdkVersion
+        // Pinned, NOT flutter.targetSdkVersion — that default floats with the Flutter
+        // version (35 on 3.32.1, see FlutterExtension.kt), so the shipped target silently
+        // tracked the toolchain. Play policy requires targetSdk 36 (Android 16) for update
+        // submissions from 31 Aug 2026; pin it explicitly so the release build targets 36
+        // regardless of which toolchain cuts it. Edge-to-edge was already forced at 35, so
+        // 35→36 introduces no new inset rendering; AGP 8.7.3 accepts 36 with no bump.
+        targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
