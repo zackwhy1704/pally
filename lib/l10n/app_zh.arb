@@ -1,0 +1,5 @@
+{
+  "@@locale": "zh",
+  "language": "语言",
+  "languagePickerSubtitle": "选择应用界面（按钮和菜单）显示的语言。这不会改变 Mochi 教学内容使用的语言。"
+}

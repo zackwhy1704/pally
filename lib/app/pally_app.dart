@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/router.dart';
+import 'package:pally/core/i18n/locale_controller.dart';
 import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/services/firebase_ready.dart';
 import 'package:pally/features/voice_input/data/voice_input_prefs.dart';
 import 'package:pally/core/theme/app_theme.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/consent/data/consent_unlock.dart';
@@ -99,9 +101,16 @@ class _PallyAppState extends ConsumerState<PallyApp>
         ref.read(voiceInputEnabledProvider.notifier).state = on;
       }
     });
+    // UI language: driven by the locale controller (persisted device pref →
+    // live rebuild on change). Delegates + supportedLocales derive from the
+    // AppLanguages registry via generated AppLocalizations — no hand-listed set.
+    final locale = ref.watch(localeControllerProvider);
     return MaterialApp.router(
       title: 'Pally',
       theme: AppTheme.light,
+      locale: locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       scaffoldMessengerKey: rootScaffoldMessengerKey,
       routerConfig: _router,
       debugShowCheckedModeBanner: false,

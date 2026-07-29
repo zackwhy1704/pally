@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/app/pally_app.dart';
 import 'package:pally/app/router.dart';
+import 'package:pally/core/i18n/app_languages.dart';
+import 'package:pally/core/i18n/locale_controller.dart';
 import 'package:pally/core/local_db/pally_database.dart';
 import 'package:pally/core/observability/sentry_observability.dart';
 import 'package:pally/core/services/install_hygiene.dart';
@@ -74,6 +76,15 @@ Future<void> _bootstrap() async {
   final db = PallyDatabase();
   _runDailyMaintenanceIfNeeded(db, prefs);
 
+  // Resolve the UI language ONCE, before the first frame, through the registry's
+  // fallback chain: persisted choice → device locale → English. Nothing is
+  // written to prefs here — an un-chosen language shows the device-resolved UI
+  // but is not committed until the user taps a language (settings / onboarding).
+  final initialLocale = AppLanguages.resolve(
+    requested: readPersistedLocaleCode(prefs),
+    device: WidgetsBinding.instance.platformDispatcher.locale.languageCode,
+  ).locale;
+
   // Voice-input mic is gated by the server `voice_input` feature flag (Railway
   // VOICE_INPUT_ENABLED) — see voice_input_prefs.dart. No bootstrap override
   // needed: voiceInputEnabledProvider derives from featureFlagsProvider (fail-closed).
@@ -83,6 +94,7 @@ Future<void> _bootstrap() async {
       overrides: [
         pallyDatabaseProvider.overrideWithValue(db),
         globalNavigatorKeyProvider.overrideWithValue(navigatorKey),
+        initialLocaleProvider.overrideWithValue(initialLocale),
       ],
       child: PallyApp(router: router),
     ),

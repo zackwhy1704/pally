@@ -9,6 +9,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # UI localization: GlobalMaterial/Widgets/CupertinoLocalizations for zh (and
+  # every future registry language). SDK-sourced — no hosted version to resolve,
+  # so it does not move the 3.32.1 release lock for any third-party package.
+  flutter_localizations:
+    sdk: flutter
 
   # State management
   flutter_riverpod: ^2.6.1
@@ -48,7 +53,12 @@ dependencies:
 
   # Utilities
   uuid: ^4.4.0
-  intl: ^0.19.0
+  # Ranged, like `dio` above, because flutter_localizations' intl floor differs
+  # across the two RELEASE SDKs: 3.32.1 (Android cut) bundles intl 0.19.x, 3.44.2
+  # (iOS cut) requires 0.20.2. The app must compile against BOTH — no intl API used
+  # here changed between them. Committed lock stays on 0.19.0 (the 3.32.1 resolution);
+  # the iOS/3.44.2 build re-resolves to 0.20.2 within this range.
+  intl: ">=0.19.0 <0.21.0"
   logger: ^2.4.0
   package_info_plus: ^9.0.0
   shared_preferences: ^2.3.2
@@ -109,6 +119,8 @@ flutter_launcher_icons:
 
 flutter:
   uses-material-design: true
+  # Generate AppLocalizations from lib/l10n/*.arb (config in l10n.yaml).
+  generate: true
 
   assets:
     - assets/images/

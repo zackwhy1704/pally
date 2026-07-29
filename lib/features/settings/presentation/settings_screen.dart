@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/i18n/app_languages.dart';
+import 'package:pally/core/i18n/locale_controller.dart';
 import 'package:pally/core/services/notification_service.dart';
 import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -22,6 +24,8 @@ import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/shared/models/entitlement.dart';
 import 'package:pally/features/home/widgets/how_pally_is_different.dart';
 import 'package:pally/features/settings/presentation/learning_style_screen.dart';
+import 'package:pally/features/settings/widgets/language_picker_sheet.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -250,6 +254,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final currentLang =
+        AppLanguages.byCode(ref.watch(localeControllerProvider).languageCode) ??
+            AppLanguages.fallback;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.bg,
@@ -313,6 +321,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                   ),
                 ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          // Language (UI chrome). The row shows the current language in its own
+          // name; tapping opens the registry-driven picker. This is a different
+          // axis from an avatar's teaching language — the picker copy says so.
+          _SectionHeader(title: l.language),
+          _SettingsCard(
+            children: [
+              _TappableTile(
+                icon: Icons.language_rounded,
+                label: currentLang.endonym,
+                trailing: const Icon(Icons.chevron_right_rounded,
+                    size: 16, color: AppColors.text3),
+                onTap: () => LanguagePickerSheet.show(context),
               ),
             ],
           ),
