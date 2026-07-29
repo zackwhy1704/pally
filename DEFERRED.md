@@ -38,8 +38,9 @@ SG-specific term 小伴 itself is part of the standing native-SG review.
 
 ### PR plan (~10 PRs; the inventory decided the count)
 - ✅ **PR-A** coverage guard + baseline + `mascotName` foundation (42 keys retrofitted) — MERGED `@f95e666`
-- **PR-B** shared data labels via a resolver (subjectLabel/levelLabel/levelSubtitle/prettyTier — the
-  "Maths"→数学 gap; resolver takes AppLocalizations, no per-locale duplication, no B-EXT.2 conditional)
+- ✅ **PR-B** subject/level/tier labels via `label_localizer.dart` resolver (28 keys; the "Maths"→数学 gap;
+  free-text subjects pass through UNTRANSLATED; canonical en fns kept; no B-EXT.2 conditional) — MERGED `@4c3d7a6`.
+  NB: display sites render variables, so the literal guard can't see this win — baseline unchanged, by design.
 - **PR-C** progress / achievements / goals · **PR-D** groups+join+invite+codes · **PR-E** shop+flashcards
 - **PR-F** subscription/premium 🔒 + learning-style · **PR-G** photo_question+upload+ocr
 - **PR-H** wiki_viewer+compiled+chapters · **PR-I** chat-residue+create-tutor · **PR-J** consent+account_deletion+auth
