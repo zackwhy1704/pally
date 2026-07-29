@@ -7,6 +7,59 @@
 
 ---
 
+## Branch B — UI localization (zh) — HANDOFF (paused 2026-07-29, main @cfc50ce)
+
+The client i18n architecture is established and the **daily student loop is fully localized**.
+Registry-driven (`AppLanguages`), ARB + gen-l10n, harness parameterized over `AppLanguages.all`,
+**157 zh strings drafted** across 8 merged PRs. Adding a third language later = one registry
+entry + one ARB file (Spanish/etc. get geometry+CTA coverage automatically).
+
+### SHIPPED (all merged to main)
+- PR1 scaffolding + AppLanguages registry + LocaleController + settings language-picker + harness
+  locale-axis + 4 guard tests (`@d0b39ef`)
+- PR2 sign-in + B4 entry-selector + reconcileToServer mirror at account creation (`@47161ed`)
+- PR3 onboarding tour (first ICU placeholder) (`@ea7e1ef`)
+- PR4 library home hub (first real ICU plurals: en 1-vs-N, zh `other`) (`@0d264db`)
+- PR5 avatar hub (`@d1ad665`)
+- PR6 chat chrome — highest-traffic surface; this is where a zh session's moderation refusal
+  (backend fix) now renders in Chinese (`@d35c63f`)
+- PR7 module SCREENS (list + player shell) (`@227a7a6`)
+- PR8 quiz (question chrome, results, re-teach nudge) (`@cfc50ce`)
+
+### REMAINS (priority order; follow the SAME recipe — do NOT invent new patterns)
+1. **Module item BODY widgets** — `LearnBody` / `TestBody` / `ProveBody` and the item types
+   (MICRO_CARD / HOT_TAKE / SPOT_MISTAKE / CHALLENGE) under `features/modules/presentation/widgets/`.
+   Deferred from PR7 (large sub-surface); PR7 shipped only the module screens' chrome.
+2. **Settings** — complete the partial surface from PR1 (~60 strings, `settings_screen.dart` 999 lines).
+   CAUTION: the Subscription/Referral cards contain price strings behind the iOS anti-steering
+   `allowPriceDisplay(ref)` gate — localize the LABELS but do NOT change what the gate shows.
+3. **Sign-up form** — `direct_onboarding_screen.dart` (1507 lines). Biggest surface, hit once per user;
+   last for that reason. Most likely to strand — do it as its own focused session.
+
+### THE RECIPE (non-negotiable, proven over 8 PRs)
+1. Extract user-facing strings to ARB (en **byte-identical** to current hardcoded so en-locale test
+   finders keep matching; zh machine-drafted; every zh row appended to `lib/l10n/NEEDS_NATIVE_REVIEW.md`).
+2. ICU plural/select for anything countable — never fragment assembly; zh resolves via `other`.
+3. Placeholders with descriptions. REUSE existing keys (`commonCancel`, `commonTryAgain`,
+   `commonLoading`, `commonCheckConnection`, `moduleCtaReview`, `libraryEmptyTitle`, …) before minting.
+   (Watch case: `commonTryAgain` is "Try Again" not "Try again" — a reuse that changes case updates the test.)
+4. NO language conditionals in widgets (B-EXT.2 grep guard stays green).
+5. DO NOT translate: Mochi's name, class names, teacher-uploaded content, student text, AI artifacts.
+6. **Two ripples that cost a cycle each — apply proactively:** (a) any test that RENDERS the screen
+   needs `AppLocalizations.localizationsDelegates` + `.supportedLocales` — INCLUDING view-model tests
+   that pump the widget, not just `*_screen_test`; (b) reconcile `pubspec.lock` to its 3.32.1 resolution
+   (`git checkout HEAD -- pubspec.lock`) before every push.
+7. Gates per PR: analyze clean · full suite at BOTH locales · geometry + CTA at both locales · APK builds ·
+   no `pubspec.yaml` change.
+
+### STANDING NATIVE-REVIEW GATE (the real Chinese-launch critical path — NOT more client PRs)
+`lib/l10n/app_zh.arb` is 157 MACHINE-DRAFTED strings. Before any zh launch, a native Singapore Chinese
+educator must review `lib/l10n/NEEDS_NATIVE_REVIEW.md` (SG conventions: 华语/中文, 巴士/德士/组屋, no
+mainlandisms). Also gate the backend moderation false-positive (PERSONAL_DATA/HIGH on comprehension
+questions — see `pally-backend/DEFERRED.md`), which bites zh comprehension hardest.
+
+---
+
 ## Small-screen geometry audit (2026-07-21) — follow-ups from Phase A
 
 ### ✅ CLOSED (2026-07-21, fix/dependency-lock-and-dio): dio 5.10.0 fresh-`pub get` compile break
