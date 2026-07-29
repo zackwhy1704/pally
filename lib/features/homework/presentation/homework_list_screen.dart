@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pally/core/i18n/label_localizer.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/error/pally_error.dart';
@@ -150,7 +152,7 @@ class _SubmissionCard extends StatelessWidget {
                     submission.subject!.trim().isNotEmpty) ...[
                   Flexible(
                     child: Text(
-                      submission.subject!,
+                      localizedSubject(AppLocalizations.of(context), submission.subject!),
                       style: AppTextStyles.bodySmall
                           .copyWith(color: AppColors.text2),
                       overflow: TextOverflow.ellipsis,

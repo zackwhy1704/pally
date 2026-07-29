@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pally/core/i18n/label_localizer.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/router.dart';
@@ -647,7 +649,8 @@ class _PageTileState extends ConsumerState<_PageTile> {
                         title: Text(g.name,
                             maxLines: 1, overflow: TextOverflow.ellipsis),
                         subtitle: g.subject != null
-                            ? Text(g.subject!, style: AppTextStyles.caption)
+                            ? Text(localizedSubject(AppLocalizations.of(ctx), g.subject!),
+                                style: AppTextStyles.caption)
                             : null,
                         onTap: () => Navigator.of(ctx).pop(g),
                       )),

@@ -1425,4 +1425,88 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get howDiffGotIt => 'Got it — let\'s study!';
+
+  @override
+  String get subjectMaths => 'Maths';
+
+  @override
+  String get subjectScience => 'Science';
+
+  @override
+  String get subjectEnglish => 'English';
+
+  @override
+  String get subjectHistory => 'History';
+
+  @override
+  String get subjectCoding => 'Coding';
+
+  @override
+  String get subjectArt => 'Art';
+
+  @override
+  String get subjectGeography => 'Geography';
+
+  @override
+  String get subjectLanguages => 'Languages';
+
+  @override
+  String get subjectMusic => 'Music';
+
+  @override
+  String get subjectPhysicalEducation => 'Physical Education';
+
+  @override
+  String get subjectHealth => 'Health';
+
+  @override
+  String get subjectLiterature => 'Literature';
+
+  @override
+  String get subjectGeneral => 'General';
+
+  @override
+  String get levelPrimary => 'Primary School';
+
+  @override
+  String get levelSecondary => 'Secondary School';
+
+  @override
+  String get levelHighSchool => 'High School';
+
+  @override
+  String get levelUniversity => 'University / Adult';
+
+  @override
+  String get levelPrimarySubtitle => 'Ages ~6–11';
+
+  @override
+  String get levelSecondarySubtitle => 'Ages ~11–16';
+
+  @override
+  String get levelHighSchoolSubtitle => 'Ages ~16–18';
+
+  @override
+  String get levelUniversitySubtitle => 'Ages 18+';
+
+  @override
+  String get tierPremium => 'Premium';
+
+  @override
+  String get tierMax => 'Max';
+
+  @override
+  String get tierPro => 'Pro';
+
+  @override
+  String get tierFree => 'Free';
+
+  @override
+  String get tierFamily => 'Family';
+
+  @override
+  String get tierTrial => 'Trial';
+
+  @override
+  String get tierCentre => 'Centre';
 }

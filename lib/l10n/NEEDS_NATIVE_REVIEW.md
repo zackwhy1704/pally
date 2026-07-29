@@ -359,12 +359,12 @@ processing states, irrelevant-upload override, ready). ~55 new zh strings.
 | `signupModuleReady` / `signupFirstModuleWord` / `signupMochiSetUp` / `signupModuleBuilt` / `signupStartLearning` / `signupGoToHome` | Your "{title}" module is ready! / first / Your Mochi is set up! / Mochi has read your notes and built a study module for you. / Start learning / Go to home | 你的“{title}”单元准备好了！ / 第一个 / 你的 Mochi 已设置完成！ / Mochi 已阅读你的笔记，并为你生成了一个学习单元。 / 开始学习 / 前往主页 |
 | (reused) `commonCancel` | Cancel | 取消 |
 
-**DO NOT translate** (carry their own language already): Mochi's name, class names,
-teacher-uploaded content, student-generated text, any AI-generated artifact. Plan tier names from
-`prettyTier` (e.g. "Premium"), and the subject/education-stage option labels (`subjectLabel` /
-`levelLabel` / `levelSubtitle`, defined in a shared onboarding-data file), are left as-is —
-out of the per-screen scope, same precedent as `prettyTier`. Email-format hint examples
-(`your@email.com`, `parent@example.com`) are kept verbatim as illustrations.
+**DO NOT translate** (carry their own language already): class names, teacher-uploaded content,
+student-generated text, any AI-generated artifact, and a teacher's OWN free-text subject (an unknown
+subject passes through the localizer untranslated). The mascot name is now localized via `mascotName`
+(→ 小伴). Email-format hint examples (`your@email.com`, `parent@example.com`) are kept verbatim as
+illustrations. (The subject/education-stage/plan-tier labels that were previously "left as-is" are now
+localized in PR-B — see below.)
 
 ### PR12 — "What makes Apalchi different" explainer (`how_pally_is_different.dart`)
 
@@ -379,10 +379,26 @@ Shown once after first tutor creation and from Settings → About. 10 strings.
 | `howDiffQuote` | "Not a generic tutor. A Mochi that knows yours." | “不是泛泛的导师。是懂你的 Mochi。” |
 | `howDiffGotIt` | Got it — let's study! | 明白了——开始学习吧！ |
 
-Running count of zh keys drafted this branch: **~371** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 · PR5: 22 · PR6: 21 · PR7: 21 · PR8: 26 · PR-home: ~51 · PR9: ~48 · PR10: ~50 · PR11: ~55 · PR12: 10 — explainer).
+### PR-B — subject / education-stage / plan-tier labels (shared-data resolver)
 
-**Branch B client extraction is COMPLETE.** Every student-facing screen surface now renders through
-the ARB. What remains is NOT more client PRs — it is the standing native-review gate below, plus two
-deliberately-scoped-out shared-data surfaces (`prettyTier` plan names; `subjectLabel`/`levelLabel`/
-`levelSubtitle` onboarding option labels) that would each be their own small data-file PR if the
-operator wants them.
+The previously scoped-out shared-data labels — the "Maths → 数学" gap. Localized via a resolver
+(`lib/core/i18n/label_localizer.dart`) that takes `AppLocalizations`: it maps the KNOWN enum labels
+and passes an UNKNOWN free-text subject (a teacher's own words, typed in create-tutor) through
+untranslated. ⚠️ **SG review**: these are the terms most likely to need a SG-classroom check —
+e.g. 英文 vs 华文/母语 conventions, 综合 for "General", 语言 vs 语文.
+
+| key | en | zh (draft) |
+|-----|----|-----------|
+| `subjectMaths` / `subjectScience` / `subjectEnglish` / `subjectHistory` | Maths / Science / English / History | 数学 / 科学 / 英文 / 历史 |
+| `subjectCoding` / `subjectArt` / `subjectGeography` / `subjectLanguages` | Coding / Art / Geography / Languages | 编程 / 美术 / 地理 / 语言 |
+| `subjectMusic` / `subjectPhysicalEducation` / `subjectHealth` / `subjectLiterature` / `subjectGeneral` | Music / Physical Education / Health / Literature / General | 音乐 / 体育 / 健康 / 文学 / 综合 |
+| `levelPrimary` / `levelSecondary` / `levelHighSchool` / `levelUniversity` | Primary School / Secondary School / High School / University / Adult | 小学 / 中学 / 高中 / 大学 / 成人 |
+| `levelPrimarySubtitle` … `levelUniversitySubtitle` | Ages ~6–11 / ~11–16 / ~16–18 / 18+ | 约 6–11 岁 / 约 11–16 岁 / 约 16–18 岁 / 18 岁以上 |
+| `tierPremium` / `tierMax` / `tierPro` / `tierFree` / `tierFamily` / `tierTrial` / `tierCentre` | Premium / Max / Pro / Free / Family / Trial / Centre | 高级版 / Max / Pro / 免费 / 家庭 / 试用 / 中心 |
+
+Running count of zh keys drafted this branch: **~400** (PR1–PR12 ~371 · PR-B: 28 — subject/level/tier labels).
+
+**Branch B is ~35% coverage, IN PROGRESS** (guard-enforced; see `DEFERRED.md` for the coverage number and
+the PR-C…PR-K plan). The earlier "COMPLETE" here was scope-based and wrong. Standing launch gates: this
+whole file (native-SG review), the 🔒 PR10 anti-steering price copy, and the backend PERSONAL_DATA/HIGH
+moderation false-positive.

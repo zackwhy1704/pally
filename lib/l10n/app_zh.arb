@@ -387,5 +387,36 @@
   "howDiffCard3Title": "为真正的学习而打造",
   "howDiffCard3Body": "每个科目都有 {mascot}——抽认卡、每日小测、掌握度追踪、贴合课程——为认真的学习者设计的深度。",
   "howDiffQuote": "“不是泛泛的导师。是懂你的 {mascot}。”",
-  "howDiffGotIt": "明白了——开始学习吧！"
+  "howDiffGotIt": "明白了——开始学习吧！",
+
+  "subjectMaths": "数学",
+  "subjectScience": "科学",
+  "subjectEnglish": "英文",
+  "subjectHistory": "历史",
+  "subjectCoding": "编程",
+  "subjectArt": "美术",
+  "subjectGeography": "地理",
+  "subjectLanguages": "语言",
+  "subjectMusic": "音乐",
+  "subjectPhysicalEducation": "体育",
+  "subjectHealth": "健康",
+  "subjectLiterature": "文学",
+  "subjectGeneral": "综合",
+
+  "levelPrimary": "小学",
+  "levelSecondary": "中学",
+  "levelHighSchool": "高中",
+  "levelUniversity": "大学 / 成人",
+  "levelPrimarySubtitle": "约 6–11 岁",
+  "levelSecondarySubtitle": "约 11–16 岁",
+  "levelHighSchoolSubtitle": "约 16–18 岁",
+  "levelUniversitySubtitle": "18 岁以上",
+
+  "tierPremium": "高级版",
+  "tierMax": "Max",
+  "tierPro": "Pro",
+  "tierFree": "免费",
+  "tierFamily": "家庭",
+  "tierTrial": "试用",
+  "tierCentre": "中心"
 }

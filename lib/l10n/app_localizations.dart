@@ -2425,6 +2425,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Got it — let\'s study!'**
   String get howDiffGotIt;
+
+  /// Subject name. Localized ONLY for the known enum subjects; a teacher's free-text subject passes through untranslated.
+  ///
+  /// In en, this message translates to:
+  /// **'Maths'**
+  String get subjectMaths;
+
+  /// Subject name.
+  ///
+  /// In en, this message translates to:
+  /// **'Science'**
+  String get subjectScience;
+
+  /// Subject name (English as a school subject).
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get subjectEnglish;
+
+  /// Subject name.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get subjectHistory;
+
+  /// Subject name.
+  ///
+  /// In en, this message translates to:
+  /// **'Coding'**
+  String get subjectCoding;
+
+  /// Subject name.
+  ///
+  /// In en, this message translates to:
+  /// **'Art'**
+  String get subjectArt;
+
+  /// Subject name.
+  ///
+  /// In en, this message translates to:
+  /// **'Geography'**
+  String get subjectGeography;
+
+  /// Subject name (languages in general).
+  ///
+  /// In en, this message translates to:
+  /// **'Languages'**
+  String get subjectLanguages;
+
+  /// Subject name.
+  ///
+  /// In en, this message translates to:
+  /// **'Music'**
+  String get subjectMusic;
+
+  /// Subject name (PE).
+  ///
+  /// In en, this message translates to:
+  /// **'Physical Education'**
+  String get subjectPhysicalEducation;
+
+  /// Subject name.
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get subjectHealth;
+
+  /// Subject name.
+  ///
+  /// In en, this message translates to:
+  /// **'Literature'**
+  String get subjectLiterature;
+
+  /// Subject name (catch-all / no specific subject).
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get subjectGeneral;
+
+  /// Education stage.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary School'**
+  String get levelPrimary;
+
+  /// Education stage.
+  ///
+  /// In en, this message translates to:
+  /// **'Secondary School'**
+  String get levelSecondary;
+
+  /// Education stage.
+  ///
+  /// In en, this message translates to:
+  /// **'High School'**
+  String get levelHighSchool;
+
+  /// Education stage (tertiary / adult learners).
+  ///
+  /// In en, this message translates to:
+  /// **'University / Adult'**
+  String get levelUniversity;
+
+  /// Age-range hint under the Primary stage.
+  ///
+  /// In en, this message translates to:
+  /// **'Ages ~6–11'**
+  String get levelPrimarySubtitle;
+
+  /// Age-range hint under the Secondary stage.
+  ///
+  /// In en, this message translates to:
+  /// **'Ages ~11–16'**
+  String get levelSecondarySubtitle;
+
+  /// Age-range hint under the High School stage.
+  ///
+  /// In en, this message translates to:
+  /// **'Ages ~16–18'**
+  String get levelHighSchoolSubtitle;
+
+  /// Age-range hint under the University stage.
+  ///
+  /// In en, this message translates to:
+  /// **'Ages 18+'**
+  String get levelUniversitySubtitle;
+
+  /// Plan tier label (default when the plan is unknown).
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get tierPremium;
+
+  /// Plan tier label (brand tier name — usually kept as-is).
+  ///
+  /// In en, this message translates to:
+  /// **'Max'**
+  String get tierMax;
+
+  /// Plan tier label (brand tier name — usually kept as-is).
+  ///
+  /// In en, this message translates to:
+  /// **'Pro'**
+  String get tierPro;
+
+  /// Plan tier label.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get tierFree;
+
+  /// Plan tier label.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get tierFamily;
+
+  /// Plan tier label.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial'**
+  String get tierTrial;
+
+  /// Plan tier label (tuition centre).
+  ///
+  /// In en, this message translates to:
+  /// **'Centre'**
+  String get tierCentre;
 }
 
 class _AppLocalizationsDelegate

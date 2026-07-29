@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/core/i18n/label_localizer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/l10n/app_localizations.dart';
@@ -94,7 +95,7 @@ class _AvatarTile extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    avatar.subject,
+                    localizedSubject(AppLocalizations.of(context), avatar.subject),
                     style: AppTextStyles.bodySmall
                         .copyWith(color: AppColors.text2),
                     maxLines: 1,

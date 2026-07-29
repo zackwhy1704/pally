@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pally/core/i18n/label_localizer.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/core/services/feature_flags.dart';
@@ -331,7 +333,7 @@ class _AvatarPickRow extends StatelessWidget {
                           .copyWith(fontWeight: FontWeight.w700),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis),
-                  Text(avatar.subject,
+                  Text(localizedSubject(AppLocalizations.of(context), avatar.subject),
                       style: AppTextStyles.caption
                           .copyWith(color: AppColors.text2),
                       maxLines: 1,

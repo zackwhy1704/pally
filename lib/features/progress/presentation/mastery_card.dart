@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:pally/core/i18n/label_localizer.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -84,14 +86,6 @@ class _SubjectRow extends StatelessWidget {
   const _SubjectRow({required this.subject});
   final SubjectCoverage subject;
 
-  String _pretty(String raw) {
-    return raw
-        .toLowerCase()
-        .split('_')
-        .map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1)}')
-        .join(' ');
-  }
-
   @override
   Widget build(BuildContext context) {
     final ratio = subject.total == 0 ? 0.0 : subject.mastered / subject.total;
@@ -106,7 +100,7 @@ class _SubjectRow extends StatelessWidget {
             children: [
               Flexible(
                 child: Text(
-                  _pretty(subject.subject),
+                  localizedSubject(AppLocalizations.of(context), subject.subject),
                   style: AppTextStyles.bodySmall,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

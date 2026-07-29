@@ -1375,4 +1375,88 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get howDiffGotIt => '明白了——开始学习吧！';
+
+  @override
+  String get subjectMaths => '数学';
+
+  @override
+  String get subjectScience => '科学';
+
+  @override
+  String get subjectEnglish => '英文';
+
+  @override
+  String get subjectHistory => '历史';
+
+  @override
+  String get subjectCoding => '编程';
+
+  @override
+  String get subjectArt => '美术';
+
+  @override
+  String get subjectGeography => '地理';
+
+  @override
+  String get subjectLanguages => '语言';
+
+  @override
+  String get subjectMusic => '音乐';
+
+  @override
+  String get subjectPhysicalEducation => '体育';
+
+  @override
+  String get subjectHealth => '健康';
+
+  @override
+  String get subjectLiterature => '文学';
+
+  @override
+  String get subjectGeneral => '综合';
+
+  @override
+  String get levelPrimary => '小学';
+
+  @override
+  String get levelSecondary => '中学';
+
+  @override
+  String get levelHighSchool => '高中';
+
+  @override
+  String get levelUniversity => '大学 / 成人';
+
+  @override
+  String get levelPrimarySubtitle => '约 6–11 岁';
+
+  @override
+  String get levelSecondarySubtitle => '约 11–16 岁';
+
+  @override
+  String get levelHighSchoolSubtitle => '约 16–18 岁';
+
+  @override
+  String get levelUniversitySubtitle => '18 岁以上';
+
+  @override
+  String get tierPremium => '高级版';
+
+  @override
+  String get tierMax => 'Max';
+
+  @override
+  String get tierPro => 'Pro';
+
+  @override
+  String get tierFree => '免费';
+
+  @override
+  String get tierFamily => '家庭';
+
+  @override
+  String get tierTrial => '试用';
+
+  @override
+  String get tierCentre => '中心';
 }

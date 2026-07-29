@@ -18,6 +18,7 @@ import 'package:pally/features/onboarding/presentation/direct_onboarding_view_mo
 import 'package:pally/features/onboarding/presentation/widgets/onboarding_legal_footer.dart';
 import 'package:pally/features/chapters/presentation/chapter_picker_sheet.dart';
 import 'package:pally/app/router.dart';
+import 'package:pally/core/i18n/label_localizer.dart';
 import 'package:pally/l10n/app_localizations.dart';
 
 // Requires TLD ≥ 2 chars; rejects single-char TLDs like .c
@@ -688,7 +689,7 @@ class _Step2SubjectLevel extends ConsumerWidget {
             children: directOnboardingSubjects.map((s) {
               final selected = vm.selectedSubject == s;
               return ChoiceChip(
-                label: Text(subjectLabel(s)),
+                label: Text(localizedSubject(l, s)),
                 selected: selected,
                 onSelected: (_) => notifier.setSubject(s),
                 selectedColor: AppColors.purpleL,
@@ -712,12 +713,12 @@ class _Step2SubjectLevel extends ConsumerWidget {
               style: AppTextStyles.label
                   .copyWith(fontWeight: FontWeight.w700)),
           const SizedBox(height: AppSpacing.sm),
-          ...directOnboardingLevels.map((l) {
-            final selected = vm.selectedLevel == l;
+          ...directOnboardingLevels.map((lvl) {
+            final selected = vm.selectedLevel == lvl;
             return Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.xs),
               child: GestureDetector(
-                onTap: () => notifier.setLevel(l),
+                onTap: () => notifier.setLevel(lvl),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.md,
@@ -746,7 +747,7 @@ class _Step2SubjectLevel extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              levelLabel(l),
+                              localizedLevel(l, lvl),
                               style: AppTextStyles.body.copyWith(
                                 color: selected
                                     ? AppColors.purple
@@ -757,7 +758,7 @@ class _Step2SubjectLevel extends ConsumerWidget {
                               ),
                             ),
                             Text(
-                              levelSubtitle(l),
+                              localizedLevelSubtitle(l, lvl),
                               style: AppTextStyles.bodySmall
                                   .copyWith(color: AppColors.text3),
                             ),

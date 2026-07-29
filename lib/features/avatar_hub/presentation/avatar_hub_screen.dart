@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/core/i18n/label_localizer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:pally/app/router.dart';
@@ -192,7 +193,7 @@ class _HubHeader extends StatelessWidget {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   _HeaderBadge(
-                    label: avatar.subject,
+                    label: localizedSubject(AppLocalizations.of(context), avatar.subject),
                     color: avatar.character.primaryColor,
                     bgColor: avatar.character.bgColor,
                   ),

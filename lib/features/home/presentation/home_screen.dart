@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:pally/core/i18n/label_localizer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -529,7 +530,7 @@ class _AvatarCard extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
-                          avatar.subject,
+                          localizedSubject(AppLocalizations.of(context), avatar.subject),
                           style: AppTextStyles.caption.copyWith(
                             color: _primaryColor,
                             fontWeight: FontWeight.w600,
@@ -790,7 +791,7 @@ void _showTutorOptions(BuildContext context, WidgetRef ref, Avatar avatar) {
                         style: AppTextStyles.title.copyWith(fontSize: 16),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis),
-                    Text(avatar.subject,
+                    Text(localizedSubject(AppLocalizations.of(context), avatar.subject),
                         style: AppTextStyles.caption
                             .copyWith(color: AppColors.text2),
                         maxLines: 1,

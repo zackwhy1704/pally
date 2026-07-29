@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:pally/core/i18n/label_localizer.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,7 +22,6 @@ import 'package:pally/features/referral/referral_service.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
 import 'package:pally/features/subscription/trial_status_provider.dart';
 import 'package:pally/core/ui/pally_toast.dart';
-import 'package:pally/shared/models/entitlement.dart';
 import 'package:pally/features/home/widgets/how_pally_is_different.dart';
 import 'package:pally/features/settings/presentation/learning_style_screen.dart';
 import 'package:pally/features/settings/widgets/language_picker_sheet.dart';
@@ -849,7 +849,7 @@ class _SubscriptionTile extends ConsumerWidget {
         final planLabel = isPremium
             ? (ent.source == 'PARENT'
                 ? l.settingsFamilyPlan
-                : prettyTier(ent.plan))
+                : localizedTier(l, ent.plan))
             : l.settingsFreePlan;
         return _SettingsCard(
           children: [

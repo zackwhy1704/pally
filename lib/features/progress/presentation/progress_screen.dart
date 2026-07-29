@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pally/core/i18n/label_localizer.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/widgets/loading/pally_skeleton.dart';
@@ -835,7 +837,7 @@ void _pickAvatarForQuiz(BuildContext context, List<Avatar> avatars) {
                   leading: CharacterWidget.forAvatar(a, 36),
                   title: Text(a.name,
                       maxLines: 1, overflow: TextOverflow.ellipsis),
-                  subtitle: Text(a.subject,
+                  subtitle: Text(localizedSubject(AppLocalizations.of(context), a.subject),
                       style: AppTextStyles.caption
                           .copyWith(color: AppColors.text2),
                       maxLines: 1,

@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/features/homework/presentation/homework_list_screen.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 class _MockDio extends Mock implements Dio {}
 
@@ -24,6 +25,8 @@ void main() {
   Widget harness() => ProviderScope(
         overrides: [dioProvider.overrideWithValue(dio)],
         child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: HomeworkListScreen(avatarId: 'av-1'),
         ),
       );
