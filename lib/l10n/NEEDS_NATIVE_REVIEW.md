@@ -52,9 +52,40 @@ Brand/product names kept verbatim in zh: **Apalchi**, **Mochi**, **Face ID**, **
 | `forgotPasswordSend` | Send Reset Link | 发送重置链接 | |
 | `forgotPasswordSent` | Check your email for a reset link | 请查收邮件中的重置链接 | |
 
+### PR3 — onboarding tour (`onboarding_screen.dart`, 3-page carousel)
+
+Kept verbatim: **Mochi** (mascot). SG conventions applied: **中三** for "Sec 3". `{current}/{total}` is an
+ICU placeholder. Curly quotes “ ” kept on the thesis line.
+
+| key | en | zh (machine draft) |
+|-----|----|--------------------|
+| `onboardingPageProgress` | {current} of {total} | {current} / {total} |
+| `onboardingNext` | Next → | 下一步 → |
+| `onboardingLetsGo` | Let's go → | 开始吧 → |
+| `onboardingPage1Title` | I learn from your material — not the whole internet. | 我学习你的材料——而不是整个互联网。 |
+| `onboardingPage1Body` | Upload your notes… just to get it. | 上传你的笔记、幻灯片或课堂讲义……还是单纯想把它弄懂。 |
+| `onboardingContrastOk1Title` | Your notes & slides | 你的笔记和幻灯片 |
+| `onboardingContrastOk1Sub` | I learn exactly what you're covering | 我学的正是你在学的内容 |
+| `onboardingContrastOk2Title` | Your lecture decks & readings | 你的课堂讲义和阅读材料 |
+| `onboardingContrastOk2Sub` | Same source material, sharper answers | 同样的材料，更精准的解答 |
+| `onboardingContrastBadTitle` | Random internet articles | 网上随便找的文章 |
+| `onboardingContrastBadSub` | Generic info that might not match your course | 泛泛的信息，未必符合你的课程 |
+| `onboardingPage2Title` | Give me one subject at a time — I go deep. | 一次给我一个科目——我会学得很深入。 |
+| `onboardingPage2Body` | Make a separate Mochi… uni economics module. | 为每个科目或单元建立一个单独的 Mochi……大学的经济学单元。 |
+| `onboardingFocusOkTitle` | One subject per Mochi | 每个 Mochi 专注一个科目 |
+| `onboardingFocusOkSub` | Deep, accurate answers for that course | 为那门课提供深入、准确的解答 |
+| `onboardingFocusBadTitle` | Everything in one Mochi | 所有内容都塞进一个 Mochi |
+| `onboardingFocusBadSub` | Mixed knowledge = muddled answers | 知识混在一起 = 解答含糊不清 |
+| `onboardingPage3Title` | I remember how you learn. | 我记得你是怎么学习的。 |
+| `onboardingPage3Body` | When you get something wrong… the better I fit you. | 当你做错时，我会留意到……我就越适合你。 |
+| `onboardingBeat1` | Tricky topics come back until they stick | 难懂的知识点会不断回来，直到你记牢 |
+| `onboardingBeat2` | Easy things get spaced out — no time wasted | 简单的内容会拉开复习间隔——不浪费时间 |
+| `onboardingBeat3` | The more you study, the better it fits you | 你学得越多，它就越适合你 |
+| `onboardingThesis` | "Not a generic AI — a Mochi that knows your notes." | “不是一个普通的 AI——而是一个懂你笔记的 Mochi。” |
+
 **DO NOT translate** (carry their own language already): Mochi's name, class names,
 teacher-uploaded content, student-generated text, any AI-generated artifact.
 
-Running count of zh keys drafted this branch: **29** (PR1: 2 — scaffolding + picker chrome; PR2: 27 — sign-in screen).
+Running count of zh keys drafted this branch: **52** (PR1: 2 · PR2: 27 · PR3: 23 — onboarding tour).
 Remaining core-loop extraction (onboarding tour · sign-up form · chat · modules · quiz · library) lands in later PRs;
 each appends its rows here.

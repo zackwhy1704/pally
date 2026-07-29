@@ -129,5 +129,61 @@
   "forgotPasswordSent": "Check your email for a reset link",
   "@forgotPasswordSent": {
     "description": "Confirmation snackbar after a reset link is sent."
-  }
+  },
+
+  "onboardingPageProgress": "{current} of {total}",
+  "@onboardingPageProgress": {
+    "description": "Progress indicator under the dots on the onboarding carousel, e.g. '1 of 3'.",
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "onboardingNext": "Next →",
+  "@onboardingNext": { "description": "Advance button on onboarding carousel pages 1 and 2. Keep the arrow." },
+  "onboardingLetsGo": "Let's go →",
+  "@onboardingLetsGo": { "description": "Final onboarding button that finishes the tour. Keep the arrow." },
+
+  "onboardingPage1Title": "I learn from your material — not the whole internet.",
+  "@onboardingPage1Title": { "description": "Onboarding page 1 heading. Mochi speaks in first person." },
+  "onboardingPage1Body": "Upload your notes, slides, or lecture decks and I build a brain around exactly what you're studying — for a quiz, a final, a module, or just to get it.",
+  "@onboardingPage1Body": { "description": "Onboarding page 1 body paragraph." },
+  "onboardingContrastOk1Title": "Your notes & slides",
+  "@onboardingContrastOk1Title": { "description": "Onboarding page 1, positive example row title." },
+  "onboardingContrastOk1Sub": "I learn exactly what you're covering",
+  "@onboardingContrastOk1Sub": { "description": "Onboarding page 1, positive example row subtitle." },
+  "onboardingContrastOk2Title": "Your lecture decks & readings",
+  "@onboardingContrastOk2Title": { "description": "Onboarding page 1, second positive example row title." },
+  "onboardingContrastOk2Sub": "Same source material, sharper answers",
+  "@onboardingContrastOk2Sub": { "description": "Onboarding page 1, second positive example row subtitle." },
+  "onboardingContrastBadTitle": "Random internet articles",
+  "@onboardingContrastBadTitle": { "description": "Onboarding page 1, negative example row title." },
+  "onboardingContrastBadSub": "Generic info that might not match your course",
+  "@onboardingContrastBadSub": { "description": "Onboarding page 1, negative example row subtitle." },
+
+  "onboardingPage2Title": "Give me one subject at a time — I go deep.",
+  "@onboardingPage2Title": { "description": "Onboarding page 2 heading." },
+  "onboardingPage2Body": "Make a separate Mochi for each subject or module. Each one only knows its stuff, so the answers stay sharp — whether it's Sec 3 Chemistry or a uni economics module.",
+  "@onboardingPage2Body": { "description": "Onboarding page 2 body. 'Mochi' is the mascot name — do NOT translate. 'Sec 3' is a Singapore school level." },
+  "onboardingFocusOkTitle": "One subject per Mochi",
+  "@onboardingFocusOkTitle": { "description": "Onboarding page 2, positive card title. Keep 'Mochi'." },
+  "onboardingFocusOkSub": "Deep, accurate answers for that course",
+  "@onboardingFocusOkSub": { "description": "Onboarding page 2, positive card subtitle." },
+  "onboardingFocusBadTitle": "Everything in one Mochi",
+  "@onboardingFocusBadTitle": { "description": "Onboarding page 2, negative card title. Keep 'Mochi'." },
+  "onboardingFocusBadSub": "Mixed knowledge = muddled answers",
+  "@onboardingFocusBadSub": { "description": "Onboarding page 2, negative card subtitle." },
+
+  "onboardingPage3Title": "I remember how you learn.",
+  "@onboardingPage3Title": { "description": "Onboarding page 3 heading." },
+  "onboardingPage3Body": "When you get something wrong, I notice — and I bring it back until it clicks. The more we study, the better I fit you.",
+  "@onboardingPage3Body": { "description": "Onboarding page 3 body." },
+  "onboardingBeat1": "Tricky topics come back until they stick",
+  "@onboardingBeat1": { "description": "Onboarding page 3, memory beat 1." },
+  "onboardingBeat2": "Easy things get spaced out — no time wasted",
+  "@onboardingBeat2": { "description": "Onboarding page 3, memory beat 2." },
+  "onboardingBeat3": "The more you study, the better it fits you",
+  "@onboardingBeat3": { "description": "Onboarding page 3, memory beat 3." },
+  "onboardingThesis": "“Not a generic AI — a Mochi that knows your notes.”",
+  "@onboardingThesis": { "description": "Onboarding page 3 closing positioning quote (italic). Keep 'Mochi'; keep the curly quotes." }
 }

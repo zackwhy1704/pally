@@ -36,5 +36,32 @@
 
   "forgotPasswordTitle": "重置密码",
   "forgotPasswordSend": "发送重置链接",
-  "forgotPasswordSent": "请查收邮件中的重置链接"
+  "forgotPasswordSent": "请查收邮件中的重置链接",
+
+  "onboardingPageProgress": "{current} / {total}",
+  "onboardingNext": "下一步 →",
+  "onboardingLetsGo": "开始吧 →",
+
+  "onboardingPage1Title": "我学习你的材料——而不是整个互联网。",
+  "onboardingPage1Body": "上传你的笔记、幻灯片或课堂讲义，我就会围绕你正在学的内容打造一个专属大脑——无论是为了小测、期末考、某个单元，还是单纯想把它弄懂。",
+  "onboardingContrastOk1Title": "你的笔记和幻灯片",
+  "onboardingContrastOk1Sub": "我学的正是你在学的内容",
+  "onboardingContrastOk2Title": "你的课堂讲义和阅读材料",
+  "onboardingContrastOk2Sub": "同样的材料，更精准的解答",
+  "onboardingContrastBadTitle": "网上随便找的文章",
+  "onboardingContrastBadSub": "泛泛的信息，未必符合你的课程",
+
+  "onboardingPage2Title": "一次给我一个科目——我会学得很深入。",
+  "onboardingPage2Body": "为每个科目或单元建立一个单独的 Mochi。每个 Mochi 只懂它自己的内容，所以解答始终精准——无论是中三化学还是大学的经济学单元。",
+  "onboardingFocusOkTitle": "每个 Mochi 专注一个科目",
+  "onboardingFocusOkSub": "为那门课提供深入、准确的解答",
+  "onboardingFocusBadTitle": "所有内容都塞进一个 Mochi",
+  "onboardingFocusBadSub": "知识混在一起 = 解答含糊不清",
+
+  "onboardingPage3Title": "我记得你是怎么学习的。",
+  "onboardingPage3Body": "当你做错时，我会留意到——并且会不断把它带回来，直到你真正掌握。我们学得越多，我就越适合你。",
+  "onboardingBeat1": "难懂的知识点会不断回来，直到你记牢",
+  "onboardingBeat2": "简单的内容会拉开复习间隔——不浪费时间",
+  "onboardingBeat3": "你学得越多，它就越适合你",
+  "onboardingThesis": "“不是一个普通的 AI——而是一个懂你笔记的 Mochi。”"
 }

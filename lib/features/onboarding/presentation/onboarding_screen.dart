@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/onboarding/presentation/widgets/onboarding_legal_footer.dart';
 
@@ -92,7 +93,7 @@ class _DotsBar extends StatelessWidget {
             }),
           ),
           const SizedBox(height: 6),
-          Text('${page + 1} of $total',
+          Text(AppLocalizations.of(context).onboardingPageProgress(page + 1, total),
               style: AppTextStyles.caption.copyWith(color: AppColors.text2)),
         ],
       ),
@@ -125,34 +126,34 @@ class _PageOne extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'I learn from your material — not the whole internet.',
+                  AppLocalizations.of(context).onboardingPage1Title,
                   style: AppTextStyles.heading1.copyWith(fontSize: 21),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
-                  'Upload your notes, slides, or lecture decks and I build a brain around exactly what you\'re studying — for a quiz, a final, a module, or just to get it.',
+                  AppLocalizations.of(context).onboardingPage1Body,
                   style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                const _ContrastRow(
+                _ContrastRow(
                   ok: true,
-                  title: 'Your notes & slides',
-                  sub: 'I learn exactly what you\'re covering',
+                  title: AppLocalizations.of(context).onboardingContrastOk1Title,
+                  sub: AppLocalizations.of(context).onboardingContrastOk1Sub,
                 ),
                 const SizedBox(height: 8),
-                const _ContrastRow(
+                _ContrastRow(
                   ok: true,
-                  title: 'Your lecture decks & readings',
-                  sub: 'Same source material, sharper answers',
+                  title: AppLocalizations.of(context).onboardingContrastOk2Title,
+                  sub: AppLocalizations.of(context).onboardingContrastOk2Sub,
                 ),
                 const SizedBox(height: 8),
-                const _ContrastRow(
+                _ContrastRow(
                   ok: false,
-                  title: 'Random internet articles',
-                  sub: 'Generic info that might not match your course',
+                  title: AppLocalizations.of(context).onboardingContrastBadTitle,
+                  sub: AppLocalizations.of(context).onboardingContrastBadSub,
                 ),
                 const SizedBox(height: AppSpacing.xl),
-                _NextButton(label: 'Next →', onPressed: onNext),
+                _NextButton(label: AppLocalizations.of(context).onboardingNext, onPressed: onNext),
               ],
             ),
           ),
@@ -186,28 +187,28 @@ class _PageTwo extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Give me one subject at a time — I go deep.',
+                  AppLocalizations.of(context).onboardingPage2Title,
                   style: AppTextStyles.heading1.copyWith(fontSize: 21),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
-                  'Make a separate Mochi for each subject or module. Each one only knows its stuff, so the answers stay sharp — whether it\'s Sec 3 Chemistry or a uni economics module.',
+                  AppLocalizations.of(context).onboardingPage2Body,
                   style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                const _FocusCard(
+                _FocusCard(
                   ok: true,
-                  title: 'One subject per Mochi',
-                  sub: 'Deep, accurate answers for that course',
+                  title: AppLocalizations.of(context).onboardingFocusOkTitle,
+                  sub: AppLocalizations.of(context).onboardingFocusOkSub,
                 ),
                 const SizedBox(height: 8),
-                const _FocusCard(
+                _FocusCard(
                   ok: false,
-                  title: 'Everything in one Mochi',
-                  sub: 'Mixed knowledge = muddled answers',
+                  title: AppLocalizations.of(context).onboardingFocusBadTitle,
+                  sub: AppLocalizations.of(context).onboardingFocusBadSub,
                 ),
                 const SizedBox(height: AppSpacing.xl),
-                _NextButton(label: 'Next →', onPressed: onNext),
+                _NextButton(label: AppLocalizations.of(context).onboardingNext, onPressed: onNext),
               ],
             ),
           ),
@@ -240,27 +241,27 @@ class _PageThree extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('I remember how you learn.',
+                Text(AppLocalizations.of(context).onboardingPage3Title,
                     style: AppTextStyles.heading1.copyWith(fontSize: 21)),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
-                  'When you get something wrong, I notice — and I bring it back until it clicks. The more we study, the better I fit you.',
+                  AppLocalizations.of(context).onboardingPage3Body,
                   style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                const _MemoryBeat(
+                _MemoryBeat(
                     emoji: '\u{1F501}',
-                    text: 'Tricky topics come back until they stick',
+                    text: AppLocalizations.of(context).onboardingBeat1,
                     color: AppColors.amberL, border: AppColors.amber),
                 const SizedBox(height: 8),
-                const _MemoryBeat(
+                _MemoryBeat(
                     emoji: '\u{1F3AF}',
-                    text: 'Easy things get spaced out — no time wasted',
+                    text: AppLocalizations.of(context).onboardingBeat2,
                     color: AppColors.tealL, border: AppColors.teal),
                 const SizedBox(height: 8),
-                const _MemoryBeat(
+                _MemoryBeat(
                     emoji: '\u{1F4C8}',
-                    text: 'The more you study, the better it fits you',
+                    text: AppLocalizations.of(context).onboardingBeat3,
                     color: AppColors.greenL, border: AppColors.green),
                 const SizedBox(height: AppSpacing.xl),
                 // Thesis — the positioning close
@@ -273,7 +274,7 @@ class _PageThree extends StatelessWidget {
                         color: AppColors.purple.withValues(alpha: 0.3)),
                   ),
                   child: Text(
-                    '“Not a generic AI — a Mochi that knows your notes.”',
+                    AppLocalizations.of(context).onboardingThesis,
                     style: AppTextStyles.body.copyWith(
                         color: AppColors.purple,
                         fontWeight: FontWeight.w700,
@@ -283,7 +284,7 @@ class _PageThree extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.xl),
                 _NextButton(
-                    label: "Let's go →",
+                    label: AppLocalizations.of(context).onboardingLetsGo,
                     onPressed: onFinish,
                     color: AppColors.green),
               ],
