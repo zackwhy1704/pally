@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/ui/no_notes_cta.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -118,7 +119,7 @@ class QuizScreen extends ConsumerWidget {
                                 : AppColors.text2),
                         const SizedBox(width: 4),
                         Text(
-                          'Confidence',
+                          AppLocalizations.of(context).quizConfidence,
                           style: AppTextStyles.label.copyWith(
                               color: quizState.confidenceMode
                                   ? AppColors.purple
@@ -146,7 +147,7 @@ class QuizScreen extends ConsumerWidget {
           ? const _QuizLoadingView()
           : quizState.error != null
               ? PallyErrorCard(
-                  message: quizState.error?.userMessage ?? 'Something went wrong — try again.',
+                  message: quizState.error?.userMessage ?? AppLocalizations.of(context).quizErrorRetry,
                   onRetry: () => ref
                       .read(quizViewModelProvider(avatarId).notifier)
                       .restart(),
@@ -285,7 +286,7 @@ class _QuizBody extends StatelessWidget {
                           strokeWidth: 2, color: Colors.white),
                     )
                   : Text(
-                      quizState.isLastQuestion ? 'Finish Quiz' : 'Next Question',
+                      quizState.isLastQuestion ? AppLocalizations.of(context).quizFinish : AppLocalizations.of(context).quizNextQuestion,
                       style: AppTextStyles.body.copyWith(color: Colors.white),
                     ),
             ),
@@ -359,7 +360,7 @@ class _QuestionCard extends StatelessWidget {
           ],
           // Targeting badge — the weak-first picker chose this (pre-answer).
           if (weakConcept != null) ...[
-            TargetingBadge(text: 'Reviewing your weak spot: $weakConcept.'),
+            TargetingBadge(text: AppLocalizations.of(context).quizReviewingWeakSpot(weakConcept)),
             const SizedBox(height: AppSpacing.sm),
           ],
           Row(
@@ -517,7 +518,7 @@ class _AnswerLockedNote extends StatelessWidget {
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
-              "Answer locked in — you'll see your results at the end.",
+              AppLocalizations.of(context).quizAnswerLocked,
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
             ),
           ),
@@ -560,7 +561,7 @@ class _ExplanationCard extends StatelessWidget {
               ),
               const SizedBox(width: AppSpacing.xs),
               Text(
-                isCorrect ? 'Correct!' : 'Not quite',
+                isCorrect ? AppLocalizations.of(context).quizCorrect : AppLocalizations.of(context).quizNotQuite,
                 style: AppTextStyles.body.copyWith(
                   color: isCorrect ? AppColors.green : AppColors.coral,
                   fontWeight: FontWeight.w700,
@@ -691,10 +692,10 @@ class _CompletionView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('Quiz Complete!', style: AppTextStyles.heading1),
+            Text(AppLocalizations.of(context).quizComplete, style: AppTextStyles.heading1),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'You got $score out of $total correct.',
+              AppLocalizations.of(context).quizScoreResult(score, total),
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
             ),
             const SizedBox(height: AppSpacing.md),
@@ -751,7 +752,7 @@ class _CompletionView extends StatelessWidget {
               const SizedBox(height: AppSpacing.lg),
               Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Review', style: AppTextStyles.title),
+                child: Text(AppLocalizations.of(context).moduleCtaReview, style: AppTextStyles.title),
               ),
               const SizedBox(height: AppSpacing.sm),
               ...feedback.map((f) => Padding(
@@ -774,7 +775,7 @@ class _CompletionView extends StatelessWidget {
                   backgroundColor: AppColors.purple,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                child: const Text('Back to Mochi'),
+                child: Text(AppLocalizations.of(context).quizBackToMochi),
               ),
             ),
           ],
@@ -836,7 +837,7 @@ class _ReviewCard extends StatelessWidget {
           ),
           if (correctOption != null) ...[
             const SizedBox(height: AppSpacing.xs),
-            Text('Answer: $correctOption',
+            Text(AppLocalizations.of(context).quizAnswerLabel(correctOption),
                 style: AppTextStyles.bodySmall
                     .copyWith(color: AppColors.green, fontWeight: FontWeight.w700)),
           ],
@@ -866,7 +867,7 @@ class _ConfidencePicker extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'How sure are you?',
+          AppLocalizations.of(context).quizHowSure,
           style: AppTextStyles.label.copyWith(color: AppColors.text2),
         ),
         const SizedBox(height: AppSpacing.xs),
@@ -875,7 +876,7 @@ class _ConfidencePicker extends StatelessWidget {
             Expanded(
                 child: _ConfidenceChip(
                     emoji: '😬',
-                    label: 'Not sure',
+                    label: AppLocalizations.of(context).quizConfNotSure,
                     value: Confidence.low,
                     selected: selected,
                     onSelect: onSelect)),
@@ -883,7 +884,7 @@ class _ConfidencePicker extends StatelessWidget {
             Expanded(
                 child: _ConfidenceChip(
                     emoji: '🤔',
-                    label: 'Kinda',
+                    label: AppLocalizations.of(context).quizConfKinda,
                     value: Confidence.medium,
                     selected: selected,
                     onSelect: onSelect)),
@@ -891,7 +892,7 @@ class _ConfidencePicker extends StatelessWidget {
             Expanded(
                 child: _ConfidenceChip(
                     emoji: '😎',
-                    label: 'Very sure',
+                    label: AppLocalizations.of(context).quizConfVerySure,
                     value: Confidence.high,
                     selected: selected,
                     onSelect: onSelect)),
@@ -976,7 +977,7 @@ class _MasteryMatrixCard extends StatelessWidget {
           children: [
             Expanded(
               child: _MasteryQuadrant(
-                title: 'Mastered',
+                title: AppLocalizations.of(context).quizResultMastered,
                 emoji: '✅',
                 items: matrix.mastered.map(_label).toList(),
                 color: AppColors.green,
@@ -986,7 +987,7 @@ class _MasteryMatrixCard extends StatelessWidget {
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: _MasteryQuadrant(
-                title: 'Misconception',
+                title: AppLocalizations.of(context).quizResultMisconception,
                 emoji: '⚠️',
                 items: matrix.misconception.map(_label).toList(),
                 color: AppColors.coral,
@@ -1001,7 +1002,7 @@ class _MasteryMatrixCard extends StatelessWidget {
           children: [
             Expanded(
               child: _MasteryQuadrant(
-                title: 'Lucky guess',
+                title: AppLocalizations.of(context).quizResultLuckyGuess,
                 emoji: '🍀',
                 items: matrix.luckyGuess.map(_label).toList(),
                 color: AppColors.amber,
@@ -1011,7 +1012,7 @@ class _MasteryMatrixCard extends StatelessWidget {
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: _MasteryQuadrant(
-                title: 'Known gap',
+                title: AppLocalizations.of(context).quizResultKnownGap,
                 emoji: '📚',
                 items: matrix.knownGap.map(_label).toList(),
                 color: AppColors.purple,
@@ -1036,7 +1037,7 @@ class _MasteryMatrixCard extends StatelessWidget {
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Text(
-                    'Focus next: ${_label(matrix.priorityReview!)}',
+                    AppLocalizations.of(context).quizFocusNext(_label(matrix.priorityReview!)),
                     style: AppTextStyles.body.copyWith(
                       color: AppColors.text1,
                       fontWeight: FontWeight.w700,
@@ -1152,8 +1153,8 @@ class _MemoryNoticeCard extends StatelessWidget {
           Expanded(
             child: Text(
               display.isNotEmpty
-                  ? 'I noticed $display is tricky for you — I\'ll bring it back soon.'
-                  : "I noticed some topics were tricky — I'll bring them back soon.",
+                  ? AppLocalizations.of(context).quizTrickyOne(display)
+                  : AppLocalizations.of(context).quizTrickySome,
               style: AppTextStyles.bodySmall
                   .copyWith(color: AppColors.amber, fontWeight: FontWeight.w600),
             ),
@@ -1262,7 +1263,7 @@ class _QuizLoadingViewState extends State<_QuizLoadingView> {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'Building your quiz…',
+              AppLocalizations.of(context).quizBuilding,
               style: AppTextStyles.caption.copyWith(color: AppColors.text3),
             ),
           ],
@@ -1287,7 +1288,7 @@ class _NoQuestionsView extends StatelessWidget {
           const Text('🧠', style: TextStyle(fontSize: 56)),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'No quiz today',
+            AppLocalizations.of(context).quizNoQuizToday,
             style: AppTextStyles.title,
             textAlign: TextAlign.center,
           ),
@@ -1295,7 +1296,7 @@ class _NoQuestionsView extends StatelessWidget {
           NoNotesCta(
             avatarId: avatarId,
             personalDescription:
-                'Upload some notes so Mochi can build your first quiz!',
+                AppLocalizations.of(context).quizUploadNotesCta,
           ),
         ],
       ),

@@ -183,9 +183,35 @@ the LEARN/TEST/PROVE item BODY widgets (hot-take/spot-mistake/challenge) are NOT
 | `moduleGoToLibrary` | Go to Library | 前往学习库 |
 | `moduleUnknownStage` | Unknown stage | 未知阶段 |
 
+### PR8 — quiz (question chrome, results, confidence, re-teach nudge)
+
+Mochi kept. Placeholders on score/answer/weak-spot/focus/tricky-concept. Reuses `moduleCtaReview` for the
+results "Review" button. Terms to sanity-check: 确信度 (confidence), 概念误解 (Misconception), 蒙对了 (Lucky guess).
+
+| key | en | zh (machine draft) |
+|-----|----|--------------------|
+| `quizConfidence` | Confidence | 确信度 |
+| `quizErrorRetry` | Something went wrong — try again. | 出错了——请重试。 |
+| `quizFinish` / `quizNextQuestion` | Finish Quiz / Next Question | 完成小测 / 下一题 |
+| `quizReviewingWeakSpot` | Reviewing your weak spot: {concept}. | 正在复习你的薄弱点：{concept}。 |
+| `quizAnswerLocked` | Answer locked in — you'll see your results at the end. | 答案已锁定——你将在结束时看到结果。 |
+| `quizCorrect` / `quizNotQuite` | Correct! / Not quite | 答对了！ / 还差一点 |
+| `quizScoreResult` | You got {score} out of {total} correct. | 你答对了 {total} 题中的 {score} 题。 |
+| `quizComplete` | Quiz Complete! | 小测完成！ |
+| `quizBackToMochi` | Back to Mochi | 返回 Mochi |
+| `quizAnswerLabel` | Answer: {answer} | 答案：{answer} |
+| `quizHowSure` | How sure are you? | 你有多确定？ |
+| `quizConfNotSure/Kinda/VerySure` | Not sure / Kinda / Very sure | 不确定 / 有点确定 / 非常确定 |
+| `quizResultMastered/Misconception/LuckyGuess/KnownGap` | Mastered / Misconception / Lucky guess / Known gap | 已掌握 / 概念误解 / 蒙对了 / 已知薄弱 |
+| `quizFocusNext` | Focus next: {topic} | 接下来重点：{topic} |
+| `quizTrickyOne` | I noticed {display} is tricky for you — I'll bring it back soon. | 我注意到 {display} 对你来说有点难——我会很快再带你复习。 |
+| `quizTrickySome` | I noticed some topics were tricky — I'll bring them back soon. | 我注意到有些内容有点难——我会很快再带你复习。 |
+| `quizBuilding` | Building your quiz… | 正在生成你的小测…… |
+| `quizNoQuizToday` / `quizUploadNotesCta` | No quiz today / Upload some notes so Mochi can build your first quiz! | 今天没有小测 / 上传一些笔记，Mochi 就能为你生成第一份小测！ |
+
 **DO NOT translate** (carry their own language already): Mochi's name, class names,
 teacher-uploaded content, student-generated text, any AI-generated artifact.
 
-Running count of zh keys drafted this branch: **131** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 · PR5: 22 · PR6: 21 · PR7: 21 — module screens; item bodies remain).
+Running count of zh keys drafted this branch: **157** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 · PR5: 22 · PR6: 21 · PR7: 21 · PR8: 26 — quiz).
 Remaining core-loop extraction (onboarding tour · sign-up form · chat · modules · quiz · library) lands in later PRs;
 each appends its rows here.

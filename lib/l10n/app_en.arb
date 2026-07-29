@@ -374,5 +374,73 @@
   "moduleGoToLibrary": "Go to Library",
   "@moduleGoToLibrary": { "description": "Button on the refreshing card, returns to the Library." },
   "moduleUnknownStage": "Unknown stage",
-  "@moduleUnknownStage": { "description": "Fallback for an unrecognized module stage." }
+  "@moduleUnknownStage": { "description": "Fallback for an unrecognized module stage." },
+
+  "quizConfidence": "Confidence",
+  "@quizConfidence": { "description": "Header for the confidence self-rating on a quiz question." },
+  "quizErrorRetry": "Something went wrong — try again.",
+  "@quizErrorRetry": { "description": "Error message on the quiz screen." },
+  "quizFinish": "Finish Quiz",
+  "@quizFinish": { "description": "Button on the last quiz question." },
+  "quizNextQuestion": "Next Question",
+  "@quizNextQuestion": { "description": "Button to advance to the next quiz question." },
+  "quizReviewingWeakSpot": "Reviewing your weak spot: {concept}.",
+  "@quizReviewingWeakSpot": {
+    "description": "Targeting badge shown when a question revisits a weak concept.",
+    "placeholders": { "concept": { "type": "String" } }
+  },
+  "quizAnswerLocked": "Answer locked in — you'll see your results at the end.",
+  "@quizAnswerLocked": { "description": "Note shown after answering, before the reveal." },
+  "quizCorrect": "Correct!",
+  "@quizCorrect": { "description": "Verdict when the answer is right." },
+  "quizNotQuite": "Not quite",
+  "@quizNotQuite": { "description": "Verdict when the answer is wrong." },
+  "quizScoreResult": "You got {score} out of {total} correct.",
+  "@quizScoreResult": {
+    "description": "Quiz results summary line.",
+    "placeholders": { "score": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "quizComplete": "Quiz Complete!",
+  "@quizComplete": { "description": "Title on the quiz results screen." },
+  "quizBackToMochi": "Back to Mochi",
+  "@quizBackToMochi": { "description": "Button returning from quiz results. Keep 'Mochi'." },
+  "quizAnswerLabel": "Answer: {answer}",
+  "@quizAnswerLabel": {
+    "description": "Shows the correct option after reveal.",
+    "placeholders": { "answer": { "type": "String" } }
+  },
+  "quizHowSure": "How sure are you?",
+  "@quizHowSure": { "description": "Prompt for the confidence self-rating." },
+  "quizConfNotSure": "Not sure",
+  "@quizConfNotSure": { "description": "Confidence option — low." },
+  "quizConfKinda": "Kinda",
+  "@quizConfKinda": { "description": "Confidence option — medium." },
+  "quizConfVerySure": "Very sure",
+  "@quizConfVerySure": { "description": "Confidence option — high." },
+  "quizResultMastered": "Mastered",
+  "@quizResultMastered": { "description": "Result matrix cell — correct + confident." },
+  "quizResultMisconception": "Misconception",
+  "@quizResultMisconception": { "description": "Result matrix cell — wrong + confident." },
+  "quizResultLuckyGuess": "Lucky guess",
+  "@quizResultLuckyGuess": { "description": "Result matrix cell — correct + unsure." },
+  "quizResultKnownGap": "Known gap",
+  "@quizResultKnownGap": { "description": "Result matrix cell — wrong + unsure." },
+  "quizFocusNext": "Focus next: {topic}",
+  "@quizFocusNext": {
+    "description": "Priority-review pointer on the results screen.",
+    "placeholders": { "topic": { "type": "String" } }
+  },
+  "quizTrickyOne": "I noticed {display} is tricky for you — I'll bring it back soon.",
+  "@quizTrickyOne": {
+    "description": "Re-teach nudge naming one tricky concept.",
+    "placeholders": { "display": { "type": "String" } }
+  },
+  "quizTrickySome": "I noticed some topics were tricky — I'll bring them back soon.",
+  "@quizTrickySome": { "description": "Re-teach nudge for multiple tricky topics." },
+  "quizBuilding": "Building your quiz…",
+  "@quizBuilding": { "description": "Loading message while the quiz is generated (keep ellipsis)." },
+  "quizNoQuizToday": "No quiz today",
+  "@quizNoQuizToday": { "description": "Empty-state title when no quiz is available." },
+  "quizUploadNotesCta": "Upload some notes so Mochi can build your first quiz!",
+  "@quizUploadNotesCta": { "description": "Empty-state body prompting an upload. Keep 'Mochi'." }
 }
