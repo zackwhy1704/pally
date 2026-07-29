@@ -41,7 +41,9 @@ SG-specific term 小伴 itself is part of the standing native-SG review.
 - ✅ **PR-B** subject/level/tier labels via `label_localizer.dart` resolver (28 keys; the "Maths"→数学 gap;
   free-text subjects pass through UNTRANSLATED; canonical en fns kept; no B-EXT.2 conditional) — MERGED `@4c3d7a6`.
   NB: display sites render variables, so the literal guard can't see this win — baseline unchanged, by design.
-- **PR-C** progress / achievements / goals · **PR-D** groups+join+invite+codes · **PR-E** shop+flashcards
+- ✅ **PR-C** progress/achievements/goals/streaks (63 keys) — MERGED `@cbc42ab`. First baseline shrink: 751→699.
+  Also localized ternary/switch strings the scanner misses (a documented guard blind spot).
+- **PR-D** groups+join+invite+codes · **PR-E** shop+flashcards
 - **PR-F** subscription/premium 🔒 + learning-style · **PR-G** photo_question+upload+ocr
 - **PR-H** wiki_viewer+compiled+chapters · **PR-I** chat-residue+create-tutor · **PR-J** consent+account_deletion+auth
 - **PR-K** long tail (homework/exam_prep/study_plan/brain_health/teach_mochi/centre/assignments/etc.)
