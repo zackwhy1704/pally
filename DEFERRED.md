@@ -45,7 +45,7 @@ SG-specific term 小伴 itself is part of the standing native-SG review.
   Also localized ternary/switch strings the scanner misses (a documented guard blind spot).
 - ✅ **PR-D** groups+join+invite (67 keys) — MERGED `@1a2d326`. Baseline 699→627. Fixed cta_invariant to
   resolve the join CTA per test-locale.
-- **PR-E** shop+flashcards
+- ✅ **PR-E** character shop + flashcards (48 keys) — MERGED `@77358f2`. Baseline 627→588.
 - **PR-F** subscription/premium 🔒 + learning-style · **PR-G** photo_question+upload+ocr
 - **PR-H** wiki_viewer+compiled+chapters · **PR-I** chat-residue+create-tutor · **PR-J** consent+account_deletion+auth
 - **PR-K** long tail (homework/exam_prep/study_plan/brain_health/teach_mochi/centre/assignments/etc.)
