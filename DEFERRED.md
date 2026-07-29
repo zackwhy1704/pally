@@ -7,12 +7,13 @@
 
 ---
 
-## Branch B — UI localization (zh) — HANDOFF (paused 2026-07-29, main @cfc50ce)
+## Branch B — UI localization (zh) — HANDOFF (updated 2026-07-29, main @31ec07a)
 
-The client i18n architecture is established and the **daily student loop is fully localized**.
-Registry-driven (`AppLanguages`), ARB + gen-l10n, harness parameterized over `AppLanguages.all`,
-**157 zh strings drafted** across 8 merged PRs. Adding a third language later = one registry
-entry + one ARB file (Spanish/etc. get geometry+CTA coverage automatically).
+The client i18n architecture is established and the **daily student loop — including the home
+screen and bottom nav — is fully localized**. Registry-driven (`AppLanguages`), ARB + gen-l10n,
+harness parameterized over `AppLanguages.all`, **~208 zh strings drafted** across 9 merged PRs.
+Adding a third language later = one registry entry + one ARB file (Spanish/etc. get geometry+CTA
+coverage automatically).
 
 ### SHIPPED (all merged to main)
 - PR1 scaffolding + AppLanguages registry + LocaleController + settings language-picker + harness
@@ -25,16 +26,30 @@ entry + one ARB file (Spanish/etc. get geometry+CTA coverage automatically).
   (backend fix) now renders in Chinese (`@d35c63f`)
 - PR7 module SCREENS (list + player shell) (`@227a7a6`)
 - PR8 quiz (question chrome, results, re-teach nudge) (`@cfc50ce`)
+- PR-home HOME screen + bottom NAV shell + the 4 home banners + consent-pending banner (~51 strings).
+  Closed the nav-shell gap the on-device E2E walk surfaced (home + nav were English while every other
+  loop surface was zh). Nav labels resolve via a branchIndex switch (semantic map, not a language
+  conditional). (`@31ec07a`)
 
 ### REMAINS (priority order; follow the SAME recipe — do NOT invent new patterns)
-1. **Module item BODY widgets** — `LearnBody` / `TestBody` / `ProveBody` and the item types
+1. **Module item BODY widgets** (PR9) — `LearnBody` / `TestBody` / `ProveBody` and the item types
    (MICRO_CARD / HOT_TAKE / SPOT_MISTAKE / CHALLENGE) under `features/modules/presentation/widgets/`.
    Deferred from PR7 (large sub-surface); PR7 shipped only the module screens' chrome.
-2. **Settings** — complete the partial surface from PR1 (~60 strings, `settings_screen.dart` 999 lines).
-   CAUTION: the Subscription/Referral cards contain price strings behind the iOS anti-steering
-   `allowPriceDisplay(ref)` gate — localize the LABELS but do NOT change what the gate shows.
-3. **Sign-up form** — `direct_onboarding_screen.dart` (1507 lines). Biggest surface, hit once per user;
-   last for that reason. Most likely to strand — do it as its own focused session.
+   ⚠️ Only STATIC CHROME is in scope — labels, buttons, empty/error copy. Item bodies rendered from
+   AI-generated material already carry their own language (backend `content_language`); if a string
+   comes from the API, LEAVE IT.
+2. **Settings** (PR10) — complete the partial surface from PR1 (~60 strings, `settings_screen.dart`).
+   ⚠️ COMPLIANCE HAZARD: the Subscription/Referral cards carry the iOS anti-steering copy (App Store
+   guideline 3.1.1), gated behind `allowPriceDisplay(ref)`. That English is a COMPLIANCE artifact, not
+   product copy: extract it BYTE-IDENTICAL (no rewording/shortening/"improving"); the zh must be
+   faithful in MEANING and must NOT imply users can pay outside the app or add any purchase steering
+   the English doesn't contain. Flag every anti-steering string in NEEDS_NATIVE_REVIEW.md with a
+   **COMPLIANCE** marker so the native reviewer knows those are not free to rephrase for naturalness.
+   If a string's compliance intent is unclear, extract verbatim + flag — do not guess.
+3. **Sign-up form** (PR11) — `direct_onboarding_screen.dart` (1507 lines). Biggest surface, hit once
+   per user; last for that reason. Most likely to strand — do it as its own focused session.
+4. **HowPallyIsDifferent** (PR12) — small modal in `features/home/widgets/` but rendered from settings
+   and create-tutor (NOT home). ~11 strings.
 
 ### THE RECIPE (non-negotiable, proven over 8 PRs)
 1. Extract user-facing strings to ARB (en **byte-identical** to current hardcoded so en-locale test
