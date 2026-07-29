@@ -106,4 +106,84 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get forgotPasswordSent => 'Check your email for a reset link';
+
+  @override
+  String onboardingPageProgress(int current, int total) {
+    return '$current of $total';
+  }
+
+  @override
+  String get onboardingNext => 'Next →';
+
+  @override
+  String get onboardingLetsGo => 'Let\'s go →';
+
+  @override
+  String get onboardingPage1Title =>
+      'I learn from your material — not the whole internet.';
+
+  @override
+  String get onboardingPage1Body =>
+      'Upload your notes, slides, or lecture decks and I build a brain around exactly what you\'re studying — for a quiz, a final, a module, or just to get it.';
+
+  @override
+  String get onboardingContrastOk1Title => 'Your notes & slides';
+
+  @override
+  String get onboardingContrastOk1Sub =>
+      'I learn exactly what you\'re covering';
+
+  @override
+  String get onboardingContrastOk2Title => 'Your lecture decks & readings';
+
+  @override
+  String get onboardingContrastOk2Sub =>
+      'Same source material, sharper answers';
+
+  @override
+  String get onboardingContrastBadTitle => 'Random internet articles';
+
+  @override
+  String get onboardingContrastBadSub =>
+      'Generic info that might not match your course';
+
+  @override
+  String get onboardingPage2Title =>
+      'Give me one subject at a time — I go deep.';
+
+  @override
+  String get onboardingPage2Body =>
+      'Make a separate Mochi for each subject or module. Each one only knows its stuff, so the answers stay sharp — whether it\'s Sec 3 Chemistry or a uni economics module.';
+
+  @override
+  String get onboardingFocusOkTitle => 'One subject per Mochi';
+
+  @override
+  String get onboardingFocusOkSub => 'Deep, accurate answers for that course';
+
+  @override
+  String get onboardingFocusBadTitle => 'Everything in one Mochi';
+
+  @override
+  String get onboardingFocusBadSub => 'Mixed knowledge = muddled answers';
+
+  @override
+  String get onboardingPage3Title => 'I remember how you learn.';
+
+  @override
+  String get onboardingPage3Body =>
+      'When you get something wrong, I notice — and I bring it back until it clicks. The more we study, the better I fit you.';
+
+  @override
+  String get onboardingBeat1 => 'Tricky topics come back until they stick';
+
+  @override
+  String get onboardingBeat2 => 'Easy things get spaced out — no time wasted';
+
+  @override
+  String get onboardingBeat3 => 'The more you study, the better it fits you';
+
+  @override
+  String get onboardingThesis =>
+      '“Not a generic AI — a Mochi that knows your notes.”';
 }

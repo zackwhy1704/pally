@@ -283,6 +283,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Check your email for a reset link'**
   String get forgotPasswordSent;
+
+  /// Progress indicator under the dots on the onboarding carousel, e.g. '1 of 3'.
+  ///
+  /// In en, this message translates to:
+  /// **'{current} of {total}'**
+  String onboardingPageProgress(int current, int total);
+
+  /// Advance button on onboarding carousel pages 1 and 2. Keep the arrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Next →'**
+  String get onboardingNext;
+
+  /// Final onboarding button that finishes the tour. Keep the arrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s go →'**
+  String get onboardingLetsGo;
+
+  /// Onboarding page 1 heading. Mochi speaks in first person.
+  ///
+  /// In en, this message translates to:
+  /// **'I learn from your material — not the whole internet.'**
+  String get onboardingPage1Title;
+
+  /// Onboarding page 1 body paragraph.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload your notes, slides, or lecture decks and I build a brain around exactly what you\'re studying — for a quiz, a final, a module, or just to get it.'**
+  String get onboardingPage1Body;
+
+  /// Onboarding page 1, positive example row title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your notes & slides'**
+  String get onboardingContrastOk1Title;
+
+  /// Onboarding page 1, positive example row subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'I learn exactly what you\'re covering'**
+  String get onboardingContrastOk1Sub;
+
+  /// Onboarding page 1, second positive example row title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your lecture decks & readings'**
+  String get onboardingContrastOk2Title;
+
+  /// Onboarding page 1, second positive example row subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Same source material, sharper answers'**
+  String get onboardingContrastOk2Sub;
+
+  /// Onboarding page 1, negative example row title.
+  ///
+  /// In en, this message translates to:
+  /// **'Random internet articles'**
+  String get onboardingContrastBadTitle;
+
+  /// Onboarding page 1, negative example row subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Generic info that might not match your course'**
+  String get onboardingContrastBadSub;
+
+  /// Onboarding page 2 heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Give me one subject at a time — I go deep.'**
+  String get onboardingPage2Title;
+
+  /// Onboarding page 2 body. 'Mochi' is the mascot name — do NOT translate. 'Sec 3' is a Singapore school level.
+  ///
+  /// In en, this message translates to:
+  /// **'Make a separate Mochi for each subject or module. Each one only knows its stuff, so the answers stay sharp — whether it\'s Sec 3 Chemistry or a uni economics module.'**
+  String get onboardingPage2Body;
+
+  /// Onboarding page 2, positive card title. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'One subject per Mochi'**
+  String get onboardingFocusOkTitle;
+
+  /// Onboarding page 2, positive card subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep, accurate answers for that course'**
+  String get onboardingFocusOkSub;
+
+  /// Onboarding page 2, negative card title. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything in one Mochi'**
+  String get onboardingFocusBadTitle;
+
+  /// Onboarding page 2, negative card subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mixed knowledge = muddled answers'**
+  String get onboardingFocusBadSub;
+
+  /// Onboarding page 3 heading.
+  ///
+  /// In en, this message translates to:
+  /// **'I remember how you learn.'**
+  String get onboardingPage3Title;
+
+  /// Onboarding page 3 body.
+  ///
+  /// In en, this message translates to:
+  /// **'When you get something wrong, I notice — and I bring it back until it clicks. The more we study, the better I fit you.'**
+  String get onboardingPage3Body;
+
+  /// Onboarding page 3, memory beat 1.
+  ///
+  /// In en, this message translates to:
+  /// **'Tricky topics come back until they stick'**
+  String get onboardingBeat1;
+
+  /// Onboarding page 3, memory beat 2.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy things get spaced out — no time wasted'**
+  String get onboardingBeat2;
+
+  /// Onboarding page 3, memory beat 3.
+  ///
+  /// In en, this message translates to:
+  /// **'The more you study, the better it fits you'**
+  String get onboardingBeat3;
+
+  /// Onboarding page 3 closing positioning quote (italic). Keep 'Mochi'; keep the curly quotes.
+  ///
+  /// In en, this message translates to:
+  /// **'“Not a generic AI — a Mochi that knows your notes.”'**
+  String get onboardingThesis;
 }
 
 class _AppLocalizationsDelegate

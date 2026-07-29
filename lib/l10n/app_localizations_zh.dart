@@ -101,4 +101,78 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get forgotPasswordSent => '请查收邮件中的重置链接';
+
+  @override
+  String onboardingPageProgress(int current, int total) {
+    return '$current / $total';
+  }
+
+  @override
+  String get onboardingNext => '下一步 →';
+
+  @override
+  String get onboardingLetsGo => '开始吧 →';
+
+  @override
+  String get onboardingPage1Title => '我学习你的材料——而不是整个互联网。';
+
+  @override
+  String get onboardingPage1Body =>
+      '上传你的笔记、幻灯片或课堂讲义，我就会围绕你正在学的内容打造一个专属大脑——无论是为了小测、期末考、某个单元，还是单纯想把它弄懂。';
+
+  @override
+  String get onboardingContrastOk1Title => '你的笔记和幻灯片';
+
+  @override
+  String get onboardingContrastOk1Sub => '我学的正是你在学的内容';
+
+  @override
+  String get onboardingContrastOk2Title => '你的课堂讲义和阅读材料';
+
+  @override
+  String get onboardingContrastOk2Sub => '同样的材料，更精准的解答';
+
+  @override
+  String get onboardingContrastBadTitle => '网上随便找的文章';
+
+  @override
+  String get onboardingContrastBadSub => '泛泛的信息，未必符合你的课程';
+
+  @override
+  String get onboardingPage2Title => '一次给我一个科目——我会学得很深入。';
+
+  @override
+  String get onboardingPage2Body =>
+      '为每个科目或单元建立一个单独的 Mochi。每个 Mochi 只懂它自己的内容，所以解答始终精准——无论是中三化学还是大学的经济学单元。';
+
+  @override
+  String get onboardingFocusOkTitle => '每个 Mochi 专注一个科目';
+
+  @override
+  String get onboardingFocusOkSub => '为那门课提供深入、准确的解答';
+
+  @override
+  String get onboardingFocusBadTitle => '所有内容都塞进一个 Mochi';
+
+  @override
+  String get onboardingFocusBadSub => '知识混在一起 = 解答含糊不清';
+
+  @override
+  String get onboardingPage3Title => '我记得你是怎么学习的。';
+
+  @override
+  String get onboardingPage3Body =>
+      '当你做错时，我会留意到——并且会不断把它带回来，直到你真正掌握。我们学得越多，我就越适合你。';
+
+  @override
+  String get onboardingBeat1 => '难懂的知识点会不断回来，直到你记牢';
+
+  @override
+  String get onboardingBeat2 => '简单的内容会拉开复习间隔——不浪费时间';
+
+  @override
+  String get onboardingBeat3 => '你学得越多，它就越适合你';
+
+  @override
+  String get onboardingThesis => '“不是一个普通的 AI——而是一个懂你笔记的 Mochi。”';
 }
