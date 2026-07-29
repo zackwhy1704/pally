@@ -7,12 +7,48 @@
 
 ---
 
-## Branch B — UI localization (zh) — ✅ CLIENT EXTRACTION COMPLETE (2026-07-29, main @a8b85d8)
+## Branch B — UI localization (zh) — IN PROGRESS, ~33% COVERAGE (2026-07-29)
 
-**Every student-facing screen surface now renders through the ARB.** Registry-driven (`AppLanguages`),
-ARB + gen-l10n, harness parameterized over `AppLanguages.all`, **~371 zh strings drafted** across 13
-merged PRs. Adding a third language later = one registry entry + one ARB file (Spanish/etc. get
-geometry+CTA coverage automatically).
+**CORRECTION (2026-07-29): the earlier "CLIENT EXTRACTION COMPLETE @a8b85d8" claim was SCOPE-based,
+not coverage-based, and was wrong.** 13 PRs localized the surfaces on a scope list (~371 strings). A
+human walking the app in Chinese then found ~12 unlocalized surfaces; a machine walk of the widget-tree
+source found **762 hardcoded user-facing strings across 40 feature directories** still in English —
+whole features (photo_question, progress, groups, wiki_viewer, shop, exam_prep, homework, study_plan,
+brain_health, invite, …) were never on the scope list. Real coverage was **371 / 1133 ≈ 33%**, not 100%.
+This is the same failure mode as the stale ledger titles and the stale branch list: the metric
+described the plan, not the artifact.
+
+### Completeness is now MEASURED, not asserted
+`test/guard/l10n_coverage_guard_test.dart` walks `lib/` for every hardcoded user-facing string (UI text
+sinks + prose heuristic) and fails on any not in a **shrink-only baseline** (`l10n_coverage_baseline.txt`,
+seeded at 751). Localize a string → delete its baseline line; you never add a line except for a
+legitimately-English string, with a reason. **"COMPLETE" = the baseline is empty**, re-verified by the
+guard — not a scope list ticked off. A new hardcoded string fails CI, so the next walk can't surprise us.
+
+### Mascot naming (operator decision): Mochi → 小伴, one source of truth
+`mascotName` ARB key (en `Mochi` / zh `小伴`). Every user-facing mascot reference resolves via a
+`{mascot}` placeholder — the 42 pre-existing "Mochi" keys were retrofitted, and en stays byte-identical
+at runtime (`"New {mascot}"`→`"New Mochi"`) so en finders keep matching while zh reads 小伴. Renaming =
+one ARB edit. ⚠️ **Backend alignment approved-in-principle, diff pending sign-off:** generated zh content
+must also say 小伴 (a `pally_backend` zh-directive line) or a compiled lesson says "Mochi" while the app
+says 小伴 — the split-brain a teacher notices. Do NOT ship the client-only 小伴 to users as final until
+that backend directive lands (or is explicitly deferred).
+
+### PR plan (~10 PRs; the inventory decided the count)
+- ✅ **PR-A** coverage guard + baseline + `mascotName` foundation (42 keys retrofitted) — MERGED `@f95e666`
+- **PR-B** shared data labels via a resolver (subjectLabel/levelLabel/levelSubtitle/prettyTier — the
+  "Maths"→数学 gap; resolver takes AppLocalizations, no per-locale duplication, no B-EXT.2 conditional)
+- **PR-C** progress / achievements / goals · **PR-D** groups+join+invite+codes · **PR-E** shop+flashcards
+- **PR-F** subscription/premium 🔒 + learning-style · **PR-G** photo_question+upload+ocr
+- **PR-H** wiki_viewer+compiled+chapters · **PR-I** chat-residue+create-tutor · **PR-J** consent+account_deletion+auth
+- **PR-K** long tail (homework/exam_prep/study_plan/brain_health/teach_mochi/centre/assignments/etc.)
+Each: same recipe; delegates on any screen-rendering test; lock→3.32.1 before push; coverage guard must
+shrink (never grow); 🔒 compliance rules if price/subscription copy is touched.
+
+---
+
+### (historical) the 13 scope-list PRs — all merged, all still valid work
+Registry-driven (`AppLanguages`), ARB + gen-l10n, harness parameterized over `AppLanguages.all`.
 
 ### THE REAL REMAINING WORK IS NOT MORE CLIENT PRs — it is the native-review gate:
 `lib/l10n/app_zh.arb` is ~371 **machine-drafted** strings. Before any zh launch, a native Singapore
