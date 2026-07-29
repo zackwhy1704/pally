@@ -240,4 +240,79 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get libraryEmptySubtitle => '在“主页”标签创建一个 Mochi，就会显示在这里。';
+
+  @override
+  String get hubLearn => '学习';
+
+  @override
+  String hubModulesSubtitle(int count, int mastery) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 个单元 · 掌握度 $mastery%',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get hubStartFirstModule => '开始你的第一个单元';
+
+  @override
+  String get hubSectionPractice => '练习';
+
+  @override
+  String get hubSectionProveIt => '证明掌握';
+
+  @override
+  String get hubSectionTools => '工具';
+
+  @override
+  String get hubCards => '卡片';
+
+  @override
+  String get hubCardsSubtitle => '快速记忆练习';
+
+  @override
+  String get hubTeach => '讲解';
+
+  @override
+  String get hubTeachSubtitle => '把学到的讲给 Mochi 听';
+
+  @override
+  String get hubChat => '聊天';
+
+  @override
+  String get hubChatSubtitle => '有问题都可以问 Mochi';
+
+  @override
+  String get hubNotes => '笔记';
+
+  @override
+  String get hubNotesSubtitle => '复习你的材料';
+
+  @override
+  String get hubUpload => '上传';
+
+  @override
+  String get hubUploadSubtitle => '添加更多材料';
+
+  @override
+  String get hubClassBadge => '班级';
+
+  @override
+  String get hubUploadNotesCta => '上传你的笔记，解锁小测、卡片和讲解练习。';
+
+  @override
+  String get hubQuiz => '小测';
+
+  @override
+  String get hubQuizSubtitleDefault => '用选择题考考自己';
+
+  @override
+  String get hubQuizSubtitleDoneToday => '今天已完成 · 随时可自由练习';
+
+  @override
+  String hubQuizSubtitleMastered(int mastered, int total) {
+    return '考考自己 · 已掌握 $mastered/$total';
+  }
 }

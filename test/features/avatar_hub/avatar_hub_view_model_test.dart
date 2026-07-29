@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/features/avatar_hub/presentation/avatar_hub_screen.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/quiz/providers/quiz_status_provider.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/mochi_character.dart';
@@ -73,7 +74,11 @@ void main() {
               const QuizStatus(
                   takenToday: false, totalTopics: 0, masteredTopics: 0)),
         ],
-        child: MaterialApp.router(routerConfig: router),
+        child: MaterialApp.router(
+          routerConfig: router,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+        ),
       ),
     );
 

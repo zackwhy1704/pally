@@ -13,6 +13,7 @@ import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/widgets/loading/pally_skeleton.dart';
 import 'package:pally/features/avatar_hub/presentation/avatar_hub_view_model.dart';
 import 'package:pally/features/quiz/providers/quiz_status_provider.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/avatar.dart';
 
 /// The per-avatar FRONT DOOR: a guided journey (Learn hero → Practice → Prove →
@@ -63,6 +64,7 @@ class _HubBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final avatar = hub.avatar;
     final hasKnowledge = avatar.hasKnowledge;
     // Upload + Teach are hidden for a centre-managed avatar (matches Library's
@@ -87,18 +89,18 @@ class _HubBody extends StatelessWidget {
           NoNotesCta(
             avatarId: avatar.id,
             personalDescription:
-                'Upload your notes to unlock quizzes, cards and teaching.',
+                l.hubUploadNotesCta,
           ),
         ],
         _HubSection(
-          title: 'Practice',
+          title: l.hubSectionPractice,
           children: [
             _QuizHubRow(avatarId: avatar.id, enabled: hasKnowledge),
             _HubRow(
               icon: Icons.style_rounded,
               color: AppColors.amber,
-              title: 'Cards',
-              subtitle: 'Quick recall practice',
+              title: l.hubCards,
+              subtitle: l.hubCardsSubtitle,
               enabled: hasKnowledge,
               onTap: () => FlashcardRoute(avatarId: avatar.id).push(context),
             ),
@@ -106,34 +108,34 @@ class _HubBody extends StatelessWidget {
         ),
         if (!centreManaged)
           _HubSection(
-            title: 'Prove it',
+            title: l.hubSectionProveIt,
             children: [
               _HubRow(
                 icon: Icons.school_rounded,
                 color: AppColors.pink,
-                title: 'Teach',
-                subtitle: 'Explain it back to Mochi',
+                title: l.hubTeach,
+                subtitle: l.hubTeachSubtitle,
                 enabled: hasKnowledge,
                 onTap: () => TeachMochiRoute(avatarId: avatar.id).push(context),
               ),
             ],
           ),
         _HubSection(
-          title: 'Tools',
+          title: l.hubSectionTools,
           children: [
             _HubRow(
               icon: Icons.chat_bubble_rounded,
               color: AppColors.purple,
-              title: 'Chat',
-              subtitle: 'Ask Mochi anything',
+              title: l.hubChat,
+              subtitle: l.hubChatSubtitle,
               enabled: true,
               onTap: () => ChatRoute(avatarId: avatar.id).push(context),
             ),
             _HubRow(
               icon: Icons.menu_book_rounded,
               color: AppColors.teal,
-              title: 'Notes',
-              subtitle: 'Review your material',
+              title: l.hubNotes,
+              subtitle: l.hubNotesSubtitle,
               enabled: true,
               onTap: () => WikiViewerRoute(avatarId: avatar.id).push(context),
             ),
@@ -141,8 +143,8 @@ class _HubBody extends StatelessWidget {
               _HubRow(
                 icon: Icons.upload_file_rounded,
                 color: AppColors.green,
-                title: 'Upload',
-                subtitle: 'Add more material',
+                title: l.hubUpload,
+                subtitle: l.hubUploadSubtitle,
                 enabled: true,
                 onTap: () => UploadRoute(avatarId: avatar.id).push(context),
               ),
@@ -160,6 +162,7 @@ class _HubHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Row(
       children: [
         Container(
@@ -196,8 +199,8 @@ class _HubHeader extends StatelessWidget {
                   // Badge keys on isCentreClass — NOT centreManaged (the two can
                   // diverge; Upload/Teach visibility uses centreManaged).
                   if (avatar.isCentreClass)
-                    const _HeaderBadge(
-                      label: 'Class',
+                    _HeaderBadge(
+                      label: l.hubClassBadge,
                       color: AppColors.purple,
                       bgColor: AppColors.purpleL,
                       icon: Icons.school_rounded,
@@ -263,12 +266,13 @@ class _HeroModulesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final subtitle = hub.hasModules
-        ? '${hub.moduleCount} module${hub.moduleCount == 1 ? '' : 's'} · ${hub.avgMasteryPct}% mastery'
-        : 'Start your first module';
+        ? l.hubModulesSubtitle(hub.moduleCount, hub.avgMasteryPct)
+        : l.hubStartFirstModule;
     return Semantics(
       button: true,
-      label: 'Learn. $subtitle',
+      label: '${l.hubLearn}. $subtitle',
       child: Material(
         color: AppColors.purple,
         shape:
@@ -289,7 +293,7 @@ class _HeroModulesCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Learn',
+                        l.hubLearn,
                         style: AppTextStyles.title
                             .copyWith(color: AppColors.surface),
                       ),
@@ -458,24 +462,25 @@ class _QuizHubRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var subtitle = 'Test yourself with MCQs';
+    final l = AppLocalizations.of(context);
+    var subtitle = l.hubQuizSubtitleDefault;
     var icon = Icons.bolt_rounded;
     if (enabled) {
       final status = ref.watch(quizStatusProvider(avatarId)).valueOrNull;
       if (status != null) {
         if (status.takenToday) {
-          subtitle = 'Done today · free play anytime';
+          subtitle = l.hubQuizSubtitleDoneToday;
           icon = Icons.check_circle_rounded;
         } else if (status.totalTopics > 0) {
-          subtitle =
-              'Test yourself · ${status.masteredTopics}/${status.totalTopics} mastered';
+          subtitle = l.hubQuizSubtitleMastered(
+              status.masteredTopics, status.totalTopics);
         }
       }
     }
     return _HubRow(
       icon: icon,
       color: AppColors.amber,
-      title: 'Quiz',
+      title: l.hubQuiz,
       subtitle: subtitle,
       enabled: enabled,
       onTap: () => QuizRoute(avatarId: avatarId).push(context),

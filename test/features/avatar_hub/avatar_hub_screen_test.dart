@@ -6,6 +6,7 @@ import 'package:pally/core/ui/no_notes_cta.dart';
 import 'package:pally/features/avatar_hub/presentation/avatar_hub_screen.dart';
 import 'package:pally/features/avatar_hub/presentation/avatar_hub_view_model.dart';
 import 'package:pally/features/quiz/providers/quiz_status_provider.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/mochi_character.dart';
 
@@ -92,7 +93,11 @@ Future<void> _pump(
         avatarIsCentreClassProvider(avatar.id)
             .overrideWith((ref) async => centreClassResolved),
       ],
-      child: MaterialApp.router(routerConfig: _router()),
+      child: MaterialApp.router(
+        routerConfig: _router(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+      ),
     ),
   );
   await tester.pumpAndSettle();
@@ -212,7 +217,11 @@ void main() {
         ],
         child: MediaQuery(
           data: const MediaQueryData(textScaler: TextScaler.linear(1.3)),
-          child: MaterialApp.router(routerConfig: _router()),
+          child: MaterialApp.router(
+        routerConfig: _router(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+      ),
         ),
       ),
     );
