@@ -29,10 +29,12 @@ guard — not a scope list ticked off. A new hardcoded string fails CI, so the n
 `mascotName` ARB key (en `Mochi` / zh `小伴`). Every user-facing mascot reference resolves via a
 `{mascot}` placeholder — the 42 pre-existing "Mochi" keys were retrofitted, and en stays byte-identical
 at runtime (`"New {mascot}"`→`"New Mochi"`) so en finders keep matching while zh reads 小伴. Renaming =
-one ARB edit. ⚠️ **Backend alignment approved-in-principle, diff pending sign-off:** generated zh content
-must also say 小伴 (a `pally_backend` zh-directive line) or a compiled lesson says "Mochi" while the app
-says 小伴 — the split-brain a teacher notices. Do NOT ship the client-only 小伴 to users as final until
-that backend directive lands (or is explicitly deferred).
+one ARB edit. ✅ **Backend alignment DONE (MERGED pally-backend main @b3b4eff):** the zh generation +
+chat directives (`PromptLanguage.ZH_DIRECTIVE` + `ZH_CHAT_BLOCK1_RULE`) now name the mascot 小伴, written
+to explicitly OVERRIDE the "keep brand names in official form" clause for the mascot only (so the model
+isn't left choosing between two rules). en directive stays "" → byte-identical-English invariant intact;
+full backend suite green. So a compiled zh lesson/chat and the app both say 小伴 — no split-brain. NB the
+SG-specific term 小伴 itself is part of the standing native-SG review.
 
 ### PR plan (~10 PRs; the inventory decided the count)
 - ✅ **PR-A** coverage guard + baseline + `mascotName` foundation (42 keys retrofitted) — MERGED `@f95e666`
