@@ -1683,4 +1683,232 @@ class AppLocalizationsZh extends AppLocalizations {
   String dailyGoalValueUnit(int count, String unit) {
     return '$count $unit';
   }
+
+  @override
+  String get groupTitle => '学习小组';
+
+  @override
+  String get groupsTitle => '学习小组';
+
+  @override
+  String get groupsEmpty => '还没有小组';
+
+  @override
+  String get groupsEmptyBody => '创建一个小组，或用好友的邀请码加入。';
+
+  @override
+  String get groupsHaveCode => '有邀请码吗？';
+
+  @override
+  String get groupJoin => '加入';
+
+  @override
+  String get groupJoinFailed => '无法加入——请检查代码';
+
+  @override
+  String get groupNewTitle => '新建小组';
+
+  @override
+  String get groupCreate => '创建小组';
+
+  @override
+  String get groupNameLabel => '小组名称';
+
+  @override
+  String get groupNameHint => '给你的小组起个名字';
+
+  @override
+  String get groupNameExample => '六年级科学伙伴';
+
+  @override
+  String get groupSubjectOptional => '科目（可选）';
+
+  @override
+  String get groupCreated => '小组已创建！';
+
+  @override
+  String get groupCreateFailed => '无法创建小组';
+
+  @override
+  String get groupLeave => '退出小组';
+
+  @override
+  String get groupLeaveConfirm => '要退出这个小组吗？';
+
+  @override
+  String get groupLeaveBody => '重新加入需要新的邀请码。';
+
+  @override
+  String get groupLeaveAction => '退出';
+
+  @override
+  String get groupAnswersReleased => '答案已公布';
+
+  @override
+  String get groupNewChallenge => '新挑战';
+
+  @override
+  String get groupMuddiest => '最难懂的地方';
+
+  @override
+  String get groupUpdate => '更新';
+
+  @override
+  String groupOpenAssignment(String mascot) {
+    return '请从你的班级 $mascot 打开这项作业。';
+  }
+
+  @override
+  String get groupInviteFriend => '邀请好友';
+
+  @override
+  String get groupCopy => '复制';
+
+  @override
+  String get groupCodeCopied => '代码已复制！';
+
+  @override
+  String get groupShareCode => '把这个代码分享给好友以邀请他们';
+
+  @override
+  String get groupNoNotes => '还没有共享的笔记';
+
+  @override
+  String get groupNoNotesHint => '从学习库打开一个知识页，点按“共享到小组”即可添加第一条笔记！';
+
+  @override
+  String get groupShareAnother => '从学习库共享另一条笔记';
+
+  @override
+  String get groupGoLibrary => '前往学习库';
+
+  @override
+  String get groupOffTopic => '跑题了？';
+
+  @override
+  String groupJoinedName(String name) {
+    return '已加入 $name！';
+  }
+
+  @override
+  String groupNoteBy(String name, String time) {
+    return '由 $name · $time';
+  }
+
+  @override
+  String groupMemberCodeLine(int count, String code) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 名成员 · 代码 $code',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get timeJustNow => '刚刚';
+
+  @override
+  String timeMinAgo(int n) {
+    return '$n 分钟前';
+  }
+
+  @override
+  String timeHourAgo(int n) {
+    return '$n 小时前';
+  }
+
+  @override
+  String timeDayAgo(int n) {
+    return '$n 天前';
+  }
+
+  @override
+  String get challengeTitle => '每日挑战';
+
+  @override
+  String get challengeRevealPending => '等待公布';
+
+  @override
+  String get challengeCorrectPrefix => '正确：';
+
+  @override
+  String get challengeYou => '（你）';
+
+  @override
+  String get challengeAnswerHint => '输入你的答案……';
+
+  @override
+  String challengeAnsweredReveals(String time) {
+    return '已作答——将在 $time 后公布';
+  }
+
+  @override
+  String challengeRevealsOn(String day, String month) {
+    return '$day/$month 公布';
+  }
+
+  @override
+  String get inviteTitle => '邀请与连接';
+
+  @override
+  String get inviteScanHint => '好友可以扫描它来获取你的代码';
+
+  @override
+  String get inviteShare => '分享';
+
+  @override
+  String get inviteBonus => '当他们完成第一次小测时，你们都能获得额外星星。';
+
+  @override
+  String get inviteCopied => '代码已复制';
+
+  @override
+  String get inviteLoadFailed => '无法加载你的代码——点按重试';
+
+  @override
+  String get inviteAction => '邀请';
+
+  @override
+  String get inviteDismiss => '忽略';
+
+  @override
+  String get inviteNudgeBody => '邀请好友——你们都能获得额外星星。';
+
+  @override
+  String milestoneStreakNice(int days) {
+    return '$days 天连续记录——真棒！';
+  }
+
+  @override
+  String get joinTitle => '输入或扫描代码';
+
+  @override
+  String get joinBody => '有班级或学习小组的代码吗？输入它，或扫描它的二维码。';
+
+  @override
+  String get joinEnterManually => '手动输入代码';
+
+  @override
+  String get joinScanQr => '扫描二维码';
+
+  @override
+  String get joinPointQr => '对准班级或小组的二维码';
+
+  @override
+  String get joinEnterFirst => '请先输入代码';
+
+  @override
+  String get joinInvalidCode => '这看起来不是有效的代码';
+
+  @override
+  String get joinParentUnsupported => '不再支持家长链接';
+
+  @override
+  String joinedSuccess(String name) {
+    return '已加入 $name 🎉';
+  }
+
+  @override
+  String get joinedFallback => '成功';
 }

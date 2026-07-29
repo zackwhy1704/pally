@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:pally/app/router.dart';
@@ -76,6 +77,7 @@ class _MilestoneInviteNudgeState extends State<MilestoneInviteNudge> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     if (!_visible) return const SizedBox.shrink();
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
@@ -93,10 +95,10 @@ class _MilestoneInviteNudgeState extends State<MilestoneInviteNudge> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('$_milestone-day streak — nice!',
+                Text(l.milestoneStreakNice(_milestone),
                     style: AppTextStyles.body
                         .copyWith(fontWeight: FontWeight.w800, color: AppColors.text1)),
-                Text('Invite a friend — you both get bonus stars.',
+                Text(l.inviteNudgeBody,
                     style: AppTextStyles.caption.copyWith(color: AppColors.text2)),
               ],
             ),
@@ -107,7 +109,7 @@ class _MilestoneInviteNudgeState extends State<MilestoneInviteNudge> {
               _markSeen();
               const InviteRoute().push(context);
             },
-            child: Text('Invite',
+            child: Text(l.inviteAction,
                 style: AppTextStyles.body
                     .copyWith(fontWeight: FontWeight.w700, color: AppColors.purple)),
           ),
@@ -115,7 +117,7 @@ class _MilestoneInviteNudgeState extends State<MilestoneInviteNudge> {
             visualDensity: VisualDensity.compact,
             onPressed: _markSeen,
             icon: const Icon(Icons.close_rounded, size: 18, color: AppColors.text3),
-            tooltip: 'Dismiss',
+            tooltip: l.inviteDismiss,
           ),
         ],
       ),

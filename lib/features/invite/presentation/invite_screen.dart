@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -18,13 +19,14 @@ class InviteScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.bg,
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
         foregroundColor: AppColors.text1,
-        title: Text('Invite & connect',
+        title: Text(l.inviteTitle,
             style: AppTextStyles.title.copyWith(color: AppColors.text1)),
       ),
       body: SafeArea(
@@ -56,11 +58,12 @@ class _InviteFriendCardState extends ConsumerState<_InviteFriendCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final summaryAsync = ref.watch(referralSummaryProvider);
     return _CardShell(
       icon: '🎁',
-      title: 'Invite a friend',
-      subtitle: 'You both get bonus stars when they take their first quiz.',
+      title: l.groupInviteFriend,
+      subtitle: l.inviteBonus,
       child: summaryAsync.when(
         loading: () => const Padding(
           padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
@@ -68,7 +71,7 @@ class _InviteFriendCardState extends ConsumerState<_InviteFriendCard> {
         ),
         error: (_, __) => TextButton(
           onPressed: () => ref.invalidate(referralSummaryProvider),
-          child: const Text('Could not load your code — tap to retry'),
+          child: Text(l.inviteLoadFailed),
         ),
         data: (summary) {
           final code = summary.code;
@@ -80,7 +83,7 @@ class _InviteFriendCardState extends ConsumerState<_InviteFriendCard> {
                 const SizedBox(height: AppSpacing.md),
                 _QrBox(data: code),
                 const SizedBox(height: AppSpacing.xs),
-                Text('Friends can scan this to grab your code',
+                Text(l.inviteScanHint,
                     textAlign: TextAlign.center,
                     style: AppTextStyles.caption.copyWith(color: AppColors.text3)),
               ],
@@ -109,7 +112,7 @@ class _InviteFriendCardState extends ConsumerState<_InviteFriendCard> {
                         : () => share_plus.Share.share(_message(code)),
                     icon: const Icon(Icons.ios_share_rounded, size: 18),
                     style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
-                    label: const Text('Share'),
+                    label: Text(l.inviteShare),
                   ),
                 ),
               ]),
@@ -169,10 +172,11 @@ class _CodePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return InkWell(
       onTap: () {
         Clipboard.setData(ClipboardData(text: code));
-        PallyToast.success(context, 'Code copied');
+        PallyToast.success(context, l.inviteCopied);
       },
       borderRadius: BorderRadius.circular(14),
       child: Container(

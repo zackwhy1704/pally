@@ -2971,6 +2971,408 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} {unit}'**
   String dailyGoalValueUnit(int count, String unit);
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Study Group'**
+  String get groupTitle;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Study Groups'**
+  String get groupsTitle;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'No groups yet'**
+  String get groupsEmpty;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a group or join one with an invite code from a friend.'**
+  String get groupsEmptyBody;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Have an invite code?'**
+  String get groupsHaveCode;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get groupJoin;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t join — check the code'**
+  String get groupJoinFailed;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'New Group'**
+  String get groupNewTitle;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Create group'**
+  String get groupCreate;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Group name'**
+  String get groupNameLabel;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Give your group a name'**
+  String get groupNameHint;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Year 6 Science Buddies'**
+  String get groupNameExample;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject (optional)'**
+  String get groupSubjectOptional;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Group created!'**
+  String get groupCreated;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not create group'**
+  String get groupCreateFailed;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave group'**
+  String get groupLeave;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave this group?'**
+  String get groupLeaveConfirm;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll need a new invite code to re-join.'**
+  String get groupLeaveBody;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get groupLeaveAction;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Answers released'**
+  String get groupAnswersReleased;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'New challenge'**
+  String get groupNewChallenge;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Muddiest points'**
+  String get groupMuddiest;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get groupUpdate;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Open this assignment from your class {mascot}.'**
+  String groupOpenAssignment(String mascot);
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite a friend'**
+  String get groupInviteFriend;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get groupCopy;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Code copied!'**
+  String get groupCodeCopied;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Share this code with a friend to invite them'**
+  String get groupShareCode;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'No notes shared yet'**
+  String get groupNoNotes;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Open a wiki page from your Library and tap \"Share to group\" to add the first note!'**
+  String get groupNoNotesHint;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Share another note from Library'**
+  String get groupShareAnother;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Library'**
+  String get groupGoLibrary;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Off topic?'**
+  String get groupOffTopic;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined {name}!'**
+  String groupJoinedName(String name);
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'by {name} · {time}'**
+  String groupNoteBy(String name, String time);
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 member · code {code}} other{{count} members · code {code}}}'**
+  String groupMemberCodeLine(int count, String code);
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'just now'**
+  String get timeJustNow;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'{n}m ago'**
+  String timeMinAgo(int n);
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'{n}h ago'**
+  String timeHourAgo(int n);
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'{n}d ago'**
+  String timeDayAgo(int n);
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Challenge'**
+  String get challengeTitle;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Reveal pending'**
+  String get challengeRevealPending;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct: '**
+  String get challengeCorrectPrefix;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'(you)'**
+  String get challengeYou;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Type your answer…'**
+  String get challengeAnswerHint;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Answered — reveals in {time}'**
+  String challengeAnsweredReveals(String time);
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Reveals {day}/{month}'**
+  String challengeRevealsOn(String day, String month);
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite & connect'**
+  String get inviteTitle;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends can scan this to grab your code'**
+  String get inviteScanHint;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get inviteShare;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'You both get bonus stars when they take their first quiz.'**
+  String get inviteBonus;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Code copied'**
+  String get inviteCopied;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your code — tap to retry'**
+  String get inviteLoadFailed;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite'**
+  String get inviteAction;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get inviteDismiss;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite a friend — you both get bonus stars.'**
+  String get inviteNudgeBody;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'{days}-day streak — nice!'**
+  String milestoneStreakNice(int days);
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter or scan a code'**
+  String get joinTitle;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Got a class or study-group code? Type it in, or scan its QR.'**
+  String get joinBody;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter code manually'**
+  String get joinEnterManually;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR'**
+  String get joinScanQr;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Point at a class or group QR'**
+  String get joinPointQr;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a code first'**
+  String get joinEnterFirst;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'That doesn\'t look like a valid code'**
+  String get joinInvalidCode;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent links are no longer supported'**
+  String get joinParentUnsupported;
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined {name} 🎉'**
+  String joinedSuccess(String name);
+
+  /// PR-D groups/join/invite.
+  ///
+  /// In en, this message translates to:
+  /// **'successfully'**
+  String get joinedFallback;
 }
 
 class _AppLocalizationsDelegate

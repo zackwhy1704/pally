@@ -1744,4 +1744,237 @@ class AppLocalizationsEn extends AppLocalizations {
   String dailyGoalValueUnit(int count, String unit) {
     return '$count $unit';
   }
+
+  @override
+  String get groupTitle => 'Study Group';
+
+  @override
+  String get groupsTitle => 'Study Groups';
+
+  @override
+  String get groupsEmpty => 'No groups yet';
+
+  @override
+  String get groupsEmptyBody =>
+      'Create a group or join one with an invite code from a friend.';
+
+  @override
+  String get groupsHaveCode => 'Have an invite code?';
+
+  @override
+  String get groupJoin => 'Join';
+
+  @override
+  String get groupJoinFailed => 'Couldn\'t join — check the code';
+
+  @override
+  String get groupNewTitle => 'New Group';
+
+  @override
+  String get groupCreate => 'Create group';
+
+  @override
+  String get groupNameLabel => 'Group name';
+
+  @override
+  String get groupNameHint => 'Give your group a name';
+
+  @override
+  String get groupNameExample => 'Year 6 Science Buddies';
+
+  @override
+  String get groupSubjectOptional => 'Subject (optional)';
+
+  @override
+  String get groupCreated => 'Group created!';
+
+  @override
+  String get groupCreateFailed => 'Could not create group';
+
+  @override
+  String get groupLeave => 'Leave group';
+
+  @override
+  String get groupLeaveConfirm => 'Leave this group?';
+
+  @override
+  String get groupLeaveBody => 'You\'ll need a new invite code to re-join.';
+
+  @override
+  String get groupLeaveAction => 'Leave';
+
+  @override
+  String get groupAnswersReleased => 'Answers released';
+
+  @override
+  String get groupNewChallenge => 'New challenge';
+
+  @override
+  String get groupMuddiest => 'Muddiest points';
+
+  @override
+  String get groupUpdate => 'Update';
+
+  @override
+  String groupOpenAssignment(String mascot) {
+    return 'Open this assignment from your class $mascot.';
+  }
+
+  @override
+  String get groupInviteFriend => 'Invite a friend';
+
+  @override
+  String get groupCopy => 'Copy';
+
+  @override
+  String get groupCodeCopied => 'Code copied!';
+
+  @override
+  String get groupShareCode => 'Share this code with a friend to invite them';
+
+  @override
+  String get groupNoNotes => 'No notes shared yet';
+
+  @override
+  String get groupNoNotesHint =>
+      'Open a wiki page from your Library and tap \"Share to group\" to add the first note!';
+
+  @override
+  String get groupShareAnother => 'Share another note from Library';
+
+  @override
+  String get groupGoLibrary => 'Go to Library';
+
+  @override
+  String get groupOffTopic => 'Off topic?';
+
+  @override
+  String groupJoinedName(String name) {
+    return 'Joined $name!';
+  }
+
+  @override
+  String groupNoteBy(String name, String time) {
+    return 'by $name · $time';
+  }
+
+  @override
+  String groupMemberCodeLine(int count, String code) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count members · code $code',
+      one: '1 member · code $code',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get timeJustNow => 'just now';
+
+  @override
+  String timeMinAgo(int n) {
+    return '${n}m ago';
+  }
+
+  @override
+  String timeHourAgo(int n) {
+    return '${n}h ago';
+  }
+
+  @override
+  String timeDayAgo(int n) {
+    return '${n}d ago';
+  }
+
+  @override
+  String get challengeTitle => 'Daily Challenge';
+
+  @override
+  String get challengeRevealPending => 'Reveal pending';
+
+  @override
+  String get challengeCorrectPrefix => 'Correct: ';
+
+  @override
+  String get challengeYou => '(you)';
+
+  @override
+  String get challengeAnswerHint => 'Type your answer…';
+
+  @override
+  String challengeAnsweredReveals(String time) {
+    return 'Answered — reveals in $time';
+  }
+
+  @override
+  String challengeRevealsOn(String day, String month) {
+    return 'Reveals $day/$month';
+  }
+
+  @override
+  String get inviteTitle => 'Invite & connect';
+
+  @override
+  String get inviteScanHint => 'Friends can scan this to grab your code';
+
+  @override
+  String get inviteShare => 'Share';
+
+  @override
+  String get inviteBonus =>
+      'You both get bonus stars when they take their first quiz.';
+
+  @override
+  String get inviteCopied => 'Code copied';
+
+  @override
+  String get inviteLoadFailed => 'Could not load your code — tap to retry';
+
+  @override
+  String get inviteAction => 'Invite';
+
+  @override
+  String get inviteDismiss => 'Dismiss';
+
+  @override
+  String get inviteNudgeBody => 'Invite a friend — you both get bonus stars.';
+
+  @override
+  String milestoneStreakNice(int days) {
+    return '$days-day streak — nice!';
+  }
+
+  @override
+  String get joinTitle => 'Enter or scan a code';
+
+  @override
+  String get joinBody =>
+      'Got a class or study-group code? Type it in, or scan its QR.';
+
+  @override
+  String get joinEnterManually => 'Enter code manually';
+
+  @override
+  String get joinScanQr => 'Scan QR';
+
+  @override
+  String get joinPointQr => 'Point at a class or group QR';
+
+  @override
+  String get joinEnterFirst => 'Enter a code first';
+
+  @override
+  String get joinInvalidCode => 'That doesn\'t look like a valid code';
+
+  @override
+  String get joinParentUnsupported => 'Parent links are no longer supported';
+
+  @override
+  String joinedSuccess(String name) {
+    return 'Joined $name 🎉';
+  }
+
+  @override
+  String get joinedFallback => 'successfully';
 }

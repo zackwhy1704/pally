@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -62,25 +63,27 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
   }
 
   Future<void> _submitManual() async {
+    final l = AppLocalizations.of(context);
     final text = _controller.text.trim();
     if (text.isEmpty) {
-      PallyToast.error(context, 'Enter a code first');
+      PallyToast.error(context, l.joinEnterFirst);
       return;
     }
     await _handleRaw(text);
   }
 
   Future<void> _handleRaw(String raw) async {
+    final l = AppLocalizations.of(context);
     if (_busy) return;
     final parsed = JoinCode.parse(raw);
     if (parsed == null) {
-      PallyToast.error(context, "That doesn't look like a valid code");
+      PallyToast.error(context, l.joinInvalidCode);
       return;
     }
 
     // Parent links are no longer supported (13+-only app, no parent accounts).
     if (parsed.kind == JoinKind.parentClaim) {
-      PallyToast.error(context, 'Parent links are no longer supported');
+      PallyToast.error(context, l.joinParentUnsupported);
       return;
     }
 
@@ -110,7 +113,7 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
     setState(() => _busy = false);
 
     if (error == null) {
-      PallyToast.success(context, 'Joined ${resolved?.name ?? 'successfully'} 🎉');
+      PallyToast.success(context, l.joinedSuccess(resolved?.name ?? l.joinedFallback));
       context.pop();
     } else {
       PallyToast.error(context, error);
@@ -129,6 +132,7 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
   }
 
   Future<bool?> _confirm(JoinCode parsed, ResolvedCode? resolved) {
+    final l = AppLocalizations.of(context);
     final String title;
     final String? subtitle;
     if (resolved != null && resolved.type == 'CLASS') {
@@ -155,7 +159,7 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text('Cancel', style: AppTextStyles.body.copyWith(color: AppColors.text2)),
+            child: Text(l.commonCancel, style: AppTextStyles.body.copyWith(color: AppColors.text2)),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop(true),
@@ -164,7 +168,7 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
-            child: Text('Join', style: AppTextStyles.body.copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
+            child: Text(l.groupJoin, style: AppTextStyles.body.copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
           ),
         ],
       ),
@@ -173,13 +177,14 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.bg,
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
         foregroundColor: AppColors.text1,
-        title: Text('Join', style: AppTextStyles.title.copyWith(color: AppColors.text1)),
+        title: Text(l.groupJoin, style: AppTextStyles.title.copyWith(color: AppColors.text1)),
       ),
       // Manual form is capped + centred so it doesn't stretch on iPad; the
       // scanner stays full-bleed (it's a camera viewfinder).
@@ -188,6 +193,7 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
   }
 
   Widget _buildManual() {
+    final l = AppLocalizations.of(context);
     return SafeArea(
       // Scrollable: with the keyboard up or at large accessibility text scale
       // the fixed column would otherwise overflow vertically (RenderFlex).
@@ -196,10 +202,10 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Enter or scan a code',
+            Text(l.joinTitle,
                 style: AppTextStyles.heading1.copyWith(color: AppColors.text1)),
             const SizedBox(height: AppSpacing.sm),
-            Text('Got a class or study-group code? Type it in, or scan its QR.',
+            Text(l.joinBody,
                 style: AppTextStyles.body.copyWith(color: AppColors.text2)),
             const SizedBox(height: AppSpacing.xl),
             TextField(
@@ -241,7 +247,7 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
                     ? const SizedBox(
                         width: 20, height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                    : Text('Join',
+                    : Text(l.groupJoin,
                         style: AppTextStyles.body
                             .copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
               ),
@@ -266,7 +272,7 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
                   side: const BorderSide(color: AppColors.purple, width: 1.5),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 ),
-                label: Text('Scan QR',
+                label: Text(l.joinScanQr,
                     style: AppTextStyles.body
                         .copyWith(color: AppColors.purple, fontWeight: FontWeight.w700)),
               ),
@@ -278,6 +284,7 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
   }
 
   Widget _buildScanner() {
+    final l = AppLocalizations.of(context);
     return Stack(
       children: [
         MobileScanner(controller: _scanController, onDetect: _onDetect),
@@ -307,13 +314,13 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
                       color: Colors.black54,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text('Point at a class or group QR',
+                    child: Text(l.joinPointQr,
                         style: AppTextStyles.body.copyWith(color: Colors.white)),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   TextButton(
                     onPressed: _stopScan,
-                    child: Text('Enter code manually',
+                    child: Text(l.joinEnterManually,
                         style: AppTextStyles.body
                             .copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
                   ),

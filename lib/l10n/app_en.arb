@@ -2452,5 +2452,337 @@
         "type": "String"
       }
     }
+  },
+  "groupTitle": "Study Group",
+  "@groupTitle": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupsTitle": "Study Groups",
+  "@groupsTitle": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupsEmpty": "No groups yet",
+  "@groupsEmpty": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupsEmptyBody": "Create a group or join one with an invite code from a friend.",
+  "@groupsEmptyBody": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupsHaveCode": "Have an invite code?",
+  "@groupsHaveCode": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupJoin": "Join",
+  "@groupJoin": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupJoinFailed": "Couldn't join — check the code",
+  "@groupJoinFailed": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupNewTitle": "New Group",
+  "@groupNewTitle": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupCreate": "Create group",
+  "@groupCreate": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupNameLabel": "Group name",
+  "@groupNameLabel": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupNameHint": "Give your group a name",
+  "@groupNameHint": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupNameExample": "Year 6 Science Buddies",
+  "@groupNameExample": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupSubjectOptional": "Subject (optional)",
+  "@groupSubjectOptional": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupCreated": "Group created!",
+  "@groupCreated": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupCreateFailed": "Could not create group",
+  "@groupCreateFailed": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupLeave": "Leave group",
+  "@groupLeave": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupLeaveConfirm": "Leave this group?",
+  "@groupLeaveConfirm": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupLeaveBody": "You'll need a new invite code to re-join.",
+  "@groupLeaveBody": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupLeaveAction": "Leave",
+  "@groupLeaveAction": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupAnswersReleased": "Answers released",
+  "@groupAnswersReleased": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupNewChallenge": "New challenge",
+  "@groupNewChallenge": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupMuddiest": "Muddiest points",
+  "@groupMuddiest": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupUpdate": "Update",
+  "@groupUpdate": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupOpenAssignment": "Open this assignment from your class {mascot}.",
+  "@groupOpenAssignment": {
+    "description": "PR-D groups/join/invite.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "groupInviteFriend": "Invite a friend",
+  "@groupInviteFriend": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupCopy": "Copy",
+  "@groupCopy": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupCodeCopied": "Code copied!",
+  "@groupCodeCopied": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupShareCode": "Share this code with a friend to invite them",
+  "@groupShareCode": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupNoNotes": "No notes shared yet",
+  "@groupNoNotes": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupNoNotesHint": "Open a wiki page from your Library and tap \"Share to group\" to add the first note!",
+  "@groupNoNotesHint": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupShareAnother": "Share another note from Library",
+  "@groupShareAnother": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupGoLibrary": "Go to Library",
+  "@groupGoLibrary": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupOffTopic": "Off topic?",
+  "@groupOffTopic": {
+    "description": "PR-D groups/join/invite."
+  },
+  "groupJoinedName": "Joined {name}!",
+  "@groupJoinedName": {
+    "description": "PR-D groups/join/invite.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "groupNoteBy": "by {name} · {time}",
+  "@groupNoteBy": {
+    "description": "PR-D groups/join/invite.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "groupMemberCodeLine": "{count, plural, =1{1 member · code {code}} other{{count} members · code {code}}}",
+  "@groupMemberCodeLine": {
+    "description": "PR-D groups/join/invite.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "timeJustNow": "just now",
+  "@timeJustNow": {
+    "description": "PR-D groups/join/invite."
+  },
+  "timeMinAgo": "{n}m ago",
+  "@timeMinAgo": {
+    "description": "PR-D groups/join/invite.",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "timeHourAgo": "{n}h ago",
+  "@timeHourAgo": {
+    "description": "PR-D groups/join/invite.",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "timeDayAgo": "{n}d ago",
+  "@timeDayAgo": {
+    "description": "PR-D groups/join/invite.",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "challengeTitle": "Daily Challenge",
+  "@challengeTitle": {
+    "description": "PR-D groups/join/invite."
+  },
+  "challengeRevealPending": "Reveal pending",
+  "@challengeRevealPending": {
+    "description": "PR-D groups/join/invite."
+  },
+  "challengeCorrectPrefix": "Correct: ",
+  "@challengeCorrectPrefix": {
+    "description": "PR-D groups/join/invite."
+  },
+  "challengeYou": "(you)",
+  "@challengeYou": {
+    "description": "PR-D groups/join/invite."
+  },
+  "challengeAnswerHint": "Type your answer…",
+  "@challengeAnswerHint": {
+    "description": "PR-D groups/join/invite."
+  },
+  "challengeAnsweredReveals": "Answered — reveals in {time}",
+  "@challengeAnsweredReveals": {
+    "description": "PR-D groups/join/invite.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "challengeRevealsOn": "Reveals {day}/{month}",
+  "@challengeRevealsOn": {
+    "description": "PR-D groups/join/invite.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteTitle": "Invite & connect",
+  "@inviteTitle": {
+    "description": "PR-D groups/join/invite."
+  },
+  "inviteScanHint": "Friends can scan this to grab your code",
+  "@inviteScanHint": {
+    "description": "PR-D groups/join/invite."
+  },
+  "inviteShare": "Share",
+  "@inviteShare": {
+    "description": "PR-D groups/join/invite."
+  },
+  "inviteBonus": "You both get bonus stars when they take their first quiz.",
+  "@inviteBonus": {
+    "description": "PR-D groups/join/invite."
+  },
+  "inviteCopied": "Code copied",
+  "@inviteCopied": {
+    "description": "PR-D groups/join/invite."
+  },
+  "inviteLoadFailed": "Could not load your code — tap to retry",
+  "@inviteLoadFailed": {
+    "description": "PR-D groups/join/invite."
+  },
+  "inviteAction": "Invite",
+  "@inviteAction": {
+    "description": "PR-D groups/join/invite."
+  },
+  "inviteDismiss": "Dismiss",
+  "@inviteDismiss": {
+    "description": "PR-D groups/join/invite."
+  },
+  "inviteNudgeBody": "Invite a friend — you both get bonus stars.",
+  "@inviteNudgeBody": {
+    "description": "PR-D groups/join/invite."
+  },
+  "milestoneStreakNice": "{days}-day streak — nice!",
+  "@milestoneStreakNice": {
+    "description": "PR-D groups/join/invite.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "joinTitle": "Enter or scan a code",
+  "@joinTitle": {
+    "description": "PR-D groups/join/invite."
+  },
+  "joinBody": "Got a class or study-group code? Type it in, or scan its QR.",
+  "@joinBody": {
+    "description": "PR-D groups/join/invite."
+  },
+  "joinEnterManually": "Enter code manually",
+  "@joinEnterManually": {
+    "description": "PR-D groups/join/invite."
+  },
+  "joinScanQr": "Scan QR",
+  "@joinScanQr": {
+    "description": "PR-D groups/join/invite."
+  },
+  "joinPointQr": "Point at a class or group QR",
+  "@joinPointQr": {
+    "description": "PR-D groups/join/invite."
+  },
+  "joinEnterFirst": "Enter a code first",
+  "@joinEnterFirst": {
+    "description": "PR-D groups/join/invite."
+  },
+  "joinInvalidCode": "That doesn't look like a valid code",
+  "@joinInvalidCode": {
+    "description": "PR-D groups/join/invite."
+  },
+  "joinParentUnsupported": "Parent links are no longer supported",
+  "@joinParentUnsupported": {
+    "description": "PR-D groups/join/invite."
+  },
+  "joinedSuccess": "Joined {name} 🎉",
+  "@joinedSuccess": {
+    "description": "PR-D groups/join/invite.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "joinedFallback": "successfully",
+  "@joinedFallback": {
+    "description": "PR-D groups/join/invite."
   }
 }

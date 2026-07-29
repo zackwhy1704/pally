@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -38,9 +39,10 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
   }
 
   Future<void> _create() async {
+    final l = AppLocalizations.of(context);
     final name = _nameCtrl.text.trim();
     if (name.isEmpty) {
-      PallyToast.error(context, 'Give your group a name');
+      PallyToast.error(context, l.groupNameHint);
       return;
     }
     setState(() => _busy = true);
@@ -50,22 +52,23 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
     if (!mounted) return;
     setState(() => _busy = false);
     if (group != null) {
-      PallyToast.success(context, 'Group created!');
+      PallyToast.success(context, l.groupCreated);
       // pushReplacement so back from the room returns to the list, not here.
       context.pushReplacement('/groups/detail/${group.id}');
     } else {
-      PallyToast.error(context, 'Could not create group');
+      PallyToast.error(context, l.groupCreateFailed);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.bg,
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('New Group', style: AppTextStyles.title),
+        title: Text(l.groupNewTitle, style: AppTextStyles.title),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -73,14 +76,14 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Group name', style: AppTextStyles.label),
+            Text(l.groupNameLabel, style: AppTextStyles.label),
             const SizedBox(height: 6),
             TextField(
               controller: _nameCtrl,
               maxLength: 60,
               decoration: InputDecoration(
                 counterText: '',
-                hintText: 'Year 6 Science Buddies',
+                hintText: l.groupNameExample,
                 filled: true,
                 fillColor: AppColors.surface,
                 border: OutlineInputBorder(
@@ -101,7 +104,7 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
               ),
             ),
             const SizedBox(height: AppSpacing.md),
-            Text('Subject (optional)', style: AppTextStyles.label),
+            Text(l.groupSubjectOptional, style: AppTextStyles.label),
             const SizedBox(height: 6),
             Wrap(
               spacing: 8,
@@ -135,7 +138,7 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                         height: 22,
                         child: CircularProgressIndicator(
                             color: Colors.white, strokeWidth: 2))
-                    : const Text('Create group'),
+                    : Text(l.groupCreate),
               ),
             ),
           ],

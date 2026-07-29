@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/features/invite/presentation/milestone_invite_nudge.dart';
@@ -27,8 +28,12 @@ void main() {
     Future<void> pump(WidgetTester tester, {String? userId}) async {
       // Unmount anything first so a re-pump runs initState again (a fresh
       // "visit"), instead of Flutter reusing the existing State in place.
-      await tester.pumpWidget(const MaterialApp(home: SizedBox.shrink()));
+      await tester.pumpWidget(const MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,home: SizedBox.shrink()));
       await tester.pumpWidget(MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: MilestoneInviteNudge(streakDays: 7, userId: userId),
         ),

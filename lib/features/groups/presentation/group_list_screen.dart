@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
@@ -17,6 +18,7 @@ class GroupListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     // Groups is public — the server returns groups_enabled=true for all users.
     // The old client pilot gate was dead policy with a stuck-gate failure mode
     // (one failed /me/flags fetch latched the coming-soon screen all session), so
@@ -27,7 +29,7 @@ class GroupListScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Study Groups', style: AppTextStyles.title),
+        title: Text(l.groupsTitle, style: AppTextStyles.title),
         centerTitle: true,
         actions: [
           IconButton(
@@ -40,7 +42,7 @@ class GroupListScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: AppColors.purple,
         icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text('New Group',
+        label: Text(l.groupNewTitle,
             style: TextStyle(color: Colors.white)),
         onPressed: () => const CreateGroupRoute().push(context),
       ),
@@ -101,6 +103,7 @@ class _JoinByCodeCardState extends State<_JoinByCodeCard> {
   }
 
   Future<void> _join() async {
+    final l = AppLocalizations.of(context);
     final code = _controller.text.trim().toUpperCase();
     if (code.isEmpty) return;
     setState(() => _busy = true);
@@ -111,17 +114,18 @@ class _JoinByCodeCardState extends State<_JoinByCodeCard> {
     setState(() => _busy = false);
     if (joined != null) {
       _controller.clear();
-      PallyToast.success(context, 'Joined ${joined.name}!');
+      PallyToast.success(context, l.groupJoinedName(joined.name));
       if (context.mounted) {
         StudyGroupDetailRoute(groupId: joined.id).push(context);
       }
     } else {
-      PallyToast.error(context, "Couldn't join — check the code");
+      PallyToast.error(context, l.groupJoinFailed);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: AppSpacing.card,
       decoration: BoxDecoration(
@@ -131,7 +135,7 @@ class _JoinByCodeCardState extends State<_JoinByCodeCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Have an invite code?',
+          Text(l.groupsHaveCode,
               style: AppTextStyles.title.copyWith(fontSize: 16)),
           const SizedBox(height: AppSpacing.sm),
           Row(
@@ -173,7 +177,7 @@ class _JoinByCodeCardState extends State<_JoinByCodeCard> {
                           height: 18,
                           child: CircularProgressIndicator(
                               strokeWidth: 2, color: Colors.white))
-                      : const Text('Join'),
+                      : Text(l.groupJoin),
                 ),
               ),
             ],
@@ -190,6 +194,7 @@ class _GroupTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Material(
       color: AppColors.surface,
       borderRadius: BorderRadius.circular(16),
@@ -224,7 +229,7 @@ class _GroupTile extends StatelessWidget {
                         style: AppTextStyles.body
                             .copyWith(fontWeight: FontWeight.w700)),
                     Text(
-                      '${group.memberCount} member${group.memberCount == 1 ? '' : 's'} · code ${group.inviteCode}',
+                      l.groupMemberCodeLine(group.memberCount, group.inviteCode),
                       style: AppTextStyles.bodySmall
                           .copyWith(color: AppColors.text2),
                     ),
@@ -245,6 +250,7 @@ class _EmptyState extends StatelessWidget {
   const _EmptyState();
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxl),
       child: Column(
@@ -252,10 +258,10 @@ class _EmptyState extends StatelessWidget {
           const Icon(Icons.group_add_outlined,
               size: 60, color: AppColors.text3),
           const SizedBox(height: AppSpacing.md),
-          Text('No groups yet', style: AppTextStyles.title),
+          Text(l.groupsEmpty, style: AppTextStyles.title),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Create a group or join one with an invite code from a friend.',
+            l.groupsEmptyBody,
             textAlign: TextAlign.center,
             style:
                 AppTextStyles.body.copyWith(color: AppColors.text2),

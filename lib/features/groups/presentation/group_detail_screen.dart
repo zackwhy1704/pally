@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -23,6 +24,7 @@ class GroupDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final detailAsync = ref.watch(groupDetailViewModelProvider(groupId));
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -35,7 +37,7 @@ class GroupDetailScreen extends ConsumerWidget {
               data: (d) =>
                   Text(d.group.name, style: AppTextStyles.title),
             ) ??
-            Text('Study Group', style: AppTextStyles.title),
+            Text(l.groupTitle, style: AppTextStyles.title),
         centerTitle: true,
         actions: [
           // CLASS groups are centre-managed: students get 403 on leave/kick,
@@ -47,7 +49,7 @@ class GroupDetailScreen extends ConsumerWidget {
                   _confirmLeave(context, ref);
                 }
               },
-              itemBuilder: (_) => const [
+              itemBuilder: (_) => [
                 PopupMenuItem(
                   value: _MenuAction.leave,
                   child: Row(
@@ -55,7 +57,7 @@ class GroupDetailScreen extends ConsumerWidget {
                       Icon(Icons.logout_rounded,
                           color: AppColors.coral, size: 18),
                       SizedBox(width: 8),
-                      Text('Leave group',
+                      Text(l.groupLeave,
                           style: TextStyle(color: AppColors.coral)),
                     ],
                   ),
@@ -157,21 +159,22 @@ class GroupDetailScreen extends ConsumerWidget {
   }
 
   Future<void> _confirmLeave(BuildContext context, WidgetRef ref) async {
+    final l = AppLocalizations.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Leave this group?'),
+        title: Text(l.groupLeaveConfirm),
         content:
-            const Text("You'll need a new invite code to re-join."),
+            Text(l.groupLeaveBody),
         actions: [
           TextButton(
               onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Cancel')),
+              child: Text(l.commonCancel)),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style:
                 TextButton.styleFrom(foregroundColor: AppColors.coral),
-            child: const Text('Leave'),
+            child: Text(l.groupLeaveAction),
           ),
         ],
       ),
@@ -237,50 +240,51 @@ class _SystemPostTile extends ConsumerWidget {
   const _SystemPostTile({required this.post});
   final GroupSystemPost post;
 
-  ({IconData icon, Color color, Color bg, String label}) _style() {
+  ({IconData icon, Color color, Color bg, String label}) _style(AppLocalizations l) {
     switch (post.kind.toUpperCase()) {
       case 'ANSWERS_RELEASED':
         return (
           icon: Icons.fact_check_rounded,
           color: AppColors.green,
           bg: AppColors.greenL,
-          label: 'Answers released',
+          label: l.groupAnswersReleased,
         );
       case 'CHALLENGE':
         return (
           icon: Icons.bolt_rounded,
           color: AppColors.amber,
           bg: AppColors.amberL,
-          label: 'New challenge',
+          label: l.groupNewChallenge,
         );
       case 'MUDDIEST':
         return (
           icon: Icons.psychology_alt_rounded,
           color: AppColors.purple,
           bg: AppColors.purpleL,
-          label: 'Muddiest points',
+          label: l.groupMuddiest,
         );
       default:
         return (
           icon: Icons.campaign_rounded,
           color: AppColors.text2,
           bg: AppColors.surf2,
-          label: 'Update',
+          label: l.groupUpdate,
         );
     }
   }
 
-  String _timeAgo(DateTime dt) {
+  String _timeAgo(AppLocalizations l, DateTime dt) {
     final diff = DateTime.now().difference(dt);
-    if (diff.inMinutes < 1) return 'just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
-    return '${diff.inDays}d ago';
+    if (diff.inMinutes < 1) return l.timeJustNow;
+    if (diff.inMinutes < 60) return l.timeMinAgo(diff.inMinutes);
+    if (diff.inHours < 24) return l.timeHourAgo(diff.inHours);
+    return l.timeDayAgo(diff.inDays);
   }
 
   /// ANSWERS_RELEASED → compare view. The contract omits avatarId, so we
   /// resolve it from the student's single centre-class avatar.
   Future<void> _openAnswers(BuildContext context, WidgetRef ref) async {
+    final l = AppLocalizations.of(context);
     final avatars = ref.read(libraryViewModelProvider).valueOrNull ?? const [];
     final classAvatars =
         avatars.where((a) => a.kind == AvatarKind.centreClass).toList();
@@ -289,7 +293,7 @@ class _SystemPostTile extends ConsumerWidget {
     if (classAvatar == null || post.refId.isEmpty) {
       if (context.mounted) {
         PallyToast.show(
-            context, 'Open this assignment from your class avatar.');
+            context, l.groupOpenAssignment(l.mascotName));
       }
       return;
     }
@@ -303,7 +307,8 @@ class _SystemPostTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final s = _style();
+    final l = AppLocalizations.of(context);
+    final s = _style(l);
     final kind = post.kind.toUpperCase();
     final tappable =
         kind == 'ANSWERS_RELEASED' || kind == 'CHALLENGE';
@@ -366,7 +371,7 @@ class _SystemPostTile extends ConsumerWidget {
                             ),
                           ),
                           const SizedBox(width: AppSpacing.sm),
-                          Text(_timeAgo(post.createdAt),
+                          Text(_timeAgo(l, post.createdAt),
                               style: AppTextStyles.caption),
                         ],
                       ),
@@ -405,6 +410,7 @@ class _InviteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: AppSpacing.card,
       decoration: BoxDecoration(
@@ -420,13 +426,13 @@ class _InviteCard extends StatelessWidget {
               const Icon(Icons.group_add_rounded,
                   size: 18, color: AppColors.purple),
               const SizedBox(width: 6),
-              Text('Invite a friend',
+              Text(l.groupInviteFriend,
                   style: AppTextStyles.body
                       .copyWith(fontWeight: FontWeight.w700)),
             ],
           ),
           const SizedBox(height: AppSpacing.xs),
-          Text('Share this code with a friend to invite them',
+          Text(l.groupShareCode,
               style:
                   AppTextStyles.bodySmall.copyWith(color: AppColors.text2)),
           const SizedBox(height: AppSpacing.sm),
@@ -451,7 +457,7 @@ class _InviteCard extends StatelessWidget {
                   onPressed: () {
                     Clipboard.setData(
                         ClipboardData(text: group.inviteCode));
-                    PallyToast.success(context, 'Code copied!');
+                    PallyToast.success(context, l.groupCodeCopied);
                   },
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.purple,
@@ -459,7 +465,7 @@ class _InviteCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10)),
                   ),
                   icon: const Icon(Icons.copy_rounded, size: 16),
-                  label: const Text('Copy'),
+                  label: Text(l.groupCopy),
                 ),
               ),
             ],
@@ -565,16 +571,17 @@ class _NoteTile extends StatelessWidget {
   const _NoteTile({required this.note});
   final SharedNote note;
 
-  String _timeAgo(DateTime dt) {
+  String _timeAgo(AppLocalizations l, DateTime dt) {
     final diff = DateTime.now().difference(dt);
-    if (diff.inMinutes < 1) return 'just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
-    return '${diff.inDays}d ago';
+    if (diff.inMinutes < 1) return l.timeJustNow;
+    if (diff.inMinutes < 60) return l.timeMinAgo(diff.inMinutes);
+    if (diff.inHours < 24) return l.timeHourAgo(diff.inHours);
+    return l.timeDayAgo(diff.inDays);
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final canNavigate =
         note.avatarId.isNotEmpty;
 
@@ -612,7 +619,7 @@ class _NoteTile extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'by ${note.sharedBy} · ${_timeAgo(note.sharedAt)}',
+                        l.groupNoteBy(note.sharedBy, _timeAgo(l, note.sharedAt)),
                         style: AppTextStyles.caption,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -631,7 +638,7 @@ class _NoteTile extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      'Off topic?',
+                      l.groupOffTopic,
                       style: AppTextStyles.caption
                           .copyWith(color: AppColors.amber),
                       maxLines: 1,
@@ -660,6 +667,7 @@ class _EmptyNotesState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
@@ -673,13 +681,13 @@ class _EmptyNotesState extends StatelessWidget {
           const Text('📖', style: TextStyle(fontSize: 40)),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            'No notes shared yet',
+            l.groupNoNotes,
             style: AppTextStyles.title,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Open a wiki page from your Library and tap "Share to group" to add the first note!',
+            l.groupNoNotesHint,
             style: AppTextStyles.body.copyWith(color: AppColors.text2),
             textAlign: TextAlign.center,
           ),
@@ -692,7 +700,7 @@ class _EmptyNotesState extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12)),
             ),
             icon: const Icon(Icons.auto_stories_rounded, size: 18),
-            label: const Text('Go to Library'),
+            label: Text(l.groupGoLibrary),
           ),
         ],
       ),
@@ -706,6 +714,7 @@ class _ShareNudge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return GestureDetector(
       onTap: () => context.go('/library'),
       child: Container(
@@ -722,7 +731,7 @@ class _ShareNudge extends StatelessWidget {
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Text(
-                'Share another note from Library',
+                l.groupShareAnother,
                 style: AppTextStyles.bodySmall
                     .copyWith(color: AppColors.teal),
               ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -79,12 +80,13 @@ class _ChallengeCardState extends ConsumerState<ChallengeCard> {
 
   /// "mm:ss" when under an hour, else a friendly "Reveals <date>".
   String _countdownLabel(DateTime? revealAt) {
-    if (revealAt == null) return 'Reveal pending';
+    final l = AppLocalizations.of(context);
+    if (revealAt == null) return l.challengeRevealPending;
     if (_remaining > const Duration(hours: 1)) {
       final d = revealAt;
       final mm = d.month.toString().padLeft(2, '0');
       final dd = d.day.toString().padLeft(2, '0');
-      return 'Reveals $dd/$mm';
+      return l.challengeRevealsOn(dd, mm);
     }
     final total = _remaining.inSeconds;
     final m = (total ~/ 60).toString().padLeft(2, '0');
@@ -133,6 +135,7 @@ class _ChallengeCardState extends ConsumerState<ChallengeCard> {
   }
 
   Widget _body(Challenge c) {
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: AppSpacing.card,
       child: Column(
@@ -146,7 +149,7 @@ class _ChallengeCardState extends ConsumerState<ChallengeCard> {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  'Daily Challenge',
+                  l.challengeTitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.label.copyWith(
@@ -175,6 +178,7 @@ class _ChallengeCardState extends ConsumerState<ChallengeCard> {
   // ── OPEN ───────────────────────────────────────────────────────────────────
 
   Widget _open(Challenge c) {
+    final l = AppLocalizations.of(context);
     if (c.isMcq) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -200,7 +204,7 @@ class _ChallengeCardState extends ConsumerState<ChallengeCard> {
           style: AppTextStyles.body,
           onChanged: (v) => setState(() => _selected = v.trim()),
           decoration: InputDecoration(
-            hintText: 'Type your answer…',
+            hintText: l.challengeAnswerHint,
             hintStyle:
                 AppTextStyles.body.copyWith(color: AppColors.text3),
             filled: true,
@@ -221,6 +225,7 @@ class _ChallengeCardState extends ConsumerState<ChallengeCard> {
   }
 
   Widget _submitButton(Challenge c, String? answer) {
+    final l = AppLocalizations.of(context);
     final enabled = answer != null && answer.isNotEmpty;
     return FilledButton(
       onPressed: enabled
@@ -234,13 +239,14 @@ class _ChallengeCardState extends ConsumerState<ChallengeCard> {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12)),
       ),
-      child: const Text('Submit'),
+      child: Text(l.moduleSubmit),
     );
   }
 
   // ── ANSWERED (locked, waiting for reveal) ───────────────────────────────────
 
   Widget _answered(Challenge c) {
+    final l = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(
@@ -256,7 +262,7 @@ class _ChallengeCardState extends ConsumerState<ChallengeCard> {
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
-              'Answered — reveals in ${_countdownLabel(c.revealAt)}',
+              l.challengeAnsweredReveals(_countdownLabel(c.revealAt)),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: AppTextStyles.bodySmall.copyWith(
@@ -273,6 +279,7 @@ class _ChallengeCardState extends ConsumerState<ChallengeCard> {
   // ── REVEALED (your answer vs correct + distribution) ────────────────────────
 
   Widget _revealed(Challenge c) {
+    final l = AppLocalizations.of(context);
     final correct = c.correct ?? c.answer;
     final mine = c.myAnswer;
     final gotItRight = mine != null && correct != null && mine == correct;
@@ -311,7 +318,7 @@ class _ChallengeCardState extends ConsumerState<ChallengeCard> {
           const SizedBox(height: AppSpacing.xs),
           Row(
             children: [
-              Text('Correct: ',
+              Text(l.challengeCorrectPrefix,
                   style: AppTextStyles.bodySmall
                       .copyWith(color: AppColors.text2)),
               Flexible(
@@ -424,6 +431,7 @@ class _DistributionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final frac = total > 0 ? count / total : 0.0;
     final pct = (frac * 100).round();
     final barColor = isCorrect ? AppColors.green : AppColors.purpleC;
@@ -449,7 +457,7 @@ class _DistributionBar extends StatelessWidget {
               ),
               if (isMine) ...[
                 const SizedBox(width: 4),
-                Text('(you)',
+                Text(l.challengeYou,
                     style: AppTextStyles.caption
                         .copyWith(color: AppColors.purple)),
               ],

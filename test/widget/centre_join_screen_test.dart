@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/features/centre/presentation/centre_join_screen.dart';
@@ -6,6 +7,8 @@ import 'package:pally/features/centre/presentation/centre_join_screen.dart';
 Widget _host({Size size = const Size(320, 568), double textScale = 1.3}) {
   return ProviderScope(
     child: MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: MediaQuery(
         data: MediaQueryData(
           size: size,

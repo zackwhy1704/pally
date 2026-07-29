@@ -229,9 +229,12 @@ void main() {
 
   // ── join / centre_join ─────────────────────────────────────────────────────
   testWidgets('join — "Join" on screen', (tester) async {
+    // Resolve the CTA label for the ACTIVE test locale (zh: 加入) — the invariant
+    // is "the primary CTA is on-screen", in whatever language it renders.
+    final l = await AppLocalizations.delegate.load(_activeLocale);
     await _pump(tester, const JoinScreen());
     _expectCtaOnScreen(
-        tester, find.widgetWithText(ElevatedButton, 'Join'), 'join');
+        tester, find.widgetWithText(ElevatedButton, l.groupJoin), 'join');
   });
 
   testWidgets('centre_join — "Join class" on screen', (tester) async {

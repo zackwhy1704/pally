@@ -244,56 +244,6 @@ features/flashcards/presentation/flashcard_screen.dart	Your Mochi has notes but 
 features/flashcards/presentation/flashcard_view_model.dart	your Mochi
 features/groups/presentation/challenge_card.dart	$m:$s
 features/groups/presentation/challenge_card.dart	$pct%
-features/groups/presentation/challenge_card.dart	(you)
-features/groups/presentation/challenge_card.dart	Answered — reveals in ${_countdownLabel(c.revealAt)}
-features/groups/presentation/challenge_card.dart	Correct: 
-features/groups/presentation/challenge_card.dart	Daily Challenge
-features/groups/presentation/challenge_card.dart	Reveal pending
-features/groups/presentation/challenge_card.dart	Reveals $dd/$mm
-features/groups/presentation/challenge_card.dart	Submit
-features/groups/presentation/challenge_card.dart	Type your answer…
-features/groups/presentation/create_group_screen.dart	Could not create group
-features/groups/presentation/create_group_screen.dart	Create group
-features/groups/presentation/create_group_screen.dart	Give your group a name
-features/groups/presentation/create_group_screen.dart	Group created!
-features/groups/presentation/create_group_screen.dart	Group name
-features/groups/presentation/create_group_screen.dart	New Group
-features/groups/presentation/create_group_screen.dart	Subject (optional)
-features/groups/presentation/create_group_screen.dart	Year 6 Science Buddies
-features/groups/presentation/group_detail_screen.dart	${diff.inDays}d ago
-features/groups/presentation/group_detail_screen.dart	${diff.inHours}h ago
-features/groups/presentation/group_detail_screen.dart	${diff.inMinutes}m ago
-features/groups/presentation/group_detail_screen.dart	Answers released
-features/groups/presentation/group_detail_screen.dart	Cancel
-features/groups/presentation/group_detail_screen.dart	Code copied!
-features/groups/presentation/group_detail_screen.dart	Copy
-features/groups/presentation/group_detail_screen.dart	Go to Library
-features/groups/presentation/group_detail_screen.dart	Invite a friend
-features/groups/presentation/group_detail_screen.dart	Leave
-features/groups/presentation/group_detail_screen.dart	Leave group
-features/groups/presentation/group_detail_screen.dart	Leave this group?
-features/groups/presentation/group_detail_screen.dart	Muddiest points
-features/groups/presentation/group_detail_screen.dart	New challenge
-features/groups/presentation/group_detail_screen.dart	No notes shared yet
-features/groups/presentation/group_detail_screen.dart	Off topic?
-features/groups/presentation/group_detail_screen.dart	Open a wiki page from your Library and tap "Share to group" to add the first note!
-features/groups/presentation/group_detail_screen.dart	Open this assignment from your class avatar.
-features/groups/presentation/group_detail_screen.dart	Share another note from Library
-features/groups/presentation/group_detail_screen.dart	Share this code with a friend to invite them
-features/groups/presentation/group_detail_screen.dart	Study Group
-features/groups/presentation/group_detail_screen.dart	Update
-features/groups/presentation/group_detail_screen.dart	You'll need a new invite code to re-join.
-features/groups/presentation/group_detail_screen.dart	by ${note.sharedBy} · ${_timeAgo(note.sharedAt)}
-features/groups/presentation/group_detail_screen.dart	just now
-features/groups/presentation/group_list_screen.dart	${group.memberCount} member${group.memberCount == 1 ? 
-features/groups/presentation/group_list_screen.dart	Couldn't join — check the code
-features/groups/presentation/group_list_screen.dart	Create a group or join one with an invite code from a friend.
-features/groups/presentation/group_list_screen.dart	Have an invite code?
-features/groups/presentation/group_list_screen.dart	Join
-features/groups/presentation/group_list_screen.dart	Joined ${joined.name}!
-features/groups/presentation/group_list_screen.dart	New Group
-features/groups/presentation/group_list_screen.dart	No groups yet
-features/groups/presentation/group_list_screen.dart	Study Groups
 features/groups/presentation/group_list_screen.dart	e.g. AB23CD
 features/home/widgets/module_progress_banner.dart	${avatar.name} — ${module.masteryDisplayPct}%
 features/homework/presentation/homework_detail_screen.dart	Homework
@@ -310,28 +260,6 @@ features/homework/presentation/homework_submit_screen.dart	Submit homework
 features/homework/presentation/homework_submit_screen.dart	Title
 features/homework/presentation/homework_submit_screen.dart	Your teacher reviews every submission before sending 
 features/homework/presentation/homework_submit_screen.dart	Your work
-features/invite/presentation/invite_screen.dart	Code copied
-features/invite/presentation/invite_screen.dart	Could not load your code — tap to retry
-features/invite/presentation/invite_screen.dart	Friends can scan this to grab your code
-features/invite/presentation/invite_screen.dart	Invite & connect
-features/invite/presentation/invite_screen.dart	Invite a friend
-features/invite/presentation/invite_screen.dart	Share
-features/invite/presentation/invite_screen.dart	You both get bonus stars when they take their first quiz.
-features/invite/presentation/milestone_invite_nudge.dart	$_milestone-day streak — nice!
-features/invite/presentation/milestone_invite_nudge.dart	Dismiss
-features/invite/presentation/milestone_invite_nudge.dart	Invite
-features/invite/presentation/milestone_invite_nudge.dart	Invite a friend — you both get bonus stars.
-features/join/presentation/join_screen.dart	Cancel
-features/join/presentation/join_screen.dart	Enter a code first
-features/join/presentation/join_screen.dart	Enter code manually
-features/join/presentation/join_screen.dart	Enter or scan a code
-features/join/presentation/join_screen.dart	Got a class or study-group code? Type it in, or scan its QR.
-features/join/presentation/join_screen.dart	Join
-features/join/presentation/join_screen.dart	Joined ${resolved?.name ?? 
-features/join/presentation/join_screen.dart	Parent links are no longer supported
-features/join/presentation/join_screen.dart	Point at a class or group QR
-features/join/presentation/join_screen.dart	Scan QR
-features/join/presentation/join_screen.dart	That doesn't look like a valid code
 features/join/presentation/join_screen.dart	e.g. 5K7Q2X
 features/modules/presentation/module_list_screen.dart	$masteryPct%
 features/modules/presentation/module_list_screen.dart	${e.value} ${e.key}

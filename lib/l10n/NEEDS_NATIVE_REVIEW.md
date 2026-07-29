@@ -412,3 +412,11 @@ Reuses `settingsInviteFriends`; mascot via `{mascot}` (progressWhichMochi/progre
 caught ternary/switch strings the coverage scanner misses (category labels, day/days units, freeze copy).
 ⚠️ SG review: 综合(General-subject unrelated — here it's achievement "Milestones"→里程碑), 连续记录 for
 "streak", 高级版 for Premium — confirm classroom-natural.
+
+### PR-D — study groups / join / invite (67 keys)
+
+`group_list/detail/create`, `challenge_card`, `join_screen`, `invite_screen`, `milestone_invite_nudge`.
+Group CRUD + membership, daily challenge, join-by-code/QR, invite/referral, relative-time (`timeDayAgo`
+etc.), ICU plural `groupMemberCodeLine`. Reuses commonCancel/moduleSubmit/groupJoin; mascot via {mascot}.
+Also fixed cta_invariant_test to resolve the join CTA per test-locale (was hardcoded 'Join').
+⚠️ SG review: 学习小组 (study group), 组屋/HDB not relevant here, 二维码 (QR).
