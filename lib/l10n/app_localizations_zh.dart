@@ -1459,4 +1459,228 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tierCentre => '中心';
+
+  @override
+  String get achievementsTitle => '成就';
+
+  @override
+  String get achievementsRecentlyEarned => '最近获得';
+
+  @override
+  String achievementsEarnedCount(int earned, int total) {
+    return '已获得 $earned / $total';
+  }
+
+  @override
+  String achievementsPercentOfAll(int pct) {
+    return '全部成就的 $pct%';
+  }
+
+  @override
+  String get progressFirstAchievement => '完成任务以获得你的第一个成就。';
+
+  @override
+  String get dailyGoalToday => '今日目标';
+
+  @override
+  String get dailyGoalPick => '选择你的每日目标';
+
+  @override
+  String get dailyGoalMinutes => '分钟';
+
+  @override
+  String get dailyGoalQuizzes => '小测';
+
+  @override
+  String get dailyGoalSet => '设定我的目标';
+
+  @override
+  String get dailyGoalCommit => '确定我的目标';
+
+  @override
+  String get dailyGoalRingHint => '每天完成这个圆环，保住你的连续记录。';
+
+  @override
+  String get dailyGoalSaveFailed => '无法保存目标。请重试。';
+
+  @override
+  String get levelRoadmapTitle => '等级奖励';
+
+  @override
+  String levelRoadmapCurrentOf(int current, int max) {
+    return '第 $current 级，共 $max 级';
+  }
+
+  @override
+  String levelRoadmapRewardsUnlocked(int earned, int total) {
+    return '已解锁 $total 项奖励中的 $earned 项';
+  }
+
+  @override
+  String levelN(int level) {
+    return '第 $level 级';
+  }
+
+  @override
+  String get levelUpTitle => '升级了！';
+
+  @override
+  String levelUpReached(int level) {
+    return '达到第 $level 级——继续加油！';
+  }
+
+  @override
+  String get levelUpKeepGoing => '继续加油！';
+
+  @override
+  String get levelUpSmarter => '你越来越聪明了！🎓';
+
+  @override
+  String get progressTitle => '我的进度';
+
+  @override
+  String get progressTotalXp => '总 XP';
+
+  @override
+  String get progressBadges => '徽章';
+
+  @override
+  String get progressCharacterShop => '角色商店';
+
+  @override
+  String get progressNeedsWork => '需要加强';
+
+  @override
+  String get progressPracticeWeak => '练习薄弱主题';
+
+  @override
+  String progressTopicsCount(int count) {
+    return '$count 个主题';
+  }
+
+  @override
+  String progressXpToLevel(int xp, int level) {
+    return '距离第 $level 级还差 $xp XP';
+  }
+
+  @override
+  String progressMinThisWeek(int min) {
+    return '本周已学习 $min 分钟';
+  }
+
+  @override
+  String progressWhichMochi(String mascot) {
+    return '要测验哪个 $mascot？';
+  }
+
+  @override
+  String get progressGoPremium => '升级高级版';
+
+  @override
+  String progressPremiumPitch(String mascot) {
+    return '无限 $mascot、聊天和家庭共享——7 天免费试用';
+  }
+
+  @override
+  String get progressEnterCode => '输入或扫描别人给你的代码';
+
+  @override
+  String get progressJoinClass => '加入班级或小组';
+
+  @override
+  String get progressReferralBonus => '当他们完成第一次小测时，你可获得额外星星';
+
+  @override
+  String get streakLadder => '连续记录阶梯';
+
+  @override
+  String streakDays(int days) {
+    return '$days 天';
+  }
+
+  @override
+  String streakBest(int days) {
+    return '最佳：$days 天';
+  }
+
+  @override
+  String streakMilestoneDay(int days) {
+    return '$days 天连续记录';
+  }
+
+  @override
+  String get streakBadge1Week => '一周徽章';
+
+  @override
+  String get streakBadge2Week => '两周徽章';
+
+  @override
+  String get streakBadge30Day => '30 天徽章';
+
+  @override
+  String get streak100Days => '100 天';
+
+  @override
+  String get streakFullYear => '整整一年';
+
+  @override
+  String streakMilestoneOverlayTitle(int days) {
+    return '$days 天连续记录！';
+  }
+
+  @override
+  String get streakKeepLit => '保持下去！';
+
+  @override
+  String get streakMilestoneReached => '达成里程碑——继续累积！';
+
+  @override
+  String streakDaysToNext(int days, String milestone) {
+    return '还差 $days 天到 $milestone';
+  }
+
+  @override
+  String get streakFreezeHint =>
+      '连胜冻结能在你漏掉一天时保住连续记录。每达成一个新的 7 天里程碑就能获回一个（最多 3 个）。';
+
+  @override
+  String get achievementsCategoryStreak => '连续记录';
+
+  @override
+  String get achievementsCategoryMastery => '掌握';
+
+  @override
+  String get achievementsCategoryCuriosity => '好奇心';
+
+  @override
+  String get achievementsCategoryMilestones => '里程碑';
+
+  @override
+  String get streakUnitDay => '天';
+
+  @override
+  String get streakUnitDays => '天';
+
+  @override
+  String get streakFreezeActive => '冻结能在你漏掉一天时保住连续记录。';
+
+  @override
+  String get streakFreezeEarn => '达成新的 7 天里程碑即可获得一个冻结。';
+
+  @override
+  String get unitXp => 'XP';
+
+  @override
+  String get unitMin => '分钟';
+
+  @override
+  String get unitQuiz => '次小测';
+
+  @override
+  String get unitQuizzes => '次小测';
+
+  @override
+  String dailyGoalValueUnit(int count, String unit) {
+    return '$count $unit';
+  }
 }

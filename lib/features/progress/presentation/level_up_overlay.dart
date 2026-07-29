@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -49,6 +50,7 @@ class _CelebrationLayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Stack(
       children: [
         // Confetti behind the card — lightweight CustomPainter so we
@@ -84,7 +86,7 @@ class _CelebrationLayer extends StatelessWidget {
                     const Text('🎉',
                         style: TextStyle(fontSize: 56)),
                     const SizedBox(height: 8),
-                    Text('LEVEL UP!',
+                    Text(l.levelUpTitle,
                         style: AppTextStyles.heading1.copyWith(
                             color: AppColors.purple, fontSize: 28)),
                     const SizedBox(height: 12),
@@ -108,12 +110,12 @@ class _CelebrationLayer extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Text("You're getting smarter! 🎓",
+                    Text(l.levelUpSmarter,
                         style: AppTextStyles.body
                             .copyWith(color: AppColors.text1),
                         textAlign: TextAlign.center),
                     const SizedBox(height: 4),
-                    Text('Reached Level $newLevel — keep going!',
+                    Text(l.levelUpReached(newLevel),
                         style: AppTextStyles.bodySmall
                             .copyWith(color: AppColors.text2),
                         textAlign: TextAlign.center),
@@ -128,7 +130,7 @@ class _CelebrationLayer extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16)),
                       ),
-                      child: const Text('Keep going!'),
+                      child: Text(l.levelUpKeepGoing),
                     ),
                   ],
                 ),

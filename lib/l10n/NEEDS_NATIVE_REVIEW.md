@@ -402,3 +402,13 @@ Running count of zh keys drafted this branch: **~400** (PR1–PR12 ~371 · PR-B:
 the PR-C…PR-K plan). The earlier "COMPLETE" here was scope-based and wrong. Standing launch gates: this
 whole file (native-SG review), the 🔒 PR10 anti-steering price copy, and the backend PERSONAL_DATA/HIGH
 moderation false-positive.
+
+### PR-C — progress / achievements / goals / streaks (63 keys)
+
+`progress_screen`, `achievements_screen`, `daily_goal_ring`, `level_roadmap_screen`, `level_up_overlay`,
+`streak_card`, `streak_milestone_overlay`. Titles, stat labels, streak/goal/milestone copy, badge names,
+level-up overlays. ICU plurals: `streakDaysToNext`. Placeholders throughout (level/xp/days/pct/counts).
+Reuses `settingsInviteFriends`; mascot via `{mascot}` (progressWhichMochi/progressPremiumPitch). Also
+caught ternary/switch strings the coverage scanner misses (category labels, day/days units, freeze copy).
+⚠️ SG review: 综合(General-subject unrelated — here it's achievement "Milestones"→里程碑), 连续记录 for
+"streak", 高级版 for Premium — confirm classroom-natural.

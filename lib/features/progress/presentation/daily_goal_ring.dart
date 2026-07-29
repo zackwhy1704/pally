@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -57,6 +58,7 @@ class _Body extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final progress =
         (goal.goalProgress / math.max(1, goal.goalTarget)).clamp(0.0, 1.0);
     final pct = (progress * 100).round();
@@ -103,7 +105,7 @@ class _Body extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Today's goal", style: AppTextStyles.title),
+                Text(l.dailyGoalToday, style: AppTextStyles.title),
                 const SizedBox(height: 2),
                 Text(
                   goal.met
@@ -120,7 +122,7 @@ class _Body extends ConsumerWidget {
                   child: OutlinedButton.icon(
                     onPressed: () => _GoalSheet.show(context, ref, goal),
                     icon: const Icon(Icons.tune_rounded, size: 16),
-                    label: const Text('Set my goal'),
+                    label: Text(l.dailyGoalSet),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.purple,
                       side: const BorderSide(color: AppColors.purpleL),
@@ -207,6 +209,7 @@ class _GoalSheetState extends State<_GoalSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return SafeArea(
       child: Container(
         constraints: BoxConstraints(
@@ -235,17 +238,17 @@ class _GoalSheetState extends State<_GoalSheet> {
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
-              Text('Pick your daily goal', style: AppTextStyles.title),
+              Text(l.dailyGoalPick, style: AppTextStyles.title),
               const SizedBox(height: 4),
-              Text('Close this ring every day to keep your streak safe.',
+              Text(l.dailyGoalRingHint,
                   style: AppTextStyles.bodySmall
                       .copyWith(color: AppColors.text2)),
               const SizedBox(height: AppSpacing.md),
               SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'QUIZ', label: Text('Quizzes')),
+                segments: [
+                  ButtonSegment(value: 'QUIZ', label: Text(l.dailyGoalQuizzes)),
                   ButtonSegment(value: 'XP', label: Text('XP')),
-                  ButtonSegment(value: 'MINUTES', label: Text('Minutes')),
+                  ButtonSegment(value: 'MINUTES', label: Text(l.dailyGoalMinutes)),
                 ],
                 selected: {_type},
                 onSelectionChanged: (s) => setState(() {
@@ -259,7 +262,7 @@ class _GoalSheetState extends State<_GoalSheet> {
                 children: _options[_type]!.map((v) {
                   final selected = v == _target;
                   return ChoiceChip(
-                    label: Text('$v ${_unitOf(_type, v)}'),
+                    label: Text(l.dailyGoalValueUnit(v, _unitOf(l, _type, v))),
                     selected: selected,
                     onSelected: (_) => setState(() => _target = v),
                     // Explicit colours: the default theme combo rendered the selected
@@ -288,7 +291,7 @@ class _GoalSheetState extends State<_GoalSheet> {
                     } catch (_) {
                       if (!context.mounted) return;
                       PallyToast.error(
-                          context, 'Could not save goal. Try again.');
+                          context, l.dailyGoalSaveFailed);
                     }
                   },
                   style: FilledButton.styleFrom(
@@ -299,7 +302,7 @@ class _GoalSheetState extends State<_GoalSheet> {
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                  child: const Text('Commit to my goal'),
+                  child: Text(l.dailyGoalCommit),
                 ),
               ),
             ],
@@ -310,9 +313,9 @@ class _GoalSheetState extends State<_GoalSheet> {
     );
   }
 
-  static String _unitOf(String type, int v) => switch (type) {
-        'XP' => 'XP',
-        'MINUTES' => 'min',
-        _ => v == 1 ? 'quiz' : 'quizzes',
+  static String _unitOf(AppLocalizations l, String type, int v) => switch (type) {
+        'XP' => l.unitXp,
+        'MINUTES' => l.unitMin,
+        _ => v == 1 ? l.unitQuiz : l.unitQuizzes,
       };
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/features/progress/presentation/daily_goal_provider.dart';
@@ -21,7 +22,9 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [dailyGoalVmProvider.overrideWith(_FakeGoalVm.new)],
-        child: const MaterialApp(home: Scaffold(body: DailyGoalRing())),
+        child: const MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,home: Scaffold(body: DailyGoalRing())),
       ),
     );
     await tester.pumpAndSettle();

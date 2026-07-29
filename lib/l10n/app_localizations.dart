@@ -2593,6 +2593,384 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Centre'**
   String get tierCentre;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements'**
+  String get achievementsTitle;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently earned'**
+  String get achievementsRecentlyEarned;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'{earned} / {total} earned'**
+  String achievementsEarnedCount(int earned, int total);
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'{pct}% of all achievements'**
+  String achievementsPercentOfAll(int pct);
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete actions to earn your first achievement.'**
+  String get progressFirstAchievement;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s goal'**
+  String get dailyGoalToday;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick your daily goal'**
+  String get dailyGoalPick;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes'**
+  String get dailyGoalMinutes;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Quizzes'**
+  String get dailyGoalQuizzes;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Set my goal'**
+  String get dailyGoalSet;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Commit to my goal'**
+  String get dailyGoalCommit;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Close this ring every day to keep your streak safe.'**
+  String get dailyGoalRingHint;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save goal. Try again.'**
+  String get dailyGoalSaveFailed;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Level rewards'**
+  String get levelRoadmapTitle;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Level {current} of {max}'**
+  String levelRoadmapCurrentOf(int current, int max);
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'{earned} of {total} rewards unlocked'**
+  String levelRoadmapRewardsUnlocked(int earned, int total);
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Level {level}'**
+  String levelN(int level);
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'LEVEL UP!'**
+  String get levelUpTitle;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Reached Level {level} — keep going!'**
+  String levelUpReached(int level);
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep going!'**
+  String get levelUpKeepGoing;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re getting smarter! 🎓'**
+  String get levelUpSmarter;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'My Progress'**
+  String get progressTitle;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Total XP'**
+  String get progressTotalXp;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Badges'**
+  String get progressBadges;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Character Shop'**
+  String get progressCharacterShop;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs Work'**
+  String get progressNeedsWork;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice Weak Topics'**
+  String get progressPracticeWeak;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} topics'**
+  String progressTopicsCount(int count);
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'{xp} XP to Level {level}'**
+  String progressXpToLevel(int xp, int level);
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'{min} min studied this week'**
+  String progressMinThisWeek(int min);
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Which {mascot} to quiz?'**
+  String progressWhichMochi(String mascot);
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Go Premium'**
+  String get progressGoPremium;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited {mascot}s, chat & family sharing — 7-day free trial'**
+  String progressPremiumPitch(String mascot);
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter or scan a code someone gave you'**
+  String get progressEnterCode;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Join a class or group'**
+  String get progressJoinClass;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn bonus stars when they take their first quiz'**
+  String get progressReferralBonus;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak ladder'**
+  String get streakLadder;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days'**
+  String streakDays(int days);
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Best: {days} days'**
+  String streakBest(int days);
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'{days}-day streak'**
+  String streakMilestoneDay(int days);
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'1-week badge'**
+  String get streakBadge1Week;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'2-week badge'**
+  String get streakBadge2Week;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'30-day badge'**
+  String get streakBadge30Day;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'100 days'**
+  String get streak100Days;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'a full year'**
+  String get streakFullYear;
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'{days}-DAY STREAK!'**
+  String streakMilestoneOverlayTitle(int days);
+
+  /// PR-C progress/achievements/goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it lit!'**
+  String get streakKeepLit;
+
+  /// PR-C streak.
+  ///
+  /// In en, this message translates to:
+  /// **'Milestone reached — keep stacking!'**
+  String get streakMilestoneReached;
+
+  /// PR-C streak.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{1 day to {milestone}} other{{days} days to {milestone}}}'**
+  String streakDaysToNext(int days, String milestone);
+
+  /// PR-C streak.
+  ///
+  /// In en, this message translates to:
+  /// **'Freezes save your streak when you miss a day. Hit each new 7-day milestone to earn one back (up to 3).'**
+  String get streakFreezeHint;
+
+  /// PR-C progress (ternary/switch strings the scanner missed).
+  ///
+  /// In en, this message translates to:
+  /// **'Streak'**
+  String get achievementsCategoryStreak;
+
+  /// PR-C progress (ternary/switch strings the scanner missed).
+  ///
+  /// In en, this message translates to:
+  /// **'Mastery'**
+  String get achievementsCategoryMastery;
+
+  /// PR-C progress (ternary/switch strings the scanner missed).
+  ///
+  /// In en, this message translates to:
+  /// **'Curiosity'**
+  String get achievementsCategoryCuriosity;
+
+  /// PR-C progress (ternary/switch strings the scanner missed).
+  ///
+  /// In en, this message translates to:
+  /// **'Milestones'**
+  String get achievementsCategoryMilestones;
+
+  /// PR-C progress (ternary/switch strings the scanner missed).
+  ///
+  /// In en, this message translates to:
+  /// **'day'**
+  String get streakUnitDay;
+
+  /// PR-C progress (ternary/switch strings the scanner missed).
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get streakUnitDays;
+
+  /// PR-C progress (ternary/switch strings the scanner missed).
+  ///
+  /// In en, this message translates to:
+  /// **'A freeze saves your streak if you miss one day.'**
+  String get streakFreezeActive;
+
+  /// PR-C progress (ternary/switch strings the scanner missed).
+  ///
+  /// In en, this message translates to:
+  /// **'Earn a freeze by hitting a new 7-day milestone.'**
+  String get streakFreezeEarn;
+
+  /// PR-C daily-goal unit.
+  ///
+  /// In en, this message translates to:
+  /// **'XP'**
+  String get unitXp;
+
+  /// PR-C daily-goal unit.
+  ///
+  /// In en, this message translates to:
+  /// **'min'**
+  String get unitMin;
+
+  /// PR-C daily-goal unit.
+  ///
+  /// In en, this message translates to:
+  /// **'quiz'**
+  String get unitQuiz;
+
+  /// PR-C daily-goal unit.
+  ///
+  /// In en, this message translates to:
+  /// **'quizzes'**
+  String get unitQuizzes;
+
+  /// PR-C daily-goal unit.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} {unit}'**
+  String dailyGoalValueUnit(int count, String unit);
 }
 
 class _AppLocalizationsDelegate

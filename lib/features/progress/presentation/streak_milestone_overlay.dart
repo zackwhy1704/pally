@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -54,6 +55,7 @@ class _Layer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Stack(
       children: [
         Positioned.fill(child: _FlameBurst(progress: anim)),
@@ -80,7 +82,7 @@ class _Layer extends StatelessWidget {
                   children: [
                     const Text('🔥', style: TextStyle(fontSize: 56)),
                     const SizedBox(height: 8),
-                    Text('$milestone-DAY STREAK!',
+                    Text(l.streakMilestoneOverlayTitle(milestone),
                         style: AppTextStyles.heading1.copyWith(
                             color: AppColors.coral, fontSize: 24)),
                     const SizedBox(height: 12),
@@ -118,7 +120,7 @@ class _Layer extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16)),
                       ),
-                      child: const Text('Keep it lit!'),
+                      child: Text(l.streakKeepLit),
                     ),
                   ],
                 ),

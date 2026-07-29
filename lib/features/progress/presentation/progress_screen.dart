@@ -42,6 +42,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final progressAsync = ref.watch(progressViewModelProvider);
 
     // Fire the milestone overlay once per newly-celebrated milestone. The
@@ -60,7 +61,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('My Progress', style: AppTextStyles.title),
+        title: Text(l.progressTitle, style: AppTextStyles.title),
         centerTitle: true,
         actions: [
           IconButton(
@@ -147,6 +148,7 @@ class _LevelCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final isMaxLevel = progress.level >= progress.maxLevel;
     final xpProgress = isMaxLevel
         ? 1.0
@@ -182,7 +184,7 @@ class _LevelCard extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Level ${progress.level}',
+                      l.levelN(progress.level),
                       style:
                           AppTextStyles.title.copyWith(color: Colors.white),
                     ),
@@ -208,7 +210,7 @@ class _LevelCard extends ConsumerWidget {
                     if (!isMaxLevel) ...[
                       const SizedBox(height: 2),
                       Text(
-                        '${progress.xpToNextLevel} XP to Level ${progress.level + 1}',
+                        l.progressXpToLevel(progress.xpToNextLevel, progress.level + 1),
                         style: AppTextStyles.caption
                             .copyWith(color: Colors.white60),
                       ),
@@ -436,6 +438,7 @@ class _StatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     // The streak stat moved to its own StreakCard; this row keeps the
     // secondary numbers (total XP + badge count).
     return Row(
@@ -444,7 +447,7 @@ class _StatsRow extends StatelessWidget {
           child: _StatCard(
             icon: Icons.star_rounded,
             value: '${progress.xp}',
-            label: 'Total XP',
+            label: l.progressTotalXp,
             color: AppColors.amber,
             bgColor: AppColors.amberL,
           ),
@@ -454,7 +457,7 @@ class _StatsRow extends StatelessWidget {
           child: _StatCard(
             icon: Icons.psychology_rounded,
             value: '${progress.badges.length}',
-            label: 'Badges',
+            label: l.progressBadges,
             color: AppColors.purple,
             bgColor: AppColors.purpleL,
           ),
@@ -509,6 +512,7 @@ class _WeekMinutesStat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final total = weekMinutes.fold<int>(0, (a, b) => a + b);
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -522,7 +526,7 @@ class _WeekMinutesStat extends StatelessWidget {
           const Icon(Icons.timer_outlined,
               color: AppColors.text2, size: 18),
           const SizedBox(width: 6),
-          Text('$total min studied this week',
+          Text(l.progressMinThisWeek(total),
               style: AppTextStyles.bodySmall
                   .copyWith(color: AppColors.text2)),
         ],
@@ -542,6 +546,7 @@ class _WeakTopicsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: AppSpacing.card,
       decoration: BoxDecoration(
@@ -555,7 +560,7 @@ class _WeakTopicsCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Needs Work', style: AppTextStyles.title),
+              Text(l.progressNeedsWork, style: AppTextStyles.title),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
@@ -563,7 +568,7 @@ class _WeakTopicsCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  '${weakTopics.length} topics',
+                  l.progressTopicsCount(weakTopics.length),
                   style: AppTextStyles.caption.copyWith(color: AppColors.coral),
                 ),
               ),
@@ -577,7 +582,7 @@ class _WeakTopicsCard extends StatelessWidget {
             child: FilledButton.icon(
               onPressed: onPractice,
               icon: const Icon(Icons.bolt_rounded, size: 18),
-              label: const Text('Practice Weak Topics'),
+              label: Text(l.progressPracticeWeak),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.amber,
               ),
@@ -639,6 +644,7 @@ class _AchievementsPreview extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final async = ref.watch(achievementsProvider);
     return async.when(
       loading: () => const SizedBox.shrink(),
@@ -671,7 +677,7 @@ class _AchievementsPreview extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Achievements', style: AppTextStyles.title),
+                  Text(l.achievementsTitle, style: AppTextStyles.title),
                   TextButton(
                     onPressed: () =>
                         const AchievementsRoute().push(context),
@@ -698,7 +704,7 @@ class _AchievementsPreview extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Text(
-                    'Complete actions to earn your first achievement.',
+                    l.progressFirstAchievement,
                     style: AppTextStyles.bodySmall
                         .copyWith(color: AppColors.text2),
                   ),
@@ -774,13 +780,14 @@ class _AchievementPreviewRow extends StatelessWidget {
 class _NavButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Row(
       children: [
         Expanded(
           child: OutlinedButton.icon(
             onPressed: () => const ShopRoute().push(context),
             icon: const Icon(Icons.storefront_rounded, size: 18),
-            label: const Text('Character Shop'),
+            label: Text(l.progressCharacterShop),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.purple,
               side: const BorderSide(color: AppColors.purple),
@@ -812,6 +819,7 @@ void _launchQuiz(BuildContext context, WidgetRef ref) {
 }
 
 void _pickAvatarForQuiz(BuildContext context, List<Avatar> avatars) {
+  final l = AppLocalizations.of(context);
   showModalBottomSheet<void>(
     context: context,
     backgroundColor: Colors.transparent,
@@ -830,7 +838,7 @@ void _pickAvatarForQuiz(BuildContext context, List<Avatar> avatars) {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Which Mochi to quiz?', style: AppTextStyles.title),
+              Text(l.progressWhichMochi(l.mascotName), style: AppTextStyles.title),
               const SizedBox(height: AppSpacing.md),
               for (final a in avatars)
                 ListTile(
@@ -863,6 +871,7 @@ class _GoPremiumBanner extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final ent = ref.watch(entitlementVmProvider).valueOrNull;
     if (ent == null || ent.isPremium) return const SizedBox.shrink();
     return Material(
@@ -889,12 +898,12 @@ class _GoPremiumBanner extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Go Premium',
+                    Text(l.progressGoPremium,
                         style: AppTextStyles.body.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w800)),
                     Text(
-                      'Unlimited Mochis, chat & family sharing — 7-day free trial',
+                      l.progressPremiumPitch(l.mascotName),
                       style: AppTextStyles.caption
                           .copyWith(color: Colors.white70),
                       maxLines: 1,
@@ -927,6 +936,7 @@ class _JoinCodeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -948,10 +958,10 @@ class _JoinCodeRow extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Join a class or group',
+                    Text(l.progressJoinClass,
                         style: AppTextStyles.body
                             .copyWith(fontWeight: FontWeight.w700)),
-                    Text('Enter or scan a code someone gave you',
+                    Text(l.progressEnterCode,
                         style: AppTextStyles.caption),
                   ],
                 ),
@@ -970,6 +980,7 @@ class _InviteFriendsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -991,10 +1002,10 @@ class _InviteFriendsRow extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Invite friends',
+                    Text(l.settingsInviteFriends,
                         style: AppTextStyles.body
                             .copyWith(fontWeight: FontWeight.w700)),
-                    Text('Earn bonus stars when they take their first quiz',
+                    Text(l.progressReferralBonus,
                         style: AppTextStyles.caption),
                   ],
                 ),

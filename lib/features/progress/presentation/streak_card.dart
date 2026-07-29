@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -45,10 +46,11 @@ class _Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final goalText = status.daysToMilestone == 0
-        ? 'Milestone reached — keep stacking!'
-        : '${status.daysToMilestone} day${status.daysToMilestone == 1 ? '' : 's'} '
-            'to ${_milestoneLabel(status.nextMilestone)}';
+        ? l.streakMilestoneReached
+        : l.streakDaysToNext(
+            status.daysToMilestone, _milestoneLabel(l, status.nextMilestone));
 
     return Material(
       color: Colors.transparent,
@@ -84,7 +86,7 @@ class _Body extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 4),
                             child: Text(
-                              status.streakDays == 1 ? 'day' : 'days',
+                              status.streakDays == 1 ? l.streakUnitDay : l.streakUnitDays,
                               style: AppTextStyles.body.copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700),
@@ -128,13 +130,13 @@ class _Body extends StatelessWidget {
     );
   }
 
-  String _milestoneLabel(int days) {
-    if (days >= 365) return 'a full year';
-    if (days >= 100) return '100 days';
-    if (days >= 30) return '30-day badge';
-    if (days >= 14) return '2-week badge';
-    if (days >= 7) return '1-week badge';
-    return '$days days';
+  String _milestoneLabel(AppLocalizations l, int days) {
+    if (days >= 365) return l.streakFullYear;
+    if (days >= 100) return l.streak100Days;
+    if (days >= 30) return l.streakBadge30Day;
+    if (days >= 14) return l.streakBadge2Week;
+    if (days >= 7) return l.streakBadge1Week;
+    return l.streakDays(days);
   }
 }
 
@@ -169,14 +171,15 @@ class _FreezePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return GestureDetector(
       onTap: () {
         HapticFeedback.selectionClick();
         showAppSnackBar(SnackBar(
           duration: const Duration(seconds: 3),
           content: Text(freezes > 0
-              ? 'A freeze saves your streak if you miss one day.'
-              : 'Earn a freeze by hitting a new 7-day milestone.'),
+              ? l.streakFreezeActive
+              : l.streakFreezeEarn),
           backgroundColor: AppColors.text1,
           behavior: SnackBarBehavior.floating,
           shape:
@@ -255,6 +258,7 @@ class _StreakDetailSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final reached = status.milestonesReached.toSet();
     return SafeArea(
       child: Container(
@@ -288,13 +292,13 @@ class _StreakDetailSheet extends StatelessWidget {
                   const Text('🔥', style: TextStyle(fontSize: 28)),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(
-                    child: Text('Streak ladder',
+                    child: Text(l.streakLadder,
                         style: AppTextStyles.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis),
                   ),
                   const SizedBox(width: AppSpacing.sm),
-                  Text('Best: ${status.longestStreak} days',
+                  Text(l.streakBest(status.longestStreak),
                       style: AppTextStyles.caption,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis),
@@ -312,8 +316,7 @@ class _StreakDetailSheet extends StatelessWidget {
               ],
               const SizedBox(height: AppSpacing.sm),
               Text(
-                'Freezes save your streak when you miss a day. Hit each new 7-day '
-                'milestone to earn one back (up to 3).',
+                l.streakFreezeHint,
                 style: AppTextStyles.caption.copyWith(color: AppColors.text2),
               ),
             ],
@@ -339,6 +342,7 @@ class _LadderRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final color = reached
         ? AppColors.gold
         : current
@@ -364,7 +368,7 @@ class _LadderRow extends StatelessWidget {
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
-              '$milestone-day streak',
+              l.streakMilestoneDay(milestone),
               style: AppTextStyles.body.copyWith(
                   color: reached ? AppColors.text1 : AppColors.text2,
                   fontWeight: FontWeight.w700),

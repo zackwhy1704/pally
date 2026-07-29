@@ -447,64 +447,12 @@ features/photo_question/screens/photo_review_screen.dart	Keep this photo
 features/photo_question/screens/photo_review_screen.dart	Retake
 features/photo_question/screens/photo_review_screen.dart	Retake photo
 features/photo_question/screens/photo_review_screen.dart	What would you like to do?
-features/progress/presentation/achievements_screen.dart	$pct% of all achievements
-features/progress/presentation/achievements_screen.dart	${list.earnedCount} / ${list.totalCount} earned
-features/progress/presentation/achievements_screen.dart	Achievements
-features/progress/presentation/achievements_screen.dart	Recently earned
-features/progress/presentation/daily_goal_ring.dart	$v ${_unitOf(_type, v)}
-features/progress/presentation/daily_goal_ring.dart	Close this ring every day to keep your streak safe.
-features/progress/presentation/daily_goal_ring.dart	Commit to my goal
-features/progress/presentation/daily_goal_ring.dart	Could not save goal. Try again.
-features/progress/presentation/daily_goal_ring.dart	Minutes
-features/progress/presentation/daily_goal_ring.dart	Pick your daily goal
-features/progress/presentation/daily_goal_ring.dart	Quizzes
-features/progress/presentation/daily_goal_ring.dart	Set my goal
-features/progress/presentation/daily_goal_ring.dart	Today's goal
-features/progress/presentation/level_roadmap_screen.dart	$earned of ${roadmap.rewards.length} rewards unlocked
-features/progress/presentation/level_roadmap_screen.dart	Level ${reward.level}
-features/progress/presentation/level_roadmap_screen.dart	Level ${roadmap.currentLevel} of ${roadmap.maxLevel}
-features/progress/presentation/level_roadmap_screen.dart	Level rewards
 features/progress/presentation/level_up_overlay.dart	$newLevel
-features/progress/presentation/level_up_overlay.dart	Keep going!
-features/progress/presentation/level_up_overlay.dart	LEVEL UP!
-features/progress/presentation/level_up_overlay.dart	Reached Level $newLevel — keep going!
-features/progress/presentation/level_up_overlay.dart	You're getting smarter! 🎓
 features/progress/presentation/mastery_card.dart	${subject.mastered}/${subject.total}  $pct%
 features/progress/presentation/progress_screen.dart	$pct%
-features/progress/presentation/progress_screen.dart	$total min studied this week
-features/progress/presentation/progress_screen.dart	${progress.xpToNextLevel} XP to Level ${progress.level + 1}
-features/progress/presentation/progress_screen.dart	${weakTopics.length} topics
-features/progress/presentation/progress_screen.dart	Achievements
-features/progress/presentation/progress_screen.dart	Badges
-features/progress/presentation/progress_screen.dart	Character Shop
-features/progress/presentation/progress_screen.dart	Complete actions to earn your first achievement.
-features/progress/presentation/progress_screen.dart	Earn bonus stars when they take their first quiz
-features/progress/presentation/progress_screen.dart	Enter or scan a code someone gave you
-features/progress/presentation/progress_screen.dart	Go Premium
-features/progress/presentation/progress_screen.dart	Invite friends
-features/progress/presentation/progress_screen.dart	Join a class or group
-features/progress/presentation/progress_screen.dart	Level ${progress.level}
-features/progress/presentation/progress_screen.dart	My Progress
-features/progress/presentation/progress_screen.dart	Needs Work
-features/progress/presentation/progress_screen.dart	Practice Weak Topics
-features/progress/presentation/progress_screen.dart	Total XP
-features/progress/presentation/progress_screen.dart	Unlimited Mochis, chat & family sharing — 7-day free trial
-features/progress/presentation/progress_screen.dart	Which Mochi to quiz?
-features/progress/presentation/streak_card.dart	$days days
 features/progress/presentation/streak_card.dart	$freezes
-features/progress/presentation/streak_card.dart	$milestone-day streak
 features/progress/presentation/streak_card.dart	$value
-features/progress/presentation/streak_card.dart	1-week badge
-features/progress/presentation/streak_card.dart	100 days
-features/progress/presentation/streak_card.dart	2-week badge
-features/progress/presentation/streak_card.dart	30-day badge
-features/progress/presentation/streak_card.dart	Best: ${status.longestStreak} days
-features/progress/presentation/streak_card.dart	Freezes save your streak when you miss a day. Hit each new 7-day 
-features/progress/presentation/streak_card.dart	Streak ladder
-features/progress/presentation/streak_card.dart	a full year
 features/progress/presentation/streak_milestone_overlay.dart	$milestone
-features/progress/presentation/streak_milestone_overlay.dart	$milestone-DAY STREAK!
-features/progress/presentation/streak_milestone_overlay.dart	Keep it lit!
 features/quiz/presentation/quiz_screen.dart	$percentage%
 features/quiz/presentation/quiz_screen.dart	${((current / total) * 100).round()}%
 features/quiz/presentation/quiz_screen.dart	${quizState.currentIndex + 1}/${quizState.totalQuestions}

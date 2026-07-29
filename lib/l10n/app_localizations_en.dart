@@ -1509,4 +1509,239 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tierCentre => 'Centre';
+
+  @override
+  String get achievementsTitle => 'Achievements';
+
+  @override
+  String get achievementsRecentlyEarned => 'Recently earned';
+
+  @override
+  String achievementsEarnedCount(int earned, int total) {
+    return '$earned / $total earned';
+  }
+
+  @override
+  String achievementsPercentOfAll(int pct) {
+    return '$pct% of all achievements';
+  }
+
+  @override
+  String get progressFirstAchievement =>
+      'Complete actions to earn your first achievement.';
+
+  @override
+  String get dailyGoalToday => 'Today\'s goal';
+
+  @override
+  String get dailyGoalPick => 'Pick your daily goal';
+
+  @override
+  String get dailyGoalMinutes => 'Minutes';
+
+  @override
+  String get dailyGoalQuizzes => 'Quizzes';
+
+  @override
+  String get dailyGoalSet => 'Set my goal';
+
+  @override
+  String get dailyGoalCommit => 'Commit to my goal';
+
+  @override
+  String get dailyGoalRingHint =>
+      'Close this ring every day to keep your streak safe.';
+
+  @override
+  String get dailyGoalSaveFailed => 'Could not save goal. Try again.';
+
+  @override
+  String get levelRoadmapTitle => 'Level rewards';
+
+  @override
+  String levelRoadmapCurrentOf(int current, int max) {
+    return 'Level $current of $max';
+  }
+
+  @override
+  String levelRoadmapRewardsUnlocked(int earned, int total) {
+    return '$earned of $total rewards unlocked';
+  }
+
+  @override
+  String levelN(int level) {
+    return 'Level $level';
+  }
+
+  @override
+  String get levelUpTitle => 'LEVEL UP!';
+
+  @override
+  String levelUpReached(int level) {
+    return 'Reached Level $level — keep going!';
+  }
+
+  @override
+  String get levelUpKeepGoing => 'Keep going!';
+
+  @override
+  String get levelUpSmarter => 'You\'re getting smarter! 🎓';
+
+  @override
+  String get progressTitle => 'My Progress';
+
+  @override
+  String get progressTotalXp => 'Total XP';
+
+  @override
+  String get progressBadges => 'Badges';
+
+  @override
+  String get progressCharacterShop => 'Character Shop';
+
+  @override
+  String get progressNeedsWork => 'Needs Work';
+
+  @override
+  String get progressPracticeWeak => 'Practice Weak Topics';
+
+  @override
+  String progressTopicsCount(int count) {
+    return '$count topics';
+  }
+
+  @override
+  String progressXpToLevel(int xp, int level) {
+    return '$xp XP to Level $level';
+  }
+
+  @override
+  String progressMinThisWeek(int min) {
+    return '$min min studied this week';
+  }
+
+  @override
+  String progressWhichMochi(String mascot) {
+    return 'Which $mascot to quiz?';
+  }
+
+  @override
+  String get progressGoPremium => 'Go Premium';
+
+  @override
+  String progressPremiumPitch(String mascot) {
+    return 'Unlimited ${mascot}s, chat & family sharing — 7-day free trial';
+  }
+
+  @override
+  String get progressEnterCode => 'Enter or scan a code someone gave you';
+
+  @override
+  String get progressJoinClass => 'Join a class or group';
+
+  @override
+  String get progressReferralBonus =>
+      'Earn bonus stars when they take their first quiz';
+
+  @override
+  String get streakLadder => 'Streak ladder';
+
+  @override
+  String streakDays(int days) {
+    return '$days days';
+  }
+
+  @override
+  String streakBest(int days) {
+    return 'Best: $days days';
+  }
+
+  @override
+  String streakMilestoneDay(int days) {
+    return '$days-day streak';
+  }
+
+  @override
+  String get streakBadge1Week => '1-week badge';
+
+  @override
+  String get streakBadge2Week => '2-week badge';
+
+  @override
+  String get streakBadge30Day => '30-day badge';
+
+  @override
+  String get streak100Days => '100 days';
+
+  @override
+  String get streakFullYear => 'a full year';
+
+  @override
+  String streakMilestoneOverlayTitle(int days) {
+    return '$days-DAY STREAK!';
+  }
+
+  @override
+  String get streakKeepLit => 'Keep it lit!';
+
+  @override
+  String get streakMilestoneReached => 'Milestone reached — keep stacking!';
+
+  @override
+  String streakDaysToNext(int days, String milestone) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days to $milestone',
+      one: '1 day to $milestone',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get streakFreezeHint =>
+      'Freezes save your streak when you miss a day. Hit each new 7-day milestone to earn one back (up to 3).';
+
+  @override
+  String get achievementsCategoryStreak => 'Streak';
+
+  @override
+  String get achievementsCategoryMastery => 'Mastery';
+
+  @override
+  String get achievementsCategoryCuriosity => 'Curiosity';
+
+  @override
+  String get achievementsCategoryMilestones => 'Milestones';
+
+  @override
+  String get streakUnitDay => 'day';
+
+  @override
+  String get streakUnitDays => 'days';
+
+  @override
+  String get streakFreezeActive =>
+      'A freeze saves your streak if you miss one day.';
+
+  @override
+  String get streakFreezeEarn =>
+      'Earn a freeze by hitting a new 7-day milestone.';
+
+  @override
+  String get unitXp => 'XP';
+
+  @override
+  String get unitMin => 'min';
+
+  @override
+  String get unitQuiz => 'quiz';
+
+  @override
+  String get unitQuizzes => 'quizzes';
+
+  @override
+  String dailyGoalValueUnit(int count, String unit) {
+    return '$count $unit';
+  }
 }

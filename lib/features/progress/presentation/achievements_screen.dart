@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -14,13 +15,14 @@ class AchievementsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final async = ref.watch(achievementsProvider);
     return Scaffold(
       backgroundColor: AppColors.bg,
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Achievements', style: AppTextStyles.title),
+        title: Text(l.achievementsTitle, style: AppTextStyles.title),
         centerTitle: true,
       ),
       body: async.when(
@@ -34,14 +36,14 @@ class AchievementsScreen extends ConsumerWidget {
           onRefresh: () async => ref.invalidate(achievementsProvider),
           child: ListView(
             padding: const EdgeInsets.all(AppSpacing.md),
-            children: _buildSections(list),
+            children: _buildSections(l, list),
           ),
         ),
       ),
     );
   }
 
-  List<Widget> _buildSections(AchievementList list) {
+  List<Widget> _buildSections(AppLocalizations l, AchievementList list) {
     final widgets = <Widget>[];
     widgets.add(_Header(list: list));
     widgets.add(const SizedBox(height: AppSpacing.md));
@@ -50,7 +52,7 @@ class AchievementsScreen extends ConsumerWidget {
     final earned = list.achievements.where((a) => a.earned).toList()
       ..sort((a, b) => (b.earnedAt ?? '').compareTo(a.earnedAt ?? ''));
     if (earned.isNotEmpty) {
-      widgets.add(Text('Recently earned', style: AppTextStyles.title));
+      widgets.add(Text(l.achievementsRecentlyEarned, style: AppTextStyles.title));
       widgets.add(const SizedBox(height: AppSpacing.sm));
       // Height scales with the user's text-size setting so the tile's fixed +
       // Expanded content never overflows the shelf at large accessibility scale.
@@ -80,7 +82,7 @@ class AchievementsScreen extends ConsumerWidget {
       if (inCat.isEmpty) continue;
       widgets.add(Padding(
         padding: const EdgeInsets.only(top: AppSpacing.sm),
-        child: Text(_categoryLabel(cat), style: AppTextStyles.title),
+        child: Text(_categoryLabel(l, cat), style: AppTextStyles.title),
       ));
       widgets.add(const SizedBox(height: AppSpacing.sm));
       widgets.add(GridView.builder(
@@ -99,11 +101,11 @@ class AchievementsScreen extends ConsumerWidget {
     return widgets;
   }
 
-  String _categoryLabel(String c) => switch (c) {
-        'STREAK' => 'Streak',
-        'MASTERY' => 'Mastery',
-        'CURIOSITY' => 'Curiosity',
-        'MILESTONE' => 'Milestones',
+  String _categoryLabel(AppLocalizations l, String c) => switch (c) {
+        'STREAK' => l.achievementsCategoryStreak,
+        'MASTERY' => l.achievementsCategoryMastery,
+        'CURIOSITY' => l.achievementsCategoryCuriosity,
+        'MILESTONE' => l.achievementsCategoryMilestones,
         _ => c,
       };
 }
@@ -114,6 +116,7 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final pct = list.totalCount == 0
         ? 0
         : ((list.earnedCount / list.totalCount) * 100).round();
@@ -136,11 +139,11 @@ class _Header extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${list.earnedCount} / ${list.totalCount} earned',
+                  l.achievementsEarnedCount(list.earnedCount, list.totalCount),
                   style: AppTextStyles.title.copyWith(color: Colors.white),
                 ),
                 const SizedBox(height: 2),
-                Text('$pct% of all achievements',
+                Text(l.achievementsPercentOfAll(pct),
                     style: AppTextStyles.bodySmall
                         .copyWith(color: Colors.white70)),
               ],

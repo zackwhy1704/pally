@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -14,13 +15,14 @@ class LevelRoadmapScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final async = ref.watch(levelRoadmapProvider);
     return Scaffold(
       backgroundColor: AppColors.bg,
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Level rewards', style: AppTextStyles.title),
+        title: Text(l.levelRoadmapTitle, style: AppTextStyles.title),
         centerTitle: true,
       ),
       body: async.when(
@@ -71,6 +73,7 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final earned = roadmap.rewards.where((r) => r.unlocked).length;
     return Container(
       padding: AppSpacing.card,
@@ -106,12 +109,12 @@ class _Header extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Level ${roadmap.currentLevel} of ${roadmap.maxLevel}',
+                Text(l.levelRoadmapCurrentOf(roadmap.currentLevel, roadmap.maxLevel),
                     style:
                         AppTextStyles.title.copyWith(color: Colors.white)),
                 const SizedBox(height: 2),
                 Text(
-                  '$earned of ${roadmap.rewards.length} rewards unlocked',
+                  l.levelRoadmapRewardsUnlocked(earned, roadmap.rewards.length),
                   style: AppTextStyles.bodySmall
                       .copyWith(color: Colors.white70),
                 ),
@@ -138,6 +141,7 @@ class _RewardRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final color = reward.unlocked
         ? AppColors.gold
         : isCurrent
@@ -173,7 +177,7 @@ class _RewardRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Level ${reward.level}',
+                Text(l.levelN(reward.level),
                     style: AppTextStyles.label.copyWith(color: color)),
                 const SizedBox(height: 2),
                 Text(reward.label,

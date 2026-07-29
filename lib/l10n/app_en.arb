@@ -1987,59 +1987,470 @@
     "description": "Dismiss button on the explainer sheet."
   },
   "subjectMaths": "Maths",
-  "@subjectMaths": { "description": "Subject name. Localized ONLY for the known enum subjects; a teacher's free-text subject passes through untranslated." },
+  "@subjectMaths": {
+    "description": "Subject name. Localized ONLY for the known enum subjects; a teacher's free-text subject passes through untranslated."
+  },
   "subjectScience": "Science",
-  "@subjectScience": { "description": "Subject name." },
+  "@subjectScience": {
+    "description": "Subject name."
+  },
   "subjectEnglish": "English",
-  "@subjectEnglish": { "description": "Subject name (English as a school subject)." },
+  "@subjectEnglish": {
+    "description": "Subject name (English as a school subject)."
+  },
   "subjectHistory": "History",
-  "@subjectHistory": { "description": "Subject name." },
+  "@subjectHistory": {
+    "description": "Subject name."
+  },
   "subjectCoding": "Coding",
-  "@subjectCoding": { "description": "Subject name." },
+  "@subjectCoding": {
+    "description": "Subject name."
+  },
   "subjectArt": "Art",
-  "@subjectArt": { "description": "Subject name." },
+  "@subjectArt": {
+    "description": "Subject name."
+  },
   "subjectGeography": "Geography",
-  "@subjectGeography": { "description": "Subject name." },
+  "@subjectGeography": {
+    "description": "Subject name."
+  },
   "subjectLanguages": "Languages",
-  "@subjectLanguages": { "description": "Subject name (languages in general)." },
+  "@subjectLanguages": {
+    "description": "Subject name (languages in general)."
+  },
   "subjectMusic": "Music",
-  "@subjectMusic": { "description": "Subject name." },
+  "@subjectMusic": {
+    "description": "Subject name."
+  },
   "subjectPhysicalEducation": "Physical Education",
-  "@subjectPhysicalEducation": { "description": "Subject name (PE)." },
+  "@subjectPhysicalEducation": {
+    "description": "Subject name (PE)."
+  },
   "subjectHealth": "Health",
-  "@subjectHealth": { "description": "Subject name." },
+  "@subjectHealth": {
+    "description": "Subject name."
+  },
   "subjectLiterature": "Literature",
-  "@subjectLiterature": { "description": "Subject name." },
+  "@subjectLiterature": {
+    "description": "Subject name."
+  },
   "subjectGeneral": "General",
-  "@subjectGeneral": { "description": "Subject name (catch-all / no specific subject)." },
+  "@subjectGeneral": {
+    "description": "Subject name (catch-all / no specific subject)."
+  },
   "levelPrimary": "Primary School",
-  "@levelPrimary": { "description": "Education stage." },
+  "@levelPrimary": {
+    "description": "Education stage."
+  },
   "levelSecondary": "Secondary School",
-  "@levelSecondary": { "description": "Education stage." },
+  "@levelSecondary": {
+    "description": "Education stage."
+  },
   "levelHighSchool": "High School",
-  "@levelHighSchool": { "description": "Education stage." },
+  "@levelHighSchool": {
+    "description": "Education stage."
+  },
   "levelUniversity": "University / Adult",
-  "@levelUniversity": { "description": "Education stage (tertiary / adult learners)." },
+  "@levelUniversity": {
+    "description": "Education stage (tertiary / adult learners)."
+  },
   "levelPrimarySubtitle": "Ages ~6–11",
-  "@levelPrimarySubtitle": { "description": "Age-range hint under the Primary stage." },
+  "@levelPrimarySubtitle": {
+    "description": "Age-range hint under the Primary stage."
+  },
   "levelSecondarySubtitle": "Ages ~11–16",
-  "@levelSecondarySubtitle": { "description": "Age-range hint under the Secondary stage." },
+  "@levelSecondarySubtitle": {
+    "description": "Age-range hint under the Secondary stage."
+  },
   "levelHighSchoolSubtitle": "Ages ~16–18",
-  "@levelHighSchoolSubtitle": { "description": "Age-range hint under the High School stage." },
+  "@levelHighSchoolSubtitle": {
+    "description": "Age-range hint under the High School stage."
+  },
   "levelUniversitySubtitle": "Ages 18+",
-  "@levelUniversitySubtitle": { "description": "Age-range hint under the University stage." },
+  "@levelUniversitySubtitle": {
+    "description": "Age-range hint under the University stage."
+  },
   "tierPremium": "Premium",
-  "@tierPremium": { "description": "Plan tier label (default when the plan is unknown)." },
+  "@tierPremium": {
+    "description": "Plan tier label (default when the plan is unknown)."
+  },
   "tierMax": "Max",
-  "@tierMax": { "description": "Plan tier label (brand tier name — usually kept as-is)." },
+  "@tierMax": {
+    "description": "Plan tier label (brand tier name — usually kept as-is)."
+  },
   "tierPro": "Pro",
-  "@tierPro": { "description": "Plan tier label (brand tier name — usually kept as-is)." },
+  "@tierPro": {
+    "description": "Plan tier label (brand tier name — usually kept as-is)."
+  },
   "tierFree": "Free",
-  "@tierFree": { "description": "Plan tier label." },
+  "@tierFree": {
+    "description": "Plan tier label."
+  },
   "tierFamily": "Family",
-  "@tierFamily": { "description": "Plan tier label." },
+  "@tierFamily": {
+    "description": "Plan tier label."
+  },
   "tierTrial": "Trial",
-  "@tierTrial": { "description": "Plan tier label." },
+  "@tierTrial": {
+    "description": "Plan tier label."
+  },
   "tierCentre": "Centre",
-  "@tierCentre": { "description": "Plan tier label (tuition centre)." }
+  "@tierCentre": {
+    "description": "Plan tier label (tuition centre)."
+  },
+  "achievementsTitle": "Achievements",
+  "@achievementsTitle": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "achievementsRecentlyEarned": "Recently earned",
+  "@achievementsRecentlyEarned": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "achievementsEarnedCount": "{earned} / {total} earned",
+  "@achievementsEarnedCount": {
+    "description": "PR-C progress/achievements/goals.",
+    "placeholders": {
+      "earned": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "achievementsPercentOfAll": "{pct}% of all achievements",
+  "@achievementsPercentOfAll": {
+    "description": "PR-C progress/achievements/goals.",
+    "placeholders": {
+      "pct": {
+        "type": "int"
+      }
+    }
+  },
+  "progressFirstAchievement": "Complete actions to earn your first achievement.",
+  "@progressFirstAchievement": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "dailyGoalToday": "Today's goal",
+  "@dailyGoalToday": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "dailyGoalPick": "Pick your daily goal",
+  "@dailyGoalPick": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "dailyGoalMinutes": "Minutes",
+  "@dailyGoalMinutes": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "dailyGoalQuizzes": "Quizzes",
+  "@dailyGoalQuizzes": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "dailyGoalSet": "Set my goal",
+  "@dailyGoalSet": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "dailyGoalCommit": "Commit to my goal",
+  "@dailyGoalCommit": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "dailyGoalRingHint": "Close this ring every day to keep your streak safe.",
+  "@dailyGoalRingHint": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "dailyGoalSaveFailed": "Could not save goal. Try again.",
+  "@dailyGoalSaveFailed": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "levelRoadmapTitle": "Level rewards",
+  "@levelRoadmapTitle": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "levelRoadmapCurrentOf": "Level {current} of {max}",
+  "@levelRoadmapCurrentOf": {
+    "description": "PR-C progress/achievements/goals.",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "levelRoadmapRewardsUnlocked": "{earned} of {total} rewards unlocked",
+  "@levelRoadmapRewardsUnlocked": {
+    "description": "PR-C progress/achievements/goals.",
+    "placeholders": {
+      "earned": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "levelN": "Level {level}",
+  "@levelN": {
+    "description": "PR-C progress/achievements/goals.",
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "levelUpTitle": "LEVEL UP!",
+  "@levelUpTitle": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "levelUpReached": "Reached Level {level} — keep going!",
+  "@levelUpReached": {
+    "description": "PR-C progress/achievements/goals.",
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "levelUpKeepGoing": "Keep going!",
+  "@levelUpKeepGoing": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "levelUpSmarter": "You're getting smarter! 🎓",
+  "@levelUpSmarter": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "progressTitle": "My Progress",
+  "@progressTitle": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "progressTotalXp": "Total XP",
+  "@progressTotalXp": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "progressBadges": "Badges",
+  "@progressBadges": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "progressCharacterShop": "Character Shop",
+  "@progressCharacterShop": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "progressNeedsWork": "Needs Work",
+  "@progressNeedsWork": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "progressPracticeWeak": "Practice Weak Topics",
+  "@progressPracticeWeak": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "progressTopicsCount": "{count} topics",
+  "@progressTopicsCount": {
+    "description": "PR-C progress/achievements/goals.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "progressXpToLevel": "{xp} XP to Level {level}",
+  "@progressXpToLevel": {
+    "description": "PR-C progress/achievements/goals.",
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      },
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "progressMinThisWeek": "{min} min studied this week",
+  "@progressMinThisWeek": {
+    "description": "PR-C progress/achievements/goals.",
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "progressWhichMochi": "Which {mascot} to quiz?",
+  "@progressWhichMochi": {
+    "description": "PR-C progress/achievements/goals.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "progressGoPremium": "Go Premium",
+  "@progressGoPremium": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "progressPremiumPitch": "Unlimited {mascot}s, chat & family sharing — 7-day free trial",
+  "@progressPremiumPitch": {
+    "description": "PR-C progress/achievements/goals.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "progressEnterCode": "Enter or scan a code someone gave you",
+  "@progressEnterCode": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "progressJoinClass": "Join a class or group",
+  "@progressJoinClass": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "progressReferralBonus": "Earn bonus stars when they take their first quiz",
+  "@progressReferralBonus": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "streakLadder": "Streak ladder",
+  "@streakLadder": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "streakDays": "{days} days",
+  "@streakDays": {
+    "description": "PR-C progress/achievements/goals.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "streakBest": "Best: {days} days",
+  "@streakBest": {
+    "description": "PR-C progress/achievements/goals.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "streakMilestoneDay": "{days}-day streak",
+  "@streakMilestoneDay": {
+    "description": "PR-C progress/achievements/goals.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "streakBadge1Week": "1-week badge",
+  "@streakBadge1Week": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "streakBadge2Week": "2-week badge",
+  "@streakBadge2Week": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "streakBadge30Day": "30-day badge",
+  "@streakBadge30Day": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "streak100Days": "100 days",
+  "@streak100Days": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "streakFullYear": "a full year",
+  "@streakFullYear": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "streakMilestoneOverlayTitle": "{days}-DAY STREAK!",
+  "@streakMilestoneOverlayTitle": {
+    "description": "PR-C progress/achievements/goals.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "streakKeepLit": "Keep it lit!",
+  "@streakKeepLit": {
+    "description": "PR-C progress/achievements/goals."
+  },
+  "streakMilestoneReached": "Milestone reached — keep stacking!",
+  "@streakMilestoneReached": {
+    "description": "PR-C streak."
+  },
+  "streakDaysToNext": "{days, plural, =1{1 day to {milestone}} other{{days} days to {milestone}}}",
+  "@streakDaysToNext": {
+    "description": "PR-C streak.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "milestone": {
+        "type": "String"
+      }
+    }
+  },
+  "streakFreezeHint": "Freezes save your streak when you miss a day. Hit each new 7-day milestone to earn one back (up to 3).",
+  "@streakFreezeHint": {
+    "description": "PR-C streak."
+  },
+  "achievementsCategoryStreak": "Streak",
+  "@achievementsCategoryStreak": {
+    "description": "PR-C progress (ternary/switch strings the scanner missed)."
+  },
+  "achievementsCategoryMastery": "Mastery",
+  "@achievementsCategoryMastery": {
+    "description": "PR-C progress (ternary/switch strings the scanner missed)."
+  },
+  "achievementsCategoryCuriosity": "Curiosity",
+  "@achievementsCategoryCuriosity": {
+    "description": "PR-C progress (ternary/switch strings the scanner missed)."
+  },
+  "achievementsCategoryMilestones": "Milestones",
+  "@achievementsCategoryMilestones": {
+    "description": "PR-C progress (ternary/switch strings the scanner missed)."
+  },
+  "streakUnitDay": "day",
+  "@streakUnitDay": {
+    "description": "PR-C progress (ternary/switch strings the scanner missed)."
+  },
+  "streakUnitDays": "days",
+  "@streakUnitDays": {
+    "description": "PR-C progress (ternary/switch strings the scanner missed)."
+  },
+  "streakFreezeActive": "A freeze saves your streak if you miss one day.",
+  "@streakFreezeActive": {
+    "description": "PR-C progress (ternary/switch strings the scanner missed)."
+  },
+  "streakFreezeEarn": "Earn a freeze by hitting a new 7-day milestone.",
+  "@streakFreezeEarn": {
+    "description": "PR-C progress (ternary/switch strings the scanner missed)."
+  },
+  "unitXp": "XP",
+  "@unitXp": {
+    "description": "PR-C daily-goal unit."
+  },
+  "unitMin": "min",
+  "@unitMin": {
+    "description": "PR-C daily-goal unit."
+  },
+  "unitQuiz": "quiz",
+  "@unitQuiz": {
+    "description": "PR-C daily-goal unit."
+  },
+  "unitQuizzes": "quizzes",
+  "@unitQuizzes": {
+    "description": "PR-C daily-goal unit."
+  },
+  "dailyGoalValueUnit": "{count} {unit}",
+  "@dailyGoalValueUnit": {
+    "description": "PR-C daily-goal unit.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  }
 }

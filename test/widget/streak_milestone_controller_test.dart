@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/features/progress/presentation/streak_milestone_controller.dart';
@@ -8,6 +9,8 @@ import 'package:pally/features/progress/presentation/streak_milestone_controller
 Future<BuildContext> _pumpHost(WidgetTester tester) async {
   late BuildContext ctx;
   await tester.pumpWidget(MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
     home: Builder(builder: (c) {
       ctx = c;
       return const Scaffold(body: SizedBox.shrink());
