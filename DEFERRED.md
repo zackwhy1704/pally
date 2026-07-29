@@ -50,8 +50,8 @@ shrink (never grow); 🔒 compliance rules if price/subscription copy is touched
 ### (historical) the 13 scope-list PRs — all merged, all still valid work
 Registry-driven (`AppLanguages`), ARB + gen-l10n, harness parameterized over `AppLanguages.all`.
 
-### THE REAL REMAINING WORK IS NOT MORE CLIENT PRs — it is the native-review gate:
-`lib/l10n/app_zh.arb` is ~371 **machine-drafted** strings. Before any zh launch, a native Singapore
+### STANDING LAUNCH GATES (in addition to finishing coverage in the plan above)
+`lib/l10n/app_zh.arb` is **machine-drafted**. Before any zh launch, a native Singapore
 Chinese educator MUST review `lib/l10n/NEEDS_NATIVE_REVIEW.md` (SG conventions: 华语/中文, 巴士/德士/
 组屋, no mainlandisms). **Two items on that review are load-bearing:**
 1. 🔒 **PR10 anti-steering copy** (`settingsKeepPremiumPrice` / `settingsKeepPremium`) — flagged
@@ -101,7 +101,8 @@ harness parameterized over `AppLanguages.all`.
   (`@051c3d2`)
 - PR12 "What makes Apalchi different" explainer (10 strings). (`@a8b85d8`)
 
-### REMAINS: nothing on the client. See the native-review gate + scoped-out shared-data surfaces above.
+### REMAINS on the client: PR-B … PR-K in the plan at the top (762→0 baseline). The
+### "nothing remains" note that was here was the scope-based error this correction fixes.
 
 ### THE RECIPE (non-negotiable, proven over 8 PRs)
 1. Extract user-facing strings to ARB (en **byte-identical** to current hardcoded so en-locale test
