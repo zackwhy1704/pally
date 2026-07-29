@@ -158,9 +158,34 @@ Note: chat MESSAGES are AI-generated (already language-tagged) — only chrome i
 | `chatDoubleCheckNumbers` | Double-check the numbers against your worksheet | 请对照你的练习纸核对数字 |
 | `chatCheckedWithCalculator` | checked with calculator | 已用计算器核对 |
 
+### PR7 — module SCREENS (list + player shell; item bodies deferred — see handoff)
+
+Mochi kept. Stage labels LEARN/TEST/PROVE/COMPLETE → 学习/测验/证明/已完成 (pedagogical, review the register).
+Reuses `commonTryAgain` (PR2) + new `commonCheckConnection`. SCOPE: the module-list + player CHROME only;
+the LEARN/TEST/PROVE item BODY widgets (hot-take/spot-mistake/challenge) are NOT localized yet.
+
+| key | en | zh (machine draft) |
+|-----|----|--------------------|
+| `commonCheckConnection` | Check your connection and try again. | 请检查网络连接后重试。 |
+| `moduleHomeworkTooltip` | Homework | 作业 |
+| `moduleCouldNotLoad` | Could not load modules. | 无法加载单元。 |
+| `moduleNoNotesToBuild` | No notes to build lessons from yet. | 还没有可用于生成课程的笔记。 |
+| `moduleBuildFailed` | Could not build lessons. Check your connection and try again. | 无法生成课程。请检查网络连接后重试。 |
+| `moduleNoLessonsYet` | No lessons yet | 还没有课程 |
+| `moduleGenerateFromMaterials` | Generate lessons from your class materials. | 根据你的班级材料生成课程。 |
+| `moduleNotesInBuildFirst` | Your notes are in — let's build your first lesson. | 你的笔记已就绪——来生成你的第一节课吧。 |
+| `moduleGenerateLessons` / `moduleBuildFirstLesson` | Generate lessons / Build my first lesson | 生成课程 / 生成我的第一节课 |
+| `moduleAddNotesCta` | Add your notes and I'll build your first lesson from them. | 添加你的笔记，我会据此为你生成第一节课。 |
+| `moduleStageLearn/Test/Prove/Complete` | LEARN / TEST / PROVE / COMPLETE | 学习 / 测验 / 证明 / 已完成 |
+| `moduleCtaReview/StartLearning/Continue` | Review / Start learning / Continue | 复习 / 开始学习 / 继续 |
+| `moduleTeacherReviewed` | Teacher-reviewed | 教师已审核 |
+| `moduleRefreshing` | Mochi is refreshing this lesson — check back soon. | Mochi 正在更新这节课——请稍后再来。 |
+| `moduleGoToLibrary` | Go to Library | 前往学习库 |
+| `moduleUnknownStage` | Unknown stage | 未知阶段 |
+
 **DO NOT translate** (carry their own language already): Mochi's name, class names,
 teacher-uploaded content, student-generated text, any AI-generated artifact.
 
-Running count of zh keys drafted this branch: **110** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 · PR5: 22 · PR6: 21 — chat chrome).
+Running count of zh keys drafted this branch: **131** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 · PR5: 22 · PR6: 21 · PR7: 21 — module screens; item bodies remain).
 Remaining core-loop extraction (onboarding tour · sign-up form · chat · modules · quiz · library) lands in later PRs;
 each appends its rows here.

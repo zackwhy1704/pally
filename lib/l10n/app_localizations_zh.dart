@@ -385,4 +385,70 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get chatCheckedWithCalculator => '已用计算器核对';
+
+  @override
+  String get commonCheckConnection => '请检查网络连接后重试。';
+
+  @override
+  String get moduleHomeworkTooltip => '作业';
+
+  @override
+  String get moduleCouldNotLoad => '无法加载单元。';
+
+  @override
+  String get moduleNoNotesToBuild => '还没有可用于生成课程的笔记。';
+
+  @override
+  String get moduleBuildFailed => '无法生成课程。请检查网络连接后重试。';
+
+  @override
+  String get moduleNoLessonsYet => '还没有课程';
+
+  @override
+  String get moduleGenerateFromMaterials => '根据你的班级材料生成课程。';
+
+  @override
+  String get moduleNotesInBuildFirst => '你的笔记已就绪——来生成你的第一节课吧。';
+
+  @override
+  String get moduleGenerateLessons => '生成课程';
+
+  @override
+  String get moduleBuildFirstLesson => '生成我的第一节课';
+
+  @override
+  String get moduleAddNotesCta => '添加你的笔记，我会据此为你生成第一节课。';
+
+  @override
+  String get moduleStageLearn => '学习';
+
+  @override
+  String get moduleStageTest => '测验';
+
+  @override
+  String get moduleStageProve => '证明';
+
+  @override
+  String get moduleStageComplete => '已完成';
+
+  @override
+  String get moduleCtaReview => '复习';
+
+  @override
+  String get moduleCtaStartLearning => '开始学习';
+
+  @override
+  String get moduleCtaContinue => '继续';
+
+  @override
+  String get moduleTeacherReviewed => '教师已审核';
+
+  @override
+  String get moduleRefreshing => 'Mochi 正在更新这节课——请稍后再来。';
+
+  @override
+  String get moduleGoToLibrary => '前往学习库';
+
+  @override
+  String get moduleUnknownStage => '未知阶段';
 }

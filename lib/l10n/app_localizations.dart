@@ -769,6 +769,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'checked with calculator'**
   String get chatCheckedWithCalculator;
+
+  /// Generic reconnect hint under an error.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your connection and try again.'**
+  String get commonCheckConnection;
+
+  /// Tooltip on the homework icon in the module list app bar.
+  ///
+  /// In en, this message translates to:
+  /// **'Homework'**
+  String get moduleHomeworkTooltip;
+
+  /// Error title when the module list fails to load.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load modules.'**
+  String get moduleCouldNotLoad;
+
+  /// Inline error when a build is attempted with no notes.
+  ///
+  /// In en, this message translates to:
+  /// **'No notes to build lessons from yet.'**
+  String get moduleNoNotesToBuild;
+
+  /// Inline error when lesson generation fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not build lessons. Check your connection and try again.'**
+  String get moduleBuildFailed;
+
+  /// Empty-state title on the module list.
+  ///
+  /// In en, this message translates to:
+  /// **'No lessons yet'**
+  String get moduleNoLessonsYet;
+
+  /// Empty-state body for a centre-class avatar (has materials).
+  ///
+  /// In en, this message translates to:
+  /// **'Generate lessons from your class materials.'**
+  String get moduleGenerateFromMaterials;
+
+  /// Empty-state body for a personal avatar that has notes.
+  ///
+  /// In en, this message translates to:
+  /// **'Your notes are in — let\'s build your first lesson.'**
+  String get moduleNotesInBuildFirst;
+
+  /// Primary button (centre) to generate lessons.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate lessons'**
+  String get moduleGenerateLessons;
+
+  /// Primary button (personal) to build the first lesson.
+  ///
+  /// In en, this message translates to:
+  /// **'Build my first lesson'**
+  String get moduleBuildFirstLesson;
+
+  /// No-notes empty-state body for a personal avatar.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your notes and I\'ll build your first lesson from them.'**
+  String get moduleAddNotesCta;
+
+  /// Stage badge — the LEARN stage of the loop.
+  ///
+  /// In en, this message translates to:
+  /// **'LEARN'**
+  String get moduleStageLearn;
+
+  /// Stage badge — the TEST stage.
+  ///
+  /// In en, this message translates to:
+  /// **'TEST'**
+  String get moduleStageTest;
+
+  /// Stage badge — the PROVE stage.
+  ///
+  /// In en, this message translates to:
+  /// **'PROVE'**
+  String get moduleStageProve;
+
+  /// Stage badge — a completed module.
+  ///
+  /// In en, this message translates to:
+  /// **'COMPLETE'**
+  String get moduleStageComplete;
+
+  /// Module row CTA when the module is COMPLETE.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get moduleCtaReview;
+
+  /// Module row CTA when the module is at the LEARN stage.
+  ///
+  /// In en, this message translates to:
+  /// **'Start learning'**
+  String get moduleCtaStartLearning;
+
+  /// Module row CTA for an in-progress module.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get moduleCtaContinue;
+
+  /// Badge on a teacher-reviewed module in the player.
+  ///
+  /// In en, this message translates to:
+  /// **'Teacher-reviewed'**
+  String get moduleTeacherReviewed;
+
+  /// Friendly card shown when a module is recompiling. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Mochi is refreshing this lesson — check back soon.'**
+  String get moduleRefreshing;
+
+  /// Button on the refreshing card, returns to the Library.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Library'**
+  String get moduleGoToLibrary;
+
+  /// Fallback for an unrecognized module stage.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown stage'**
+  String get moduleUnknownStage;
 }
 
 class _AppLocalizationsDelegate

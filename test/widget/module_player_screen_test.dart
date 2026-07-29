@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/features/modules/presentation/module_player_screen.dart';
 import 'package:pally/features/modules/presentation/module_player_view_model.dart';
@@ -9,7 +10,10 @@ import 'package:pally/shared/models/learning_module.dart';
 Widget _wrap(Widget child, {List<Override> overrides = const []}) =>
     ProviderScope(
       overrides: overrides,
-      child: MaterialApp(home: child),
+      child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+home: child),
     );
 
 void main() {
@@ -127,7 +131,7 @@ void main() {
       expect(find.text('Mochi is refreshing this lesson — check back soon.'),
           findsOneWidget);
       expect(find.text('Go to Library'), findsOneWidget);
-      expect(find.text('Try again'), findsNothing);
+      expect(find.text('Try Again'), findsNothing);
       expect(find.byIcon(Icons.error_outline_rounded), findsNothing);
     });
 
@@ -163,7 +167,7 @@ void main() {
         ],
       ));
 
-      expect(find.text('Try again'), findsOneWidget);
+      expect(find.text('Try Again'), findsOneWidget);
     });
   });
 }

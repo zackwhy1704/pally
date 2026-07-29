@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/ui/no_notes_cta.dart';
 import 'package:pally/features/modules/presentation/module_list_screen.dart';
 import 'package:pally/features/modules/presentation/module_list_view_model.dart';
@@ -11,7 +12,10 @@ import 'package:pally/shared/models/learning_module.dart';
 Widget _wrap(Widget child, {List<Override> overrides = const []}) =>
     ProviderScope(
       overrides: overrides,
-      child: MaterialApp(home: child),
+      child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+home: child),
     );
 
 void main() {
@@ -163,7 +167,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Could not load modules.'), findsOneWidget);
-      expect(find.text('Try again'), findsOneWidget);
+      expect(find.text('Try Again'), findsOneWidget);
     });
   });
 }

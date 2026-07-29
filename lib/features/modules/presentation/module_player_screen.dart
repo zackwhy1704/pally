@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/router.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -163,7 +164,7 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
                       const Icon(Icons.verified_rounded,
                           size: 13, color: AppColors.teal),
                       const SizedBox(width: AppSpacing.xs),
-                      Text('Teacher-reviewed',
+                      Text(AppLocalizations.of(context).moduleTeacherReviewed,
                           style: AppTextStyles.label
                               .copyWith(color: AppColors.teal)),
                     ],
@@ -202,7 +203,7 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
                 size: 48, color: AppColors.purpleC),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'Mochi is refreshing this lesson — check back soon.',
+              AppLocalizations.of(context).moduleRefreshing,
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),
@@ -210,7 +211,7 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
             FilledButton(
               onPressed: () => context.go('/library'),
               style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
-              child: const Text('Go to Library'),
+              child: Text(AppLocalizations.of(context).moduleGoToLibrary),
             ),
           ],
         ),
@@ -240,7 +241,7 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
                     .startStage(),
                 style: FilledButton.styleFrom(
                     backgroundColor: AppColors.purple),
-                child: const Text('Try again'),
+                child: Text(AppLocalizations.of(context).commonTryAgain),
               ),
             ],
           ),
@@ -388,7 +389,7 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
           onOpenNotes: () =>
               WikiViewerRoute(avatarId: widget.avatarId).push(context),
         ),
-      _ => const Center(child: Text('Unknown stage')),
+      _ => Center(child: Text(AppLocalizations.of(context).moduleUnknownStage)),
     };
   }
 }

@@ -407,4 +407,75 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatCheckedWithCalculator => 'checked with calculator';
+
+  @override
+  String get commonCheckConnection => 'Check your connection and try again.';
+
+  @override
+  String get moduleHomeworkTooltip => 'Homework';
+
+  @override
+  String get moduleCouldNotLoad => 'Could not load modules.';
+
+  @override
+  String get moduleNoNotesToBuild => 'No notes to build lessons from yet.';
+
+  @override
+  String get moduleBuildFailed =>
+      'Could not build lessons. Check your connection and try again.';
+
+  @override
+  String get moduleNoLessonsYet => 'No lessons yet';
+
+  @override
+  String get moduleGenerateFromMaterials =>
+      'Generate lessons from your class materials.';
+
+  @override
+  String get moduleNotesInBuildFirst =>
+      'Your notes are in — let\'s build your first lesson.';
+
+  @override
+  String get moduleGenerateLessons => 'Generate lessons';
+
+  @override
+  String get moduleBuildFirstLesson => 'Build my first lesson';
+
+  @override
+  String get moduleAddNotesCta =>
+      'Add your notes and I\'ll build your first lesson from them.';
+
+  @override
+  String get moduleStageLearn => 'LEARN';
+
+  @override
+  String get moduleStageTest => 'TEST';
+
+  @override
+  String get moduleStageProve => 'PROVE';
+
+  @override
+  String get moduleStageComplete => 'COMPLETE';
+
+  @override
+  String get moduleCtaReview => 'Review';
+
+  @override
+  String get moduleCtaStartLearning => 'Start learning';
+
+  @override
+  String get moduleCtaContinue => 'Continue';
+
+  @override
+  String get moduleTeacherReviewed => 'Teacher-reviewed';
+
+  @override
+  String get moduleRefreshing =>
+      'Mochi is refreshing this lesson — check back soon.';
+
+  @override
+  String get moduleGoToLibrary => 'Go to Library';
+
+  @override
+  String get moduleUnknownStage => 'Unknown stage';
 }
