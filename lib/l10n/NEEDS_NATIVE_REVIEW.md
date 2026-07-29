@@ -420,3 +420,11 @@ Group CRUD + membership, daily challenge, join-by-code/QR, invite/referral, rela
 etc.), ICU plural `groupMemberCodeLine`. Reuses commonCancel/moduleSubmit/groupJoin; mascot via {mascot}.
 Also fixed cta_invariant_test to resolve the join CTA per test-locale (was hardcoded 'Join').
 ⚠️ SG review: 学习小组 (study group), 组屋/HDB not relevant here, 二维码 (QR).
+
+### PR-E — character shop / flashcards (48 keys)
+
+`shop_screen` (mystery box, power-ups, streak-freeze, collection, unlock dialogs), `flashcard_screen`
+(generate CTA, flip card, difficulty ratings, filters). ICU plurals `flashcardAboutPages`/`flashcardGenerateN`.
+Reuses moduleAnswer, progressCharacterShop; mascot via {mascot}. Converted static-const record lists
+(_items powerups, filter chips) to l-taking methods (scanner-missed strings). `flashcard_view_model`'s
+'your Mochi' fallback left (VM, no context) — one baseline remnant.

@@ -2784,5 +2784,238 @@
   "joinedFallback": "successfully",
   "@joinedFallback": {
     "description": "PR-D groups/join/invite."
+  },
+  "shopEarnStars": "Earn Stars",
+  "@shopEarnStars": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopMyCollection": "My Collection",
+  "@shopMyCollection": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopMysteryBox": "Mystery Box",
+  "@shopMysteryBox": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopMysteryBoxHint": "Open to unlock a random character!",
+  "@shopMysteryBoxHint": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopPowerUps": "Power-ups",
+  "@shopPowerUps": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopQuizPowerUps": "Quiz Power-ups",
+  "@shopQuizPowerUps": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopQuizPowerUpsHint": "Spend stars to study smarter.",
+  "@shopQuizPowerUpsHint": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopHintToken": "Hint token",
+  "@shopHintToken": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopDoubleXp": "Double-XP boost",
+  "@shopDoubleXp": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopBonusQuiz": "Bonus practice quiz",
+  "@shopBonusQuiz": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopStreakFreeze": "Streak Freeze",
+  "@shopStreakFreeze": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopStreakFreezeHint": "Save your streak if you miss a day.",
+  "@shopStreakFreezeHint": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopStreakFreezeSpend": "Spend stars to protect your streak.",
+  "@shopStreakFreezeSpend": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopAlreadyUnlocked": "Already Unlocked",
+  "@shopAlreadyUnlocked": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopAwesome": "Awesome!",
+  "@shopAwesome": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopNewCharacter": "New Character Unlocked!",
+  "@shopNewCharacter": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopCanUseMochi": "You can now use this {mascot} for studying!",
+  "@shopCanUseMochi": {
+    "description": "PR-E shop/flashcards.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "shopLoadingOdds": "Loading odds…",
+  "@shopLoadingOdds": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopProbability": "💡 FYI — Probability:",
+  "@shopProbability": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopLearnHarder": "I will learn harder and try again!",
+  "@shopLearnHarder": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopFreezeAdded": "❄️ Freeze added — you now have {current}/{cap}",
+  "@shopFreezeAdded": {
+    "description": "PR-E shop/flashcards.",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "cap": {
+        "type": "int"
+      }
+    }
+  },
+  "shopBought": "Bought {label} — you now have {count}",
+  "@shopBought": {
+    "description": "PR-E shop/flashcards.",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shopRarityBadge": "✨ {label}",
+  "@shopRarityBadge": {
+    "description": "PR-E shop/flashcards.",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "shopLabelHintToken": "a hint token",
+  "@shopLabelHintToken": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopLabelDoubleXp": "a double-XP boost",
+  "@shopLabelDoubleXp": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopLabelBonusQuiz": "a bonus quiz",
+  "@shopLabelBonusQuiz": {
+    "description": "PR-E shop/flashcards."
+  },
+  "shopLabelPowerup": "a powerup",
+  "@shopLabelPowerup": {
+    "description": "PR-E shop/flashcards."
+  },
+  "flashcardsTitle": "Flashcards",
+  "@flashcardsTitle": {
+    "description": "PR-E shop/flashcards."
+  },
+  "flashcardQuestion": "Question",
+  "@flashcardQuestion": {
+    "description": "PR-E shop/flashcards."
+  },
+  "flashcardTapFlip": "Tap to flip",
+  "@flashcardTapFlip": {
+    "description": "PR-E shop/flashcards."
+  },
+  "flashcardEasy": "Easy",
+  "@flashcardEasy": {
+    "description": "PR-E shop/flashcards."
+  },
+  "flashcardOkay": "Okay",
+  "@flashcardOkay": {
+    "description": "PR-E shop/flashcards."
+  },
+  "flashcardHard": "Hard",
+  "@flashcardHard": {
+    "description": "PR-E shop/flashcards."
+  },
+  "flashcardEmpty": "No flashcards yet",
+  "@flashcardEmpty": {
+    "description": "PR-E shop/flashcards."
+  },
+  "flashcardReadyMake": "Ready to make cards",
+  "@flashcardReadyMake": {
+    "description": "PR-E shop/flashcards."
+  },
+  "flashcardReadyMakeYours": "Ready to make your cards",
+  "@flashcardReadyMakeYours": {
+    "description": "PR-E shop/flashcards."
+  },
+  "flashcardGenerate": "Generate flashcards",
+  "@flashcardGenerate": {
+    "description": "PR-E shop/flashcards."
+  },
+  "flashcardRegenerate": "Regenerate cards",
+  "@flashcardRegenerate": {
+    "description": "PR-E shop/flashcards."
+  },
+  "flashcardHasNotesNoCards": "Your {mascot} has notes but no cards yet.\nTap the button below to generate them.",
+  "@flashcardHasNotesNoCards": {
+    "description": "PR-E shop/flashcards.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "flashcardAboutPages": "{count, plural, =1{That's about 1 page of notes. It takes a moment — tap when you're ready.} other{That's about {count} pages of notes. It takes a moment — tap when you're ready.}}",
+  "@flashcardAboutPages": {
+    "description": "PR-E shop/flashcards.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "flashcardGenerateN": "{count, plural, =1{Generate cards (~1 page)} other{Generate cards (~{count} pages)}}",
+  "@flashcardGenerateN": {
+    "description": "PR-E shop/flashcards.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shopHintTokenSub": "Reveal one wrong option in a quiz.",
+  "@shopHintTokenSub": {
+    "description": "PR-E shop/flashcard (const-list strings the scanner missed)."
+  },
+  "shopDoubleXpSub": "Doubles XP on your next quiz (within the daily cap).",
+  "@shopDoubleXpSub": {
+    "description": "PR-E shop/flashcard (const-list strings the scanner missed)."
+  },
+  "shopBonusQuizSub": "Unlock an extra full-XP quiz today.",
+  "@shopBonusQuizSub": {
+    "description": "PR-E shop/flashcard (const-list strings the scanner missed)."
+  },
+  "flashcardFilterAll": "All",
+  "@flashcardFilterAll": {
+    "description": "PR-E shop/flashcard (const-list strings the scanner missed)."
+  },
+  "flashcardFilterDue": "Due",
+  "@flashcardFilterDue": {
+    "description": "PR-E shop/flashcard (const-list strings the scanner missed)."
+  },
+  "flashcardFilterWeak": "Weak",
+  "@flashcardFilterWeak": {
+    "description": "PR-E shop/flashcard (const-list strings the scanner missed)."
+  },
+  "flashcardFilterDone": "Done",
+  "@flashcardFilterDone": {
+    "description": "PR-E shop/flashcard (const-list strings the scanner missed)."
   }
 }

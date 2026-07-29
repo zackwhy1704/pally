@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -17,6 +18,7 @@ class FlashcardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final state = ref.watch(flashCardViewModelProvider(avatarId));
     final notifier = ref.read(flashCardViewModelProvider(avatarId).notifier);
 
@@ -25,14 +27,14 @@ class FlashcardScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Flashcards', style: AppTextStyles.title),
+        title: Text(l.flashcardsTitle, style: AppTextStyles.title),
         centerTitle: true,
         actions: [
           // Regenerate action — visible when cards exist or pages exist
           if (!state.isGenerating && !state.isLoading)
             IconButton(
               icon: const Icon(Icons.auto_fix_high_rounded),
-              tooltip: 'Regenerate cards',
+              tooltip: l.flashcardRegenerate,
               onPressed: notifier.generateCards,
             ),
           IconButton(
@@ -108,11 +110,12 @@ class _FilterChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const filters = [
-      (FlashCardFilter.all, 'All'),
-      (FlashCardFilter.due, 'Due'),
-      (FlashCardFilter.weak, 'Weak'),
-      (FlashCardFilter.done, 'Done'),
+    final l = AppLocalizations.of(context);
+    final filters = [
+      (FlashCardFilter.all, l.flashcardFilterAll),
+      (FlashCardFilter.due, l.flashcardFilterDue),
+      (FlashCardFilter.weak, l.flashcardFilterWeak),
+      (FlashCardFilter.done, l.flashcardFilterDone),
     ];
 
     return SingleChildScrollView(
@@ -175,6 +178,7 @@ class _FlipCardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Padding(
@@ -188,7 +192,7 @@ class _FlipCardView extends StatelessWidget {
               ? _CardFace(
                   key: const ValueKey('back'),
                   text: card.back,
-                  label: 'Answer',
+                  label: l.moduleAnswer,
                   bgColor: AppColors.tealL,
                   labelColor: AppColors.teal,
                   icon: Icons.lightbulb_rounded,
@@ -197,7 +201,7 @@ class _FlipCardView extends StatelessWidget {
               : _CardFace(
                   key: const ValueKey('front'),
                   text: card.front,
-                  label: 'Question',
+                  label: l.flashcardQuestion,
                   bgColor: AppColors.purpleL,
                   labelColor: AppColors.purple,
                   icon: Icons.help_outline_rounded,
@@ -228,6 +232,7 @@ class _CardFace extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
       constraints: const BoxConstraints(minHeight: 200),
@@ -293,7 +298,7 @@ class _CardFace extends StatelessWidget {
           ],
           const SizedBox(height: AppSpacing.md),
           Text(
-            'Tap to flip',
+            l.flashcardTapFlip,
             style: AppTextStyles.caption,
           ),
         ],
@@ -310,13 +315,14 @@ class _RatingRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
       child: Row(
         children: [
           Expanded(
             child: _RateButton(
-              label: 'Hard',
+              label: l.flashcardHard,
               color: AppColors.coral,
               bgColor: AppColors.coralL,
               icon: Icons.sentiment_dissatisfied_rounded,
@@ -327,7 +333,7 @@ class _RatingRow extends StatelessWidget {
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: _RateButton(
-              label: 'Okay',
+              label: l.flashcardOkay,
               color: AppColors.amber,
               bgColor: AppColors.amberL,
               icon: Icons.sentiment_neutral_rounded,
@@ -338,7 +344,7 @@ class _RatingRow extends StatelessWidget {
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: _RateButton(
-              label: 'Easy',
+              label: l.flashcardEasy,
               color: AppColors.teal,
               bgColor: AppColors.tealL,
               icon: Icons.sentiment_satisfied_rounded,
@@ -444,6 +450,7 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     // Case 1: Cards exist but none match the active filter.
     if (totalCards > 0) {
       final (icon, message) = switch (filter) {
@@ -487,7 +494,7 @@ class _EmptyState extends StatelessWidget {
           children: [
             const Text('📚', style: TextStyle(fontSize: 56)),
             const SizedBox(height: AppSpacing.md),
-            Text('No flashcards yet',
+            Text(l.flashcardEmpty,
                 style: AppTextStyles.title, textAlign: TextAlign.center),
             const SizedBox(height: AppSpacing.xs),
             NoNotesCta(
@@ -509,11 +516,11 @@ class _EmptyState extends StatelessWidget {
         children: [
           const Text('✨', style: TextStyle(fontSize: 56)),
           const SizedBox(height: AppSpacing.md),
-          Text('Ready to make cards',
+          Text(l.flashcardReadyMake,
               style: AppTextStyles.title, textAlign: TextAlign.center),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Your Mochi has notes but no cards yet.\nTap the button below to generate them.',
+            l.flashcardHasNotesNoCards(l.mascotName),
             style: AppTextStyles.body.copyWith(color: AppColors.text2),
             textAlign: TextAlign.center,
           ),
@@ -526,7 +533,7 @@ class _EmptyState extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14)),
             ),
             icon: const Icon(Icons.auto_fix_high_rounded, size: 18),
-            label: const Text('Generate flashcards'),
+            label: Text(l.flashcardGenerate),
           ),
         ],
       ),
@@ -544,6 +551,7 @@ class _GenerateCtaView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.xl),
       child: Column(
@@ -551,12 +559,11 @@ class _GenerateCtaView extends StatelessWidget {
         children: [
           const Text('🃏', style: TextStyle(fontSize: 48)),
           const SizedBox(height: AppSpacing.md),
-          Text('Ready to make your cards',
+          Text(l.flashcardReadyMakeYours,
               style: AppTextStyles.title, textAlign: TextAlign.center),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            "That's about $pageCount page${pageCount == 1 ? '' : 's'} of notes. "
-            'It takes a moment — tap when you\'re ready.',
+            l.flashcardAboutPages(pageCount),
             style: AppTextStyles.body.copyWith(color: AppColors.text2),
             textAlign: TextAlign.center,
           ),
@@ -564,7 +571,7 @@ class _GenerateCtaView extends StatelessWidget {
           FilledButton.icon(
             onPressed: onGenerate,
             icon: const Icon(Icons.auto_awesome_rounded, size: 18),
-            label: Text('Generate cards (~$pageCount page${pageCount == 1 ? '' : 's'})'),
+            label: Text(l.flashcardGenerateN(pageCount)),
             style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
           ),
         ],

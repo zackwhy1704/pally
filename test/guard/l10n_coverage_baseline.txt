@@ -226,21 +226,6 @@ features/exam_prep/presentation/exam_prep_screen.dart	Study $dailyTarget module$
 features/exam_prep/presentation/exam_prep_screen.dart	Try again
 features/exam_prep/presentation/exam_prep_screen.dart	days until exam
 features/flashcards/presentation/flashcard_screen.dart	$current / $total
-features/flashcards/presentation/flashcard_screen.dart	Answer
-features/flashcards/presentation/flashcard_screen.dart	Easy
-features/flashcards/presentation/flashcard_screen.dart	Flashcards
-features/flashcards/presentation/flashcard_screen.dart	Generate cards (~$pageCount page${pageCount == 1 ? 
-features/flashcards/presentation/flashcard_screen.dart	Generate flashcards
-features/flashcards/presentation/flashcard_screen.dart	Hard
-features/flashcards/presentation/flashcard_screen.dart	No flashcards yet
-features/flashcards/presentation/flashcard_screen.dart	Okay
-features/flashcards/presentation/flashcard_screen.dart	Question
-features/flashcards/presentation/flashcard_screen.dart	Ready to make cards
-features/flashcards/presentation/flashcard_screen.dart	Ready to make your cards
-features/flashcards/presentation/flashcard_screen.dart	Regenerate cards
-features/flashcards/presentation/flashcard_screen.dart	Tap to flip
-features/flashcards/presentation/flashcard_screen.dart	That's about $pageCount page${pageCount == 1 ? '' : 's'} of notes. 
-features/flashcards/presentation/flashcard_screen.dart	Your Mochi has notes but no cards yet.nTap the button below to generate them.
 features/flashcards/presentation/flashcard_view_model.dart	your Mochi
 features/groups/presentation/challenge_card.dart	$m:$s
 features/groups/presentation/challenge_card.dart	$pct%
@@ -410,31 +395,7 @@ features/settings/presentation/learning_style_screen.dart	Guide Me builds unders
 features/settings/presentation/learning_style_screen.dart	Learning style
 features/shop/presentation/shop_screen.dart	$n
 features/shop/presentation/shop_screen.dart	${(n / 1000).toStringAsFixed(1)}k
-features/shop/presentation/shop_screen.dart	Already Unlocked
-features/shop/presentation/shop_screen.dart	Awesome!
-features/shop/presentation/shop_screen.dart	Bonus practice quiz
-features/shop/presentation/shop_screen.dart	Bought ${_labelFor(next.lastPurchase!.type)} — 
-features/shop/presentation/shop_screen.dart	Character Shop
-features/shop/presentation/shop_screen.dart	Double-XP boost
-features/shop/presentation/shop_screen.dart	Earn Stars
-features/shop/presentation/shop_screen.dart	Hint token
-features/shop/presentation/shop_screen.dart	I will learn harder and try again!
-features/shop/presentation/shop_screen.dart	Loading odds…
-features/shop/presentation/shop_screen.dart	My Collection
-features/shop/presentation/shop_screen.dart	Mystery Box
-features/shop/presentation/shop_screen.dart	New Character Unlocked!
-features/shop/presentation/shop_screen.dart	Open to unlock a random character!
-features/shop/presentation/shop_screen.dart	Power-ups
-features/shop/presentation/shop_screen.dart	Quiz Power-ups
-features/shop/presentation/shop_screen.dart	Save your streak if you miss a day.
-features/shop/presentation/shop_screen.dart	Spend stars to protect your streak.
-features/shop/presentation/shop_screen.dart	Spend stars to study smarter.
-features/shop/presentation/shop_screen.dart	Streak Freeze
-features/shop/presentation/shop_screen.dart	You can now use this Mochi for studying!
 features/shop/presentation/shop_screen.dart	× $count
-features/shop/presentation/shop_screen.dart	✨ ${character.rarity.label}
-features/shop/presentation/shop_screen.dart	❄️ Freeze added — you now have 
-features/shop/presentation/shop_screen.dart	💡 FYI — Probability:
 features/study_plan/presentation/study_plan_screen.dart	Coming Up
 features/study_plan/presentation/study_plan_screen.dart	Complete all tasks to keep your streak going and earn bonus stars!
 features/study_plan/presentation/study_plan_screen.dart	Could not save — check your connection

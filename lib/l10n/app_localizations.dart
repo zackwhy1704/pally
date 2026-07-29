@@ -3373,6 +3373,294 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'successfully'**
   String get joinedFallback;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn Stars'**
+  String get shopEarnStars;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'My Collection'**
+  String get shopMyCollection;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Mystery Box'**
+  String get shopMysteryBox;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Open to unlock a random character!'**
+  String get shopMysteryBoxHint;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Power-ups'**
+  String get shopPowerUps;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz Power-ups'**
+  String get shopQuizPowerUps;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Spend stars to study smarter.'**
+  String get shopQuizPowerUpsHint;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Hint token'**
+  String get shopHintToken;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Double-XP boost'**
+  String get shopDoubleXp;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Bonus practice quiz'**
+  String get shopBonusQuiz;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak Freeze'**
+  String get shopStreakFreeze;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Save your streak if you miss a day.'**
+  String get shopStreakFreezeHint;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Spend stars to protect your streak.'**
+  String get shopStreakFreezeSpend;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Already Unlocked'**
+  String get shopAlreadyUnlocked;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Awesome!'**
+  String get shopAwesome;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'New Character Unlocked!'**
+  String get shopNewCharacter;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'You can now use this {mascot} for studying!'**
+  String shopCanUseMochi(String mascot);
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading odds…'**
+  String get shopLoadingOdds;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'💡 FYI — Probability:'**
+  String get shopProbability;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'I will learn harder and try again!'**
+  String get shopLearnHarder;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'❄️ Freeze added — you now have {current}/{cap}'**
+  String shopFreezeAdded(int current, int cap);
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Bought {label} — you now have {count}'**
+  String shopBought(String label, int count);
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'✨ {label}'**
+  String shopRarityBadge(String label);
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'a hint token'**
+  String get shopLabelHintToken;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'a double-XP boost'**
+  String get shopLabelDoubleXp;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'a bonus quiz'**
+  String get shopLabelBonusQuiz;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'a powerup'**
+  String get shopLabelPowerup;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Flashcards'**
+  String get flashcardsTitle;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Question'**
+  String get flashcardQuestion;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to flip'**
+  String get flashcardTapFlip;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy'**
+  String get flashcardEasy;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Okay'**
+  String get flashcardOkay;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard'**
+  String get flashcardHard;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'No flashcards yet'**
+  String get flashcardEmpty;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to make cards'**
+  String get flashcardReadyMake;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to make your cards'**
+  String get flashcardReadyMakeYours;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate flashcards'**
+  String get flashcardGenerate;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Regenerate cards'**
+  String get flashcardRegenerate;
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Your {mascot} has notes but no cards yet.\nTap the button below to generate them.'**
+  String flashcardHasNotesNoCards(String mascot);
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{That\'s about 1 page of notes. It takes a moment — tap when you\'re ready.} other{That\'s about {count} pages of notes. It takes a moment — tap when you\'re ready.}}'**
+  String flashcardAboutPages(int count);
+
+  /// PR-E shop/flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Generate cards (~1 page)} other{Generate cards (~{count} pages)}}'**
+  String flashcardGenerateN(int count);
+
+  /// PR-E shop/flashcard (const-list strings the scanner missed).
+  ///
+  /// In en, this message translates to:
+  /// **'Reveal one wrong option in a quiz.'**
+  String get shopHintTokenSub;
+
+  /// PR-E shop/flashcard (const-list strings the scanner missed).
+  ///
+  /// In en, this message translates to:
+  /// **'Doubles XP on your next quiz (within the daily cap).'**
+  String get shopDoubleXpSub;
+
+  /// PR-E shop/flashcard (const-list strings the scanner missed).
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock an extra full-XP quiz today.'**
+  String get shopBonusQuizSub;
+
+  /// PR-E shop/flashcard (const-list strings the scanner missed).
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get flashcardFilterAll;
+
+  /// PR-E shop/flashcard (const-list strings the scanner missed).
+  ///
+  /// In en, this message translates to:
+  /// **'Due'**
+  String get flashcardFilterDue;
+
+  /// PR-E shop/flashcard (const-list strings the scanner missed).
+  ///
+  /// In en, this message translates to:
+  /// **'Weak'**
+  String get flashcardFilterWeak;
+
+  /// PR-E shop/flashcard (const-list strings the scanner missed).
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get flashcardFilterDone;
 }
 
 class _AppLocalizationsDelegate

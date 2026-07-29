@@ -1911,4 +1911,162 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get joinedFallback => '成功';
+
+  @override
+  String get shopEarnStars => '赚取星星';
+
+  @override
+  String get shopMyCollection => '我的收藏';
+
+  @override
+  String get shopMysteryBox => '神秘盒子';
+
+  @override
+  String get shopMysteryBoxHint => '打开以解锁一个随机角色！';
+
+  @override
+  String get shopPowerUps => '道具';
+
+  @override
+  String get shopQuizPowerUps => '小测道具';
+
+  @override
+  String get shopQuizPowerUpsHint => '花费星星，更聪明地学习。';
+
+  @override
+  String get shopHintToken => '提示令牌';
+
+  @override
+  String get shopDoubleXp => '双倍 XP 加成';
+
+  @override
+  String get shopBonusQuiz => '额外练习小测';
+
+  @override
+  String get shopStreakFreeze => '连续记录冻结';
+
+  @override
+  String get shopStreakFreezeHint => '漏掉一天时保住你的连续记录。';
+
+  @override
+  String get shopStreakFreezeSpend => '花费星星保护你的连续记录。';
+
+  @override
+  String get shopAlreadyUnlocked => '已解锁';
+
+  @override
+  String get shopAwesome => '太棒了！';
+
+  @override
+  String get shopNewCharacter => '解锁新角色！';
+
+  @override
+  String shopCanUseMochi(String mascot) {
+    return '现在你可以用这个 $mascot 来学习了！';
+  }
+
+  @override
+  String get shopLoadingOdds => '正在加载概率……';
+
+  @override
+  String get shopProbability => '💡 温馨提示——概率：';
+
+  @override
+  String get shopLearnHarder => '我会更努力学习，再试一次！';
+
+  @override
+  String shopFreezeAdded(int current, int cap) {
+    return '❄️ 已添加冻结——你现在有 $current/$cap 个';
+  }
+
+  @override
+  String shopBought(String label, int count) {
+    return '已购买 $label——你现在有 $count 个';
+  }
+
+  @override
+  String shopRarityBadge(String label) {
+    return '✨ $label';
+  }
+
+  @override
+  String get shopLabelHintToken => '一个提示令牌';
+
+  @override
+  String get shopLabelDoubleXp => '一个双倍 XP 加成';
+
+  @override
+  String get shopLabelBonusQuiz => '一次额外小测';
+
+  @override
+  String get shopLabelPowerup => '一个道具';
+
+  @override
+  String get flashcardsTitle => '抽认卡';
+
+  @override
+  String get flashcardQuestion => '问题';
+
+  @override
+  String get flashcardTapFlip => '点按翻面';
+
+  @override
+  String get flashcardEasy => '简单';
+
+  @override
+  String get flashcardOkay => '一般';
+
+  @override
+  String get flashcardHard => '困难';
+
+  @override
+  String get flashcardEmpty => '还没有抽认卡';
+
+  @override
+  String get flashcardReadyMake => '准备好制作卡片';
+
+  @override
+  String get flashcardReadyMakeYours => '准备好制作你的卡片';
+
+  @override
+  String get flashcardGenerate => '生成抽认卡';
+
+  @override
+  String get flashcardRegenerate => '重新生成卡片';
+
+  @override
+  String flashcardHasNotesNoCards(String mascot) {
+    return '你的 $mascot 有笔记但还没有卡片。\n点按下方按钮来生成。';
+  }
+
+  @override
+  String flashcardAboutPages(int count) {
+    return '大约有 $count 页笔记。需要一点时间——准备好后点按。';
+  }
+
+  @override
+  String flashcardGenerateN(int count) {
+    return '生成卡片（约 $count 页）';
+  }
+
+  @override
+  String get shopHintTokenSub => '在小测中揭示一个错误选项。';
+
+  @override
+  String get shopDoubleXpSub => '让你下一次小测的 XP 翻倍（在每日上限内）。';
+
+  @override
+  String get shopBonusQuizSub => '今天解锁一次额外的满 XP 小测。';
+
+  @override
+  String get flashcardFilterAll => '全部';
+
+  @override
+  String get flashcardFilterDue => '待复习';
+
+  @override
+  String get flashcardFilterWeak => '薄弱';
+
+  @override
+  String get flashcardFilterDone => '已完成';
 }

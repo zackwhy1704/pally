@@ -1977,4 +1977,177 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get joinedFallback => 'successfully';
+
+  @override
+  String get shopEarnStars => 'Earn Stars';
+
+  @override
+  String get shopMyCollection => 'My Collection';
+
+  @override
+  String get shopMysteryBox => 'Mystery Box';
+
+  @override
+  String get shopMysteryBoxHint => 'Open to unlock a random character!';
+
+  @override
+  String get shopPowerUps => 'Power-ups';
+
+  @override
+  String get shopQuizPowerUps => 'Quiz Power-ups';
+
+  @override
+  String get shopQuizPowerUpsHint => 'Spend stars to study smarter.';
+
+  @override
+  String get shopHintToken => 'Hint token';
+
+  @override
+  String get shopDoubleXp => 'Double-XP boost';
+
+  @override
+  String get shopBonusQuiz => 'Bonus practice quiz';
+
+  @override
+  String get shopStreakFreeze => 'Streak Freeze';
+
+  @override
+  String get shopStreakFreezeHint => 'Save your streak if you miss a day.';
+
+  @override
+  String get shopStreakFreezeSpend => 'Spend stars to protect your streak.';
+
+  @override
+  String get shopAlreadyUnlocked => 'Already Unlocked';
+
+  @override
+  String get shopAwesome => 'Awesome!';
+
+  @override
+  String get shopNewCharacter => 'New Character Unlocked!';
+
+  @override
+  String shopCanUseMochi(String mascot) {
+    return 'You can now use this $mascot for studying!';
+  }
+
+  @override
+  String get shopLoadingOdds => 'Loading odds…';
+
+  @override
+  String get shopProbability => '💡 FYI — Probability:';
+
+  @override
+  String get shopLearnHarder => 'I will learn harder and try again!';
+
+  @override
+  String shopFreezeAdded(int current, int cap) {
+    return '❄️ Freeze added — you now have $current/$cap';
+  }
+
+  @override
+  String shopBought(String label, int count) {
+    return 'Bought $label — you now have $count';
+  }
+
+  @override
+  String shopRarityBadge(String label) {
+    return '✨ $label';
+  }
+
+  @override
+  String get shopLabelHintToken => 'a hint token';
+
+  @override
+  String get shopLabelDoubleXp => 'a double-XP boost';
+
+  @override
+  String get shopLabelBonusQuiz => 'a bonus quiz';
+
+  @override
+  String get shopLabelPowerup => 'a powerup';
+
+  @override
+  String get flashcardsTitle => 'Flashcards';
+
+  @override
+  String get flashcardQuestion => 'Question';
+
+  @override
+  String get flashcardTapFlip => 'Tap to flip';
+
+  @override
+  String get flashcardEasy => 'Easy';
+
+  @override
+  String get flashcardOkay => 'Okay';
+
+  @override
+  String get flashcardHard => 'Hard';
+
+  @override
+  String get flashcardEmpty => 'No flashcards yet';
+
+  @override
+  String get flashcardReadyMake => 'Ready to make cards';
+
+  @override
+  String get flashcardReadyMakeYours => 'Ready to make your cards';
+
+  @override
+  String get flashcardGenerate => 'Generate flashcards';
+
+  @override
+  String get flashcardRegenerate => 'Regenerate cards';
+
+  @override
+  String flashcardHasNotesNoCards(String mascot) {
+    return 'Your $mascot has notes but no cards yet.\nTap the button below to generate them.';
+  }
+
+  @override
+  String flashcardAboutPages(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'That\'s about $count pages of notes. It takes a moment — tap when you\'re ready.',
+      one:
+          'That\'s about 1 page of notes. It takes a moment — tap when you\'re ready.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String flashcardGenerateN(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Generate cards (~$count pages)',
+      one: 'Generate cards (~1 page)',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shopHintTokenSub => 'Reveal one wrong option in a quiz.';
+
+  @override
+  String get shopDoubleXpSub =>
+      'Doubles XP on your next quiz (within the daily cap).';
+
+  @override
+  String get shopBonusQuizSub => 'Unlock an extra full-XP quiz today.';
+
+  @override
+  String get flashcardFilterAll => 'All';
+
+  @override
+  String get flashcardFilterDue => 'Due';
+
+  @override
+  String get flashcardFilterWeak => 'Weak';
+
+  @override
+  String get flashcardFilterDone => 'Done';
 }

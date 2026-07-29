@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/ui/pally_toast.dart';
@@ -19,6 +20,7 @@ class ShopScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final shopState = ref.watch(shopViewModelProvider);
     final notifier = ref.read(shopViewModelProvider.notifier);
 
@@ -39,9 +41,8 @@ class ShopScreen extends ConsumerWidget {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           content: Text(
-            '❄️ Freeze added — you now have '
-            '${next.lastFreezePurchase!.freezes}/'
-            '${next.lastFreezePurchase!.freezeCap}',
+            l.shopFreezeAdded(next.lastFreezePurchase!.freezes,
+                next.lastFreezePurchase!.freezeCap),
           ),
         ));
         notifier.clearFreezePurchase();
@@ -66,7 +67,7 @@ class ShopScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Character Shop', style: AppTextStyles.title),
+        title: Text(l.progressCharacterShop, style: AppTextStyles.title),
         centerTitle: true,
         actions: [
           Padding(
@@ -215,6 +216,7 @@ class _MysteryBoxCardState extends State<_MysteryBoxCard>
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final canAfford = widget.stars >= 600;
 
     return Container(
@@ -278,12 +280,12 @@ class _MysteryBoxCardState extends State<_MysteryBoxCard>
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'Mystery Box',
+            l.shopMysteryBox,
             style: AppTextStyles.heading1.copyWith(color: Colors.white),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Open to unlock a random character!',
+            l.shopMysteryBoxHint,
             style: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
             textAlign: TextAlign.center,
           ),
@@ -345,26 +347,27 @@ class _PowerupShopCard extends ConsumerWidget {
   const _PowerupShopCard({required this.stars});
   final int stars;
 
-  static const _items = [
+  static List<_PowerupItem> _items(AppLocalizations l) => [
     _PowerupItem(
         type: 'HINT_TOKEN',
         emoji: '💡',
-        title: 'Hint token',
-        sub: 'Reveal one wrong option in a quiz.'),
+        title: l.shopHintToken,
+        sub: l.shopHintTokenSub),
     _PowerupItem(
         type: 'DOUBLE_XP',
         emoji: '⚡',
-        title: 'Double-XP boost',
-        sub: 'Doubles XP on your next quiz (within the daily cap).'),
+        title: l.shopDoubleXp,
+        sub: l.shopDoubleXpSub),
     _PowerupItem(
         type: 'BONUS_QUIZ',
         emoji: '🎯',
-        title: 'Bonus practice quiz',
-        sub: 'Unlock an extra full-XP quiz today.'),
+        title: l.shopBonusQuiz,
+        sub: l.shopBonusQuizSub),
   ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final state = ref.watch(powerupViewModelProvider);
     final notifier = ref.read(powerupViewModelProvider.notifier);
 
@@ -377,8 +380,8 @@ class _PowerupShopCard extends ConsumerWidget {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           content: Text(
-            'Bought ${_labelFor(next.lastPurchase!.type)} — '
-            'you now have ${next.lastPurchase!.count}',
+            l.shopBought(_labelFor(l, next.lastPurchase!.type),
+                next.lastPurchase!.count),
           ),
         ));
         notifier.clearPurchase();
@@ -406,10 +409,10 @@ class _PowerupShopCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Quiz Power-ups', style: AppTextStyles.title),
+          Text(l.shopQuizPowerUps, style: AppTextStyles.title),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Spend stars to study smarter.',
+            l.shopQuizPowerUpsHint,
             style: AppTextStyles.bodySmall,
           ),
           const SizedBox(height: AppSpacing.md),
@@ -422,7 +425,7 @@ class _PowerupShopCard extends ConsumerWidget {
               ),
             )
           else
-            ..._items.map((it) => _PowerupRow(
+            ..._items(l).map((it) => _PowerupRow(
                   item: it,
                   count: state.counts[it.type] ?? 0,
                   cost: state.catalog[it.type]?.cost ?? 0,
@@ -435,11 +438,11 @@ class _PowerupShopCard extends ConsumerWidget {
     );
   }
 
-  static String _labelFor(String type) => switch (type) {
-        'HINT_TOKEN' => 'a hint token',
-        'DOUBLE_XP' => 'a double-XP boost',
-        'BONUS_QUIZ' => 'a bonus quiz',
-        _ => 'a powerup',
+  static String _labelFor(AppLocalizations l, String type) => switch (type) {
+        'HINT_TOKEN' => l.shopLabelHintToken,
+        'DOUBLE_XP' => l.shopLabelDoubleXp,
+        'BONUS_QUIZ' => l.shopLabelBonusQuiz,
+        _ => l.shopLabelPowerup,
       };
 }
 
@@ -584,6 +587,7 @@ class _MysteryOddsPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final asyncOdds = ref.watch(mysteryBoxOddsNotifierProvider);
     final odds = asyncOdds.valueOrNull;
     return Container(
@@ -599,7 +603,7 @@ class _MysteryOddsPanel extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '💡 FYI — Probability:',
+            l.shopProbability,
             style: AppTextStyles.label.copyWith(
               color: const Color(0xFFB8860B),
               fontWeight: FontWeight.w600,
@@ -608,7 +612,7 @@ class _MysteryOddsPanel extends ConsumerWidget {
           const SizedBox(height: 2),
           if (odds == null || odds.isEmpty)
             Text(
-              'Loading odds…',
+              l.shopLoadingOdds,
               style: AppTextStyles.caption.copyWith(color: AppColors.text2),
             )
           else
@@ -655,6 +659,7 @@ class _PowerUpsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final canAfford = stars >= 150;
     return Container(
       padding: AppSpacing.card,
@@ -666,10 +671,10 @@ class _PowerUpsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Power-ups', style: AppTextStyles.title),
+          Text(l.shopPowerUps, style: AppTextStyles.title),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Spend stars to protect your streak.',
+            l.shopStreakFreezeSpend,
             style: AppTextStyles.bodySmall,
           ),
           const SizedBox(height: AppSpacing.md),
@@ -698,12 +703,12 @@ class _PowerUpsCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Streak Freeze',
+                        l.shopStreakFreeze,
                         style: AppTextStyles.body
                             .copyWith(fontWeight: FontWeight.w700),
                       ),
                       Text(
-                        'Save your streak if you miss a day.',
+                        l.shopStreakFreezeHint,
                         style: AppTextStyles.bodySmall,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -774,6 +779,7 @@ class _EarnMethodsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: AppSpacing.card,
       decoration: BoxDecoration(
@@ -784,7 +790,7 @@ class _EarnMethodsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Earn Stars', style: AppTextStyles.title),
+          Text(l.shopEarnStars, style: AppTextStyles.title),
           const SizedBox(height: AppSpacing.md),
           ..._methods.map((m) => Padding(
                 padding: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -843,6 +849,7 @@ class _CollectionCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final collection = ref.watch(collectionViewModelProvider);
     final unlocked = ref.watch(unlockedCharactersProvider);
 
@@ -879,7 +886,7 @@ class _CollectionCard extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'My Collection',
+                    l.shopMyCollection,
                     style: AppTextStyles.body
                         .copyWith(fontWeight: FontWeight.w600),
                   ),
@@ -907,6 +914,7 @@ class _UnlockedDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
@@ -926,7 +934,7 @@ class _UnlockedDialog extends StatelessWidget {
                   color: AppColors.green, size: 32),
             ),
             const SizedBox(height: AppSpacing.md),
-            Text('New Character Unlocked!',
+            Text(l.shopNewCharacter,
                 style: AppTextStyles.title, textAlign: TextAlign.center),
             const SizedBox(height: AppSpacing.md),
             Container(
@@ -961,7 +969,7 @@ class _UnlockedDialog extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  '✨ ${character.rarity.label}',
+                  l.shopRarityBadge(character.rarity.label),
                   style: AppTextStyles.label.copyWith(
                     color: AppColors.gold,
                     fontWeight: FontWeight.w700,
@@ -971,7 +979,7 @@ class _UnlockedDialog extends StatelessWidget {
             ],
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'You can now use this Mochi for studying!',
+              l.shopCanUseMochi(l.mascotName),
               style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),
@@ -983,7 +991,7 @@ class _UnlockedDialog extends StatelessWidget {
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.purple,
                 ),
-                child: const Text('Awesome!'),
+                child: Text(l.shopAwesome),
               ),
             ),
           ],
@@ -1000,6 +1008,7 @@ class _DuplicateDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
@@ -1033,7 +1042,7 @@ class _DuplicateDialog extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                'Already Unlocked',
+                l.shopAlreadyUnlocked,
                 style: AppTextStyles.label.copyWith(
                   color: AppColors.amber,
                   fontWeight: FontWeight.w700,
@@ -1042,7 +1051,7 @@ class _DuplicateDialog extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'I will learn harder and try again!',
+              l.shopLearnHarder,
               style: AppTextStyles.body.copyWith(
                 color: AppColors.text2,
                 fontStyle: FontStyle.italic,
