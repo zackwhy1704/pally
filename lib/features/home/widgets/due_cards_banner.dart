@@ -5,6 +5,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/features/flashcards/providers/due_cards_summary_provider.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 /// Compact banner at the top of Home that surfaces flashcards due for review
 /// across all tutors. Hidden when nothing is due. Tap → first tutor with
@@ -22,6 +23,7 @@ class DueCardsBanner extends ConsumerWidget {
         }
         final count = summary.totalDue;
         final avatar = summary.firstDueAvatar!;
+        final l10n = AppLocalizations.of(context);
         return Padding(
           padding: const EdgeInsets.fromLTRB(
               AppSpacing.md, AppSpacing.sm, AppSpacing.md, 0),
@@ -55,14 +57,14 @@ class DueCardsBanner extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '$count flashcard${count == 1 ? '' : 's'} due',
+                            l10n.homeFlashcardsDue(count),
                             style: AppTextStyles.body.copyWith(
                               fontWeight: FontWeight.w700,
                               color: AppColors.text1,
                             ),
                           ),
                           Text(
-                            'Start with ${avatar.name} — 2-min review',
+                            l10n.homeStartReview(avatar.name),
                             style: AppTextStyles.bodySmall
                                 .copyWith(color: AppColors.text2),
                             maxLines: 1,

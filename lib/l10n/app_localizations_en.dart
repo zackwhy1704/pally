@@ -569,4 +569,206 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get quizUploadNotesCta =>
       'Upload some notes so Mochi can build your first quiz!';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navLibrary => 'Library';
+
+  @override
+  String get navGroups => 'Groups';
+
+  @override
+  String get navMe => 'Me';
+
+  @override
+  String get homeWelcomeBack => 'Welcome back! 👋';
+
+  @override
+  String get homeReadyToLearn => 'Ready to keep learning?';
+
+  @override
+  String get homeNewMochi => 'New Mochi';
+
+  @override
+  String get homeSectionMyClasses => 'MY CLASSES';
+
+  @override
+  String get homeSectionYourMochis => 'YOUR MOCHIS';
+
+  @override
+  String homeLevelBadge(int level) {
+    return '⭐ Level $level';
+  }
+
+  @override
+  String get homeMaxLevel => 'MAX LEVEL ⭐';
+
+  @override
+  String homeXpProgress(int xpInto, int xpSpan) {
+    return '$xpInto / $xpSpan XP';
+  }
+
+  @override
+  String get homeCouldNotLoadMochis =>
+      'Could not load Mochis. Pull down to retry.';
+
+  @override
+  String get homeCouldNotLoadYourMochis => 'Could not load your Mochis.';
+
+  @override
+  String get homeCheckConnectionPull =>
+      'Check your connection and pull down to retry.';
+
+  @override
+  String get homeConsentApprove =>
+      'Ask a grown-up to approve your account to make a Mochi.';
+
+  @override
+  String get homeResendEmail => 'Resend email';
+
+  @override
+  String get homeConsentCollapsedChip =>
+      'Awaiting parental approval — tap for options';
+
+  @override
+  String get homeConsentWaitingTitle => 'Waiting for parental approval';
+
+  @override
+  String homeConsentEmailSent(String email) {
+    return 'A consent email was sent to $email. AI features unlock once your parent approves.';
+  }
+
+  @override
+  String get homeConsentSignOut => 'Sign out';
+
+  @override
+  String get homeManageKnowledge => 'Manage knowledge';
+
+  @override
+  String get homeCouldNotActivate => 'Could not activate — try again.';
+
+  @override
+  String homeMochiLocked(String name) {
+    return '$name is locked';
+  }
+
+  @override
+  String get homeActivateError =>
+      'Something went wrong — this Mochi should be active. Pull to refresh.';
+
+  @override
+  String homeActivateCapMessage(int cap) {
+    String _temp0 = intl.Intl.pluralLogic(
+      cap,
+      locale: localeName,
+      other:
+          'You have $cap active Mochis on your free plan. Deactivate another Mochi first, then activate this one.\n\nYou can swap once every 24 hours.',
+      one:
+          'You have 1 active Mochi on your free plan. Deactivate another Mochi first, then activate this one.\n\nYou can swap once every 24 hours.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeActivating => 'Activating…';
+
+  @override
+  String homeActivateAvatar(String name) {
+    return 'Activate $name';
+  }
+
+  @override
+  String get homeClose => 'Close';
+
+  @override
+  String get homeNudgeFlashcards => 'You have flashcards due today!';
+
+  @override
+  String get homeNudgeStreak => 'Keep your streak going!';
+
+  @override
+  String homeReteachMessage(String concept) {
+    return 'Can we review $concept? I keep getting it wrong';
+  }
+
+  @override
+  String get homeReteachThis => 'this';
+
+  @override
+  String get homeContinueLearning => 'CONTINUE LEARNING';
+
+  @override
+  String homeFlashcardsDue(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count flashcards due',
+      one: '1 flashcard due',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String homeStartReview(String name) {
+    return 'Start with $name — 2-min review';
+  }
+
+  @override
+  String get homeAssignments => 'ASSIGNMENTS';
+
+  @override
+  String get homeAssignmentOverdue => 'Overdue';
+
+  @override
+  String homeAssignmentDue(String date) {
+    return 'Due: $date';
+  }
+
+  @override
+  String get homeAssignmentPreClass => 'Pre-class';
+
+  @override
+  String get homeAssignmentPostClass => 'Post-class';
+
+  @override
+  String get homeAssignmentRevision => 'Revision';
+
+  @override
+  String get homeAssignmentCustom => 'Custom';
+
+  @override
+  String homeEmptyHi(String name) {
+    return 'Hi $name! 👋';
+  }
+
+  @override
+  String get homeEmptySetupFirst => 'Let\'s set up your first Mochi';
+
+  @override
+  String get homeEmptyNoMochis => 'No Mochis yet!';
+
+  @override
+  String get homeEmptyCreate =>
+      'Create your first Mochi and start learning something amazing 🚀';
+
+  @override
+  String get homeEmptyPickBuddy =>
+      'Pick a buddy, teach it your notes, ask it anything!';
+
+  @override
+  String get homeEmptyCreateButton => '+ Create My First Mochi ✨';
+
+  @override
+  String get homeEmptyHaveCode => '🎟️  Have a code? Enter or scan it';
+
+  @override
+  String get homeEmptyChipLearn => '🧠 Learn from your notes';
+
+  @override
+  String get homeEmptyChipAsk => '💬 Ask any question';
+
+  @override
+  String get homeEmptyChipEarn => '⭐ Earn XP & rewards';
 }

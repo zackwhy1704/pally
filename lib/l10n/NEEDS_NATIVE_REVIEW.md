@@ -209,9 +209,45 @@ results "Review" button. Terms to sanity-check: 确信度 (confidence), 概念�
 | `quizBuilding` | Building your quiz… | 正在生成你的小测…… |
 | `quizNoQuizToday` / `quizUploadNotesCta` | No quiz today / Upload some notes so Mochi can build your first quiz! | 今天没有小测 / 上传一些笔记，Mochi 就能为你生成第一份小测！ |
 
+### PR-home — home screen + bottom nav (`scaffold_shell` · `home_screen` · home banners)
+
+| key | en | zh (draft) |
+|-----|----|-----------|
+| `navHome` / `navLibrary` / `navGroups` / `navMe` | Home / Library / Groups / Me | 主页 / 学习库 / 小组 / 我的 |
+| `homeWelcomeBack` / `homeReadyToLearn` | Welcome back! 👋 / Ready to keep learning? | 欢迎回来！👋 / 准备好继续学习了吗？ |
+| `homeNewMochi` | New Mochi | 新建 Mochi |
+| `homeSectionMyClasses` / `homeSectionYourMochis` | MY CLASSES / YOUR MOCHIS | 我的班级 / 你的 Mochi |
+| `homeLevelBadge` | ⭐ Level {level} | ⭐ 等级 {level} |
+| `homeMaxLevel` / `homeXpProgress` | MAX LEVEL ⭐ / {xpInto} / {xpSpan} XP | 满级 ⭐ / {xpInto} / {xpSpan} XP |
+| `homeCouldNotLoadMochis` | Could not load Mochis. Pull down to retry. | 无法加载 Mochi。下拉重试。 |
+| `homeCouldNotLoadYourMochis` / `homeCheckConnectionPull` | Could not load your Mochis. / Check your connection and pull down to retry. | 无法加载你的 Mochi。 / 请检查网络连接后下拉重试。 |
+| `homeConsentApprove` | Ask a grown-up to approve your account to make a Mochi. | 请让家长同意你的账户，才能创建 Mochi。 |
+| `homeResendEmail` | Resend email | 重新发送邮件 |
+| `homeConsentCollapsedChip` | Awaiting parental approval — tap for options | 等待家长批准——点按查看选项 |
+| `homeConsentWaitingTitle` | Waiting for parental approval | 等待家长批准 |
+| `homeConsentEmailSent` | A consent email was sent to {email}. AI features unlock once your parent approves. | 已向 {email} 发送同意邮件。家长批准后即可解锁 AI 功能。 |
+| `homeConsentSignOut` | Sign out | 退出登录 |
+| `homeManageKnowledge` | Manage knowledge | 管理知识 |
+| `homeMochiLocked` | {name} is locked | {name} 已锁定 |
+| `homeCouldNotActivate` | Could not activate — try again. | 无法激活——请重试。 |
+| `homeActivateError` | Something went wrong — this Mochi should be active. Pull to refresh. | 出错了——这个 Mochi 应该处于激活状态。请下拉刷新。 |
+| `homeActivateCapMessage` | You have {cap} active Mochi(s) on your free plan. Deactivate another Mochi first… (24h swap) | 在免费方案中，你已有 {cap} 个激活的 Mochi。请先停用另一个 Mochi…（每 24 小时更换一次） |
+| `homeActivating` / `homeActivateAvatar` / `homeClose` | Activating… / Activate {name} / Close | 激活中…… / 激活 {name} / 关闭 |
+| `homeNudgeFlashcards` / `homeNudgeStreak` | You have flashcards due today! / Keep your streak going! | 你今天有卡片要复习了！ / 保持你的连续学习记录！ |
+| `homeReteachMessage` / `homeReteachThis` | Can we review {concept}? I keep getting it wrong / this | 我们能复习一下 {concept} 吗？我总是做错 / 这个 |
+| `homeContinueLearning` | CONTINUE LEARNING | 继续学习 |
+| `homeFlashcardsDue` | {count} flashcard(s) due | {count} 张卡片待复习 |
+| `homeStartReview` | Start with {name} — 2-min review | 从 {name} 开始——2 分钟复习 |
+| `homeAssignments` / `homeAssignmentOverdue` / `homeAssignmentDue` | ASSIGNMENTS / Overdue / Due: {date} | 作业 / 已逾期 / 截止：{date} |
+| `homeAssignmentPreClass/PostClass/Revision/Custom` | Pre-class / Post-class / Revision / Custom | 课前 / 课后 / 复习 / 自定义 |
+| `homeEmptyHi` / `homeEmptySetupFirst` | Hi {name}! 👋 / Let's set up your first Mochi | 你好，{name}！👋 / 来设置你的第一个 Mochi 吧 |
+| `homeEmptyNoMochis` / `homeEmptyCreate` / `homeEmptyPickBuddy` | No Mochis yet! / Create your first Mochi… 🚀 / Pick a buddy, teach it your notes, ask it anything! | 还没有 Mochi！ / 创建你的第一个 Mochi… 🚀 / 挑一个伙伴，教它你的笔记，尽管问它任何问题！ |
+| `homeEmptyCreateButton` / `homeEmptyHaveCode` | + Create My First Mochi ✨ / 🎟️ Have a code? Enter or scan it | + 创建我的第一个 Mochi ✨ / 🎟️ 有邀请码？输入或扫描 |
+| `homeEmptyChipLearn/Ask/Earn` | 🧠 Learn from your notes / 💬 Ask any question / ⭐ Earn XP & rewards | 🧠 从你的笔记中学习 / 💬 有问必答 / ⭐ 赚取 XP 和奖励 |
+
 **DO NOT translate** (carry their own language already): Mochi's name, class names,
 teacher-uploaded content, student-generated text, any AI-generated artifact.
 
-Running count of zh keys drafted this branch: **157** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 · PR5: 22 · PR6: 21 · PR7: 21 · PR8: 26 — quiz).
-Remaining core-loop extraction (onboarding tour · sign-up form · chat · modules · quiz · library) lands in later PRs;
+Running count of zh keys drafted this branch: **~208** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 · PR5: 22 · PR6: 21 · PR7: 21 · PR8: 26 — quiz · PR-home: ~51 — home + nav).
+Remaining core-loop extraction (module item bodies · settings · sign-up form) lands in later PRs;
 each appends its rows here.

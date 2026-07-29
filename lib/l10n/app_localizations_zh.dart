@@ -539,4 +539,196 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get quizUploadNotesCta => '上传一些笔记，Mochi 就能为你生成第一份小测！';
+
+  @override
+  String get navHome => '主页';
+
+  @override
+  String get navLibrary => '学习库';
+
+  @override
+  String get navGroups => '小组';
+
+  @override
+  String get navMe => '我的';
+
+  @override
+  String get homeWelcomeBack => '欢迎回来！👋';
+
+  @override
+  String get homeReadyToLearn => '准备好继续学习了吗？';
+
+  @override
+  String get homeNewMochi => '新建 Mochi';
+
+  @override
+  String get homeSectionMyClasses => '我的班级';
+
+  @override
+  String get homeSectionYourMochis => '你的 Mochi';
+
+  @override
+  String homeLevelBadge(int level) {
+    return '⭐ 等级 $level';
+  }
+
+  @override
+  String get homeMaxLevel => '满级 ⭐';
+
+  @override
+  String homeXpProgress(int xpInto, int xpSpan) {
+    return '$xpInto / $xpSpan XP';
+  }
+
+  @override
+  String get homeCouldNotLoadMochis => '无法加载 Mochi。下拉重试。';
+
+  @override
+  String get homeCouldNotLoadYourMochis => '无法加载你的 Mochi。';
+
+  @override
+  String get homeCheckConnectionPull => '请检查网络连接后下拉重试。';
+
+  @override
+  String get homeConsentApprove => '请让家长同意你的账户，才能创建 Mochi。';
+
+  @override
+  String get homeResendEmail => '重新发送邮件';
+
+  @override
+  String get homeConsentCollapsedChip => '等待家长批准——点按查看选项';
+
+  @override
+  String get homeConsentWaitingTitle => '等待家长批准';
+
+  @override
+  String homeConsentEmailSent(String email) {
+    return '已向 $email 发送同意邮件。家长批准后即可解锁 AI 功能。';
+  }
+
+  @override
+  String get homeConsentSignOut => '退出登录';
+
+  @override
+  String get homeManageKnowledge => '管理知识';
+
+  @override
+  String get homeCouldNotActivate => '无法激活——请重试。';
+
+  @override
+  String homeMochiLocked(String name) {
+    return '$name 已锁定';
+  }
+
+  @override
+  String get homeActivateError => '出错了——这个 Mochi 应该处于激活状态。请下拉刷新。';
+
+  @override
+  String homeActivateCapMessage(int cap) {
+    String _temp0 = intl.Intl.pluralLogic(
+      cap,
+      locale: localeName,
+      other:
+          '在免费方案中，你已有 $cap 个激活的 Mochi。请先停用另一个 Mochi，再激活这一个。\n\n每 24 小时只能更换一次。',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeActivating => '激活中……';
+
+  @override
+  String homeActivateAvatar(String name) {
+    return '激活 $name';
+  }
+
+  @override
+  String get homeClose => '关闭';
+
+  @override
+  String get homeNudgeFlashcards => '你今天有卡片要复习了！';
+
+  @override
+  String get homeNudgeStreak => '保持你的连续学习记录！';
+
+  @override
+  String homeReteachMessage(String concept) {
+    return '我们能复习一下 $concept 吗？我总是做错';
+  }
+
+  @override
+  String get homeReteachThis => '这个';
+
+  @override
+  String get homeContinueLearning => '继续学习';
+
+  @override
+  String homeFlashcardsDue(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 张卡片待复习',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String homeStartReview(String name) {
+    return '从 $name 开始——2 分钟复习';
+  }
+
+  @override
+  String get homeAssignments => '作业';
+
+  @override
+  String get homeAssignmentOverdue => '已逾期';
+
+  @override
+  String homeAssignmentDue(String date) {
+    return '截止：$date';
+  }
+
+  @override
+  String get homeAssignmentPreClass => '课前';
+
+  @override
+  String get homeAssignmentPostClass => '课后';
+
+  @override
+  String get homeAssignmentRevision => '复习';
+
+  @override
+  String get homeAssignmentCustom => '自定义';
+
+  @override
+  String homeEmptyHi(String name) {
+    return '你好，$name！👋';
+  }
+
+  @override
+  String get homeEmptySetupFirst => '来设置你的第一个 Mochi 吧';
+
+  @override
+  String get homeEmptyNoMochis => '还没有 Mochi！';
+
+  @override
+  String get homeEmptyCreate => '创建你的第一个 Mochi，开始学习精彩的知识 🚀';
+
+  @override
+  String get homeEmptyPickBuddy => '挑一个伙伴，教它你的笔记，尽管问它任何问题！';
+
+  @override
+  String get homeEmptyCreateButton => '+ 创建我的第一个 Mochi ✨';
+
+  @override
+  String get homeEmptyHaveCode => '🎟️  有邀请码？输入或扫描';
+
+  @override
+  String get homeEmptyChipLearn => '🧠 从你的笔记中学习';
+
+  @override
+  String get homeEmptyChipAsk => '💬 有问必答';
+
+  @override
+  String get homeEmptyChipEarn => '⭐ 赚取 XP 和奖励';
 }

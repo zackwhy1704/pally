@@ -1057,6 +1057,324 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Upload some notes so Mochi can build your first quiz!'**
   String get quizUploadNotesCta;
+
+  /// Bottom-nav tab: Home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// Bottom-nav tab: Library.
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get navLibrary;
+
+  /// Bottom-nav tab: Groups.
+  ///
+  /// In en, this message translates to:
+  /// **'Groups'**
+  String get navGroups;
+
+  /// Bottom-nav tab: Me (profile/settings).
+  ///
+  /// In en, this message translates to:
+  /// **'Me'**
+  String get navMe;
+
+  /// Home greeting heading. Keep the emoji.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back! 👋'**
+  String get homeWelcomeBack;
+
+  /// Home greeting subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to keep learning?'**
+  String get homeReadyToLearn;
+
+  /// Button to create a new avatar. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'New Mochi'**
+  String get homeNewMochi;
+
+  /// Home section header for centre-class avatars.
+  ///
+  /// In en, this message translates to:
+  /// **'MY CLASSES'**
+  String get homeSectionMyClasses;
+
+  /// Home section header for personal avatars. Keep 'Mochis'.
+  ///
+  /// In en, this message translates to:
+  /// **'YOUR MOCHIS'**
+  String get homeSectionYourMochis;
+
+  /// Level badge in the home header. Keep the star.
+  ///
+  /// In en, this message translates to:
+  /// **'⭐ Level {level}'**
+  String homeLevelBadge(int level);
+
+  /// XP bar label at the max level. Keep the star.
+  ///
+  /// In en, this message translates to:
+  /// **'MAX LEVEL ⭐'**
+  String get homeMaxLevel;
+
+  /// XP progress toward the next level.
+  ///
+  /// In en, this message translates to:
+  /// **'{xpInto} / {xpSpan} XP'**
+  String homeXpProgress(int xpInto, int xpSpan);
+
+  /// Error toast when the avatar list fails to load. Keep 'Mochis'.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load Mochis. Pull down to retry.'**
+  String get homeCouldNotLoadMochis;
+
+  /// Error title on home. Keep 'Mochis'.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your Mochis.'**
+  String get homeCouldNotLoadYourMochis;
+
+  /// Error body on home.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your connection and pull down to retry.'**
+  String get homeCheckConnectionPull;
+
+  /// Under-13 consent-pending message on home. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a grown-up to approve your account to make a Mochi.'**
+  String get homeConsentApprove;
+
+  /// Button to resend the parental consent email.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend email'**
+  String get homeResendEmail;
+
+  /// Collapsed consent-banner chip on home.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting parental approval — tap for options'**
+  String get homeConsentCollapsedChip;
+
+  /// Consent-banner title on home.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for parental approval'**
+  String get homeConsentWaitingTitle;
+
+  /// Consent-banner body naming the masked parent email.
+  ///
+  /// In en, this message translates to:
+  /// **'A consent email was sent to {email}. AI features unlock once your parent approves.'**
+  String homeConsentEmailSent(String email);
+
+  /// Sign-out link in the consent banner.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get homeConsentSignOut;
+
+  /// Avatar long-press sheet action.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage knowledge'**
+  String get homeManageKnowledge;
+
+  /// Error when activating a Mochi fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not activate — try again.'**
+  String get homeCouldNotActivate;
+
+  /// Title of the slot-locked sheet, naming the Mochi.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is locked'**
+  String homeMochiLocked(String name);
+
+  /// Inconsistent-state message in the activate dialog. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong — this Mochi should be active. Pull to refresh.'**
+  String get homeActivateError;
+
+  /// Free-plan active-Mochi cap explanation. Keep 'Mochi'/'Mochis' and the blank line.
+  ///
+  /// In en, this message translates to:
+  /// **'{cap, plural, =1{You have 1 active Mochi on your free plan. Deactivate another Mochi first, then activate this one.\n\nYou can swap once every 24 hours.} other{You have {cap} active Mochis on your free plan. Deactivate another Mochi first, then activate this one.\n\nYou can swap once every 24 hours.}}'**
+  String homeActivateCapMessage(int cap);
+
+  /// Button label while activating (keep ellipsis).
+  ///
+  /// In en, this message translates to:
+  /// **'Activating…'**
+  String get homeActivating;
+
+  /// Activate button naming the Mochi.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate {name}'**
+  String homeActivateAvatar(String name);
+
+  /// Close button on the activate dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get homeClose;
+
+  /// Default nudge — flashcards due.
+  ///
+  /// In en, this message translates to:
+  /// **'You have flashcards due today!'**
+  String get homeNudgeFlashcards;
+
+  /// Default nudge — streak.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your streak going!'**
+  String get homeNudgeStreak;
+
+  /// Prefilled chat message from a weak-concept nudge.
+  ///
+  /// In en, this message translates to:
+  /// **'Can we review {concept}? I keep getting it wrong'**
+  String homeReteachMessage(String concept);
+
+  /// Fallback for {concept} in homeReteachMessage when the concept is unknown ('review this').
+  ///
+  /// In en, this message translates to:
+  /// **'this'**
+  String get homeReteachThis;
+
+  /// Home banner header above the in-progress module.
+  ///
+  /// In en, this message translates to:
+  /// **'CONTINUE LEARNING'**
+  String get homeContinueLearning;
+
+  /// Due-cards banner count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 flashcard due} other{{count} flashcards due}}'**
+  String homeFlashcardsDue(int count);
+
+  /// Due-cards banner CTA naming the Mochi.
+  ///
+  /// In en, this message translates to:
+  /// **'Start with {name} — 2-min review'**
+  String homeStartReview(String name);
+
+  /// Home assignment-banner header.
+  ///
+  /// In en, this message translates to:
+  /// **'ASSIGNMENTS'**
+  String get homeAssignments;
+
+  /// Assignment status chip — overdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get homeAssignmentOverdue;
+
+  /// Assignment due date.
+  ///
+  /// In en, this message translates to:
+  /// **'Due: {date}'**
+  String homeAssignmentDue(String date);
+
+  /// Assignment kind.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-class'**
+  String get homeAssignmentPreClass;
+
+  /// Assignment kind.
+  ///
+  /// In en, this message translates to:
+  /// **'Post-class'**
+  String get homeAssignmentPostClass;
+
+  /// Assignment kind.
+  ///
+  /// In en, this message translates to:
+  /// **'Revision'**
+  String get homeAssignmentRevision;
+
+  /// Assignment kind.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get homeAssignmentCustom;
+
+  /// New-user empty home greeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi {name}! 👋'**
+  String homeEmptyHi(String name);
+
+  /// New-user empty home subtitle. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s set up your first Mochi'**
+  String get homeEmptySetupFirst;
+
+  /// Empty home card title. Keep 'Mochis'.
+  ///
+  /// In en, this message translates to:
+  /// **'No Mochis yet!'**
+  String get homeEmptyNoMochis;
+
+  /// Empty home card body. Keep 'Mochi' + emoji.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first Mochi and start learning something amazing 🚀'**
+  String get homeEmptyCreate;
+
+  /// Empty home hint line.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a buddy, teach it your notes, ask it anything!'**
+  String get homeEmptyPickBuddy;
+
+  /// Empty home primary CTA. Keep 'Mochi' + emoji.
+  ///
+  /// In en, this message translates to:
+  /// **'+ Create My First Mochi ✨'**
+  String get homeEmptyCreateButton;
+
+  /// Empty home secondary CTA to redeem a class code. Keep the emoji + spacing.
+  ///
+  /// In en, this message translates to:
+  /// **'🎟️  Have a code? Enter or scan it'**
+  String get homeEmptyHaveCode;
+
+  /// Empty home feature chip. Keep the emoji.
+  ///
+  /// In en, this message translates to:
+  /// **'🧠 Learn from your notes'**
+  String get homeEmptyChipLearn;
+
+  /// Empty home feature chip. Keep the emoji.
+  ///
+  /// In en, this message translates to:
+  /// **'💬 Ask any question'**
+  String get homeEmptyChipAsk;
+
+  /// Empty home feature chip. Keep the emoji and 'XP'.
+  ///
+  /// In en, this message translates to:
+  /// **'⭐ Earn XP & rewards'**
+  String get homeEmptyChipEarn;
 }
 
 class _AppLocalizationsDelegate

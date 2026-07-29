@@ -7,6 +7,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/assignment.dart';
 import 'package:pally/shared/models/avatar.dart';
 
@@ -94,6 +95,7 @@ class _AssignmentBannerState extends ConsumerState<AssignmentBanner> {
   @override
   Widget build(BuildContext context) {
     if (_assignments.isEmpty) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,7 +104,7 @@ class _AssignmentBannerState extends ConsumerState<AssignmentBanner> {
           padding: const EdgeInsets.fromLTRB(
               AppSpacing.md, AppSpacing.sm, AppSpacing.md, 0),
           child: Text(
-            'ASSIGNMENTS',
+            l10n.homeAssignments,
             style: AppTextStyles.label.copyWith(
               letterSpacing: 1.2,
               color: AppColors.text2,
@@ -146,6 +148,7 @@ class _AssignmentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isOverdue = assignment.status == 'OVERDUE';
+    final l10n = AppLocalizations.of(context);
     final firstIncompleteModule = assignment.modules
         .where((m) => m.stage != 'COMPLETE')
         .firstOrNull;
@@ -214,7 +217,7 @@ class _AssignmentCard extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
-                                'Overdue',
+                                l10n.homeAssignmentOverdue,
                                 style: AppTextStyles.caption.copyWith(
                                   color: AppColors.coral,
                                   fontWeight: FontWeight.w700,
@@ -225,7 +228,7 @@ class _AssignmentCard extends StatelessWidget {
                           ],
                           Flexible(
                             child: Text(
-                              'Due: ${assignment.dueDate}',
+                              l10n.homeAssignmentDue(assignment.dueDate),
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: isOverdue
                                     ? AppColors.coral
@@ -263,11 +266,11 @@ class _TypeBadge extends StatelessWidget {
         _ => AppColors.text3,
       };
 
-  String get _label => switch (type) {
-        'PRE_CLASS' => 'Pre-class',
-        'POST_CLASS' => 'Post-class',
-        'REVISION' => 'Revision',
-        'CUSTOM' => 'Custom',
+  String _label(AppLocalizations l) => switch (type) {
+        'PRE_CLASS' => l.homeAssignmentPreClass,
+        'POST_CLASS' => l.homeAssignmentPostClass,
+        'REVISION' => l.homeAssignmentRevision,
+        'CUSTOM' => l.homeAssignmentCustom,
         _ => type,
       };
 
@@ -281,7 +284,7 @@ class _TypeBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
-        _label,
+        _label(AppLocalizations.of(context)),
         style: AppTextStyles.caption.copyWith(
           color: _color,
           fontWeight: FontWeight.w700,

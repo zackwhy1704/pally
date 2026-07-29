@@ -7,6 +7,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/learning_module.dart';
 
@@ -78,6 +79,7 @@ class _ModuleProgressBannerState extends ConsumerState<ModuleProgressBanner> {
   @override
   Widget build(BuildContext context) {
     if (_activeModules.isEmpty) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +88,7 @@ class _ModuleProgressBannerState extends ConsumerState<ModuleProgressBanner> {
           padding: const EdgeInsets.fromLTRB(
               AppSpacing.md, AppSpacing.sm, AppSpacing.md, 0),
           child: Text(
-            'CONTINUE LEARNING',
+            l10n.homeContinueLearning,
             style: AppTextStyles.label.copyWith(
               letterSpacing: 1.2,
               color: AppColors.text2,
@@ -121,15 +123,16 @@ class _ModuleProgressCard extends StatelessWidget {
         _ => AppColors.text3,
       };
 
-  String get _stageLabel => switch (module.stage) {
-        'LEARN' => 'LEARN',
-        'TEST' => 'TEST',
-        'PROVE' => 'PROVE',
+  String _stageLabel(AppLocalizations l) => switch (module.stage) {
+        'LEARN' => l.moduleStageLearn,
+        'TEST' => l.moduleStageTest,
+        'PROVE' => l.moduleStageProve,
         _ => module.stage,
       };
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(
           AppSpacing.md, AppSpacing.xs, AppSpacing.md, 0),
@@ -188,7 +191,7 @@ class _ModuleProgressCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
-                              _stageLabel,
+                              _stageLabel(l10n),
                               style: AppTextStyles.caption.copyWith(
                                 color: _stageColor,
                                 fontWeight: FontWeight.w700,

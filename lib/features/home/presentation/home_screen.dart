@@ -28,6 +28,7 @@ import 'package:pally/features/subscription/presentation/trial_welcome_screen.da
 import 'package:pally/features/subscription/trial_status_provider.dart';
 import 'package:pally/features/onboarding/presentation/feature_tour.dart';
 import 'package:pally/features/onboarding/presentation/direct_onboarding_view_model.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -70,10 +71,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final progressAsync = ref.watch(progressViewModelProvider);
     final auth = ref.watch(authStateProvider);
     final childName = auth.childName ?? '';
+    final l10n = AppLocalizations.of(context);
 
     ref.listen<AsyncValue<List<Avatar>>>(homeViewModelProvider, (_, next) {
       if (next is AsyncError) {
-        PallyToast.error(context, 'Could not load Mochis. Pull down to retry.');
+        PallyToast.error(context, l10n.homeCouldNotLoadMochis);
       }
     });
 
@@ -112,7 +114,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   // to look at UI that isn't there.
                   showAppSnackBar(SnackBar(
                       content: Text(
-                        'Ask a grown-up to approve your account to make a Mochi.',
+                        l10n.homeConsentApprove,
                         style: AppTextStyles.bodySmall
                             .copyWith(color: Colors.white),
                       ),
@@ -121,7 +123,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
                       action: SnackBarAction(
-                        label: 'Resend email',
+                        label: l10n.homeResendEmail,
                         textColor: Colors.white,
                         onPressed: () => ref
                             .read(directOnboardingViewModelProvider.notifier)
@@ -153,11 +155,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         const Icon(Icons.wifi_off_rounded,
                             size: 48, color: AppColors.text3),
                         const SizedBox(height: AppSpacing.md),
-                        Text('Could not load your Mochis.',
+                        Text(l10n.homeCouldNotLoadYourMochis,
                             style: AppTextStyles.title,
                             textAlign: TextAlign.center),
                         const SizedBox(height: AppSpacing.xs),
-                        Text('Check your connection and pull down to retry.',
+                        Text(l10n.homeCheckConnectionPull,
                             style: AppTextStyles.body
                                 .copyWith(color: AppColors.text2),
                             textAlign: TextAlign.center),
@@ -168,7 +170,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               .refresh(),
                           style: FilledButton.styleFrom(
                               backgroundColor: AppColors.purple),
-                          child: const Text('Try again'),
+                          child: Text(l10n.commonTryAgain),
                         ),
                       ],
                     ),
@@ -204,6 +206,7 @@ class _HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isMax = level >= maxLevel;
     final xpFraction = isMax
         ? 1.0
@@ -241,10 +244,10 @@ class _HomeHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Welcome back! 👋', style: AppTextStyles.heading1),
+                Text(l10n.homeWelcomeBack, style: AppTextStyles.heading1),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  'Ready to keep learning?',
+                  l10n.homeReadyToLearn,
                   style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 ),
 
@@ -263,7 +266,7 @@ class _HomeHeader extends StatelessWidget {
                               color: AppColors.amber.withValues(alpha: 0.5)),
                         ),
                         child: Text(
-                          '⭐ Level $level',
+                          l10n.homeLevelBadge(level),
                           style: AppTextStyles.label.copyWith(
                               color: AppColors.amber,
                               fontWeight: FontWeight.w700),
@@ -275,7 +278,7 @@ class _HomeHeader extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              isMax ? 'MAX LEVEL ⭐' : '$xpInto / $xpSpan XP',
+                              isMax ? l10n.homeMaxLevel : l10n.homeXpProgress(xpInto, xpSpan),
                               style: AppTextStyles.caption.copyWith(
                                   color: AppColors.text2),
                             ),
@@ -304,7 +307,7 @@ class _HomeHeader extends StatelessWidget {
                     key: featureTourCreateMochiKey,
                     onPressed: onNewTutor,
                     icon: const Icon(Icons.add, size: 16),
-                    label: const Text('New Mochi'),
+                    label: Text(l10n.homeNewMochi),
                     style: TextButton.styleFrom(
                       foregroundColor: AppColors.purple,
                       textStyle: AppTextStyles.label
@@ -394,17 +397,18 @@ class _AvatarSection extends ConsumerWidget {
         avatars.where((a) => a.isCentreClass).toList(growable: false);
     final personalAvatars =
         avatars.where((a) => !a.isCentreClass).toList(growable: false);
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // ── My classes (only when the child has centre-class avatars) ─────
         if (classAvatars.isNotEmpty) ...[
-          const _SectionHeader(label: 'MY CLASSES'),
+          _SectionHeader(label: l10n.homeSectionMyClasses),
           _AvatarGrid(avatars: classAvatars),
         ],
         // ── Personal tutors ────────────────────────────────────────────────
-        const _SectionHeader(label: 'YOUR MOCHIS'),
+        _SectionHeader(label: l10n.homeSectionYourMochis),
         GridView.builder(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
           shrinkWrap: true,
@@ -619,6 +623,7 @@ class _SlotLockedSheetState extends ConsumerState<_SlotLockedSheet> {
   String? _error;
 
   Future<void> _activateSlot() async {
+    final l10n = AppLocalizations.of(context);
     setState(() { _isLoading = true; _error = null; });
     try {
       final dio = ref.read(dioProvider);
@@ -632,11 +637,11 @@ class _SlotLockedSheetState extends ConsumerState<_SlotLockedSheet> {
     } on DioException catch (e) {
       final msg = e.response?.data is Map
           ? (e.response!.data as Map)['error']?.toString() ??
-              'Could not activate — try again.'
-          : 'Could not activate — try again.';
+              l10n.homeCouldNotActivate
+          : l10n.homeCouldNotActivate;
       if (mounted) setState(() { _isLoading = false; _error = msg; });
     } catch (_) {
-      if (mounted) setState(() { _isLoading = false; _error = 'Something went wrong.'; });
+      if (mounted) setState(() { _isLoading = false; _error = l10n.commonSomethingWrong; });
     }
   }
 
@@ -645,6 +650,7 @@ class _SlotLockedSheetState extends ConsumerState<_SlotLockedSheet> {
     final trial = ref.watch(trialStatusProvider).valueOrNull;
     final cap = trial?.freeTutorCap ?? 1;
     final isPremium = trial?.isPremium ?? false;
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       constraints: BoxConstraints(
@@ -672,14 +678,12 @@ class _SlotLockedSheetState extends ConsumerState<_SlotLockedSheet> {
           const SizedBox(height: AppSpacing.lg),
           const Icon(Icons.lock_rounded, color: AppColors.amber, size: 48),
           const SizedBox(height: AppSpacing.md),
-          Text('${widget.avatar.name} is locked', style: AppTextStyles.title),
+          Text(l10n.homeMochiLocked(widget.avatar.name), style: AppTextStyles.title),
           const SizedBox(height: AppSpacing.sm),
           Text(
             isPremium
-                ? 'Something went wrong — this Mochi should be active. Pull to refresh.'
-                : 'You have $cap active Mochi${cap == 1 ? '' : 's'} on your free plan. '
-                  'Deactivate another Mochi first, then activate this one.\n\n'
-                  'You can swap once every 24 hours.',
+                ? l10n.homeActivateError
+                : l10n.homeActivateCapMessage(cap),
             style: AppTextStyles.body.copyWith(color: AppColors.text2),
             textAlign: TextAlign.center,
           ),
@@ -708,7 +712,7 @@ class _SlotLockedSheetState extends ConsumerState<_SlotLockedSheet> {
                         child: CircularProgressIndicator(
                             strokeWidth: 2, color: Colors.white))
                     : const Icon(Icons.lock_open_rounded, size: 18),
-                label: Text(_isLoading ? 'Activating…' : 'Activate ${widget.avatar.name}'),
+                label: Text(_isLoading ? l10n.homeActivating : l10n.homeActivateAvatar(widget.avatar.name)),
                 style: FilledButton.styleFrom(
                     backgroundColor: AppColors.purple,
                     padding: const EdgeInsets.symmetric(vertical: 14)),
@@ -720,7 +724,7 @@ class _SlotLockedSheetState extends ConsumerState<_SlotLockedSheet> {
             width: double.infinity,
             child: OutlinedButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close'),
+              child: Text(l10n.homeClose),
             ),
           ),
           ],
@@ -736,6 +740,7 @@ void _showTutorOptions(BuildContext context, WidgetRef ref, Avatar avatar) {
   // centreManaged=true → this avatar is a centre Mochi; suppress destructive
   // and knowledge-management options. Personal avatars are always fully editable.
   final isCentre = avatar.centreManaged;
+  final l10n = AppLocalizations.of(context);
   showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -799,7 +804,7 @@ void _showTutorOptions(BuildContext context, WidgetRef ref, Avatar avatar) {
           if (!isCentre)
             _OptionTile(
               icon: Icons.library_books_outlined,
-              label: 'Manage knowledge',
+              label: l10n.homeManageKnowledge,
               color: AppColors.teal,
               onTap: () {
                 Navigator.pop(sheetCtx);
@@ -809,7 +814,7 @@ void _showTutorOptions(BuildContext context, WidgetRef ref, Avatar avatar) {
           if (!isCentre)
             _OptionTile(
               icon: Icons.delete_outline_rounded,
-              label: 'Delete Mochi',
+              label: l10n.chatMenuDelete,
               color: AppColors.coral,
               onTap: () async {
                 Navigator.pop(sheetCtx);
@@ -824,9 +829,9 @@ void _showTutorOptions(BuildContext context, WidgetRef ref, Avatar avatar) {
                   if (context.mounted) {
                     if (ok) {
                       HapticFeedback.heavyImpact();
-                      PallyToast.success(context, '${avatar.name} deleted');
+                      PallyToast.success(context, l10n.libraryAvatarDeleted(avatar.name));
                     } else {
-                      PallyToast.error(context, 'Delete failed. Try again.');
+                      PallyToast.error(context, l10n.libraryDeleteFailed);
                     }
                   }
                 }
@@ -895,20 +900,23 @@ class _NudgeCardsRow extends ConsumerStatefulWidget {
 class _NudgeCardsRowState extends ConsumerState<_NudgeCardsRow> {
   List<_NudgeData> _nudges = [];
 
-  static const _fallback = [
-    _NudgeData(
-      emoji: '⚡',
-      message: 'You have flashcards due today!',
-      color: AppColors.amber,
-      bgColor: AppColors.amberL,
-    ),
-    _NudgeData(
-      emoji: '🔥',
-      message: 'Keep your streak going!',
-      color: AppColors.coral,
-      bgColor: AppColors.coralL,
-    ),
-  ];
+  // Localized default nudges, used when the server list is unavailable. Built
+  // from l10n (not a const) so the fallback speaks the user's language too.
+  // Resolved only in the post-await catch branches — never in initState.
+  List<_NudgeData> _fallbackNudges(AppLocalizations l) => [
+        _NudgeData(
+          emoji: '⚡',
+          message: l.homeNudgeFlashcards,
+          color: AppColors.amber,
+          bgColor: AppColors.amberL,
+        ),
+        _NudgeData(
+          emoji: '🔥',
+          message: l.homeNudgeStreak,
+          color: AppColors.coral,
+          bgColor: AppColors.coralL,
+        ),
+      ];
 
   @override
   void initState() {
@@ -945,10 +953,14 @@ class _NudgeCardsRowState extends ConsumerState<_NudgeCardsRow> {
       if (mounted) setState(() => _nudges = parsed);
     } on DioException catch (e) {
       appLog.d('[Home] Nudges unavailable (${e.type.name}); using fallback');
-      if (mounted) setState(() => _nudges = _fallback);
+      if (mounted) {
+        setState(() => _nudges = _fallbackNudges(AppLocalizations.of(context)));
+      }
     } catch (e, st) {
       appLog.e('[Home] Nudges load error', error: e, stackTrace: st);
-      if (mounted) setState(() => _nudges = _fallback);
+      if (mounted) {
+        setState(() => _nudges = _fallbackNudges(AppLocalizations.of(context)));
+      }
     }
   }
 
@@ -1041,11 +1053,11 @@ class _NudgeCard extends StatelessWidget {
     // close-button GestureDetector still wins its own hit area). Other nudges are
     // display-only. Prefill copy (not auto-sent) is placeholder-final.
     if (data.type == 'weak_concept' && (data.avatarId ?? '').isNotEmpty) {
+      final l10n = AppLocalizations.of(context);
       return GestureDetector(
         onTap: () => ChatRoute(
           avatarId: data.avatarId!,
-          seed:
-              'Can we review ${data.concept ?? 'this'}? I keep getting it wrong',
+          seed: l10n.homeReteachMessage(data.concept ?? l10n.homeReteachThis),
         ).push(context),
         child: card,
       );
@@ -1073,6 +1085,7 @@ class ConsentPendingBannerState extends ConsumerState<ConsentPendingBanner> {
   @override
   Widget build(BuildContext context) {
     final auth = ref.watch(authStateProvider);
+    final l10n = AppLocalizations.of(context);
     // Only fully gone when consent is no longer pending. While awaiting, the
     // status + recovery actions must stay reachable — collapse to a chip, never
     // SizedBox.shrink (that was the dead-end: the error pointed at a vanished banner).
@@ -1098,7 +1111,7 @@ class ConsentPendingBannerState extends ConsumerState<ConsentPendingBanner> {
                   const Icon(Icons.hourglass_bottom_rounded,
                       size: 14, color: AppColors.amberText),
                   const SizedBox(width: 6),
-                  Text('Awaiting parental approval — tap for options',
+                  Text(l10n.homeConsentCollapsedChip,
                       style: AppTextStyles.bodySmall.copyWith(
                           color: AppColors.amberText,
                           fontWeight: FontWeight.w600)),
@@ -1138,7 +1151,7 @@ class ConsentPendingBannerState extends ConsumerState<ConsentPendingBanner> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Waiting for parental approval',
+                      l10n.homeConsentWaitingTitle,
                       style: AppTextStyles.body.copyWith(
                         fontWeight: FontWeight.w700,
                         color: AppColors.amberText,
@@ -1147,8 +1160,7 @@ class ConsentPendingBannerState extends ConsumerState<ConsentPendingBanner> {
                     if (auth.maskedParentEmail != null) ...[
                       const SizedBox(height: 2),
                       Text(
-                        'A consent email was sent to ${auth.maskedParentEmail}. '
-                        'AI features unlock once your parent approves.',
+                        l10n.homeConsentEmailSent(auth.maskedParentEmail!),
                         style: AppTextStyles.bodySmall
                             .copyWith(color: AppColors.amberText),
                       ),
@@ -1191,7 +1203,7 @@ class ConsentPendingBannerState extends ConsumerState<ConsentPendingBanner> {
                         child: CircularProgressIndicator(
                             strokeWidth: 2, color: AppColors.amberText),
                       )
-                    : Text('Resend email',
+                    : Text(l10n.homeResendEmail,
                         style: AppTextStyles.bodySmall.copyWith(
                           fontWeight: FontWeight.w600,
                           color: AppColors.amberText,
@@ -1211,7 +1223,7 @@ class ConsentPendingBannerState extends ConsumerState<ConsentPendingBanner> {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   foregroundColor: AppColors.text2,
                 ),
-                child: Text('Sign out',
+                child: Text(l10n.homeConsentSignOut,
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.text2,
                       decoration: TextDecoration.underline,

@@ -4,6 +4,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/adaptive_layout.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 class EmptyHomeState extends StatefulWidget {
   const EmptyHomeState({super.key, required this.childName});
@@ -39,6 +40,7 @@ class _EmptyHomeStateState extends State<EmptyHomeState>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return SingleChildScrollView(
       physics: const ClampingScrollPhysics(),
       child: ConstrainedBox(
@@ -56,11 +58,11 @@ class _EmptyHomeStateState extends State<EmptyHomeState>
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                 child: Column(
                   children: [
-                    Text('Hi ${widget.childName}! 👋',
+                    Text(l10n.homeEmptyHi(widget.childName),
                         style: AppTextStyles.title.copyWith(fontSize: 18),
                         textAlign: TextAlign.center),
                     const SizedBox(height: 4),
-                    Text("Let's set up your first Mochi",
+                    Text(l10n.homeEmptySetupFirst,
                         style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
                         textAlign: TextAlign.center),
                   ],
@@ -96,22 +98,22 @@ class _EmptyHomeStateState extends State<EmptyHomeState>
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 child: Column(
                   children: [
-                    Text('No Mochis yet!',
+                    Text(l10n.homeEmptyNoMochis,
                         style: AppTextStyles.heading1.copyWith(fontSize: 22),
                         textAlign: TextAlign.center),
                     const SizedBox(height: AppSpacing.sm),
-                    Text('Create your first Mochi and start learning something amazing 🚀',
+                    Text(l10n.homeEmptyCreate,
                         style: AppTextStyles.body.copyWith(color: AppColors.text2, height: 1.5),
                         textAlign: TextAlign.center),
                     const SizedBox(height: AppSpacing.md),
-                    const Wrap(
+                    Wrap(
                       alignment: WrapAlignment.center,
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        _FeatureChip('🧠 Learn from your notes'),
-                        _FeatureChip('💬 Ask any question'),
-                        _FeatureChip('⭐ Earn XP & rewards'),
+                        _FeatureChip(l10n.homeEmptyChipLearn),
+                        _FeatureChip(l10n.homeEmptyChipAsk),
+                        _FeatureChip(l10n.homeEmptyChipEarn),
                       ],
                     ),
                     const SizedBox(height: AppSpacing.lg),
@@ -126,18 +128,18 @@ class _EmptyHomeStateState extends State<EmptyHomeState>
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                           elevation: 0,
                         ),
-                        child: Text('+ Create My First Mochi ✨',
+                        child: Text(l10n.homeEmptyCreateButton,
                             style: AppTextStyles.body.copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
                       ),
                     ),
                     const SizedBox(height: AppSpacing.sm),
-                    Text('Pick a buddy, teach it your notes, ask it anything!',
+                    Text(l10n.homeEmptyPickBuddy,
                         style: AppTextStyles.label.copyWith(color: AppColors.text3),
                         textAlign: TextAlign.center),
                     const SizedBox(height: AppSpacing.md),
                     TextButton(
                       onPressed: () => const JoinRoute().push(context),
-                      child: Text('🎟️  Have a code? Enter or scan it',
+                      child: Text(l10n.homeEmptyHaveCode,
                           style: AppTextStyles.body.copyWith(
                               color: AppColors.purple,
                               fontWeight: FontWeight.w700)),

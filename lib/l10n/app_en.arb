@@ -442,5 +442,150 @@
   "quizNoQuizToday": "No quiz today",
   "@quizNoQuizToday": { "description": "Empty-state title when no quiz is available." },
   "quizUploadNotesCta": "Upload some notes so Mochi can build your first quiz!",
-  "@quizUploadNotesCta": { "description": "Empty-state body prompting an upload. Keep 'Mochi'." }
+  "@quizUploadNotesCta": { "description": "Empty-state body prompting an upload. Keep 'Mochi'." },
+
+  "navHome": "Home",
+  "@navHome": { "description": "Bottom-nav tab: Home." },
+  "navLibrary": "Library",
+  "@navLibrary": { "description": "Bottom-nav tab: Library." },
+  "navGroups": "Groups",
+  "@navGroups": { "description": "Bottom-nav tab: Groups." },
+  "navMe": "Me",
+  "@navMe": { "description": "Bottom-nav tab: Me (profile/settings)." },
+
+  "homeWelcomeBack": "Welcome back! 👋",
+  "@homeWelcomeBack": { "description": "Home greeting heading. Keep the emoji." },
+  "homeReadyToLearn": "Ready to keep learning?",
+  "@homeReadyToLearn": { "description": "Home greeting subtitle." },
+  "homeNewMochi": "New Mochi",
+  "@homeNewMochi": { "description": "Button to create a new avatar. Keep 'Mochi'." },
+  "homeSectionMyClasses": "MY CLASSES",
+  "@homeSectionMyClasses": { "description": "Home section header for centre-class avatars." },
+  "homeSectionYourMochis": "YOUR MOCHIS",
+  "@homeSectionYourMochis": { "description": "Home section header for personal avatars. Keep 'Mochis'." },
+  "homeLevelBadge": "⭐ Level {level}",
+  "@homeLevelBadge": {
+    "description": "Level badge in the home header. Keep the star.",
+    "placeholders": { "level": { "type": "int" } }
+  },
+  "homeMaxLevel": "MAX LEVEL ⭐",
+  "@homeMaxLevel": { "description": "XP bar label at the max level. Keep the star." },
+  "homeXpProgress": "{xpInto} / {xpSpan} XP",
+  "@homeXpProgress": {
+    "description": "XP progress toward the next level.",
+    "placeholders": { "xpInto": { "type": "int" }, "xpSpan": { "type": "int" } }
+  },
+  "homeCouldNotLoadMochis": "Could not load Mochis. Pull down to retry.",
+  "@homeCouldNotLoadMochis": { "description": "Error toast when the avatar list fails to load. Keep 'Mochis'." },
+  "homeCouldNotLoadYourMochis": "Could not load your Mochis.",
+  "@homeCouldNotLoadYourMochis": { "description": "Error title on home. Keep 'Mochis'." },
+  "homeCheckConnectionPull": "Check your connection and pull down to retry.",
+  "@homeCheckConnectionPull": { "description": "Error body on home." },
+  "homeConsentApprove": "Ask a grown-up to approve your account to make a Mochi.",
+  "@homeConsentApprove": { "description": "Under-13 consent-pending message on home. Keep 'Mochi'." },
+  "homeResendEmail": "Resend email",
+  "@homeResendEmail": { "description": "Button to resend the parental consent email." },
+  "homeConsentCollapsedChip": "Awaiting parental approval — tap for options",
+  "@homeConsentCollapsedChip": { "description": "Collapsed consent-banner chip on home." },
+  "homeConsentWaitingTitle": "Waiting for parental approval",
+  "@homeConsentWaitingTitle": { "description": "Consent-banner title on home." },
+  "homeConsentEmailSent": "A consent email was sent to {email}. AI features unlock once your parent approves.",
+  "@homeConsentEmailSent": {
+    "description": "Consent-banner body naming the masked parent email.",
+    "placeholders": { "email": { "type": "String" } }
+  },
+  "homeConsentSignOut": "Sign out",
+  "@homeConsentSignOut": { "description": "Sign-out link in the consent banner." },
+  "homeManageKnowledge": "Manage knowledge",
+  "@homeManageKnowledge": { "description": "Avatar long-press sheet action." },
+  "homeCouldNotActivate": "Could not activate — try again.",
+  "@homeCouldNotActivate": { "description": "Error when activating a Mochi fails." },
+  "homeMochiLocked": "{name} is locked",
+  "@homeMochiLocked": {
+    "description": "Title of the slot-locked sheet, naming the Mochi.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "homeActivateError": "Something went wrong — this Mochi should be active. Pull to refresh.",
+  "@homeActivateError": { "description": "Inconsistent-state message in the activate dialog. Keep 'Mochi'." },
+  "homeActivateCapMessage": "{cap, plural, =1{You have 1 active Mochi on your free plan. Deactivate another Mochi first, then activate this one.\n\nYou can swap once every 24 hours.} other{You have {cap} active Mochis on your free plan. Deactivate another Mochi first, then activate this one.\n\nYou can swap once every 24 hours.}}",
+  "@homeActivateCapMessage": {
+    "description": "Free-plan active-Mochi cap explanation. Keep 'Mochi'/'Mochis' and the blank line.",
+    "placeholders": { "cap": { "type": "int" } }
+  },
+  "homeActivating": "Activating…",
+  "@homeActivating": { "description": "Button label while activating (keep ellipsis)." },
+  "homeActivateAvatar": "Activate {name}",
+  "@homeActivateAvatar": {
+    "description": "Activate button naming the Mochi.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "homeClose": "Close",
+  "@homeClose": { "description": "Close button on the activate dialog." },
+  "homeNudgeFlashcards": "You have flashcards due today!",
+  "@homeNudgeFlashcards": { "description": "Default nudge — flashcards due." },
+  "homeNudgeStreak": "Keep your streak going!",
+  "@homeNudgeStreak": { "description": "Default nudge — streak." },
+  "homeReteachMessage": "Can we review {concept}? I keep getting it wrong",
+  "@homeReteachMessage": {
+    "description": "Prefilled chat message from a weak-concept nudge.",
+    "placeholders": { "concept": { "type": "String" } }
+  },
+  "homeReteachThis": "this",
+  "@homeReteachThis": { "description": "Fallback for {concept} in homeReteachMessage when the concept is unknown ('review this')." },
+
+  "homeContinueLearning": "CONTINUE LEARNING",
+  "@homeContinueLearning": { "description": "Home banner header above the in-progress module." },
+
+  "homeFlashcardsDue": "{count, plural, =1{1 flashcard due} other{{count} flashcards due}}",
+  "@homeFlashcardsDue": {
+    "description": "Due-cards banner count.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "homeStartReview": "Start with {name} — 2-min review",
+  "@homeStartReview": {
+    "description": "Due-cards banner CTA naming the Mochi.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+
+  "homeAssignments": "ASSIGNMENTS",
+  "@homeAssignments": { "description": "Home assignment-banner header." },
+  "homeAssignmentOverdue": "Overdue",
+  "@homeAssignmentOverdue": { "description": "Assignment status chip — overdue." },
+  "homeAssignmentDue": "Due: {date}",
+  "@homeAssignmentDue": {
+    "description": "Assignment due date.",
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "homeAssignmentPreClass": "Pre-class",
+  "@homeAssignmentPreClass": { "description": "Assignment kind." },
+  "homeAssignmentPostClass": "Post-class",
+  "@homeAssignmentPostClass": { "description": "Assignment kind." },
+  "homeAssignmentRevision": "Revision",
+  "@homeAssignmentRevision": { "description": "Assignment kind." },
+  "homeAssignmentCustom": "Custom",
+  "@homeAssignmentCustom": { "description": "Assignment kind." },
+
+  "homeEmptyHi": "Hi {name}! 👋",
+  "@homeEmptyHi": {
+    "description": "New-user empty home greeting.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "homeEmptySetupFirst": "Let's set up your first Mochi",
+  "@homeEmptySetupFirst": { "description": "New-user empty home subtitle. Keep 'Mochi'." },
+  "homeEmptyNoMochis": "No Mochis yet!",
+  "@homeEmptyNoMochis": { "description": "Empty home card title. Keep 'Mochis'." },
+  "homeEmptyCreate": "Create your first Mochi and start learning something amazing 🚀",
+  "@homeEmptyCreate": { "description": "Empty home card body. Keep 'Mochi' + emoji." },
+  "homeEmptyPickBuddy": "Pick a buddy, teach it your notes, ask it anything!",
+  "@homeEmptyPickBuddy": { "description": "Empty home hint line." },
+  "homeEmptyCreateButton": "+ Create My First Mochi ✨",
+  "@homeEmptyCreateButton": { "description": "Empty home primary CTA. Keep 'Mochi' + emoji." },
+  "homeEmptyHaveCode": "🎟️  Have a code? Enter or scan it",
+  "@homeEmptyHaveCode": { "description": "Empty home secondary CTA to redeem a class code. Keep the emoji + spacing." },
+  "homeEmptyChipLearn": "🧠 Learn from your notes",
+  "@homeEmptyChipLearn": { "description": "Empty home feature chip. Keep the emoji." },
+  "homeEmptyChipAsk": "💬 Ask any question",
+  "@homeEmptyChipAsk": { "description": "Empty home feature chip. Keep the emoji." },
+  "homeEmptyChipEarn": "⭐ Earn XP & rewards",
+  "@homeEmptyChipEarn": { "description": "Empty home feature chip. Keep the emoji and 'XP'." }
 }

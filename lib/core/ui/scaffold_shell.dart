@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/features/onboarding/presentation/feature_tour.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 /// A single tab in the bottom navigation. {@code branchIndex} is the index in
 /// the {@code StatefulShellRoute}'s branches array — it stays stable even when
@@ -62,8 +63,20 @@ class ScaffoldShell extends StatelessWidget {
 
   final StatefulNavigationShell navigationShell;
 
+  /// Localized label for a nav branch. Keyed on the stable branchIndex — a
+  /// semantic map, not a language conditional (B-EXT.2). Falls back to the
+  /// English semantic label baked into the TabSpec for any unmapped branch.
+  static String _navLabel(AppLocalizations l, TabSpec tab) => switch (tab.branchIndex) {
+        0 => l.navHome,
+        1 => l.navLibrary,
+        2 => l.navGroups,
+        3 => l.navMe,
+        _ => tab.label,
+      };
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final tabs = buildTabs();
 
     // Map the shell's current branch index → visible tab index. Defaults to 0
@@ -93,7 +106,7 @@ class ScaffoldShell extends StatelessWidget {
             NavigationDestination(
               icon: Icon(tab.icon),
               selectedIcon: Icon(tab.selectedIcon, color: AppColors.purple),
-              label: tab.label,
+              label: _navLabel(l10n, tab),
             ),
         ],
       ),

@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/home/presentation/home_screen.dart';
 import 'package:pally/features/onboarding/presentation/direct_onboarding_view_model.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 /// Fake onboarding VM with a fixed idle state so the banner renders without
 /// touching storage/network. Its consent methods are never tapped in these tests.
@@ -19,7 +20,11 @@ Future<void> _pump(WidgetTester tester) async {
           (ref) => const AuthState(awaitingConsent: true, maskedParentEmail: 'j***@x.com')),
       directOnboardingViewModelProvider.overrideWith(_FakeOnboardVM.new),
     ],
-    child: const MaterialApp(home: Scaffold(body: ConsentPendingBanner())),
+    child: const MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Scaffold(body: ConsentPendingBanner()),
+    ),
   ));
   await tester.pump();
 }
