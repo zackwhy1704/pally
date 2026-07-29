@@ -332,4 +332,79 @@ class AppLocalizationsEn extends AppLocalizations {
   String hubQuizSubtitleMastered(int mastered, int total) {
     return 'Test yourself · $mastered/$total mastered';
   }
+
+  @override
+  String get commonLoading => 'Loading…';
+
+  @override
+  String get commonSomethingWrong => 'Something went wrong.';
+
+  @override
+  String get chatCouldNotLoadMochis => 'Could not load Mochis.';
+
+  @override
+  String get chatCreateMochiFirst => 'Create a Mochi from the Home tab first.';
+
+  @override
+  String get chatCentreCuratedOnly => 'Centre-curated answers only';
+
+  @override
+  String get chatMenuTeach => 'Teach Mochi';
+
+  @override
+  String get chatMenuAddKnowledge => 'Add knowledge';
+
+  @override
+  String get chatMenuDelete => 'Delete Mochi';
+
+  @override
+  String get chatLostTrain => 'Hmm, I lost my train of thought. Ask me again!';
+
+  @override
+  String get chatNotSynced => 'Not synced — tap to retry';
+
+  @override
+  String get chatSending => 'Sending…';
+
+  @override
+  String get chatDailyDone =>
+      'Daily chats done — come back tomorrow or go Premium.';
+
+  @override
+  String chatMessagesLeftToday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count messages left today',
+      one: '1 message left today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get chatInputHint => 'Ask anything…';
+
+  @override
+  String get chatInputHintWait => 'Please wait…';
+
+  @override
+  String get chatSnap => 'Snap';
+
+  @override
+  String get chatEmptyTitle => 'Start the conversation!';
+
+  @override
+  String get chatEmptySubtitle =>
+      'Ask your Mochi anything, or tap 📷 to snap a homework question!';
+
+  @override
+  String get chatDisclaimer =>
+      'Mochi can make mistakes — always double-check your work!';
+
+  @override
+  String get chatDoubleCheckNumbers =>
+      'Double-check the numbers against your worksheet';
+
+  @override
+  String get chatCheckedWithCalculator => 'checked with calculator';
 }

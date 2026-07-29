@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/chat/presentation/chat_screen.dart';
 import 'package:pally/features/chat/presentation/chat_view_model.dart';
 import 'package:pally/features/chat/providers/chat_usage_provider.dart';
@@ -84,7 +85,10 @@ Widget _harness(ChatViewModel Function() vmBuilder) => ProviderScope(
         chatViewModelProvider('av-1').overrideWith(vmBuilder),
         chatUsageNotifierProvider.overrideWith(_FakeChatUsage.new),
       ],
-      child: const MaterialApp(home: ChatScreen(avatarId: 'av-1')),
+      child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+home: ChatScreen(avatarId: 'av-1')),
     );
 
 void main() {

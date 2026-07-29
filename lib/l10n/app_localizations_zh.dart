@@ -315,4 +315,74 @@ class AppLocalizationsZh extends AppLocalizations {
   String hubQuizSubtitleMastered(int mastered, int total) {
     return '考考自己 · 已掌握 $mastered/$total';
   }
+
+  @override
+  String get commonLoading => '加载中……';
+
+  @override
+  String get commonSomethingWrong => '出错了。';
+
+  @override
+  String get chatCouldNotLoadMochis => '无法加载 Mochi。';
+
+  @override
+  String get chatCreateMochiFirst => '请先在“主页”标签创建一个 Mochi。';
+
+  @override
+  String get chatCentreCuratedOnly => '仅提供机构精选的解答';
+
+  @override
+  String get chatMenuTeach => '教一教 Mochi';
+
+  @override
+  String get chatMenuAddKnowledge => '添加知识';
+
+  @override
+  String get chatMenuDelete => '删除 Mochi';
+
+  @override
+  String get chatLostTrain => '嗯，我刚才走神了。再问我一次吧！';
+
+  @override
+  String get chatNotSynced => '未同步——点按重试';
+
+  @override
+  String get chatSending => '发送中……';
+
+  @override
+  String get chatDailyDone => '今天的聊天次数用完了——明天再来，或升级 Premium。';
+
+  @override
+  String chatMessagesLeftToday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '今天还剩 $count 条消息',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get chatInputHint => '问我任何问题……';
+
+  @override
+  String get chatInputHintWait => '请稍候……';
+
+  @override
+  String get chatSnap => '拍照';
+
+  @override
+  String get chatEmptyTitle => '开始聊天吧！';
+
+  @override
+  String get chatEmptySubtitle => '有问题都可以问 Mochi，或点按 📷 拍下作业题目！';
+
+  @override
+  String get chatDisclaimer => 'Mochi 也可能会出错——请务必核对你的作业！';
+
+  @override
+  String get chatDoubleCheckNumbers => '请对照你的练习纸核对数字';
+
+  @override
+  String get chatCheckedWithCalculator => '已用计算器核对';
 }

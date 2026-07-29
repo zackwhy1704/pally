@@ -643,6 +643,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Test yourself · {mastered}/{total} mastered'**
   String hubQuizSubtitleMastered(int mastered, int total);
+
+  /// Generic loading placeholder (keep the ellipsis …).
+  ///
+  /// In en, this message translates to:
+  /// **'Loading…'**
+  String get commonLoading;
+
+  /// Generic error toast fallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong.'**
+  String get commonSomethingWrong;
+
+  /// Error toast when the chat tab can't load the avatar list. Keep 'Mochis'.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load Mochis.'**
+  String get chatCouldNotLoadMochis;
+
+  /// Empty-state subtitle on the chat tab. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a Mochi from the Home tab first.'**
+  String get chatCreateMochiFirst;
+
+  /// Subtitle under a centre-class avatar name in the chat header.
+  ///
+  /// In en, this message translates to:
+  /// **'Centre-curated answers only'**
+  String get chatCentreCuratedOnly;
+
+  /// Chat overflow-menu item — go to Teach. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Teach Mochi'**
+  String get chatMenuTeach;
+
+  /// Chat overflow-menu item — upload material.
+  ///
+  /// In en, this message translates to:
+  /// **'Add knowledge'**
+  String get chatMenuAddKnowledge;
+
+  /// Chat overflow-menu item — delete the avatar. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Mochi'**
+  String get chatMenuDelete;
+
+  /// Fallback shown when a chat reply errors out (Mochi speaking).
+  ///
+  /// In en, this message translates to:
+  /// **'Hmm, I lost my train of thought. Ask me again!'**
+  String get chatLostTrain;
+
+  /// Status on a message that failed to send; tap retries.
+  ///
+  /// In en, this message translates to:
+  /// **'Not synced — tap to retry'**
+  String get chatNotSynced;
+
+  /// Status on a message that is being sent (keep ellipsis).
+  ///
+  /// In en, this message translates to:
+  /// **'Sending…'**
+  String get chatSending;
+
+  /// Banner when a free user hits the daily chat cap.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily chats done — come back tomorrow or go Premium.'**
+  String get chatDailyDone;
+
+  /// Banner counting a free user's remaining daily chat messages.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 message left today} other{{count} messages left today}}'**
+  String chatMessagesLeftToday(int count);
+
+  /// Chat text-field placeholder when sending is allowed (keep ellipsis).
+  ///
+  /// In en, this message translates to:
+  /// **'Ask anything…'**
+  String get chatInputHint;
+
+  /// Chat text-field placeholder while a reply is streaming (keep ellipsis).
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait…'**
+  String get chatInputHintWait;
+
+  /// Camera button label — snap a homework photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Snap'**
+  String get chatSnap;
+
+  /// Empty chat placeholder title.
+  ///
+  /// In en, this message translates to:
+  /// **'Start the conversation!'**
+  String get chatEmptyTitle;
+
+  /// Empty chat placeholder subtitle. Keep 'Mochi' and the 📷 emoji.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask your Mochi anything, or tap 📷 to snap a homework question!'**
+  String get chatEmptySubtitle;
+
+  /// Daily chat disclaimer banner. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Mochi can make mistakes — always double-check your work!'**
+  String get chatDisclaimer;
+
+  /// Tip shown on a numeric answer.
+  ///
+  /// In en, this message translates to:
+  /// **'Double-check the numbers against your worksheet'**
+  String get chatDoubleCheckNumbers;
+
+  /// Badge indicating an answer was verified by the calculator.
+  ///
+  /// In en, this message translates to:
+  /// **'checked with calculator'**
+  String get chatCheckedWithCalculator;
 }
 
 class _AppLocalizationsDelegate
