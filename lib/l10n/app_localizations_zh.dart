@@ -175,4 +175,69 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get onboardingThesis => '“不是一个普通的 AI——而是一个懂你笔记的 Mochi。”';
+
+  @override
+  String get libraryTitle => '学习库';
+
+  @override
+  String get libraryMyClasses => '我的班级';
+
+  @override
+  String get libraryLeave => '退出';
+
+  @override
+  String get libraryDelete => '删除';
+
+  @override
+  String libraryAvatarDeleted(String name) {
+    return '已删除 $name';
+  }
+
+  @override
+  String get libraryDeleteFailed => '删除失败，请重试。';
+
+  @override
+  String get libraryLeaveClassTitle => '退出这个班级？';
+
+  @override
+  String libraryLeaveClassBody(String name) {
+    return '你将无法再访问 $name 的材料和班级 Mochi。你的个人 Mochi 会保留。你可以用班级代码重新加入。';
+  }
+
+  @override
+  String libraryLeftClass(String name) {
+    return '已退出 $name';
+  }
+
+  @override
+  String get libraryStatusCompiling => '📖 Mochi 正在阅读你的章节……';
+
+  @override
+  String libraryStatusBrainPages(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '🧠 $count 个知识页',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String libraryStatusBuilding(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '⏳ 正在从 $count 个文件构建大脑……',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get libraryStatusNoNotes => '📂 还没有笔记——教我你的材料吧！';
+
+  @override
+  String get libraryEmptyTitle => '还没有 Mochi';
+
+  @override
+  String get libraryEmptySubtitle => '在“主页”标签创建一个 Mochi，就会显示在这里。';
 }

@@ -185,5 +185,51 @@
   "onboardingBeat3": "The more you study, the better it fits you",
   "@onboardingBeat3": { "description": "Onboarding page 3, memory beat 3." },
   "onboardingThesis": "“Not a generic AI — a Mochi that knows your notes.”",
-  "@onboardingThesis": { "description": "Onboarding page 3 closing positioning quote (italic). Keep 'Mochi'; keep the curly quotes." }
+  "@onboardingThesis": { "description": "Onboarding page 3 closing positioning quote (italic). Keep 'Mochi'; keep the curly quotes." },
+
+  "libraryTitle": "Library",
+  "@libraryTitle": { "description": "Library screen app-bar title (the home hub listing the student's Mochis)." },
+  "libraryMyClasses": "My classes",
+  "@libraryMyClasses": { "description": "Section header above centre-class avatars in the library." },
+  "libraryLeave": "Leave",
+  "@libraryLeave": { "description": "Swipe-action label to leave a centre class." },
+  "libraryDelete": "Delete",
+  "@libraryDelete": { "description": "Swipe-action label to delete a personal Mochi." },
+  "libraryAvatarDeleted": "{name} deleted",
+  "@libraryAvatarDeleted": {
+    "description": "Success toast after deleting a Mochi. {name} is the Mochi's name (not translated).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "libraryDeleteFailed": "Delete failed. Try again.",
+  "@libraryDeleteFailed": { "description": "Error toast when deleting a Mochi fails." },
+  "libraryLeaveClassTitle": "Leave this class?",
+  "@libraryLeaveClassTitle": { "description": "Confirmation dialog title for leaving a class." },
+  "libraryLeaveClassBody": "You'll lose access to {name}'s materials and class Mochi. Your personal Mochis stay. You can rejoin with the class code.",
+  "@libraryLeaveClassBody": {
+    "description": "Confirmation dialog body for leaving a class. {name} is the class name. 'Mochi'/'Mochis' is the mascot name — do NOT translate.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "libraryLeftClass": "Left {name}",
+  "@libraryLeftClass": {
+    "description": "Success toast after leaving a class. {name} is the class name.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "libraryStatusCompiling": "📖 Mochi is reading your chapters…",
+  "@libraryStatusCompiling": { "description": "Avatar row status while the brain is compiling. Keep the emoji + 'Mochi'." },
+  "libraryStatusBrainPages": "{count, plural, =1{🧠 {count} brain page} other{🧠 {count} brain pages}}",
+  "@libraryStatusBrainPages": {
+    "description": "Avatar row status showing how many wiki/brain pages exist. Keep the 🧠 emoji.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "libraryStatusBuilding": "{count, plural, =1{⏳ Building brain from {count} file…} other{⏳ Building brain from {count} files…}}",
+  "@libraryStatusBuilding": {
+    "description": "Avatar row status while the brain is being built from uploaded files. Keep the ⏳ emoji and trailing ellipsis.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "libraryStatusNoNotes": "📂 No notes yet — teach me your material!",
+  "@libraryStatusNoNotes": { "description": "Avatar row status when the Mochi has no uploaded material yet. Keep the 📂 emoji." },
+  "libraryEmptyTitle": "No Mochis yet",
+  "@libraryEmptyTitle": { "description": "Empty-library placeholder title. Keep 'Mochis'." },
+  "libraryEmptySubtitle": "Create a Mochi from the Home tab to see it here.",
+  "@libraryEmptySubtitle": { "description": "Empty-library placeholder subtitle. Keep 'Mochi'." }
 }

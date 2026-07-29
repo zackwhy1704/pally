@@ -83,9 +83,33 @@ ICU placeholder. Curly quotes “ ” kept on the thesis line.
 | `onboardingBeat3` | The more you study, the better it fits you | 你学得越多，它就越适合你 |
 | `onboardingThesis` | "Not a generic AI — a Mochi that knows your notes." | “不是一个普通的 AI——而是一个懂你笔记的 Mochi。” |
 
+### PR4 — library (home hub `library_screen.dart`)
+
+Mochi kept verbatim. Two real ICU plurals (en 1-vs-N; zh `other`-only). `{name}` = Mochi/class name (not translated).
+
+| key | en | zh (machine draft) |
+|-----|----|--------------------|
+| `libraryTitle` | Library | 学习库 |
+| `libraryMyClasses` | My classes | 我的班级 |
+| `libraryLeave` | Leave | 退出 |
+| `libraryDelete` | Delete | 删除 |
+| `libraryAvatarDeleted` | {name} deleted | 已删除 {name} |
+| `libraryDeleteFailed` | Delete failed. Try again. | 删除失败，请重试。 |
+| `libraryLeaveClassTitle` | Leave this class? | 退出这个班级？ |
+| `libraryLeaveClassBody` | You'll lose access to {name}'s materials and class Mochi… rejoin with the class code. | 你将无法再访问 {name} 的材料和班级 Mochi……用班级代码重新加入。 |
+| `libraryLeftClass` | Left {name} | 已退出 {name} |
+| `libraryStatusCompiling` | 📖 Mochi is reading your chapters… | 📖 Mochi 正在阅读你的章节…… |
+| `libraryStatusBrainPages` | 🧠 {count} brain page(s) | 🧠 {count} 个知识页 |
+| `libraryStatusBuilding` | ⏳ Building brain from {count} file(s)… | ⏳ 正在从 {count} 个文件构建大脑…… |
+| `libraryStatusNoNotes` | 📂 No notes yet — teach me your material! | 📂 还没有笔记——教我你的材料吧！ |
+| `libraryEmptyTitle` | No Mochis yet | 还没有 Mochi |
+| `libraryEmptySubtitle` | Create a Mochi from the Home tab to see it here. | 在“主页”标签创建一个 Mochi，就会显示在这里。 |
+
+Reuse note: the library "Cancel" button uses the existing `commonCancel` key (from PR2), not a new one.
+
 **DO NOT translate** (carry their own language already): Mochi's name, class names,
 teacher-uploaded content, student-generated text, any AI-generated artifact.
 
-Running count of zh keys drafted this branch: **52** (PR1: 2 · PR2: 27 · PR3: 23 — onboarding tour).
+Running count of zh keys drafted this branch: **67** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 — library hub).
 Remaining core-loop extraction (onboarding tour · sign-up form · chat · modules · quiz · library) lands in later PRs;
 each appends its rows here.

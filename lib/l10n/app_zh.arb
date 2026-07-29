@@ -63,5 +63,21 @@
   "onboardingBeat1": "难懂的知识点会不断回来，直到你记牢",
   "onboardingBeat2": "简单的内容会拉开复习间隔——不浪费时间",
   "onboardingBeat3": "你学得越多，它就越适合你",
-  "onboardingThesis": "“不是一个普通的 AI——而是一个懂你笔记的 Mochi。”"
+  "onboardingThesis": "“不是一个普通的 AI——而是一个懂你笔记的 Mochi。”",
+
+  "libraryTitle": "学习库",
+  "libraryMyClasses": "我的班级",
+  "libraryLeave": "退出",
+  "libraryDelete": "删除",
+  "libraryAvatarDeleted": "已删除 {name}",
+  "libraryDeleteFailed": "删除失败，请重试。",
+  "libraryLeaveClassTitle": "退出这个班级？",
+  "libraryLeaveClassBody": "你将无法再访问 {name} 的材料和班级 Mochi。你的个人 Mochi 会保留。你可以用班级代码重新加入。",
+  "libraryLeftClass": "已退出 {name}",
+  "libraryStatusCompiling": "📖 Mochi 正在阅读你的章节……",
+  "libraryStatusBrainPages": "{count, plural, other{🧠 {count} 个知识页}}",
+  "libraryStatusBuilding": "{count, plural, other{⏳ 正在从 {count} 个文件构建大脑……}}",
+  "libraryStatusNoNotes": "📂 还没有笔记——教我你的材料吧！",
+  "libraryEmptyTitle": "还没有 Mochi",
+  "libraryEmptySubtitle": "在“主页”标签创建一个 Mochi，就会显示在这里。"
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/features/library/presentation/library_screen.dart';
 import 'package:pally/features/modules/presentation/widgets/complete_body.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/widgets/mochi_placeholder.dart';
 
 Finder _anyMochiImage() => find.byWidgetPredicate(
@@ -40,7 +41,11 @@ void main() {
   testWidgets('EmptyLibraryView renders the Mochi empty mascot, not a book icon',
       (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(home: Scaffold(body: EmptyLibraryView())),
+      const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(body: EmptyLibraryView()),
+      ),
     );
 
     expect(find.byType(MochiPlaceholder), findsOneWidget);
