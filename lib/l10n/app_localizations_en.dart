@@ -478,4 +478,95 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moduleUnknownStage => 'Unknown stage';
+
+  @override
+  String get quizConfidence => 'Confidence';
+
+  @override
+  String get quizErrorRetry => 'Something went wrong — try again.';
+
+  @override
+  String get quizFinish => 'Finish Quiz';
+
+  @override
+  String get quizNextQuestion => 'Next Question';
+
+  @override
+  String quizReviewingWeakSpot(String concept) {
+    return 'Reviewing your weak spot: $concept.';
+  }
+
+  @override
+  String get quizAnswerLocked =>
+      'Answer locked in — you\'ll see your results at the end.';
+
+  @override
+  String get quizCorrect => 'Correct!';
+
+  @override
+  String get quizNotQuite => 'Not quite';
+
+  @override
+  String quizScoreResult(int score, int total) {
+    return 'You got $score out of $total correct.';
+  }
+
+  @override
+  String get quizComplete => 'Quiz Complete!';
+
+  @override
+  String get quizBackToMochi => 'Back to Mochi';
+
+  @override
+  String quizAnswerLabel(String answer) {
+    return 'Answer: $answer';
+  }
+
+  @override
+  String get quizHowSure => 'How sure are you?';
+
+  @override
+  String get quizConfNotSure => 'Not sure';
+
+  @override
+  String get quizConfKinda => 'Kinda';
+
+  @override
+  String get quizConfVerySure => 'Very sure';
+
+  @override
+  String get quizResultMastered => 'Mastered';
+
+  @override
+  String get quizResultMisconception => 'Misconception';
+
+  @override
+  String get quizResultLuckyGuess => 'Lucky guess';
+
+  @override
+  String get quizResultKnownGap => 'Known gap';
+
+  @override
+  String quizFocusNext(String topic) {
+    return 'Focus next: $topic';
+  }
+
+  @override
+  String quizTrickyOne(String display) {
+    return 'I noticed $display is tricky for you — I\'ll bring it back soon.';
+  }
+
+  @override
+  String get quizTrickySome =>
+      'I noticed some topics were tricky — I\'ll bring them back soon.';
+
+  @override
+  String get quizBuilding => 'Building your quiz…';
+
+  @override
+  String get quizNoQuizToday => 'No quiz today';
+
+  @override
+  String get quizUploadNotesCta =>
+      'Upload some notes so Mochi can build your first quiz!';
 }

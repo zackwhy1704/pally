@@ -901,6 +901,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unknown stage'**
   String get moduleUnknownStage;
+
+  /// Header for the confidence self-rating on a quiz question.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence'**
+  String get quizConfidence;
+
+  /// Error message on the quiz screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong — try again.'**
+  String get quizErrorRetry;
+
+  /// Button on the last quiz question.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish Quiz'**
+  String get quizFinish;
+
+  /// Button to advance to the next quiz question.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Question'**
+  String get quizNextQuestion;
+
+  /// Targeting badge shown when a question revisits a weak concept.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviewing your weak spot: {concept}.'**
+  String quizReviewingWeakSpot(String concept);
+
+  /// Note shown after answering, before the reveal.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer locked in — you\'ll see your results at the end.'**
+  String get quizAnswerLocked;
+
+  /// Verdict when the answer is right.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct!'**
+  String get quizCorrect;
+
+  /// Verdict when the answer is wrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Not quite'**
+  String get quizNotQuite;
+
+  /// Quiz results summary line.
+  ///
+  /// In en, this message translates to:
+  /// **'You got {score} out of {total} correct.'**
+  String quizScoreResult(int score, int total);
+
+  /// Title on the quiz results screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz Complete!'**
+  String get quizComplete;
+
+  /// Button returning from quiz results. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Mochi'**
+  String get quizBackToMochi;
+
+  /// Shows the correct option after reveal.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer: {answer}'**
+  String quizAnswerLabel(String answer);
+
+  /// Prompt for the confidence self-rating.
+  ///
+  /// In en, this message translates to:
+  /// **'How sure are you?'**
+  String get quizHowSure;
+
+  /// Confidence option — low.
+  ///
+  /// In en, this message translates to:
+  /// **'Not sure'**
+  String get quizConfNotSure;
+
+  /// Confidence option — medium.
+  ///
+  /// In en, this message translates to:
+  /// **'Kinda'**
+  String get quizConfKinda;
+
+  /// Confidence option — high.
+  ///
+  /// In en, this message translates to:
+  /// **'Very sure'**
+  String get quizConfVerySure;
+
+  /// Result matrix cell — correct + confident.
+  ///
+  /// In en, this message translates to:
+  /// **'Mastered'**
+  String get quizResultMastered;
+
+  /// Result matrix cell — wrong + confident.
+  ///
+  /// In en, this message translates to:
+  /// **'Misconception'**
+  String get quizResultMisconception;
+
+  /// Result matrix cell — correct + unsure.
+  ///
+  /// In en, this message translates to:
+  /// **'Lucky guess'**
+  String get quizResultLuckyGuess;
+
+  /// Result matrix cell — wrong + unsure.
+  ///
+  /// In en, this message translates to:
+  /// **'Known gap'**
+  String get quizResultKnownGap;
+
+  /// Priority-review pointer on the results screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus next: {topic}'**
+  String quizFocusNext(String topic);
+
+  /// Re-teach nudge naming one tricky concept.
+  ///
+  /// In en, this message translates to:
+  /// **'I noticed {display} is tricky for you — I\'ll bring it back soon.'**
+  String quizTrickyOne(String display);
+
+  /// Re-teach nudge for multiple tricky topics.
+  ///
+  /// In en, this message translates to:
+  /// **'I noticed some topics were tricky — I\'ll bring them back soon.'**
+  String get quizTrickySome;
+
+  /// Loading message while the quiz is generated (keep ellipsis).
+  ///
+  /// In en, this message translates to:
+  /// **'Building your quiz…'**
+  String get quizBuilding;
+
+  /// Empty-state title when no quiz is available.
+  ///
+  /// In en, this message translates to:
+  /// **'No quiz today'**
+  String get quizNoQuizToday;
+
+  /// Empty-state body prompting an upload. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload some notes so Mochi can build your first quiz!'**
+  String get quizUploadNotesCta;
 }
 
 class _AppLocalizationsDelegate

@@ -451,4 +451,92 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get moduleUnknownStage => '未知阶段';
+
+  @override
+  String get quizConfidence => '确信度';
+
+  @override
+  String get quizErrorRetry => '出错了——请重试。';
+
+  @override
+  String get quizFinish => '完成小测';
+
+  @override
+  String get quizNextQuestion => '下一题';
+
+  @override
+  String quizReviewingWeakSpot(String concept) {
+    return '正在复习你的薄弱点：$concept。';
+  }
+
+  @override
+  String get quizAnswerLocked => '答案已锁定——你将在结束时看到结果。';
+
+  @override
+  String get quizCorrect => '答对了！';
+
+  @override
+  String get quizNotQuite => '还差一点';
+
+  @override
+  String quizScoreResult(int score, int total) {
+    return '你答对了 $total 题中的 $score 题。';
+  }
+
+  @override
+  String get quizComplete => '小测完成！';
+
+  @override
+  String get quizBackToMochi => '返回 Mochi';
+
+  @override
+  String quizAnswerLabel(String answer) {
+    return '答案：$answer';
+  }
+
+  @override
+  String get quizHowSure => '你有多确定？';
+
+  @override
+  String get quizConfNotSure => '不确定';
+
+  @override
+  String get quizConfKinda => '有点确定';
+
+  @override
+  String get quizConfVerySure => '非常确定';
+
+  @override
+  String get quizResultMastered => '已掌握';
+
+  @override
+  String get quizResultMisconception => '概念误解';
+
+  @override
+  String get quizResultLuckyGuess => '蒙对了';
+
+  @override
+  String get quizResultKnownGap => '已知薄弱';
+
+  @override
+  String quizFocusNext(String topic) {
+    return '接下来重点：$topic';
+  }
+
+  @override
+  String quizTrickyOne(String display) {
+    return '我注意到 $display 对你来说有点难——我会很快再带你复习。';
+  }
+
+  @override
+  String get quizTrickySome => '我注意到有些内容有点难——我会很快再带你复习。';
+
+  @override
+  String get quizBuilding => '正在生成你的小测……';
+
+  @override
+  String get quizNoQuizToday => '今天没有小测';
+
+  @override
+  String get quizUploadNotesCta => '上传一些笔记，Mochi 就能为你生成第一份小测！';
 }

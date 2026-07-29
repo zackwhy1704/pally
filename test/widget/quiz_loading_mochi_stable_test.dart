@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/quiz/presentation/quiz_screen.dart';
 import 'package:pally/features/quiz/presentation/quiz_view_model.dart';
 
@@ -18,7 +19,10 @@ Widget _wrap() => ProviderScope(
       overrides: [
         quizViewModelProvider('av-1').overrideWith(_LoadingQuizVM.new),
       ],
-      child: const MaterialApp(home: QuizScreen(avatarId: 'av-1')),
+      child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+home: QuizScreen(avatarId: 'av-1')),
     );
 
 void main() {
