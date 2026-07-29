@@ -81,7 +81,7 @@ class _ExplainerSheet extends StatelessWidget {
             _DifferentiatorCard(
               emoji: '📚',
               title: l.howDiffCard1Title,
-              body: l.howDiffCard1Body,
+              body: l.howDiffCard1Body(l.mascotName),
               color: AppColors.purpleL,
               border: AppColors.purple,
             ),
@@ -97,7 +97,7 @@ class _ExplainerSheet extends StatelessWidget {
             _DifferentiatorCard(
               emoji: '🎯',
               title: l.howDiffCard3Title,
-              body: l.howDiffCard3Body,
+              body: l.howDiffCard3Body(l.mascotName),
               color: AppColors.tealL,
               border: AppColors.teal,
             ),
@@ -111,7 +111,7 @@ class _ExplainerSheet extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                l.howDiffQuote,
+                l.howDiffQuote(l.mascotName),
                 style: AppTextStyles.body.copyWith(
                     color: AppColors.purple,
                     fontStyle: FontStyle.italic,

@@ -21,6 +21,7 @@ void main() {
     final zh = await AppLocalizations.delegate.load(const Locale('zh'));
     expect(zh.chatInputHint, '问我任何问题……');
     expect(zh.chatSnap, '拍照');
-    expect(zh.libraryEmptyTitle, '还没有 Mochi'); // reused, not re-minted
+    // reused, not re-minted; mascot now resolves via {mascot} (zh 小伴)
+    expect(zh.libraryEmptyTitle(zh.mascotName), '还没有 小伴');
   });
 }

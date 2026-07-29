@@ -203,7 +203,7 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
                 size: 48, color: AppColors.purpleC),
             const SizedBox(height: AppSpacing.md),
             Text(
-              AppLocalizations.of(context).moduleRefreshing,
+              AppLocalizations.of(context).moduleRefreshing(AppLocalizations.of(context).mascotName),
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),

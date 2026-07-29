@@ -859,7 +859,7 @@ class _SubscriptionTile extends ConsumerWidget {
               title: Text(planLabel),
               subtitle: Text(isPremium
                   ? l.settingsPremiumManage
-                  : l.settingsFreePlanSubtitle),
+                  : l.settingsFreePlanSubtitle(l.mascotName)),
               trailing: FilledButton(
                 onPressed: () => _onTap(context, ref, ent.isPremium,
                     ent.source == 'PARENT'),

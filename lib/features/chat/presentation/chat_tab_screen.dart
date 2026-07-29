@@ -21,7 +21,7 @@ class ChatTabScreen extends ConsumerWidget {
 
     ref.listen<AsyncValue<List<Avatar>>>(homeViewModelProvider, (_, next) {
       if (next is AsyncError) {
-        PallyToast.error(context, AppLocalizations.of(context).chatCouldNotLoadMochis);
+        PallyToast.error(context, AppLocalizations.of(context).chatCouldNotLoadMochis(AppLocalizations.of(context).mascotName));
       }
     });
 
@@ -118,8 +118,8 @@ class _EmptyView extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
         child: MochiPlaceholder(
-          title: AppLocalizations.of(context).libraryEmptyTitle,
-          subtitle: AppLocalizations.of(context).chatCreateMochiFirst,
+          title: AppLocalizations.of(context).libraryEmptyTitle(AppLocalizations.of(context).mascotName),
+          subtitle: AppLocalizations.of(context).chatCreateMochiFirst(AppLocalizations.of(context).mascotName),
         ),
       ),
     );

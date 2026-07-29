@@ -75,7 +75,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     ref.listen<AsyncValue<List<Avatar>>>(homeViewModelProvider, (_, next) {
       if (next is AsyncError) {
-        PallyToast.error(context, l10n.homeCouldNotLoadMochis);
+        PallyToast.error(context, l10n.homeCouldNotLoadMochis(l10n.mascotName));
       }
     });
 
@@ -114,7 +114,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   // to look at UI that isn't there.
                   showAppSnackBar(SnackBar(
                       content: Text(
-                        l10n.homeConsentApprove,
+                        l10n.homeConsentApprove(l10n.mascotName),
                         style: AppTextStyles.bodySmall
                             .copyWith(color: Colors.white),
                       ),
@@ -155,7 +155,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         const Icon(Icons.wifi_off_rounded,
                             size: 48, color: AppColors.text3),
                         const SizedBox(height: AppSpacing.md),
-                        Text(l10n.homeCouldNotLoadYourMochis,
+                        Text(l10n.homeCouldNotLoadYourMochis(l10n.mascotName),
                             style: AppTextStyles.title,
                             textAlign: TextAlign.center),
                         const SizedBox(height: AppSpacing.xs),
@@ -307,7 +307,7 @@ class _HomeHeader extends StatelessWidget {
                     key: featureTourCreateMochiKey,
                     onPressed: onNewTutor,
                     icon: const Icon(Icons.add, size: 16),
-                    label: Text(l10n.homeNewMochi),
+                    label: Text(l10n.homeNewMochi(l10n.mascotName)),
                     style: TextButton.styleFrom(
                       foregroundColor: AppColors.purple,
                       textStyle: AppTextStyles.label
@@ -682,8 +682,8 @@ class _SlotLockedSheetState extends ConsumerState<_SlotLockedSheet> {
           const SizedBox(height: AppSpacing.sm),
           Text(
             isPremium
-                ? l10n.homeActivateError
-                : l10n.homeActivateCapMessage(cap),
+                ? l10n.homeActivateError(l10n.mascotName)
+                : l10n.homeActivateCapMessage(cap, l10n.mascotName),
             style: AppTextStyles.body.copyWith(color: AppColors.text2),
             textAlign: TextAlign.center,
           ),
@@ -814,7 +814,7 @@ void _showTutorOptions(BuildContext context, WidgetRef ref, Avatar avatar) {
           if (!isCentre)
             _OptionTile(
               icon: Icons.delete_outline_rounded,
-              label: l10n.chatMenuDelete,
+              label: l10n.chatMenuDelete(l10n.mascotName),
               color: AppColors.coral,
               onTap: () async {
                 Navigator.pop(sheetCtx);

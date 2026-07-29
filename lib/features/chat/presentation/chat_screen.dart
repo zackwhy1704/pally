@@ -408,7 +408,7 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     const Icon(Icons.school_outlined,
                         color: AppColors.purple, size: 18),
                     const SizedBox(width: 10),
-                    Text(AppLocalizations.of(context).chatMenuTeach,
+                    Text(AppLocalizations.of(context).chatMenuTeach(AppLocalizations.of(context).mascotName),
                         style: AppTextStyles.body.copyWith(fontSize: 13)),
                   ]),
                 ),
@@ -431,7 +431,7 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     const Icon(Icons.delete_outline_rounded,
                         color: AppColors.coral, size: 18),
                     const SizedBox(width: 10),
-                    Text(AppLocalizations.of(context).chatMenuDelete,
+                    Text(AppLocalizations.of(context).chatMenuDelete(AppLocalizations.of(context).mascotName),
                         style: AppTextStyles.body.copyWith(
                             fontSize: 13, color: AppColors.coral)),
                   ]),
@@ -975,7 +975,7 @@ class _WelcomePrompt extends StatelessWidget {
       child: MochiPlaceholder(
         title: AppLocalizations.of(context).chatEmptyTitle,
         subtitle:
-            AppLocalizations.of(context).chatEmptySubtitle,
+            AppLocalizations.of(context).chatEmptySubtitle(AppLocalizations.of(context).mascotName),
       ),
     );
   }
@@ -1034,7 +1034,7 @@ class _SessionDisclaimerState extends State<_SessionDisclaimer> {
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Text(
-                AppLocalizations.of(context).chatDisclaimer,
+                AppLocalizations.of(context).chatDisclaimer(AppLocalizations.of(context).mascotName),
                 style:
                     AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
               ),

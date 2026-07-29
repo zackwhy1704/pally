@@ -39,7 +39,7 @@ class SelfAssessBody extends StatelessWidget {
             Text(l10n.moduleMarkOwnAnswers, style: AppTextStyles.heading1),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              l10n.moduleCompareReference,
+              l10n.moduleCompareReference(l10n.mascotName),
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
             ),
             const SizedBox(height: AppSpacing.lg),

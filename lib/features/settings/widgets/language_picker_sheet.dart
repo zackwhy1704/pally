@@ -42,7 +42,7 @@ class LanguagePickerSheet extends ConsumerWidget {
             Text(l.language, style: AppTextStyles.title),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              l.languagePickerSubtitle,
+              l.languagePickerSubtitle(l.mascotName),
               style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
             ),
             const SizedBox(height: AppSpacing.md),

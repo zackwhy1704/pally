@@ -439,7 +439,7 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              l.signupStudyBuddy,
+              l.signupStudyBuddy(l.mascotName),
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),
@@ -861,7 +861,7 @@ class _Step3Upload extends ConsumerWidget {
               Text(l.signupBookSplitChapters,
                   style: AppTextStyles.title, textAlign: TextAlign.center),
               const SizedBox(height: AppSpacing.sm),
-              Text(l.signupPickChapters,
+              Text(l.signupPickChapters(l.mascotName),
                   style: AppTextStyles.body.copyWith(color: AppColors.text2),
                   textAlign: TextAlign.center),
               const SizedBox(height: AppSpacing.lg),
@@ -1036,7 +1036,7 @@ class _UploadIdleViewState extends ConsumerState<_UploadIdleView> {
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    l.signupNotesInstructions,
+                    l.signupNotesInstructions(l.mascotName),
                     style: AppTextStyles.body.copyWith(color: AppColors.text2),
                     textAlign: TextAlign.center,
                   ),
@@ -1096,7 +1096,7 @@ class _UploadIdleViewState extends ConsumerState<_UploadIdleView> {
                             borderRadius: BorderRadius.circular(14)),
                       ),
                       child: Text(
-                        l.signupAddToMochi,
+                        l.signupAddToMochi(l.mascotName),
                         style: AppTextStyles.body.copyWith(
                             color: Colors.white, fontWeight: FontWeight.w700),
                       ),
@@ -1219,7 +1219,7 @@ class _ProcessingView extends StatelessWidget {
 
   String _message(AppLocalizations l) => switch (stage) {
         DirectUploadStage.uploading => l.signupUploading,
-        DirectUploadStage.compiling => l.signupReadingNotes,
+        DirectUploadStage.compiling => l.signupReadingNotes(l.mascotName),
         DirectUploadStage.generatingModules => l.signupCreatingModule,
         _ => l.signupWorkingOnIt,
       };
@@ -1395,13 +1395,13 @@ class _ReadyView extends StatelessWidget {
           Text(
             moduleId != null
                 ? l.signupModuleReady(moduleTitle ?? l.signupFirstModuleWord)
-                : l.signupMochiSetUp,
+                : l.signupMochiSetUp(l.mascotName),
             style: AppTextStyles.heading1,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            l.signupModuleBuilt,
+            l.signupModuleBuilt(l.mascotName),
             style: AppTextStyles.body.copyWith(color: AppColors.text2),
             textAlign: TextAlign.center,
           ),

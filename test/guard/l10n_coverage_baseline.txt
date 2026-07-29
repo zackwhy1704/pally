@@ -1,0 +1,754 @@
+# zh coverage baseline — SHRINK ONLY. Each line: <relpath>\t<string>.
+# Remove a line by localizing that string. Adding a line = an explicit
+# "legitimately English" allow; include a reason in the PR.
+app/api_client.dart	$_title unlocks once a grown-up approves your account. 
+app/api_client.dart	Almost there!
+app/api_client.dart	Got it
+app/api_client.dart	Let's finish setting up your account so you can start learning
+app/api_client.dart	Remind my grown-up
+app/api_client.dart	Server error ($status) — please try again
+app/pally_app.dart	Pally
+app/router.dart	Go home
+app/router.dart	Something went wrong.
+core/services/notification_service.dart	$dueCount card${dueCount == 1 ? 
+core/services/notification_service.dart	Quiz time!
+core/ui/pally_delete_tutor_dialog.dart	Chat messages
+core/ui/pally_delete_tutor_dialog.dart	Delete
+core/ui/pally_delete_tutor_dialog.dart	Delete ${avatar.name}?
+core/ui/pally_delete_tutor_dialog.dart	Keep Tutor
+core/ui/pally_delete_tutor_dialog.dart	Knowledge pages
+core/ui/pally_delete_tutor_dialog.dart	Quiz progress
+core/ui/pally_delete_tutor_dialog.dart	This permanently deletes this tutor and all their knowledge, 
+core/ui/pally_error_card.dart	Something went wrong
+core/ui/pally_relevance_warning_dialog.dart	Add Anyway
+core/ui/pally_relevance_warning_dialog.dart	Go Back
+core/ui/pally_relevance_warning_dialog.dart	Hmm, this might not fit!
+core/ui/scaffold_shell.dart	Groups
+core/ui/scaffold_shell.dart	Home
+core/ui/scaffold_shell.dart	Library
+core/ui/scaffold_shell.dart	Me
+core/utils/device_info.dart	${a.manufacturer} ${a.model}
+core/utils/device_info.dart	Unknown device
+core/widgets/loading/mochi_generating.dart	Cancel
+features/account_deletion/presentation/delete_account_screen.dart	${local.day} ${months[local.month - 1]} ${local.year}
+features/account_deletion/presentation/delete_account_screen.dart	6-digit code
+features/account_deletion/presentation/delete_account_screen.dart	Back
+features/account_deletion/presentation/delete_account_screen.dart	Changed your mind? Sign back in before then to restore your account 
+features/account_deletion/presentation/delete_account_screen.dart	Confirm it's you
+features/account_deletion/presentation/delete_account_screen.dart	Continue
+features/account_deletion/presentation/delete_account_screen.dart	Delete account
+features/account_deletion/presentation/delete_account_screen.dart	Delete my account
+features/account_deletion/presentation/delete_account_screen.dart	Delete your account?
+features/account_deletion/presentation/delete_account_screen.dart	Email me a code instead
+features/account_deletion/presentation/delete_account_screen.dart	For your security, confirm your identity before we schedule the 
+features/account_deletion/presentation/delete_account_screen.dart	If you subscribed through the App Store or Google Play, remember 
+features/account_deletion/presentation/delete_account_screen.dart	Keep my account
+features/account_deletion/presentation/delete_account_screen.dart	Password
+features/account_deletion/presentation/delete_account_screen.dart	Sign out
+features/account_deletion/presentation/delete_account_screen.dart	This permanently deletes your account. It cannot be undone after the 
+features/account_deletion/presentation/delete_account_screen.dart	We emailed you a 6-digit code. Enter it below to confirm.
+features/account_deletion/presentation/delete_account_screen.dart	What gets deleted
+features/account_deletion/presentation/delete_account_screen.dart	You have 14 days to change your mind. Sign back in during that time 
+features/account_deletion/presentation/delete_account_screen.dart	Your account is scheduled for deletion
+features/account_deletion/presentation/restore_account_sheet.dart	${local.day} ${months[local.month - 1]} ${local.year}
+features/account_deletion/presentation/restore_account_sheet.dart	Not now
+features/account_deletion/presentation/restore_account_sheet.dart	Restore my account
+features/account_deletion/presentation/restore_account_sheet.dart	This account is scheduled for deletion
+features/app_update/force_update_screen.dart	A newer version of Apalchi is ready with important improvements. 
+features/app_update/force_update_screen.dart	Time to update!
+features/app_update/force_update_screen.dart	Update now
+features/assignments/presentation/assignment_compare_screen.dart	Answers not released yet
+features/assignments/presentation/assignment_compare_screen.dart	Assignment
+features/assignments/presentation/assignment_compare_screen.dart	Compare your answers with the model answers below.
+features/assignments/presentation/assignment_compare_screen.dart	Evaluation
+features/assignments/presentation/assignment_compare_screen.dart	Model answer
+features/assignments/presentation/assignment_compare_screen.dart	Picked for you
+features/assignments/presentation/assignment_compare_screen.dart	Q${question.index + 1}
+features/assignments/presentation/assignment_compare_screen.dart	Your answer
+features/assignments/presentation/assignment_compare_screen.dart	Your teacher hasn't shared the model answers. 
+features/auth/screens/centre_block_screen.dart	Back to Sign In
+features/auth/screens/centre_block_screen.dart	Log in at apalchi.com
+features/auth/screens/centre_block_screen.dart	The Apalchi app is for students only. 
+features/auth/screens/centre_block_screen.dart	This is a Centre account
+features/auth/screens/complete_profile_screen.dart	Age group
+features/auth/screens/complete_profile_screen.dart	I am 13 or older
+features/auth/screens/complete_profile_screen.dart	I am under 13
+features/auth/screens/complete_profile_screen.dart	One quick thing
+features/auth/screens/complete_profile_screen.dart	Parent's email address
+features/auth/screens/complete_profile_screen.dart	Please enter your parent's email
+features/auth/screens/complete_profile_screen.dart	Please enter your parent's valid email (e.g. parent@example.com)
+features/auth/screens/complete_profile_screen.dart	Tell us your age group so we can set up your account safely.
+features/auth/screens/complete_profile_screen.dart	We'll email your parent to approve your account before you can use AI features.
+features/auth/screens/splash_screen.dart	Mochi
+features/avatar_hub/presentation/avatar_hub_screen.dart	$title. $subtitle
+features/avatar_hub/presentation/avatar_hub_screen.dart	${l.hubLearn}. $subtitle
+features/avatar_picker/screens/avatar_picker_screen.dart	Choose Your Mochi ✨
+features/avatar_picker/screens/avatar_picker_screen.dart	Could not create Mochi — ${e.message}
+features/avatar_picker/screens/avatar_picker_screen.dart	Each one is unique 🍡 Pick who you want to learn with!
+features/brain_health/presentation/brain_health_screen.dart	$count errors
+features/brain_health/presentation/brain_health_screen.dart	$q
+features/brain_health/presentation/brain_health_screen.dart	$score%
+features/brain_health/presentation/brain_health_screen.dart	Avg Quality
+features/brain_health/presentation/brain_health_screen.dart	Brain Health Score
+features/brain_health/presentation/brain_health_screen.dart	Brain Health 🧠
+features/brain_health/presentation/brain_health_screen.dart	Pages
+features/brain_health/presentation/brain_health_screen.dart	Verified
+features/brain_health/presentation/brain_health_screen.dart	Weak Topics
+features/brain_health/presentation/brain_health_screen.dart	Wiki Pages
+features/centre/presentation/centre_join_screen.dart	Ask your teacher or tuition centre for the class code on their 
+features/centre/presentation/centre_join_screen.dart	Enter the class code
+features/centre/presentation/centre_join_screen.dart	Enter the full class code
+features/centre/presentation/centre_join_screen.dart	Join a class
+features/centre/presentation/centre_join_screen.dart	Join class
+features/centre/presentation/centre_join_screen.dart	Joined $className 🎉
+features/chapters/presentation/chapter_lock_banner.dart	$n chapter${n == 1 ? 
+features/chapters/presentation/chapter_lock_banner.dart	Choose
+features/chapters/presentation/chapter_lock_banner.dart	Mochi hasn't read ${n == 1 ? 'this chapter' : 'these chapters'} yet 
+features/chapters/presentation/chapter_picker_sheet.dart	Choose chapters to compile
+features/chapters/presentation/chapter_picker_sheet.dart	Compile all (${locked.length})
+features/chapters/presentation/chapter_picker_sheet.dart	Couldn't load chapters. Please close and try again.
+features/chapters/presentation/chapter_picker_sheet.dart	Go to Library
+features/chapters/presentation/chapter_picker_sheet.dart	Mochi is reading your chapters!
+features/chapters/presentation/chapter_picker_sheet.dart	Mochi only reads the chapters you pick — start with what you’re studying now.
+features/chapters/presentation/chapter_picker_sheet.dart	No chapters to compile.
+features/chapters/presentation/chapter_picker_sheet.dart	Pages ${c.pageFrom}–${c.pageTo} · ${c.pageCount} 
+features/chapters/presentation/chapter_picker_sheet.dart	This takes a few minutes. You can follow along in Library — Mochi will 
+features/chat/presentation/chat_screen.dart	Reported
+features/chat/presentation/chat_screen.dart	🌐 general knowledge — upload notes for tailored answers
+features/chat/presentation/chat_screen.dart	📖 from your notes
+features/chat/presentation/chat_tab_screen.dart	Chat
+features/chat/presentation/chat_view_model.dart	📷 Homework photo
+features/chat/presentation/widgets/answer_card.dart	$questionNumber
+features/chat/presentation/widgets/answer_card.dart	✅  ${answer.answer}
+features/chat/presentation/widgets/homework_scan_result_bubble.dart	+$xp XP earned
+features/chat/presentation/widgets/homework_scan_result_bubble.dart	Could not solve these questions. Please try again with a clearer photo.
+features/chat/presentation/widgets/homework_scan_result_bubble.dart	Solved $count question${count == 1 ? 
+features/chat/presentation/widgets/homework_scan_result_bubble.dart	Tap to view full results →
+features/chat/presentation/widgets/homework_scan_result_bubble.dart	⚡ Quiz me on this
+features/chat/presentation/widgets/homework_scan_result_bubble.dart	📖 from $pageSlug.md
+features/chat/presentation/widgets/homework_scan_result_bubble.dart	📝 Show full working
+features/chat/presentation/widgets/homework_scan_result_bubble.dart	🔄 Another example
+features/chat/presentation/widgets/photo_message_bubble.dart	📷 $questionCount question${questionCount == 1 ? 
+features/chat/presentation/widgets/photo_message_bubble.dart	📷 Homework photo
+features/chat/presentation/widgets/photo_processing_bubble.dart	Hold on, I'm reading your homework… 🔍
+features/chat/presentation/widgets/report_message_sheet.dart	Cancel
+features/chat/presentation/widgets/report_message_sheet.dart	Done
+features/chat/presentation/widgets/report_message_sheet.dart	Help us keep Mochi safe and helpful. We'll look into it.
+features/chat/presentation/widgets/report_message_sheet.dart	Mochi got it wrong or was confusing
+features/chat/presentation/widgets/report_message_sheet.dart	Report this message
+features/chat/presentation/widgets/report_message_sheet.dart	Something Mochi said was not safe or upsetting
+features/chat/presentation/widgets/report_message_sheet.dart	Something else
+features/chat/presentation/widgets/report_message_sheet.dart	Thanks — we'll take a look
+features/chat/presentation/widgets/report_message_sheet.dart	Type here…
+features/chat/presentation/widgets/report_message_sheet.dart	Want to tell us more? (optional)
+features/chat/presentation/widgets/report_message_sheet.dart	Your report helps keep Mochi safe.
+features/chat/widgets/escape_hatch_notification.dart	Added "${widget.topicLabel}" to your practice list
+features/chat/widgets/escape_hatch_notification.dart	Great effort! Here's the answer
+features/chat/widgets/guide_attempt_indicator.dart	Hints: 
+features/chat/widgets/guide_attempt_indicator.dart	— answer ready
+features/chat/widgets/mode_coach_mark.dart	Full answer coming up — try Guide Me sometimes, 
+features/chat/widgets/mode_coach_mark.dart	Tap the toggle to switch how Mochi helps you.
+features/chat/widgets/mode_education_overlay.dart	Default: Guide Me
+features/chat/widgets/mode_education_overlay.dart	Got it — let's learn!
+features/chat/widgets/mode_education_overlay.dart	Guide Me
+features/chat/widgets/mode_education_overlay.dart	Just answer
+features/chat/widgets/mode_education_overlay.dart	Mochi asks you guiding questions — you figure it out yourself. 
+features/chat/widgets/mode_education_overlay.dart	Mochi gives you the worked solution directly. 
+features/chat/widgets/mode_education_overlay.dart	Two ways to learn 🎓
+features/chat/widgets/mode_education_overlay.dart	You can switch any time with the toggle above the chat.
+features/chat/widgets/teaching_mode_toggle.dart	Guide Me
+features/chat/widgets/teaching_mode_toggle.dart	Just answer
+features/collection/presentation/collection_screen.dart	$owned / $total
+features/collection/presentation/collection_screen.dart	Collection
+features/collection/presentation/collection_screen.dart	Mochi Album
+features/consent/presentation/ai_disclosure_screen.dart	A quick note about AI
+features/consent/presentation/ai_disclosure_screen.dart	Apalchi uses AI helpers to turn your notes into lessons. 
+features/consent/presentation/ai_disclosure_screen.dart	I agree
+features/consent/presentation/ai_disclosure_screen.dart	Not now
+features/consent/presentation/ai_disclosure_screen.dart	Read more
+features/consent/presentation/ai_disclosure_screen.dart	These companies are outside Singapore. We only 
+features/consent/presentation/consent_approved_overlay.dart	Let's go!
+features/consent/presentation/consent_approved_overlay.dart	You're all set! 🎉
+features/consent/presentation/consent_approved_overlay.dart	Your grown-up said yes — your account is ready. 
+features/consent/presentation/parental_consent_pending_sheet.dart	Almost there! 🎉
+features/consent/presentation/parental_consent_pending_sheet.dart	Cancel
+features/consent/presentation/parental_consent_pending_sheet.dart	Got it
+features/consent/presentation/parental_consent_pending_sheet.dart	I've approved — refresh
+features/consent/presentation/parental_consent_pending_sheet.dart	It can take a minute. If they don't see it, ask them to check 
+features/consent/presentation/parental_consent_pending_sheet.dart	Not approved yet — ask your grown-up to tap the link, then try again.
+features/consent/presentation/parental_consent_pending_sheet.dart	Resend email
+features/consent/presentation/parental_consent_pending_sheet.dart	Resend in ${_cooldown}s
+features/consent/presentation/parental_consent_pending_sheet.dart	Send
+features/consent/presentation/parental_consent_pending_sheet.dart	Sending…
+features/consent/presentation/parental_consent_pending_sheet.dart	We just need a grown-up to say yes.
+features/consent/presentation/parental_consent_pending_sheet.dart	We'll send the approval link here instead.
+features/consent/presentation/parental_consent_pending_sheet.dart	We'll unlock automatically the moment they do — you can close the 
+features/consent/presentation/parental_consent_pending_sheet.dart	Wrong grown-up's email? Change it
+features/consent/presentation/parental_consent_pending_sheet.dart	You're all set! 🎉
+features/consent/presentation/parental_consent_pending_sheet.dart	Your grown-up's email
+features/create_tutor/presentation/character_picker_step.dart	600 ⭐ to unlock
+features/create_tutor/presentation/character_picker_step.dart	Character Locked
+features/create_tutor/presentation/character_picker_step.dart	Choose Your Mochi
+features/create_tutor/presentation/character_picker_step.dart	Could not load Mochis — tap to retry.
+features/create_tutor/presentation/character_picker_step.dart	Dismiss
+features/create_tutor/presentation/character_picker_step.dart	Earn XP to open a mystery box and unlock ${character.displayName}!
+features/create_tutor/presentation/character_picker_step.dart	Next →
+features/create_tutor/presentation/character_picker_step.dart	Open Mystery Box
+features/create_tutor/presentation/character_picker_step.dart	Pick a Mochi that matches your vibe! 🎉
+features/create_tutor/presentation/character_picker_step.dart	Retry
+features/create_tutor/presentation/create_tutor_screen.dart	Create Mochi
+features/create_tutor/presentation/grade_step.dart	Almost there! 🎓
+features/create_tutor/presentation/grade_step.dart	Create $name! 🎉
+features/create_tutor/presentation/grade_step.dart	Help $name teach at the right level. (Optional)
+features/create_tutor/presentation/grade_step.dart	Select age (optional)
+features/create_tutor/presentation/grade_step.dart	WHAT DO YOU WISH MOCHI TO HELP YOU WITH?
+features/create_tutor/presentation/grade_step.dart	— Not set —
+features/create_tutor/presentation/name_step.dart	Give your Mochi a name
+features/create_tutor/presentation/name_step.dart	Next
+features/create_tutor/presentation/name_step.dart	What would you like to call your Mochi?
+features/create_tutor/presentation/name_step.dart	e.g. Robo, Prof. Felix…
+features/create_tutor/presentation/subject_step.dart	Next →
+features/create_tutor/presentation/subject_step.dart	Quick picks
+features/create_tutor/presentation/subject_step.dart	What subject?
+features/create_tutor/presentation/subject_step.dart	What will $name help you with?
+features/create_tutor/presentation/subject_step.dart	e.g. Maths, Science, Guitar…
+features/exam_prep/presentation/exam_prep_screen.dart	$_masteryIcon $pct%
+features/exam_prep/presentation/exam_prep_screen.dart	$daysRemaining
+features/exam_prep/presentation/exam_prep_screen.dart	CONCEPT MASTERY
+features/exam_prep/presentation/exam_prep_screen.dart	Complete some modules first to see your concept mastery.
+features/exam_prep/presentation/exam_prep_screen.dart	Could not load exam prep data.
+features/exam_prep/presentation/exam_prep_screen.dart	Could not start revision. Try again.
+features/exam_prep/presentation/exam_prep_screen.dart	Exam Prep
+features/exam_prep/presentation/exam_prep_screen.dart	No exam prep data yet
+features/exam_prep/presentation/exam_prep_screen.dart	Re-do
+features/exam_prep/presentation/exam_prep_screen.dart	Self-assessed
+features/exam_prep/presentation/exam_prep_screen.dart	Study $dailyTarget module${dailyTarget == 1 ? 
+features/exam_prep/presentation/exam_prep_screen.dart	Try again
+features/exam_prep/presentation/exam_prep_screen.dart	days until exam
+features/flashcards/presentation/flashcard_screen.dart	$current / $total
+features/flashcards/presentation/flashcard_screen.dart	Answer
+features/flashcards/presentation/flashcard_screen.dart	Easy
+features/flashcards/presentation/flashcard_screen.dart	Flashcards
+features/flashcards/presentation/flashcard_screen.dart	Generate cards (~$pageCount page${pageCount == 1 ? 
+features/flashcards/presentation/flashcard_screen.dart	Generate flashcards
+features/flashcards/presentation/flashcard_screen.dart	Hard
+features/flashcards/presentation/flashcard_screen.dart	No flashcards yet
+features/flashcards/presentation/flashcard_screen.dart	Okay
+features/flashcards/presentation/flashcard_screen.dart	Question
+features/flashcards/presentation/flashcard_screen.dart	Ready to make cards
+features/flashcards/presentation/flashcard_screen.dart	Ready to make your cards
+features/flashcards/presentation/flashcard_screen.dart	Regenerate cards
+features/flashcards/presentation/flashcard_screen.dart	Tap to flip
+features/flashcards/presentation/flashcard_screen.dart	That's about $pageCount page${pageCount == 1 ? '' : 's'} of notes. 
+features/flashcards/presentation/flashcard_screen.dart	Your Mochi has notes but no cards yet.nTap the button below to generate them.
+features/flashcards/presentation/flashcard_view_model.dart	your Mochi
+features/groups/presentation/challenge_card.dart	$m:$s
+features/groups/presentation/challenge_card.dart	$pct%
+features/groups/presentation/challenge_card.dart	(you)
+features/groups/presentation/challenge_card.dart	Answered — reveals in ${_countdownLabel(c.revealAt)}
+features/groups/presentation/challenge_card.dart	Correct: 
+features/groups/presentation/challenge_card.dart	Daily Challenge
+features/groups/presentation/challenge_card.dart	Reveal pending
+features/groups/presentation/challenge_card.dart	Reveals $dd/$mm
+features/groups/presentation/challenge_card.dart	Submit
+features/groups/presentation/challenge_card.dart	Type your answer…
+features/groups/presentation/create_group_screen.dart	Could not create group
+features/groups/presentation/create_group_screen.dart	Create group
+features/groups/presentation/create_group_screen.dart	Give your group a name
+features/groups/presentation/create_group_screen.dart	Group created!
+features/groups/presentation/create_group_screen.dart	Group name
+features/groups/presentation/create_group_screen.dart	New Group
+features/groups/presentation/create_group_screen.dart	Subject (optional)
+features/groups/presentation/create_group_screen.dart	Year 6 Science Buddies
+features/groups/presentation/group_detail_screen.dart	${diff.inDays}d ago
+features/groups/presentation/group_detail_screen.dart	${diff.inHours}h ago
+features/groups/presentation/group_detail_screen.dart	${diff.inMinutes}m ago
+features/groups/presentation/group_detail_screen.dart	Answers released
+features/groups/presentation/group_detail_screen.dart	Cancel
+features/groups/presentation/group_detail_screen.dart	Code copied!
+features/groups/presentation/group_detail_screen.dart	Copy
+features/groups/presentation/group_detail_screen.dart	Go to Library
+features/groups/presentation/group_detail_screen.dart	Invite a friend
+features/groups/presentation/group_detail_screen.dart	Leave
+features/groups/presentation/group_detail_screen.dart	Leave group
+features/groups/presentation/group_detail_screen.dart	Leave this group?
+features/groups/presentation/group_detail_screen.dart	Muddiest points
+features/groups/presentation/group_detail_screen.dart	New challenge
+features/groups/presentation/group_detail_screen.dart	No notes shared yet
+features/groups/presentation/group_detail_screen.dart	Off topic?
+features/groups/presentation/group_detail_screen.dart	Open a wiki page from your Library and tap "Share to group" to add the first note!
+features/groups/presentation/group_detail_screen.dart	Open this assignment from your class avatar.
+features/groups/presentation/group_detail_screen.dart	Share another note from Library
+features/groups/presentation/group_detail_screen.dart	Share this code with a friend to invite them
+features/groups/presentation/group_detail_screen.dart	Study Group
+features/groups/presentation/group_detail_screen.dart	Update
+features/groups/presentation/group_detail_screen.dart	You'll need a new invite code to re-join.
+features/groups/presentation/group_detail_screen.dart	by ${note.sharedBy} · ${_timeAgo(note.sharedAt)}
+features/groups/presentation/group_detail_screen.dart	just now
+features/groups/presentation/group_list_screen.dart	${group.memberCount} member${group.memberCount == 1 ? 
+features/groups/presentation/group_list_screen.dart	Couldn't join — check the code
+features/groups/presentation/group_list_screen.dart	Create a group or join one with an invite code from a friend.
+features/groups/presentation/group_list_screen.dart	Have an invite code?
+features/groups/presentation/group_list_screen.dart	Join
+features/groups/presentation/group_list_screen.dart	Joined ${joined.name}!
+features/groups/presentation/group_list_screen.dart	New Group
+features/groups/presentation/group_list_screen.dart	No groups yet
+features/groups/presentation/group_list_screen.dart	Study Groups
+features/groups/presentation/group_list_screen.dart	e.g. AB23CD
+features/home/widgets/module_progress_banner.dart	${avatar.name} — ${module.masteryDisplayPct}%
+features/homework/presentation/homework_detail_screen.dart	Homework
+features/homework/presentation/homework_detail_screen.dart	Teacher's feedback
+features/homework/presentation/homework_detail_screen.dart	What you submitted
+features/homework/presentation/homework_list_screen.dart	Homework
+features/homework/presentation/homework_list_screen.dart	No homework yet
+features/homework/presentation/homework_list_screen.dart	Submit a photo or PDF of your work and your teacher will send 
+features/homework/presentation/homework_list_screen.dart	Submit homework
+features/homework/presentation/homework_submit_screen.dart	Photo
+features/homework/presentation/homework_submit_screen.dart	Scan
+features/homework/presentation/homework_submit_screen.dart	Subject (optional)
+features/homework/presentation/homework_submit_screen.dart	Submit homework
+features/homework/presentation/homework_submit_screen.dart	Title
+features/homework/presentation/homework_submit_screen.dart	Your teacher reviews every submission before sending 
+features/homework/presentation/homework_submit_screen.dart	Your work
+features/invite/presentation/invite_screen.dart	Code copied
+features/invite/presentation/invite_screen.dart	Could not load your code — tap to retry
+features/invite/presentation/invite_screen.dart	Friends can scan this to grab your code
+features/invite/presentation/invite_screen.dart	Invite & connect
+features/invite/presentation/invite_screen.dart	Invite a friend
+features/invite/presentation/invite_screen.dart	Share
+features/invite/presentation/invite_screen.dart	You both get bonus stars when they take their first quiz.
+features/invite/presentation/milestone_invite_nudge.dart	$_milestone-day streak — nice!
+features/invite/presentation/milestone_invite_nudge.dart	Dismiss
+features/invite/presentation/milestone_invite_nudge.dart	Invite
+features/invite/presentation/milestone_invite_nudge.dart	Invite a friend — you both get bonus stars.
+features/join/presentation/join_screen.dart	Cancel
+features/join/presentation/join_screen.dart	Enter a code first
+features/join/presentation/join_screen.dart	Enter code manually
+features/join/presentation/join_screen.dart	Enter or scan a code
+features/join/presentation/join_screen.dart	Got a class or study-group code? Type it in, or scan its QR.
+features/join/presentation/join_screen.dart	Join
+features/join/presentation/join_screen.dart	Joined ${resolved?.name ?? 
+features/join/presentation/join_screen.dart	Parent links are no longer supported
+features/join/presentation/join_screen.dart	Point at a class or group QR
+features/join/presentation/join_screen.dart	Scan QR
+features/join/presentation/join_screen.dart	That doesn't look like a valid code
+features/join/presentation/join_screen.dart	e.g. 5K7Q2X
+features/modules/presentation/module_list_screen.dart	$masteryPct%
+features/modules/presentation/module_list_screen.dart	${e.value} ${e.key}
+features/modules/presentation/module_list_screen.dart	Modules
+features/modules/presentation/module_player_screen.dart	${playerState.currentIndex + 1}/${playerState.totalItems}
+features/modules/presentation/module_player_screen.dart	Complete
+features/modules/presentation/widgets/complete_body.dart	$pct%
+features/ocr_awareness/screens/ocr_confidence_preview.dart	Fix text manually
+features/ocr_awareness/screens/ocr_confidence_preview.dart	How well Mochi can read each question
+features/ocr_awareness/screens/ocr_confidence_preview.dart	Q${e.key + 1}: ${item.text}
+features/ocr_awareness/screens/ocr_confidence_preview.dart	Reading confidence
+features/ocr_awareness/screens/ocr_confidence_preview.dart	Send anyway
+features/ocr_awareness/screens/ocr_quality_warning.dart	${(_barAnimation.value * 100).round()}%
+features/ocr_awareness/screens/ocr_quality_warning.dart	Issues detected
+features/ocr_awareness/screens/ocr_quality_warning.dart	Photo quality is low
+features/ocr_awareness/screens/ocr_quality_warning.dart	Quality score
+features/ocr_awareness/screens/ocr_quality_warning.dart	Retake photo 📸
+features/ocr_awareness/screens/ocr_quality_warning.dart	Send anyway
+features/ocr_awareness/screens/ocr_quality_warning.dart	Your tutor may misread some questions
+features/ocr_awareness/screens/ocr_tips_overlay.dart	Get the best results from your camera
+features/ocr_awareness/screens/ocr_tips_overlay.dart	Got it — take photo
+features/ocr_awareness/screens/ocr_tips_overlay.dart	Might need manual fix
+features/ocr_awareness/screens/ocr_tips_overlay.dart	Photo tips for better reading
+features/ocr_awareness/screens/ocr_tips_overlay.dart	What reads well
+features/ocr_awareness/screens/ocr_what_can_read.dart	Best tip: snap the words & numbers, then type any graph values yourself.
+features/ocr_awareness/screens/ocr_what_can_read.dart	But it can't truly "see" pictures like graphs or shapes — 
+features/ocr_awareness/screens/ocr_what_can_read.dart	Mochi reads text & numbers really well
+features/ocr_awareness/screens/ocr_what_can_read.dart	What can Apalchi read?
+features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}%
+features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}% ⚠
+features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}% ✓
+features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}% ✗
+features/ocr_awareness/utils/confidence_utils.dart	Maths symbols and equations may not be read perfectly by OCR.
+features/ocr_awareness/utils/confidence_utils.dart	Some content in this image may not be read accurately.
+features/ocr_awareness/utils/confidence_utils.dart	Tap "Fix text manually" to correct any misread symbols.
+features/ocr_awareness/utils/confidence_utils.dart	Tap "Fix text manually" to describe what the diagram shows.
+features/ocr_awareness/utils/confidence_utils.dart	Tap "Fix text manually" to review and correct the text.
+features/ocr_awareness/utils/confidence_utils.dart	This image contains a diagram or chart. Text reading may miss visual elements.
+features/ocr_awareness/widgets/ocr_diagram_warning.dart	Diagram detected
+features/ocr_awareness/widgets/ocr_diagram_warning.dart	Maths symbols detected
+features/onboarding/presentation/direct_onboarding_view_model.dart	No internet connection. Check your WiFi and try again.
+features/onboarding/presentation/feature_tour.dart	A Mochi for every subject
+features/onboarding/presentation/feature_tour.dart	Hi, I'm Mochi!
+features/onboarding/presentation/feature_tour.dart	I remember what you find hard
+features/onboarding/presentation/feature_tour.dart	Learn it. Test it. Prove it.
+features/onboarding/presentation/feature_tour.dart	Not a generic AI — a Mochi that knows yours.
+features/onboarding/presentation/feature_tour.dart	Skip
+features/onboarding/presentation/feature_tour.dart	← Back
+features/onboarding/presentation/onboarding_screen.dart	u{1F4CA}
+features/onboarding/presentation/onboarding_screen.dart	u{1F9E0}
+features/photo_question/presentation/camera_screen.dart	Better photo = better answers from Mochi
+features/photo_question/presentation/camera_screen.dart	Bright light
+features/photo_question/presentation/camera_screen.dart	Charts ✕
+features/photo_question/presentation/camera_screen.dart	Clear numbers ✓
+features/photo_question/presentation/camera_screen.dart	Diagrams ⚠️
+features/photo_question/presentation/camera_screen.dart	Fill the frame
+features/photo_question/presentation/camera_screen.dart	Got it, close tips
+features/photo_question/presentation/camera_screen.dart	Graphs, charts & shapes don't scan well. Type those values yourself.
+features/photo_question/presentation/camera_screen.dart	Hold still
+features/photo_question/presentation/camera_screen.dart	Keep it straight
+features/photo_question/presentation/camera_screen.dart	Neat handwriting ✓
+features/photo_question/presentation/camera_screen.dart	Printed text ✓
+features/photo_question/presentation/camera_screen.dart	Symbols ⚠️
+features/photo_question/presentation/camera_screen.dart	Type instead
+features/photo_question/presentation/camera_screen.dart	What Mochi reads:
+features/photo_question/presentation/camera_screen.dart	What can I read? ›
+features/photo_question/presentation/camera_screen.dart	📚 Point at your homework question
+features/photo_question/presentation/camera_screen.dart	📷 Tips for best results
+features/photo_question/presentation/homework_scan_detail_screen.dart	$questionCount question${questionCount == 1 ? 
+features/photo_question/presentation/homework_scan_detail_screen.dart	+$xpEarned XP
+features/photo_question/presentation/homework_scan_detail_screen.dart	Homework Results
+features/photo_question/presentation/homework_scan_detail_screen.dart	Nothing to share yet.
+features/photo_question/presentation/homework_scan_detail_screen.dart	Share results
+features/photo_question/presentation/homework_scan_detail_screen.dart	What next?
+features/photo_question/presentation/homework_scan_detail_screen.dart	🎯 Quiz me on this
+features/photo_question/presentation/homework_scan_detail_screen.dart	💡 Another example
+features/photo_question/presentation/homework_scan_detail_screen.dart	📝 Show full working
+features/photo_question/presentation/homework_scan_detail_screen.dart	🔍 I found $count question${count == 1 ? 
+features/photo_question/presentation/photo_preview_screen.dart	${questions.length} question${questions.length == 1 ? 
+features/photo_question/presentation/photo_preview_screen.dart	Could not read photo
+features/photo_question/presentation/photo_preview_screen.dart	Detecting questions… 🔍
+features/photo_question/presentation/photo_preview_screen.dart	Edit questions
+features/photo_question/presentation/photo_preview_screen.dart	Retake
+features/photo_question/presentation/photo_preview_screen.dart	Try Again
+features/photo_question/presentation/widgets/edit_questions_sheet.dart	${index + 1}
+features/photo_question/presentation/widgets/edit_questions_sheet.dart	Done — use these questions ✓
+features/photo_question/presentation/widgets/edit_questions_sheet.dart	Fix any text Mochi misread
+features/photo_question/presentation/widgets/edit_questions_sheet.dart	✏️  Edit Questions
+features/photo_question/presentation/widgets/retake_confirmation_dialog.dart	Choose from Gallery
+features/photo_question/presentation/widgets/retake_confirmation_dialog.dart	Keep Photo
+features/photo_question/presentation/widgets/retake_confirmation_dialog.dart	Retake
+features/photo_question/presentation/widgets/retake_confirmation_dialog.dart	Retake photo?
+features/photo_question/presentation/widgets/retake_confirmation_dialog.dart	You'll lose the current scan. Choose what to do:
+features/photo_question/screens/ocr_confidence_preview_screen.dart	$pct%
+features/photo_question/screens/ocr_confidence_preview_screen.dart	${(item.confidence * 100).round()}%
+features/photo_question/screens/ocr_confidence_preview_screen.dart	Great! ✓
+features/photo_question/screens/ocr_confidence_preview_screen.dart	Here's what Mochi found in your photo:
+features/photo_question/screens/ocr_confidence_preview_screen.dart	High (>85%)
+features/photo_question/screens/ocr_confidence_preview_screen.dart	Mochi's Reading Report
+features/photo_question/screens/ocr_confidence_preview_screen.dart	OK-ish
+features/photo_question/screens/ocr_confidence_preview_screen.dart	Per question:
+features/photo_question/screens/ocr_confidence_preview_screen.dart	Risky (<50%)
+features/photo_question/screens/ocr_confidence_preview_screen.dart	Send anyway (Mochi will do its best)
+features/photo_question/screens/ocr_confidence_preview_screen.dart	Tricky (50–85%)
+features/photo_question/screens/ocr_confidence_preview_screen.dart	Tricky ⚠️
+features/photo_question/screens/ocr_confidence_preview_screen.dart	✏️  Fix text manually
+features/photo_question/screens/ocr_confidence_preview_screen.dart	💡 Better quality photos = more accurate answers
+features/photo_question/screens/photo_review_screen.dart	${_questions.length} question${_questions.length == 1 ? 
+features/photo_question/screens/photo_review_screen.dart	Choose from gallery
+features/photo_question/screens/photo_review_screen.dart	Done
+features/photo_question/screens/photo_review_screen.dart	Edit question text…
+features/photo_question/screens/photo_review_screen.dart	Keep this photo
+features/photo_question/screens/photo_review_screen.dart	Retake
+features/photo_question/screens/photo_review_screen.dart	Retake photo
+features/photo_question/screens/photo_review_screen.dart	What would you like to do?
+features/progress/presentation/achievements_screen.dart	$pct% of all achievements
+features/progress/presentation/achievements_screen.dart	${list.earnedCount} / ${list.totalCount} earned
+features/progress/presentation/achievements_screen.dart	Achievements
+features/progress/presentation/achievements_screen.dart	Recently earned
+features/progress/presentation/daily_goal_ring.dart	$v ${_unitOf(_type, v)}
+features/progress/presentation/daily_goal_ring.dart	Close this ring every day to keep your streak safe.
+features/progress/presentation/daily_goal_ring.dart	Commit to my goal
+features/progress/presentation/daily_goal_ring.dart	Could not save goal. Try again.
+features/progress/presentation/daily_goal_ring.dart	Minutes
+features/progress/presentation/daily_goal_ring.dart	Pick your daily goal
+features/progress/presentation/daily_goal_ring.dart	Quizzes
+features/progress/presentation/daily_goal_ring.dart	Set my goal
+features/progress/presentation/daily_goal_ring.dart	Today's goal
+features/progress/presentation/level_roadmap_screen.dart	$earned of ${roadmap.rewards.length} rewards unlocked
+features/progress/presentation/level_roadmap_screen.dart	Level ${reward.level}
+features/progress/presentation/level_roadmap_screen.dart	Level ${roadmap.currentLevel} of ${roadmap.maxLevel}
+features/progress/presentation/level_roadmap_screen.dart	Level rewards
+features/progress/presentation/level_up_overlay.dart	$newLevel
+features/progress/presentation/level_up_overlay.dart	Keep going!
+features/progress/presentation/level_up_overlay.dart	LEVEL UP!
+features/progress/presentation/level_up_overlay.dart	Reached Level $newLevel — keep going!
+features/progress/presentation/level_up_overlay.dart	You're getting smarter! 🎓
+features/progress/presentation/mastery_card.dart	${subject.mastered}/${subject.total}  $pct%
+features/progress/presentation/progress_screen.dart	$pct%
+features/progress/presentation/progress_screen.dart	$total min studied this week
+features/progress/presentation/progress_screen.dart	${progress.xpToNextLevel} XP to Level ${progress.level + 1}
+features/progress/presentation/progress_screen.dart	${weakTopics.length} topics
+features/progress/presentation/progress_screen.dart	Achievements
+features/progress/presentation/progress_screen.dart	Badges
+features/progress/presentation/progress_screen.dart	Character Shop
+features/progress/presentation/progress_screen.dart	Complete actions to earn your first achievement.
+features/progress/presentation/progress_screen.dart	Earn bonus stars when they take their first quiz
+features/progress/presentation/progress_screen.dart	Enter or scan a code someone gave you
+features/progress/presentation/progress_screen.dart	Go Premium
+features/progress/presentation/progress_screen.dart	Invite friends
+features/progress/presentation/progress_screen.dart	Join a class or group
+features/progress/presentation/progress_screen.dart	Level ${progress.level}
+features/progress/presentation/progress_screen.dart	My Progress
+features/progress/presentation/progress_screen.dart	Needs Work
+features/progress/presentation/progress_screen.dart	Practice Weak Topics
+features/progress/presentation/progress_screen.dart	Total XP
+features/progress/presentation/progress_screen.dart	Unlimited Mochis, chat & family sharing — 7-day free trial
+features/progress/presentation/progress_screen.dart	Which Mochi to quiz?
+features/progress/presentation/streak_card.dart	$days days
+features/progress/presentation/streak_card.dart	$freezes
+features/progress/presentation/streak_card.dart	$milestone-day streak
+features/progress/presentation/streak_card.dart	$value
+features/progress/presentation/streak_card.dart	1-week badge
+features/progress/presentation/streak_card.dart	100 days
+features/progress/presentation/streak_card.dart	2-week badge
+features/progress/presentation/streak_card.dart	30-day badge
+features/progress/presentation/streak_card.dart	Best: ${status.longestStreak} days
+features/progress/presentation/streak_card.dart	Freezes save your streak when you miss a day. Hit each new 7-day 
+features/progress/presentation/streak_card.dart	Streak ladder
+features/progress/presentation/streak_card.dart	a full year
+features/progress/presentation/streak_milestone_overlay.dart	$milestone
+features/progress/presentation/streak_milestone_overlay.dart	$milestone-DAY STREAK!
+features/progress/presentation/streak_milestone_overlay.dart	Keep it lit!
+features/quiz/presentation/quiz_screen.dart	$percentage%
+features/quiz/presentation/quiz_screen.dart	${((current / total) * 100).round()}%
+features/quiz/presentation/quiz_screen.dart	${quizState.currentIndex + 1}/${quizState.totalQuestions}
+features/quiz/presentation/quiz_screen.dart	+$xp XP
+features/quiz/presentation/quiz_screen.dart	+$xpEarned XP earned
+features/quiz/presentation/quiz_screen.dart	+${items.length - 3} more
+features/quiz/presentation/quiz_screen.dart	Daily Quiz
+features/quiz/presentation/quiz_screen.dart	Mastery breakdown
+features/quiz/presentation/quiz_screen.dart	Question $current of $total
+features/quiz/presentation/quiz_screen.dart	· $item
+features/referral/presentation/referral_screen.dart	${summary.activatedCount} of $target friends activated
+features/referral/presentation/referral_screen.dart	Code copied
+features/referral/presentation/referral_screen.dart	Copy
+features/referral/presentation/referral_screen.dart	Could not load your invites
+features/referral/presentation/referral_screen.dart	Friends count as "activated" after they complete their first quiz.
+features/referral/presentation/referral_screen.dart	Friends you invited
+features/referral/presentation/referral_screen.dart	Invite friends
+features/referral/presentation/referral_screen.dart	No invites yet — share your code above to get started!
+features/referral/presentation/referral_screen.dart	Refer ${target - summary.activatedCount} more → 
+features/referral/presentation/referral_screen.dart	Share
+features/referral/presentation/referral_screen.dart	Your invite code
+features/referral/presentation/referral_screen.dart	⭐ ${summary.rewardsEarned}
+features/settings/presentation/learning_style_screen.dart	Could not save — check your connection
+features/settings/presentation/learning_style_screen.dart	Default answer mode
+features/settings/presentation/learning_style_screen.dart	Default saved!
+features/settings/presentation/learning_style_screen.dart	Guide Me builds understanding — you figure it out, 
+features/settings/presentation/learning_style_screen.dart	Learning style
+features/shop/presentation/shop_screen.dart	$n
+features/shop/presentation/shop_screen.dart	${(n / 1000).toStringAsFixed(1)}k
+features/shop/presentation/shop_screen.dart	Already Unlocked
+features/shop/presentation/shop_screen.dart	Awesome!
+features/shop/presentation/shop_screen.dart	Bonus practice quiz
+features/shop/presentation/shop_screen.dart	Bought ${_labelFor(next.lastPurchase!.type)} — 
+features/shop/presentation/shop_screen.dart	Character Shop
+features/shop/presentation/shop_screen.dart	Double-XP boost
+features/shop/presentation/shop_screen.dart	Earn Stars
+features/shop/presentation/shop_screen.dart	Hint token
+features/shop/presentation/shop_screen.dart	I will learn harder and try again!
+features/shop/presentation/shop_screen.dart	Loading odds…
+features/shop/presentation/shop_screen.dart	My Collection
+features/shop/presentation/shop_screen.dart	Mystery Box
+features/shop/presentation/shop_screen.dart	New Character Unlocked!
+features/shop/presentation/shop_screen.dart	Open to unlock a random character!
+features/shop/presentation/shop_screen.dart	Power-ups
+features/shop/presentation/shop_screen.dart	Quiz Power-ups
+features/shop/presentation/shop_screen.dart	Save your streak if you miss a day.
+features/shop/presentation/shop_screen.dart	Spend stars to protect your streak.
+features/shop/presentation/shop_screen.dart	Spend stars to study smarter.
+features/shop/presentation/shop_screen.dart	Streak Freeze
+features/shop/presentation/shop_screen.dart	You can now use this Mochi for studying!
+features/shop/presentation/shop_screen.dart	× $count
+features/shop/presentation/shop_screen.dart	✨ ${character.rarity.label}
+features/shop/presentation/shop_screen.dart	❄️ Freeze added — you now have 
+features/shop/presentation/shop_screen.dart	💡 FYI — Probability:
+features/study_plan/presentation/study_plan_screen.dart	Coming Up
+features/study_plan/presentation/study_plan_screen.dart	Complete all tasks to keep your streak going and earn bonus stars!
+features/study_plan/presentation/study_plan_screen.dart	Could not save — check your connection
+features/study_plan/presentation/study_plan_screen.dart	Done
+features/study_plan/presentation/study_plan_screen.dart	Here's your plan for today! 📅
+features/study_plan/presentation/study_plan_screen.dart	In 2 days
+features/study_plan/presentation/study_plan_screen.dart	Set a test date in Settings to see a countdown here.
+features/study_plan/presentation/study_plan_screen.dart	Start
+features/study_plan/presentation/study_plan_screen.dart	Study Plan
+features/study_plan/presentation/study_plan_screen.dart	Today's Tasks
+features/study_plan/presentation/study_plan_screen.dart	Today's plan done! 🎉 Keep it up!
+features/study_plan/presentation/study_plan_screen.dart	Tomorrow
+features/subscription/presentation/paywall_screen.dart	Maybe later
+features/subscription/presentation/paywall_screen.dart	See plans
+features/subscription/presentation/subscription_plans_screen.dart	1 student · all AI features
+features/subscription/presentation/subscription_plans_screen.dart	1 student · smarter AI for hard problems
+features/subscription/presentation/subscription_plans_screen.dart	20 messages/day · 1 Mochi · basic features
+features/subscription/presentation/subscription_plans_screen.dart	Choose your plan
+features/subscription/presentation/subscription_plans_screen.dart	Could not load subscription info. Try again.
+features/subscription/presentation/subscription_plans_screen.dart	Current
+features/subscription/presentation/subscription_plans_screen.dart	Family
+features/subscription/presentation/subscription_plans_screen.dart	Free
+features/subscription/presentation/subscription_plans_screen.dart	Max
+features/subscription/presentation/subscription_plans_screen.dart	Pro
+features/subscription/presentation/subscription_plans_screen.dart	Up to 4 students
+features/subscription/presentation/subscription_plans_screen.dart	⭐ Premium via your centre
+features/subscription/presentation/subscription_return_screen.dart	Back to Apalchi
+features/subscription/presentation/subscription_return_screen.dart	Confirming your subscription…
+features/subscription/presentation/subscription_return_screen.dart	Everything just unlocked — unlimited Mochis, family 
+features/subscription/presentation/subscription_return_screen.dart	Start exploring
+features/subscription/presentation/subscription_return_screen.dart	Still confirming…
+features/subscription/presentation/subscription_return_screen.dart	Subscription
+features/subscription/presentation/subscription_return_screen.dart	You are premium!
+features/subscription/presentation/subscription_return_screen.dart	Your payment may still be processing. You can check 
+features/subscription/presentation/trial_countdown_banner.dart	When your trial ends:
+features/subscription/presentation/trial_expired_screen.dart	Choose which Mochi stays active. The rest are locked 
+features/subscription/presentation/trial_expired_screen.dart	Continue free with $_selectedKeeperName
+features/subscription/presentation/trial_expired_screen.dart	Continue free with 1 Mochi
+features/subscription/presentation/trial_expired_screen.dart	Family
+features/subscription/presentation/trial_expired_screen.dart	Max
+features/subscription/presentation/trial_expired_screen.dart	Or — continue free with 1 Mochi
+features/subscription/presentation/trial_expired_screen.dart	Unlimited Mochis, unlimited chat, full flashcards & quizzes.
+features/subscription/presentation/trial_expired_screen.dart	You still have all your Mochis — nothing was deleted. 
+features/subscription/presentation/trial_expired_screen.dart	Your free week is up! ⏰
+features/subscription/presentation/trial_expired_screen.dart	up to 4 kids
+features/subscription/presentation/trial_expired_screen.dart	⭐ Keep all your Mochis
+features/subscription/presentation/trial_welcome_screen.dart	No card needed. We'll remind you before it ends.
+features/subscription/presentation/trial_welcome_screen.dart	Start exploring! 🚀
+features/subscription/presentation/trial_welcome_screen.dart	🎁 Premium is on usnfor 7 days!
+features/subscription/widgets/web_upgrade_cta.dart	Checking…
+features/subscription/widgets/web_upgrade_cta.dart	I've upgraded — refresh
+features/teach_mochi/presentation/teach_mochi_screen.dart	+${eval.xpEarned} XP
+features/teach_mochi/presentation/teach_mochi_screen.dart	Done — show me how I did
+features/teach_mochi/presentation/teach_mochi_screen.dart	Missed concepts
+features/teach_mochi/presentation/teach_mochi_screen.dart	Mochi asks: ${eval.followUpQuestion}
+features/teach_mochi/presentation/teach_mochi_screen.dart	Mochi couldn't check this one
+features/teach_mochi/presentation/teach_mochi_screen.dart	No topics to teach yet
+features/teach_mochi/presentation/teach_mochi_screen.dart	Pick a topic and TEACH Mochi! 
+features/teach_mochi/presentation/teach_mochi_screen.dart	Pick another
+features/teach_mochi/presentation/teach_mochi_screen.dart	Pretend Mochi has never heard of this. Use your own words…
+features/teach_mochi/presentation/teach_mochi_screen.dart	Teach Mochi
+features/teach_mochi/presentation/teach_mochi_screen.dart	Teach Mochi about
+features/teach_mochi/presentation/teach_mochi_screen.dart	Try again
+features/teach_mochi/presentation/teach_mochi_screen.dart	You explained
+features/teach_mochi/presentation/teach_mochi_screen.dart	· $item
+features/upload/presentation/ocr_review_screen.dart	Extracted text...
+features/upload/presentation/ocr_review_screen.dart	Looks good
+features/upload/presentation/ocr_review_screen.dart	Re-upload
+features/upload/presentation/ocr_review_screen.dart	Review extracted text
+features/upload/presentation/ocr_review_screen.dart	Save edits
+features/upload/presentation/ocr_review_screen.dart	Type instead
+features/upload/presentation/upload_screen.dart	$_charCount chars${_charCount < 50 ? 
+features/upload/presentation/upload_screen.dart	$count file${count != 1 ? 
+features/upload/presentation/upload_screen.dart	Add Knowledge
+features/upload/presentation/upload_screen.dart	Add to Mochi
+features/upload/presentation/upload_screen.dart	Adding notes to ${widget.subject}
+features/upload/presentation/upload_screen.dart	Brain updated!
+features/upload/presentation/upload_screen.dart	Build my brain
+features/upload/presentation/upload_screen.dart	Cancel
+features/upload/presentation/upload_screen.dart	Choose a PDF from your device
+features/upload/presentation/upload_screen.dart	Consider splitting long notes into separate uploads for better accuracy.
+features/upload/presentation/upload_screen.dart	Done
+features/upload/presentation/upload_screen.dart	Large file — this takes a few minutes
+features/upload/presentation/upload_screen.dart	Mochi has read your notes and added them to the brain. 
+features/upload/presentation/upload_screen.dart	Paste from clipboard
+features/upload/presentation/upload_screen.dart	Paste or type your notes here...
+features/upload/presentation/upload_screen.dart	Retake photo
+features/upload/presentation/upload_screen.dart	Snap your notes or textbook
+features/upload/presentation/upload_screen.dart	Source
+features/upload/presentation/upload_screen.dart	Tag this upload (optional)
+features/upload/presentation/upload_screen.dart	Take a photo
+features/upload/presentation/upload_screen.dart	This is a large file (${mb}MB). Building your brain from it can 
+features/upload/presentation/upload_screen.dart	Topic (e.g. Algebra)
+features/upload/presentation/upload_screen.dart	Typed notes give the best results. Paste from Google Docs or type from your textbook.
+features/upload/presentation/upload_screen.dart	Upload PDF
+features/upload/presentation/upload_screen.dart	Your notes become my brain.
+features/upload/presentation/upload_screen.dart	large file
+features/upload/presentation/upload_view_model.dart	"${file.name}" appears to be empty.
+features/upload/presentation/upload_view_model.dart	"${file.name}" is ${mb}MB — max is 25MB. 
+features/upload/presentation/upload_view_model.dart	"${file.name}" is a .$ext file — only PDFs, images, and text 
+features/upload/presentation/upload_view_model.dart	1–2 min
+features/upload/presentation/upload_view_model.dart	30–60 sec
+features/upload/presentation/upload_view_model.dart	3–5 min
+features/upload/presentation/upload_view_model.dart	Could not read "${file.name}" — try selecting it again.
+features/upload/presentation/upload_view_model.dart	I couldn't read much text from this — re-upload a clearer 
+features/upload/presentation/upload_view_model.dart	I used my backup reader for this one 
+features/upload/presentation/widgets/upload_tips_banner.dart	Tip: clear, typed or printed pages read best.
+features/voice_input/presentation/voice_input_button.dart	Got it
+features/voice_input/presentation/voice_input_button.dart	Microphone access needed
+features/voice_input/presentation/voice_input_button.dart	Mochi uses your phone's speech recognition to turn talking into 
+features/voice_input/presentation/voice_input_button.dart	Not now
+features/voice_input/presentation/voice_input_button.dart	Open Settings
+features/voice_input/presentation/voice_input_button.dart	Talk to Mochi
+features/voice_input/presentation/voice_input_button.dart	To talk to Mochi, turn on microphone access in Settings. 
+features/weakness/presentation/weakness_focus_card.dart	Let's focus on
+features/weakness/presentation/weakness_focus_card.dart	Mochi will help you practise these.
+features/weakness/presentation/weakness_focus_card.dart	You improved on ${_pretty(f.recentWins)}! 📈
+features/wiki_compiled/presentation/wiki_compiled_screen.dart	$score/10
+features/wiki_compiled/presentation/wiki_compiled_screen.dart	Ask Mochi Now
+features/wiki_compiled/presentation/wiki_compiled_screen.dart	Brain Quality Score
+features/wiki_compiled/presentation/wiki_compiled_screen.dart	Quick Quiz
+features/wiki_compiled/presentation/wiki_compiled_screen.dart	View Brain
+features/wiki_viewer/presentation/get_it_checked_sheet.dart	Add or re-upload content for this page
+features/wiki_viewer/presentation/get_it_checked_sheet.dart	Ask a grown-up to confirm “${page.title}” is accurate.
+features/wiki_viewer/presentation/get_it_checked_sheet.dart	Fix my notes
+features/wiki_viewer/presentation/get_it_checked_sheet.dart	Get it checked
+features/wiki_viewer/presentation/get_it_checked_sheet.dart	Revoke
+features/wiki_viewer/presentation/get_it_checked_sheet.dart	Send a link to anyone to check it
+features/wiki_viewer/presentation/get_it_checked_sheet.dart	Share review link
+features/wiki_viewer/presentation/review_status_widgets.dart	${page.verifiedBy ?? 
+features/wiki_viewer/presentation/review_status_widgets.dart	Checked by ${page.verifiedBy ?? 
+features/wiki_viewer/presentation/review_status_widgets.dart	Fix my notes
+features/wiki_viewer/presentation/review_status_widgets.dart	Get it checked
+features/wiki_viewer/presentation/review_status_widgets.dart	This was made from limited notes — double-check key facts.
+features/wiki_viewer/presentation/review_status_widgets.dart	Unverified
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	"${file.fileName}" will be removed and Mochi's brain will update automatically.
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	$label · $pct%
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	${diff.inDays}d ago
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	${diff.inHours}h ago
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	${diff.inMinutes} min ago
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Brain is empty
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Cancel
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Checked by $by ✓$more
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Conflict
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Conflicting Info
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Could not save — try again.
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Dismiss
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Edit page content
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Failed
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Fix Now
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Go to Groups
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	How should Mochi teach you?
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Join a group first
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Manage Mochis
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Mochi is reading your notes — new pages will appear here automatically.
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Off-topic
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	RECENT PAGES
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Reading…
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Remove
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Remove document
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Remove document?
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Save
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Search pages…
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Share to which group?
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Source documents (${widget.files.length})
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Tap a style or write your own — e.g. "Use the bar model for fractions" or "Always show full working." Mochi follows this in every lesson and chat.
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Teacher notes
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	This page contains information from multiple sources that may disagree with each other.nnYou can fix the content manually to resolve the conflict.
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	You're not in any study groups yet. Join or create one, then you can share notes!
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Your centre keeps this class's materials up to date.
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	Your centre sets how this class Mochi teaches.
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	e.g. Use model method for fractions. Show all steps.
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	from: ${widget.page.sourceFileNames.join(
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	just now
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	↗ Share
+shared/models/avatar.dart	Art
+shared/models/avatar.dart	Coding
+shared/models/avatar.dart	English
+shared/models/avatar.dart	General
+shared/models/avatar.dart	Geography
+shared/models/avatar.dart	Health
+shared/models/avatar.dart	History
+shared/models/avatar.dart	Languages
+shared/models/avatar.dart	Literature
+shared/models/avatar.dart	Maths
+shared/models/avatar.dart	Music
+shared/models/avatar.dart	Physical Education
+shared/models/avatar.dart	Science
+shared/models/entitlement.dart	Premium
+shared/widgets/app_async.dart	Something went wrong. Pull down to retry.
+shared/widgets/app_error_view.dart	Try again
+shared/widgets/mochi_placeholder.dart	Create a Mochi from the Home tab to see it here.
+shared/widgets/mochi_placeholder.dart	No Mochis yet

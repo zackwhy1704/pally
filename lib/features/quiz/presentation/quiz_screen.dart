@@ -775,7 +775,7 @@ class _CompletionView extends StatelessWidget {
                   backgroundColor: AppColors.purple,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                child: Text(AppLocalizations.of(context).quizBackToMochi),
+                child: Text(AppLocalizations.of(context).quizBackToMochi(AppLocalizations.of(context).mascotName)),
               ),
             ),
           ],
@@ -1296,7 +1296,7 @@ class _NoQuestionsView extends StatelessWidget {
           NoNotesCta(
             avatarId: avatarId,
             personalDescription:
-                AppLocalizations.of(context).quizUploadNotesCta,
+                AppLocalizations.of(context).quizUploadNotesCta(AppLocalizations.of(context).mascotName),
           ),
         ],
       ),

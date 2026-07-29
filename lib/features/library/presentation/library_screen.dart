@@ -221,7 +221,7 @@ class LibraryScreen extends ConsumerWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l.libraryLeaveClassTitle),
-        content: Text(l.libraryLeaveClassBody(name)),
+        content: Text(l.libraryLeaveClassBody(name, l.mascotName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
@@ -324,7 +324,7 @@ class _AvatarRow extends ConsumerWidget {
                     // honest "async job in flight" surface the compile dialog + the
                     // compile timeout copy both point users to.
                     avatar.isBrainCompiling
-                        ? l.libraryStatusCompiling
+                        ? l.libraryStatusCompiling(l.mascotName)
                         : avatar.hasKnowledge
                             ? l.libraryStatusBrainPages(avatar.wikiPageCount)
                             : avatar.fileCount > 0
@@ -396,8 +396,8 @@ class EmptyLibraryView extends StatelessWidget {
     return AdaptiveCenter(
       padding: const EdgeInsets.all(AppSpacing.xl),
       child: MochiPlaceholder(
-        title: l.libraryEmptyTitle,
-        subtitle: l.libraryEmptySubtitle,
+        title: l.libraryEmptyTitle(l.mascotName),
+        subtitle: l.libraryEmptySubtitle(l.mascotName),
       ),
     );
   }

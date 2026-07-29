@@ -98,6 +98,12 @@ abstract class AppLocalizations {
     Locale('zh')
   ];
 
+  /// The mascot's display name. SINGLE SOURCE OF TRUTH — every user-facing reference to the mascot resolves through this via a {mascot} placeholder, never a literal. Renaming the mascot = editing this one value. en 'Mochi' / zh '小伴'.
+  ///
+  /// In en, this message translates to:
+  /// **'Mochi'**
+  String get mascotName;
+
   /// Settings row label and the title of the language-picker sheet. UI chrome.
   ///
   /// In en, this message translates to:
@@ -107,8 +113,8 @@ abstract class AppLocalizations {
   /// Shown under the title in the language picker. States that the UI language (a person's preferred_locale) is separate from the avatar's teaching/content language, so switching the UI does not re-translate existing lessons. 'Mochi' is the mascot name and must NOT be translated.
   ///
   /// In en, this message translates to:
-  /// **'Choose the language for the app\'s buttons and menus. This does not change the language your Mochi teaches in.'**
-  String get languagePickerSubtitle;
+  /// **'Choose the language for the app\'s buttons and menus. This does not change the language your {mascot} teaches in.'**
+  String languagePickerSubtitle(String mascot);
 
   /// Greeting heading at the top of the sign-in form. Keep the waving-hand emoji.
   ///
@@ -359,14 +365,14 @@ abstract class AppLocalizations {
   /// Onboarding page 2 body. 'Mochi' is the mascot name — do NOT translate. 'Sec 3' is a Singapore school level.
   ///
   /// In en, this message translates to:
-  /// **'Make a separate Mochi for each subject or module. Each one only knows its stuff, so the answers stay sharp — whether it\'s Sec 3 Chemistry or a uni economics module.'**
-  String get onboardingPage2Body;
+  /// **'Make a separate {mascot} for each subject or module. Each one only knows its stuff, so the answers stay sharp — whether it\'s Sec 3 Chemistry or a uni economics module.'**
+  String onboardingPage2Body(String mascot);
 
   /// Onboarding page 2, positive card title. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'One subject per Mochi'**
-  String get onboardingFocusOkTitle;
+  /// **'One subject per {mascot}'**
+  String onboardingFocusOkTitle(String mascot);
 
   /// Onboarding page 2, positive card subtitle.
   ///
@@ -377,8 +383,8 @@ abstract class AppLocalizations {
   /// Onboarding page 2, negative card title. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Everything in one Mochi'**
-  String get onboardingFocusBadTitle;
+  /// **'Everything in one {mascot}'**
+  String onboardingFocusBadTitle(String mascot);
 
   /// Onboarding page 2, negative card subtitle.
   ///
@@ -419,8 +425,8 @@ abstract class AppLocalizations {
   /// Onboarding page 3 closing positioning quote (italic). Keep 'Mochi'; keep the curly quotes.
   ///
   /// In en, this message translates to:
-  /// **'“Not a generic AI — a Mochi that knows your notes.”'**
-  String get onboardingThesis;
+  /// **'“Not a generic AI — a {mascot} that knows your notes.”'**
+  String onboardingThesis(String mascot);
 
   /// Library screen app-bar title (the home hub listing the student's Mochis).
   ///
@@ -467,8 +473,8 @@ abstract class AppLocalizations {
   /// Confirmation dialog body for leaving a class. {name} is the class name. 'Mochi'/'Mochis' is the mascot name — do NOT translate.
   ///
   /// In en, this message translates to:
-  /// **'You\'ll lose access to {name}\'s materials and class Mochi. Your personal Mochis stay. You can rejoin with the class code.'**
-  String libraryLeaveClassBody(String name);
+  /// **'You\'ll lose access to {name}\'s materials and class {mascot}. Your personal {mascot}s stay. You can rejoin with the class code.'**
+  String libraryLeaveClassBody(String name, String mascot);
 
   /// Success toast after leaving a class. {name} is the class name.
   ///
@@ -479,8 +485,8 @@ abstract class AppLocalizations {
   /// Avatar row status while the brain is compiling. Keep the emoji + 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'📖 Mochi is reading your chapters…'**
-  String get libraryStatusCompiling;
+  /// **'📖 {mascot} is reading your chapters…'**
+  String libraryStatusCompiling(String mascot);
 
   /// Avatar row status showing how many wiki/brain pages exist. Keep the 🧠 emoji.
   ///
@@ -503,14 +509,14 @@ abstract class AppLocalizations {
   /// Empty-library placeholder title. Keep 'Mochis'.
   ///
   /// In en, this message translates to:
-  /// **'No Mochis yet'**
-  String get libraryEmptyTitle;
+  /// **'No {mascot}s yet'**
+  String libraryEmptyTitle(String mascot);
 
   /// Empty-library placeholder subtitle. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Create a Mochi from the Home tab to see it here.'**
-  String get libraryEmptySubtitle;
+  /// **'Create a {mascot} from the Home tab to see it here.'**
+  String libraryEmptySubtitle(String mascot);
 
   /// Avatar-hub hero card title — the LEARN stage (opens the module list).
   ///
@@ -569,8 +575,8 @@ abstract class AppLocalizations {
   /// Hub row subtitle for Teach. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Explain it back to Mochi'**
-  String get hubTeachSubtitle;
+  /// **'Explain it back to {mascot}'**
+  String hubTeachSubtitle(String mascot);
 
   /// Hub row title — chat with the Mochi.
   ///
@@ -581,8 +587,8 @@ abstract class AppLocalizations {
   /// Hub row subtitle for Chat. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Ask Mochi anything'**
-  String get hubChatSubtitle;
+  /// **'Ask {mascot} anything'**
+  String hubChatSubtitle(String mascot);
 
   /// Hub row title — view compiled notes/wiki.
   ///
@@ -659,14 +665,14 @@ abstract class AppLocalizations {
   /// Error toast when the chat tab can't load the avatar list. Keep 'Mochis'.
   ///
   /// In en, this message translates to:
-  /// **'Could not load Mochis.'**
-  String get chatCouldNotLoadMochis;
+  /// **'Could not load {mascot}s.'**
+  String chatCouldNotLoadMochis(String mascot);
 
   /// Empty-state subtitle on the chat tab. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Create a Mochi from the Home tab first.'**
-  String get chatCreateMochiFirst;
+  /// **'Create a {mascot} from the Home tab first.'**
+  String chatCreateMochiFirst(String mascot);
 
   /// Subtitle under a centre-class avatar name in the chat header.
   ///
@@ -677,8 +683,8 @@ abstract class AppLocalizations {
   /// Chat overflow-menu item — go to Teach. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Teach Mochi'**
-  String get chatMenuTeach;
+  /// **'Teach {mascot}'**
+  String chatMenuTeach(String mascot);
 
   /// Chat overflow-menu item — upload material.
   ///
@@ -689,8 +695,8 @@ abstract class AppLocalizations {
   /// Chat overflow-menu item — delete the avatar. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Delete Mochi'**
-  String get chatMenuDelete;
+  /// **'Delete {mascot}'**
+  String chatMenuDelete(String mascot);
 
   /// Fallback shown when a chat reply errors out (Mochi speaking).
   ///
@@ -749,14 +755,14 @@ abstract class AppLocalizations {
   /// Empty chat placeholder subtitle. Keep 'Mochi' and the 📷 emoji.
   ///
   /// In en, this message translates to:
-  /// **'Ask your Mochi anything, or tap 📷 to snap a homework question!'**
-  String get chatEmptySubtitle;
+  /// **'Ask your {mascot} anything, or tap 📷 to snap a homework question!'**
+  String chatEmptySubtitle(String mascot);
 
   /// Daily chat disclaimer banner. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Mochi can make mistakes — always double-check your work!'**
-  String get chatDisclaimer;
+  /// **'{mascot} can make mistakes — always double-check your work!'**
+  String chatDisclaimer(String mascot);
 
   /// Tip shown on a numeric answer.
   ///
@@ -887,8 +893,8 @@ abstract class AppLocalizations {
   /// Friendly card shown when a module is recompiling. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Mochi is refreshing this lesson — check back soon.'**
-  String get moduleRefreshing;
+  /// **'{mascot} is refreshing this lesson — check back soon.'**
+  String moduleRefreshing(String mascot);
 
   /// Button on the refreshing card, returns to the Library.
   ///
@@ -965,8 +971,8 @@ abstract class AppLocalizations {
   /// Button returning from quiz results. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Back to Mochi'**
-  String get quizBackToMochi;
+  /// **'Back to {mascot}'**
+  String quizBackToMochi(String mascot);
 
   /// Shows the correct option after reveal.
   ///
@@ -1055,8 +1061,8 @@ abstract class AppLocalizations {
   /// Empty-state body prompting an upload. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Upload some notes so Mochi can build your first quiz!'**
-  String get quizUploadNotesCta;
+  /// **'Upload some notes so {mascot} can build your first quiz!'**
+  String quizUploadNotesCta(String mascot);
 
   /// Bottom-nav tab: Home.
   ///
@@ -1097,8 +1103,8 @@ abstract class AppLocalizations {
   /// Button to create a new avatar. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'New Mochi'**
-  String get homeNewMochi;
+  /// **'New {mascot}'**
+  String homeNewMochi(String mascot);
 
   /// Home section header for centre-class avatars.
   ///
@@ -1133,14 +1139,14 @@ abstract class AppLocalizations {
   /// Error toast when the avatar list fails to load. Keep 'Mochis'.
   ///
   /// In en, this message translates to:
-  /// **'Could not load Mochis. Pull down to retry.'**
-  String get homeCouldNotLoadMochis;
+  /// **'Could not load {mascot}s. Pull down to retry.'**
+  String homeCouldNotLoadMochis(String mascot);
 
   /// Error title on home. Keep 'Mochis'.
   ///
   /// In en, this message translates to:
-  /// **'Could not load your Mochis.'**
-  String get homeCouldNotLoadYourMochis;
+  /// **'Could not load your {mascot}s.'**
+  String homeCouldNotLoadYourMochis(String mascot);
 
   /// Error body on home.
   ///
@@ -1151,8 +1157,8 @@ abstract class AppLocalizations {
   /// Under-13 consent-pending message on home. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Ask a grown-up to approve your account to make a Mochi.'**
-  String get homeConsentApprove;
+  /// **'Ask a grown-up to approve your account to make a {mascot}.'**
+  String homeConsentApprove(String mascot);
 
   /// Button to resend the parental consent email.
   ///
@@ -1205,14 +1211,14 @@ abstract class AppLocalizations {
   /// Inconsistent-state message in the activate dialog. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Something went wrong — this Mochi should be active. Pull to refresh.'**
-  String get homeActivateError;
+  /// **'Something went wrong — this {mascot} should be active. Pull to refresh.'**
+  String homeActivateError(String mascot);
 
   /// Free-plan active-Mochi cap explanation. Keep 'Mochi'/'Mochis' and the blank line.
   ///
   /// In en, this message translates to:
-  /// **'{cap, plural, =1{You have 1 active Mochi on your free plan. Deactivate another Mochi first, then activate this one.\n\nYou can swap once every 24 hours.} other{You have {cap} active Mochis on your free plan. Deactivate another Mochi first, then activate this one.\n\nYou can swap once every 24 hours.}}'**
-  String homeActivateCapMessage(int cap);
+  /// **'{cap, plural, =1{You have 1 active {mascot} on your free plan. Deactivate another {mascot} first, then activate this one.\n\nYou can swap once every 24 hours.} other{You have {cap} active {mascot}s on your free plan. Deactivate another {mascot} first, then activate this one.\n\nYou can swap once every 24 hours.}}'**
+  String homeActivateCapMessage(int cap, String mascot);
 
   /// Button label while activating (keep ellipsis).
   ///
@@ -1325,20 +1331,20 @@ abstract class AppLocalizations {
   /// New-user empty home subtitle. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Let\'s set up your first Mochi'**
-  String get homeEmptySetupFirst;
+  /// **'Let\'s set up your first {mascot}'**
+  String homeEmptySetupFirst(String mascot);
 
   /// Empty home card title. Keep 'Mochis'.
   ///
   /// In en, this message translates to:
-  /// **'No Mochis yet!'**
-  String get homeEmptyNoMochis;
+  /// **'No {mascot}s yet!'**
+  String homeEmptyNoMochis(String mascot);
 
   /// Empty home card body. Keep 'Mochi' + emoji.
   ///
   /// In en, this message translates to:
-  /// **'Create your first Mochi and start learning something amazing 🚀'**
-  String get homeEmptyCreate;
+  /// **'Create your first {mascot} and start learning something amazing 🚀'**
+  String homeEmptyCreate(String mascot);
 
   /// Empty home hint line.
   ///
@@ -1349,8 +1355,8 @@ abstract class AppLocalizations {
   /// Empty home primary CTA. Keep 'Mochi' + emoji.
   ///
   /// In en, this message translates to:
-  /// **'+ Create My First Mochi ✨'**
-  String get homeEmptyCreateButton;
+  /// **'+ Create My First {mascot} ✨'**
+  String homeEmptyCreateButton(String mascot);
 
   /// Empty home secondary CTA to redeem a class code. Keep the emoji + spacing.
   ///
@@ -1511,8 +1517,8 @@ abstract class AppLocalizations {
   /// Self-assessment instructions. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Compare what you wrote to the reference. Be honest — this just helps Mochi learn what to revisit.'**
-  String get moduleCompareReference;
+  /// **'Compare what you wrote to the reference. Be honest — this just helps {mascot} learn what to revisit.'**
+  String moduleCompareReference(String mascot);
 
   /// Self-assessment screen title.
   ///
@@ -1913,8 +1919,8 @@ abstract class AppLocalizations {
   /// Subtitle for a free user. Keep 'Mochis'. Do NOT add a price (iOS anti-steering).
   ///
   /// In en, this message translates to:
-  /// **'Unlock unlimited Mochis, chat, and family sharing.'**
-  String get settingsFreePlanSubtitle;
+  /// **'Unlock unlimited {mascot}s, chat, and family sharing.'**
+  String settingsFreePlanSubtitle(String mascot);
 
   /// Button to manage an existing subscription.
   ///
@@ -2033,8 +2039,8 @@ abstract class AppLocalizations {
   /// Step 1 subtitle. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Mochi will become your personal study buddy.'**
-  String get signupStudyBuddy;
+  /// **'{mascot} will become your personal study buddy.'**
+  String signupStudyBuddy(String mascot);
 
   /// Name field label.
   ///
@@ -2183,8 +2189,8 @@ abstract class AppLocalizations {
   /// Chapter-picker subtitle. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Pick the chapters you want Mochi to study first.'**
-  String get signupPickChapters;
+  /// **'Pick the chapters you want {mascot} to study first.'**
+  String signupPickChapters(String mascot);
 
   /// Button opening the chapter picker.
   ///
@@ -2201,8 +2207,8 @@ abstract class AppLocalizations {
   /// Step 3 upload subtitle. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Type or paste your notes below. Mochi will read them and build a study module for you.'**
-  String get signupNotesInstructions;
+  /// **'Type or paste your notes below. {mascot} will read them and build a study module for you.'**
+  String signupNotesInstructions(String mascot);
 
   /// Notes text-field placeholder. Keep the ellipsis.
   ///
@@ -2225,8 +2231,8 @@ abstract class AppLocalizations {
   /// Submit typed notes. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Add to Mochi'**
-  String get signupAddToMochi;
+  /// **'Add to {mascot}'**
+  String signupAddToMochi(String mascot);
 
   /// Divider between typed notes and photo/file upload.
   ///
@@ -2273,8 +2279,8 @@ abstract class AppLocalizations {
   /// Processing state: compiling. Keep 'Mochi' + ellipsis.
   ///
   /// In en, this message translates to:
-  /// **'Mochi is reading your notes...'**
-  String get signupReadingNotes;
+  /// **'{mascot} is reading your notes...'**
+  String signupReadingNotes(String mascot);
 
   /// Processing state: generating. Keep the ellipsis.
   ///
@@ -2339,14 +2345,14 @@ abstract class AppLocalizations {
   /// Success heading when no module title is available. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Your Mochi is set up!'**
-  String get signupMochiSetUp;
+  /// **'Your {mascot} is set up!'**
+  String signupMochiSetUp(String mascot);
 
   /// Success subtitle. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Mochi has read your notes and built a study module for you.'**
-  String get signupModuleBuilt;
+  /// **'{mascot} has read your notes and built a study module for you.'**
+  String signupModuleBuilt(String mascot);
 
   /// Primary success CTA into the first module.
   ///
@@ -2381,8 +2387,8 @@ abstract class AppLocalizations {
   /// Differentiator card 1 body. Keep 'Mochi'.
   ///
   /// In en, this message translates to:
-  /// **'Your Mochi learns your material — your textbook, your class notes, your syllabus. So every answer matches what your teacher actually taught, not a generic textbook.'**
-  String get howDiffCard1Body;
+  /// **'Your {mascot} learns your material — your textbook, your class notes, your syllabus. So every answer matches what your teacher actually taught, not a generic textbook.'**
+  String howDiffCard1Body(String mascot);
 
   /// Differentiator card 2 title.
   ///
@@ -2405,14 +2411,14 @@ abstract class AppLocalizations {
   /// Differentiator card 3 body. Keep 'Mochis'.
   ///
   /// In en, this message translates to:
-  /// **'Mochis for every subject — flashcards, daily quizzes, mastery tracking, curriculum-aligned — depth designed for serious learners.'**
-  String get howDiffCard3Body;
+  /// **'{mascot}s for every subject — flashcards, daily quizzes, mastery tracking, curriculum-aligned — depth designed for serious learners.'**
+  String howDiffCard3Body(String mascot);
 
   /// Pull-quote near the bottom of the sheet. Keep 'Mochi' and the quotation marks.
   ///
   /// In en, this message translates to:
-  /// **'\"Not a generic tutor. A Mochi that knows yours.\"'**
-  String get howDiffQuote;
+  /// **'\"Not a generic tutor. A {mascot} that knows yours.\"'**
+  String howDiffQuote(String mascot);
 
   /// Dismiss button on the explainer sheet.
   ///

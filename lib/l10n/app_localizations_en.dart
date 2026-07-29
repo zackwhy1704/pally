@@ -9,11 +9,15 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get mascotName => 'Mochi';
+
+  @override
   String get language => 'Language';
 
   @override
-  String get languagePickerSubtitle =>
-      'Choose the language for the app\'s buttons and menus. This does not change the language your Mochi teaches in.';
+  String languagePickerSubtitle(String mascot) {
+    return 'Choose the language for the app\'s buttons and menus. This does not change the language your $mascot teaches in.';
+  }
 
   @override
   String get signInWelcomeBack => 'Welcome back! 👋';
@@ -152,17 +156,22 @@ class AppLocalizationsEn extends AppLocalizations {
       'Give me one subject at a time — I go deep.';
 
   @override
-  String get onboardingPage2Body =>
-      'Make a separate Mochi for each subject or module. Each one only knows its stuff, so the answers stay sharp — whether it\'s Sec 3 Chemistry or a uni economics module.';
+  String onboardingPage2Body(String mascot) {
+    return 'Make a separate $mascot for each subject or module. Each one only knows its stuff, so the answers stay sharp — whether it\'s Sec 3 Chemistry or a uni economics module.';
+  }
 
   @override
-  String get onboardingFocusOkTitle => 'One subject per Mochi';
+  String onboardingFocusOkTitle(String mascot) {
+    return 'One subject per $mascot';
+  }
 
   @override
   String get onboardingFocusOkSub => 'Deep, accurate answers for that course';
 
   @override
-  String get onboardingFocusBadTitle => 'Everything in one Mochi';
+  String onboardingFocusBadTitle(String mascot) {
+    return 'Everything in one $mascot';
+  }
 
   @override
   String get onboardingFocusBadSub => 'Mixed knowledge = muddled answers';
@@ -184,8 +193,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingBeat3 => 'The more you study, the better it fits you';
 
   @override
-  String get onboardingThesis =>
-      '“Not a generic AI — a Mochi that knows your notes.”';
+  String onboardingThesis(String mascot) {
+    return '“Not a generic AI — a $mascot that knows your notes.”';
+  }
 
   @override
   String get libraryTitle => 'Library';
@@ -211,8 +221,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get libraryLeaveClassTitle => 'Leave this class?';
 
   @override
-  String libraryLeaveClassBody(String name) {
-    return 'You\'ll lose access to $name\'s materials and class Mochi. Your personal Mochis stay. You can rejoin with the class code.';
+  String libraryLeaveClassBody(String name, String mascot) {
+    return 'You\'ll lose access to $name\'s materials and class $mascot. Your personal ${mascot}s stay. You can rejoin with the class code.';
   }
 
   @override
@@ -221,7 +231,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get libraryStatusCompiling => '📖 Mochi is reading your chapters…';
+  String libraryStatusCompiling(String mascot) {
+    return '📖 $mascot is reading your chapters…';
+  }
 
   @override
   String libraryStatusBrainPages(int count) {
@@ -250,11 +262,14 @@ class AppLocalizationsEn extends AppLocalizations {
       '📂 No notes yet — teach me your material!';
 
   @override
-  String get libraryEmptyTitle => 'No Mochis yet';
+  String libraryEmptyTitle(String mascot) {
+    return 'No ${mascot}s yet';
+  }
 
   @override
-  String get libraryEmptySubtitle =>
-      'Create a Mochi from the Home tab to see it here.';
+  String libraryEmptySubtitle(String mascot) {
+    return 'Create a $mascot from the Home tab to see it here.';
+  }
 
   @override
   String get hubLearn => 'Learn';
@@ -292,13 +307,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hubTeach => 'Teach';
 
   @override
-  String get hubTeachSubtitle => 'Explain it back to Mochi';
+  String hubTeachSubtitle(String mascot) {
+    return 'Explain it back to $mascot';
+  }
 
   @override
   String get hubChat => 'Chat';
 
   @override
-  String get hubChatSubtitle => 'Ask Mochi anything';
+  String hubChatSubtitle(String mascot) {
+    return 'Ask $mascot anything';
+  }
 
   @override
   String get hubNotes => 'Notes';
@@ -340,22 +359,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonSomethingWrong => 'Something went wrong.';
 
   @override
-  String get chatCouldNotLoadMochis => 'Could not load Mochis.';
+  String chatCouldNotLoadMochis(String mascot) {
+    return 'Could not load ${mascot}s.';
+  }
 
   @override
-  String get chatCreateMochiFirst => 'Create a Mochi from the Home tab first.';
+  String chatCreateMochiFirst(String mascot) {
+    return 'Create a $mascot from the Home tab first.';
+  }
 
   @override
   String get chatCentreCuratedOnly => 'Centre-curated answers only';
 
   @override
-  String get chatMenuTeach => 'Teach Mochi';
+  String chatMenuTeach(String mascot) {
+    return 'Teach $mascot';
+  }
 
   @override
   String get chatMenuAddKnowledge => 'Add knowledge';
 
   @override
-  String get chatMenuDelete => 'Delete Mochi';
+  String chatMenuDelete(String mascot) {
+    return 'Delete $mascot';
+  }
 
   @override
   String get chatLostTrain => 'Hmm, I lost my train of thought. Ask me again!';
@@ -394,12 +421,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatEmptyTitle => 'Start the conversation!';
 
   @override
-  String get chatEmptySubtitle =>
-      'Ask your Mochi anything, or tap 📷 to snap a homework question!';
+  String chatEmptySubtitle(String mascot) {
+    return 'Ask your $mascot anything, or tap 📷 to snap a homework question!';
+  }
 
   @override
-  String get chatDisclaimer =>
-      'Mochi can make mistakes — always double-check your work!';
+  String chatDisclaimer(String mascot) {
+    return '$mascot can make mistakes — always double-check your work!';
+  }
 
   @override
   String get chatDoubleCheckNumbers =>
@@ -470,8 +499,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moduleTeacherReviewed => 'Teacher-reviewed';
 
   @override
-  String get moduleRefreshing =>
-      'Mochi is refreshing this lesson — check back soon.';
+  String moduleRefreshing(String mascot) {
+    return '$mascot is refreshing this lesson — check back soon.';
+  }
 
   @override
   String get moduleGoToLibrary => 'Go to Library';
@@ -515,7 +545,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizComplete => 'Quiz Complete!';
 
   @override
-  String get quizBackToMochi => 'Back to Mochi';
+  String quizBackToMochi(String mascot) {
+    return 'Back to $mascot';
+  }
 
   @override
   String quizAnswerLabel(String answer) {
@@ -567,8 +599,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizNoQuizToday => 'No quiz today';
 
   @override
-  String get quizUploadNotesCta =>
-      'Upload some notes so Mochi can build your first quiz!';
+  String quizUploadNotesCta(String mascot) {
+    return 'Upload some notes so $mascot can build your first quiz!';
+  }
 
   @override
   String get navHome => 'Home';
@@ -589,7 +622,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeReadyToLearn => 'Ready to keep learning?';
 
   @override
-  String get homeNewMochi => 'New Mochi';
+  String homeNewMochi(String mascot) {
+    return 'New $mascot';
+  }
 
   @override
   String get homeSectionMyClasses => 'MY CLASSES';
@@ -611,19 +646,23 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get homeCouldNotLoadMochis =>
-      'Could not load Mochis. Pull down to retry.';
+  String homeCouldNotLoadMochis(String mascot) {
+    return 'Could not load ${mascot}s. Pull down to retry.';
+  }
 
   @override
-  String get homeCouldNotLoadYourMochis => 'Could not load your Mochis.';
+  String homeCouldNotLoadYourMochis(String mascot) {
+    return 'Could not load your ${mascot}s.';
+  }
 
   @override
   String get homeCheckConnectionPull =>
       'Check your connection and pull down to retry.';
 
   @override
-  String get homeConsentApprove =>
-      'Ask a grown-up to approve your account to make a Mochi.';
+  String homeConsentApprove(String mascot) {
+    return 'Ask a grown-up to approve your account to make a $mascot.';
+  }
 
   @override
   String get homeResendEmail => 'Resend email';
@@ -655,18 +694,19 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get homeActivateError =>
-      'Something went wrong — this Mochi should be active. Pull to refresh.';
+  String homeActivateError(String mascot) {
+    return 'Something went wrong — this $mascot should be active. Pull to refresh.';
+  }
 
   @override
-  String homeActivateCapMessage(int cap) {
+  String homeActivateCapMessage(int cap, String mascot) {
     String _temp0 = intl.Intl.pluralLogic(
       cap,
       locale: localeName,
       other:
-          'You have $cap active Mochis on your free plan. Deactivate another Mochi first, then activate this one.\n\nYou can swap once every 24 hours.',
+          'You have $cap active ${mascot}s on your free plan. Deactivate another $mascot first, then activate this one.\n\nYou can swap once every 24 hours.',
       one:
-          'You have 1 active Mochi on your free plan. Deactivate another Mochi first, then activate this one.\n\nYou can swap once every 24 hours.',
+          'You have 1 active $mascot on your free plan. Deactivate another $mascot first, then activate this one.\n\nYou can swap once every 24 hours.',
     );
     return '$_temp0';
   }
@@ -744,21 +784,28 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get homeEmptySetupFirst => 'Let\'s set up your first Mochi';
+  String homeEmptySetupFirst(String mascot) {
+    return 'Let\'s set up your first $mascot';
+  }
 
   @override
-  String get homeEmptyNoMochis => 'No Mochis yet!';
+  String homeEmptyNoMochis(String mascot) {
+    return 'No ${mascot}s yet!';
+  }
 
   @override
-  String get homeEmptyCreate =>
-      'Create your first Mochi and start learning something amazing 🚀';
+  String homeEmptyCreate(String mascot) {
+    return 'Create your first $mascot and start learning something amazing 🚀';
+  }
 
   @override
   String get homeEmptyPickBuddy =>
       'Pick a buddy, teach it your notes, ask it anything!';
 
   @override
-  String get homeEmptyCreateButton => '+ Create My First Mochi ✨';
+  String homeEmptyCreateButton(String mascot) {
+    return '+ Create My First $mascot ✨';
+  }
 
   @override
   String get homeEmptyHaveCode => '🎟️  Have a code? Enter or scan it';
@@ -857,8 +904,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moduleAnswerHint => 'Write your answer (1-3 sentences)...';
 
   @override
-  String get moduleCompareReference =>
-      'Compare what you wrote to the reference. Be honest — this just helps Mochi learn what to revisit.';
+  String moduleCompareReference(String mascot) {
+    return 'Compare what you wrote to the reference. Be honest — this just helps $mascot learn what to revisit.';
+  }
 
   @override
   String get moduleMarkOwnAnswers => 'Mark your own answers';
@@ -1072,8 +1120,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsPremiumManage => 'Tap Manage to update billing or cancel.';
 
   @override
-  String get settingsFreePlanSubtitle =>
-      'Unlock unlimited Mochis, chat, and family sharing.';
+  String settingsFreePlanSubtitle(String mascot) {
+    return 'Unlock unlimited ${mascot}s, chat, and family sharing.';
+  }
 
   @override
   String get settingsManage => 'Manage';
@@ -1144,7 +1193,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signupCreateYourAccount => 'Create your account';
 
   @override
-  String get signupStudyBuddy => 'Mochi will become your personal study buddy.';
+  String signupStudyBuddy(String mascot) {
+    return '$mascot will become your personal study buddy.';
+  }
 
   @override
   String get signupFieldName => 'Name';
@@ -1225,8 +1276,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signupBookSplitChapters => 'Your book is split into chapters';
 
   @override
-  String get signupPickChapters =>
-      'Pick the chapters you want Mochi to study first.';
+  String signupPickChapters(String mascot) {
+    return 'Pick the chapters you want $mascot to study first.';
+  }
 
   @override
   String get signupChooseChapters => 'Choose chapters';
@@ -1235,8 +1287,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signupAddFirstNotes => 'Add your first notes';
 
   @override
-  String get signupNotesInstructions =>
-      'Type or paste your notes below. Mochi will read them and build a study module for you.';
+  String signupNotesInstructions(String mascot) {
+    return 'Type or paste your notes below. $mascot will read them and build a study module for you.';
+  }
 
   @override
   String get signupNotesHint => 'Paste or type your notes here...';
@@ -1252,7 +1305,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get signupAddToMochi => 'Add to Mochi';
+  String signupAddToMochi(String mascot) {
+    return 'Add to $mascot';
+  }
 
   @override
   String get signupOr => 'or';
@@ -1277,7 +1332,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signupUploading => 'Uploading your notes...';
 
   @override
-  String get signupReadingNotes => 'Mochi is reading your notes...';
+  String signupReadingNotes(String mascot) {
+    return '$mascot is reading your notes...';
+  }
 
   @override
   String get signupCreatingModule => 'Creating your first study module...';
@@ -1316,11 +1373,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signupFirstModuleWord => 'first';
 
   @override
-  String get signupMochiSetUp => 'Your Mochi is set up!';
+  String signupMochiSetUp(String mascot) {
+    return 'Your $mascot is set up!';
+  }
 
   @override
-  String get signupModuleBuilt =>
-      'Mochi has read your notes and built a study module for you.';
+  String signupModuleBuilt(String mascot) {
+    return '$mascot has read your notes and built a study module for you.';
+  }
 
   @override
   String get signupStartLearning => 'Start learning';
@@ -1339,8 +1399,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get howDiffCard1Title => 'Built from your notes';
 
   @override
-  String get howDiffCard1Body =>
-      'Your Mochi learns your material — your textbook, your class notes, your syllabus. So every answer matches what your teacher actually taught, not a generic textbook.';
+  String howDiffCard1Body(String mascot) {
+    return 'Your $mascot learns your material — your textbook, your class notes, your syllabus. So every answer matches what your teacher actually taught, not a generic textbook.';
+  }
 
   @override
   String get howDiffCard2Title => 'Remembers how you learn';
@@ -1353,12 +1414,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get howDiffCard3Title => 'Made for real studying';
 
   @override
-  String get howDiffCard3Body =>
-      'Mochis for every subject — flashcards, daily quizzes, mastery tracking, curriculum-aligned — depth designed for serious learners.';
+  String howDiffCard3Body(String mascot) {
+    return '${mascot}s for every subject — flashcards, daily quizzes, mastery tracking, curriculum-aligned — depth designed for serious learners.';
+  }
 
   @override
-  String get howDiffQuote =>
-      '\"Not a generic tutor. A Mochi that knows yours.\"';
+  String howDiffQuote(String mascot) {
+    return '\"Not a generic tutor. A $mascot that knows yours.\"';
+  }
 
   @override
   String get howDiffGotIt => 'Got it — let\'s study!';

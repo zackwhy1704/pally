@@ -192,19 +192,19 @@ class _PageTwo extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
-                  AppLocalizations.of(context).onboardingPage2Body,
+                  AppLocalizations.of(context).onboardingPage2Body(AppLocalizations.of(context).mascotName),
                   style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 _FocusCard(
                   ok: true,
-                  title: AppLocalizations.of(context).onboardingFocusOkTitle,
+                  title: AppLocalizations.of(context).onboardingFocusOkTitle(AppLocalizations.of(context).mascotName),
                   sub: AppLocalizations.of(context).onboardingFocusOkSub,
                 ),
                 const SizedBox(height: 8),
                 _FocusCard(
                   ok: false,
-                  title: AppLocalizations.of(context).onboardingFocusBadTitle,
+                  title: AppLocalizations.of(context).onboardingFocusBadTitle(AppLocalizations.of(context).mascotName),
                   sub: AppLocalizations.of(context).onboardingFocusBadSub,
                 ),
                 const SizedBox(height: AppSpacing.xl),
@@ -274,7 +274,7 @@ class _PageThree extends StatelessWidget {
                         color: AppColors.purple.withValues(alpha: 0.3)),
                   ),
                   child: Text(
-                    AppLocalizations.of(context).onboardingThesis,
+                    AppLocalizations.of(context).onboardingThesis(AppLocalizations.of(context).mascotName),
                     style: AppTextStyles.body.copyWith(
                         color: AppColors.purple,
                         fontWeight: FontWeight.w700,

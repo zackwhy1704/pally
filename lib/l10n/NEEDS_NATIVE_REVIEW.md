@@ -5,6 +5,20 @@ native Singapore Chinese educator before the Chinese UI is presented as complete
 (see CLAUDE.md — half-translated UI teaches a 华文 centre the support is fake on
 first contact; same reasoning as voice shipping dark).
 
+> **⚠️ COVERAGE, not scope (2026-07-29).** Branch B was once called "COMPLETE" against a
+> 13-surface scope list — a human walk then found ~750 hardcoded strings. Completeness is now
+> measured by `test/guard/l10n_coverage_guard_test.dart` (a shrink-only baseline of every
+> hardcoded user-facing string). "Complete" = that baseline is empty. This file grows as those
+> surfaces get localized. See `DEFERRED.md` for the coverage number and the per-surface PR plan.
+
+> **🐾 MASCOT NAME (operator decision, 2026-07-29).** The mascot renders as **小伴** in Chinese.
+> There is ONE source of truth: the `mascotName` key (en `Mochi` / zh `小伴`). Every user-facing
+> reference resolves through it via a `{mascot}` placeholder — never a baked-in literal. Reviewers:
+> if 小伴 should be a different SG term, change `mascotName`'s zh value **once** and it propagates
+> everywhere. (Class names / teacher content / student text / AI artifacts are still never translated.)
+> Backend-generated zh content will be aligned to 小伴 separately (a pally_backend directive line,
+> pending a diff for operator sign-off) so a compiled lesson never says "Mochi" while the app says 小伴.
+
 **Singapore conventions apply to UI copy too** (not just AI-generated content):
 Simplified script, SG register — e.g. 华语 (not 中文) when naming the *spoken subject*,
 巴士 (not 公交车), 德士 (not 出租车), 组屋/HDB where relevant. Flag mainlandisms.

@@ -9,11 +9,15 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
+  String get mascotName => '小伴';
+
+  @override
   String get language => '语言';
 
   @override
-  String get languagePickerSubtitle =>
-      '选择应用界面（按钮和菜单）显示的语言。这不会改变 Mochi 教学内容使用的语言。';
+  String languagePickerSubtitle(String mascot) {
+    return '选择应用界面（按钮和菜单）显示的语言。这不会改变 $mascot 教学内容使用的语言。';
+  }
 
   @override
   String get signInWelcomeBack => '欢迎回来！👋';
@@ -142,17 +146,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String get onboardingPage2Title => '一次给我一个科目——我会学得很深入。';
 
   @override
-  String get onboardingPage2Body =>
-      '为每个科目或单元建立一个单独的 Mochi。每个 Mochi 只懂它自己的内容，所以解答始终精准——无论是中三化学还是大学的经济学单元。';
+  String onboardingPage2Body(String mascot) {
+    return '为每个科目或单元建立一个单独的 $mascot。每个 $mascot 只懂它自己的内容，所以解答始终精准——无论是中三化学还是大学的经济学单元。';
+  }
 
   @override
-  String get onboardingFocusOkTitle => '每个 Mochi 专注一个科目';
+  String onboardingFocusOkTitle(String mascot) {
+    return '每个 $mascot 专注一个科目';
+  }
 
   @override
   String get onboardingFocusOkSub => '为那门课提供深入、准确的解答';
 
   @override
-  String get onboardingFocusBadTitle => '所有内容都塞进一个 Mochi';
+  String onboardingFocusBadTitle(String mascot) {
+    return '所有内容都塞进一个 $mascot';
+  }
 
   @override
   String get onboardingFocusBadSub => '知识混在一起 = 解答含糊不清';
@@ -174,7 +183,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get onboardingBeat3 => '你学得越多，它就越适合你';
 
   @override
-  String get onboardingThesis => '“不是一个普通的 AI——而是一个懂你笔记的 Mochi。”';
+  String onboardingThesis(String mascot) {
+    return '“不是一个普通的 AI——而是一个懂你笔记的 $mascot。”';
+  }
 
   @override
   String get libraryTitle => '学习库';
@@ -200,8 +211,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get libraryLeaveClassTitle => '退出这个班级？';
 
   @override
-  String libraryLeaveClassBody(String name) {
-    return '你将无法再访问 $name 的材料和班级 Mochi。你的个人 Mochi 会保留。你可以用班级代码重新加入。';
+  String libraryLeaveClassBody(String name, String mascot) {
+    return '你将无法再访问 $name 的材料和班级 $mascot。你的个人 $mascot 会保留。你可以用班级代码重新加入。';
   }
 
   @override
@@ -210,7 +221,9 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get libraryStatusCompiling => '📖 Mochi 正在阅读你的章节……';
+  String libraryStatusCompiling(String mascot) {
+    return '📖 $mascot 正在阅读你的章节……';
+  }
 
   @override
   String libraryStatusBrainPages(int count) {
@@ -236,10 +249,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String get libraryStatusNoNotes => '📂 还没有笔记——教我你的材料吧！';
 
   @override
-  String get libraryEmptyTitle => '还没有 Mochi';
+  String libraryEmptyTitle(String mascot) {
+    return '还没有 $mascot';
+  }
 
   @override
-  String get libraryEmptySubtitle => '在“主页”标签创建一个 Mochi，就会显示在这里。';
+  String libraryEmptySubtitle(String mascot) {
+    return '在“主页”标签创建一个 $mascot，就会显示在这里。';
+  }
 
   @override
   String get hubLearn => '学习';
@@ -276,13 +293,17 @@ class AppLocalizationsZh extends AppLocalizations {
   String get hubTeach => '讲解';
 
   @override
-  String get hubTeachSubtitle => '把学到的讲给 Mochi 听';
+  String hubTeachSubtitle(String mascot) {
+    return '把学到的讲给 $mascot 听';
+  }
 
   @override
   String get hubChat => '聊天';
 
   @override
-  String get hubChatSubtitle => '有问题都可以问 Mochi';
+  String hubChatSubtitle(String mascot) {
+    return '有问题都可以问 $mascot';
+  }
 
   @override
   String get hubNotes => '笔记';
@@ -323,22 +344,30 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonSomethingWrong => '出错了。';
 
   @override
-  String get chatCouldNotLoadMochis => '无法加载 Mochi。';
+  String chatCouldNotLoadMochis(String mascot) {
+    return '无法加载 $mascot。';
+  }
 
   @override
-  String get chatCreateMochiFirst => '请先在“主页”标签创建一个 Mochi。';
+  String chatCreateMochiFirst(String mascot) {
+    return '请先在“主页”标签创建一个 $mascot。';
+  }
 
   @override
   String get chatCentreCuratedOnly => '仅提供机构精选的解答';
 
   @override
-  String get chatMenuTeach => '教一教 Mochi';
+  String chatMenuTeach(String mascot) {
+    return '教一教 $mascot';
+  }
 
   @override
   String get chatMenuAddKnowledge => '添加知识';
 
   @override
-  String get chatMenuDelete => '删除 Mochi';
+  String chatMenuDelete(String mascot) {
+    return '删除 $mascot';
+  }
 
   @override
   String get chatLostTrain => '嗯，我刚才走神了。再问我一次吧！';
@@ -375,10 +404,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String get chatEmptyTitle => '开始聊天吧！';
 
   @override
-  String get chatEmptySubtitle => '有问题都可以问 Mochi，或点按 📷 拍下作业题目！';
+  String chatEmptySubtitle(String mascot) {
+    return '有问题都可以问 $mascot，或点按 📷 拍下作业题目！';
+  }
 
   @override
-  String get chatDisclaimer => 'Mochi 也可能会出错——请务必核对你的作业！';
+  String chatDisclaimer(String mascot) {
+    return '$mascot 也可能会出错——请务必核对你的作业！';
+  }
 
   @override
   String get chatDoubleCheckNumbers => '请对照你的练习纸核对数字';
@@ -444,7 +477,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moduleTeacherReviewed => '教师已审核';
 
   @override
-  String get moduleRefreshing => 'Mochi 正在更新这节课——请稍后再来。';
+  String moduleRefreshing(String mascot) {
+    return '$mascot 正在更新这节课——请稍后再来。';
+  }
 
   @override
   String get moduleGoToLibrary => '前往学习库';
@@ -487,7 +522,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get quizComplete => '小测完成！';
 
   @override
-  String get quizBackToMochi => '返回 Mochi';
+  String quizBackToMochi(String mascot) {
+    return '返回 $mascot';
+  }
 
   @override
   String quizAnswerLabel(String answer) {
@@ -538,7 +575,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get quizNoQuizToday => '今天没有小测';
 
   @override
-  String get quizUploadNotesCta => '上传一些笔记，Mochi 就能为你生成第一份小测！';
+  String quizUploadNotesCta(String mascot) {
+    return '上传一些笔记，$mascot 就能为你生成第一份小测！';
+  }
 
   @override
   String get navHome => '主页';
@@ -559,7 +598,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeReadyToLearn => '准备好继续学习了吗？';
 
   @override
-  String get homeNewMochi => '新建 Mochi';
+  String homeNewMochi(String mascot) {
+    return '新建 $mascot';
+  }
 
   @override
   String get homeSectionMyClasses => '我的班级';
@@ -581,16 +622,22 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get homeCouldNotLoadMochis => '无法加载 Mochi。下拉重试。';
+  String homeCouldNotLoadMochis(String mascot) {
+    return '无法加载 $mascot。下拉重试。';
+  }
 
   @override
-  String get homeCouldNotLoadYourMochis => '无法加载你的 Mochi。';
+  String homeCouldNotLoadYourMochis(String mascot) {
+    return '无法加载你的 $mascot。';
+  }
 
   @override
   String get homeCheckConnectionPull => '请检查网络连接后下拉重试。';
 
   @override
-  String get homeConsentApprove => '请让家长同意你的账户，才能创建 Mochi。';
+  String homeConsentApprove(String mascot) {
+    return '请让家长同意你的账户，才能创建 $mascot。';
+  }
 
   @override
   String get homeResendEmail => '重新发送邮件';
@@ -621,15 +668,17 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get homeActivateError => '出错了——这个 Mochi 应该处于激活状态。请下拉刷新。';
+  String homeActivateError(String mascot) {
+    return '出错了——这个 $mascot 应该处于激活状态。请下拉刷新。';
+  }
 
   @override
-  String homeActivateCapMessage(int cap) {
+  String homeActivateCapMessage(int cap, String mascot) {
     String _temp0 = intl.Intl.pluralLogic(
       cap,
       locale: localeName,
       other:
-          '在免费方案中，你已有 $cap 个激活的 Mochi。请先停用另一个 Mochi，再激活这一个。\n\n每 24 小时只能更换一次。',
+          '在免费方案中，你已有 $cap 个激活的 $mascot。请先停用另一个 $mascot，再激活这一个。\n\n每 24 小时只能更换一次。',
     );
     return '$_temp0';
   }
@@ -706,19 +755,27 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get homeEmptySetupFirst => '来设置你的第一个 Mochi 吧';
+  String homeEmptySetupFirst(String mascot) {
+    return '来设置你的第一个 $mascot 吧';
+  }
 
   @override
-  String get homeEmptyNoMochis => '还没有 Mochi！';
+  String homeEmptyNoMochis(String mascot) {
+    return '还没有 $mascot！';
+  }
 
   @override
-  String get homeEmptyCreate => '创建你的第一个 Mochi，开始学习精彩的知识 🚀';
+  String homeEmptyCreate(String mascot) {
+    return '创建你的第一个 $mascot，开始学习精彩的知识 🚀';
+  }
 
   @override
   String get homeEmptyPickBuddy => '挑一个伙伴，教它你的笔记，尽管问它任何问题！';
 
   @override
-  String get homeEmptyCreateButton => '+ 创建我的第一个 Mochi ✨';
+  String homeEmptyCreateButton(String mascot) {
+    return '+ 创建我的第一个 $mascot ✨';
+  }
 
   @override
   String get homeEmptyHaveCode => '🎟️  有邀请码？输入或扫描';
@@ -815,8 +872,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moduleAnswerHint => '写下你的答案（1-3 句话）……';
 
   @override
-  String get moduleCompareReference =>
-      '把你写的和参考答案对比一下。请诚实作答——这只是帮助 Mochi 了解需要重温的内容。';
+  String moduleCompareReference(String mascot) {
+    return '把你写的和参考答案对比一下。请诚实作答——这只是帮助 $mascot 了解需要重温的内容。';
+  }
 
   @override
   String get moduleMarkOwnAnswers => '为自己的答案评分';
@@ -1026,7 +1084,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsPremiumManage => '点按“管理”以更新账单或取消。';
 
   @override
-  String get settingsFreePlanSubtitle => '解锁无限 Mochi、聊天和家庭共享。';
+  String settingsFreePlanSubtitle(String mascot) {
+    return '解锁无限 $mascot、聊天和家庭共享。';
+  }
 
   @override
   String get settingsManage => '管理';
@@ -1090,7 +1150,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get signupCreateYourAccount => '创建你的账户';
 
   @override
-  String get signupStudyBuddy => 'Mochi 将成为你的专属学习伙伴。';
+  String signupStudyBuddy(String mascot) {
+    return '$mascot 将成为你的专属学习伙伴。';
+  }
 
   @override
   String get signupFieldName => '名字';
@@ -1166,7 +1228,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get signupBookSplitChapters => '你的书被分成了多个章节';
 
   @override
-  String get signupPickChapters => '选择你想让 Mochi 先学习的章节。';
+  String signupPickChapters(String mascot) {
+    return '选择你想让 $mascot 先学习的章节。';
+  }
 
   @override
   String get signupChooseChapters => '选择章节';
@@ -1175,7 +1239,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get signupAddFirstNotes => '添加你的第一份笔记';
 
   @override
-  String get signupNotesInstructions => '在下方输入或粘贴你的笔记。Mochi 会阅读它们，并为你生成一个学习单元。';
+  String signupNotesInstructions(String mascot) {
+    return '在下方输入或粘贴你的笔记。$mascot 会阅读它们，并为你生成一个学习单元。';
+  }
 
   @override
   String get signupNotesHint => '在这里粘贴或输入你的笔记……';
@@ -1191,7 +1257,9 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get signupAddToMochi => '添加到 Mochi';
+  String signupAddToMochi(String mascot) {
+    return '添加到 $mascot';
+  }
 
   @override
   String get signupOr => '或';
@@ -1215,7 +1283,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get signupUploading => '正在上传你的笔记……';
 
   @override
-  String get signupReadingNotes => 'Mochi 正在阅读你的笔记……';
+  String signupReadingNotes(String mascot) {
+    return '$mascot 正在阅读你的笔记……';
+  }
 
   @override
   String get signupCreatingModule => '正在创建你的第一个学习单元……';
@@ -1254,10 +1324,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String get signupFirstModuleWord => '第一个';
 
   @override
-  String get signupMochiSetUp => '你的 Mochi 已设置完成！';
+  String signupMochiSetUp(String mascot) {
+    return '你的 $mascot 已设置完成！';
+  }
 
   @override
-  String get signupModuleBuilt => 'Mochi 已阅读你的笔记，并为你生成了一个学习单元。';
+  String signupModuleBuilt(String mascot) {
+    return '$mascot 已阅读你的笔记，并为你生成了一个学习单元。';
+  }
 
   @override
   String get signupStartLearning => '开始学习';
@@ -1275,8 +1349,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get howDiffCard1Title => '从你的笔记构建';
 
   @override
-  String get howDiffCard1Body =>
-      '你的 Mochi 学习你的材料——你的课本、你的课堂笔记、你的教学大纲。所以每个答案都贴合你老师真正教的内容，而不是泛泛的课本。';
+  String howDiffCard1Body(String mascot) {
+    return '你的 $mascot 学习你的材料——你的课本、你的课堂笔记、你的教学大纲。所以每个答案都贴合你老师真正教的内容，而不是泛泛的课本。';
+  }
 
   @override
   String get howDiffCard2Title => '记住你的学习方式';
@@ -1289,11 +1364,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String get howDiffCard3Title => '为真正的学习而打造';
 
   @override
-  String get howDiffCard3Body =>
-      '每个科目都有 Mochi——抽认卡、每日小测、掌握度追踪、贴合课程——为认真的学习者设计的深度。';
+  String howDiffCard3Body(String mascot) {
+    return '每个科目都有 $mascot——抽认卡、每日小测、掌握度追踪、贴合课程——为认真的学习者设计的深度。';
+  }
 
   @override
-  String get howDiffQuote => '“不是泛泛的导师。是懂你的 Mochi。”';
+  String howDiffQuote(String mascot) {
+    return '“不是泛泛的导师。是懂你的 $mascot。”';
+  }
 
   @override
   String get howDiffGotIt => '明白了——开始学习吧！';
