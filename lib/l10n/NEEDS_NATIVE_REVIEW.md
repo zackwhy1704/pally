@@ -107,9 +107,34 @@ Mochi kept verbatim. Two real ICU plurals (en 1-vs-N; zh `other`-only). `{name}`
 
 Reuse note: the library "Cancel" button uses the existing `commonCancel` key (from PR2), not a new one.
 
+### PR5 — avatar hub (`avatar_hub_screen.dart`, per-Mochi front door)
+
+Mochi kept. ICU plural on module count (en 1-vs-N; zh `other`). `·` = middle dot (U+00B7). Terms to sanity-check
+with the reviewer: 单元 (module/unit), 掌握度 (mastery), 证明掌握 (Prove it), 小测 (Quiz).
+
+| key | en | zh (machine draft) |
+|-----|----|--------------------|
+| `hubLearn` | Learn | 学习 |
+| `hubModulesSubtitle` | {count} module(s) · {mastery}% mastery | {count} 个单元 · 掌握度 {mastery}% |
+| `hubStartFirstModule` | Start your first module | 开始你的第一个单元 |
+| `hubSectionPractice` | Practice | 练习 |
+| `hubSectionProveIt` | Prove it | 证明掌握 |
+| `hubSectionTools` | Tools | 工具 |
+| `hubCards` / `hubCardsSubtitle` | Cards / Quick recall practice | 卡片 / 快速记忆练习 |
+| `hubTeach` / `hubTeachSubtitle` | Teach / Explain it back to Mochi | 讲解 / 把学到的讲给 Mochi 听 |
+| `hubChat` / `hubChatSubtitle` | Chat / Ask Mochi anything | 聊天 / 有问题都可以问 Mochi |
+| `hubNotes` / `hubNotesSubtitle` | Notes / Review your material | 笔记 / 复习你的材料 |
+| `hubUpload` / `hubUploadSubtitle` | Upload / Add more material | 上传 / 添加更多材料 |
+| `hubClassBadge` | Class | 班级 |
+| `hubUploadNotesCta` | Upload your notes to unlock quizzes, cards and teaching. | 上传你的笔记，解锁小测、卡片和讲解练习。 |
+| `hubQuiz` | Quiz | 小测 |
+| `hubQuizSubtitleDefault` | Test yourself with MCQs | 用选择题考考自己 |
+| `hubQuizSubtitleDoneToday` | Done today · free play anytime | 今天已完成 · 随时可自由练习 |
+| `hubQuizSubtitleMastered` | Test yourself · {mastered}/{total} mastered | 考考自己 · 已掌握 {mastered}/{total} |
+
 **DO NOT translate** (carry their own language already): Mochi's name, class names,
 teacher-uploaded content, student-generated text, any AI-generated artifact.
 
-Running count of zh keys drafted this branch: **67** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 — library hub).
+Running count of zh keys drafted this branch: **89** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 · PR5: 22 — avatar hub).
 Remaining core-loop extraction (onboarding tour · sign-up form · chat · modules · quiz · library) lands in later PRs;
 each appends its rows here.

@@ -511,6 +511,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create a Mochi from the Home tab to see it here.'**
   String get libraryEmptySubtitle;
+
+  /// Avatar-hub hero card title — the LEARN stage (opens the module list).
+  ///
+  /// In en, this message translates to:
+  /// **'Learn'**
+  String get hubLearn;
+
+  /// Hero card subtitle when modules exist: module count + average mastery. The separator is a middle dot (·).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{{count} module · {mastery}% mastery} other{{count} modules · {mastery}% mastery}}'**
+  String hubModulesSubtitle(int count, int mastery);
+
+  /// Hero card subtitle when the avatar has no modules yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Start your first module'**
+  String get hubStartFirstModule;
+
+  /// Avatar-hub section header grouping Quiz + Cards.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice'**
+  String get hubSectionPractice;
+
+  /// Avatar-hub section header for the PROVE stage (Teach).
+  ///
+  /// In en, this message translates to:
+  /// **'Prove it'**
+  String get hubSectionProveIt;
+
+  /// Avatar-hub section header grouping Chat / Notes / Upload.
+  ///
+  /// In en, this message translates to:
+  /// **'Tools'**
+  String get hubSectionTools;
+
+  /// Hub row title — flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Cards'**
+  String get hubCards;
+
+  /// Hub row subtitle for Cards.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick recall practice'**
+  String get hubCardsSubtitle;
+
+  /// Hub row title — the Teach-back (PROVE) feature.
+  ///
+  /// In en, this message translates to:
+  /// **'Teach'**
+  String get hubTeach;
+
+  /// Hub row subtitle for Teach. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain it back to Mochi'**
+  String get hubTeachSubtitle;
+
+  /// Hub row title — chat with the Mochi.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get hubChat;
+
+  /// Hub row subtitle for Chat. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Mochi anything'**
+  String get hubChatSubtitle;
+
+  /// Hub row title — view compiled notes/wiki.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get hubNotes;
+
+  /// Hub row subtitle for Notes.
+  ///
+  /// In en, this message translates to:
+  /// **'Review your material'**
+  String get hubNotesSubtitle;
+
+  /// Hub row title — upload more material.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get hubUpload;
+
+  /// Hub row subtitle for Upload.
+  ///
+  /// In en, this message translates to:
+  /// **'Add more material'**
+  String get hubUploadSubtitle;
+
+  /// Badge on a centre-class avatar in the hub header.
+  ///
+  /// In en, this message translates to:
+  /// **'Class'**
+  String get hubClassBadge;
+
+  /// No-notes call-to-action description on the hub for a personal Mochi.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload your notes to unlock quizzes, cards and teaching.'**
+  String get hubUploadNotesCta;
+
+  /// Hub row title — the daily quiz.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz'**
+  String get hubQuiz;
+
+  /// Quiz row subtitle, default state.
+  ///
+  /// In en, this message translates to:
+  /// **'Test yourself with MCQs'**
+  String get hubQuizSubtitleDefault;
+
+  /// Quiz row subtitle when today's quiz is done. Separator is a middle dot (·).
+  ///
+  /// In en, this message translates to:
+  /// **'Done today · free play anytime'**
+  String get hubQuizSubtitleDoneToday;
+
+  /// Quiz row subtitle showing mastery progress. Separator is a middle dot (·).
+  ///
+  /// In en, this message translates to:
+  /// **'Test yourself · {mastered}/{total} mastered'**
+  String hubQuizSubtitleMastered(int mastered, int total);
 }
 
 class _AppLocalizationsDelegate

@@ -255,4 +255,81 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get libraryEmptySubtitle =>
       'Create a Mochi from the Home tab to see it here.';
+
+  @override
+  String get hubLearn => 'Learn';
+
+  @override
+  String hubModulesSubtitle(int count, int mastery) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count modules · $mastery% mastery',
+      one: '$count module · $mastery% mastery',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get hubStartFirstModule => 'Start your first module';
+
+  @override
+  String get hubSectionPractice => 'Practice';
+
+  @override
+  String get hubSectionProveIt => 'Prove it';
+
+  @override
+  String get hubSectionTools => 'Tools';
+
+  @override
+  String get hubCards => 'Cards';
+
+  @override
+  String get hubCardsSubtitle => 'Quick recall practice';
+
+  @override
+  String get hubTeach => 'Teach';
+
+  @override
+  String get hubTeachSubtitle => 'Explain it back to Mochi';
+
+  @override
+  String get hubChat => 'Chat';
+
+  @override
+  String get hubChatSubtitle => 'Ask Mochi anything';
+
+  @override
+  String get hubNotes => 'Notes';
+
+  @override
+  String get hubNotesSubtitle => 'Review your material';
+
+  @override
+  String get hubUpload => 'Upload';
+
+  @override
+  String get hubUploadSubtitle => 'Add more material';
+
+  @override
+  String get hubClassBadge => 'Class';
+
+  @override
+  String get hubUploadNotesCta =>
+      'Upload your notes to unlock quizzes, cards and teaching.';
+
+  @override
+  String get hubQuiz => 'Quiz';
+
+  @override
+  String get hubQuizSubtitleDefault => 'Test yourself with MCQs';
+
+  @override
+  String get hubQuizSubtitleDoneToday => 'Done today · free play anytime';
+
+  @override
+  String hubQuizSubtitleMastered(int mastered, int total) {
+    return 'Test yourself · $mastered/$total mastered';
+  }
 }
