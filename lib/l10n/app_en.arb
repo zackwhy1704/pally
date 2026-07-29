@@ -1,5 +1,6 @@
 {
   "@@locale": "en",
+
   "language": "Language",
   "@language": {
     "description": "Settings row label and the title of the language-picker sheet. UI chrome."
@@ -7,5 +8,126 @@
   "languagePickerSubtitle": "Choose the language for the app's buttons and menus. This does not change the language your Mochi teaches in.",
   "@languagePickerSubtitle": {
     "description": "Shown under the title in the language picker. States that the UI language (a person's preferred_locale) is separate from the avatar's teaching/content language, so switching the UI does not re-translate existing lessons. 'Mochi' is the mascot name and must NOT be translated."
+  },
+
+  "signInWelcomeBack": "Welcome back! 👋",
+  "@signInWelcomeBack": {
+    "description": "Greeting heading at the top of the sign-in form. Keep the waving-hand emoji."
+  },
+  "signInEmailLabel": "Email",
+  "@signInEmailLabel": {
+    "description": "Field label above the email input on the sign-in screen."
+  },
+  "signInEmailHint": "your@email.com",
+  "@signInEmailHint": {
+    "description": "Placeholder text inside the email input (an example address). Also used in the forgot-password dialog."
+  },
+  "signInPasswordLabel": "Password",
+  "@signInPasswordLabel": {
+    "description": "Field label above the password input on the sign-in screen."
+  },
+  "signInForgotPassword": "Forgot password?",
+  "@signInForgotPassword": {
+    "description": "Link below the password field that opens the reset-password dialog."
+  },
+  "signInButton": "Sign In",
+  "@signInButton": {
+    "description": "Primary button that submits the sign-in form."
+  },
+  "signInOr": "or",
+  "@signInOr": {
+    "description": "Divider label between password sign-in and biometric sign-in."
+  },
+  "signInUseBiometrics": "Use Biometrics",
+  "@signInUseBiometrics": {
+    "description": "Label on the biometric sign-in button."
+  },
+  "signInFaceTouchId": "Face ID / Touch ID",
+  "@signInFaceTouchId": {
+    "description": "Sub-label under the biometric button naming the platform methods. 'Face ID' and 'Touch ID' are Apple product names — keep them in English."
+  },
+  "signInEnableBiometricHint": "Sign in once to enable biometric login",
+  "@signInEnableBiometricHint": {
+    "description": "Hint shown when biometrics are supported but not yet registered for this account."
+  },
+  "signInNoAccount": "Don't have an account?",
+  "@signInNoAccount": {
+    "description": "Prompt in the pinned footer, before the Create Account button."
+  },
+  "signInCreateAccount": "Create Account ✨",
+  "@signInCreateAccount": {
+    "description": "Footer button that goes to the sign-up flow. Keep the sparkles emoji."
+  },
+  "signInBiometricReason": "Sign in to Apalchi",
+  "@signInBiometricReason": {
+    "description": "The system biometric prompt's reason string. 'Apalchi' is the product name — keep it."
+  },
+
+  "signInErrorEmptyCredentials": "Please enter your email and password",
+  "@signInErrorEmptyCredentials": {
+    "description": "Error shown when the user submits sign-in with an empty email or password."
+  },
+  "signInErrorBiometricsUnavailable": "Biometrics not available on this device",
+  "@signInErrorBiometricsUnavailable": {
+    "description": "Error shown when biometric sign-in is tapped on a device without biometric hardware/support."
+  },
+  "signInErrorBiometricsNotRegistered": "Sign in with your password first — biometrics will be enabled in Settings",
+  "@signInErrorBiometricsNotRegistered": {
+    "description": "Error shown when biometric sign-in is tapped but no biometric credential is registered yet."
+  },
+  "signInErrorPasswordFirst": "Sign in with your password first",
+  "@signInErrorPasswordFirst": {
+    "description": "Error shown when biometric sign-in has no prior signed-in user to verify against."
+  },
+
+  "biometricScanning": "Scanning...",
+  "@biometricScanning": {
+    "description": "Biometric sheet title while waiting for the fingerprint/face scan."
+  },
+  "biometricVerified": "Verified! ✨",
+  "@biometricVerified": {
+    "description": "Biometric sheet title on a successful scan. Keep the sparkles emoji."
+  },
+  "biometricCouldntVerify": "Couldn't verify",
+  "@biometricCouldntVerify": {
+    "description": "Biometric sheet title when the scan fails."
+  },
+  "biometricScanningHint": "Place your finger or look at your camera",
+  "@biometricScanningHint": {
+    "description": "Biometric sheet subtitle while scanning."
+  },
+  "biometricSigningIn": "Signing you in...",
+  "@biometricSigningIn": {
+    "description": "Biometric sheet subtitle after a successful scan, while completing sign-in."
+  },
+  "biometricNotRecognised": "Face or fingerprint not recognised",
+  "@biometricNotRecognised": {
+    "description": "Biometric sheet subtitle when the scan fails."
+  },
+  "biometricUsePassword": "Use password instead",
+  "@biometricUsePassword": {
+    "description": "Biometric sheet button to fall back to password sign-in."
+  },
+
+  "commonTryAgain": "Try Again",
+  "@commonTryAgain": {
+    "description": "Generic retry button (biometric failure)."
+  },
+  "commonCancel": "Cancel",
+  "@commonCancel": {
+    "description": "Generic cancel button (biometric sheet, dialogs)."
+  },
+
+  "forgotPasswordTitle": "Reset Password",
+  "@forgotPasswordTitle": {
+    "description": "Title of the reset-password dialog."
+  },
+  "forgotPasswordSend": "Send Reset Link",
+  "@forgotPasswordSend": {
+    "description": "Button in the reset-password dialog that sends the reset email."
+  },
+  "forgotPasswordSent": "Check your email for a reset link",
+  "@forgotPasswordSent": {
+    "description": "Confirmation snackbar after a reset link is sent."
   }
 }

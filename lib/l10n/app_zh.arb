@@ -1,5 +1,40 @@
 {
   "@@locale": "zh",
+
   "language": "语言",
-  "languagePickerSubtitle": "选择应用界面（按钮和菜单）显示的语言。这不会改变 Mochi 教学内容使用的语言。"
+  "languagePickerSubtitle": "选择应用界面（按钮和菜单）显示的语言。这不会改变 Mochi 教学内容使用的语言。",
+
+  "signInWelcomeBack": "欢迎回来！👋",
+  "signInEmailLabel": "电子邮件",
+  "signInEmailHint": "your@email.com",
+  "signInPasswordLabel": "密码",
+  "signInForgotPassword": "忘记密码？",
+  "signInButton": "登录",
+  "signInOr": "或",
+  "signInUseBiometrics": "使用生物识别",
+  "signInFaceTouchId": "Face ID / Touch ID",
+  "signInEnableBiometricHint": "先登录一次即可启用生物识别登录",
+  "signInNoAccount": "还没有账户？",
+  "signInCreateAccount": "创建账户 ✨",
+  "signInBiometricReason": "登录 Apalchi",
+
+  "signInErrorEmptyCredentials": "请输入电子邮件和密码",
+  "signInErrorBiometricsUnavailable": "此设备不支持生物识别",
+  "signInErrorBiometricsNotRegistered": "请先使用密码登录 —— 生物识别可在“设置”中启用",
+  "signInErrorPasswordFirst": "请先使用密码登录",
+
+  "biometricScanning": "扫描中……",
+  "biometricVerified": "验证成功！✨",
+  "biometricCouldntVerify": "无法验证",
+  "biometricScanningHint": "请放上手指或注视摄像头",
+  "biometricSigningIn": "正在为你登录……",
+  "biometricNotRecognised": "无法识别面容或指纹",
+  "biometricUsePassword": "改用密码",
+
+  "commonTryAgain": "重试",
+  "commonCancel": "取消",
+
+  "forgotPasswordTitle": "重置密码",
+  "forgotPasswordSend": "发送重置链接",
+  "forgotPasswordSent": "请查收邮件中的重置链接"
 }
