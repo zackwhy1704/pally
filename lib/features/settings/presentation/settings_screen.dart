@@ -122,10 +122,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _toggleBiometric(bool value) async {
+    final l = AppLocalizations.of(context);
     if (value) {
       try {
         final authenticated = await _localAuth.authenticate(
-          localizedReason: 'Verify to enable biometric login',
+          localizedReason: l.settingsBiometricReason,
           options: const AuthenticationOptions(
             biometricOnly: true,
             stickyAuth: true,
@@ -144,7 +145,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           setState(() => _biometricEnabled = true);
           showAppSnackBar(
             SnackBar(
-              content: const Text('Biometric login enabled'),
+              content: Text(l.settingsBiometricEnabled),
               backgroundColor: AppColors.green,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
@@ -156,7 +157,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         if (mounted) {
           showAppSnackBar(
             SnackBar(
-              content: const Text('Could not enable biometric login'),
+              content: Text(l.settingsBiometricEnableFailed),
               backgroundColor: AppColors.coral,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
@@ -171,7 +172,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         setState(() => _biometricEnabled = false);
         showAppSnackBar(
           SnackBar(
-            content: const Text('Biometric login disabled'),
+            content: Text(l.settingsBiometricDisabled),
             backgroundColor: AppColors.text2,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -189,6 +190,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _saveDisplayName() async {
+    final l = AppLocalizations.of(context);
     final name = _nameController.text.trim();
     if (name.isEmpty) return;
     setState(() => _savingName = true);
@@ -201,8 +203,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       await AuthNotifier.instance.setChildName(name);
       if (mounted) {
         showAppSnackBar(
-          const SnackBar(
-            content: Text('Name updated!'),
+          SnackBar(
+            content: Text(l.settingsNameUpdated),
             backgroundColor: AppColors.green,
             behavior: SnackBarBehavior.floating,
           ),
@@ -211,8 +213,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     } on DioException {
       if (mounted) {
         showAppSnackBar(
-          const SnackBar(
-            content: Text('Could not save name — check your connection'),
+          SnackBar(
+            content: Text(l.settingsNameSaveFailed),
             backgroundColor: AppColors.coral,
             behavior: SnackBarBehavior.floating,
           ),
@@ -224,20 +226,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _confirmSignOut() async {
+    final l = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Sign Out?'),
-        content: const Text("You'll need to sign in again"),
+        title: Text(l.settingsSignOutTitle),
+        content: Text(l.settingsSignOutBody),
         actions: [
           TextButton(
             onPressed: () => ctx.pop(false),
-            child: const Text('Cancel'),
+            child: Text(l.commonCancel),
           ),
           TextButton(
             onPressed: () => ctx.pop(true),
-            child: const Text('Sign Out',
-                style: TextStyle(color: AppColors.coral)),
+            child: Text(l.settingsSignOut,
+                style: const TextStyle(color: AppColors.coral)),
           ),
         ],
       ),
@@ -264,26 +267,26 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Settings', style: AppTextStyles.title),
+        title: Text(l.settingsTitle, style: AppTextStyles.title),
         centerTitle: true,
       ),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
-          const _SectionHeader(title: 'Subscription'),
+          _SectionHeader(title: l.settingsSectionSubscription),
           const _SubscriptionTile(),
           const SizedBox(height: AppSpacing.md),
           // 'Join a class' tile removed — class/group join lives in the Home
           // empty state and the persistent "Join a class or group" handle on
           // the Me tab. Referral (outbound) stays below; this is its home.
-          const _SectionHeader(title: 'Referral'),
+          _SectionHeader(title: l.settingsSectionReferral),
           const _ReferralTile(),
           const SizedBox(height: AppSpacing.md),
-          const _SectionHeader(title: 'Profile'),
+          _SectionHeader(title: l.settingsSectionProfile),
           _SettingsCard(
             children: [
               _TextFieldTile(
-                label: 'Display Name',
+                label: l.settingsDisplayName,
                 controller: _nameController,
                 icon: Icons.person_outline_rounded,
               ),
@@ -315,7 +318,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               child: CircularProgressIndicator(
                                   strokeWidth: 2, color: Colors.white),
                             )
-                          : Text('Save',
+                          : Text(l.settingsSave,
                               style: AppTextStyles.label
                                   .copyWith(color: Colors.white)),
                     ),
@@ -341,12 +344,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          const _SectionHeader(title: 'Notifications'),
+          _SectionHeader(title: l.settingsSectionNotifications),
           _SettingsCard(
             children: [
               _SwitchTile(
                 icon: Icons.notifications_outlined,
-                label: 'Daily quiz reminder',
+                label: l.settingsDailyReminder,
                 value: _dailyReminder,
                 onChanged: (v) {
                   setState(() => _dailyReminder = v);
@@ -357,7 +360,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 const Divider(height: 1, color: AppColors.outline),
                 _TappableTile(
                   icon: Icons.access_time_rounded,
-                  label: 'Reminder time',
+                  label: l.settingsReminderTime,
                   trailing: Text(
                     _reminderTime.format(context),
                     style: AppTextStyles.body
@@ -369,27 +372,27 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          const _SectionHeader(title: 'Security'),
+          _SectionHeader(title: l.settingsSectionSecurity),
           _SettingsCard(
             children: [
               _SwitchTile(
                 icon: Icons.fingerprint_rounded,
-                label: 'Biometric Login',
+                label: l.settingsBiometricLogin,
                 subtitle: _biometricSupported
                     ? null
-                    : 'Not available on this device',
+                    : l.settingsBiometricUnavailable,
                 value: _biometricEnabled,
                 onChanged: _biometricSupported ? _toggleBiometric : null,
               ),
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          const _SectionHeader(title: 'Learning'),
+          _SectionHeader(title: l.settingsSectionLearning),
           _SettingsCard(
             children: [
               _TappableTile(
                 icon: Icons.school_rounded,
-                label: 'Learning style',
+                label: l.settingsLearningStyle,
                 trailing: const Icon(Icons.chevron_right_rounded,
                     size: 16, color: AppColors.text3),
                 onTap: () => Navigator.of(context).push(MaterialPageRoute(
@@ -398,12 +401,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          const _SectionHeader(title: 'About'),
+          _SectionHeader(title: l.settingsSectionAbout),
           _SettingsCard(
             children: [
               _TappableTile(
                 icon: Icons.lightbulb_outline_rounded,
-                label: 'Why Apalchi is different',
+                label: l.settingsWhyDifferent,
                 trailing: const Icon(Icons.chevron_right_rounded,
                     size: 16, color: AppColors.text3),
                 onTap: () => HowPallyIsDifferent.show(context),
@@ -411,13 +414,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const Divider(height: 1, color: AppColors.outline),
               _InfoTile(
                 icon: Icons.info_outline_rounded,
-                label: 'Version',
+                label: l.settingsVersion,
                 value: _versionLabel,
               ),
               const Divider(height: 1, color: AppColors.outline),
               _TappableTile(
                 icon: Icons.public_rounded,
-                label: 'About Apalchi',
+                label: l.settingsAboutApalchi,
                 trailing: const Icon(Icons.open_in_new_rounded,
                     size: 16, color: AppColors.text3),
                 onTap: () => launchUrl(
@@ -428,7 +431,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const Divider(height: 1, color: AppColors.outline),
               _TappableTile(
                 icon: Icons.privacy_tip_outlined,
-                label: 'Privacy Policy',
+                label: l.settingsPrivacyPolicy,
                 trailing: const Icon(Icons.open_in_new_rounded,
                     size: 16, color: AppColors.text3),
                 onTap: () => launchUrl(
@@ -439,7 +442,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const Divider(height: 1, color: AppColors.outline),
               _TappableTile(
                 icon: Icons.description_outlined,
-                label: 'Terms of Service',
+                label: l.settingsTermsOfService,
                 trailing: const Icon(Icons.open_in_new_rounded,
                     size: 16, color: AppColors.text3),
                 onTap: () => launchUrl(
@@ -450,7 +453,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const Divider(height: 1, color: AppColors.outline),
               _TappableTile(
                 icon: Icons.help_outline_rounded,
-                label: 'Help & Support',
+                label: l.settingsHelpSupport,
                 trailing: const Icon(Icons.open_in_new_rounded,
                     size: 16, color: AppColors.text3),
                 onTap: () => launchUrl(
@@ -461,7 +464,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const Divider(height: 1, color: AppColors.outline),
               _TappableTile(
                 icon: Icons.mail_outline_rounded,
-                label: 'Email us',
+                label: l.settingsEmailUs,
                 trailing: const Icon(Icons.open_in_new_rounded,
                     size: 16, color: AppColors.text3),
                 onTap: () => launchUrl(
@@ -472,12 +475,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          const _SectionHeader(title: 'Account'),
+          _SectionHeader(title: l.settingsSectionAccount),
           _SettingsCard(
             children: [
               _TappableTile(
                 icon: Icons.logout_rounded,
-                label: 'Sign Out',
+                label: l.settingsSignOut,
                 trailing: const Icon(Icons.chevron_right_rounded,
                     size: 20, color: AppColors.text3),
                 onTap: _confirmSignOut,
@@ -486,7 +489,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const Divider(height: 1, color: AppColors.outline),
               _TappableTile(
                 icon: Icons.delete_outline_rounded,
-                label: 'Delete Account',
+                label: l.settingsDeleteAccount,
                 trailing: const Icon(Icons.chevron_right_rounded,
                     size: 20, color: AppColors.text3),
                 onTap: _confirmDeleteAccount,
@@ -752,23 +755,24 @@ class _SubscriptionTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final entAsync = ref.watch(entitlementVmProvider);
     return entAsync.when(
-      loading: () => const _SettingsCard(
+      loading: () => _SettingsCard(
         children: [
           ListTile(
-            leading: Icon(Icons.workspace_premium_rounded,
+            leading: const Icon(Icons.workspace_premium_rounded,
                 color: AppColors.purple),
-            title: Text('Subscription'),
-            subtitle: Text('Loading…'),
+            title: Text(l.settingsSectionSubscription),
+            subtitle: Text(l.commonLoading),
           ),
         ],
       ),
-      error: (_, __) => const _SettingsCard(children: [
+      error: (_, __) => _SettingsCard(children: [
           ListTile(
-            leading: Icon(Icons.workspace_premium_rounded, color: AppColors.text3),
-            title: Text('Subscription'),
-            subtitle: Text('Could not load — tap to retry'),
+            leading: const Icon(Icons.workspace_premium_rounded, color: AppColors.text3),
+            title: Text(l.settingsSectionSubscription),
+            subtitle: Text(l.settingsSubLoadError),
           ),
         ]),
       data: (ent) {
@@ -795,14 +799,14 @@ class _SubscriptionTile extends ConsumerWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                          '⭐ Premium Trial · $days day${days == 1 ? '' : 's'} left',
+                          l.settingsPremiumTrialLeft(days),
                           overflow: TextOverflow.ellipsis,
                           style: AppTextStyles.body
                               .copyWith(fontWeight: FontWeight.w700)),
                     ),
                   ]),
                   const SizedBox(height: 4),
-                  Text('Ends $endsLabel',
+                  Text(l.settingsEndsLabel(endsLabel),
                       style: AppTextStyles.bodySmall
                           .copyWith(color: AppColors.text2)),
                   const SizedBox(height: AppSpacing.sm),
@@ -832,8 +836,8 @@ class _SubscriptionTile extends ConsumerWidget {
                       // Link entitlement. Gate like every sibling surface, and quote
                       // USD to match the plans screen + the actual (USD) charge.
                       child: Text(allowPriceDisplay(ref)
-                          ? 'Keep Premium from US\$9.99/mo'
-                          : 'Keep Premium'),
+                          ? l.settingsKeepPremiumPrice
+                          : l.settingsKeepPremium),
                     ),
                   ),
                 ],
@@ -844,9 +848,9 @@ class _SubscriptionTile extends ConsumerWidget {
 
         final planLabel = isPremium
             ? (ent.source == 'PARENT'
-                ? 'Family plan — managed by parent'
+                ? l.settingsFamilyPlan
                 : prettyTier(ent.plan))
-            : 'Free plan';
+            : l.settingsFreePlan;
         return _SettingsCard(
           children: [
             ListTile(
@@ -854,8 +858,8 @@ class _SubscriptionTile extends ConsumerWidget {
                   color: AppColors.purple),
               title: Text(planLabel),
               subtitle: Text(isPremium
-                  ? 'Tap Manage to update billing or cancel.'
-                  : 'Unlock unlimited Mochis, chat, and family sharing.'),
+                  ? l.settingsPremiumManage
+                  : l.settingsFreePlanSubtitle),
               trailing: FilledButton(
                 onPressed: () => _onTap(context, ref, ent.isPremium,
                     ent.source == 'PARENT'),
@@ -865,7 +869,7 @@ class _SubscriptionTile extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 12, vertical: 8),
                 ),
-                child: Text(isPremium ? 'Manage' : 'Upgrade'),
+                child: Text(isPremium ? l.settingsManage : l.settingsUpgrade),
               ),
             ),
           ],
@@ -882,7 +886,7 @@ class _SubscriptionTile extends ConsumerWidget {
     }
     if (inheritedFromParent) {
       PallyToast.success(context,
-          'Your subscription is managed by the parent account.');
+          AppLocalizations.of(context).settingsManagedByParent);
       return;
     }
     // Premium self-managed users: go to the plans screen which shows their
@@ -902,13 +906,14 @@ class _ReferralTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     return _SettingsCard(
       children: [
         ListTile(
           leading: const Icon(Icons.card_giftcard_rounded,
               color: AppColors.purple),
-          title: const Text('Invite friends'),
-          subtitle: const Text('See your code, share it, track who joined.'),
+          title: Text(l.settingsInviteFriends),
+          subtitle: Text(l.settingsInviteFriendsSubtitle),
           trailing: const Icon(Icons.chevron_right_rounded,
               color: AppColors.text3),
           onTap: () => context.push('/referral'),
@@ -917,8 +922,8 @@ class _ReferralTile extends ConsumerWidget {
         ListTile(
           leading: const Icon(Icons.redeem_rounded,
               color: AppColors.teal),
-          title: const Text('Have a referral code?'),
-          subtitle: const Text('Enter it to reward you and the friend who sent it.'),
+          title: Text(l.settingsHaveReferralCode),
+          subtitle: Text(l.settingsHaveReferralCodeSubtitle),
           trailing: const Icon(Icons.chevron_right_rounded,
               color: AppColors.text3),
           onTap: () => _showRedeemSheet(context, ref),
@@ -928,6 +933,7 @@ class _ReferralTile extends ConsumerWidget {
   }
 
   Future<void> _showRedeemSheet(BuildContext context, WidgetRef ref) async {
+    final l = AppLocalizations.of(context);
     final controller = TextEditingController();
     try {
     await showModalBottomSheet<void>(
@@ -954,9 +960,9 @@ class _ReferralTile extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Enter referral code', style: AppTextStyles.title),
+                  Text(l.settingsEnterReferralCode, style: AppTextStyles.title),
                 const SizedBox(height: 4),
-                Text('Share the reward with the friend who invited you.',
+                Text(l.settingsShareReward,
                     style: AppTextStyles.bodySmall
                         .copyWith(color: AppColors.text2)),
                 const SizedBox(height: AppSpacing.md),
@@ -985,7 +991,7 @@ class _ReferralTile extends ConsumerWidget {
                       final code = controller.text.trim();
                       if (code.length != 6) {
                         PallyToast.error(
-                            sheetCtx, 'Codes are 6 characters');
+                            sheetCtx, l.settingsCodes6Chars);
                         return;
                       }
                       final err = await ref
@@ -995,7 +1001,7 @@ class _ReferralTile extends ConsumerWidget {
                       if (err == null) {
                         Navigator.of(sheetCtx).pop();
                         PallyToast.success(context,
-                            'Code applied! Take a quiz to activate the reward.');
+                            l.settingsCodeApplied);
                       } else {
                         PallyToast.error(sheetCtx, err);
                       }
@@ -1006,7 +1012,7 @@ class _ReferralTile extends ConsumerWidget {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14)),
                     ),
-                    child: const Text('Apply code'),
+                    child: Text(l.settingsApplyCode),
                   ),
                 ),
                 ],

@@ -1663,6 +1663,330 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Answer'**
   String get moduleAnswer;
+
+  /// Settings screen app-bar title.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// Settings section header.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription'**
+  String get settingsSectionSubscription;
+
+  /// Settings section header.
+  ///
+  /// In en, this message translates to:
+  /// **'Referral'**
+  String get settingsSectionReferral;
+
+  /// Settings section header.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get settingsSectionProfile;
+
+  /// Settings section header.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get settingsSectionNotifications;
+
+  /// Settings section header.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get settingsSectionSecurity;
+
+  /// Settings section header.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning'**
+  String get settingsSectionLearning;
+
+  /// Settings section header.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get settingsSectionAbout;
+
+  /// Settings section header.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get settingsSectionAccount;
+
+  /// Profile display-name field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Display Name'**
+  String get settingsDisplayName;
+
+  /// Save the display name.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get settingsSave;
+
+  /// Success toast after saving the name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name updated!'**
+  String get settingsNameUpdated;
+
+  /// Error toast when saving the name fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save name — check your connection'**
+  String get settingsNameSaveFailed;
+
+  /// Notifications toggle for the daily quiz reminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily quiz reminder'**
+  String get settingsDailyReminder;
+
+  /// Row that opens the reminder time picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder time'**
+  String get settingsReminderTime;
+
+  /// Security toggle for biometric login.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric Login'**
+  String get settingsBiometricLogin;
+
+  /// Subtitle when biometrics aren't supported.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available on this device'**
+  String get settingsBiometricUnavailable;
+
+  /// OS biometric-prompt reason string.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify to enable biometric login'**
+  String get settingsBiometricReason;
+
+  /// Toast after enabling biometric login.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric login enabled'**
+  String get settingsBiometricEnabled;
+
+  /// Toast when enabling biometric login fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not enable biometric login'**
+  String get settingsBiometricEnableFailed;
+
+  /// Toast after disabling biometric login.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric login disabled'**
+  String get settingsBiometricDisabled;
+
+  /// Row opening the learning-style screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning style'**
+  String get settingsLearningStyle;
+
+  /// About row. Keep 'Apalchi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Why Apalchi is different'**
+  String get settingsWhyDifferent;
+
+  /// About row showing the app version.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get settingsVersion;
+
+  /// About row link. Keep 'Apalchi'.
+  ///
+  /// In en, this message translates to:
+  /// **'About Apalchi'**
+  String get settingsAboutApalchi;
+
+  /// About row link.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get settingsPrivacyPolicy;
+
+  /// About row link.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get settingsTermsOfService;
+
+  /// About row link.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get settingsHelpSupport;
+
+  /// About row opening the mail client.
+  ///
+  /// In en, this message translates to:
+  /// **'Email us'**
+  String get settingsEmailUs;
+
+  /// Account row / confirm button to sign out.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Out'**
+  String get settingsSignOut;
+
+  /// Account row opening the delete-account flow.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get settingsDeleteAccount;
+
+  /// Sign-out confirmation dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Out?'**
+  String get settingsSignOutTitle;
+
+  /// Sign-out confirmation dialog body.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll need to sign in again'**
+  String get settingsSignOutBody;
+
+  /// Subscription tile subtitle when the entitlement fails to load.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load — tap to retry'**
+  String get settingsSubLoadError;
+
+  /// Premium-trial countdown. Keep the star and 'Premium Trial'.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{⭐ Premium Trial · 1 day left} other{⭐ Premium Trial · {days} days left}}'**
+  String settingsPremiumTrialLeft(int days);
+
+  /// Trial end date line.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends {date}'**
+  String settingsEndsLabel(String date);
+
+  /// COMPLIANCE (App Store 3.1.1): price variant shown ONLY where allowPriceDisplay(ref) is true. The translation must stay faithful and must NOT imply payment outside the app. Do not reword to add purchase steering. Keep 'Premium' and 'US$9.99/mo' as-is.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Premium from US\$9.99/mo'**
+  String get settingsKeepPremiumPrice;
+
+  /// COMPLIANCE-adjacent: no-price variant shown where price display is gated off (iOS w/o entitlement). Keep 'Premium'; do not add a price or purchase steering.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Premium'**
+  String get settingsKeepPremium;
+
+  /// Plan label for a parent-managed subscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Family plan — managed by parent'**
+  String get settingsFamilyPlan;
+
+  /// Plan label for a free user.
+  ///
+  /// In en, this message translates to:
+  /// **'Free plan'**
+  String get settingsFreePlan;
+
+  /// Subtitle for a premium user. 'Manage' matches settingsManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Manage to update billing or cancel.'**
+  String get settingsPremiumManage;
+
+  /// Subtitle for a free user. Keep 'Mochis'. Do NOT add a price (iOS anti-steering).
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock unlimited Mochis, chat, and family sharing.'**
+  String get settingsFreePlanSubtitle;
+
+  /// Button to manage an existing subscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage'**
+  String get settingsManage;
+
+  /// Button to upgrade from free. Do NOT append a price (iOS anti-steering).
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade'**
+  String get settingsUpgrade;
+
+  /// Toast when a child taps Manage on a parent-managed plan.
+  ///
+  /// In en, this message translates to:
+  /// **'Your subscription is managed by the parent account.'**
+  String get settingsManagedByParent;
+
+  /// Referral row title.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite friends'**
+  String get settingsInviteFriends;
+
+  /// Referral row subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'See your code, share it, track who joined.'**
+  String get settingsInviteFriendsSubtitle;
+
+  /// Redeem row title.
+  ///
+  /// In en, this message translates to:
+  /// **'Have a referral code?'**
+  String get settingsHaveReferralCode;
+
+  /// Redeem row subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter it to reward you and the friend who sent it.'**
+  String get settingsHaveReferralCodeSubtitle;
+
+  /// Redeem sheet title.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter referral code'**
+  String get settingsEnterReferralCode;
+
+  /// Redeem sheet body.
+  ///
+  /// In en, this message translates to:
+  /// **'Share the reward with the friend who invited you.'**
+  String get settingsShareReward;
+
+  /// Validation error for a referral code of the wrong length.
+  ///
+  /// In en, this message translates to:
+  /// **'Codes are 6 characters'**
+  String get settingsCodes6Chars;
+
+  /// Success toast after redeeming a referral code.
+  ///
+  /// In en, this message translates to:
+  /// **'Code applied! Take a quiz to activate the reward.'**
+  String get settingsCodeApplied;
+
+  /// Redeem sheet submit button.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply code'**
+  String get settingsApplyCode;
 }
 
 class _AppLocalizationsDelegate

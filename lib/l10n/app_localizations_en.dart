@@ -935,4 +935,184 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moduleAnswer => 'Answer';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsSectionSubscription => 'Subscription';
+
+  @override
+  String get settingsSectionReferral => 'Referral';
+
+  @override
+  String get settingsSectionProfile => 'Profile';
+
+  @override
+  String get settingsSectionNotifications => 'Notifications';
+
+  @override
+  String get settingsSectionSecurity => 'Security';
+
+  @override
+  String get settingsSectionLearning => 'Learning';
+
+  @override
+  String get settingsSectionAbout => 'About';
+
+  @override
+  String get settingsSectionAccount => 'Account';
+
+  @override
+  String get settingsDisplayName => 'Display Name';
+
+  @override
+  String get settingsSave => 'Save';
+
+  @override
+  String get settingsNameUpdated => 'Name updated!';
+
+  @override
+  String get settingsNameSaveFailed =>
+      'Could not save name — check your connection';
+
+  @override
+  String get settingsDailyReminder => 'Daily quiz reminder';
+
+  @override
+  String get settingsReminderTime => 'Reminder time';
+
+  @override
+  String get settingsBiometricLogin => 'Biometric Login';
+
+  @override
+  String get settingsBiometricUnavailable => 'Not available on this device';
+
+  @override
+  String get settingsBiometricReason => 'Verify to enable biometric login';
+
+  @override
+  String get settingsBiometricEnabled => 'Biometric login enabled';
+
+  @override
+  String get settingsBiometricEnableFailed =>
+      'Could not enable biometric login';
+
+  @override
+  String get settingsBiometricDisabled => 'Biometric login disabled';
+
+  @override
+  String get settingsLearningStyle => 'Learning style';
+
+  @override
+  String get settingsWhyDifferent => 'Why Apalchi is different';
+
+  @override
+  String get settingsVersion => 'Version';
+
+  @override
+  String get settingsAboutApalchi => 'About Apalchi';
+
+  @override
+  String get settingsPrivacyPolicy => 'Privacy Policy';
+
+  @override
+  String get settingsTermsOfService => 'Terms of Service';
+
+  @override
+  String get settingsHelpSupport => 'Help & Support';
+
+  @override
+  String get settingsEmailUs => 'Email us';
+
+  @override
+  String get settingsSignOut => 'Sign Out';
+
+  @override
+  String get settingsDeleteAccount => 'Delete Account';
+
+  @override
+  String get settingsSignOutTitle => 'Sign Out?';
+
+  @override
+  String get settingsSignOutBody => 'You\'ll need to sign in again';
+
+  @override
+  String get settingsSubLoadError => 'Could not load — tap to retry';
+
+  @override
+  String settingsPremiumTrialLeft(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '⭐ Premium Trial · $days days left',
+      one: '⭐ Premium Trial · 1 day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String settingsEndsLabel(String date) {
+    return 'Ends $date';
+  }
+
+  @override
+  String get settingsKeepPremiumPrice => 'Keep Premium from US\$9.99/mo';
+
+  @override
+  String get settingsKeepPremium => 'Keep Premium';
+
+  @override
+  String get settingsFamilyPlan => 'Family plan — managed by parent';
+
+  @override
+  String get settingsFreePlan => 'Free plan';
+
+  @override
+  String get settingsPremiumManage => 'Tap Manage to update billing or cancel.';
+
+  @override
+  String get settingsFreePlanSubtitle =>
+      'Unlock unlimited Mochis, chat, and family sharing.';
+
+  @override
+  String get settingsManage => 'Manage';
+
+  @override
+  String get settingsUpgrade => 'Upgrade';
+
+  @override
+  String get settingsManagedByParent =>
+      'Your subscription is managed by the parent account.';
+
+  @override
+  String get settingsInviteFriends => 'Invite friends';
+
+  @override
+  String get settingsInviteFriendsSubtitle =>
+      'See your code, share it, track who joined.';
+
+  @override
+  String get settingsHaveReferralCode => 'Have a referral code?';
+
+  @override
+  String get settingsHaveReferralCodeSubtitle =>
+      'Enter it to reward you and the friend who sent it.';
+
+  @override
+  String get settingsEnterReferralCode => 'Enter referral code';
+
+  @override
+  String get settingsShareReward =>
+      'Share the reward with the friend who invited you.';
+
+  @override
+  String get settingsCodes6Chars => 'Codes are 6 characters';
+
+  @override
+  String get settingsCodeApplied =>
+      'Code applied! Take a quiz to activate the reward.';
+
+  @override
+  String get settingsApplyCode => 'Apply code';
 }

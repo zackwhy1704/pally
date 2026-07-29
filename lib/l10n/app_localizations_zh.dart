@@ -892,4 +892,175 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get moduleAnswer => '查看答案';
+
+  @override
+  String get settingsTitle => '设置';
+
+  @override
+  String get settingsSectionSubscription => '订阅';
+
+  @override
+  String get settingsSectionReferral => '推荐';
+
+  @override
+  String get settingsSectionProfile => '个人资料';
+
+  @override
+  String get settingsSectionNotifications => '通知';
+
+  @override
+  String get settingsSectionSecurity => '安全';
+
+  @override
+  String get settingsSectionLearning => '学习';
+
+  @override
+  String get settingsSectionAbout => '关于';
+
+  @override
+  String get settingsSectionAccount => '账户';
+
+  @override
+  String get settingsDisplayName => '显示名称';
+
+  @override
+  String get settingsSave => '保存';
+
+  @override
+  String get settingsNameUpdated => '名称已更新！';
+
+  @override
+  String get settingsNameSaveFailed => '无法保存名称——请检查你的网络连接';
+
+  @override
+  String get settingsDailyReminder => '每日小测提醒';
+
+  @override
+  String get settingsReminderTime => '提醒时间';
+
+  @override
+  String get settingsBiometricLogin => '生物识别登录';
+
+  @override
+  String get settingsBiometricUnavailable => '此设备不支持';
+
+  @override
+  String get settingsBiometricReason => '请验证以启用生物识别登录';
+
+  @override
+  String get settingsBiometricEnabled => '已启用生物识别登录';
+
+  @override
+  String get settingsBiometricEnableFailed => '无法启用生物识别登录';
+
+  @override
+  String get settingsBiometricDisabled => '已停用生物识别登录';
+
+  @override
+  String get settingsLearningStyle => '学习风格';
+
+  @override
+  String get settingsWhyDifferent => 'Apalchi 有何不同';
+
+  @override
+  String get settingsVersion => '版本';
+
+  @override
+  String get settingsAboutApalchi => '关于 Apalchi';
+
+  @override
+  String get settingsPrivacyPolicy => '隐私政策';
+
+  @override
+  String get settingsTermsOfService => '服务条款';
+
+  @override
+  String get settingsHelpSupport => '帮助与支持';
+
+  @override
+  String get settingsEmailUs => '给我们发邮件';
+
+  @override
+  String get settingsSignOut => '退出登录';
+
+  @override
+  String get settingsDeleteAccount => '删除账户';
+
+  @override
+  String get settingsSignOutTitle => '退出登录？';
+
+  @override
+  String get settingsSignOutBody => '你需要重新登录';
+
+  @override
+  String get settingsSubLoadError => '无法加载——点按重试';
+
+  @override
+  String settingsPremiumTrialLeft(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '⭐ 高级版试用 · 还剩 $days 天',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String settingsEndsLabel(String date) {
+    return '结束于 $date';
+  }
+
+  @override
+  String get settingsKeepPremiumPrice => '以每月 US\$9.99 起继续使用高级版';
+
+  @override
+  String get settingsKeepPremium => '继续使用高级版';
+
+  @override
+  String get settingsFamilyPlan => '家庭方案——由家长管理';
+
+  @override
+  String get settingsFreePlan => '免费方案';
+
+  @override
+  String get settingsPremiumManage => '点按“管理”以更新账单或取消。';
+
+  @override
+  String get settingsFreePlanSubtitle => '解锁无限 Mochi、聊天和家庭共享。';
+
+  @override
+  String get settingsManage => '管理';
+
+  @override
+  String get settingsUpgrade => '升级';
+
+  @override
+  String get settingsManagedByParent => '你的订阅由家长账户管理。';
+
+  @override
+  String get settingsInviteFriends => '邀请好友';
+
+  @override
+  String get settingsInviteFriendsSubtitle => '查看你的邀请码、分享它、追踪谁加入了。';
+
+  @override
+  String get settingsHaveReferralCode => '有推荐码吗？';
+
+  @override
+  String get settingsHaveReferralCodeSubtitle => '输入推荐码，奖励你和邀请你的好友。';
+
+  @override
+  String get settingsEnterReferralCode => '输入推荐码';
+
+  @override
+  String get settingsShareReward => '与邀请你的好友分享奖励。';
+
+  @override
+  String get settingsCodes6Chars => '推荐码为 6 个字符';
+
+  @override
+  String get settingsCodeApplied => '推荐码已应用！完成一次小测即可激活奖励。';
+
+  @override
+  String get settingsApplyCode => '应用推荐码';
 }

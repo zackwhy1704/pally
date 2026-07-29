@@ -276,9 +276,51 @@ wiki titles) is AI-generated and carries its own `content_language`; it is NOT t
 | `moduleYourAnswerColon` / `moduleExplanation` / `moduleAnswer` | Your answer: / Explanation: / Answer | 你的答案： / 解释： / 查看答案 |
 | (reused) `quizCorrect` / `quizNotQuite` / `moduleCtaContinue` | Correct! / Not quite / Continue | 答对了！ / 还差一点 / 继续 |
 
-**DO NOT translate** (carry their own language already): Mochi's name, class names,
-teacher-uploaded content, student-generated text, any AI-generated artifact.
+### PR10 — settings screen (`settings_screen.dart`)
 
-Running count of zh keys drafted this branch: **~256** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 · PR5: 22 · PR6: 21 · PR7: 21 · PR8: 26 · PR-home: ~51 · PR9: ~48 — module item bodies).
-Remaining core-loop extraction (settings · sign-up form · HowPallyIsDifferent) lands in later PRs;
+⚠️ **COMPLIANCE — read before editing the two flagged rows.** The price string exists to satisfy
+App Store guideline 3.1.1 (anti-steering). It is gated in code behind `allowPriceDisplay(ref)` so it
+renders ONLY where price display is permitted. When reviewing the zh:
+- Keep it faithful in MEANING. It must **not** imply the user can pay outside the app, and must not add
+  any purchase step or steering the English doesn't contain.
+- Do **not** reword for naturalness in a way that changes the commercial meaning. Keep `US$9.99/mo`
+  and `Premium` verbatim.
+- The `ios_price_gate_guard_test` now follows the l10n indirection: any file that references a
+  price-valued ARB key must still gate it. Don't defeat that by minting an un-gated price key.
+
+| key | en | zh (draft) |
+|-----|----|-----------|
+| **`settingsKeepPremiumPrice`** 🔒COMPLIANCE | Keep Premium from US$9.99/mo | 以每月 US$9.99 起继续使用高级版 |
+| **`settingsKeepPremium`** 🔒(no-price variant) | Keep Premium | 继续使用高级版 |
+| `settingsTitle` | Settings | 设置 |
+| `settingsSection*` (Subscription/Referral/Profile/Notifications/Security/Learning/About/Account) | Subscription / Referral / Profile / Notifications / Security / Learning / About / Account | 订阅 / 推荐 / 个人资料 / 通知 / 安全 / 学习 / 关于 / 账户 |
+| `settingsDisplayName` / `settingsSave` | Display Name / Save | 显示名称 / 保存 |
+| `settingsNameUpdated` / `settingsNameSaveFailed` | Name updated! / Could not save name — check your connection | 名称已更新！ / 无法保存名称——请检查你的网络连接 |
+| `settingsDailyReminder` / `settingsReminderTime` | Daily quiz reminder / Reminder time | 每日小测提醒 / 提醒时间 |
+| `settingsBiometricLogin` / `settingsBiometricUnavailable` | Biometric Login / Not available on this device | 生物识别登录 / 此设备不支持 |
+| `settingsBiometricReason` / `settingsBiometricEnabled` / `settingsBiometricEnableFailed` / `settingsBiometricDisabled` | Verify to enable biometric login / Biometric login enabled / Could not enable biometric login / Biometric login disabled | 请验证以启用生物识别登录 / 已启用生物识别登录 / 无法启用生物识别登录 / 已停用生物识别登录 |
+| `settingsLearningStyle` | Learning style | 学习风格 |
+| `settingsWhyDifferent` / `settingsVersion` / `settingsAboutApalchi` | Why Apalchi is different / Version / About Apalchi | Apalchi 有何不同 / 版本 / 关于 Apalchi |
+| `settingsPrivacyPolicy` / `settingsTermsOfService` / `settingsHelpSupport` / `settingsEmailUs` | Privacy Policy / Terms of Service / Help & Support / Email us | 隐私政策 / 服务条款 / 帮助与支持 / 给我们发邮件 |
+| `settingsSignOut` / `settingsDeleteAccount` | Sign Out / Delete Account | 退出登录 / 删除账户 |
+| `settingsSignOutTitle` / `settingsSignOutBody` | Sign Out? / You'll need to sign in again | 退出登录？ / 你需要重新登录 |
+| `settingsSubLoadError` | Could not load — tap to retry | 无法加载——点按重试 |
+| `settingsPremiumTrialLeft` | ⭐ Premium Trial · {days} day(s) left | ⭐ 高级版试用 · 还剩 {days} 天 |
+| `settingsEndsLabel` | Ends {date} | 结束于 {date} |
+| `settingsFamilyPlan` / `settingsFreePlan` | Family plan — managed by parent / Free plan | 家庭方案——由家长管理 / 免费方案 |
+| `settingsPremiumManage` / `settingsFreePlanSubtitle` | Tap Manage to update billing or cancel. / Unlock unlimited Mochis, chat, and family sharing. | 点按“管理”以更新账单或取消。 / 解锁无限 Mochi、聊天和家庭共享。 |
+| `settingsManage` / `settingsUpgrade` | Manage / Upgrade | 管理 / 升级 |
+| `settingsManagedByParent` | Your subscription is managed by the parent account. | 你的订阅由家长账户管理。 |
+| `settingsInviteFriends` / `settingsInviteFriendsSubtitle` | Invite friends / See your code, share it, track who joined. | 邀请好友 / 查看你的邀请码、分享它、追踪谁加入了。 |
+| `settingsHaveReferralCode` / `settingsHaveReferralCodeSubtitle` | Have a referral code? / Enter it to reward you and the friend who sent it. | 有推荐码吗？ / 输入推荐码，奖励你和邀请你的好友。 |
+| `settingsEnterReferralCode` / `settingsShareReward` | Enter referral code / Share the reward with the friend who invited you. | 输入推荐码 / 与邀请你的好友分享奖励。 |
+| `settingsCodes6Chars` / `settingsCodeApplied` / `settingsApplyCode` | Codes are 6 characters / Code applied! Take a quiz to activate the reward. / Apply code | 推荐码为 6 个字符 / 推荐码已应用！完成一次小测即可激活奖励。 / 应用推荐码 |
+| (reused) `commonCancel` / `commonLoading` / `language` | Cancel / Loading… / Language | 取消 / 加载中… / 语言 |
+
+**DO NOT translate** (carry their own language already): Mochi's name, class names,
+teacher-uploaded content, student-generated text, any AI-generated artifact. Plan tier names from
+`prettyTier` (e.g. "Premium") are left as-is (shared model, out of the settings-screen scope).
+
+Running count of zh keys drafted this branch: **~306** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 · PR5: 22 · PR6: 21 · PR7: 21 · PR8: 26 · PR-home: ~51 · PR9: ~48 · PR10: ~50 — settings).
+Remaining core-loop extraction (sign-up form · HowPallyIsDifferent) lands in later PRs;
 each appends its rows here.
