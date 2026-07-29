@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/chat/presentation/chat_screen.dart';
 import 'package:pally/features/chat/providers/chat_usage_provider.dart';
 
@@ -22,6 +23,8 @@ Widget _wrap(ChatUsage? usage) {
       chatUsageNotifierProvider.overrideWith(() => _StubUsage(usage)),
     ],
     child: const MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(body: DailyChatHint()),
     ),
   );

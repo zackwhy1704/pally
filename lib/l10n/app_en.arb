@@ -282,5 +282,52 @@
   "@hubQuizSubtitleMastered": {
     "description": "Quiz row subtitle showing mastery progress. Separator is a middle dot (·).",
     "placeholders": { "mastered": { "type": "int" }, "total": { "type": "int" } }
-  }
+  },
+
+  "commonLoading": "Loading…",
+  "@commonLoading": { "description": "Generic loading placeholder (keep the ellipsis …)." },
+  "commonSomethingWrong": "Something went wrong.",
+  "@commonSomethingWrong": { "description": "Generic error toast fallback." },
+
+  "chatCouldNotLoadMochis": "Could not load Mochis.",
+  "@chatCouldNotLoadMochis": { "description": "Error toast when the chat tab can't load the avatar list. Keep 'Mochis'." },
+  "chatCreateMochiFirst": "Create a Mochi from the Home tab first.",
+  "@chatCreateMochiFirst": { "description": "Empty-state subtitle on the chat tab. Keep 'Mochi'." },
+  "chatCentreCuratedOnly": "Centre-curated answers only",
+  "@chatCentreCuratedOnly": { "description": "Subtitle under a centre-class avatar name in the chat header." },
+  "chatMenuTeach": "Teach Mochi",
+  "@chatMenuTeach": { "description": "Chat overflow-menu item — go to Teach. Keep 'Mochi'." },
+  "chatMenuAddKnowledge": "Add knowledge",
+  "@chatMenuAddKnowledge": { "description": "Chat overflow-menu item — upload material." },
+  "chatMenuDelete": "Delete Mochi",
+  "@chatMenuDelete": { "description": "Chat overflow-menu item — delete the avatar. Keep 'Mochi'." },
+  "chatLostTrain": "Hmm, I lost my train of thought. Ask me again!",
+  "@chatLostTrain": { "description": "Fallback shown when a chat reply errors out (Mochi speaking)." },
+  "chatNotSynced": "Not synced — tap to retry",
+  "@chatNotSynced": { "description": "Status on a message that failed to send; tap retries." },
+  "chatSending": "Sending…",
+  "@chatSending": { "description": "Status on a message that is being sent (keep ellipsis)." },
+  "chatDailyDone": "Daily chats done — come back tomorrow or go Premium.",
+  "@chatDailyDone": { "description": "Banner when a free user hits the daily chat cap." },
+  "chatMessagesLeftToday": "{count, plural, =1{1 message left today} other{{count} messages left today}}",
+  "@chatMessagesLeftToday": {
+    "description": "Banner counting a free user's remaining daily chat messages.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "chatInputHint": "Ask anything…",
+  "@chatInputHint": { "description": "Chat text-field placeholder when sending is allowed (keep ellipsis)." },
+  "chatInputHintWait": "Please wait…",
+  "@chatInputHintWait": { "description": "Chat text-field placeholder while a reply is streaming (keep ellipsis)." },
+  "chatSnap": "Snap",
+  "@chatSnap": { "description": "Camera button label — snap a homework photo." },
+  "chatEmptyTitle": "Start the conversation!",
+  "@chatEmptyTitle": { "description": "Empty chat placeholder title." },
+  "chatEmptySubtitle": "Ask your Mochi anything, or tap 📷 to snap a homework question!",
+  "@chatEmptySubtitle": { "description": "Empty chat placeholder subtitle. Keep 'Mochi' and the 📷 emoji." },
+  "chatDisclaimer": "Mochi can make mistakes — always double-check your work!",
+  "@chatDisclaimer": { "description": "Daily chat disclaimer banner. Keep 'Mochi'." },
+  "chatDoubleCheckNumbers": "Double-check the numbers against your worksheet",
+  "@chatDoubleCheckNumbers": { "description": "Tip shown on a numeric answer." },
+  "chatCheckedWithCalculator": "checked with calculator",
+  "@chatCheckedWithCalculator": { "description": "Badge indicating an answer was verified by the calculator." }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:pally/app/api_client.dart';
@@ -98,6 +99,9 @@ void main() {
       await tester.pumpWidget(ProviderScope(
         overrides: [_voiceOn()],
         child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+
           home: Scaffold(
             body: SpotMistakeCard(
               problem: '2 + 2 = ?',
@@ -122,6 +126,9 @@ void main() {
       await tester.pumpWidget(ProviderScope(
         overrides: [_voiceOn()],
         child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+
           home: Scaffold(
             body: Column(children: [
               ChallengeCard(
@@ -155,6 +162,9 @@ void main() {
       await tester.pumpWidget(ProviderScope(
         overrides: [_voiceOn()],
         child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+
           home: Scaffold(
             body: ProveQuestion(
               questionNumber: 1,
@@ -187,7 +197,10 @@ void main() {
           _voiceOn(),
           uploadViewModelProvider('test-avatar').overrideWith(() => _IdleUploadVM()),
         ],
-        child: const MaterialApp(home: UploadScreen(avatarId: 'test-avatar')),
+        child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+home: UploadScreen(avatarId: 'test-avatar')),
       ));
       await _settleAndDrain(tester);
 
@@ -211,7 +224,10 @@ void main() {
         (tester) async {
       await tester.pumpWidget(ProviderScope(
         overrides: [..._authOverrides(), _voiceOn()],
-        child: const MaterialApp(home: ChatScreen(avatarId: 'test-avatar')),
+        child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+home: ChatScreen(avatarId: 'test-avatar')),
       ));
       await _settleAndDrain(tester);
 
@@ -225,7 +241,10 @@ void main() {
     testWidgets('CompleteProfileScreen has no mic anywhere', (tester) async {
       await tester.pumpWidget(ProviderScope(
         overrides: [..._authOverrides(), _voiceOn()],
-        child: const MaterialApp(home: CompleteProfileScreen()),
+        child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+home: CompleteProfileScreen()),
       ));
       await _settleAndDrain(tester);
 
@@ -245,6 +264,9 @@ void main() {
       await tester.pumpWidget(ProviderScope(
         overrides: [voiceInputEnabledProvider.overrideWith((ref) => false)],
         child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+
           home: Scaffold(
             body: SpotMistakeCard(
               problem: 'p',
@@ -268,6 +290,9 @@ void main() {
       await tester.pumpWidget(ProviderScope(
         overrides: [voiceInputEnabledProvider.overrideWith((ref) => false)],
         child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+
           home: Scaffold(
             body: ProveQuestion(
                 questionNumber: 1, question: 'q', answer: '', onChanged: (_) {}),
@@ -285,7 +310,10 @@ void main() {
           ..._authOverrides(),
           uploadViewModelProvider('test-avatar').overrideWith(() => _IdleUploadVM()),
         ],
-        child: const MaterialApp(home: UploadScreen(avatarId: 'test-avatar')),
+        child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+home: UploadScreen(avatarId: 'test-avatar')),
       ));
       await _settleAndDrain(tester);
       expect(find.byKey(_voiceKey), findsNothing);
@@ -298,7 +326,10 @@ void main() {
           voiceInputEnabledProvider.overrideWith((ref) => false),
           ..._authOverrides(),
         ],
-        child: const MaterialApp(home: ChatScreen(avatarId: 'test-avatar')),
+        child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+home: ChatScreen(avatarId: 'test-avatar')),
       ));
       await _settleAndDrain(tester);
       expect(find.byKey(_voiceKey), findsNothing);

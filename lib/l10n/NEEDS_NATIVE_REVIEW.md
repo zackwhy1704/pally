@@ -132,9 +132,35 @@ with the reviewer: 单元 (module/unit), 掌握度 (mastery), 证明掌握 (Prov
 | `hubQuizSubtitleDoneToday` | Done today · free play anytime | 今天已完成 · 随时可自由练习 |
 | `hubQuizSubtitleMastered` | Test yourself · {mastered}/{total} mastered | 考考自己 · 已掌握 {mastered}/{total} |
 
+### PR6 — chat (highest-traffic student surface)
+
+Mochi kept. ICU plural on the daily-cap counter (en 1-vs-N; zh `other`). Reuses `libraryEmptyTitle`,
+`libraryAvatarDeleted`, `libraryDeleteFailed` + 2 new common keys (`commonLoading`, `commonSomethingWrong`).
+Note: chat MESSAGES are AI-generated (already language-tagged) — only chrome is localized here.
+
+| key | en | zh (machine draft) |
+|-----|----|--------------------|
+| `commonLoading` | Loading… | 加载中…… |
+| `commonSomethingWrong` | Something went wrong. | 出错了。 |
+| `chatCouldNotLoadMochis` | Could not load Mochis. | 无法加载 Mochi。 |
+| `chatCreateMochiFirst` | Create a Mochi from the Home tab first. | 请先在“主页”标签创建一个 Mochi。 |
+| `chatCentreCuratedOnly` | Centre-curated answers only | 仅提供机构精选的解答 |
+| `chatMenuTeach` / `chatMenuAddKnowledge` / `chatMenuDelete` | Teach Mochi / Add knowledge / Delete Mochi | 教一教 Mochi / 添加知识 / 删除 Mochi |
+| `chatLostTrain` | Hmm, I lost my train of thought. Ask me again! | 嗯，我刚才走神了。再问我一次吧！ |
+| `chatNotSynced` | Not synced — tap to retry | 未同步——点按重试 |
+| `chatSending` | Sending… | 发送中…… |
+| `chatDailyDone` | Daily chats done — come back tomorrow or go Premium. | 今天的聊天次数用完了——明天再来，或升级 Premium。 |
+| `chatMessagesLeftToday` | {count} message(s) left today | 今天还剩 {count} 条消息 |
+| `chatInputHint` / `chatInputHintWait` | Ask anything… / Please wait… | 问我任何问题…… / 请稍候…… |
+| `chatSnap` | Snap | 拍照 |
+| `chatEmptyTitle` / `chatEmptySubtitle` | Start the conversation! / Ask your Mochi anything, or tap 📷… | 开始聊天吧！ / 有问题都可以问 Mochi，或点按 📷… |
+| `chatDisclaimer` | Mochi can make mistakes — always double-check your work! | Mochi 也可能会出错——请务必核对你的作业！ |
+| `chatDoubleCheckNumbers` | Double-check the numbers against your worksheet | 请对照你的练习纸核对数字 |
+| `chatCheckedWithCalculator` | checked with calculator | 已用计算器核对 |
+
 **DO NOT translate** (carry their own language already): Mochi's name, class names,
 teacher-uploaded content, student-generated text, any AI-generated artifact.
 
-Running count of zh keys drafted this branch: **89** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 · PR5: 22 — avatar hub).
+Running count of zh keys drafted this branch: **110** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 · PR5: 22 · PR6: 21 — chat chrome).
 Remaining core-loop extraction (onboarding tour · sign-up form · chat · modules · quiz · library) lands in later PRs;
 each appends its rows here.

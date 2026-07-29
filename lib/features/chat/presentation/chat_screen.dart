@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/ui/adaptive_center.dart';
 import 'package:pally/core/ui/math_text.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -135,7 +136,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     ref.listen<ChatState>(chatViewModelProvider(widget.avatarId), (prev, next) {
       _scrollToBottom();
       if (next.error != null && prev?.error != next.error) {
-        PallyToast.error(context, next.error ?? 'Something went wrong.');
+        PallyToast.error(context, next.error ?? AppLocalizations.of(context).commonSomethingWrong);
       }
       // Level-up from photo solve (or stamped before this screen rebuilt
       // from a session-end credit). Fire once then clear so it doesn't
@@ -319,7 +320,7 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  avatar?.name ?? 'Loading…',
+                  avatar?.name ?? AppLocalizations.of(context).commonLoading,
                   style:
                       AppTextStyles.body.copyWith(fontWeight: FontWeight.w700),
                   maxLines: 1,
@@ -327,7 +328,7 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
                 ),
                 if (isCentre)
                   Text(
-                    'Centre-curated answers only',
+                    AppLocalizations.of(context).chatCentreCuratedOnly,
                     style: AppTextStyles.caption
                         .copyWith(color: AppColors.text3),
                     maxLines: 1,
@@ -392,9 +393,9 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     } else {
                       const HomeRoute().go(context);
                     }
-                    PallyToast.success(context, '${avatar.name} deleted');
+                    PallyToast.success(context, AppLocalizations.of(context).libraryAvatarDeleted(avatar.name));
                   } else {
-                    PallyToast.error(context, 'Delete failed. Try again.');
+                    PallyToast.error(context, AppLocalizations.of(context).libraryDeleteFailed);
                   }
                 }
               }
@@ -407,7 +408,7 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     const Icon(Icons.school_outlined,
                         color: AppColors.purple, size: 18),
                     const SizedBox(width: 10),
-                    Text('Teach Mochi',
+                    Text(AppLocalizations.of(context).chatMenuTeach,
                         style: AppTextStyles.body.copyWith(fontSize: 13)),
                   ]),
                 ),
@@ -418,7 +419,7 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     const Icon(Icons.upload_file_outlined,
                         color: AppColors.text2, size: 18),
                     const SizedBox(width: 10),
-                    Text('Add knowledge',
+                    Text(AppLocalizations.of(context).chatMenuAddKnowledge,
                         style: AppTextStyles.body.copyWith(fontSize: 13)),
                   ]),
                 ),
@@ -430,7 +431,7 @@ class _ChatAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     const Icon(Icons.delete_outline_rounded,
                         color: AppColors.coral, size: 18),
                     const SizedBox(width: 10),
-                    Text('Delete Mochi',
+                    Text(AppLocalizations.of(context).chatMenuDelete,
                         style: AppTextStyles.body.copyWith(
                             fontSize: 13, color: AppColors.coral)),
                   ]),
@@ -618,7 +619,7 @@ class _TextBubble extends ConsumerWidget {
             )
           : message.content.isEmpty
               ? Text(
-                  'Hmm, I lost my train of thought. Ask me again!',
+                  AppLocalizations.of(context).chatLostTrain,
                   style: AppTextStyles.body.copyWith(
                     color: AppColors.text2,
                     fontStyle: FontStyle.italic,
@@ -684,7 +685,7 @@ class _TextBubble extends ConsumerWidget {
                       size: 12, color: AppColors.coral),
                   const SizedBox(width: 3),
                   Text(
-                    'Not synced — tap to retry',
+                    AppLocalizations.of(context).chatNotSynced,
                     style: AppTextStyles.caption
                         .copyWith(color: AppColors.coral),
                   ),
@@ -708,7 +709,7 @@ class _TextBubble extends ConsumerWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  'Sending…',
+                  AppLocalizations.of(context).chatSending,
                   style: AppTextStyles.caption
                       .copyWith(color: AppColors.text3),
                 ),
@@ -760,8 +761,8 @@ class DailyChatHint extends ConsumerWidget {
             ? '⚡'
             : '✨';
     final copy = remaining == 0
-        ? 'Daily chats done — come back tomorrow or go Premium.'
-        : '$remaining message${remaining == 1 ? '' : 's'} left today';
+        ? AppLocalizations.of(context).chatDailyDone
+        : AppLocalizations.of(context).chatMessagesLeftToday(remaining);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(
@@ -830,7 +831,7 @@ class _InputBar extends StatelessWidget {
               focusNode: focusNode,
               enabled: canSend,
               decoration: InputDecoration(
-                hintText: canSend ? 'Ask anything…' : 'Please wait…',
+                hintText: canSend ? AppLocalizations.of(context).chatInputHint : AppLocalizations.of(context).chatInputHintWait,
                 hintStyle:
                     AppTextStyles.body.copyWith(color: AppColors.text3),
                 border: OutlineInputBorder(
@@ -887,7 +888,7 @@ class _InputBar extends StatelessWidget {
                         color: canSend ? null : AppColors.text3),
                   ),
                   Text(
-                    'Snap',
+                    AppLocalizations.of(context).chatSnap,
                     style: AppTextStyles.caption.copyWith(
                       color: canSend ? AppColors.teal : AppColors.text3,
                       fontSize: 8,
@@ -969,12 +970,12 @@ class _WelcomePrompt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const AdaptiveCenter(
-      padding: EdgeInsets.all(AppSpacing.xl),
+    return AdaptiveCenter(
+      padding: const EdgeInsets.all(AppSpacing.xl),
       child: MochiPlaceholder(
-        title: 'Start the conversation!',
+        title: AppLocalizations.of(context).chatEmptyTitle,
         subtitle:
-            'Ask your Mochi anything, or tap 📷 to snap a homework question!',
+            AppLocalizations.of(context).chatEmptySubtitle,
       ),
     );
   }
@@ -1033,7 +1034,7 @@ class _SessionDisclaimerState extends State<_SessionDisclaimer> {
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Text(
-                'Mochi can make mistakes — always double-check your work!',
+                AppLocalizations.of(context).chatDisclaimer,
                 style:
                     AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
               ),
@@ -1079,7 +1080,7 @@ class DoubleCheckStrip extends StatelessWidget {
                     size: 12, color: AppColors.amber),
                 const SizedBox(width: 4),
                 Text(
-                  'Double-check the numbers against your worksheet',
+                  AppLocalizations.of(context).chatDoubleCheckNumbers,
                   style: AppTextStyles.caption
                       .copyWith(color: AppColors.amber),
                 ),
@@ -1102,7 +1103,7 @@ class DoubleCheckStrip extends StatelessWidget {
                       size: 12, color: AppColors.green),
                   const SizedBox(width: 4),
                   Text(
-                    'checked with calculator',
+                    AppLocalizations.of(context).chatCheckedWithCalculator,
                     style: AppTextStyles.caption
                         .copyWith(color: AppColors.green),
                   ),

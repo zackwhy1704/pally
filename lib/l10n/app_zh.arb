@@ -102,5 +102,28 @@
   "hubQuiz": "小测",
   "hubQuizSubtitleDefault": "用选择题考考自己",
   "hubQuizSubtitleDoneToday": "今天已完成 · 随时可自由练习",
-  "hubQuizSubtitleMastered": "考考自己 · 已掌握 {mastered}/{total}"
+  "hubQuizSubtitleMastered": "考考自己 · 已掌握 {mastered}/{total}",
+
+  "commonLoading": "加载中……",
+  "commonSomethingWrong": "出错了。",
+
+  "chatCouldNotLoadMochis": "无法加载 Mochi。",
+  "chatCreateMochiFirst": "请先在“主页”标签创建一个 Mochi。",
+  "chatCentreCuratedOnly": "仅提供机构精选的解答",
+  "chatMenuTeach": "教一教 Mochi",
+  "chatMenuAddKnowledge": "添加知识",
+  "chatMenuDelete": "删除 Mochi",
+  "chatLostTrain": "嗯，我刚才走神了。再问我一次吧！",
+  "chatNotSynced": "未同步——点按重试",
+  "chatSending": "发送中……",
+  "chatDailyDone": "今天的聊天次数用完了——明天再来，或升级 Premium。",
+  "chatMessagesLeftToday": "{count, plural, other{今天还剩 {count} 条消息}}",
+  "chatInputHint": "问我任何问题……",
+  "chatInputHintWait": "请稍候……",
+  "chatSnap": "拍照",
+  "chatEmptyTitle": "开始聊天吧！",
+  "chatEmptySubtitle": "有问题都可以问 Mochi，或点按 📷 拍下作业题目！",
+  "chatDisclaimer": "Mochi 也可能会出错——请务必核对你的作业！",
+  "chatDoubleCheckNumbers": "请对照你的练习纸核对数字",
+  "chatCheckedWithCalculator": "已用计算器核对"
 }

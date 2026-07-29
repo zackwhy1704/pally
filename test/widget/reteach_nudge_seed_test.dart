@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/features/chat/presentation/chat_screen.dart';
 import 'package:pally/features/chat/presentation/chat_view_model.dart';
@@ -40,7 +41,10 @@ void main() {
       (tester) async {
     await tester.pumpWidget(ProviderScope(
       overrides: _overrides(),
-      child: const MaterialApp(home: ChatScreen(avatarId: 'av-1', seed: seed)),
+      child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+home: ChatScreen(avatarId: 'av-1', seed: seed)),
     ));
     await tester.pump();
 
@@ -51,7 +55,10 @@ void main() {
   testWidgets('ChatScreen with no seed leaves the composer empty', (tester) async {
     await tester.pumpWidget(ProviderScope(
       overrides: _overrides(),
-      child: const MaterialApp(home: ChatScreen(avatarId: 'av-1')),
+      child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+home: ChatScreen(avatarId: 'av-1')),
     ));
     await tester.pump();
     expect(find.widgetWithText(TextField, seed), findsNothing);

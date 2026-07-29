@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/widgets/loading/pally_skeleton.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -20,7 +21,7 @@ class ChatTabScreen extends ConsumerWidget {
 
     ref.listen<AsyncValue<List<Avatar>>>(homeViewModelProvider, (_, next) {
       if (next is AsyncError) {
-        PallyToast.error(context, 'Could not load Mochis.');
+        PallyToast.error(context, AppLocalizations.of(context).chatCouldNotLoadMochis);
       }
     });
 
@@ -113,12 +114,12 @@ class _AvatarTile extends StatelessWidget {
 class _EmptyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Padding(
-        padding: EdgeInsets.all(AppSpacing.xl),
+        padding: const EdgeInsets.all(AppSpacing.xl),
         child: MochiPlaceholder(
-          title: 'No Mochis yet',
-          subtitle: 'Create a Mochi from the Home tab first.',
+          title: AppLocalizations.of(context).libraryEmptyTitle,
+          subtitle: AppLocalizations.of(context).chatCreateMochiFirst,
         ),
       ),
     );
