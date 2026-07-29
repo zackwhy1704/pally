@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/router.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -44,7 +45,7 @@ class ModuleListScreen extends ConsumerWidget {
               false)
             IconButton(
               icon: const Icon(Icons.assignment_turned_in_outlined),
-              tooltip: 'Homework',
+              tooltip: AppLocalizations.of(context).moduleHomeworkTooltip,
               onPressed: () => HomeworkListRoute(avatarId: avatarId).push(context),
             ),
         ],
@@ -89,10 +90,10 @@ class _ErrorBody extends StatelessWidget {
           const Icon(Icons.wifi_off_rounded,
               size: 48, color: AppColors.text3),
           const SizedBox(height: AppSpacing.md),
-          Text('Could not load modules.',
+          Text(AppLocalizations.of(context).moduleCouldNotLoad,
               style: AppTextStyles.title, textAlign: TextAlign.center),
           const SizedBox(height: AppSpacing.xs),
-          Text('Check your connection and try again.',
+          Text(AppLocalizations.of(context).commonCheckConnection,
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center),
           const SizedBox(height: AppSpacing.lg),
@@ -100,7 +101,7 @@ class _ErrorBody extends StatelessWidget {
             onPressed: onRetry,
             style:
                 FilledButton.styleFrom(backgroundColor: AppColors.purple),
-            child: const Text('Try again'),
+            child: Text(AppLocalizations.of(context).commonTryAgain),
           ),
         ],
       ),
@@ -140,11 +141,11 @@ class _EmptyBodyState extends State<_EmptyBody> {
       case ModuleGenResult.success:
         break;
       case ModuleGenResult.noNotes:
-        setState(() => _errorMessage = 'No notes to build lessons from yet.');
+        setState(() => _errorMessage = AppLocalizations.of(context).moduleNoNotesToBuild);
       case ModuleGenResult.error:
         setState(
           () => _errorMessage =
-              'Could not build lessons. Check your connection and try again.',
+              AppLocalizations.of(context).moduleBuildFailed,
         );
     }
   }
@@ -163,7 +164,7 @@ class _EmptyBodyState extends State<_EmptyBody> {
           const Icon(Icons.auto_stories_rounded,
               size: 56, color: AppColors.purpleC),
             const SizedBox(height: AppSpacing.md),
-            Text('No lessons yet',
+            Text(AppLocalizations.of(context).moduleNoLessonsYet,
                 style: AppTextStyles.title, textAlign: TextAlign.center),
             const SizedBox(height: AppSpacing.sm),
             // Three-state rule (mirrors NoNotesCta so the module list never
@@ -177,8 +178,8 @@ class _EmptyBodyState extends State<_EmptyBody> {
             else if (notes) ...[
               Text(
                 isCentre
-                    ? 'Generate lessons from your class materials.'
-                    : 'Your notes are in — let\'s build your first lesson.',
+                    ? AppLocalizations.of(context).moduleGenerateFromMaterials
+                    : AppLocalizations.of(context).moduleNotesInBuildFirst,
                 style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 textAlign: TextAlign.center,
               ),
@@ -196,7 +197,7 @@ class _EmptyBodyState extends State<_EmptyBody> {
                       )
                     : const Icon(Icons.auto_awesome_rounded, size: 18),
                 label: Text(
-                    isCentre ? 'Generate lessons' : 'Build my first lesson'),
+                    isCentre ? AppLocalizations.of(context).moduleGenerateLessons : AppLocalizations.of(context).moduleBuildFirstLesson),
                 style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
               ),
               if (_errorMessage != null) ...[
@@ -209,14 +210,14 @@ class _EmptyBodyState extends State<_EmptyBody> {
                 const SizedBox(height: AppSpacing.xs),
                 TextButton(
                   onPressed: _handleGenerate,
-                  child: const Text('Try again'),
+                  child: Text(AppLocalizations.of(context).commonTryAgain),
                 ),
               ],
             ] else
               NoNotesCta(
                 avatarId: widget.avatarId,
                 personalDescription:
-                    'Add your notes and I\'ll build your first lesson from them.',
+                    AppLocalizations.of(context).moduleAddNotesCta,
               ),
           ],
         ),
@@ -267,11 +268,11 @@ class _ModuleCard extends StatelessWidget {
         _ => AppColors.surf2,
       };
 
-  String get _stageLabel => switch (module.stage) {
-        'LEARN' => 'LEARN',
-        'TEST' => 'TEST',
-        'PROVE' => 'PROVE',
-        'COMPLETE' => 'COMPLETE',
+  String _stageLabel(AppLocalizations l) => switch (module.stage) {
+        'LEARN' => l.moduleStageLearn,
+        'TEST' => l.moduleStageTest,
+        'PROVE' => l.moduleStageProve,
+        'COMPLETE' => l.moduleStageComplete,
         _ => module.stage,
       };
 
@@ -283,14 +284,15 @@ class _ModuleCard extends StatelessWidget {
         _ => Icons.circle_outlined,
       };
 
-  String get _ctaLabel => switch (module.stage) {
-        'COMPLETE' => 'Review',
-        'LEARN' => 'Start learning',
-        _ => 'Continue',
+  String _ctaLabel(AppLocalizations l) => switch (module.stage) {
+        'COMPLETE' => l.moduleCtaReview,
+        'LEARN' => l.moduleCtaStartLearning,
+        _ => l.moduleCtaContinue,
       };
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final isComplete = module.stage == 'COMPLETE';
     final masteryPct = module.masteryDisplayPct; // already 0–100 — do NOT ×100
 
@@ -325,7 +327,7 @@ class _ModuleCard extends StatelessWidget {
                 ),
                 const SizedBox(width: AppSpacing.sm),
                 _StageBadge(
-                  label: _stageLabel,
+                  label: _stageLabel(l),
                   color: _stageColor,
                   bgColor: _stageBgColor,
                   icon: _stageIcon,
@@ -390,7 +392,7 @@ class _ModuleCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    _ctaLabel,
+                    _ctaLabel(l),
                     style: AppTextStyles.label.copyWith(
                       color:
                           isComplete ? AppColors.green : AppColors.purple,
