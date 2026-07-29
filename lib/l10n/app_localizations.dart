@@ -421,6 +421,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'“Not a generic AI — a Mochi that knows your notes.”'**
   String get onboardingThesis;
+
+  /// Library screen app-bar title (the home hub listing the student's Mochis).
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get libraryTitle;
+
+  /// Section header above centre-class avatars in the library.
+  ///
+  /// In en, this message translates to:
+  /// **'My classes'**
+  String get libraryMyClasses;
+
+  /// Swipe-action label to leave a centre class.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get libraryLeave;
+
+  /// Swipe-action label to delete a personal Mochi.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get libraryDelete;
+
+  /// Success toast after deleting a Mochi. {name} is the Mochi's name (not translated).
+  ///
+  /// In en, this message translates to:
+  /// **'{name} deleted'**
+  String libraryAvatarDeleted(String name);
+
+  /// Error toast when deleting a Mochi fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete failed. Try again.'**
+  String get libraryDeleteFailed;
+
+  /// Confirmation dialog title for leaving a class.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave this class?'**
+  String get libraryLeaveClassTitle;
+
+  /// Confirmation dialog body for leaving a class. {name} is the class name. 'Mochi'/'Mochis' is the mascot name — do NOT translate.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll lose access to {name}\'s materials and class Mochi. Your personal Mochis stay. You can rejoin with the class code.'**
+  String libraryLeaveClassBody(String name);
+
+  /// Success toast after leaving a class. {name} is the class name.
+  ///
+  /// In en, this message translates to:
+  /// **'Left {name}'**
+  String libraryLeftClass(String name);
+
+  /// Avatar row status while the brain is compiling. Keep the emoji + 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'📖 Mochi is reading your chapters…'**
+  String get libraryStatusCompiling;
+
+  /// Avatar row status showing how many wiki/brain pages exist. Keep the 🧠 emoji.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{🧠 {count} brain page} other{🧠 {count} brain pages}}'**
+  String libraryStatusBrainPages(int count);
+
+  /// Avatar row status while the brain is being built from uploaded files. Keep the ⏳ emoji and trailing ellipsis.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{⏳ Building brain from {count} file…} other{⏳ Building brain from {count} files…}}'**
+  String libraryStatusBuilding(int count);
+
+  /// Avatar row status when the Mochi has no uploaded material yet. Keep the 📂 emoji.
+  ///
+  /// In en, this message translates to:
+  /// **'📂 No notes yet — teach me your material!'**
+  String get libraryStatusNoNotes;
+
+  /// Empty-library placeholder title. Keep 'Mochis'.
+  ///
+  /// In en, this message translates to:
+  /// **'No Mochis yet'**
+  String get libraryEmptyTitle;
+
+  /// Empty-library placeholder subtitle. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a Mochi from the Home tab to see it here.'**
+  String get libraryEmptySubtitle;
 }
 
 class _AppLocalizationsDelegate

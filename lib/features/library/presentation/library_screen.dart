@@ -18,6 +18,7 @@ import 'package:pally/core/widgets/loading/pally_skeleton.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/avatar.dart';
 enum _LibraryItemType { header, avatar }
 
@@ -43,13 +44,14 @@ class LibraryScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final avatarsAsync = ref.watch(libraryViewModelProvider);
+    final l = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: AppColors.bg,
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Library', style: AppTextStyles.title),
+        title: Text(l.libraryTitle, style: AppTextStyles.title),
         centerTitle: true,
       ),
       body: AdaptiveContentWidth(
@@ -69,12 +71,12 @@ class LibraryScreen extends ConsumerWidget {
                 onRefresh: () =>
                     ref.read(libraryViewModelProvider.notifier).refresh(),
                 child: Builder(builder: (context) {
-                  final items = _buildLibraryItems(avatars);
+                  final items = _buildLibraryItems(avatars, l.libraryMyClasses);
                   return ListView.builder(
                     padding: const EdgeInsets.all(AppSpacing.md),
                     itemCount: items.length,
                     itemBuilder: (context, index) =>
-                        _buildLibraryRow(context, ref, items[index]),
+                        _buildLibraryRow(context, ref, items[index], l),
                   );
                 }),
               ),
@@ -85,12 +87,13 @@ class LibraryScreen extends ConsumerWidget {
 
   /// Orders library rows so class avatars are grouped under a "My classes"
   /// header above personal tutors.
-  List<_LibraryItem> _buildLibraryItems(List<Avatar> avatars) {
+  List<_LibraryItem> _buildLibraryItems(
+      List<Avatar> avatars, String myClassesLabel) {
     final classAvatars = avatars.where((a) => a.isCentreClass);
     final personalAvatars = avatars.where((a) => !a.isCentreClass);
     return [
       if (classAvatars.isNotEmpty) ...[
-        const _LibraryItem.header('My classes'),
+        _LibraryItem.header(myClassesLabel),
         for (final a in classAvatars) _LibraryItem.avatar(a),
       ],
       for (final a in personalAvatars) _LibraryItem.avatar(a),
@@ -101,6 +104,7 @@ class LibraryScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     _LibraryItem item,
+    AppLocalizations l,
   ) {
     switch (item.type) {
       case _LibraryItemType.header:
@@ -134,13 +138,14 @@ class LibraryScreen extends ConsumerWidget {
                 color: AppColors.amber,
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.logout_rounded, color: Colors.white, size: 24),
-                  SizedBox(height: 2),
-                  Text('Leave',
-                      style: TextStyle(
+                  const Icon(Icons.logout_rounded,
+                      color: Colors.white, size: 24),
+                  const SizedBox(height: 2),
+                  Text(l.libraryLeave,
+                      style: const TextStyle(
                           color: Colors.white,
                           fontSize: 11,
                           fontWeight: FontWeight.w600)),
@@ -163,14 +168,14 @@ class LibraryScreen extends ConsumerWidget {
               color: AppColors.coral,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Column(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.delete_outline_rounded,
+                const Icon(Icons.delete_outline_rounded,
                     color: Colors.white, size: 24),
-                SizedBox(height: 2),
-                Text('Delete',
-                    style: TextStyle(
+                const SizedBox(height: 2),
+                Text(l.libraryDelete,
+                    style: const TextStyle(
                         color: Colors.white,
                         fontSize: 11,
                         fontWeight: FontWeight.w600)),
@@ -194,11 +199,11 @@ class LibraryScreen extends ConsumerWidget {
 
             if (ok) {
               HapticFeedback.heavyImpact();
-              PallyToast.success(context, '${avatar.name} deleted');
+              PallyToast.success(context, l.libraryAvatarDeleted(avatar.name));
               ref.invalidate(libraryViewModelProvider);
               return true;
             }
-            PallyToast.error(context, 'Delete failed. Try again.');
+            PallyToast.error(context, l.libraryDeleteFailed);
             return false;
           },
           child: _AvatarRow(avatar: avatar),
@@ -211,23 +216,21 @@ class LibraryScreen extends ConsumerWidget {
   /// personal Mochis and class materials are untouched.
   Future<bool> _confirmAndLeaveClass(
       BuildContext context, WidgetRef ref, String name, String classId) async {
+    final l = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Leave this class?'),
-        content: Text(
-          "You'll lose access to $name's materials and class Mochi. "
-          'Your personal Mochis stay. You can rejoin with the class code.',
-        ),
+        title: Text(l.libraryLeaveClassTitle),
+        content: Text(l.libraryLeaveClassBody(name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l.commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: FilledButton.styleFrom(backgroundColor: AppColors.coral),
-            child: const Text('Leave'),
+            child: Text(l.libraryLeave),
           ),
         ],
       ),
@@ -241,7 +244,7 @@ class LibraryScreen extends ConsumerWidget {
       );
       if (!context.mounted) return true;
       HapticFeedback.heavyImpact();
-      PallyToast.success(context, 'Left $name');
+      PallyToast.success(context, l.libraryLeftClass(name));
       ref.invalidate(libraryViewModelProvider);
       ref.invalidate(homeViewModelProvider);
       return true;
@@ -261,6 +264,7 @@ class _AvatarRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     return GestureDetector(
       // The row is now a clean front door into the per-avatar Hub — the guided
       // journey lives there. (Notes/Wiki is one row inside the hub.)
@@ -320,12 +324,12 @@ class _AvatarRow extends ConsumerWidget {
                     // honest "async job in flight" surface the compile dialog + the
                     // compile timeout copy both point users to.
                     avatar.isBrainCompiling
-                        ? '📖 Mochi is reading your chapters…'
+                        ? l.libraryStatusCompiling
                         : avatar.hasKnowledge
-                            ? '🧠 ${avatar.wikiPageCount} brain page${avatar.wikiPageCount == 1 ? '' : 's'}'
+                            ? l.libraryStatusBrainPages(avatar.wikiPageCount)
                             : avatar.fileCount > 0
-                                ? '⏳ Building brain from ${avatar.fileCount} file${avatar.fileCount == 1 ? '' : 's'}…'
-                                : '📂 No notes yet — teach me your material!',
+                                ? l.libraryStatusBuilding(avatar.fileCount)
+                                : l.libraryStatusNoNotes,
                     style: AppTextStyles.caption.copyWith(
                       color: avatar.isBrainCompiling
                           ? AppColors.purple
@@ -388,11 +392,12 @@ class EmptyLibraryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const AdaptiveCenter(
-      padding: EdgeInsets.all(AppSpacing.xl),
+    final l = AppLocalizations.of(context);
+    return AdaptiveCenter(
+      padding: const EdgeInsets.all(AppSpacing.xl),
       child: MochiPlaceholder(
-        title: 'No Mochis yet',
-        subtitle: 'Create a Mochi from the Home tab to see it here.',
+        title: l.libraryEmptyTitle,
+        subtitle: l.libraryEmptySubtitle,
       ),
     );
   }

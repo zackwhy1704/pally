@@ -186,4 +186,73 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get onboardingThesis =>
       '“Not a generic AI — a Mochi that knows your notes.”';
+
+  @override
+  String get libraryTitle => 'Library';
+
+  @override
+  String get libraryMyClasses => 'My classes';
+
+  @override
+  String get libraryLeave => 'Leave';
+
+  @override
+  String get libraryDelete => 'Delete';
+
+  @override
+  String libraryAvatarDeleted(String name) {
+    return '$name deleted';
+  }
+
+  @override
+  String get libraryDeleteFailed => 'Delete failed. Try again.';
+
+  @override
+  String get libraryLeaveClassTitle => 'Leave this class?';
+
+  @override
+  String libraryLeaveClassBody(String name) {
+    return 'You\'ll lose access to $name\'s materials and class Mochi. Your personal Mochis stay. You can rejoin with the class code.';
+  }
+
+  @override
+  String libraryLeftClass(String name) {
+    return 'Left $name';
+  }
+
+  @override
+  String get libraryStatusCompiling => '📖 Mochi is reading your chapters…';
+
+  @override
+  String libraryStatusBrainPages(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '🧠 $count brain pages',
+      one: '🧠 $count brain page',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String libraryStatusBuilding(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '⏳ Building brain from $count files…',
+      one: '⏳ Building brain from $count file…',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get libraryStatusNoNotes =>
+      '📂 No notes yet — teach me your material!';
+
+  @override
+  String get libraryEmptyTitle => 'No Mochis yet';
+
+  @override
+  String get libraryEmptySubtitle =>
+      'Create a Mochi from the Home tab to see it here.';
 }
