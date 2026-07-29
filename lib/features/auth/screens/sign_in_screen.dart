@@ -17,6 +17,8 @@ import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/auth/services/auth_service.dart';
 import 'package:pally/features/account_deletion/presentation/restore_account_sheet.dart';
 import 'package:pally/features/consent/data/consent_unlock.dart';
+import 'package:pally/l10n/app_localizations.dart';
+import 'package:pally/shared/widgets/language_selector.dart';
 
 enum _BiometricState { scanning, success, failed }
 
@@ -68,10 +70,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   }
 
   Future<void> _signIn() async {
+    final l = AppLocalizations.of(context);
     final email = _emailCtrl.text.trim();
     final password = _passCtrl.text;
     if (email.isEmpty || password.isEmpty) {
-      _showError('Please enter your email and password');
+      _showError(l.signInErrorEmptyCredentials);
       return;
     }
     setState(() => _loading = true);
@@ -117,18 +120,19 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   }
 
   Future<void> _biometricSignIn() async {
+    final l = AppLocalizations.of(context);
     if (!_biometricSupported) {
-      _showError('Biometrics not available on this device');
+      _showError(l.signInErrorBiometricsUnavailable);
       return;
     }
     if (!_biometricRegistered) {
-      _showError('Sign in with your password first — biometrics will be enabled in Settings');
+      _showError(l.signInErrorBiometricsNotRegistered);
       return;
     }
 
     final userId = await AuthNotifier.instance.getLastUserId();
     if (userId == null) {
-      _showError('Sign in with your password first');
+      _showError(l.signInErrorPasswordFirst);
       return;
     }
 
@@ -136,7 +140,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
     try {
       final authenticated = await _localAuth.authenticate(
-        localizedReason: 'Sign in to Apalchi',
+        localizedReason: l.signInBiometricReason,
         options: const AuthenticationOptions(
           biometricOnly: true,
           stickyAuth: true,
@@ -212,6 +216,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   }
 
   Future<void> _showForgotPasswordDialog() async {
+    final l = AppLocalizations.of(context);
     final emailCtrl = TextEditingController(text: _emailCtrl.text.trim());
     try {
     await showDialog<void>(
@@ -220,13 +225,13 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         var sending = false;
         return StatefulBuilder(
           builder: (ctx, setDialogState) => AlertDialog(
-            title: const Text('Reset Password'),
+            title: Text(l.forgotPasswordTitle),
             content: TextField(
               controller: emailCtrl,
               keyboardType: TextInputType.emailAddress,
               style: AppTextStyles.body,
               decoration: InputDecoration(
-                hintText: 'your@email.com',
+                hintText: l.signInEmailHint,
                 hintStyle: AppTextStyles.body.copyWith(color: AppColors.text3),
                 filled: true,
                 fillColor: const Color(0xFFEDE8F5),
@@ -241,7 +246,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('Cancel'),
+                child: Text(l.commonCancel),
               ),
               TextButton(
                 onPressed: sending
@@ -256,8 +261,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                           if (mounted) {
                             showAppSnackBar(
                               SnackBar(
-                                content: const Text(
-                                    'Check your email for a reset link'),
+                                content: Text(l.forgotPasswordSent),
                                 backgroundColor: AppColors.green,
                                 behavior: SnackBarBehavior.floating,
                                 shape: RoundedRectangleBorder(
@@ -279,7 +283,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                         width: AppSizing.iconSm,
                         height: AppSizing.iconSm,
                         child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Text('Send Reset Link'),
+                    : Text(l.forgotPasswordSend),
               ),
             ],
           ),
@@ -305,6 +309,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.bg,
@@ -319,24 +324,29 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // B4: language is settable at the FIRST interaction, before an
+                  // account exists. Device locale is pre-selected; the choice is
+                  // mirrored to preferred_locale at account creation.
+                  const Center(child: LanguageSelector()),
+                  const SizedBox(height: AppSpacing.md),
                   Text(
-                    'Welcome back! 👋',
+                    l.signInWelcomeBack,
                     style: AppTextStyles.title.copyWith(fontSize: 20),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  const _FieldLabel('Email'),
+                  _FieldLabel(l.signInEmailLabel),
                   const SizedBox(height: 6),
                   _TextField(
                     controller: _emailCtrl,
                     focusNode: _emailFocus,
-                    hint: 'your@email.com',
+                    hint: l.signInEmailHint,
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     onSubmitted: (_) => _passFocus.requestFocus(),
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  const _FieldLabel('Password'),
+                  _FieldLabel(l.signInPasswordLabel),
                   const SizedBox(height: 6),
                   _TextField(
                     controller: _passCtrl,
@@ -364,14 +374,14 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                       style: TextButton.styleFrom(
                           foregroundColor: AppColors.purple,
                           padding: EdgeInsets.zero),
-                      child: Text('Forgot password?',
+                      child: Text(l.signInForgotPassword,
                           style: AppTextStyles.bodySmall
                               .copyWith(color: AppColors.purple)),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   _PrimaryButton(
-                    label: 'Sign In',
+                    label: l.signInButton,
                     loading: _loading,
                     onPressed: _signIn,
                   ),
@@ -383,7 +393,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                             child: Divider(color: AppColors.outline)),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Text('or',
+                          child: Text(l.signInOr,
                               style: AppTextStyles.caption
                                   .copyWith(color: AppColors.text3)),
                         ),
@@ -421,12 +431,12 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Use Biometrics',
+                                  Text(l.signInUseBiometrics,
                                       style: AppTextStyles.label.copyWith(
                                           color: AppColors.teal,
                                           fontWeight: FontWeight.w600,
                                           fontSize: 12)),
-                                  Text('Face ID / Touch ID',
+                                  Text(l.signInFaceTouchId,
                                       style: AppTextStyles.caption.copyWith(
                                           color: AppColors.text2,
                                           fontSize: 9)),
@@ -441,7 +451,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                       Padding(
                         padding: const EdgeInsets.only(top: 8),
                         child: Text(
-                          'Sign in once to enable biometric login',
+                          l.signInEnableBiometricHint,
                           style: AppTextStyles.caption
                               .copyWith(color: AppColors.text3),
                           textAlign: TextAlign.center,
@@ -474,8 +484,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             spacing: 8,
             runSpacing: 6,
             children: [
-              Text("Don't have an account?",
-                  style: AppTextStyles.bodySmall),
+              Text(l.signInNoAccount, style: AppTextStyles.bodySmall),
               GestureDetector(
                 onTap: () => context.push('/onboarding/direct'),
                 child: Container(
@@ -486,7 +495,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    'Create Account ✨',
+                    l.signInCreateAccount,
                     style: AppTextStyles.label.copyWith(
                         color: AppColors.purple,
                         fontWeight: FontWeight.w700),
@@ -731,6 +740,7 @@ class _BiometricSheet extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context, _BiometricState state) {
+    final l = AppLocalizations.of(context);
     final Color ringColor = switch (state) {
       _BiometricState.scanning => AppColors.teal,
       _BiometricState.success => AppColors.green,
@@ -778,19 +788,18 @@ class _BiometricSheet extends StatelessWidget {
         const SizedBox(height: 20),
         Text(
           switch (state) {
-            _BiometricState.scanning => 'Scanning...',
-            _BiometricState.success => 'Verified! ✨',
-            _BiometricState.failed => "Couldn't verify",
+            _BiometricState.scanning => l.biometricScanning,
+            _BiometricState.success => l.biometricVerified,
+            _BiometricState.failed => l.biometricCouldntVerify,
           },
           style: AppTextStyles.title.copyWith(fontSize: 20),
         ),
         const SizedBox(height: 8),
         Text(
           switch (state) {
-            _BiometricState.scanning =>
-              'Place your finger or look at your camera',
-            _BiometricState.success => 'Signing you in...',
-            _BiometricState.failed => 'Face or fingerprint not recognised',
+            _BiometricState.scanning => l.biometricScanningHint,
+            _BiometricState.success => l.biometricSigningIn,
+            _BiometricState.failed => l.biometricNotRecognised,
           },
           style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
           textAlign: TextAlign.center,
@@ -827,8 +836,8 @@ class _BiometricSheet extends StatelessWidget {
                           borderRadius: BorderRadius.circular(14)),
                       elevation: 0,
                     ),
-                    child: const Text('Try Again',
-                        style: TextStyle(fontWeight: FontWeight.w600)),
+                    child: Text(l.commonTryAgain,
+                        style: const TextStyle(fontWeight: FontWeight.w600)),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -841,7 +850,7 @@ class _BiometricSheet extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14)),
                     ),
-                    child: Text('Use password instead',
+                    child: Text(l.biometricUsePassword,
                         style: AppTextStyles.bodySmall
                             .copyWith(color: AppColors.text2)),
                   ),
@@ -862,7 +871,7 @@ class _BiometricSheet extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(22)),
               ),
-              child: Text('Cancel',
+              child: Text(l.commonCancel,
                   style: AppTextStyles.bodySmall
                       .copyWith(color: AppColors.text2)),
             ),

@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/i18n/locale_controller.dart';
 import 'package:pally/core/services/fcm_token_service.dart';
 import 'package:pally/core/observability/observability.dart';
 import 'package:pally/core/observability/observability_providers.dart';
@@ -344,6 +345,11 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
       // the child never gets a push address and parental-approval push can't
       // reach them. Fire-and-forget; no-ops if Firebase isn't ready.
       FcmTokenService(ref.read(dioProvider)).registerToken();
+      // Mirror the UI language chosen pre-auth to preferred_locale now that a
+      // token exists. /onboard/quick does NOT accept preferredLocale (backend
+      // never added it there — sending it would be a silent no-op), so the
+      // honest mirror is this authenticated PATCH. Best-effort, never blocks.
+      unawaited(ref.read(localeControllerProvider.notifier).reconcileToServer());
 
       appLog.i(
           '[DirectOnboard] Quick onboard success: userId=$userId avatarId=$avatarId under13=$isUnder13');

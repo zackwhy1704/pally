@@ -22,6 +22,22 @@ class _StubAdapter implements HttpClientAdapter {
   void close({bool force = false}) {}
 }
 
+/// Records the requests the controller makes so the mirror can be asserted.
+class _RecordingAdapter implements HttpClientAdapter {
+  final List<RequestOptions> requests = [];
+  @override
+  Future<ResponseBody> fetch(RequestOptions options,
+      Stream<Uint8List>? requestStream, Future<void>? cancelFuture) async {
+    requests.add(options);
+    return ResponseBody.fromString('{}', 200, headers: {
+      Headers.contentTypeHeader: [Headers.jsonContentType],
+    });
+  }
+
+  @override
+  void close({bool force = false}) {}
+}
+
 ProviderContainer _container({Locale? initial}) => ProviderContainer(
       overrides: [
         dioProvider.overrideWithValue(Dio()..httpClientAdapter = _StubAdapter()),
@@ -88,5 +104,24 @@ void main() {
     expect(c.read(localeControllerProvider), AppLanguages.english.locale);
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getString(localePrefsKey), 'en');
+  });
+
+  test('reconcileToServer PATCHes preferred_locale with the current language',
+      () async {
+    // The mirror called after account creation: a language chosen pre-auth (zh)
+    // must reach PATCH /auth/settings/locale once a token exists.
+    final rec = _RecordingAdapter();
+    final c = ProviderContainer(overrides: [
+      dioProvider.overrideWithValue(Dio()..httpClientAdapter = rec),
+      initialLocaleProvider.overrideWithValue(const Locale('zh')),
+    ]);
+    addTearDown(c.dispose);
+
+    await c.read(localeControllerProvider.notifier).reconcileToServer();
+
+    expect(rec.requests, hasLength(1));
+    expect(rec.requests.single.path, '/api/v1/auth/settings/locale');
+    expect(rec.requests.single.method, 'PATCH');
+    expect(rec.requests.single.data, {'preferredLocale': 'zh'});
   });
 }

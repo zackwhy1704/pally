@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/auth/screens/sign_in_screen.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 /// The invariant: 'Create Account ✨' is the primary secondary-action of the
 /// sign-in screen and must be reachable WITHOUT a scroll gesture at every common
@@ -49,7 +50,11 @@ void main() {
   });
 
   Widget app(GoRouter router) => ProviderScope(
-        child: MaterialApp.router(routerConfig: router),
+        child: MaterialApp.router(
+          routerConfig: router,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+        ),
       );
 
   GoRouter router() => GoRouter(routes: [

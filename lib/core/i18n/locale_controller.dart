@@ -69,6 +69,12 @@ class LocaleController extends Notifier<Locale> {
   /// Mirror the choice to the server so it follows the user across devices.
   /// Fire-and-forget: never awaited, never surfaces an error to the UI (local
   /// prefs are the source of truth for the UI language).
+  /// Push the CURRENT locale to the server. Call once auth is established (e.g.
+  /// right after account creation) so a language chosen PRE-auth — when the
+  /// best-effort sync in [setLanguage] would have 401'd with no token — is
+  /// mirrored to `preferred_locale`. Best-effort, never throws, safe to ignore.
+  Future<void> reconcileToServer() => _patchLocale(state.languageCode);
+
   void _syncToServer(String code) => unawaited(_patchLocale(code));
 
   Future<void> _patchLocale(String code) async {
