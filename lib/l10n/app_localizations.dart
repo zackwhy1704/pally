@@ -2359,6 +2359,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Go to home'**
   String get signupGoToHome;
+
+  /// Explainer-sheet heading. Keep 'Apalchi' + emoji.
+  ///
+  /// In en, this message translates to:
+  /// **'What makes Apalchi different 🧠'**
+  String get howDiffTitle;
+
+  /// Explainer-sheet subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Here\'s what you just got — and why it matters.'**
+  String get howDiffSubtitle;
+
+  /// Differentiator card 1 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Built from your notes'**
+  String get howDiffCard1Title;
+
+  /// Differentiator card 1 body. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Mochi learns your material — your textbook, your class notes, your syllabus. So every answer matches what your teacher actually taught, not a generic textbook.'**
+  String get howDiffCard1Body;
+
+  /// Differentiator card 2 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Remembers how you learn'**
+  String get howDiffCard2Title;
+
+  /// Differentiator card 2 body.
+  ///
+  /// In en, this message translates to:
+  /// **'It tracks which topics trip you up and brings them back until they stick. Easy things get spaced out. No time wasted on what you already know.'**
+  String get howDiffCard2Body;
+
+  /// Differentiator card 3 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Made for real studying'**
+  String get howDiffCard3Title;
+
+  /// Differentiator card 3 body. Keep 'Mochis'.
+  ///
+  /// In en, this message translates to:
+  /// **'Mochis for every subject — flashcards, daily quizzes, mastery tracking, curriculum-aligned — depth designed for serious learners.'**
+  String get howDiffCard3Body;
+
+  /// Pull-quote near the bottom of the sheet. Keep 'Mochi' and the quotation marks.
+  ///
+  /// In en, this message translates to:
+  /// **'\"Not a generic tutor. A Mochi that knows yours.\"'**
+  String get howDiffQuote;
+
+  /// Dismiss button on the explainer sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it — let\'s study!'**
+  String get howDiffGotIt;
 }
 
 class _AppLocalizationsDelegate

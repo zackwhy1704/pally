@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 const _kSeenKey = 'pally_different_seen_v1';
 
@@ -36,6 +37,7 @@ class _ExplainerSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -65,37 +67,37 @@ class _ExplainerSheet extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
 
-            Text('What makes Apalchi different 🧠',
+            Text(l.howDiffTitle,
                 style: AppTextStyles.heading1.copyWith(fontSize: 20),
                 textAlign: TextAlign.center),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              "Here's what you just got — and why it matters.",
+              l.howDiffSubtitle,
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.lg),
 
-            const _DifferentiatorCard(
+            _DifferentiatorCard(
               emoji: '📚',
-              title: 'Built from your notes',
-              body: 'Your Mochi learns your material — your textbook, your class notes, your syllabus. So every answer matches what your teacher actually taught, not a generic textbook.',
+              title: l.howDiffCard1Title,
+              body: l.howDiffCard1Body,
               color: AppColors.purpleL,
               border: AppColors.purple,
             ),
             const SizedBox(height: AppSpacing.sm),
-            const _DifferentiatorCard(
+            _DifferentiatorCard(
               emoji: '🧠',
-              title: 'Remembers how you learn',
-              body: 'It tracks which topics trip you up and brings them back until they stick. Easy things get spaced out. No time wasted on what you already know.',
+              title: l.howDiffCard2Title,
+              body: l.howDiffCard2Body,
               color: AppColors.amberL,
               border: AppColors.amber,
             ),
             const SizedBox(height: AppSpacing.sm),
-            const _DifferentiatorCard(
+            _DifferentiatorCard(
               emoji: '🎯',
-              title: 'Made for real studying',
-              body: 'Mochis for every subject — flashcards, daily quizzes, mastery tracking, curriculum-aligned — depth designed for serious learners.',
+              title: l.howDiffCard3Title,
+              body: l.howDiffCard3Body,
               color: AppColors.tealL,
               border: AppColors.teal,
             ),
@@ -109,7 +111,7 @@ class _ExplainerSheet extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                '"Not a generic tutor. A Mochi that knows yours."',
+                l.howDiffQuote,
                 style: AppTextStyles.body.copyWith(
                     color: AppColors.purple,
                     fontStyle: FontStyle.italic,
@@ -127,7 +129,7 @@ class _ExplainerSheet extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14)),
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              child: const Text("Got it — let's study!"),
+              child: Text(l.howDiffGotIt),
             ),
           ],
         ),

@@ -401,5 +401,16 @@
   "signupMochiSetUp": "你的 Mochi 已设置完成！",
   "signupModuleBuilt": "Mochi 已阅读你的笔记，并为你生成了一个学习单元。",
   "signupStartLearning": "开始学习",
-  "signupGoToHome": "前往主页"
+  "signupGoToHome": "前往主页",
+
+  "howDiffTitle": "Apalchi 有何不同 🧠",
+  "howDiffSubtitle": "这就是你刚刚获得的——以及它为什么重要。",
+  "howDiffCard1Title": "从你的笔记构建",
+  "howDiffCard1Body": "你的 Mochi 学习你的材料——你的课本、你的课堂笔记、你的教学大纲。所以每个答案都贴合你老师真正教的内容，而不是泛泛的课本。",
+  "howDiffCard2Title": "记住你的学习方式",
+  "howDiffCard2Body": "它会追踪哪些主题难住了你，并不断带你复习直到掌握。简单的内容会拉长复习间隔。绝不浪费时间在你已经会的东西上。",
+  "howDiffCard3Title": "为真正的学习而打造",
+  "howDiffCard3Body": "每个科目都有 Mochi——抽认卡、每日小测、掌握度追踪、贴合课程——为认真的学习者设计的深度。",
+  "howDiffQuote": "“不是泛泛的导师。是懂你的 Mochi。”",
+  "howDiffGotIt": "明白了——开始学习吧！"
 }

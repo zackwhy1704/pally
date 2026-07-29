@@ -969,5 +969,26 @@
   "signupStartLearning": "Start learning",
   "@signupStartLearning": { "description": "Primary success CTA into the first module." },
   "signupGoToHome": "Go to home",
-  "@signupGoToHome": { "description": "Success CTA to the home screen." }
+  "@signupGoToHome": { "description": "Success CTA to the home screen." },
+
+  "howDiffTitle": "What makes Apalchi different 🧠",
+  "@howDiffTitle": { "description": "Explainer-sheet heading. Keep 'Apalchi' + emoji." },
+  "howDiffSubtitle": "Here's what you just got — and why it matters.",
+  "@howDiffSubtitle": { "description": "Explainer-sheet subtitle." },
+  "howDiffCard1Title": "Built from your notes",
+  "@howDiffCard1Title": { "description": "Differentiator card 1 title." },
+  "howDiffCard1Body": "Your Mochi learns your material — your textbook, your class notes, your syllabus. So every answer matches what your teacher actually taught, not a generic textbook.",
+  "@howDiffCard1Body": { "description": "Differentiator card 1 body. Keep 'Mochi'." },
+  "howDiffCard2Title": "Remembers how you learn",
+  "@howDiffCard2Title": { "description": "Differentiator card 2 title." },
+  "howDiffCard2Body": "It tracks which topics trip you up and brings them back until they stick. Easy things get spaced out. No time wasted on what you already know.",
+  "@howDiffCard2Body": { "description": "Differentiator card 2 body." },
+  "howDiffCard3Title": "Made for real studying",
+  "@howDiffCard3Title": { "description": "Differentiator card 3 title." },
+  "howDiffCard3Body": "Mochis for every subject — flashcards, daily quizzes, mastery tracking, curriculum-aligned — depth designed for serious learners.",
+  "@howDiffCard3Body": { "description": "Differentiator card 3 body. Keep 'Mochis'." },
+  "howDiffQuote": "\"Not a generic tutor. A Mochi that knows yours.\"",
+  "@howDiffQuote": { "description": "Pull-quote near the bottom of the sheet. Keep 'Mochi' and the quotation marks." },
+  "howDiffGotIt": "Got it — let's study!",
+  "@howDiffGotIt": { "description": "Dismiss button on the explainer sheet." }
 }

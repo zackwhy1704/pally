@@ -352,5 +352,23 @@ teacher-uploaded content, student-generated text, any AI-generated artifact. Pla
 out of the per-screen scope, same precedent as `prettyTier`. Email-format hint examples
 (`your@email.com`, `parent@example.com`) are kept verbatim as illustrations.
 
-Running count of zh keys drafted this branch: **~361** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 · PR5: 22 · PR6: 21 · PR7: 21 · PR8: 26 · PR-home: ~51 · PR9: ~48 · PR10: ~50 · PR11: ~55 — sign-up form).
-Remaining: HowPallyIsDifferent modal (PR12), plus the two shared-data surfaces noted above.
+### PR12 — "What makes Apalchi different" explainer (`how_pally_is_different.dart`)
+
+Shown once after first tutor creation and from Settings → About. 10 strings.
+
+| key | en | zh (draft) |
+|-----|----|-----------|
+| `howDiffTitle` / `howDiffSubtitle` | What makes Apalchi different 🧠 / Here's what you just got — and why it matters. | Apalchi 有何不同 🧠 / 这就是你刚刚获得的——以及它为什么重要。 |
+| `howDiffCard1Title` / `howDiffCard1Body` | Built from your notes / Your Mochi learns your material — … not a generic textbook. | 从你的笔记构建 / 你的 Mochi 学习你的材料——…而不是泛泛的课本。 |
+| `howDiffCard2Title` / `howDiffCard2Body` | Remembers how you learn / It tracks which topics trip you up… | 记住你的学习方式 / 它会追踪哪些主题难住了你…… |
+| `howDiffCard3Title` / `howDiffCard3Body` | Made for real studying / Mochis for every subject — … serious learners. | 为真正的学习而打造 / 每个科目都有 Mochi——…为认真的学习者设计的深度。 |
+| `howDiffQuote` | "Not a generic tutor. A Mochi that knows yours." | “不是泛泛的导师。是懂你的 Mochi。” |
+| `howDiffGotIt` | Got it — let's study! | 明白了——开始学习吧！ |
+
+Running count of zh keys drafted this branch: **~371** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 · PR5: 22 · PR6: 21 · PR7: 21 · PR8: 26 · PR-home: ~51 · PR9: ~48 · PR10: ~50 · PR11: ~55 · PR12: 10 — explainer).
+
+**Branch B client extraction is COMPLETE.** Every student-facing screen surface now renders through
+the ARB. What remains is NOT more client PRs — it is the standing native-review gate below, plus two
+deliberately-scoped-out shared-data surfaces (`prettyTier` plan names; `subjectLabel`/`levelLabel`/
+`levelSubtitle` onboarding option labels) that would each be their own small data-file PR if the
+operator wants them.

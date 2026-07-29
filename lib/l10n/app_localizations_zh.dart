@@ -1264,4 +1264,37 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get signupGoToHome => '前往主页';
+
+  @override
+  String get howDiffTitle => 'Apalchi 有何不同 🧠';
+
+  @override
+  String get howDiffSubtitle => '这就是你刚刚获得的——以及它为什么重要。';
+
+  @override
+  String get howDiffCard1Title => '从你的笔记构建';
+
+  @override
+  String get howDiffCard1Body =>
+      '你的 Mochi 学习你的材料——你的课本、你的课堂笔记、你的教学大纲。所以每个答案都贴合你老师真正教的内容，而不是泛泛的课本。';
+
+  @override
+  String get howDiffCard2Title => '记住你的学习方式';
+
+  @override
+  String get howDiffCard2Body =>
+      '它会追踪哪些主题难住了你，并不断带你复习直到掌握。简单的内容会拉长复习间隔。绝不浪费时间在你已经会的东西上。';
+
+  @override
+  String get howDiffCard3Title => '为真正的学习而打造';
+
+  @override
+  String get howDiffCard3Body =>
+      '每个科目都有 Mochi——抽认卡、每日小测、掌握度追踪、贴合课程——为认真的学习者设计的深度。';
+
+  @override
+  String get howDiffQuote => '“不是泛泛的导师。是懂你的 Mochi。”';
+
+  @override
+  String get howDiffGotIt => '明白了——开始学习吧！';
 }

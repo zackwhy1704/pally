@@ -1327,4 +1327,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signupGoToHome => 'Go to home';
+
+  @override
+  String get howDiffTitle => 'What makes Apalchi different 🧠';
+
+  @override
+  String get howDiffSubtitle =>
+      'Here\'s what you just got — and why it matters.';
+
+  @override
+  String get howDiffCard1Title => 'Built from your notes';
+
+  @override
+  String get howDiffCard1Body =>
+      'Your Mochi learns your material — your textbook, your class notes, your syllabus. So every answer matches what your teacher actually taught, not a generic textbook.';
+
+  @override
+  String get howDiffCard2Title => 'Remembers how you learn';
+
+  @override
+  String get howDiffCard2Body =>
+      'It tracks which topics trip you up and brings them back until they stick. Easy things get spaced out. No time wasted on what you already know.';
+
+  @override
+  String get howDiffCard3Title => 'Made for real studying';
+
+  @override
+  String get howDiffCard3Body =>
+      'Mochis for every subject — flashcards, daily quizzes, mastery tracking, curriculum-aligned — depth designed for serious learners.';
+
+  @override
+  String get howDiffQuote =>
+      '\"Not a generic tutor. A Mochi that knows yours.\"';
+
+  @override
+  String get howDiffGotIt => 'Got it — let\'s study!';
 }
