@@ -1063,4 +1063,205 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsApplyCode => '应用推荐码';
+
+  @override
+  String signupSignedInAs(String name) {
+    return '你已以 $name 的身份登录。要退出并创建新账户吗？';
+  }
+
+  @override
+  String get signupAlreadySignedIn => '你已经登录。要退出并创建新账户吗？';
+
+  @override
+  String get signupCreateNewAccount => '创建新账户？';
+
+  @override
+  String get signupLogOutContinue => '退出并继续';
+
+  @override
+  String signupStepOf(int step) {
+    return '第 $step 步，共 3 步';
+  }
+
+  @override
+  String get signupSelectAgeGroup => '请选择你的年龄段以继续。';
+
+  @override
+  String get signupCreateYourAccount => '创建你的账户';
+
+  @override
+  String get signupStudyBuddy => 'Mochi 将成为你的专属学习伙伴。';
+
+  @override
+  String get signupFieldName => '名字';
+
+  @override
+  String get signupHintYourName => '你的名字';
+
+  @override
+  String get signupValidatorName => '名字至少需要 2 个字符';
+
+  @override
+  String get signupFieldEmail => '电子邮箱';
+
+  @override
+  String get signupValidatorEmailEmpty => '请输入你的电子邮箱';
+
+  @override
+  String get signupValidatorEmailInvalid => '请输入有效的电子邮箱（例如 you@example.com）';
+
+  @override
+  String get signupFieldPassword => '密码';
+
+  @override
+  String get signupHintPassword => '至少 8 个字符';
+
+  @override
+  String get signupValidatorPassword => '密码至少需要 8 个字符';
+
+  @override
+  String get signupAgeGroup => '年龄段';
+
+  @override
+  String get signupAge13OrOlder => '我已满 13 岁';
+
+  @override
+  String get signupAgeUnder13 => '我未满 13 岁';
+
+  @override
+  String get signupFieldParentEmail => '家长的电子邮箱';
+
+  @override
+  String get signupValidatorParentEmailEmpty => '请输入家长的电子邮箱';
+
+  @override
+  String get signupValidatorParentEmailInvalid =>
+      '请输入家长有效的电子邮箱（例如 parent@example.com）';
+
+  @override
+  String get signupParentApproval => '在你使用 AI 功能之前，我们会发邮件给你的家长以批准你的账户。';
+
+  @override
+  String get signupNext => '下一步';
+
+  @override
+  String get signupAlreadyHaveAccount => '已有账户？登录';
+
+  @override
+  String get signupWhatStudying => '你在学习什么？';
+
+  @override
+  String get signupPickSubject => '先选一个科目开始。之后可以再添加更多。';
+
+  @override
+  String get signupSubject => '科目';
+
+  @override
+  String get signupEducationStage => '教育阶段';
+
+  @override
+  String get signupCreateAccount => '创建账户';
+
+  @override
+  String get signupBookSplitChapters => '你的书被分成了多个章节';
+
+  @override
+  String get signupPickChapters => '选择你想让 Mochi 先学习的章节。';
+
+  @override
+  String get signupChooseChapters => '选择章节';
+
+  @override
+  String get signupAddFirstNotes => '添加你的第一份笔记';
+
+  @override
+  String get signupNotesInstructions => '在下方输入或粘贴你的笔记。Mochi 会阅读它们，并为你生成一个学习单元。';
+
+  @override
+  String get signupNotesHint => '在这里粘贴或输入你的笔记……';
+
+  @override
+  String signupCharCount(int count) {
+    return '$count 个字符';
+  }
+
+  @override
+  String signupCharCountMin(int count) {
+    return '$count 个字符（至少 50 个）';
+  }
+
+  @override
+  String get signupAddToMochi => '添加到 Mochi';
+
+  @override
+  String get signupOr => '或';
+
+  @override
+  String get signupSnapPhoto => '或拍一张照片';
+
+  @override
+  String get signupChooseFile => '或选择一个文件';
+
+  @override
+  String get signupUploadFailed => '上传失败。请重试。';
+
+  @override
+  String get signupHaveCode => '🎟️  有班级或小组代码吗？输入或扫描';
+
+  @override
+  String get signupSkipForNow => '暂时跳过';
+
+  @override
+  String get signupUploading => '正在上传你的笔记……';
+
+  @override
+  String get signupReadingNotes => 'Mochi 正在阅读你的笔记……';
+
+  @override
+  String get signupCreatingModule => '正在创建你的第一个学习单元……';
+
+  @override
+  String get signupWorkingOnIt => '正在处理……';
+
+  @override
+  String get signupTakeMinute => '这可能需要一分钟。';
+
+  @override
+  String get signupThisSubject => '这个科目';
+
+  @override
+  String signupNotLikeMaterial(String subject) {
+    return '这看起来不像是$subject的材料';
+  }
+
+  @override
+  String signupCouldntMatch(String subject) {
+    return '我们无法将它与$subject匹配。你可以照样使用它，或选择另一个文件。';
+  }
+
+  @override
+  String get signupUseAnyway => '照样使用';
+
+  @override
+  String get signupChooseDifferentFile => '选择另一个文件';
+
+  @override
+  String signupModuleReady(String title) {
+    return '你的“$title”单元准备好了！';
+  }
+
+  @override
+  String get signupFirstModuleWord => '第一个';
+
+  @override
+  String get signupMochiSetUp => '你的 Mochi 已设置完成！';
+
+  @override
+  String get signupModuleBuilt => 'Mochi 已阅读你的笔记，并为你生成了一个学习单元。';
+
+  @override
+  String get signupStartLearning => '开始学习';
+
+  @override
+  String get signupGoToHome => '前往主页';
 }

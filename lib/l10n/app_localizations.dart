@@ -1987,6 +1987,378 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Apply code'**
   String get settingsApplyCode;
+
+  /// Interstitial shown when a signed-in user starts sign-up.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re signed in as {name}. Log out to create a new account?'**
+  String signupSignedInAs(String name);
+
+  /// Interstitial when signed in without a known name.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re already signed in. Log out to create a new account?'**
+  String get signupAlreadySignedIn;
+
+  /// Interstitial heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new account?'**
+  String get signupCreateNewAccount;
+
+  /// Interstitial confirm button.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out & continue'**
+  String get signupLogOutContinue;
+
+  /// Sign-up progress indicator (3-step flow).
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of 3'**
+  String signupStepOf(int step);
+
+  /// Validation snackbar when no age group is chosen.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select your age group to continue.'**
+  String get signupSelectAgeGroup;
+
+  /// Step 1 heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your account'**
+  String get signupCreateYourAccount;
+
+  /// Step 1 subtitle. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Mochi will become your personal study buddy.'**
+  String get signupStudyBuddy;
+
+  /// Name field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get signupFieldName;
+
+  /// Name field placeholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name'**
+  String get signupHintYourName;
+
+  /// Name validation error.
+  ///
+  /// In en, this message translates to:
+  /// **'Name must be at least 2 characters'**
+  String get signupValidatorName;
+
+  /// Email field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get signupFieldEmail;
+
+  /// Empty-email validation error.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your email'**
+  String get signupValidatorEmailEmpty;
+
+  /// Invalid-email validation error. Keep the example address.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email (e.g. you@example.com)'**
+  String get signupValidatorEmailInvalid;
+
+  /// Password field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get signupFieldPassword;
+
+  /// Password field placeholder.
+  ///
+  /// In en, this message translates to:
+  /// **'At least 8 characters'**
+  String get signupHintPassword;
+
+  /// Password validation error.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 8 characters'**
+  String get signupValidatorPassword;
+
+  /// Age-group section label.
+  ///
+  /// In en, this message translates to:
+  /// **'Age group'**
+  String get signupAgeGroup;
+
+  /// Age-group option.
+  ///
+  /// In en, this message translates to:
+  /// **'I am 13 or older'**
+  String get signupAge13OrOlder;
+
+  /// Age-group option (triggers parental-consent flow).
+  ///
+  /// In en, this message translates to:
+  /// **'I am under 13'**
+  String get signupAgeUnder13;
+
+  /// Parent email field label (under-13).
+  ///
+  /// In en, this message translates to:
+  /// **'Parent\'s email address'**
+  String get signupFieldParentEmail;
+
+  /// Empty parent-email validation error.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your parent\'s email'**
+  String get signupValidatorParentEmailEmpty;
+
+  /// Invalid parent-email validation error. Keep the example.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your parent\'s valid email (e.g. parent@example.com)'**
+  String get signupValidatorParentEmailInvalid;
+
+  /// Under-13 parental-consent explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll email your parent to approve your account before you can use AI features.'**
+  String get signupParentApproval;
+
+  /// Step 1 advance button.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get signupNext;
+
+  /// Link to the sign-in screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account? Sign in'**
+  String get signupAlreadyHaveAccount;
+
+  /// Step 2 heading.
+  ///
+  /// In en, this message translates to:
+  /// **'What are you studying?'**
+  String get signupWhatStudying;
+
+  /// Step 2 subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick one subject to start with. You can add more later.'**
+  String get signupPickSubject;
+
+  /// Subject picker label.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject'**
+  String get signupSubject;
+
+  /// Education-stage picker label.
+  ///
+  /// In en, this message translates to:
+  /// **'Education stage'**
+  String get signupEducationStage;
+
+  /// Step 2 submit button (creates the account).
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get signupCreateAccount;
+
+  /// Heading for the segmented-upload chapter picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Your book is split into chapters'**
+  String get signupBookSplitChapters;
+
+  /// Chapter-picker subtitle. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the chapters you want Mochi to study first.'**
+  String get signupPickChapters;
+
+  /// Button opening the chapter picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose chapters'**
+  String get signupChooseChapters;
+
+  /// Step 3 upload heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first notes'**
+  String get signupAddFirstNotes;
+
+  /// Step 3 upload subtitle. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Type or paste your notes below. Mochi will read them and build a study module for you.'**
+  String get signupNotesInstructions;
+
+  /// Notes text-field placeholder. Keep the ellipsis.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste or type your notes here...'**
+  String get signupNotesHint;
+
+  /// Character count under the notes field.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} chars'**
+  String signupCharCount(int count);
+
+  /// Character count when below the 50-char minimum.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} chars (min 50)'**
+  String signupCharCountMin(int count);
+
+  /// Submit typed notes. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Mochi'**
+  String get signupAddToMochi;
+
+  /// Divider between typed notes and photo/file upload.
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get signupOr;
+
+  /// Secondary upload option (camera).
+  ///
+  /// In en, this message translates to:
+  /// **'Or snap a photo'**
+  String get signupSnapPhoto;
+
+  /// Tertiary upload option (file picker).
+  ///
+  /// In en, this message translates to:
+  /// **'Or choose a file'**
+  String get signupChooseFile;
+
+  /// Inline error when an upload fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload failed. Please try again.'**
+  String get signupUploadFailed;
+
+  /// Join-code capture on the upload step. Keep the emoji + spacing.
+  ///
+  /// In en, this message translates to:
+  /// **'🎟️  Have a class or group code? Enter or scan it'**
+  String get signupHaveCode;
+
+  /// Skip the upload step.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip for now'**
+  String get signupSkipForNow;
+
+  /// Processing state: uploading. Keep the ellipsis.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading your notes...'**
+  String get signupUploading;
+
+  /// Processing state: compiling. Keep 'Mochi' + ellipsis.
+  ///
+  /// In en, this message translates to:
+  /// **'Mochi is reading your notes...'**
+  String get signupReadingNotes;
+
+  /// Processing state: generating. Keep the ellipsis.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating your first study module...'**
+  String get signupCreatingModule;
+
+  /// Generic processing fallback. Keep the ellipsis.
+  ///
+  /// In en, this message translates to:
+  /// **'Working on it...'**
+  String get signupWorkingOnIt;
+
+  /// Processing reassurance line.
+  ///
+  /// In en, this message translates to:
+  /// **'This may take a minute.'**
+  String get signupTakeMinute;
+
+  /// Fallback for {subject} in the irrelevant-upload copy when no subject is set.
+  ///
+  /// In en, this message translates to:
+  /// **'this subject'**
+  String get signupThisSubject;
+
+  /// Irrelevant-upload heading.
+  ///
+  /// In en, this message translates to:
+  /// **'This doesn\'t look like {subject} material'**
+  String signupNotLikeMaterial(String subject);
+
+  /// Irrelevant-upload body (fallback when the server gave no reason).
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t match it to {subject}. Use it anyway, or pick a different file.'**
+  String signupCouldntMatch(String subject);
+
+  /// Accept an upload the server flagged as irrelevant.
+  ///
+  /// In en, this message translates to:
+  /// **'Use it anyway'**
+  String get signupUseAnyway;
+
+  /// Reject the flagged upload and pick another.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a different file'**
+  String get signupChooseDifferentFile;
+
+  /// Success heading naming the generated module. Title may be student material — keep it verbatim.
+  ///
+  /// In en, this message translates to:
+  /// **'Your \"{title}\" module is ready!'**
+  String signupModuleReady(String title);
+
+  /// Fallback for {title} in signupModuleReady when the module has no title ('Your "first" module').
+  ///
+  /// In en, this message translates to:
+  /// **'first'**
+  String get signupFirstModuleWord;
+
+  /// Success heading when no module title is available. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Mochi is set up!'**
+  String get signupMochiSetUp;
+
+  /// Success subtitle. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Mochi has read your notes and built a study module for you.'**
+  String get signupModuleBuilt;
+
+  /// Primary success CTA into the first module.
+  ///
+  /// In en, this message translates to:
+  /// **'Start learning'**
+  String get signupStartLearning;
+
+  /// Success CTA to the home screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to home'**
+  String get signupGoToHome;
 }
 
 class _AppLocalizationsDelegate

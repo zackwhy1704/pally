@@ -1115,4 +1115,216 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsApplyCode => 'Apply code';
+
+  @override
+  String signupSignedInAs(String name) {
+    return 'You\'re signed in as $name. Log out to create a new account?';
+  }
+
+  @override
+  String get signupAlreadySignedIn =>
+      'You\'re already signed in. Log out to create a new account?';
+
+  @override
+  String get signupCreateNewAccount => 'Create a new account?';
+
+  @override
+  String get signupLogOutContinue => 'Log out & continue';
+
+  @override
+  String signupStepOf(int step) {
+    return 'Step $step of 3';
+  }
+
+  @override
+  String get signupSelectAgeGroup =>
+      'Please select your age group to continue.';
+
+  @override
+  String get signupCreateYourAccount => 'Create your account';
+
+  @override
+  String get signupStudyBuddy => 'Mochi will become your personal study buddy.';
+
+  @override
+  String get signupFieldName => 'Name';
+
+  @override
+  String get signupHintYourName => 'Your name';
+
+  @override
+  String get signupValidatorName => 'Name must be at least 2 characters';
+
+  @override
+  String get signupFieldEmail => 'Email';
+
+  @override
+  String get signupValidatorEmailEmpty => 'Please enter your email';
+
+  @override
+  String get signupValidatorEmailInvalid =>
+      'Please enter a valid email (e.g. you@example.com)';
+
+  @override
+  String get signupFieldPassword => 'Password';
+
+  @override
+  String get signupHintPassword => 'At least 8 characters';
+
+  @override
+  String get signupValidatorPassword =>
+      'Password must be at least 8 characters';
+
+  @override
+  String get signupAgeGroup => 'Age group';
+
+  @override
+  String get signupAge13OrOlder => 'I am 13 or older';
+
+  @override
+  String get signupAgeUnder13 => 'I am under 13';
+
+  @override
+  String get signupFieldParentEmail => 'Parent\'s email address';
+
+  @override
+  String get signupValidatorParentEmailEmpty =>
+      'Please enter your parent\'s email';
+
+  @override
+  String get signupValidatorParentEmailInvalid =>
+      'Please enter your parent\'s valid email (e.g. parent@example.com)';
+
+  @override
+  String get signupParentApproval =>
+      'We\'ll email your parent to approve your account before you can use AI features.';
+
+  @override
+  String get signupNext => 'Next';
+
+  @override
+  String get signupAlreadyHaveAccount => 'Already have an account? Sign in';
+
+  @override
+  String get signupWhatStudying => 'What are you studying?';
+
+  @override
+  String get signupPickSubject =>
+      'Pick one subject to start with. You can add more later.';
+
+  @override
+  String get signupSubject => 'Subject';
+
+  @override
+  String get signupEducationStage => 'Education stage';
+
+  @override
+  String get signupCreateAccount => 'Create account';
+
+  @override
+  String get signupBookSplitChapters => 'Your book is split into chapters';
+
+  @override
+  String get signupPickChapters =>
+      'Pick the chapters you want Mochi to study first.';
+
+  @override
+  String get signupChooseChapters => 'Choose chapters';
+
+  @override
+  String get signupAddFirstNotes => 'Add your first notes';
+
+  @override
+  String get signupNotesInstructions =>
+      'Type or paste your notes below. Mochi will read them and build a study module for you.';
+
+  @override
+  String get signupNotesHint => 'Paste or type your notes here...';
+
+  @override
+  String signupCharCount(int count) {
+    return '$count chars';
+  }
+
+  @override
+  String signupCharCountMin(int count) {
+    return '$count chars (min 50)';
+  }
+
+  @override
+  String get signupAddToMochi => 'Add to Mochi';
+
+  @override
+  String get signupOr => 'or';
+
+  @override
+  String get signupSnapPhoto => 'Or snap a photo';
+
+  @override
+  String get signupChooseFile => 'Or choose a file';
+
+  @override
+  String get signupUploadFailed => 'Upload failed. Please try again.';
+
+  @override
+  String get signupHaveCode =>
+      '🎟️  Have a class or group code? Enter or scan it';
+
+  @override
+  String get signupSkipForNow => 'Skip for now';
+
+  @override
+  String get signupUploading => 'Uploading your notes...';
+
+  @override
+  String get signupReadingNotes => 'Mochi is reading your notes...';
+
+  @override
+  String get signupCreatingModule => 'Creating your first study module...';
+
+  @override
+  String get signupWorkingOnIt => 'Working on it...';
+
+  @override
+  String get signupTakeMinute => 'This may take a minute.';
+
+  @override
+  String get signupThisSubject => 'this subject';
+
+  @override
+  String signupNotLikeMaterial(String subject) {
+    return 'This doesn\'t look like $subject material';
+  }
+
+  @override
+  String signupCouldntMatch(String subject) {
+    return 'We couldn\'t match it to $subject. Use it anyway, or pick a different file.';
+  }
+
+  @override
+  String get signupUseAnyway => 'Use it anyway';
+
+  @override
+  String get signupChooseDifferentFile => 'Choose a different file';
+
+  @override
+  String signupModuleReady(String title) {
+    return 'Your \"$title\" module is ready!';
+  }
+
+  @override
+  String get signupFirstModuleWord => 'first';
+
+  @override
+  String get signupMochiSetUp => 'Your Mochi is set up!';
+
+  @override
+  String get signupModuleBuilt =>
+      'Mochi has read your notes and built a study module for you.';
+
+  @override
+  String get signupStartLearning => 'Start learning';
+
+  @override
+  String get signupGoToHome => 'Go to home';
 }

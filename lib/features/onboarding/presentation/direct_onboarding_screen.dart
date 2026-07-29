@@ -18,6 +18,7 @@ import 'package:pally/features/onboarding/presentation/direct_onboarding_view_mo
 import 'package:pally/features/onboarding/presentation/widgets/onboarding_legal_footer.dart';
 import 'package:pally/features/chapters/presentation/chapter_picker_sheet.dart';
 import 'package:pally/app/router.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 // Requires TLD ≥ 2 chars; rejects single-char TLDs like .c
 final _kEmailRegex =
@@ -214,10 +215,11 @@ class _AlreadySignedInInterstitialState
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final name = widget.signedInName;
     final message = name != null && name.trim().isNotEmpty
-        ? "You're signed in as $name. Log out to create a new account?"
-        : "You're already signed in. Log out to create a new account?";
+        ? l.signupSignedInAs(name)
+        : l.signupAlreadySignedIn;
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -238,7 +240,7 @@ class _AlreadySignedInInterstitialState
               ),
               const SizedBox(height: AppSpacing.lg),
               Text(
-                'Create a new account?',
+                l.signupCreateNewAccount,
                 style: AppTextStyles.heading1,
                 textAlign: TextAlign.center,
               ),
@@ -266,7 +268,7 @@ class _AlreadySignedInInterstitialState
                               strokeWidth: 2, color: Colors.white),
                         )
                       : Text(
-                          'Log out & continue',
+                          l.signupLogOutContinue,
                           style: AppTextStyles.body.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w700),
@@ -284,7 +286,7 @@ class _AlreadySignedInInterstitialState
                         borderRadius: BorderRadius.circular(14)),
                   ),
                   child: Text(
-                    'Cancel',
+                    l.commonCancel,
                     style: AppTextStyles.body.copyWith(
                         color: AppColors.text2, fontWeight: FontWeight.w600),
                   ),
@@ -341,7 +343,7 @@ class _StepProgressBar extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Step $step of 3',
+                  AppLocalizations.of(context).signupStepOf(step),
                   style: AppTextStyles.caption.copyWith(color: AppColors.text2),
                 ),
               ],
@@ -388,7 +390,7 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
       showAppSnackBar(
         SnackBar(
           content: Text(
-            'Please select your age group to continue.',
+            AppLocalizations.of(context).signupSelectAgeGroup,
             style: AppTextStyles.bodySmall.copyWith(color: Colors.white),
           ),
           backgroundColor: AppColors.coral,
@@ -406,6 +408,7 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final vm = ref.watch(directOnboardingViewModelProvider);
     final isUnder13 = vm.isUnder13;
     final notifier = ref.read(directOnboardingViewModelProvider.notifier);
@@ -430,50 +433,50 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'Create your account',
+              l.signupCreateYourAccount,
               style: AppTextStyles.heading1,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Mochi will become your personal study buddy.',
+              l.signupStudyBuddy,
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.lg),
             _Field(
-              label: 'Name',
-              hint: 'Your name',
+              label: l.signupFieldName,
+              hint: l.signupHintYourName,
               controller: widget.nameCtrl,
               textInputAction: TextInputAction.next,
               validator: (v) {
                 if (v == null || v.trim().length < 2) {
-                  return 'Name must be at least 2 characters';
+                  return l.signupValidatorName;
                 }
                 return null;
               },
             ),
             const SizedBox(height: AppSpacing.md),
             _Field(
-              label: 'Email',
+              label: l.signupFieldEmail,
               hint: 'your@email.com',
               controller: widget.emailCtrl,
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
               validator: (v) {
                 if (v == null || v.trim().isEmpty) {
-                  return 'Please enter your email';
+                  return l.signupValidatorEmailEmpty;
                 }
                 if (!_kEmailRegex.hasMatch(v.trim())) {
-                  return 'Please enter a valid email (e.g. you@example.com)';
+                  return l.signupValidatorEmailInvalid;
                 }
                 return null;
               },
             ),
             const SizedBox(height: AppSpacing.md),
             _Field(
-              label: 'Password',
-              hint: 'At least 8 characters',
+              label: l.signupFieldPassword,
+              hint: l.signupHintPassword,
               controller: widget.passCtrl,
               obscure: _obscure,
               textInputAction: TextInputAction.done,
@@ -489,7 +492,7 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
               ),
               validator: (v) {
                 if (v == null || v.length < 8) {
-                  return 'Password must be at least 8 characters';
+                  return l.signupValidatorPassword;
                 }
                 return null;
               },
@@ -497,18 +500,18 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
             const SizedBox(height: AppSpacing.lg),
             // Age group selection — required for legal consent.
             Text(
-              'Age group',
+              l.signupAgeGroup,
               style: AppTextStyles.label.copyWith(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: AppSpacing.xs),
             _AgeGroupTile(
-              label: 'I am 13 or older',
+              label: l.signupAge13OrOlder,
               selected: isUnder13 == false,
               onTap: () => notifier.setAgeGroup(isUnder13: false),
             ),
             const SizedBox(height: AppSpacing.xs),
             _AgeGroupTile(
-              label: 'I am under 13',
+              label: l.signupAgeUnder13,
               selected: isUnder13 == true,
               onTap: () => notifier.setAgeGroup(isUnder13: true),
             ),
@@ -516,24 +519,24 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
             if (isUnder13 == true) ...[
               const SizedBox(height: AppSpacing.md),
               _Field(
-                label: "Parent's email address",
+                label: l.signupFieldParentEmail,
                 hint: 'parent@example.com',
                 controller: widget.parentEmailCtrl,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.done,
                 validator: (v) {
                   if (v == null || v.trim().isEmpty) {
-                    return "Please enter your parent's email";
+                    return l.signupValidatorParentEmailEmpty;
                   }
                   if (!_kEmailRegex.hasMatch(v.trim())) {
-                    return "Please enter your parent's valid email (e.g. parent@example.com)";
+                    return l.signupValidatorParentEmailInvalid;
                   }
                   return null;
                 },
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                "We'll email your parent to approve your account before you can use AI features.",
+                l.signupParentApproval,
                 style: AppTextStyles.bodySmall
                     .copyWith(color: AppColors.text2),
               ),
@@ -549,7 +552,7 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
                       borderRadius: BorderRadius.circular(14)),
                 ),
                 child: Text(
-                  'Next',
+                  l.signupNext,
                   style: AppTextStyles.body.copyWith(
                       color: Colors.white, fontWeight: FontWeight.w700),
                 ),
@@ -560,7 +563,7 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
               child: TextButton(
                 onPressed: () => context.go('/auth/signin'),
                 style: TextButton.styleFrom(foregroundColor: AppColors.text2),
-                child: Text('Already have an account? Sign in',
+                child: Text(l.signupAlreadyHaveAccount,
                     style: AppTextStyles.bodySmall),
               ),
             ),
@@ -643,6 +646,7 @@ class _Step2SubjectLevel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final vm = ref.watch(directOnboardingViewModelProvider);
     final notifier = ref.read(directOnboardingViewModelProvider.notifier);
 
@@ -662,19 +666,19 @@ class _Step2SubjectLevel extends ConsumerWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'What are you studying?',
+            l.signupWhatStudying,
             style: AppTextStyles.heading1,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Pick one subject to start with. You can add more later.',
+            l.signupPickSubject,
             style: AppTextStyles.body.copyWith(color: AppColors.text2),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.lg),
           // Subject chips
-          Text('Subject',
+          Text(l.signupSubject,
               style: AppTextStyles.label
                   .copyWith(fontWeight: FontWeight.w700)),
           const SizedBox(height: AppSpacing.sm),
@@ -704,7 +708,7 @@ class _Step2SubjectLevel extends ConsumerWidget {
           ),
           const SizedBox(height: AppSpacing.lg),
           // Education stage picker (replaces Singapore-specific levels)
-          Text('Education stage',
+          Text(l.signupEducationStage,
               style: AppTextStyles.label
                   .copyWith(fontWeight: FontWeight.w700)),
           const SizedBox(height: AppSpacing.sm),
@@ -796,7 +800,7 @@ class _Step2SubjectLevel extends ConsumerWidget {
                           strokeWidth: 2, color: Colors.white),
                     )
                   : Text(
-                      'Create account',
+                      l.signupCreateAccount,
                       style: AppTextStyles.body.copyWith(
                           color: Colors.white, fontWeight: FontWeight.w700),
                     ),
@@ -826,6 +830,7 @@ class _Step3Upload extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     // Processing states
     if (uploadStage == DirectUploadStage.uploading ||
         uploadStage == DirectUploadStage.compiling ||
@@ -853,10 +858,10 @@ class _Step3Upload extends ConsumerWidget {
             children: [
               const Icon(Icons.menu_book_rounded, size: 48, color: AppColors.purple),
               const SizedBox(height: AppSpacing.md),
-              Text('Your book is split into chapters',
+              Text(l.signupBookSplitChapters,
                   style: AppTextStyles.title, textAlign: TextAlign.center),
               const SizedBox(height: AppSpacing.sm),
-              Text('Pick the chapters you want Mochi to study first.',
+              Text(l.signupPickChapters,
                   style: AppTextStyles.body.copyWith(color: AppColors.text2),
                   textAlign: TextAlign.center),
               const SizedBox(height: AppSpacing.lg),
@@ -869,7 +874,7 @@ class _Step3Upload extends ConsumerWidget {
                       .proceedAfterChapters(avatarId ?? ''),
                 ),
                 style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
-                child: const Text('Choose chapters'),
+                child: Text(l.signupChooseChapters),
               ),
             ],
           ),
@@ -1002,6 +1007,7 @@ class _UploadIdleViewState extends ConsumerState<_UploadIdleView> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final charColor = _charCount > 5000 ? AppColors.coral : AppColors.text3;
 
     return Padding(
@@ -1024,13 +1030,13 @@ class _UploadIdleViewState extends ConsumerState<_UploadIdleView> {
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Text(
-                    'Add your first notes',
+                    l.signupAddFirstNotes,
                     style: AppTextStyles.heading1,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    'Type or paste your notes below. Mochi will read them and build a study module for you.',
+                    l.signupNotesInstructions,
                     style: AppTextStyles.body.copyWith(color: AppColors.text2),
                     textAlign: TextAlign.center,
                   ),
@@ -1042,7 +1048,7 @@ class _UploadIdleViewState extends ConsumerState<_UploadIdleView> {
                     minLines: 4,
                     textAlignVertical: TextAlignVertical.top,
                     decoration: InputDecoration(
-                      hintText: 'Paste or type your notes here...',
+                      hintText: l.signupNotesHint,
                       hintStyle:
                           AppTextStyles.body.copyWith(color: AppColors.text3),
                       filled: true,
@@ -1071,7 +1077,9 @@ class _UploadIdleViewState extends ConsumerState<_UploadIdleView> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: Text(
-                      '$_charCount chars${_charCount < 50 ? ' (min 50)' : ''}',
+                      _charCount < 50
+                          ? l.signupCharCountMin(_charCount)
+                          : l.signupCharCount(_charCount),
                       style: AppTextStyles.caption.copyWith(color: charColor),
                     ),
                   ),
@@ -1088,7 +1096,7 @@ class _UploadIdleViewState extends ConsumerState<_UploadIdleView> {
                             borderRadius: BorderRadius.circular(14)),
                       ),
                       child: Text(
-                        'Add to Mochi',
+                        l.signupAddToMochi,
                         style: AppTextStyles.body.copyWith(
                             color: Colors.white, fontWeight: FontWeight.w700),
                       ),
@@ -1102,7 +1110,7 @@ class _UploadIdleViewState extends ConsumerState<_UploadIdleView> {
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: AppSpacing.md),
-                        child: Text('or',
+                        child: Text(l.signupOr,
                             style: AppTextStyles.bodySmall
                                 .copyWith(color: AppColors.text3)),
                       ),
@@ -1120,7 +1128,7 @@ class _UploadIdleViewState extends ConsumerState<_UploadIdleView> {
                       icon: const Icon(Icons.camera_alt_rounded,
                           color: AppColors.purple),
                       label: Text(
-                        'Or snap a photo',
+                        l.signupSnapPhoto,
                         style: AppTextStyles.body.copyWith(
                             color: AppColors.purple,
                             fontWeight: FontWeight.w600),
@@ -1143,7 +1151,7 @@ class _UploadIdleViewState extends ConsumerState<_UploadIdleView> {
                       icon: const Icon(Icons.upload_file_rounded,
                           color: AppColors.text2),
                       label: Text(
-                        'Or choose a file',
+                        l.signupChooseFile,
                         style: AppTextStyles.body.copyWith(
                             color: AppColors.text2,
                             fontWeight: FontWeight.w600),
@@ -1164,7 +1172,7 @@ class _UploadIdleViewState extends ConsumerState<_UploadIdleView> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        'Upload failed. Please try again.',
+                        l.signupUploadFailed,
                         style:
                             AppTextStyles.body.copyWith(color: AppColors.coral),
                         textAlign: TextAlign.center,
@@ -1181,7 +1189,7 @@ class _UploadIdleViewState extends ConsumerState<_UploadIdleView> {
           TextButton(
             onPressed: () => const JoinRoute().push(context),
             child: Text(
-              '🎟️  Have a class or group code? Enter or scan it',
+              l.signupHaveCode,
               style: AppTextStyles.body.copyWith(
                   color: AppColors.purple, fontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
@@ -1191,7 +1199,7 @@ class _UploadIdleViewState extends ConsumerState<_UploadIdleView> {
           TextButton(
             onPressed: () => context.go('/'),
             child: Text(
-              'Skip for now',
+              l.signupSkipForNow,
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
             ),
           ),
@@ -1209,16 +1217,16 @@ class _ProcessingView extends StatelessWidget {
   const _ProcessingView({required this.stage});
   final DirectUploadStage stage;
 
-  String get _message => switch (stage) {
-        DirectUploadStage.uploading => 'Uploading your notes...',
-        DirectUploadStage.compiling => 'Mochi is reading your notes...',
-        DirectUploadStage.generatingModules =>
-          'Creating your first study module...',
-        _ => 'Working on it...',
+  String _message(AppLocalizations l) => switch (stage) {
+        DirectUploadStage.uploading => l.signupUploading,
+        DirectUploadStage.compiling => l.signupReadingNotes,
+        DirectUploadStage.generatingModules => l.signupCreatingModule,
+        _ => l.signupWorkingOnIt,
       };
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
@@ -1229,13 +1237,13 @@ class _ProcessingView extends StatelessWidget {
             _PulsingMochi(),
             const SizedBox(height: AppSpacing.lg),
             Text(
-              _message,
+              _message(l),
               style: AppTextStyles.title,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'This may take a minute.',
+              l.signupTakeMinute,
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),
@@ -1307,8 +1315,9 @@ class _IrrelevantView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final vm = ref.read(directOnboardingViewModelProvider.notifier);
-    final subjectLabel = (subject == null || subject!.isEmpty) ? 'this subject' : subject!;
+    final subjectLabel = (subject == null || subject!.isEmpty) ? l.signupThisSubject : subject!;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
@@ -1318,7 +1327,7 @@ class _IrrelevantView extends ConsumerWidget {
             const Icon(Icons.help_outline_rounded, size: 48, color: AppColors.amber),
             const SizedBox(height: AppSpacing.md),
             Text(
-              "This doesn't look like $subjectLabel material",
+              l.signupNotLikeMaterial(subjectLabel),
               style: AppTextStyles.title,
               textAlign: TextAlign.center,
             ),
@@ -1326,7 +1335,7 @@ class _IrrelevantView extends ConsumerWidget {
             Text(
               reason?.isNotEmpty == true
                   ? reason!
-                  : "We couldn't match it to $subjectLabel. Use it anyway, or pick a different file.",
+                  : l.signupCouldntMatch(subjectLabel),
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
               textAlign: TextAlign.center,
             ),
@@ -1336,13 +1345,13 @@ class _IrrelevantView extends ConsumerWidget {
               child: FilledButton(
                 onPressed: () => vm.useUploadedFileAnyway(),
                 style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
-                child: const Text('Use it anyway'),
+                child: Text(l.signupUseAnyway),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
             TextButton(
               onPressed: () => vm.dismissIrrelevant(),
-              child: const Text('Choose a different file'),
+              child: Text(l.signupChooseDifferentFile),
             ),
           ],
         ),
@@ -1364,6 +1373,7 @@ class _ReadyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
       child: Column(
@@ -1384,14 +1394,14 @@ class _ReadyView extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
           Text(
             moduleId != null
-                ? 'Your "${moduleTitle ?? 'first'}" module is ready!'
-                : 'Your Mochi is set up!',
+                ? l.signupModuleReady(moduleTitle ?? l.signupFirstModuleWord)
+                : l.signupMochiSetUp,
             style: AppTextStyles.heading1,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            'Mochi has read your notes and built a study module for you.',
+            l.signupModuleBuilt,
             style: AppTextStyles.body.copyWith(color: AppColors.text2),
             textAlign: TextAlign.center,
           ),
@@ -1414,7 +1424,7 @@ class _ReadyView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14)),
               ),
               child: Text(
-                moduleId != null ? 'Start learning' : 'Go to home',
+                moduleId != null ? l.signupStartLearning : l.signupGoToHome,
                 style: AppTextStyles.body.copyWith(
                     color: Colors.white, fontWeight: FontWeight.w700),
               ),
@@ -1427,7 +1437,7 @@ class _ReadyView extends StatelessWidget {
             TextButton(
               onPressed: () => context.go('/'),
               child: Text(
-                'Go to home',
+                l.signupGoToHome,
                 style: AppTextStyles.body.copyWith(color: AppColors.text2),
               ),
             ),

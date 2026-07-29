@@ -317,10 +317,40 @@ renders ONLY where price display is permitted. When reviewing the zh:
 | `settingsCodes6Chars` / `settingsCodeApplied` / `settingsApplyCode` | Codes are 6 characters / Code applied! Take a quiz to activate the reward. / Apply code | 推荐码为 6 个字符 / 推荐码已应用！完成一次小测即可激活奖励。 / 应用推荐码 |
 | (reused) `commonCancel` / `commonLoading` / `language` | Cancel / Loading… / Language | 取消 / 加载中… / 语言 |
 
+### PR11 — sign-up form (`direct_onboarding_screen.dart`, 1507 lines)
+
+The 3-step direct-signup flow: already-signed-in interstitial, Step 1 (account + age-group +
+under-13 parental consent), Step 2 (subject/level), Step 3 (upload: typed notes / photo / file,
+processing states, irrelevant-upload override, ready). ~55 new zh strings.
+
+| key group | en (sample) | zh (sample) |
+|-----------|-------------|-------------|
+| `signupSignedInAs` / `signupAlreadySignedIn` / `signupCreateNewAccount` / `signupLogOutContinue` | You're signed in as {name}. Log out to create a new account? / … / Create a new account? / Log out & continue | 你已以 {name} 的身份登录。要退出并创建新账户吗？ / … / 创建新账户？ / 退出并继续 |
+| `signupStepOf` | Step {step} of 3 | 第 {step} 步，共 3 步 |
+| `signupCreateYourAccount` / `signupStudyBuddy` | Create your account / Mochi will become your personal study buddy. | 创建你的账户 / Mochi 将成为你的专属学习伙伴。 |
+| `signupFieldName` / `signupHintYourName` / `signupValidatorName` | Name / Your name / Name must be at least 2 characters | 名字 / 你的名字 / 名字至少需要 2 个字符 |
+| `signupFieldEmail` / `signupValidatorEmailEmpty` / `signupValidatorEmailInvalid` | Email / Please enter your email / Please enter a valid email (e.g. you@example.com) | 电子邮箱 / 请输入你的电子邮箱 / 请输入有效的电子邮箱（例如 you@example.com） |
+| `signupFieldPassword` / `signupHintPassword` / `signupValidatorPassword` | Password / At least 8 characters / Password must be at least 8 characters | 密码 / 至少 8 个字符 / 密码至少需要 8 个字符 |
+| `signupAgeGroup` / `signupAge13OrOlder` / `signupAgeUnder13` | Age group / I am 13 or older / I am under 13 | 年龄段 / 我已满 13 岁 / 我未满 13 岁 |
+| `signupFieldParentEmail` / `signupValidatorParentEmailEmpty` / `signupValidatorParentEmailInvalid` / `signupParentApproval` | Parent's email address / Please enter your parent's email / …valid email (e.g. parent@example.com) / We'll email your parent to approve your account before you can use AI features. | 家长的电子邮箱 / 请输入家长的电子邮箱 / …有效的电子邮箱（例如 parent@example.com） / 在你使用 AI 功能之前，我们会发邮件给你的家长以批准你的账户。 |
+| `signupNext` / `signupAlreadyHaveAccount` | Next / Already have an account? Sign in | 下一步 / 已有账户？登录 |
+| `signupWhatStudying` / `signupPickSubject` / `signupSubject` / `signupEducationStage` / `signupCreateAccount` | What are you studying? / Pick one subject to start with. You can add more later. / Subject / Education stage / Create account | 你在学习什么？ / 先选一个科目开始。之后可以再添加更多。 / 科目 / 教育阶段 / 创建账户 |
+| `signupBookSplitChapters` / `signupPickChapters` / `signupChooseChapters` | Your book is split into chapters / Pick the chapters you want Mochi to study first. / Choose chapters | 你的书被分成了多个章节 / 选择你想让 Mochi 先学习的章节。 / 选择章节 |
+| `signupAddFirstNotes` / `signupNotesInstructions` / `signupNotesHint` | Add your first notes / Type or paste your notes below. Mochi will read them… / Paste or type your notes here... | 添加你的第一份笔记 / 在下方输入或粘贴你的笔记。Mochi 会阅读它们… / 在这里粘贴或输入你的笔记…… |
+| `signupCharCount` / `signupCharCountMin` | {count} chars / {count} chars (min 50) | {count} 个字符 / {count} 个字符（至少 50 个） |
+| `signupAddToMochi` / `signupOr` / `signupSnapPhoto` / `signupChooseFile` / `signupUploadFailed` | Add to Mochi / or / Or snap a photo / Or choose a file / Upload failed. Please try again. | 添加到 Mochi / 或 / 或拍一张照片 / 或选择一个文件 / 上传失败。请重试。 |
+| `signupHaveCode` / `signupSkipForNow` | 🎟️ Have a class or group code? Enter or scan it / Skip for now | 🎟️ 有班级或小组代码吗？输入或扫描 / 暂时跳过 |
+| `signupUploading` / `signupReadingNotes` / `signupCreatingModule` / `signupWorkingOnIt` / `signupTakeMinute` | Uploading your notes... / Mochi is reading your notes... / Creating your first study module... / Working on it... / This may take a minute. | 正在上传你的笔记…… / Mochi 正在阅读你的笔记…… / 正在创建你的第一个学习单元…… / 正在处理…… / 这可能需要一分钟。 |
+| `signupThisSubject` / `signupNotLikeMaterial` / `signupCouldntMatch` / `signupUseAnyway` / `signupChooseDifferentFile` | this subject / This doesn't look like {subject} material / We couldn't match it to {subject}. Use it anyway… / Use it anyway / Choose a different file | 这个科目 / 这看起来不像是{subject}的材料 / 我们无法将它与{subject}匹配。你可以照样使用它… / 照样使用 / 选择另一个文件 |
+| `signupModuleReady` / `signupFirstModuleWord` / `signupMochiSetUp` / `signupModuleBuilt` / `signupStartLearning` / `signupGoToHome` | Your "{title}" module is ready! / first / Your Mochi is set up! / Mochi has read your notes and built a study module for you. / Start learning / Go to home | 你的“{title}”单元准备好了！ / 第一个 / 你的 Mochi 已设置完成！ / Mochi 已阅读你的笔记，并为你生成了一个学习单元。 / 开始学习 / 前往主页 |
+| (reused) `commonCancel` | Cancel | 取消 |
+
 **DO NOT translate** (carry their own language already): Mochi's name, class names,
 teacher-uploaded content, student-generated text, any AI-generated artifact. Plan tier names from
-`prettyTier` (e.g. "Premium") are left as-is (shared model, out of the settings-screen scope).
+`prettyTier` (e.g. "Premium"), and the subject/education-stage option labels (`subjectLabel` /
+`levelLabel` / `levelSubtitle`, defined in a shared onboarding-data file), are left as-is —
+out of the per-screen scope, same precedent as `prettyTier`. Email-format hint examples
+(`your@email.com`, `parent@example.com`) are kept verbatim as illustrations.
 
-Running count of zh keys drafted this branch: **~306** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 · PR5: 22 · PR6: 21 · PR7: 21 · PR8: 26 · PR-home: ~51 · PR9: ~48 · PR10: ~50 — settings).
-Remaining core-loop extraction (sign-up form · HowPallyIsDifferent) lands in later PRs;
-each appends its rows here.
+Running count of zh keys drafted this branch: **~361** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 · PR5: 22 · PR6: 21 · PR7: 21 · PR8: 26 · PR-home: ~51 · PR9: ~48 · PR10: ~50 · PR11: ~55 — sign-up form).
+Remaining: HowPallyIsDifferent modal (PR12), plus the two shared-data surfaces noted above.
