@@ -6,6 +6,7 @@ import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/features/modules/presentation/module_player_view_model.dart';
 import 'package:pally/features/modules/presentation/widgets/proof_chips.dart';
 import 'package:pally/features/voice_input/presentation/voice_input_button.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/learning_module.dart';
 
 /// Leading provenance chip for a TEST card — "From your notes: {title}" tapping to the
@@ -69,8 +70,9 @@ class TestBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (item == null) {
-      return const Center(child: Text('No items'));
+      return Center(child: Text(l10n.moduleNoItems));
     }
 
     return Column(
@@ -127,7 +129,7 @@ class TestBody extends StatelessWidget {
                             strokeWidth: 2, color: Colors.white),
                       )
                     : Text(
-                        isLast ? 'Time to prove you understand' : 'Next',
+                        isLast ? l10n.moduleTimeToProve : l10n.moduleNext,
                         style: AppTextStyles.body.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
@@ -229,6 +231,7 @@ class HotTakeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final wasRight = verdict?.correct ?? false;
 
     return Container(
@@ -242,7 +245,7 @@ class HotTakeCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ..._provenancePrefix(sourcePageTitle, onOpenNotes),
-          Text('True or False?',
+          Text(l10n.moduleTrueOrFalse,
               style: AppTextStyles.label.copyWith(
                   color: AppColors.amber, fontWeight: FontWeight.w700)),
           const SizedBox(height: AppSpacing.md),
@@ -253,7 +256,7 @@ class HotTakeCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: AnswerButton(
-                    label: 'Agree',
+                    label: l10n.moduleAgree,
                     color: AppColors.green,
                     onTap: () => onAnswer('AGREE'),
                   ),
@@ -261,7 +264,7 @@ class HotTakeCard extends StatelessWidget {
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: AnswerButton(
-                    label: 'Disagree',
+                    label: l10n.moduleDisagree,
                     color: AppColors.coral,
                     onTap: () => onAnswer('DISAGREE'),
                   ),
@@ -288,7 +291,7 @@ class HotTakeCard extends StatelessWidget {
                           strokeWidth: 2, color: AppColors.purple),
                     ),
                     const SizedBox(width: AppSpacing.sm),
-                    Text('Checking your answer…',
+                    Text(l10n.moduleCheckingAnswer,
                         style: AppTextStyles.body
                             .copyWith(color: AppColors.text2)),
                   ],
@@ -316,7 +319,7 @@ class HotTakeCard extends StatelessWidget {
                         ),
                         const SizedBox(width: AppSpacing.xs),
                         Text(
-                          wasRight ? 'Correct!' : 'Not quite',
+                          wasRight ? l10n.quizCorrect : l10n.quizNotQuite,
                           style: AppTextStyles.body.copyWith(
                             color:
                                 wasRight ? AppColors.green : AppColors.coral,
@@ -343,7 +346,7 @@ class HotTakeCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  "Answer recorded — couldn't load feedback right now.",
+                  l10n.moduleFeedbackUnavailable,
                   style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 ),
               ),
@@ -463,6 +466,7 @@ class SpotMistakeCardState extends State<SpotMistakeCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: AppSpacing.card,
       decoration: BoxDecoration(
@@ -474,7 +478,7 @@ class SpotMistakeCardState extends State<SpotMistakeCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ..._provenancePrefix(widget.sourcePageTitle, widget.onOpenNotes),
-          Text('Spot the mistake',
+          Text(l10n.moduleSpotTheMistake,
               style: AppTextStyles.label.copyWith(
                   color: AppColors.amber, fontWeight: FontWeight.w700)),
           const SizedBox(height: AppSpacing.md),
@@ -499,7 +503,7 @@ class SpotMistakeCardState extends State<SpotMistakeCard> {
               controller: _controller,
               maxLines: 3,
               decoration: InputDecoration(
-                hintText: "What's wrong here? Type what you spotted...",
+                hintText: l10n.moduleSpotHint,
                 hintStyle:
                     AppTextStyles.body.copyWith(color: AppColors.text3),
                 border: OutlineInputBorder(
@@ -531,7 +535,7 @@ class SpotMistakeCardState extends State<SpotMistakeCard> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14)),
                 ),
-                child: const Text('Reveal the error'),
+                child: Text(l10n.moduleRevealError),
               ),
             ),
           ],
@@ -546,14 +550,14 @@ class SpotMistakeCardState extends State<SpotMistakeCard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('The error:',
+                  Text(l10n.moduleTheError,
                       style: AppTextStyles.label.copyWith(
                           color: AppColors.coral,
                           fontWeight: FontWeight.w700)),
                   const SizedBox(height: AppSpacing.xs),
                   Text(widget.errorDescription, style: AppTextStyles.body),
                   const SizedBox(height: AppSpacing.sm),
-                  Text('Correct solution:',
+                  Text(l10n.moduleCorrectSolution,
                       style: AppTextStyles.label.copyWith(
                           color: AppColors.green,
                           fontWeight: FontWeight.w700)),
@@ -565,13 +569,13 @@ class SpotMistakeCardState extends State<SpotMistakeCard> {
             const SizedBox(height: AppSpacing.md),
             // Self-check — the student marks their own diagnosis (low-trust
             // SELF_REPORT, never a machine grade). Mirrors the PROVE self-assess row.
-            Text('Were you right?',
+            Text(l10n.moduleWereYouRight,
                 style: AppTextStyles.label.copyWith(color: AppColors.text2)),
             const SizedBox(height: AppSpacing.xs),
             Row(
               children: [
                 _SelfCheckChoice(
-                  label: 'Yes',
+                  label: l10n.moduleYes,
                   value: 'YES',
                   color: AppColors.green,
                   selected: widget.selfCheck == 'YES',
@@ -579,7 +583,7 @@ class SpotMistakeCardState extends State<SpotMistakeCard> {
                 ),
                 const SizedBox(width: AppSpacing.sm),
                 _SelfCheckChoice(
-                  label: 'Not quite',
+                  label: l10n.quizNotQuite,
                   value: 'NOT_QUITE',
                   color: AppColors.amber,
                   selected: widget.selfCheck == 'NOT_QUITE',
@@ -689,6 +693,7 @@ class ChallengeCardState extends State<ChallengeCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: AppSpacing.card,
       decoration: BoxDecoration(
@@ -700,7 +705,7 @@ class ChallengeCardState extends State<ChallengeCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ..._provenancePrefix(widget.sourcePageTitle, widget.onOpenNotes),
-          Text('Challenge',
+          Text(l10n.moduleChallenge,
               style: AppTextStyles.label.copyWith(
                   color: AppColors.amber, fontWeight: FontWeight.w700)),
           const SizedBox(height: AppSpacing.md),
@@ -711,7 +716,7 @@ class ChallengeCardState extends State<ChallengeCard> {
               controller: _controller,
               maxLines: 3,
               decoration: InputDecoration(
-                hintText: 'Type your answer...',
+                hintText: l10n.moduleTypeYourAnswer,
                 hintStyle:
                     AppTextStyles.body.copyWith(color: AppColors.text3),
                 border: OutlineInputBorder(
@@ -741,7 +746,7 @@ class ChallengeCardState extends State<ChallengeCard> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14)),
                 ),
-                child: const Text('Submit'),
+                child: Text(l10n.moduleSubmit),
               ),
             ),
           ],
@@ -756,13 +761,13 @@ class ChallengeCardState extends State<ChallengeCard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Your answer:',
+                  Text(l10n.moduleYourAnswerColon,
                       style: AppTextStyles.label.copyWith(
                           color: AppColors.text2)),
                   const SizedBox(height: AppSpacing.xs),
                   Text(widget.answer, style: AppTextStyles.body),
                   const SizedBox(height: AppSpacing.sm),
-                  Text('Explanation:',
+                  Text(l10n.moduleExplanation,
                       style: AppTextStyles.label.copyWith(
                           color: AppColors.amber,
                           fontWeight: FontWeight.w700)),
@@ -792,6 +797,7 @@ class GenericTestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final question = content['question'] as String? ?? '';
     return Container(
       padding: AppSpacing.card,
@@ -816,7 +822,7 @@ class GenericTestCard extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14)),
                 ),
-                child: const Text('Answer'),
+                child: Text(l10n.moduleAnswer),
               ),
             ),
         ],

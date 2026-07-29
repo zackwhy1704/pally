@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 /// The "one-to-one, for everyone" feature made visible on every card:
 ///  · [ProvenanceChip] — "From your notes: {title}", the trust marker (tap → wiki).
@@ -49,7 +50,7 @@ class ProvenanceChip extends StatelessWidget {
             const SizedBox(width: 4),
             Flexible(
               child: Text(
-                'From your notes: $pageTitle',
+                AppLocalizations.of(context).moduleFromYourNotes(pageTitle),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppTextStyles.caption.copyWith(color: AppColors.text2),
@@ -116,7 +117,7 @@ class ComebackLine extends StatelessWidget {
         const SizedBox(width: AppSpacing.xs),
         Flexible(
           child: Text(
-            "That's a comeback — $concept got you last time.",
+            AppLocalizations.of(context).moduleComeback(concept),
             maxLines: 2,
             style: AppTextStyles.bodySmall
                 .copyWith(color: AppColors.green, fontWeight: FontWeight.w700),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/features/modules/presentation/widgets/test_body.dart';
 import 'package:pally/shared/models/learning_module.dart';
@@ -9,6 +10,8 @@ import 'package:pally/shared/models/learning_module.dart';
 /// (visible in the screen recording: answer prefilled on the next question).
 void main() {
   Widget host(ModuleContentItem item) => MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: SizedBox(
             width: 800,

@@ -771,4 +771,168 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeEmptyChipEarn => '⭐ Earn XP & rewards';
+
+  @override
+  String get moduleNext => 'Next';
+
+  @override
+  String get moduleReadyToTest => 'Ready to test yourself';
+
+  @override
+  String get moduleTimeToProve => 'Time to prove you understand';
+
+  @override
+  String moduleCardOf(int cardNumber, int total) {
+    return 'Card $cardNumber of $total';
+  }
+
+  @override
+  String moduleCardFallback(int n) {
+    return 'Card $n';
+  }
+
+  @override
+  String get moduleKeyTerms => 'Key terms';
+
+  @override
+  String get moduleComplete => 'Module complete!';
+
+  @override
+  String moduleXpEarned(int xp) {
+    return '+$xp XP';
+  }
+
+  @override
+  String get moduleYourMastery => 'Your mastery';
+
+  @override
+  String get moduleFocusArea => 'Focus area';
+
+  @override
+  String moduleReviewToImprove(String concept) {
+    return 'Review \"$concept\" to improve your mastery.';
+  }
+
+  @override
+  String get moduleBackToModules => 'Back to modules';
+
+  @override
+  String get moduleRevisionMode =>
+      'Revision mode — fresh questions to check your progress.';
+
+  @override
+  String get moduleWhichHardest => 'Which part was hardest?';
+
+  @override
+  String get moduleMuddiestHint =>
+      'Tap the one that felt the muddiest. This helps your tutor know what to review next.';
+
+  @override
+  String get moduleSkip => 'Skip';
+
+  @override
+  String moduleFromYourNotes(String title) {
+    return 'From your notes: $title';
+  }
+
+  @override
+  String moduleComeback(String concept) {
+    return 'That\'s a comeback — $concept got you last time.';
+  }
+
+  @override
+  String get moduleSubmitAllAnswers => 'Submit all answers';
+
+  @override
+  String moduleFocusingOn(String concept) {
+    return 'Focusing on $concept — this tripped you up in the Test.';
+  }
+
+  @override
+  String moduleQuestionNumber(int number) {
+    return 'Question $number';
+  }
+
+  @override
+  String get moduleAnswerHint => 'Write your answer (1-3 sentences)...';
+
+  @override
+  String get moduleCompareReference =>
+      'Compare what you wrote to the reference. Be honest — this just helps Mochi learn what to revisit.';
+
+  @override
+  String get moduleMarkOwnAnswers => 'Mark your own answers';
+
+  @override
+  String get modulePartly => 'Partly';
+
+  @override
+  String get moduleNo => 'No';
+
+  @override
+  String get moduleYourAnswer => 'Your answer';
+
+  @override
+  String get moduleReference => 'Reference';
+
+  @override
+  String get moduleDidYouGetIt => 'Did you get it?';
+
+  @override
+  String get moduleNoItems => 'No items';
+
+  @override
+  String get moduleTrueOrFalse => 'True or False?';
+
+  @override
+  String get moduleAgree => 'Agree';
+
+  @override
+  String get moduleDisagree => 'Disagree';
+
+  @override
+  String get moduleCheckingAnswer => 'Checking your answer…';
+
+  @override
+  String get moduleFeedbackUnavailable =>
+      'Answer recorded — couldn\'t load feedback right now.';
+
+  @override
+  String get moduleSpotTheMistake => 'Spot the mistake';
+
+  @override
+  String get moduleSpotHint => 'What\'s wrong here? Type what you spotted...';
+
+  @override
+  String get moduleRevealError => 'Reveal the error';
+
+  @override
+  String get moduleTheError => 'The error:';
+
+  @override
+  String get moduleCorrectSolution => 'Correct solution:';
+
+  @override
+  String get moduleWereYouRight => 'Were you right?';
+
+  @override
+  String get moduleYes => 'Yes';
+
+  @override
+  String get moduleChallenge => 'Challenge';
+
+  @override
+  String get moduleTypeYourAnswer => 'Type your answer...';
+
+  @override
+  String get moduleSubmit => 'Submit';
+
+  @override
+  String get moduleYourAnswerColon => 'Your answer:';
+
+  @override
+  String get moduleExplanation => 'Explanation:';
+
+  @override
+  String get moduleAnswer => 'Answer';
 }

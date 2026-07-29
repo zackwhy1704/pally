@@ -5,6 +5,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/features/modules/presentation/widgets/proof_chips.dart';
 import 'package:pally/features/voice_input/presentation/voice_input_button.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/learning_module.dart';
 
 // ── PROVE stage: all short-answer questions ─────────────────────────────────
@@ -84,7 +85,7 @@ class ProveBody extends StatelessWidget {
                       child: CircularProgressIndicator(
                           strokeWidth: 2, color: Colors.white),
                     )
-                  : const Text('Submit all answers'),
+                  : Text(AppLocalizations.of(context).moduleSubmitAllAnswers),
             ),
           ),
         ),
@@ -136,6 +137,7 @@ class ProveQuestionState extends State<ProveQuestion> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: AppSpacing.card,
       decoration: BoxDecoration(
@@ -161,13 +163,12 @@ class ProveQuestionState extends State<ProveQuestion> {
           if (isWeaknessScore(widget.priorScore) &&
               (widget.targetConcept ?? '').isNotEmpty) ...[
             TargetingBadge(
-              text:
-                  'Focusing on ${widget.targetConcept} — this tripped you up in the Test.',
+              text: l10n.moduleFocusingOn(widget.targetConcept ?? ''),
             ),
             const SizedBox(height: AppSpacing.sm),
           ],
           Text(
-            'Question ${widget.questionNumber}',
+            l10n.moduleQuestionNumber(widget.questionNumber),
             style: AppTextStyles.caption
                 .copyWith(color: AppColors.purple, fontWeight: FontWeight.w700),
           ),
@@ -179,7 +180,7 @@ class ProveQuestionState extends State<ProveQuestion> {
             maxLines: 3,
             onChanged: widget.onChanged,
             decoration: InputDecoration(
-              hintText: 'Write your answer (1-3 sentences)...',
+              hintText: l10n.moduleAnswerHint,
               hintStyle:
                   AppTextStyles.bodySmall.copyWith(color: AppColors.text3),
               border: OutlineInputBorder(

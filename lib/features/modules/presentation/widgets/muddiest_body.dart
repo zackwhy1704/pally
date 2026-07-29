@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/learning_module.dart';
 
 // ── MUDDIEST POINT (post-PROVE, pre-COMPLETE) ───────────────────────────────
@@ -23,6 +24,7 @@ class MuddiestBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     // De-duplicate + drop empty names so chips stay clean.
     final seen = <String>{};
     final labels = <String>[];
@@ -51,12 +53,11 @@ class MuddiestBody extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.md),
-          Text('Which part was hardest?',
+          Text(l10n.moduleWhichHardest,
               style: AppTextStyles.heading1, textAlign: TextAlign.center),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Tap the one that felt the muddiest. This helps your tutor know '
-            'what to review next.',
+            l10n.moduleMuddiestHint,
             style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
             textAlign: TextAlign.center,
           ),
@@ -73,7 +74,7 @@ class MuddiestBody extends StatelessWidget {
           const SizedBox(height: AppSpacing.xl),
           TextButton(
             onPressed: onSkip,
-            child: Text('Skip',
+            child: Text(l10n.moduleSkip,
                 style: AppTextStyles.body.copyWith(
                   color: AppColors.text2,
                   fontWeight: FontWeight.w700,

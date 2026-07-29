@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/features/modules/presentation/widgets/test_body.dart';
 
@@ -11,6 +12,8 @@ void main() {
   testWidgets('ChallengeCard Submit enables once the student types', (tester) async {
     String? submitted;
     await tester.pumpWidget(MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(
         body: ChallengeCard(
           question: 'Explain the idea in your own words.',

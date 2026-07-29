@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/features/modules/presentation/widgets/test_body.dart';
@@ -11,7 +12,9 @@ void main() {
   // ProviderScope ancestor now, even though this widget itself has no other
   // Riverpod dependency.
   Widget wrap(Widget child) =>
-      ProviderScope(child: MaterialApp(home: Scaffold(body: child)));
+      ProviderScope(child: MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,home: Scaffold(body: child)));
 
   testWidgets('Reveal is disabled until the student types a diagnosis',
       (tester) async {

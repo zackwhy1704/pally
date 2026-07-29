@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/features/modules/presentation/widgets/proof_chips.dart';
@@ -11,7 +12,9 @@ void main() {
   // feature), which reads a Riverpod provider — every render needs a
   // ProviderScope ancestor now.
   Widget host(Widget child) => ProviderScope(
-      child: MaterialApp(home: Scaffold(body: Center(child: child))));
+      child: MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,home: Scaffold(body: Center(child: child))));
 
   group('helpers', () {
     test('weakTopicConcept parses WEAK_TOPIC:{concept}, else null', () {

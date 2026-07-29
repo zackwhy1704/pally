@@ -245,9 +245,40 @@ results "Review" button. Terms to sanity-check: 确信度 (confidence), 概念�
 | `homeEmptyCreateButton` / `homeEmptyHaveCode` | + Create My First Mochi ✨ / 🎟️ Have a code? Enter or scan it | + 创建我的第一个 Mochi ✨ / 🎟️ 有邀请码？输入或扫描 |
 | `homeEmptyChipLearn/Ask/Earn` | 🧠 Learn from your notes / 💬 Ask any question / ⭐ Earn XP & rewards | 🧠 从你的笔记中学习 / 💬 有问必答 / ⭐ 赚取 XP 和奖励 |
 
+### PR9 — module item BODY widgets (`learn/test/prove/complete/muddiest/self_assess_body` · `proof_chips`)
+
+Static chrome only — item CONTENT (questions, statements, explanations, key terms, concept names,
+wiki titles) is AI-generated and carries its own `content_language`; it is NOT translated.
+
+| key | en | zh (draft) |
+|-----|----|-----------|
+| `moduleNext` / `moduleReadyToTest` / `moduleTimeToProve` | Next / Ready to test yourself / Time to prove you understand | 下一个 / 准备好自我检测了 / 该来证明你已经理解了 |
+| `moduleCardOf` / `moduleCardFallback` | Card {cardNumber} of {total} / Card {n} | 第 {cardNumber} 张，共 {total} 张 / 第 {n} 张卡片 |
+| `moduleKeyTerms` | Key terms | 关键术语 |
+| `moduleComplete` / `moduleXpEarned` | Module complete! / +{xp} XP | 单元完成！ / +{xp} XP |
+| `moduleYourMastery` / `moduleFocusArea` | Your mastery / Focus area | 你的掌握程度 / 重点领域 |
+| `moduleReviewToImprove` | Review "{concept}" to improve your mastery. | 复习“{concept}”以提升你的掌握程度。 |
+| `moduleBackToModules` | Back to modules | 返回单元列表 |
+| `moduleRevisionMode` | Revision mode — fresh questions to check your progress. | 复习模式——用新题目检验你的进度。 |
+| `moduleWhichHardest` / `moduleMuddiestHint` / `moduleSkip` | Which part was hardest? / Tap the one that felt the muddiest… / Skip | 哪部分最难？ / 点选你觉得最难懂的那一个…… / 跳过 |
+| `moduleFromYourNotes` / `moduleComeback` | From your notes: {title} / That's a comeback — {concept} got you last time. | 来自你的笔记：{title} / 卷土重来——{concept} 上次难住了你。 |
+| `moduleSubmitAllAnswers` / `moduleFocusingOn` / `moduleQuestionNumber` | Submit all answers / Focusing on {concept} — this tripped you up in the Test. / Question {number} | 提交所有答案 / 重点关注 {concept}—…… / 第 {number} 题 |
+| `moduleAnswerHint` | Write your answer (1-3 sentences)... | 写下你的答案（1-3 句话）…… |
+| `moduleMarkOwnAnswers` / `moduleCompareReference` | Mark your own answers / Compare what you wrote to the reference. Be honest… | 为自己的答案评分 / 把你写的和参考答案对比一下。请诚实作答…… |
+| `moduleYourAnswer` / `moduleReference` / `moduleDidYouGetIt` | Your answer / Reference / Did you get it? | 你的答案 / 参考答案 / 你做对了吗？ |
+| `moduleYes` / `modulePartly` / `moduleNo` | Yes / Partly / No | 对了 / 部分正确 / 不对 |
+| `moduleNoItems` / `moduleTrueOrFalse` | No items / True or False? | 暂无内容 / 对还是错？ |
+| `moduleAgree` / `moduleDisagree` | Agree / Disagree | 同意 / 不同意 |
+| `moduleCheckingAnswer` / `moduleFeedbackUnavailable` | Checking your answer… / Answer recorded — couldn't load feedback right now. | 正在检查你的答案…… / 已记录你的答案——暂时无法加载反馈。 |
+| `moduleSpotTheMistake` / `moduleSpotHint` / `moduleRevealError` | Spot the mistake / What's wrong here? Type what you spotted... / Reveal the error | 找出错误 / 这里有什么问题？写下你发现的…… / 揭示错误 |
+| `moduleTheError` / `moduleCorrectSolution` / `moduleWereYouRight` | The error: / Correct solution: / Were you right? | 错误所在： / 正确解法： / 你答对了吗？ |
+| `moduleChallenge` / `moduleTypeYourAnswer` / `moduleSubmit` | Challenge / Type your answer... / Submit | 挑战 / 输入你的答案…… / 提交 |
+| `moduleYourAnswerColon` / `moduleExplanation` / `moduleAnswer` | Your answer: / Explanation: / Answer | 你的答案： / 解释： / 查看答案 |
+| (reused) `quizCorrect` / `quizNotQuite` / `moduleCtaContinue` | Correct! / Not quite / Continue | 答对了！ / 还差一点 / 继续 |
+
 **DO NOT translate** (carry their own language already): Mochi's name, class names,
 teacher-uploaded content, student-generated text, any AI-generated artifact.
 
-Running count of zh keys drafted this branch: **~208** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 · PR5: 22 · PR6: 21 · PR7: 21 · PR8: 26 — quiz · PR-home: ~51 — home + nav).
-Remaining core-loop extraction (module item bodies · settings · sign-up form) lands in later PRs;
+Running count of zh keys drafted this branch: **~256** (PR1: 2 · PR2: 27 · PR3: 23 · PR4: 15 · PR5: 22 · PR6: 21 · PR7: 21 · PR8: 26 · PR-home: ~51 · PR9: ~48 — module item bodies).
+Remaining core-loop extraction (settings · sign-up form · HowPallyIsDifferent) lands in later PRs;
 each appends its rows here.

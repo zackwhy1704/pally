@@ -1375,6 +1375,294 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'⭐ Earn XP & rewards'**
   String get homeEmptyChipEarn;
+
+  /// Advance to the next card in a LEARN/TEST module.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get moduleNext;
+
+  /// Last-card CTA in a LEARN module → moves to TEST.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to test yourself'**
+  String get moduleReadyToTest;
+
+  /// Last-card CTA in a TEST module → moves to PROVE.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to prove you understand'**
+  String get moduleTimeToProve;
+
+  /// LEARN card position indicator.
+  ///
+  /// In en, this message translates to:
+  /// **'Card {cardNumber} of {total}'**
+  String moduleCardOf(int cardNumber, int total);
+
+  /// Fallback title for a LEARN card when the generated title is missing.
+  ///
+  /// In en, this message translates to:
+  /// **'Card {n}'**
+  String moduleCardFallback(int n);
+
+  /// Header above the key-terms list on a LEARN card.
+  ///
+  /// In en, this message translates to:
+  /// **'Key terms'**
+  String get moduleKeyTerms;
+
+  /// Header on the module-complete celebration screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Module complete!'**
+  String get moduleComplete;
+
+  /// XP-earned badge on module-complete. Keep the leading '+' and 'XP'.
+  ///
+  /// In en, this message translates to:
+  /// **'+{xp} XP'**
+  String moduleXpEarned(int xp);
+
+  /// Label above the mastery meter on the module-complete screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Your mastery'**
+  String get moduleYourMastery;
+
+  /// Label for the weakest-concept callout on module-complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus area'**
+  String get moduleFocusArea;
+
+  /// Suggestion naming the weakest concept (concept is student material — keep it verbatim).
+  ///
+  /// In en, this message translates to:
+  /// **'Review \"{concept}\" to improve your mastery.'**
+  String moduleReviewToImprove(String concept);
+
+  /// Button returning from module-complete to the module list.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to modules'**
+  String get moduleBackToModules;
+
+  /// Banner shown when a completed module is replayed in revision mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Revision mode — fresh questions to check your progress.'**
+  String get moduleRevisionMode;
+
+  /// Muddiest-point survey title, shown after PROVE.
+  ///
+  /// In en, this message translates to:
+  /// **'Which part was hardest?'**
+  String get moduleWhichHardest;
+
+  /// Muddiest-point survey helper text.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the one that felt the muddiest. This helps your tutor know what to review next.'**
+  String get moduleMuddiestHint;
+
+  /// Skip the muddiest-point survey.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get moduleSkip;
+
+  /// Provenance chip. The title is the student's own wiki page — keep it verbatim.
+  ///
+  /// In en, this message translates to:
+  /// **'From your notes: {title}'**
+  String moduleFromYourNotes(String title);
+
+  /// Weak-topic chip on a revisited card. Concept is student material — keep it verbatim.
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s a comeback — {concept} got you last time.'**
+  String moduleComeback(String concept);
+
+  /// PROVE-stage button submitting every written answer.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit all answers'**
+  String get moduleSubmitAllAnswers;
+
+  /// PROVE banner naming the targeted concept. Keep concept verbatim.
+  ///
+  /// In en, this message translates to:
+  /// **'Focusing on {concept} — this tripped you up in the Test.'**
+  String moduleFocusingOn(String concept);
+
+  /// PROVE question position.
+  ///
+  /// In en, this message translates to:
+  /// **'Question {number}'**
+  String moduleQuestionNumber(int number);
+
+  /// Placeholder in the PROVE free-text answer field. Keep the ellipsis.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your answer (1-3 sentences)...'**
+  String get moduleAnswerHint;
+
+  /// Self-assessment instructions. Keep 'Mochi'.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare what you wrote to the reference. Be honest — this just helps Mochi learn what to revisit.'**
+  String get moduleCompareReference;
+
+  /// Self-assessment screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark your own answers'**
+  String get moduleMarkOwnAnswers;
+
+  /// Self-assessment choice (Yes / Partly / No).
+  ///
+  /// In en, this message translates to:
+  /// **'Partly'**
+  String get modulePartly;
+
+  /// Self-assessment choice (Yes / Partly / No).
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get moduleNo;
+
+  /// Label above the student's own answer in self-assessment.
+  ///
+  /// In en, this message translates to:
+  /// **'Your answer'**
+  String get moduleYourAnswer;
+
+  /// Label above the reference answer in self-assessment.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference'**
+  String get moduleReference;
+
+  /// Self-assessment prompt asking the student to self-grade.
+  ///
+  /// In en, this message translates to:
+  /// **'Did you get it?'**
+  String get moduleDidYouGetIt;
+
+  /// Empty state when a TEST module has no cards.
+  ///
+  /// In en, this message translates to:
+  /// **'No items'**
+  String get moduleNoItems;
+
+  /// HOT_TAKE card prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'True or False?'**
+  String get moduleTrueOrFalse;
+
+  /// HOT_TAKE agree button.
+  ///
+  /// In en, this message translates to:
+  /// **'Agree'**
+  String get moduleAgree;
+
+  /// HOT_TAKE disagree button.
+  ///
+  /// In en, this message translates to:
+  /// **'Disagree'**
+  String get moduleDisagree;
+
+  /// HOT_TAKE verdict-in-flight state. Keep the ellipsis.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking your answer…'**
+  String get moduleCheckingAnswer;
+
+  /// HOT_TAKE fallback when the verdict fetch fails; the answer is still saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer recorded — couldn\'t load feedback right now.'**
+  String get moduleFeedbackUnavailable;
+
+  /// SPOT_MISTAKE card title.
+  ///
+  /// In en, this message translates to:
+  /// **'Spot the mistake'**
+  String get moduleSpotTheMistake;
+
+  /// SPOT_MISTAKE answer-field placeholder. Keep the ellipsis.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s wrong here? Type what you spotted...'**
+  String get moduleSpotHint;
+
+  /// SPOT_MISTAKE button revealing the correct answer.
+  ///
+  /// In en, this message translates to:
+  /// **'Reveal the error'**
+  String get moduleRevealError;
+
+  /// Label above the revealed error in SPOT_MISTAKE.
+  ///
+  /// In en, this message translates to:
+  /// **'The error:'**
+  String get moduleTheError;
+
+  /// Label above the correct solution in SPOT_MISTAKE.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct solution:'**
+  String get moduleCorrectSolution;
+
+  /// SPOT_MISTAKE self-check prompt after the reveal.
+  ///
+  /// In en, this message translates to:
+  /// **'Were you right?'**
+  String get moduleWereYouRight;
+
+  /// SPOT_MISTAKE self-check affirmative (paired with 'Not quite').
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get moduleYes;
+
+  /// CHALLENGE card title.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge'**
+  String get moduleChallenge;
+
+  /// CHALLENGE answer-field placeholder. Keep the ellipsis.
+  ///
+  /// In en, this message translates to:
+  /// **'Type your answer...'**
+  String get moduleTypeYourAnswer;
+
+  /// CHALLENGE submit button.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get moduleSubmit;
+
+  /// Label above the submitted answer in CHALLENGE (note trailing colon).
+  ///
+  /// In en, this message translates to:
+  /// **'Your answer:'**
+  String get moduleYourAnswerColon;
+
+  /// Label above the explanation in CHALLENGE (note trailing colon).
+  ///
+  /// In en, this message translates to:
+  /// **'Explanation:'**
+  String get moduleExplanation;
+
+  /// Button that reveals the answer on a short-answer TEST card.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer'**
+  String get moduleAnswer;
 }
 
 class _AppLocalizationsDelegate

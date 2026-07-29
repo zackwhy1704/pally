@@ -5,6 +5,7 @@ import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/adaptive_content_width.dart';
 import 'package:pally/features/modules/presentation/module_player_view_model.dart';
 import 'package:pally/features/modules/presentation/widgets/proof_chips.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 /// Post-PROVE self-assessment (Tier 2). For each open-ended answer the student
 /// compares theirs to the reference and reports Yes / Partly / No. The system
@@ -28,17 +29,17 @@ class SelfAssessBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AdaptiveContentWidth(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Mark your own answers', style: AppTextStyles.heading1),
+            Text(l10n.moduleMarkOwnAnswers, style: AppTextStyles.heading1),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Compare what you wrote to the reference. Be honest — this just '
-              'helps Mochi learn what to revisit.',
+              l10n.moduleCompareReference,
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -57,7 +58,7 @@ class SelfAssessBody extends StatelessWidget {
                 backgroundColor: AppColors.purple,
                 padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
               ),
-              child: const Text('Continue'),
+              child: Text(l10n.moduleCtaContinue),
             ),
             const SizedBox(height: AppSpacing.lg),
           ],
@@ -80,6 +81,7 @@ class _SelfAssessCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -92,22 +94,22 @@ class _SelfAssessCard extends StatelessWidget {
         children: [
           Text(item.question, style: AppTextStyles.title),
           const SizedBox(height: AppSpacing.sm),
-          _labelled('Your answer', item.yourAnswer.isEmpty ? '—' : item.yourAnswer,
+          _labelled(l10n.moduleYourAnswer, item.yourAnswer.isEmpty ? '—' : item.yourAnswer,
               AppColors.surf2),
           const SizedBox(height: AppSpacing.sm),
-          _labelled('Reference', item.reference.isEmpty ? '—' : item.reference,
+          _labelled(l10n.moduleReference, item.reference.isEmpty ? '—' : item.reference,
               AppColors.tealL),
           const SizedBox(height: AppSpacing.md),
-          Text('Did you get it?',
+          Text(l10n.moduleDidYouGetIt,
               style: AppTextStyles.label.copyWith(color: AppColors.text2)),
           const SizedBox(height: AppSpacing.xs),
           Row(
             children: [
-              _choice('Yes', 'YES', AppColors.green),
+              _choice(l10n.moduleYes, 'YES', AppColors.green),
               const SizedBox(width: AppSpacing.sm),
-              _choice('Partly', 'PARTLY', AppColors.amber),
+              _choice(l10n.modulePartly, 'PARTLY', AppColors.amber),
               const SizedBox(width: AppSpacing.sm),
-              _choice('No', 'NO', AppColors.coral),
+              _choice(l10n.moduleNo, 'NO', AppColors.coral),
             ],
           ),
           // Comeback payoff (render-only): a POSITIVE self-report on a concept the

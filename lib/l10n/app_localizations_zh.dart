@@ -731,4 +731,165 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get homeEmptyChipEarn => '⭐ 赚取 XP 和奖励';
+
+  @override
+  String get moduleNext => '下一个';
+
+  @override
+  String get moduleReadyToTest => '准备好自我检测了';
+
+  @override
+  String get moduleTimeToProve => '该来证明你已经理解了';
+
+  @override
+  String moduleCardOf(int cardNumber, int total) {
+    return '第 $cardNumber 张，共 $total 张';
+  }
+
+  @override
+  String moduleCardFallback(int n) {
+    return '第 $n 张卡片';
+  }
+
+  @override
+  String get moduleKeyTerms => '关键术语';
+
+  @override
+  String get moduleComplete => '单元完成！';
+
+  @override
+  String moduleXpEarned(int xp) {
+    return '+$xp XP';
+  }
+
+  @override
+  String get moduleYourMastery => '你的掌握程度';
+
+  @override
+  String get moduleFocusArea => '重点领域';
+
+  @override
+  String moduleReviewToImprove(String concept) {
+    return '复习“$concept”以提升你的掌握程度。';
+  }
+
+  @override
+  String get moduleBackToModules => '返回单元列表';
+
+  @override
+  String get moduleRevisionMode => '复习模式——用新题目检验你的进度。';
+
+  @override
+  String get moduleWhichHardest => '哪部分最难？';
+
+  @override
+  String get moduleMuddiestHint => '点选你觉得最难懂的那一个。这能帮助你的导师知道接下来要复习什么。';
+
+  @override
+  String get moduleSkip => '跳过';
+
+  @override
+  String moduleFromYourNotes(String title) {
+    return '来自你的笔记：$title';
+  }
+
+  @override
+  String moduleComeback(String concept) {
+    return '卷土重来——$concept 上次难住了你。';
+  }
+
+  @override
+  String get moduleSubmitAllAnswers => '提交所有答案';
+
+  @override
+  String moduleFocusingOn(String concept) {
+    return '重点关注 $concept——你在测试中被它难住了。';
+  }
+
+  @override
+  String moduleQuestionNumber(int number) {
+    return '第 $number 题';
+  }
+
+  @override
+  String get moduleAnswerHint => '写下你的答案（1-3 句话）……';
+
+  @override
+  String get moduleCompareReference =>
+      '把你写的和参考答案对比一下。请诚实作答——这只是帮助 Mochi 了解需要重温的内容。';
+
+  @override
+  String get moduleMarkOwnAnswers => '为自己的答案评分';
+
+  @override
+  String get modulePartly => '部分正确';
+
+  @override
+  String get moduleNo => '不对';
+
+  @override
+  String get moduleYourAnswer => '你的答案';
+
+  @override
+  String get moduleReference => '参考答案';
+
+  @override
+  String get moduleDidYouGetIt => '你做对了吗？';
+
+  @override
+  String get moduleNoItems => '暂无内容';
+
+  @override
+  String get moduleTrueOrFalse => '对还是错？';
+
+  @override
+  String get moduleAgree => '同意';
+
+  @override
+  String get moduleDisagree => '不同意';
+
+  @override
+  String get moduleCheckingAnswer => '正在检查你的答案……';
+
+  @override
+  String get moduleFeedbackUnavailable => '已记录你的答案——暂时无法加载反馈。';
+
+  @override
+  String get moduleSpotTheMistake => '找出错误';
+
+  @override
+  String get moduleSpotHint => '这里有什么问题？写下你发现的……';
+
+  @override
+  String get moduleRevealError => '揭示错误';
+
+  @override
+  String get moduleTheError => '错误所在：';
+
+  @override
+  String get moduleCorrectSolution => '正确解法：';
+
+  @override
+  String get moduleWereYouRight => '你答对了吗？';
+
+  @override
+  String get moduleYes => '对了';
+
+  @override
+  String get moduleChallenge => '挑战';
+
+  @override
+  String get moduleTypeYourAnswer => '输入你的答案……';
+
+  @override
+  String get moduleSubmit => '提交';
+
+  @override
+  String get moduleYourAnswerColon => '你的答案：';
+
+  @override
+  String get moduleExplanation => '解释：';
+
+  @override
+  String get moduleAnswer => '查看答案';
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -285,6 +286,8 @@ Future<void> _pumpAt(
     ProviderScope(
       overrides: [..._overrides(), ...extraOverrides],
       child: MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
         home: MediaQuery(
           data: MediaQueryData(
             size: size,
@@ -356,6 +359,8 @@ void main() {
         ProviderScope(
           overrides: _overrides(),
           child: MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
             home: MediaQuery(
               data: const MediaQueryData(
                 size: small,
@@ -392,6 +397,8 @@ void main() {
         ProviderScope(
           overrides: _overrides(),
           child: MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
             home: MediaQuery(
               data: const MediaQueryData(
                 size: small,

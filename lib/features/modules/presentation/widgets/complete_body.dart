@@ -3,6 +3,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_sizing.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/learning_module.dart';
 import 'package:pally/shared/widgets/mochi_placeholder.dart';
 
@@ -15,6 +16,7 @@ class CompleteBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final concepts = results?.concepts ?? const [];
     final xpEarned = results?.xpEarned ?? 0;
 
@@ -34,7 +36,7 @@ class CompleteBody extends StatelessWidget {
           // Celebration — Mochi mascot flanked by inward-facing party-poppers.
           const MochiPlaceholder(variant: MochiVariant.success),
           const SizedBox(height: AppSpacing.md),
-          Text('Module complete!', style: AppTextStyles.heading1),
+          Text(l10n.moduleComplete, style: AppTextStyles.heading1),
           if (xpEarned > 0) ...[
             const SizedBox(height: AppSpacing.sm),
             Container(
@@ -45,7 +47,7 @@ class CompleteBody extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                '+$xpEarned XP',
+                l10n.moduleXpEarned(xpEarned),
                 style: AppTextStyles.label.copyWith(
                   color: AppColors.amber,
                   fontWeight: FontWeight.w700,
@@ -57,7 +59,7 @@ class CompleteBody extends StatelessWidget {
           // Mastery bars
           if (concepts.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.xl),
-            Text('Your mastery',
+            Text(l10n.moduleYourMastery,
                 style: AppTextStyles.title.copyWith(fontSize: 16)),
             const SizedBox(height: AppSpacing.md),
             ...concepts.map((c) => MasteryRow(concept: c)),
@@ -78,13 +80,13 @@ class CompleteBody extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Focus area',
+                  Text(l10n.moduleFocusArea,
                       style: AppTextStyles.label.copyWith(
                           color: AppColors.amber,
                           fontWeight: FontWeight.w700)),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    'Review "${weakest.concept}" to improve your mastery.',
+                    l10n.moduleReviewToImprove(weakest.concept),
                     style: AppTextStyles.body,
                   ),
                 ],
@@ -103,7 +105,7 @@ class CompleteBody extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14)),
               ),
-              child: const Text('Back to modules'),
+              child: Text(l10n.moduleBackToModules),
             ),
           ),
           SizedBox(height: MediaQuery.of(context).padding.bottom + AppSpacing.md),
@@ -180,6 +182,7 @@ class RevisionBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(
@@ -193,7 +196,7 @@ class RevisionBanner extends StatelessWidget {
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
-              'Revision mode — fresh questions to check your progress.',
+              l10n.moduleRevisionMode,
               style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.purple,
                 fontWeight: FontWeight.w600,

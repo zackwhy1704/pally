@@ -3,6 +3,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_sizing.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/learning_module.dart';
 
 // ── LEARN stage: horizontal swipeable micro-cards ───────────────────────────
@@ -27,6 +28,7 @@ class LearnBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       children: [
         // Progress dots
@@ -90,7 +92,7 @@ class LearnBody extends StatelessWidget {
                           strokeWidth: 2, color: Colors.white),
                     )
                   : Text(
-                      isLast ? 'Ready to test yourself' : 'Next',
+                      isLast ? l10n.moduleReadyToTest : l10n.moduleNext,
                       style: AppTextStyles.body.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
@@ -118,8 +120,9 @@ class MicroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final content = item.contentJson;
-    final title = content['title'] as String? ?? 'Card $cardNumber';
+    final title = content['title'] as String? ?? l10n.moduleCardFallback(cardNumber);
     final body = content['body'] as String? ?? '';
     final keyTerms = (content['keyTerms'] as List<dynamic>?)
             ?.whereType<String>()
@@ -140,7 +143,7 @@ class MicroCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Card $cardNumber of $total',
+                l10n.moduleCardOf(cardNumber, total),
                 style: AppTextStyles.caption.copyWith(color: AppColors.teal),
               ),
               const SizedBox(height: AppSpacing.sm),
@@ -149,7 +152,7 @@ class MicroCard extends StatelessWidget {
               RichBodyText(body: body, keyTerms: keyTerms),
               if (keyTerms.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.lg),
-                Text('Key terms',
+                Text(l10n.moduleKeyTerms,
                     style: AppTextStyles.label.copyWith(
                         color: AppColors.teal, fontWeight: FontWeight.w700)),
                 const SizedBox(height: AppSpacing.xs),
