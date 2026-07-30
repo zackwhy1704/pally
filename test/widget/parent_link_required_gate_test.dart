@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/api_client.dart';
 
@@ -61,7 +62,11 @@ void main() {
         child: Consumer(
           builder: (context, ref, _) {
             container = ProviderScope.containerOf(context);
-            return MaterialApp.router(routerConfig: router);
+            return MaterialApp.router(
+              routerConfig: router,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+            );
           },
         ),
       ),

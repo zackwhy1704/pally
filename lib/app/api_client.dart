@@ -2,13 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pally/core/theme/app_colors.dart';
-import 'package:pally/core/theme/app_sizing.dart';
-import 'package:pally/core/theme/app_spacing.dart';
-import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/consent/data/consent_gate_guard.dart';
+import 'package:pally/features/consent/presentation/consent_gate_sheet.dart';
 import 'package:pally/features/consent/presentation/parental_consent_pending_sheet.dart';
 import 'package:pally/features/auth/auth_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -351,7 +349,7 @@ class _ServerErrorInterceptor extends Interceptor {
                 context: ctx,
                 isScrollControlled: true,
                 backgroundColor: Colors.transparent,
-                builder: (_) => _ConsentGateSheet(
+                builder: (_) => ConsentGateSheet(
                   reason: reason ?? 'general',
                   onRemind: () {
                     final c =
@@ -367,7 +365,7 @@ class _ServerErrorInterceptor extends Interceptor {
                     showParentalConsentPendingSheet(
                       context: c2,
                       ref: _ref,
-                      maskedEmail: 'your grown-up',
+                      maskedEmail: null,
                       cooldownSeconds: 0,
                     );
                   },
@@ -387,7 +385,7 @@ class _ServerErrorInterceptor extends Interceptor {
         final ctx = _ref.read(globalNavigatorKeyProvider)?.currentContext;
         if (ctx != null && ctx.mounted) {
           PallyToast.error(
-              ctx, 'Server error ($status) — please try again');
+              ctx, AppLocalizations.of(ctx).serverErrorRetry(status));
         }
       }
     }
@@ -414,9 +412,7 @@ class _ServerErrorInterceptor extends Interceptor {
     _showConsentGateOnce(() => showParentalConsentPendingSheet(
           context: ctx,
           ref: _ref,
-          maskedEmail: (masked == null || masked.isEmpty)
-              ? 'your grown-up'
-              : masked,
+          maskedEmail: (masked == null || masked.isEmpty) ? null : masked,
           cooldownSeconds: cooldown,
         ));
   }
@@ -435,11 +431,13 @@ class _ServerErrorInterceptor extends Interceptor {
     final ctx = _ref.read(globalNavigatorKeyProvider)?.currentContext;
     if (ctx == null || !ctx.mounted) return;
     try {
+      // Navigate FIRST — the redirect must never be hostage to the toast
+      // (an l10n/overlay failure would otherwise swallow the navigation).
+      ctx.go('/onboarding/direct');
       PallyToast.success(
         ctx,
-        "Let's finish setting up your account so you can start learning",
+        AppLocalizations.of(ctx).consentGateFinishSetup,
       );
-      ctx.go('/onboarding/direct');
     } catch (_) {
       // Fall through; the view model will surface the original error.
     }
@@ -538,94 +536,5 @@ class _SessionExpiredInterceptor extends Interceptor {
       }
     }
     handler.next(err);
-  }
-}
-
-// ── Consent gate sheet ────────────────────────────────────────────────────────
-// Shown instead of a raw 403 error when a PENDING account attempts a gated action.
-
-class _ConsentGateSheet extends StatelessWidget {
-  const _ConsentGateSheet({required this.reason, required this.onRemind});
-  final String reason;
-
-  /// Opens the working resend affordance. Replaces the old navigation to the
-  /// never-registered `/consent/waiting` route, which dead-ended on the error
-  /// screen — the exact failure this consent UX exists to kill.
-  final VoidCallback onRemind;
-
-  String get _title => switch (reason) {
-        'UPLOAD' => 'Upload notes',
-        'CREATE_TUTOR' => 'Create your own Mochi',
-        'SHARE_NOTE' => 'Share notes',
-        'PERSIST_CHAT' => 'Save conversations',
-        'EARN_XP' => 'Earn rewards',
-        _ => 'This feature',
-      };
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.sizeOf(context).height * 0.85,
-      ),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(
-          AppSpacing.lg,
-          AppSpacing.md,
-          AppSpacing.lg,
-          AppSpacing.lg + MediaQuery.viewInsetsOf(context).bottom,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Center(
-              child: Container(
-                width: AppSizing.handleBarWidth,
-                height: AppSizing.handleBarHeight,
-                decoration: BoxDecoration(
-                    color: AppColors.outline,
-                    borderRadius: BorderRadius.circular(2)),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            const Text('⏳', style: TextStyle(fontSize: 40)),
-            const SizedBox(height: AppSpacing.sm),
-            Text('Almost there!',
-                style: AppTextStyles.heading1.copyWith(fontSize: 20)),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              '$_title unlocks once a grown-up approves your account. '
-              "We've already sent them an email — or tap below to send a reminder.",
-              style: AppTextStyles.body.copyWith(color: AppColors.text2),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            FilledButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                onRemind();
-              },
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.purple,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-              ),
-              child: const Text('Remind my grown-up'),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Got it',
-                  style: AppTextStyles.body.copyWith(color: AppColors.text2)),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

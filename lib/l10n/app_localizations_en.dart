@@ -4163,4 +4163,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get uploadLargeFileSizeLabel => 'large file';
+
+  @override
+  String get consentGateAlmostThere => 'Almost there!';
+
+  @override
+  String consentGateBody(String feature) {
+    return '$feature unlocks once a grown-up approves your account. We\'ve already sent them an email — or tap below to send a reminder.';
+  }
+
+  @override
+  String get consentGateRemind => 'Remind my grown-up';
+
+  @override
+  String get consentGateFeatureUpload => 'Upload notes';
+
+  @override
+  String consentGateFeatureCreateTutor(String mascot) {
+    return 'Create your own $mascot';
+  }
+
+  @override
+  String get consentGateFeatureShareNote => 'Share notes';
+
+  @override
+  String get consentGateFeaturePersistChat => 'Save conversations';
+
+  @override
+  String get consentGateFeatureEarnXp => 'Earn rewards';
+
+  @override
+  String get consentGateFeatureGeneric => 'This feature';
+
+  @override
+  String get consentGateFinishSetup =>
+      'Let\'s finish setting up your account so you can start learning';
+
+  @override
+  String serverErrorRetry(int status) {
+    return 'Server error ($status) — please try again';
+  }
+
+  @override
+  String get consentPendingYourGrownUp => 'your grown-up';
 }

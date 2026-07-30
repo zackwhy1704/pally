@@ -973,9 +973,8 @@ class ChatViewModel extends _$ChatViewModel {
                 showParentalConsentPendingSheet(
                   context: ctx,
                   ref: ref,
-                  maskedEmail: (masked == null || masked.isEmpty)
-                      ? 'your grown-up'
-                      : masked,
+                  maskedEmail:
+                      (masked == null || masked.isEmpty) ? null : masked,
                   cooldownSeconds: secs is num ? secs.toInt() : 0,
                 );
               }

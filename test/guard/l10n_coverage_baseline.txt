@@ -1,12 +1,6 @@
 # zh coverage baseline — SHRINK ONLY. Each line: <relpath>\t<string>.
 # Remove a line by localizing that string. Adding a line = an explicit
 # "legitimately English" allow; include a reason in the PR.
-app/api_client.dart	$_title unlocks once a grown-up approves your account. 
-app/api_client.dart	Almost there!
-app/api_client.dart	Got it
-app/api_client.dart	Let's finish setting up your account so you can start learning
-app/api_client.dart	Remind my grown-up
-app/api_client.dart	Server error ($status) — please try again
 app/pally_app.dart	Pally
 app/router.dart	Go home
 app/router.dart	Something went wrong.

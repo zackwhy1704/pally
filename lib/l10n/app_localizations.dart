@@ -6859,6 +6859,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'large file'**
   String get uploadLargeFileSizeLabel;
+
+  /// No description provided for @consentGateAlmostThere.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost there!'**
+  String get consentGateAlmostThere;
+
+  /// No description provided for @consentGateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{feature} unlocks once a grown-up approves your account. We\'ve already sent them an email — or tap below to send a reminder.'**
+  String consentGateBody(String feature);
+
+  /// No description provided for @consentGateRemind.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind my grown-up'**
+  String get consentGateRemind;
+
+  /// No description provided for @consentGateFeatureUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload notes'**
+  String get consentGateFeatureUpload;
+
+  /// No description provided for @consentGateFeatureCreateTutor.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your own {mascot}'**
+  String consentGateFeatureCreateTutor(String mascot);
+
+  /// No description provided for @consentGateFeatureShareNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Share notes'**
+  String get consentGateFeatureShareNote;
+
+  /// No description provided for @consentGateFeaturePersistChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Save conversations'**
+  String get consentGateFeaturePersistChat;
+
+  /// No description provided for @consentGateFeatureEarnXp.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn rewards'**
+  String get consentGateFeatureEarnXp;
+
+  /// No description provided for @consentGateFeatureGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature'**
+  String get consentGateFeatureGeneric;
+
+  /// No description provided for @consentGateFinishSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s finish setting up your account so you can start learning'**
+  String get consentGateFinishSetup;
+
+  /// No description provided for @serverErrorRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Server error ({status}) — please try again'**
+  String serverErrorRetry(int status);
+
+  /// No description provided for @consentPendingYourGrownUp.
+  ///
+  /// In en, this message translates to:
+  /// **'your grown-up'**
+  String get consentPendingYourGrownUp;
 }
 
 class _AppLocalizationsDelegate

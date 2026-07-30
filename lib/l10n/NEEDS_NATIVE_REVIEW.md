@@ -716,3 +716,27 @@ quiz=测验 — confirm house style.
 | `forceUpdateBody` | A newer version of Apalchi is ready with important improvements. Please update to keep learning. | 新版 Apalchi 已经准备好，包含重要改进。请更新后继续学习。 | |
 | `forceUpdateCta` | Update now | 立即更新 | |
 | `uploadLargeFileSizeLabel` | large file | 大文件 | |
+
+
+### PR-K2 — 🔒 consent-gate sheet + API-client toasts (parental-approval compliance surface)
+
+**🔒 CONSENT-FAMILY.** These strings gate a child's access pending parental approval — same
+compliance handling as the PR-J consent set: en extracted byte-faithfully; every zh draft below
+requires native-SG review as a launch precondition. Layering: the API client now passes only the
+typed reason CODE — the sheet (features/consent) localizes at render; the masked-email fallback
+("your grown-up") resolves INSIDE the pending sheet, never pre-rendered by a context-less caller.
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `consentGateAlmostThere` | Almost there! | 就快好了！ | |
+| `consentGateBody` | {feature} unlocks once a grown-up approves your account. We've already sent them an email — or tap below to send a reminder. | 等大人批准你的账户后，就能使用「{feature}」。我们已经发了邮件给他们 — 也可以点下面再发一次提醒。 | |
+| `consentGateRemind` | Remind my grown-up | 提醒我的大人 | |
+| `consentGateFeatureUpload` | Upload notes | 上传笔记 | |
+| `consentGateFeatureCreateTutor` | Create your own {mascot} | 创建你自己的{mascot} | |
+| `consentGateFeatureShareNote` | Share notes | 分享笔记 | |
+| `consentGateFeaturePersistChat` | Save conversations | 保存对话 | |
+| `consentGateFeatureEarnXp` | Earn rewards | 赚取奖励 | |
+| `consentGateFeatureGeneric` | This feature | 此功能 | |
+| `consentGateFinishSetup` | Let's finish setting up your account so you can start learning | 我们来完成账户设置，你就可以开始学习啦 | |
+| `serverErrorRetry` | Server error ({status}) — please try again | 服务器出错（{status}）— 请再试一次 | |
+| `consentPendingYourGrownUp` | your grown-up | 你的大人 | |

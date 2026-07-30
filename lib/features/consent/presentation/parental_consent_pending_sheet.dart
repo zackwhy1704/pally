@@ -160,7 +160,7 @@ int _parseWaitSeconds(dynamic body) {
 Future<void> showParentalConsentPendingSheet({
   required BuildContext context,
   required Ref ref,
-  required String maskedEmail,
+  required String? maskedEmail,
   required int cooldownSeconds,
 }) {
   return showModalBottomSheet<void>(
@@ -190,7 +190,10 @@ class ParentalConsentPendingSheet extends ConsumerStatefulWidget {
     this.onChangeEmail,
   });
 
-  final String maskedEmail;
+  /// Masked parent email to display. Null/empty → the sheet renders the
+  /// localized "your grown-up" fallback at build time (never a pre-rendered
+  /// English literal from a context-less caller).
+  final String? maskedEmail;
   final int initialCooldownSeconds;
   final Future<ResendResult> Function() onResend;
 
@@ -220,7 +223,14 @@ class _ParentalConsentPendingSheetState
 
   /// Mutable so a successful resend can reveal the real masked address when the
   /// caller only had a generic placeholder (e.g. the CONSENT_REQUIRED gate).
-  late String _maskedEmail = widget.maskedEmail;
+  late String? _maskedEmail = widget.maskedEmail;
+
+  /// Render-time fallback: resolves in the CURRENT locale, so a context-less
+  /// caller (the API client) never bakes English into this localized surface.
+  String _displayEmail(AppLocalizations l) {
+    final m = _maskedEmail;
+    return (m == null || m.isEmpty) ? l.consentPendingYourGrownUp : m;
+  }
 
   @override
   void initState() {
@@ -333,7 +343,7 @@ class _ParentalConsentPendingSheetState
   }
 
   String _statusLine(AppLocalizations l) => switch (_ui) {
-        _ResendUi.sent => l.consentPendingResent(_maskedEmail),
+        _ResendUi.sent => l.consentPendingResent(_displayEmail(l)),
         _ResendUi.failed => l.consentPendingResendFailed,
         _ => '',
       };
@@ -406,7 +416,7 @@ class _ParentalConsentPendingSheetState
                 children: [
                   TextSpan(text: l.consentPendingAskEmailBefore),
                   TextSpan(
-                    text: _maskedEmail,
+                    text: _displayEmail(l),
                     style: AppTextStyles.body.copyWith(
                         color: AppColors.text1, fontWeight: FontWeight.w700),
                   ),

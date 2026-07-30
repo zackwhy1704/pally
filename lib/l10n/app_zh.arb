@@ -1126,5 +1126,17 @@
   "forceUpdateTitle": "该更新啦！",
   "forceUpdateBody": "新版 Apalchi 已经准备好，包含重要改进。请更新后继续学习。",
   "forceUpdateCta": "立即更新",
-  "uploadLargeFileSizeLabel": "大文件"
+  "uploadLargeFileSizeLabel": "大文件",
+  "consentGateAlmostThere": "就快好了！",
+  "consentGateBody": "等大人批准你的账户后，就能使用「{feature}」。我们已经发了邮件给他们 — 也可以点下面再发一次提醒。",
+  "consentGateRemind": "提醒我的大人",
+  "consentGateFeatureUpload": "上传笔记",
+  "consentGateFeatureCreateTutor": "创建你自己的{mascot}",
+  "consentGateFeatureShareNote": "分享笔记",
+  "consentGateFeaturePersistChat": "保存对话",
+  "consentGateFeatureEarnXp": "赚取奖励",
+  "consentGateFeatureGeneric": "此功能",
+  "consentGateFinishSetup": "我们来完成账户设置，你就可以开始学习啦",
+  "serverErrorRetry": "服务器出错（{status}）— 请再试一次",
+  "consentPendingYourGrownUp": "你的大人"
 }

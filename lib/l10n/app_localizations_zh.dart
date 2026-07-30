@@ -3946,4 +3946,46 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get uploadLargeFileSizeLabel => '大文件';
+
+  @override
+  String get consentGateAlmostThere => '就快好了！';
+
+  @override
+  String consentGateBody(String feature) {
+    return '等大人批准你的账户后，就能使用「$feature」。我们已经发了邮件给他们 — 也可以点下面再发一次提醒。';
+  }
+
+  @override
+  String get consentGateRemind => '提醒我的大人';
+
+  @override
+  String get consentGateFeatureUpload => '上传笔记';
+
+  @override
+  String consentGateFeatureCreateTutor(String mascot) {
+    return '创建你自己的$mascot';
+  }
+
+  @override
+  String get consentGateFeatureShareNote => '分享笔记';
+
+  @override
+  String get consentGateFeaturePersistChat => '保存对话';
+
+  @override
+  String get consentGateFeatureEarnXp => '赚取奖励';
+
+  @override
+  String get consentGateFeatureGeneric => '此功能';
+
+  @override
+  String get consentGateFinishSetup => '我们来完成账户设置，你就可以开始学习啦';
+
+  @override
+  String serverErrorRetry(int status) {
+    return '服务器出错（$status）— 请再试一次';
+  }
+
+  @override
+  String get consentPendingYourGrownUp => '你的大人';
 }
