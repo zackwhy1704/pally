@@ -2595,4 +2595,255 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get uploadTipBanner => '提示：清晰的、打字或印刷的页面识别效果最好。';
+
+  @override
+  String get uploadSourceTextbook => '课本';
+
+  @override
+  String get uploadSourceNotes => '笔记';
+
+  @override
+  String get uploadSourceWebsite => '网站';
+
+  @override
+  String get uploadSourceOther => '其他';
+
+  @override
+  String wikiChaptersNotCompiled(int count) {
+    return '还有 $count 章未编译';
+  }
+
+  @override
+  String wikiHasntReadChapters(int count, String mascot) {
+    return '$mascot 还没有读这些章节——请选择要编译哪些。';
+  }
+
+  @override
+  String get wikiChoose => '选择';
+
+  @override
+  String get wikiChooseChaptersCompile => '选择要编译的章节';
+
+  @override
+  String wikiCompileAll(int count) {
+    return '全部编译（$count）';
+  }
+
+  @override
+  String get wikiCouldntLoadChapters => '无法加载章节。请关闭后重试。';
+
+  @override
+  String wikiReadingChapters(String mascot) {
+    return '$mascot 正在阅读你的章节！';
+  }
+
+  @override
+  String wikiOnlyReadsPicked(String mascot) {
+    return '$mascot 只会阅读你选择的章节——先从你现在正在学的开始。';
+  }
+
+  @override
+  String get wikiNoChaptersCompile => '没有可编译的章节。';
+
+  @override
+  String wikiPagesRange(int from, int to, int count) {
+    return '第 $from–$to 页 · 共 $count 页';
+  }
+
+  @override
+  String wikiTakesFewMinutes(String mascot) {
+    return '这需要几分钟。你可以在学习库中跟进——$mascot 会显示它正在阅读哪一章，完成后你的课程就会解锁。';
+  }
+
+  @override
+  String wikiAskMochiNow(String mascot) {
+    return '现在问 $mascot';
+  }
+
+  @override
+  String get wikiBrainQuality => '大脑质量评分';
+
+  @override
+  String get wikiQuickQuiz => '快速小测';
+
+  @override
+  String get wikiViewBrain => '查看大脑';
+
+  @override
+  String get wikiAddReupload => '为这个页面添加或重新上传内容';
+
+  @override
+  String wikiAskConfirm(String title) {
+    return '请让家长确认“$title”是否准确。';
+  }
+
+  @override
+  String get wikiFixNotes => '修正我的笔记';
+
+  @override
+  String get wikiGetChecked => '让它接受检查';
+
+  @override
+  String get wikiRevoke => '撤销';
+
+  @override
+  String get wikiSendLink => '向任何人发送链接以检查它';
+
+  @override
+  String get wikiShareReviewLink => '分享审阅链接';
+
+  @override
+  String wikiCheckedBy(String name) {
+    return '由 $name 检查过 ✓';
+  }
+
+  @override
+  String wikiReviewerFlagged(String name) {
+    return '$name 标记了一处问题：';
+  }
+
+  @override
+  String get wikiLimitedNotes => '这是根据有限的笔记生成的——请仔细核对关键事实。';
+
+  @override
+  String get wikiUnverified => '未验证';
+
+  @override
+  String get wikiReviewerFallback => '一位审阅者';
+
+  @override
+  String get wikiReviewerFallbackCap => '一位审阅者';
+
+  @override
+  String wikiRemoveDoc(String fileName, String mascot) {
+    return '“$fileName”将被移除，$mascot 的大脑会自动更新。';
+  }
+
+  @override
+  String wikiMinAgo(int n) {
+    return '$n 分钟前';
+  }
+
+  @override
+  String get wikiBrainEmpty => '大脑是空的';
+
+  @override
+  String wikiCheckedByShort(String by, String more) {
+    return '由 $by 检查过 ✓$more';
+  }
+
+  @override
+  String get wikiConflict => '冲突';
+
+  @override
+  String get wikiConflictingInfo => '信息冲突';
+
+  @override
+  String get wikiCouldNotSave => '无法保存——请重试。';
+
+  @override
+  String get wikiEditPageContent => '编辑页面内容';
+
+  @override
+  String get wikiFailed => '失败';
+
+  @override
+  String get wikiFixNow => '立即修正';
+
+  @override
+  String get wikiGoToGroups => '前往小组';
+
+  @override
+  String wikiHowTeach(String mascot) {
+    return '$mascot 应该怎样教你？';
+  }
+
+  @override
+  String get wikiJoinGroupFirst => '请先加入一个小组';
+
+  @override
+  String wikiManageMochis(String mascot) {
+    return '管理你的 $mascot';
+  }
+
+  @override
+  String wikiReadingNotes(String mascot) {
+    return '$mascot 正在阅读你的笔记——新页面会自动出现在这里。';
+  }
+
+  @override
+  String get wikiOffTopic => '跑题';
+
+  @override
+  String get wikiRecentPages => '最近的页面';
+
+  @override
+  String get wikiReading => '正在阅读……';
+
+  @override
+  String get wikiRemove => '移除';
+
+  @override
+  String get wikiRemoveDocument => '移除文档';
+
+  @override
+  String get wikiRemoveDocumentConfirm => '要移除文档吗？';
+
+  @override
+  String get wikiSearchPages => '搜索页面……';
+
+  @override
+  String get wikiShareToGroup => '分享到哪个小组？';
+
+  @override
+  String wikiSourceDocuments(int count) {
+    return '来源文档（$count）';
+  }
+
+  @override
+  String wikiStylePrompt(String mascot) {
+    return '点选一种风格或自己写——例如“分数用条形模型”或“始终展示完整解题过程”。$mascot 会在每节课和聊天中遵循它。';
+  }
+
+  @override
+  String get wikiTeacherNotes => '老师的备注';
+
+  @override
+  String get wikiConflictBody =>
+      '这个页面包含来自多个来源的信息，它们之间可能存在分歧。\n\n你可以手动修正内容来解决冲突。';
+
+  @override
+  String get wikiNoGroups => '你还没有加入任何学习小组。加入或创建一个，就可以分享笔记了！';
+
+  @override
+  String get wikiCentreKeepsUpdated => '你的中心会保持这个班级的材料为最新。';
+
+  @override
+  String wikiCentreSetsTeaching(String mascot) {
+    return '你的中心设定这个班级 $mascot 的教学方式。';
+  }
+
+  @override
+  String get wikiStyleExample => '例如：分数用模型法。展示所有步骤。';
+
+  @override
+  String wikiFrom(String sources) {
+    return '来自：$sources';
+  }
+
+  @override
+  String get wikiShareArrow => '↗ 分享';
+
+  @override
+  String wikiChaptersOverLimit(int remaining, int excess) {
+    return '本月仅剩 $remaining 个 — 请取消选择 $excess 个。';
+  }
+
+  @override
+  String wikiChaptersSelectedCount(int count) {
+    return '已选 $count 个';
+  }
+
+  @override
+  String get wikiSelectChapters => '选择一个或多个章节';
 }

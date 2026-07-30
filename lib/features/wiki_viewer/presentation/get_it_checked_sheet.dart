@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart' as share_plus;
@@ -43,6 +44,7 @@ class GetItCheckedSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final state = ref.watch(reviewViewModelProvider(page.id));
     final pending = state.pending;
 
@@ -75,11 +77,11 @@ class GetItCheckedSheet extends ConsumerWidget {
                 ),
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
-            Text('Get it checked', style: AppTextStyles.title),
-            const SizedBox(height: AppSpacing.xs),
+            SizedBox(height: AppSpacing.md),
+            Text(l.wikiGetChecked, style: AppTextStyles.title),
+            SizedBox(height: AppSpacing.xs),
             Text(
-              'Ask a grown-up to confirm “${page.title}” is accurate.',
+              l.wikiAskConfirm(page.title),
               style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
             ),
             const SizedBox(height: AppSpacing.md),
@@ -93,24 +95,24 @@ class GetItCheckedSheet extends ConsumerWidget {
                     .read(reviewViewModelProvider(page.id).notifier)
                     .revoke(pending.id),
               ),
-              const SizedBox(height: AppSpacing.md),
+              SizedBox(height: AppSpacing.md),
             ],
 
             _SheetAction(
               icon: Icons.ios_share_rounded,
-              label: 'Share review link',
-              subtitle: 'Send a link to anyone to check it',
+              label: l.wikiShareReviewLink,
+              subtitle: l.wikiSendLink,
               busy: state.isCreating,
               onTap: state.isCreating ? null : () => _shareLink(context, ref),
             ),
-            const SizedBox(height: AppSpacing.sm),
+            SizedBox(height: AppSpacing.sm),
 
             // Centre classes: notes are managed by the teacher, not the student.
             if (canEditNotes)
               _SheetAction(
                 icon: Icons.edit_note_rounded,
-                label: 'Fix my notes',
-                subtitle: 'Add or re-upload content for this page',
+                label: l.wikiFixNotes,
+                subtitle: l.wikiAddReupload,
                 onTap: () {
                   Navigator.of(context).pop();
                   context.go('/avatar/$avatarId/upload');
@@ -136,6 +138,7 @@ class _PendingRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final days = request.daysUntilExpiry;
     final expiry = days == null
         ? 'Review link active'
@@ -165,17 +168,17 @@ class _PendingRow extends StatelessWidget {
             onPressed: isRevoking ? null : onRevoke,
             style: TextButton.styleFrom(
               foregroundColor: AppColors.coral,
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-              minimumSize: const Size(0, 36),
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+              minimumSize: Size(0, 36),
             ),
             child: isRevoking
-                ? const SizedBox(
+                ? SizedBox(
                     width: 16,
                     height: 16,
                     child: CircularProgressIndicator(
                         strokeWidth: 2, color: AppColors.coral),
                   )
-                : const Text('Revoke'),
+                : Text(l.wikiRevoke),
           ),
         ],
       ),

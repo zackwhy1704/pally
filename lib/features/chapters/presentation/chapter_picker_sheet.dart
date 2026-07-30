@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -53,14 +54,14 @@ Future<void> showChapterPicker(
 /// user to the honest progress surface (the Library "Mochi is reading" row)
 /// rather than pretending the work is already done.
 Future<void> _showCompilingDialog(BuildContext context) {
+    final l = AppLocalizations.of(context);
   return showDialog<void>(
     context: context,
     builder: (dctx) => AlertDialog(
       backgroundColor: AppColors.surface,
-      title: Text('Mochi is reading your chapters!', style: AppTextStyles.title),
+      title: Text(l.wikiReadingChapters(l.mascotName), style: AppTextStyles.title),
       content: Text(
-        'This takes a few minutes. You can follow along in Library — Mochi will '
-        'show which chapter it is reading, and your lessons unlock when it is done.',
+        l.wikiTakesFewMinutes(l.mascotName),
         style: AppTextStyles.body.copyWith(color: AppColors.text2),
       ),
       actions: [
@@ -75,7 +76,7 @@ Future<void> _showCompilingDialog(BuildContext context) {
             if (context.mounted) context.go('/library');
           },
           style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
-          child: const Text('Go to Library'),
+          child: Text(l.groupGoLibrary),
         ),
       ],
     ),
@@ -142,6 +143,7 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final async = ref.watch(chapterPickerViewModelProvider(widget.avatarId));
 
     return SafeArea(
@@ -171,9 +173,9 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
               children: [
                 _header(context),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+                  padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
                   child: Center(
-                    child: Text("Couldn't load chapters. Please close and try again.",
+                    child: Text(l.wikiCouldntLoadChapters,
                         style: AppTextStyles.body.copyWith(color: AppColors.coral)),
                   ),
                 ),
@@ -186,17 +188,19 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
     );
   }
 
-  Widget _header(BuildContext context) => Row(
+  Widget _header(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Choose chapters to compile', style: AppTextStyles.title),
-                const SizedBox(height: 2),
+                Text(l.wikiChooseChaptersCompile, style: AppTextStyles.title),
+                SizedBox(height: 2),
                 Text(
-                  'Mochi only reads the chapters you pick — start with what you’re studying now.',
+                  l.wikiOnlyReadsPicked(l.mascotName),
                   style: AppTextStyles.bodySmall.copyWith(color: AppColors.text3),
                 ),
               ],
@@ -209,8 +213,10 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
           ),
         ],
       );
+  }
 
   Widget _loaded(BuildContext context, ChaptersResult result) {
+    final l = AppLocalizations.of(context);
     final chapters = result.chapters;
     final locked = result.locked;
     final remaining = result.remaining;
@@ -228,14 +234,14 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _header(context),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: AppSpacing.sm),
         _counter(result),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: AppSpacing.sm),
         if (chapters.isEmpty)
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+            padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
             child: Center(
-              child: Text('No chapters to compile.',
+              child: Text(l.wikiNoChaptersCompile,
                   style: AppTextStyles.body.copyWith(color: AppColors.text3)),
             ),
           )
@@ -243,7 +249,7 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
           for (final c in chapters)
             Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-              child: _row(c),
+              child: _row(l, c),
             ),
         if (_error != null) ...[
           const SizedBox(height: AppSpacing.sm),
@@ -273,7 +279,7 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
     );
   }
 
-  Widget _row(Chapter c) {
+  Widget _row(AppLocalizations l, Chapter c) {
     final isLocked = c.isLocked;
     final checked = _selected.contains(c.chunkId);
     return Opacity(
@@ -299,8 +305,8 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
                   visualDensity: VisualDensity.compact,
                 )
               else
-                const SizedBox(width: 24),
-              const SizedBox(width: AppSpacing.xs),
+                SizedBox(width: 24),
+              SizedBox(width: AppSpacing.xs),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -309,8 +315,7 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600)),
-                    Text('Pages ${c.pageFrom}–${c.pageTo} · ${c.pageCount} '
-                        '${c.pageCount == 1 ? "page" : "pages"}',
+                    Text(l.wikiPagesRange(c.pageFrom, c.pageTo, c.pageCount),
                         style: AppTextStyles.caption.copyWith(color: AppColors.text3)),
                   ],
                 ),
@@ -333,6 +338,7 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
     bool overLimit,
     int remaining,
   ) {
+    final l = AppLocalizations.of(context);
     final selectedCount = _selected.length;
     // Hint on its own line, buttons in a Wrap — so a narrow screen or a large text
     // scale wraps the CTAs instead of overflowing the Row (the recurring bug class).
@@ -342,10 +348,10 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
       children: [
         Text(
           overLimit
-              ? 'Only $remaining left this month — deselect ${selectedCount - remaining}.'
+              ? l.wikiChaptersOverLimit(remaining, selectedCount - remaining)
               : selectedCount > 0
-                  ? '$selectedCount selected'
-                  : 'Select one or more chapters',
+                  ? l.wikiChaptersSelectedCount(selectedCount)
+                  : l.wikiSelectChapters,
           style: AppTextStyles.caption.copyWith(color: AppColors.text3),
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -359,9 +365,9 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
                 onPressed: () => _compile(locked.map((c) => c.chunkId).toList()),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.purple,
-                  side: const BorderSide(color: AppColors.purpleC),
+                  side: BorderSide(color: AppColors.purpleC),
                 ),
-                child: Text('Compile all (${locked.length})'),
+                child: Text(l.wikiCompileAll(locked.length)),
               ),
             ElevatedButton(
               onPressed: canCompile ? () => _compile(_selected.toList()) : null,

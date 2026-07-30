@@ -451,5 +451,17 @@ UploadEstimate); `localizedUploadError` (upload_error_localizer.dart) resolves w
 notifier never holds AppLocalizations (layering), and errors re-localize after a live locale switch.
 serverMessage carries the backend's own (content_language-localized) copy verbatim. ~21 error kinds +
 warnings + estimates + upload chrome. Mascot via {mascot}; reuses signupReadingNotes/signupAddToMochi/
-signupNotesHint/signupCharCount/commonCancel/photoDone/photoRetakePhoto/photoTypeInstead. Scanner-missed
-`_sourceTypes` dropdown (Textbook/Notes/Website/Other) left as a tiny follow-up.
+signupNotesHint/signupCharCount/commonCancel/photoDone/photoRetakePhoto/photoTypeInstead. The scanner-missed
+`_sourceTypes` dropdown (`uploadSourceTextbook`/`uploadSourceNotes`/`uploadSourceWebsite`/`uploadSourceOther`)
+was FOLDED IN here (inline switch in upload_screen.dart), not deferred.
+
+### PR-H — wiki viewer / compiled + chapters (64 `wiki*` keys)
+
+`chapter_lock_banner`, `chapter_picker_sheet`, `wiki_compiled_screen`, `get_it_checked_sheet`,
+`review_status_widgets`, `wiki_viewer_screen`. The compiled-brain surface (brain quality, quick-quiz,
+view-brain, "ask {mascot} now"), the chapter picker/lock banner (choose-chapters, not-compiled plural,
+compile-all count, over-limit/selected-count/select-prompt), the wiki viewer (statuses reading/failed/
+off-topic, get-it-checked / share-review-link / fix-my-notes, could-not-save). ICU plurals on chapter
+counts (`wikiChaptersNotCompiled`, `wikiHasntReadChapters`, `wikiChaptersOverLimit`,
+`wikiChaptersSelectedCount`, `wikiCompileAll`); mascot via {mascot}. serverMessage-style backend copy
+(conflict/delete dialogs) untouched — those are AI/teacher content, not chrome.

@@ -3841,5 +3841,406 @@
   "uploadTipBanner": "Tip: clear, typed or printed pages read best.",
   "@uploadTipBanner": {
     "description": "PR-G3 upload chrome."
-  }
+  },
+  "uploadSourceTextbook": "Textbook",
+  "@uploadSourceTextbook": {
+    "description": "Upload source-type dropdown (value stays English; label localized)."
+  },
+  "uploadSourceNotes": "Notes",
+  "@uploadSourceNotes": {
+    "description": "Upload source-type dropdown (value stays English; label localized)."
+  },
+  "uploadSourceWebsite": "Website",
+  "@uploadSourceWebsite": {
+    "description": "Upload source-type dropdown (value stays English; label localized)."
+  },
+  "uploadSourceOther": "Other",
+  "@uploadSourceOther": {
+    "description": "Upload source-type dropdown (value stays English; label localized)."
+  },
+  "wikiChaptersNotCompiled": "{count, plural, =1{1 chapter not compiled yet} other{{count} chapters not compiled yet}}",
+  "@wikiChaptersNotCompiled": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "wikiHasntReadChapters": "{count, plural, =1{{mascot} hasn't read this chapter yet — pick which to compile.} other{{mascot} hasn't read these chapters yet — pick which to compile.}}",
+  "@wikiHasntReadChapters": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "wikiChoose": "Choose",
+  "@wikiChoose": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiChooseChaptersCompile": "Choose chapters to compile",
+  "@wikiChooseChaptersCompile": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiCompileAll": "Compile all ({count})",
+  "@wikiCompileAll": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "wikiCouldntLoadChapters": "Couldn't load chapters. Please close and try again.",
+  "@wikiCouldntLoadChapters": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiReadingChapters": "{mascot} is reading your chapters!",
+  "@wikiReadingChapters": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "wikiOnlyReadsPicked": "{mascot} only reads the chapters you pick — start with what you're studying now.",
+  "@wikiOnlyReadsPicked": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "wikiNoChaptersCompile": "No chapters to compile.",
+  "@wikiNoChaptersCompile": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiPagesRange": "Pages {from}–{to} · {count, plural, =1{1 page} other{{count} pages}}",
+  "@wikiPagesRange": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "wikiTakesFewMinutes": "This takes a few minutes. You can follow along in Library — {mascot} will show which chapter it is reading, and your lessons unlock when it is done.",
+  "@wikiTakesFewMinutes": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "wikiAskMochiNow": "Ask {mascot} Now",
+  "@wikiAskMochiNow": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "wikiBrainQuality": "Brain Quality Score",
+  "@wikiBrainQuality": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiQuickQuiz": "Quick Quiz",
+  "@wikiQuickQuiz": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiViewBrain": "View Brain",
+  "@wikiViewBrain": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiAddReupload": "Add or re-upload content for this page",
+  "@wikiAddReupload": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiAskConfirm": "Ask a grown-up to confirm \"{title}\" is accurate.",
+  "@wikiAskConfirm": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "wikiFixNotes": "Fix my notes",
+  "@wikiFixNotes": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiGetChecked": "Get it checked",
+  "@wikiGetChecked": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiRevoke": "Revoke",
+  "@wikiRevoke": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiSendLink": "Send a link to anyone to check it",
+  "@wikiSendLink": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiShareReviewLink": "Share review link",
+  "@wikiShareReviewLink": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiCheckedBy": "Checked by {name} ✓",
+  "@wikiCheckedBy": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "wikiReviewerFlagged": "{name} flagged something:",
+  "@wikiReviewerFlagged": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "wikiLimitedNotes": "This was made from limited notes — double-check key facts.",
+  "@wikiLimitedNotes": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiUnverified": "Unverified",
+  "@wikiUnverified": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiReviewerFallback": "a reviewer",
+  "@wikiReviewerFallback": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiReviewerFallbackCap": "A reviewer",
+  "@wikiReviewerFallbackCap": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiRemoveDoc": "\"{fileName}\" will be removed and {mascot}'s brain will update automatically.",
+  "@wikiRemoveDoc": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      },
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "wikiMinAgo": "{n} min ago",
+  "@wikiMinAgo": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "wikiBrainEmpty": "Brain is empty",
+  "@wikiBrainEmpty": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiCheckedByShort": "Checked by {by} ✓{more}",
+  "@wikiCheckedByShort": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "by": {
+        "type": "String"
+      },
+      "more": {
+        "type": "String"
+      }
+    }
+  },
+  "wikiConflict": "Conflict",
+  "@wikiConflict": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiConflictingInfo": "Conflicting Info",
+  "@wikiConflictingInfo": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiCouldNotSave": "Could not save — try again.",
+  "@wikiCouldNotSave": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiEditPageContent": "Edit page content",
+  "@wikiEditPageContent": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiFailed": "Failed",
+  "@wikiFailed": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiFixNow": "Fix Now",
+  "@wikiFixNow": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiGoToGroups": "Go to Groups",
+  "@wikiGoToGroups": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiHowTeach": "How should {mascot} teach you?",
+  "@wikiHowTeach": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "wikiJoinGroupFirst": "Join a group first",
+  "@wikiJoinGroupFirst": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiManageMochis": "Manage {mascot}s",
+  "@wikiManageMochis": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "wikiReadingNotes": "{mascot} is reading your notes — new pages will appear here automatically.",
+  "@wikiReadingNotes": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "wikiOffTopic": "Off-topic",
+  "@wikiOffTopic": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiRecentPages": "RECENT PAGES",
+  "@wikiRecentPages": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiReading": "Reading…",
+  "@wikiReading": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiRemove": "Remove",
+  "@wikiRemove": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiRemoveDocument": "Remove document",
+  "@wikiRemoveDocument": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiRemoveDocumentConfirm": "Remove document?",
+  "@wikiRemoveDocumentConfirm": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiSearchPages": "Search pages…",
+  "@wikiSearchPages": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiShareToGroup": "Share to which group?",
+  "@wikiShareToGroup": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiSourceDocuments": "Source documents ({count})",
+  "@wikiSourceDocuments": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "wikiStylePrompt": "Tap a style or write your own — e.g. \"Use the bar model for fractions\" or \"Always show full working.\" {mascot} follows this in every lesson and chat.",
+  "@wikiStylePrompt": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "wikiTeacherNotes": "Teacher notes",
+  "@wikiTeacherNotes": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiConflictBody": "This page contains information from multiple sources that may disagree with each other.\n\nYou can fix the content manually to resolve the conflict.",
+  "@wikiConflictBody": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiNoGroups": "You're not in any study groups yet. Join or create one, then you can share notes!",
+  "@wikiNoGroups": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiCentreKeepsUpdated": "Your centre keeps this class's materials up to date.",
+  "@wikiCentreKeepsUpdated": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiCentreSetsTeaching": "Your centre sets how this class {mascot} teaches.",
+  "@wikiCentreSetsTeaching": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "wikiStyleExample": "e.g. Use model method for fractions. Show all steps.",
+  "@wikiStyleExample": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiFrom": "from: {sources}",
+  "@wikiFrom": {
+    "description": "PR-H wiki/chapters.",
+    "placeholders": {
+      "sources": {
+        "type": "String"
+      }
+    }
+  },
+  "wikiShareArrow": "↗ Share",
+  "@wikiShareArrow": {
+    "description": "PR-H wiki/chapters."
+  },
+  "wikiChaptersOverLimit": "Only {remaining} left this month — deselect {excess}.",
+  "@wikiChaptersOverLimit": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      },
+      "excess": {
+        "type": "int"
+      }
+    }
+  },
+  "wikiChaptersSelectedCount": "{count} selected",
+  "@wikiChaptersSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "wikiSelectChapters": "Select one or more chapters",
+  "@wikiSelectChapters": {}
 }

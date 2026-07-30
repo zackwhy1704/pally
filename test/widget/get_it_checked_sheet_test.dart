@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/features/wiki_viewer/presentation/get_it_checked_sheet.dart';
@@ -26,6 +27,8 @@ Widget _wrap({required bool canEditNotes}) =>
         ),
       ],
       child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: GetItCheckedSheet(
             avatarId: 'avatar-1',

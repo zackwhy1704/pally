@@ -4555,6 +4555,414 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tip: clear, typed or printed pages read best.'**
   String get uploadTipBanner;
+
+  /// Upload source-type dropdown (value stays English; label localized).
+  ///
+  /// In en, this message translates to:
+  /// **'Textbook'**
+  String get uploadSourceTextbook;
+
+  /// Upload source-type dropdown (value stays English; label localized).
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get uploadSourceNotes;
+
+  /// Upload source-type dropdown (value stays English; label localized).
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get uploadSourceWebsite;
+
+  /// Upload source-type dropdown (value stays English; label localized).
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get uploadSourceOther;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 chapter not compiled yet} other{{count} chapters not compiled yet}}'**
+  String wikiChaptersNotCompiled(int count);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{{mascot} hasn\'t read this chapter yet — pick which to compile.} other{{mascot} hasn\'t read these chapters yet — pick which to compile.}}'**
+  String wikiHasntReadChapters(int count, String mascot);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose'**
+  String get wikiChoose;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose chapters to compile'**
+  String get wikiChooseChaptersCompile;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Compile all ({count})'**
+  String wikiCompileAll(int count);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load chapters. Please close and try again.'**
+  String get wikiCouldntLoadChapters;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} is reading your chapters!'**
+  String wikiReadingChapters(String mascot);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} only reads the chapters you pick — start with what you\'re studying now.'**
+  String wikiOnlyReadsPicked(String mascot);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'No chapters to compile.'**
+  String get wikiNoChaptersCompile;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Pages {from}–{to} · {count, plural, =1{1 page} other{{count} pages}}'**
+  String wikiPagesRange(int from, int to, int count);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'This takes a few minutes. You can follow along in Library — {mascot} will show which chapter it is reading, and your lessons unlock when it is done.'**
+  String wikiTakesFewMinutes(String mascot);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask {mascot} Now'**
+  String wikiAskMochiNow(String mascot);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Brain Quality Score'**
+  String get wikiBrainQuality;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Quiz'**
+  String get wikiQuickQuiz;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'View Brain'**
+  String get wikiViewBrain;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Add or re-upload content for this page'**
+  String get wikiAddReupload;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a grown-up to confirm \"{title}\" is accurate.'**
+  String wikiAskConfirm(String title);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Fix my notes'**
+  String get wikiFixNotes;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Get it checked'**
+  String get wikiGetChecked;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke'**
+  String get wikiRevoke;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a link to anyone to check it'**
+  String get wikiSendLink;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Share review link'**
+  String get wikiShareReviewLink;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked by {name} ✓'**
+  String wikiCheckedBy(String name);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} flagged something:'**
+  String wikiReviewerFlagged(String name);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'This was made from limited notes — double-check key facts.'**
+  String get wikiLimitedNotes;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Unverified'**
+  String get wikiUnverified;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'a reviewer'**
+  String get wikiReviewerFallback;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'A reviewer'**
+  String get wikiReviewerFallbackCap;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{fileName}\" will be removed and {mascot}\'s brain will update automatically.'**
+  String wikiRemoveDoc(String fileName, String mascot);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} min ago'**
+  String wikiMinAgo(int n);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Brain is empty'**
+  String get wikiBrainEmpty;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked by {by} ✓{more}'**
+  String wikiCheckedByShort(String by, String more);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict'**
+  String get wikiConflict;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflicting Info'**
+  String get wikiConflictingInfo;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save — try again.'**
+  String get wikiCouldNotSave;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit page content'**
+  String get wikiEditPageContent;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get wikiFailed;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Fix Now'**
+  String get wikiFixNow;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Groups'**
+  String get wikiGoToGroups;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'How should {mascot} teach you?'**
+  String wikiHowTeach(String mascot);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Join a group first'**
+  String get wikiJoinGroupFirst;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage {mascot}s'**
+  String wikiManageMochis(String mascot);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} is reading your notes — new pages will appear here automatically.'**
+  String wikiReadingNotes(String mascot);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Off-topic'**
+  String get wikiOffTopic;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'RECENT PAGES'**
+  String get wikiRecentPages;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading…'**
+  String get wikiReading;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get wikiRemove;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove document'**
+  String get wikiRemoveDocument;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove document?'**
+  String get wikiRemoveDocumentConfirm;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Search pages…'**
+  String get wikiSearchPages;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Share to which group?'**
+  String get wikiShareToGroup;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Source documents ({count})'**
+  String wikiSourceDocuments(int count);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a style or write your own — e.g. \"Use the bar model for fractions\" or \"Always show full working.\" {mascot} follows this in every lesson and chat.'**
+  String wikiStylePrompt(String mascot);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Teacher notes'**
+  String get wikiTeacherNotes;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'This page contains information from multiple sources that may disagree with each other.\n\nYou can fix the content manually to resolve the conflict.'**
+  String get wikiConflictBody;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re not in any study groups yet. Join or create one, then you can share notes!'**
+  String get wikiNoGroups;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Your centre keeps this class\'s materials up to date.'**
+  String get wikiCentreKeepsUpdated;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Your centre sets how this class {mascot} teaches.'**
+  String wikiCentreSetsTeaching(String mascot);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Use model method for fractions. Show all steps.'**
+  String get wikiStyleExample;
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'from: {sources}'**
+  String wikiFrom(String sources);
+
+  /// PR-H wiki/chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'↗ Share'**
+  String get wikiShareArrow;
+
+  /// No description provided for @wikiChaptersOverLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Only {remaining} left this month — deselect {excess}.'**
+  String wikiChaptersOverLimit(int remaining, int excess);
+
+  /// No description provided for @wikiChaptersSelectedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String wikiChaptersSelectedCount(int count);
+
+  /// No description provided for @wikiSelectChapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Select one or more chapters'**
+  String get wikiSelectChapters;
 }
 
 class _AppLocalizationsDelegate

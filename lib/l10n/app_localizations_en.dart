@@ -2721,4 +2721,278 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get uploadTipBanner => 'Tip: clear, typed or printed pages read best.';
+
+  @override
+  String get uploadSourceTextbook => 'Textbook';
+
+  @override
+  String get uploadSourceNotes => 'Notes';
+
+  @override
+  String get uploadSourceWebsite => 'Website';
+
+  @override
+  String get uploadSourceOther => 'Other';
+
+  @override
+  String wikiChaptersNotCompiled(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count chapters not compiled yet',
+      one: '1 chapter not compiled yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String wikiHasntReadChapters(int count, String mascot) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$mascot hasn\'t read these chapters yet — pick which to compile.',
+      one: '$mascot hasn\'t read this chapter yet — pick which to compile.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get wikiChoose => 'Choose';
+
+  @override
+  String get wikiChooseChaptersCompile => 'Choose chapters to compile';
+
+  @override
+  String wikiCompileAll(int count) {
+    return 'Compile all ($count)';
+  }
+
+  @override
+  String get wikiCouldntLoadChapters =>
+      'Couldn\'t load chapters. Please close and try again.';
+
+  @override
+  String wikiReadingChapters(String mascot) {
+    return '$mascot is reading your chapters!';
+  }
+
+  @override
+  String wikiOnlyReadsPicked(String mascot) {
+    return '$mascot only reads the chapters you pick — start with what you\'re studying now.';
+  }
+
+  @override
+  String get wikiNoChaptersCompile => 'No chapters to compile.';
+
+  @override
+  String wikiPagesRange(int from, int to, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pages',
+      one: '1 page',
+    );
+    return 'Pages $from–$to · $_temp0';
+  }
+
+  @override
+  String wikiTakesFewMinutes(String mascot) {
+    return 'This takes a few minutes. You can follow along in Library — $mascot will show which chapter it is reading, and your lessons unlock when it is done.';
+  }
+
+  @override
+  String wikiAskMochiNow(String mascot) {
+    return 'Ask $mascot Now';
+  }
+
+  @override
+  String get wikiBrainQuality => 'Brain Quality Score';
+
+  @override
+  String get wikiQuickQuiz => 'Quick Quiz';
+
+  @override
+  String get wikiViewBrain => 'View Brain';
+
+  @override
+  String get wikiAddReupload => 'Add or re-upload content for this page';
+
+  @override
+  String wikiAskConfirm(String title) {
+    return 'Ask a grown-up to confirm \"$title\" is accurate.';
+  }
+
+  @override
+  String get wikiFixNotes => 'Fix my notes';
+
+  @override
+  String get wikiGetChecked => 'Get it checked';
+
+  @override
+  String get wikiRevoke => 'Revoke';
+
+  @override
+  String get wikiSendLink => 'Send a link to anyone to check it';
+
+  @override
+  String get wikiShareReviewLink => 'Share review link';
+
+  @override
+  String wikiCheckedBy(String name) {
+    return 'Checked by $name ✓';
+  }
+
+  @override
+  String wikiReviewerFlagged(String name) {
+    return '$name flagged something:';
+  }
+
+  @override
+  String get wikiLimitedNotes =>
+      'This was made from limited notes — double-check key facts.';
+
+  @override
+  String get wikiUnverified => 'Unverified';
+
+  @override
+  String get wikiReviewerFallback => 'a reviewer';
+
+  @override
+  String get wikiReviewerFallbackCap => 'A reviewer';
+
+  @override
+  String wikiRemoveDoc(String fileName, String mascot) {
+    return '\"$fileName\" will be removed and $mascot\'s brain will update automatically.';
+  }
+
+  @override
+  String wikiMinAgo(int n) {
+    return '$n min ago';
+  }
+
+  @override
+  String get wikiBrainEmpty => 'Brain is empty';
+
+  @override
+  String wikiCheckedByShort(String by, String more) {
+    return 'Checked by $by ✓$more';
+  }
+
+  @override
+  String get wikiConflict => 'Conflict';
+
+  @override
+  String get wikiConflictingInfo => 'Conflicting Info';
+
+  @override
+  String get wikiCouldNotSave => 'Could not save — try again.';
+
+  @override
+  String get wikiEditPageContent => 'Edit page content';
+
+  @override
+  String get wikiFailed => 'Failed';
+
+  @override
+  String get wikiFixNow => 'Fix Now';
+
+  @override
+  String get wikiGoToGroups => 'Go to Groups';
+
+  @override
+  String wikiHowTeach(String mascot) {
+    return 'How should $mascot teach you?';
+  }
+
+  @override
+  String get wikiJoinGroupFirst => 'Join a group first';
+
+  @override
+  String wikiManageMochis(String mascot) {
+    return 'Manage ${mascot}s';
+  }
+
+  @override
+  String wikiReadingNotes(String mascot) {
+    return '$mascot is reading your notes — new pages will appear here automatically.';
+  }
+
+  @override
+  String get wikiOffTopic => 'Off-topic';
+
+  @override
+  String get wikiRecentPages => 'RECENT PAGES';
+
+  @override
+  String get wikiReading => 'Reading…';
+
+  @override
+  String get wikiRemove => 'Remove';
+
+  @override
+  String get wikiRemoveDocument => 'Remove document';
+
+  @override
+  String get wikiRemoveDocumentConfirm => 'Remove document?';
+
+  @override
+  String get wikiSearchPages => 'Search pages…';
+
+  @override
+  String get wikiShareToGroup => 'Share to which group?';
+
+  @override
+  String wikiSourceDocuments(int count) {
+    return 'Source documents ($count)';
+  }
+
+  @override
+  String wikiStylePrompt(String mascot) {
+    return 'Tap a style or write your own — e.g. \"Use the bar model for fractions\" or \"Always show full working.\" $mascot follows this in every lesson and chat.';
+  }
+
+  @override
+  String get wikiTeacherNotes => 'Teacher notes';
+
+  @override
+  String get wikiConflictBody =>
+      'This page contains information from multiple sources that may disagree with each other.\n\nYou can fix the content manually to resolve the conflict.';
+
+  @override
+  String get wikiNoGroups =>
+      'You\'re not in any study groups yet. Join or create one, then you can share notes!';
+
+  @override
+  String get wikiCentreKeepsUpdated =>
+      'Your centre keeps this class\'s materials up to date.';
+
+  @override
+  String wikiCentreSetsTeaching(String mascot) {
+    return 'Your centre sets how this class $mascot teaches.';
+  }
+
+  @override
+  String get wikiStyleExample =>
+      'e.g. Use model method for fractions. Show all steps.';
+
+  @override
+  String wikiFrom(String sources) {
+    return 'from: $sources';
+  }
+
+  @override
+  String get wikiShareArrow => '↗ Share';
+
+  @override
+  String wikiChaptersOverLimit(int remaining, int excess) {
+    return 'Only $remaining left this month — deselect $excess.';
+  }
+
+  @override
+  String wikiChaptersSelectedCount(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String get wikiSelectChapters => 'Select one or more chapters';
 }

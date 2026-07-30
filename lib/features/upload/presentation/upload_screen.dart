@@ -1042,8 +1042,15 @@ class _ContextTagBar extends StatelessWidget {
               underline: const SizedBox(),
               style: AppTextStyles.caption.copyWith(color: AppColors.text1),
               items: _sourceTypes
-                  .map((s) =>
-                      DropdownMenuItem(value: s, child: Text(s)))
+                  .map((s) => DropdownMenuItem(
+                      value: s,
+                      child: Text(switch (s) {
+                        'Textbook' => l.uploadSourceTextbook,
+                        'Notes' => l.uploadSourceNotes,
+                        'Website' => l.uploadSourceWebsite,
+                        'Other' => l.uploadSourceOther,
+                        _ => s,
+                      })))
                   .toList(),
               onChanged: onSourceChanged,
             ),

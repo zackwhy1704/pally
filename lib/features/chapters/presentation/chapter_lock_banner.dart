@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -16,6 +17,7 @@ class ChapterLockBanner extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final async = ref.watch(chapterPickerViewModelProvider(avatarId));
 
     // ── Beta-period skew armor (REMOVABLE once the fleet + server verifiably ship
@@ -37,7 +39,7 @@ class ChapterLockBanner extends ConsumerWidget {
     final n = locked.length;
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.purpleL,
         borderRadius: BorderRadius.circular(14),
@@ -49,18 +51,17 @@ class ChapterLockBanner extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('$n chapter${n == 1 ? '' : 's'} not compiled yet',
+                Text(l.wikiChaptersNotCompiled(n),
                     style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w700)),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text(
-                  "Mochi hasn't read ${n == 1 ? 'this chapter' : 'these chapters'} yet "
-                  '— pick which to compile.',
+                  l.wikiHasntReadChapters(n, l.mascotName),
                   style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: AppSpacing.sm),
+          SizedBox(width: AppSpacing.sm),
           ElevatedButton(
             onPressed: () => showChapterPicker(context,
                 avatarId: avatarId, pointToLibraryOnSuccess: true, ref: ref),
@@ -68,7 +69,7 @@ class ChapterLockBanner extends ConsumerWidget {
               backgroundColor: AppColors.purple,
               foregroundColor: AppColors.surface,
             ),
-            child: const Text('Choose'),
+            child: Text(l.wikiChoose),
           ),
         ],
       ),
