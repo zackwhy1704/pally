@@ -65,8 +65,12 @@ SG-specific term 小伴 itself is part of the standing native-SG review.
   not skipped): `chat_view_model` system-message CONTENT is persisted into the stream + synced to backend →
   needs a typed system-message-kind on the Message model (data-model change, not string extraction); its two
   consent lines are compliance copy → **routed to PR-J**.
-- **PR-J** consent+account_deletion+auth (QUIET COMPLIANCE — byte-faithful meaning, no "improving" the English,
-  flag zh for native reviewer alongside the 🔒 set) — INCLUDES the two chat_view_model consent lines from PR-I
+- ✅ **PR-J** 🔒 consent + account_deletion + auth (84 keys) — MERGED `@eef5235`. Baseline 348→290. COMPLIANCE:
+  byte-faithful en, every zh flagged for native-SG review as a launch precondition. AI-disclosure, parental-
+  consent-pending, delete-account (+VM), restore, complete-profile (+VM). Typed `CompleteProfileError` +
+  `DeleteAccountError`; shared month names + `dateFormatDMY` (zh {year}年{month}{day}日). NOT WIRED (honest,
+  drafted zh in tracker): the 2 chat_view_model consent MESSAGES (persisted → ride the deferred typed-system-
+  message refactor) + shared `PallyError` network strings (central-mapper PR).
 - **PR-K** long tail (homework/exam_prep/study_plan/brain_health/teach_mochi/centre/assignments/etc.)
 - **PR-F** subscription — RESERVED, own session (re-prove ios_price_gate_guard before+after, human eyes on zh)
 Each: same recipe; delegates on any screen-rendering test; lock→3.32.1 before push; coverage guard must
