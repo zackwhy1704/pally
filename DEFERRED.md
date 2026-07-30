@@ -91,15 +91,33 @@ SG-specific term 小伴 itself is part of the standing native-SG review.
   module item-count chips (closed learn/test/prove set, resolver + raw fallback).
 - **PR-F** subscription — RESERVED, own session (re-prove ios_price_gate_guard before+after, human eyes on zh)
 
-### Baseline END STATE (post-K3): 105 = 39 PR-F + 66 REASONED ALLOWS
-The 66 allows, by category (each stated in the PR-K commit messages): ~44 format-only interpolations
-(numerals/symbols/emoji, no natural language) · `avatar.dart` 13 + `entitlement.dart` 1 (canonical
-backend-adjacent labels; DISPLAY localizes via `label_localizer` since PR-B) · `scaffold_shell` 4
-(TabSpec semantic fallbacks; display via `_navLabel`) · `'Pally'` (MaterialApp.title product identifier) ·
-`device_info` 2 (backend-bound device metadata, not UI) · `onboarding_screen` 2 (emoji escape literals) ·
-`chat_view_model` '📷 Homework photo' (persisted into saved message history → typed-system-message
-refactor below) · `direct_onboarding_view_model` 1 (PallyError ledger below). After PR-F drains its 39,
-the baseline IS the allow list — a new hardcoded user-facing string fails CI.
+### Baseline END STATE (post-K4): 105 = 39 PR-F + 66 allows, EACH REASON ENFORCED IN THE FILE
+Buckets (per-line reason now lives in the baseline's third column, not a PR description): `format` 41
+(interpolation + numerals/symbols/punctuation/emoji, no natural-language tokens) · `deferred-PRF` 39
+(subscription, English-by-design until PR-F) · `backend-label` 14 (`avatar.dart` 13 + `entitlement.dart` 1;
+DISPLAY localizes via `label_localizer` since PR-B) · `nav-fallback` 4 (`scaffold_shell` const `TabSpec.label`;
+DISPLAY localizes via `_navLabel` branchIndex→navHome/navLibrary/navGroups/navMe — see below) · `device-meta` 2 ·
+`emoji-escape` 2 · `brand` 1 (`'Pally'` MaterialApp.title) · `deferred-persisted` 1 (`chat_view_model` 📷
+Homework photo) · `deferred-pallyerror` 1 (`direct_onboarding_view_model`). After PR-F drains its 39, the
+baseline IS the allow list — a new hardcoded string fails CI.
+
+### PR-K4 — allow-list made auditable + the nav-labels premise CORRECTED (2026-07-30)
+An allow-list line with no in-file reason is the coverage guard lying politely: the number reads
+"105-and-shrinking" while a reason that lives only in a merged PR description evaporates. Fixed:
+- **Baseline format is now `<relpath>\t<string>\t<reason>`, and the reason is ENFORCED** —
+  `unreasonedBaselineKeys` fails the guard on any bare allow (proven: stripping the `Pally` reason failed
+  the real guard; a unit test pins the detector). Regeneration PRESERVES reasons; a newly-baselined string
+  gets `NEEDS_REASON` and fails until justified. This is the escape-hatch-closer the shrink-only baseline
+  lacked. All 105 lines audited into the buckets above.
+- **The four nav labels were NOT an escape — the premise "Home/Library/Groups/Me render English" is WRONG.**
+  `scaffold_shell.dart:109` renders `_navLabel(l10n, tab)`, which maps branchIndex 0-3 →
+  navHome/navLibrary/navGroups/navMe (both ARBs: 主页/学习库/小组/我的). `tab.label` is referenced ONCE
+  (line 74) as the `_ =>` fallback for an UNMAPPED branch — unreachable for tabs 0-3. The baseline literals
+  are the `const TabSpec.label` fallbacks the regex-scanner sees in source but that never render. Localizing
+  `buildTabs()` would be wrong (breaks the const data structure, duplicates the resolver). New permanent test
+  `test/widget/nav_shell_localized_test.dart` pumps the real `ScaffoldShell` under en+zh and asserts the nav
+  renders 中文 (and not the English fallbacks) — the device-locale walk as CI evidence, and the regression
+  guard if anyone reverts to `label: tab.label`.
 
 ### LEDGERED (with triggers), not skipped
 1. **PallyError central-mapper localization** — MEASURED 2026-07-30: 32 `.userMessage` sites across 25

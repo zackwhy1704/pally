@@ -1,108 +1,111 @@
-# zh coverage baseline — SHRINK ONLY. Each line: <relpath>\t<string>.
-# Remove a line by localizing that string. Adding a line = an explicit
-# "legitimately English" allow; include a reason in the PR.
-app/pally_app.dart	Pally
-core/ui/scaffold_shell.dart	Groups
-core/ui/scaffold_shell.dart	Home
-core/ui/scaffold_shell.dart	Library
-core/ui/scaffold_shell.dart	Me
-core/utils/device_info.dart	${a.manufacturer} ${a.model}
-core/utils/device_info.dart	Unknown device
-features/avatar_hub/presentation/avatar_hub_screen.dart	$title. $subtitle
-features/avatar_hub/presentation/avatar_hub_screen.dart	${l.hubLearn}. $subtitle
-features/brain_health/presentation/brain_health_screen.dart	$q
-features/brain_health/presentation/brain_health_screen.dart	$score%
-features/chat/presentation/chat_view_model.dart	📷 Homework photo
-features/chat/presentation/widgets/answer_card.dart	$questionNumber
-features/chat/presentation/widgets/answer_card.dart	✅  ${answer.answer}
-features/collection/presentation/collection_screen.dart	$owned / $total
-features/exam_prep/presentation/exam_prep_screen.dart	$_masteryIcon $pct%
-features/exam_prep/presentation/exam_prep_screen.dart	$daysRemaining
-features/flashcards/presentation/flashcard_screen.dart	$current / $total
-features/groups/presentation/challenge_card.dart	$m:$s
-features/groups/presentation/challenge_card.dart	$pct%
-features/home/widgets/module_progress_banner.dart	${avatar.name} — ${module.masteryDisplayPct}%
-features/modules/presentation/module_list_screen.dart	$masteryPct%
-features/modules/presentation/module_player_screen.dart	${playerState.currentIndex + 1}/${playerState.totalItems}
-features/modules/presentation/widgets/complete_body.dart	$pct%
-features/ocr_awareness/screens/ocr_quality_warning.dart	${(_barAnimation.value * 100).round()}%
-features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}%
-features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}% ⚠
-features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}% ✓
-features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}% ✗
-features/onboarding/presentation/direct_onboarding_view_model.dart	No internet connection. Check your WiFi and try again.
-features/onboarding/presentation/onboarding_screen.dart	u{1F4CA}
-features/onboarding/presentation/onboarding_screen.dart	u{1F9E0}
-features/photo_question/presentation/widgets/edit_questions_sheet.dart	${index + 1}
-features/photo_question/screens/ocr_confidence_preview_screen.dart	$pct%
-features/photo_question/screens/ocr_confidence_preview_screen.dart	${(item.confidence * 100).round()}%
-features/progress/presentation/level_up_overlay.dart	$newLevel
-features/progress/presentation/mastery_card.dart	${subject.mastered}/${subject.total}  $pct%
-features/progress/presentation/progress_screen.dart	$pct%
-features/progress/presentation/streak_card.dart	$freezes
-features/progress/presentation/streak_card.dart	$value
-features/progress/presentation/streak_milestone_overlay.dart	$milestone
-features/quiz/presentation/quiz_screen.dart	$percentage%
-features/quiz/presentation/quiz_screen.dart	${((current / total) * 100).round()}%
-features/quiz/presentation/quiz_screen.dart	${quizState.currentIndex + 1}/${quizState.totalQuestions}
-features/quiz/presentation/quiz_screen.dart	· $item
-features/referral/presentation/referral_screen.dart	⭐ ${summary.rewardsEarned}
-features/shop/presentation/shop_screen.dart	$n
-features/shop/presentation/shop_screen.dart	${(n / 1000).toStringAsFixed(1)}k
-features/shop/presentation/shop_screen.dart	× $count
-features/subscription/presentation/paywall_screen.dart	Maybe later
-features/subscription/presentation/paywall_screen.dart	See plans
-features/subscription/presentation/subscription_plans_screen.dart	1 student · all AI features
-features/subscription/presentation/subscription_plans_screen.dart	1 student · smarter AI for hard problems
-features/subscription/presentation/subscription_plans_screen.dart	20 messages/day · 1 Mochi · basic features
-features/subscription/presentation/subscription_plans_screen.dart	Choose your plan
-features/subscription/presentation/subscription_plans_screen.dart	Could not load subscription info. Try again.
-features/subscription/presentation/subscription_plans_screen.dart	Current
-features/subscription/presentation/subscription_plans_screen.dart	Family
-features/subscription/presentation/subscription_plans_screen.dart	Free
-features/subscription/presentation/subscription_plans_screen.dart	Max
-features/subscription/presentation/subscription_plans_screen.dart	Pro
-features/subscription/presentation/subscription_plans_screen.dart	Up to 4 students
-features/subscription/presentation/subscription_plans_screen.dart	⭐ Premium via your centre
-features/subscription/presentation/subscription_return_screen.dart	Back to Apalchi
-features/subscription/presentation/subscription_return_screen.dart	Confirming your subscription…
-features/subscription/presentation/subscription_return_screen.dart	Everything just unlocked — unlimited Mochis, family 
-features/subscription/presentation/subscription_return_screen.dart	Start exploring
-features/subscription/presentation/subscription_return_screen.dart	Still confirming…
-features/subscription/presentation/subscription_return_screen.dart	Subscription
-features/subscription/presentation/subscription_return_screen.dart	You are premium!
-features/subscription/presentation/subscription_return_screen.dart	Your payment may still be processing. You can check 
-features/subscription/presentation/trial_countdown_banner.dart	When your trial ends:
-features/subscription/presentation/trial_expired_screen.dart	Choose which Mochi stays active. The rest are locked 
-features/subscription/presentation/trial_expired_screen.dart	Continue free with $_selectedKeeperName
-features/subscription/presentation/trial_expired_screen.dart	Continue free with 1 Mochi
-features/subscription/presentation/trial_expired_screen.dart	Family
-features/subscription/presentation/trial_expired_screen.dart	Max
-features/subscription/presentation/trial_expired_screen.dart	Or — continue free with 1 Mochi
-features/subscription/presentation/trial_expired_screen.dart	Unlimited Mochis, unlimited chat, full flashcards & quizzes.
-features/subscription/presentation/trial_expired_screen.dart	You still have all your Mochis — nothing was deleted. 
-features/subscription/presentation/trial_expired_screen.dart	Your free week is up! ⏰
-features/subscription/presentation/trial_expired_screen.dart	up to 4 kids
-features/subscription/presentation/trial_expired_screen.dart	⭐ Keep all your Mochis
-features/subscription/presentation/trial_welcome_screen.dart	No card needed. We'll remind you before it ends.
-features/subscription/presentation/trial_welcome_screen.dart	Start exploring! 🚀
-features/subscription/presentation/trial_welcome_screen.dart	🎁 Premium is on usnfor 7 days!
-features/subscription/widgets/web_upgrade_cta.dart	Checking…
-features/subscription/widgets/web_upgrade_cta.dart	I've upgraded — refresh
-features/teach_mochi/presentation/teach_mochi_screen.dart	· $item
-features/wiki_compiled/presentation/wiki_compiled_screen.dart	$score/10
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	$label · $pct%
-shared/models/avatar.dart	Art
-shared/models/avatar.dart	Coding
-shared/models/avatar.dart	English
-shared/models/avatar.dart	General
-shared/models/avatar.dart	Geography
-shared/models/avatar.dart	Health
-shared/models/avatar.dart	History
-shared/models/avatar.dart	Languages
-shared/models/avatar.dart	Literature
-shared/models/avatar.dart	Maths
-shared/models/avatar.dart	Music
-shared/models/avatar.dart	Physical Education
-shared/models/avatar.dart	Science
-shared/models/entitlement.dart	Premium
+# zh coverage baseline — SHRINK ONLY. Each line: <relpath>\t<string>\t<reason>.
+# Remove a line by LOCALIZING that string (delete the line). A line may exist ONLY
+# WITH a reason in the third column — a bare allow FAILS the guard (unreasonedBaselineKeys).
+# Reason vocabulary: brand / format / nav-fallback / backend-label / device-meta /
+# emoji-escape / deferred-<owner>. deferred-* = English-by-design debt with a named owner,
+# NOT a permanent allow. See DEFERRED.md for the ledger.
+app/pally_app.dart	Pally	brand: MaterialApp.title app identifier (proper noun, kept verbatim in every locale)
+core/ui/scaffold_shell.dart	Groups	nav-fallback: const TabSpec.label; DISPLAY localizes via _navLabel branchIndex-> navHome/navLibrary/navGroups/navMe (scaffold_shell.dart:69-75,109). Unreachable for tabs 0-3 (nav_shell_localized_test proves zh render).
+core/ui/scaffold_shell.dart	Home	nav-fallback: const TabSpec.label; DISPLAY localizes via _navLabel branchIndex-> navHome/navLibrary/navGroups/navMe (scaffold_shell.dart:69-75,109). Unreachable for tabs 0-3 (nav_shell_localized_test proves zh render).
+core/ui/scaffold_shell.dart	Library	nav-fallback: const TabSpec.label; DISPLAY localizes via _navLabel branchIndex-> navHome/navLibrary/navGroups/navMe (scaffold_shell.dart:69-75,109). Unreachable for tabs 0-3 (nav_shell_localized_test proves zh render).
+core/ui/scaffold_shell.dart	Me	nav-fallback: const TabSpec.label; DISPLAY localizes via _navLabel branchIndex-> navHome/navLibrary/navGroups/navMe (scaffold_shell.dart:69-75,109). Unreachable for tabs 0-3 (nav_shell_localized_test proves zh render).
+core/utils/device_info.dart	${a.manufacturer} ${a.model}	device-meta: device-derived diagnostic (manufacturer/model), not user-facing UI copy
+core/utils/device_info.dart	Unknown device	device-meta: device-derived diagnostic (manufacturer/model), not user-facing UI copy
+features/avatar_hub/presentation/avatar_hub_screen.dart	$title. $subtitle	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/avatar_hub/presentation/avatar_hub_screen.dart	${l.hubLearn}. $subtitle	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/brain_health/presentation/brain_health_screen.dart	$q	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/brain_health/presentation/brain_health_screen.dart	$score%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/chat/presentation/chat_view_model.dart	📷 Homework photo	deferred-persisted: written into saved/synced message history; rides the typed-system-message refactor, not a string extraction. See DEFERRED.md.
+features/chat/presentation/widgets/answer_card.dart	$questionNumber	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/chat/presentation/widgets/answer_card.dart	✅  ${answer.answer}	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/collection/presentation/collection_screen.dart	$owned / $total	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/exam_prep/presentation/exam_prep_screen.dart	$_masteryIcon $pct%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/exam_prep/presentation/exam_prep_screen.dart	$daysRemaining	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/flashcards/presentation/flashcard_screen.dart	$current / $total	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/groups/presentation/challenge_card.dart	$m:$s	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/groups/presentation/challenge_card.dart	$pct%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/home/widgets/module_progress_banner.dart	${avatar.name} — ${module.masteryDisplayPct}%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/modules/presentation/module_list_screen.dart	$masteryPct%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/modules/presentation/module_player_screen.dart	${playerState.currentIndex + 1}/${playerState.totalItems}	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/modules/presentation/widgets/complete_body.dart	$pct%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/ocr_awareness/screens/ocr_quality_warning.dart	${(_barAnimation.value * 100).round()}%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}% ⚠	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}% ✓	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}% ✗	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/onboarding/presentation/direct_onboarding_view_model.dart	No internet connection. Check your WiFi and try again.	deferred-pallyerror: VM friendly-error prose; localize with the PallyError central-mapper pass. Debt, not a permanent allow. See DEFERRED.md.
+features/onboarding/presentation/onboarding_screen.dart	u{1F4CA}	emoji-escape: unicode escape-sequence literal (u{1F...}), not translatable text
+features/onboarding/presentation/onboarding_screen.dart	u{1F9E0}	emoji-escape: unicode escape-sequence literal (u{1F...}), not translatable text
+features/photo_question/presentation/widgets/edit_questions_sheet.dart	${index + 1}	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/photo_question/screens/ocr_confidence_preview_screen.dart	$pct%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/photo_question/screens/ocr_confidence_preview_screen.dart	${(item.confidence * 100).round()}%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/progress/presentation/level_up_overlay.dart	$newLevel	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/progress/presentation/mastery_card.dart	${subject.mastered}/${subject.total}  $pct%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/progress/presentation/progress_screen.dart	$pct%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/progress/presentation/streak_card.dart	$freezes	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/progress/presentation/streak_card.dart	$value	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/progress/presentation/streak_milestone_overlay.dart	$milestone	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/quiz/presentation/quiz_screen.dart	$percentage%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/quiz/presentation/quiz_screen.dart	${((current / total) * 100).round()}%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/quiz/presentation/quiz_screen.dart	${quizState.currentIndex + 1}/${quizState.totalQuestions}	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/quiz/presentation/quiz_screen.dart	· $item	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/referral/presentation/referral_screen.dart	⭐ ${summary.rewardsEarned}	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/shop/presentation/shop_screen.dart	$n	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/shop/presentation/shop_screen.dart	${(n / 1000).toStringAsFixed(1)}k	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/shop/presentation/shop_screen.dart	× $count	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/subscription/presentation/paywall_screen.dart	Maybe later	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/paywall_screen.dart	See plans	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_plans_screen.dart	1 student · all AI features	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_plans_screen.dart	1 student · smarter AI for hard problems	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_plans_screen.dart	20 messages/day · 1 Mochi · basic features	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_plans_screen.dart	Choose your plan	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_plans_screen.dart	Could not load subscription info. Try again.	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_plans_screen.dart	Current	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_plans_screen.dart	Family	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_plans_screen.dart	Free	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_plans_screen.dart	Max	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_plans_screen.dart	Pro	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_plans_screen.dart	Up to 4 students	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_plans_screen.dart	⭐ Premium via your centre	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_return_screen.dart	Back to Apalchi	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_return_screen.dart	Confirming your subscription…	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_return_screen.dart	Everything just unlocked — unlimited Mochis, family 	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_return_screen.dart	Start exploring	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_return_screen.dart	Still confirming…	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_return_screen.dart	Subscription	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_return_screen.dart	You are premium!	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/subscription_return_screen.dart	Your payment may still be processing. You can check 	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/trial_countdown_banner.dart	When your trial ends:	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/trial_expired_screen.dart	Choose which Mochi stays active. The rest are locked 	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/trial_expired_screen.dart	Continue free with $_selectedKeeperName	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/trial_expired_screen.dart	Continue free with 1 Mochi	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/trial_expired_screen.dart	Family	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/trial_expired_screen.dart	Max	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/trial_expired_screen.dart	Or — continue free with 1 Mochi	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/trial_expired_screen.dart	Unlimited Mochis, unlimited chat, full flashcards & quizzes.	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/trial_expired_screen.dart	You still have all your Mochis — nothing was deleted. 	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/trial_expired_screen.dart	Your free week is up! ⏰	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/trial_expired_screen.dart	up to 4 kids	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/trial_expired_screen.dart	⭐ Keep all your Mochis	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/trial_welcome_screen.dart	No card needed. We'll remind you before it ends.	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/trial_welcome_screen.dart	Start exploring! 🚀	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/presentation/trial_welcome_screen.dart	🎁 Premium is on usnfor 7 days!	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/widgets/web_upgrade_cta.dart	Checking…	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/subscription/widgets/web_upgrade_cta.dart	I've upgraded — refresh	deferred-PRF: reserved for the PR-F subscription session (App Store anti-steering, 🔒). English by design until PR-F; not a permanent allow. See DEFERRED.md.
+features/teach_mochi/presentation/teach_mochi_screen.dart	· $item	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/wiki_compiled/presentation/wiki_compiled_screen.dart	$score/10	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/wiki_viewer/presentation/wiki_viewer_screen.dart	$label · $pct%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+shared/models/avatar.dart	Art	backend-label: canonical backend enum label; DISPLAY localizes at render via label_localizer.dart (localizedSubject/localizedTier). Source-of-truth form kept English.
+shared/models/avatar.dart	Coding	backend-label: canonical backend enum label; DISPLAY localizes at render via label_localizer.dart (localizedSubject/localizedTier). Source-of-truth form kept English.
+shared/models/avatar.dart	English	backend-label: canonical backend enum label; DISPLAY localizes at render via label_localizer.dart (localizedSubject/localizedTier). Source-of-truth form kept English.
+shared/models/avatar.dart	General	backend-label: canonical backend enum label; DISPLAY localizes at render via label_localizer.dart (localizedSubject/localizedTier). Source-of-truth form kept English.
+shared/models/avatar.dart	Geography	backend-label: canonical backend enum label; DISPLAY localizes at render via label_localizer.dart (localizedSubject/localizedTier). Source-of-truth form kept English.
+shared/models/avatar.dart	Health	backend-label: canonical backend enum label; DISPLAY localizes at render via label_localizer.dart (localizedSubject/localizedTier). Source-of-truth form kept English.
+shared/models/avatar.dart	History	backend-label: canonical backend enum label; DISPLAY localizes at render via label_localizer.dart (localizedSubject/localizedTier). Source-of-truth form kept English.
+shared/models/avatar.dart	Languages	backend-label: canonical backend enum label; DISPLAY localizes at render via label_localizer.dart (localizedSubject/localizedTier). Source-of-truth form kept English.
+shared/models/avatar.dart	Literature	backend-label: canonical backend enum label; DISPLAY localizes at render via label_localizer.dart (localizedSubject/localizedTier). Source-of-truth form kept English.
+shared/models/avatar.dart	Maths	backend-label: canonical backend enum label; DISPLAY localizes at render via label_localizer.dart (localizedSubject/localizedTier). Source-of-truth form kept English.
+shared/models/avatar.dart	Music	backend-label: canonical backend enum label; DISPLAY localizes at render via label_localizer.dart (localizedSubject/localizedTier). Source-of-truth form kept English.
+shared/models/avatar.dart	Physical Education	backend-label: canonical backend enum label; DISPLAY localizes at render via label_localizer.dart (localizedSubject/localizedTier). Source-of-truth form kept English.
+shared/models/avatar.dart	Science	backend-label: canonical backend enum label; DISPLAY localizes at render via label_localizer.dart (localizedSubject/localizedTier). Source-of-truth form kept English.
+shared/models/entitlement.dart	Premium	backend-label: canonical backend enum label; DISPLAY localizes at render via label_localizer.dart (localizedSubject/localizedTier). Source-of-truth form kept English.

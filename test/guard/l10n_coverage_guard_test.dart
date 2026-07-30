@@ -13,51 +13,140 @@ import 'package:flutter_test/flutter_test.dart';
 /// The baseline (`l10n_coverage_baseline.txt`) is SHRINK-ONLY, like
 /// `layering_guard`: localize a string and you delete its line; you never add a
 /// line to silence a new hardcoded string unless it is legitimately English
-/// (identifier/debug/illustrative) — and then with a comment saying why. When the
-/// baseline reaches zero, coverage is 100% and stays there: a new hardcoded
-/// user-facing string fails CI, so the next walk cannot find a new surprise.
+/// (identifier/debug/illustrative). When the baseline reaches zero, coverage is
+/// 100% and stays there: a new hardcoded user-facing string fails CI, so the
+/// next walk cannot find a new surprise.
+///
+/// EACH BASELINE LINE IS `<relpath>\t<string>\t<reason>`. The reason is
+/// ENFORCED, not advisory: a line with no third column fails the guard
+/// ([unreasonedBaselineKeys]). This closes the escape hatch that a bare
+/// allow-list opens — an allow without an in-file, auditable reason is the
+/// guard lying in the polite direction (measured-looking, wrong in the visible
+/// place). A reason in a merged PR description evaporates; a reason in the file
+/// is auditable forever. Reason vocabulary: brand / format / nav-fallback /
+/// backend-label / device-meta / emoji-escape / deferred-<owner>.
 ///
 /// Regenerate the baseline after a localization PR:
 ///   UPDATE_L10N_BASELINE=1 flutter test test/guard/l10n_coverage_guard_test.dart
 /// (only ever run this to SHRINK it; review the diff — it must not grow.)
+/// Regeneration PRESERVES the reason on every surviving line; a newly-baselined
+/// string gets `NEEDS_REASON`, which then fails the guard until justified.
+const _reasonPlaceholder = 'NEEDS_REASON';
+
+/// One baseline entry: the `<relpath>\t<string>` [key] plus its [reason].
+class _Entry {
+  const _Entry(this.key, this.reason);
+  final String key;
+  final String reason;
+}
+
+/// Parse non-comment baseline lines into (key, reason). relpath and the scanned
+/// string never contain a tab (the scanner excludes tab/newline from extracted
+/// literals — see [_stringAt]), so the FIRST TWO tabs delimit the key and
+/// everything after the second tab is the reason. A line with no second tab has
+/// no reason (empty) — which [unreasonedBaselineKeys] then flags.
+List<_Entry> _parseBaseline(Iterable<String> lines) {
+  final out = <_Entry>[];
+  for (final l in lines) {
+    if (l.isEmpty || l.startsWith('#')) continue;
+    final t1 = l.indexOf('\t');
+    final t2 = t1 < 0 ? -1 : l.indexOf('\t', t1 + 1);
+    if (t2 < 0) {
+      out.add(_Entry(l, ''));
+    } else {
+      out.add(_Entry(l.substring(0, t2), l.substring(t2 + 1).trim()));
+    }
+  }
+  return out;
+}
+
+/// Keys of baseline entries carrying no defensible reason (empty or the
+/// [_reasonPlaceholder]). Public so the enforcement is unit-testable without
+/// the real file. THIS is the teeth: a bare allow is flagged here and fails.
+List<String> unreasonedBaselineKeys(Iterable<String> lines) =>
+    (_parseBaseline(lines)
+          ..removeWhere((e) => e.reason.isNotEmpty && e.reason != _reasonPlaceholder))
+        .map((e) => e.key)
+        .toList()
+      ..sort();
+
 void main() {
   final baselineFile = File('test/guard/l10n_coverage_baseline.txt');
 
-  test('no new hardcoded user-facing string enters a localized directory', () {
+  test('every hardcoded string is localized, or an allow WITH a stated reason',
+      () {
     final current = _scan();
+    final rawLines = baselineFile.readAsLinesSync();
 
     if (Platform.environment['UPDATE_L10N_BASELINE'] == '1') {
+      // Preserve reasons across regeneration: a surviving line keeps its reason;
+      // a newly-baselined string gets the placeholder so the next (non-update)
+      // run FAILS until a human justifies it — never a silent bare allow.
+      final oldReason = {
+        for (final e in _parseBaseline(rawLines)) e.key: e.reason
+      };
       final sorted = current.toList()..sort();
+      final body = sorted.map((k) {
+        final r = oldReason[k];
+        return '$k\t${(r == null || r.isEmpty) ? _reasonPlaceholder : r}';
+      }).join('\n');
       baselineFile.writeAsStringSync(
-          '# zh coverage baseline — SHRINK ONLY. Each line: <relpath>\\t<string>.\n'
-          '# Remove a line by localizing that string. Adding a line = an explicit\n'
-          '# "legitimately English" allow; include a reason in the PR.\n'
-          '${sorted.join('\n')}\n');
+          '# zh coverage baseline — SHRINK ONLY. Each line: <relpath>\\t<string>\\t<reason>.\n'
+          '# Remove a line by LOCALIZING that string (delete the line). A line may exist ONLY\n'
+          '# WITH a reason in the third column — a bare allow FAILS the guard (unreasonedBaselineKeys).\n'
+          '# Reason vocabulary: brand / format / nav-fallback / backend-label / device-meta /\n'
+          '# emoji-escape / deferred-<owner>. deferred-* = English-by-design debt with a named owner,\n'
+          '# NOT a permanent allow. See DEFERRED.md for the ledger.\n'
+          '$body\n');
       // ignore: avoid_print
-      print('Wrote ${sorted.length} baseline entries.');
+      print('Wrote ${sorted.length} baseline entries (reasons preserved).');
       return;
     }
 
-    final baseline = baselineFile
-        .readAsLinesSync()
-        .where((l) => l.isNotEmpty && !l.startsWith('#'))
-        .toSet();
+    final entries = _parseBaseline(rawLines);
+    final baselineKeys = {for (final e in entries) e.key};
 
-    final novel = current.difference(baseline).toList()..sort();
+    // (1) Shrink-only invariant: no NEW hardcoded string may enter.
+    final novel = current.difference(baselineKeys).toList()..sort();
     expect(novel, isEmpty,
         reason: '${novel.length} hardcoded user-facing string(s) are not in the '
             'coverage baseline. Localize them (route through AppLocalizations), '
             'or — only if legitimately English — add the line(s) to '
-            'test/guard/l10n_coverage_baseline.txt with a reason:\n'
-            '${novel.take(40).join('\n')}');
+            'test/guard/l10n_coverage_baseline.txt as '
+            '"<relpath>\\t<string>\\t<reason>":\n${novel.take(40).join('\n')}');
 
-    // Report (do not fail on) stale baseline lines so a shrink is visible.
-    final stale = baseline.difference(current);
+    // (2) Enforcement: every allow carries an auditable reason. A bare allow is
+    // the escape hatch that turns a measured baseline back into a scope list.
+    final unreasoned = unreasonedBaselineKeys(rawLines);
+    expect(unreasoned, isEmpty,
+        reason: '${unreasoned.length} allow-list entr(ies) have no reason in the '
+            'third column. State WHY each is not localized (brand / format / '
+            'nav-fallback / backend-label / device-meta / emoji-escape / '
+            'deferred-<owner>) as "<relpath>\\t<string>\\t<reason>":\n'
+            '${unreasoned.take(40).join('\n')}');
+
+    // (3) Report (do not fail on) stale baseline lines so a shrink is visible.
+    final stale = baselineKeys.difference(current);
     if (stale.isNotEmpty) {
       // ignore: avoid_print
       print('NOTE: ${stale.length} baseline entries are stale (localized or '
           'removed). Regenerate the baseline to drop them.');
     }
+  });
+
+  test('the reason-enforcement detects a bare allow (fail-without-fix proof)',
+      () {
+    // A line with no reason column is flagged; the same line WITH a reason is
+    // not; the NEEDS_REASON placeholder is treated as unreasoned.
+    expect(unreasonedBaselineKeys(['features/x_screen.dart\tHello']),
+        equals(['features/x_screen.dart\tHello']));
+    expect(
+        unreasonedBaselineKeys(
+            ['features/x_screen.dart\tHello\tformat: numerals only']),
+        isEmpty);
+    expect(
+        unreasonedBaselineKeys(['features/x_screen.dart\tHello\t$_reasonPlaceholder']),
+        equals(['features/x_screen.dart\tHello']));
   });
 }
 
