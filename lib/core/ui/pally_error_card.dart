@@ -3,6 +3,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 class PallyErrorCard extends StatelessWidget {
   const PallyErrorCard({
@@ -38,7 +39,7 @@ class PallyErrorCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.md),
-            Text('Something went wrong', style: AppTextStyles.title),
+            Text(AppLocalizations.of(context).uploadSomethingWrong, style: AppTextStyles.title),
             const SizedBox(height: AppSpacing.xs),
             Text(
               message,

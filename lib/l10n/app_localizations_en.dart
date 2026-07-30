@@ -4206,4 +4206,114 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get consentPendingYourGrownUp => 'your grown-up';
+
+  @override
+  String get notifQuizTitle => 'Quiz time!';
+
+  @override
+  String get notifQuizBody =>
+      'Your daily quiz is waiting — earn XP and keep your streak!';
+
+  @override
+  String get notifQuizChannelName => 'Daily Quiz Reminder';
+
+  @override
+  String get notifQuizChannelDesc => 'Reminds you to take your daily quiz';
+
+  @override
+  String notifSrsTitle(int count, String name) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cards due for $name',
+      one: '1 card due for $name',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get notifSrsBodyOverdue =>
+      'Quick 2-min review to lock it in your memory 📚';
+
+  @override
+  String get notifSrsBody =>
+      'Spaced repetition works best when you keep the streak 💪';
+
+  @override
+  String get notifSrsChannelName => 'Flashcard reviews';
+
+  @override
+  String get notifSrsChannelDesc =>
+      'Reminds you when spaced-repetition flashcards are due';
+
+  @override
+  String notifYourMascot(String mascot) {
+    return 'your $mascot';
+  }
+
+  @override
+  String deleteTutorTitle(String name) {
+    return 'Delete $name?';
+  }
+
+  @override
+  String get deleteTutorBody =>
+      'This permanently deletes this tutor and all their knowledge, chat history, and quiz progress. This cannot be undone.';
+
+  @override
+  String get deleteTutorKnowledgePages => 'Knowledge pages';
+
+  @override
+  String get deleteTutorChatMessages => 'Chat messages';
+
+  @override
+  String get deleteTutorQuizProgress => 'Quiz progress';
+
+  @override
+  String get deleteTutorAllDeleted => 'All will be deleted';
+
+  @override
+  String get deleteTutorAllLost => 'All will be lost';
+
+  @override
+  String get deleteTutorKeep => 'Keep Tutor';
+
+  @override
+  String get deleteTutorDelete => 'Delete';
+
+  @override
+  String get relevanceTitle => 'Hmm, this might not fit!';
+
+  @override
+  String relevanceBody(String subject) {
+    return 'This file doesn\'t seem to match \"$subject\". Your tutor works best with notes from that subject.';
+  }
+
+  @override
+  String get relevanceGoBack => 'Go Back';
+
+  @override
+  String get relevanceAddAnyway => 'Add Anyway';
+
+  @override
+  String get routerGoHome => 'Go home';
+
+  @override
+  String get appAsyncDefaultError =>
+      'Something went wrong. Pull down to retry.';
+
+  @override
+  String moduleItemsLearn(int count) {
+    return '$count learn';
+  }
+
+  @override
+  String moduleItemsTest(int count) {
+    return '$count test';
+  }
+
+  @override
+  String moduleItemsProve(int count) {
+    return '$count prove';
+  }
 }

@@ -86,7 +86,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await prefs.setBool(_kReminderEnabled, enabled);
     if (enabled) {
       await NotificationService.scheduleDailyQuizReminder(
-          _reminderTime.hour, _reminderTime.minute);
+          _reminderTime.hour, _reminderTime.minute,
+          l10n: lookupAppLocalizations(ref.read(localeControllerProvider)));
     } else {
       await NotificationService.cancelDailyQuizReminder();
     }
@@ -97,7 +98,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await prefs.setInt(_kReminderHour, t.hour);
     await prefs.setInt(_kReminderMinute, t.minute);
     if (_dailyReminder) {
-      await NotificationService.scheduleDailyQuizReminder(t.hour, t.minute);
+      await NotificationService.scheduleDailyQuizReminder(t.hour, t.minute,
+          l10n: lookupAppLocalizations(ref.read(localeControllerProvider)));
     }
   }
 

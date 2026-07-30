@@ -2,28 +2,12 @@
 # Remove a line by localizing that string. Adding a line = an explicit
 # "legitimately English" allow; include a reason in the PR.
 app/pally_app.dart	Pally
-app/router.dart	Go home
-app/router.dart	Something went wrong.
-core/services/notification_service.dart	$dueCount card${dueCount == 1 ? 
-core/services/notification_service.dart	Quiz time!
-core/ui/pally_delete_tutor_dialog.dart	Chat messages
-core/ui/pally_delete_tutor_dialog.dart	Delete
-core/ui/pally_delete_tutor_dialog.dart	Delete ${avatar.name}?
-core/ui/pally_delete_tutor_dialog.dart	Keep Tutor
-core/ui/pally_delete_tutor_dialog.dart	Knowledge pages
-core/ui/pally_delete_tutor_dialog.dart	Quiz progress
-core/ui/pally_delete_tutor_dialog.dart	This permanently deletes this tutor and all their knowledge, 
-core/ui/pally_error_card.dart	Something went wrong
-core/ui/pally_relevance_warning_dialog.dart	Add Anyway
-core/ui/pally_relevance_warning_dialog.dart	Go Back
-core/ui/pally_relevance_warning_dialog.dart	Hmm, this might not fit!
 core/ui/scaffold_shell.dart	Groups
 core/ui/scaffold_shell.dart	Home
 core/ui/scaffold_shell.dart	Library
 core/ui/scaffold_shell.dart	Me
 core/utils/device_info.dart	${a.manufacturer} ${a.model}
 core/utils/device_info.dart	Unknown device
-core/widgets/loading/mochi_generating.dart	Cancel
 features/avatar_hub/presentation/avatar_hub_screen.dart	$title. $subtitle
 features/avatar_hub/presentation/avatar_hub_screen.dart	${l.hubLearn}. $subtitle
 features/brain_health/presentation/brain_health_screen.dart	$q
@@ -35,12 +19,10 @@ features/collection/presentation/collection_screen.dart	$owned / $total
 features/exam_prep/presentation/exam_prep_screen.dart	$_masteryIcon $pct%
 features/exam_prep/presentation/exam_prep_screen.dart	$daysRemaining
 features/flashcards/presentation/flashcard_screen.dart	$current / $total
-features/flashcards/presentation/flashcard_view_model.dart	your Mochi
 features/groups/presentation/challenge_card.dart	$m:$s
 features/groups/presentation/challenge_card.dart	$pct%
 features/home/widgets/module_progress_banner.dart	${avatar.name} — ${module.masteryDisplayPct}%
 features/modules/presentation/module_list_screen.dart	$masteryPct%
-features/modules/presentation/module_list_screen.dart	${e.value} ${e.key}
 features/modules/presentation/module_player_screen.dart	${playerState.currentIndex + 1}/${playerState.totalItems}
 features/modules/presentation/widgets/complete_body.dart	$pct%
 features/ocr_awareness/screens/ocr_quality_warning.dart	${(_barAnimation.value * 100).round()}%
@@ -51,7 +33,6 @@ features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}
 features/onboarding/presentation/direct_onboarding_view_model.dart	No internet connection. Check your WiFi and try again.
 features/onboarding/presentation/onboarding_screen.dart	u{1F4CA}
 features/onboarding/presentation/onboarding_screen.dart	u{1F9E0}
-features/photo_question/presentation/homework_scan_detail_screen.dart	+$xpEarned XP
 features/photo_question/presentation/widgets/edit_questions_sheet.dart	${index + 1}
 features/photo_question/screens/ocr_confidence_preview_screen.dart	$pct%
 features/photo_question/screens/ocr_confidence_preview_screen.dart	${(item.confidence * 100).round()}%
@@ -125,7 +106,3 @@ shared/models/avatar.dart	Music
 shared/models/avatar.dart	Physical Education
 shared/models/avatar.dart	Science
 shared/models/entitlement.dart	Premium
-shared/widgets/app_async.dart	Something went wrong. Pull down to retry.
-shared/widgets/app_error_view.dart	Try again
-shared/widgets/mochi_placeholder.dart	Create a Mochi from the Home tab to see it here.
-shared/widgets/mochi_placeholder.dart	No Mochis yet

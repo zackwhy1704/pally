@@ -740,3 +740,41 @@ typed reason CODE — the sheet (features/consent) localizes at render; the mask
 | `consentGateFinishSetup` | Let's finish setting up your account so you can start learning | 我们来完成账户设置，你就可以开始学习啦 | |
 | `serverErrorRetry` | Server error ({status}) — please try again | 服务器出错（{status}）— 请再试一次 | |
 | `consentPendingYourGrownUp` | your grown-up | 你的大人 | |
+
+
+### PR-K3 — core/shared infra (delete-tutor + relevance dialogs, router error, notifications)
+
+Notification copy resolves context-free via `lookupAppLocalizations(persisted locale)` — a scheduled
+notification keeps the language it was scheduled in until the next idempotent reschedule. `{mascot}`
+via `mascotName`. Module item-count chips localize the closed backend set (learn/test/prove).
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `notifQuizTitle` | Quiz time! | 测验时间到！ | |
+| `notifQuizBody` | Your daily quiz is waiting — earn XP and keep your streak! | 你的每日测验在等你 — 赚取 XP，保持连胜！ | |
+| `notifQuizChannelName` | Daily Quiz Reminder | 每日测验提醒 | |
+| `notifQuizChannelDesc` | Reminds you to take your daily quiz | 提醒你完成每日测验 | |
+| `notifSrsTitle` | {count, plural, one{1 card due for {name}} other{{count} cards due for {name}}} | {count, plural, other{{name}的 {count} 张卡片到期了}} | |
+| `notifSrsBodyOverdue` | Quick 2-min review to lock it in your memory 📚 | 花 2 分钟快速复习，把知识牢牢记住 📚 | |
+| `notifSrsBody` | Spaced repetition works best when you keep the streak 💪 | 坚持间隔复习，效果最好 💪 | |
+| `notifSrsChannelName` | Flashcard reviews | 卡片复习 | |
+| `notifSrsChannelDesc` | Reminds you when spaced-repetition flashcards are due | 在间隔复习卡片到期时提醒你 | |
+| `notifYourMascot` | your {mascot} | 你的{mascot} | |
+| `deleteTutorTitle` | Delete {name}? | 要删除{name}吗？ | |
+| `deleteTutorBody` | This permanently deletes this tutor and all their knowledge, chat history, and quiz progress. This cannot be undone. | 这会永久删除这位导师及其所有知识、聊天记录和测验进度。此操作无法撤销。 | |
+| `deleteTutorKnowledgePages` | Knowledge pages | 知识页面 | |
+| `deleteTutorChatMessages` | Chat messages | 聊天记录 | |
+| `deleteTutorQuizProgress` | Quiz progress | 测验进度 | |
+| `deleteTutorAllDeleted` | All will be deleted | 将全部删除 | |
+| `deleteTutorAllLost` | All will be lost | 将全部丢失 | |
+| `deleteTutorKeep` | Keep Tutor | 保留导师 | |
+| `deleteTutorDelete` | Delete | 删除 | |
+| `relevanceTitle` | Hmm, this might not fit! | 嗯，这份材料可能不太合适！ | |
+| `relevanceBody` | This file doesn't seem to match "{subject}". Your tutor works best with notes from that subject. | 这个文件看起来和「{subject}」不太相符。导师用该科目的笔记学习，效果最好。 | |
+| `relevanceGoBack` | Go Back | 返回 | |
+| `relevanceAddAnyway` | Add Anyway | 仍要添加 | |
+| `routerGoHome` | Go home | 回到主页 | |
+| `appAsyncDefaultError` | Something went wrong. Pull down to retry. | 出了点问题。下拉即可重试。 | |
+| `moduleItemsLearn` | {count} learn | 学习 {count} 项 | |
+| `moduleItemsTest` | {count} test | 测试 {count} 项 | |
+| `moduleItemsProve` | {count} prove | 挑战 {count} 项 | |

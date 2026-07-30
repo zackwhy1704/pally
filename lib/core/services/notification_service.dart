@@ -2,12 +2,18 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 /// Wraps flutter_local_notifications for the daily quiz reminder.
 ///
 /// Call [init] once from main() before runApp. Then settings UI can call
 /// [scheduleDailyQuizReminder] / [cancelDailyQuizReminder] freely.
 class NotificationService {
+  // All user-visible notification copy arrives as an [AppLocalizations]
+  // resolved by the CALLER (context, or lookupAppLocalizations(persisted
+  // locale) in a view model) — this service has no BuildContext and never
+  // bakes a language. A scheduled notification keeps the language it was
+  // scheduled in until the next (idempotent) reschedule.
   NotificationService._();
 
   static final _plugin = FlutterLocalNotificationsPlugin();
@@ -42,7 +48,8 @@ class NotificationService {
     }
   }
 
-  static Future<void> scheduleDailyQuizReminder(int hour, int minute) async {
+  static Future<void> scheduleDailyQuizReminder(
+      int hour, int minute, {required AppLocalizations l10n}) async {
     if (!_initialised) await init();
     try {
       await _plugin.cancel(id: _quizNotificationId);
@@ -56,18 +63,18 @@ class NotificationService {
 
       await _plugin.zonedSchedule(
         id: _quizNotificationId,
-        title: 'Quiz time!',
-        body: 'Your daily quiz is waiting — earn XP and keep your streak!',
+        title: l10n.notifQuizTitle,
+        body: l10n.notifQuizBody,
         scheduledDate: scheduled,
-        notificationDetails: const NotificationDetails(
+        notificationDetails: NotificationDetails(
           android: AndroidNotificationDetails(
             _quizChannelId,
-            'Daily Quiz Reminder',
-            channelDescription: 'Reminds you to take your daily quiz',
+            l10n.notifQuizChannelName,
+            channelDescription: l10n.notifQuizChannelDesc,
             importance: Importance.high,
             priority: Priority.high,
           ),
-          iOS: DarwinNotificationDetails(
+          iOS: const DarwinNotificationDetails(
             presentAlert: true,
             presentBadge: true,
             presentSound: true,
@@ -102,6 +109,7 @@ class NotificationService {
     required String avatarName,
     required int dueCount,
     required DateTime? earliestDue,
+    required AppLocalizations l10n,
   }) async {
     if (!_initialised) await init();
     final id = _srsIdFor(avatarId);
@@ -122,11 +130,10 @@ class NotificationService {
             : today4pm.add(const Duration(days: 1));
         await _plugin.zonedSchedule(
           id: id,
-          title: '$dueCount card${dueCount == 1 ? '' : 's'} due for $avatarName',
-          body:
-              'Quick 2-min review to lock it in your memory 📚',
+          title: l10n.notifSrsTitle(dueCount, avatarName),
+          body: l10n.notifSrsBodyOverdue,
           scheduledDate: target,
-          notificationDetails: _srsDetails(),
+          notificationDetails: _srsDetails(l10n),
           androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         );
         appLog.i('[Notifications] SRS (overdue) avatar=$avatarName '
@@ -136,10 +143,10 @@ class NotificationService {
 
       await _plugin.zonedSchedule(
         id: id,
-        title: '$dueCount card${dueCount == 1 ? '' : 's'} due for $avatarName',
-        body: 'Spaced repetition works best when you keep the streak 💪',
+        title: l10n.notifSrsTitle(dueCount, avatarName),
+        body: l10n.notifSrsBody,
         scheduledDate: scheduled,
-        notificationDetails: _srsDetails(),
+        notificationDetails: _srsDetails(l10n),
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       );
       appLog.i('[Notifications] SRS scheduled avatar=$avatarName '
@@ -158,16 +165,16 @@ class NotificationService {
     } catch (_) {/* best-effort */}
   }
 
-  static NotificationDetails _srsDetails() => const NotificationDetails(
+  static NotificationDetails _srsDetails(AppLocalizations l10n) =>
+      NotificationDetails(
         android: AndroidNotificationDetails(
           _srsChannelId,
-          'Flashcard reviews',
-          channelDescription:
-              'Reminds you when spaced-repetition flashcards are due',
+          l10n.notifSrsChannelName,
+          channelDescription: l10n.notifSrsChannelDesc,
           importance: Importance.high,
           priority: Priority.high,
         ),
-        iOS: DarwinNotificationDetails(
+        iOS: const DarwinNotificationDetails(
           presentAlert: true,
           presentBadge: true,
           presentSound: true,

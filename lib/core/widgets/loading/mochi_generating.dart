@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -186,7 +187,7 @@ class _MochiGeneratingState extends State<MochiGenerating>
                 const SizedBox(height: AppSpacing.lg),
                 TextButton(
                   onPressed: widget.onCancel,
-                  child: Text('Cancel',
+                  child: Text(AppLocalizations.of(context).commonCancel,
                       style: AppTextStyles.body
                           .copyWith(color: AppColors.text2)),
                 ),

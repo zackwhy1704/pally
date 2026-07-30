@@ -4,6 +4,7 @@ import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/pally_button.dart';
 import 'package:pally/core/ui/pally_dialog.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 class PallyRelevanceWarningDialog extends StatelessWidget {
   const PallyRelevanceWarningDialog({
@@ -59,28 +60,26 @@ class PallyRelevanceWarningDialog extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'Hmm, this might not fit!',
+            AppLocalizations.of(context).relevanceTitle,
             style: AppTextStyles.title,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            reason ??
-                'This file doesn\'t seem to match "$subject". '
-                    'Your tutor works best with notes from that subject.',
+            reason ?? AppLocalizations.of(context).relevanceBody(subject),
             style: AppTextStyles.body.copyWith(color: AppColors.text2),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.lg),
           PallyDialog.buttonRow(
             secondary: PallyButton(
-              label: 'Go Back',
+              label: AppLocalizations.of(context).relevanceGoBack,
               onPressed: onGoBack,
               variant: PallyButtonVariant.outlined,
               fullWidth: true,
             ),
             primary: PallyButton(
-              label: 'Add Anyway',
+              label: AppLocalizations.of(context).relevanceAddAnyway,
               onPressed: onAddAnyway,
               fullWidth: true,
             ),

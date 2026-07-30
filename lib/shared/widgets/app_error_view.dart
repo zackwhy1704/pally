@@ -3,6 +3,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/shared/widgets/app_button.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 /// The single consistent error surface across the app.
 ///
@@ -48,7 +49,7 @@ class AppErrorView extends StatelessWidget {
             ] else if (onRetry != null) ...[
               const SizedBox(height: AppSpacing.lg),
               AppButton(
-                label: 'Try again',
+                label: AppLocalizations.of(context).commonTryAgainSentence,
                 onPressed: onRetry,
                 variant: AppButtonVariant.secondary,
               ),

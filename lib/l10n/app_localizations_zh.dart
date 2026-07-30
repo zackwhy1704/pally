@@ -3988,4 +3988,107 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get consentPendingYourGrownUp => '你的大人';
+
+  @override
+  String get notifQuizTitle => '测验时间到！';
+
+  @override
+  String get notifQuizBody => '你的每日测验在等你 — 赚取 XP，保持连胜！';
+
+  @override
+  String get notifQuizChannelName => '每日测验提醒';
+
+  @override
+  String get notifQuizChannelDesc => '提醒你完成每日测验';
+
+  @override
+  String notifSrsTitle(int count, String name) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$name的 $count 张卡片到期了',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get notifSrsBodyOverdue => '花 2 分钟快速复习，把知识牢牢记住 📚';
+
+  @override
+  String get notifSrsBody => '坚持间隔复习，效果最好 💪';
+
+  @override
+  String get notifSrsChannelName => '卡片复习';
+
+  @override
+  String get notifSrsChannelDesc => '在间隔复习卡片到期时提醒你';
+
+  @override
+  String notifYourMascot(String mascot) {
+    return '你的$mascot';
+  }
+
+  @override
+  String deleteTutorTitle(String name) {
+    return '要删除$name吗？';
+  }
+
+  @override
+  String get deleteTutorBody => '这会永久删除这位导师及其所有知识、聊天记录和测验进度。此操作无法撤销。';
+
+  @override
+  String get deleteTutorKnowledgePages => '知识页面';
+
+  @override
+  String get deleteTutorChatMessages => '聊天记录';
+
+  @override
+  String get deleteTutorQuizProgress => '测验进度';
+
+  @override
+  String get deleteTutorAllDeleted => '将全部删除';
+
+  @override
+  String get deleteTutorAllLost => '将全部丢失';
+
+  @override
+  String get deleteTutorKeep => '保留导师';
+
+  @override
+  String get deleteTutorDelete => '删除';
+
+  @override
+  String get relevanceTitle => '嗯，这份材料可能不太合适！';
+
+  @override
+  String relevanceBody(String subject) {
+    return '这个文件看起来和「$subject」不太相符。导师用该科目的笔记学习，效果最好。';
+  }
+
+  @override
+  String get relevanceGoBack => '返回';
+
+  @override
+  String get relevanceAddAnyway => '仍要添加';
+
+  @override
+  String get routerGoHome => '回到主页';
+
+  @override
+  String get appAsyncDefaultError => '出了点问题。下拉即可重试。';
+
+  @override
+  String moduleItemsLearn(int count) {
+    return '学习 $count 项';
+  }
+
+  @override
+  String moduleItemsTest(int count) {
+    return '测试 $count 项';
+  }
+
+  @override
+  String moduleItemsProve(int count) {
+    return '挑战 $count 项';
+  }
 }

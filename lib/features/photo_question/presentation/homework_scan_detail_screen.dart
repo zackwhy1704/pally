@@ -203,7 +203,7 @@ class _StatsRow extends StatelessWidget {
         const SizedBox(width: AppSpacing.sm),
         _StatChip(
           icon: '⭐',
-          label: '+$xpEarned XP',
+          label: l.commonXpPlus(xpEarned),
           color: AppColors.amber,
           bgColor: AppColors.amberL,
         ),

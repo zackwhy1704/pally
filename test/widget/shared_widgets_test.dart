@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/widgets/app_button.dart';
 import 'package:pally/shared/widgets/app_card.dart';
 import 'package:pally/shared/widgets/app_error_view.dart';
@@ -8,7 +9,10 @@ import 'package:pally/shared/widgets/app_empty_view.dart';
 import 'package:pally/shared/widgets/app_async.dart';
 
 Widget _wrap(Widget child) => ProviderScope(
-      child: MaterialApp(home: Scaffold(body: child)));
+      child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(body: child)));
 
 void main() {
   group('AppButton', () {

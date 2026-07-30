@@ -29,10 +29,10 @@ enum MochiVariant {
 /// so converting a surface is a one-widget swap that preserves its layout.
 ///
 /// ```dart
-/// const MochiPlaceholder(
+/// MochiPlaceholder(
 ///   variant: MochiVariant.empty,
-///   title: 'No Mochis yet',
-///   subtitle: 'Create a Mochi from the Home tab to see it here.',
+///   title: l10n.homeEmptyNoMochis(l10n.mascotName),
+///   subtitle: l10n.homeEmptyCreate(l10n.mascotName),
 /// )
 /// ```
 class MochiPlaceholder extends StatelessWidget {

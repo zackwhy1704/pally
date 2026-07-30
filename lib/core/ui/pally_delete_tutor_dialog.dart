@@ -5,6 +5,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_button.dart';
 import 'package:pally/core/ui/pally_dialog.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/avatar.dart';
 
 class PallyDeleteTutorDialog extends StatelessWidget {
@@ -42,6 +43,7 @@ class PallyDeleteTutorDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return PallyDialog(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -64,14 +66,13 @@ class PallyDeleteTutorDialog extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'Delete ${avatar.name}?',
+            l10n.deleteTutorTitle(avatar.name),
             style: AppTextStyles.title,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            'This permanently deletes this tutor and all their knowledge, '
-            'chat history, and quiz progress. This cannot be undone.',
+            l10n.deleteTutorBody,
             style: AppTextStyles.body.copyWith(color: AppColors.text2),
             textAlign: TextAlign.center,
           ),
@@ -86,31 +87,31 @@ class PallyDeleteTutorDialog extends StatelessWidget {
               children: [
                 _StatRow(
                     icon: '📚',
-                    label: 'Knowledge pages',
+                    label: l10n.deleteTutorKnowledgePages,
                     value: '${avatar.wikiPageCount}'),
                 const SizedBox(height: 4),
-                const _StatRow(
+                _StatRow(
                     icon: '💬',
-                    label: 'Chat messages',
-                    value: 'All will be deleted'),
+                    label: l10n.deleteTutorChatMessages,
+                    value: l10n.deleteTutorAllDeleted),
                 const SizedBox(height: 4),
-                const _StatRow(
+                _StatRow(
                     icon: '⭐',
-                    label: 'Quiz progress',
-                    value: 'All will be lost'),
+                    label: l10n.deleteTutorQuizProgress,
+                    value: l10n.deleteTutorAllLost),
               ],
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
           PallyDialog.buttonRow(
             secondary: PallyButton(
-              label: 'Keep Tutor',
+              label: l10n.deleteTutorKeep,
               onPressed: onCancel,
               variant: PallyButtonVariant.outlined,
               fullWidth: true,
             ),
             primary: PallyButton(
-              label: 'Delete',
+              label: l10n.deleteTutorDelete,
               onPressed: onDelete,
               variant: PallyButtonVariant.destructive,
               fullWidth: true,

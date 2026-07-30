@@ -4,8 +4,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
+import 'package:pally/core/i18n/locale_controller.dart';
 import 'package:pally/core/services/notification_service.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/flash_card.dart';
 
 part 'flashcard_view_model.g.dart';
@@ -241,19 +243,24 @@ class FlashCardViewModel extends _$FlashCardViewModel {
               .where((c) => _isSameDay(c.nextReview!, earliest))
               .length;
 
-      final name = await _fetchAvatarName();
+      // Resolve copy in the user's persisted UI language — this VM has no
+      // BuildContext, so the generated context-free lookup carries the locale.
+      final l10n =
+          lookupAppLocalizations(ref.read(localeControllerProvider));
+      final name = await _fetchAvatarName(l10n);
       await NotificationService.scheduleSrsReminder(
         avatarId: _avatarId,
         avatarName: name,
         dueCount: count,
         earliestDue: earliest,
+        l10n: l10n,
       );
     } catch (e) {
       appLog.w('[Flashcards] SRS reschedule failed: $e');
     }
   }
 
-  Future<String> _fetchAvatarName() async {
+  Future<String> _fetchAvatarName(AppLocalizations l10n) async {
     try {
       final dio = ref.read(dioProvider);
       final response = await dio
@@ -261,9 +268,9 @@ class FlashCardViewModel extends _$FlashCardViewModel {
       final data = (response.data?['data'] is Map
               ? response.data!['data']
               : response.data) as Map<String, dynamic>;
-      return (data['name'] as String?) ?? 'your Mochi';
+      return (data['name'] as String?) ?? l10n.notifYourMascot(l10n.mascotName);
     } catch (_) {
-      return 'your Mochi';
+      return l10n.notifYourMascot(l10n.mascotName);
     }
   }
 

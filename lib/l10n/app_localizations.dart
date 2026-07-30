@@ -6931,6 +6931,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'your grown-up'**
   String get consentPendingYourGrownUp;
+
+  /// No description provided for @notifQuizTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz time!'**
+  String get notifQuizTitle;
+
+  /// No description provided for @notifQuizBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your daily quiz is waiting — earn XP and keep your streak!'**
+  String get notifQuizBody;
+
+  /// No description provided for @notifQuizChannelName.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Quiz Reminder'**
+  String get notifQuizChannelName;
+
+  /// No description provided for @notifQuizChannelDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminds you to take your daily quiz'**
+  String get notifQuizChannelDesc;
+
+  /// No description provided for @notifSrsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 card due for {name}} other{{count} cards due for {name}}}'**
+  String notifSrsTitle(int count, String name);
+
+  /// No description provided for @notifSrsBodyOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick 2-min review to lock it in your memory 📚'**
+  String get notifSrsBodyOverdue;
+
+  /// No description provided for @notifSrsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Spaced repetition works best when you keep the streak 💪'**
+  String get notifSrsBody;
+
+  /// No description provided for @notifSrsChannelName.
+  ///
+  /// In en, this message translates to:
+  /// **'Flashcard reviews'**
+  String get notifSrsChannelName;
+
+  /// No description provided for @notifSrsChannelDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminds you when spaced-repetition flashcards are due'**
+  String get notifSrsChannelDesc;
+
+  /// No description provided for @notifYourMascot.
+  ///
+  /// In en, this message translates to:
+  /// **'your {mascot}'**
+  String notifYourMascot(String mascot);
+
+  /// No description provided for @deleteTutorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}?'**
+  String deleteTutorTitle(String name);
+
+  /// No description provided for @deleteTutorBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This permanently deletes this tutor and all their knowledge, chat history, and quiz progress. This cannot be undone.'**
+  String get deleteTutorBody;
+
+  /// No description provided for @deleteTutorKnowledgePages.
+  ///
+  /// In en, this message translates to:
+  /// **'Knowledge pages'**
+  String get deleteTutorKnowledgePages;
+
+  /// No description provided for @deleteTutorChatMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat messages'**
+  String get deleteTutorChatMessages;
+
+  /// No description provided for @deleteTutorQuizProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz progress'**
+  String get deleteTutorQuizProgress;
+
+  /// No description provided for @deleteTutorAllDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'All will be deleted'**
+  String get deleteTutorAllDeleted;
+
+  /// No description provided for @deleteTutorAllLost.
+  ///
+  /// In en, this message translates to:
+  /// **'All will be lost'**
+  String get deleteTutorAllLost;
+
+  /// No description provided for @deleteTutorKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Tutor'**
+  String get deleteTutorKeep;
+
+  /// No description provided for @deleteTutorDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteTutorDelete;
+
+  /// No description provided for @relevanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hmm, this might not fit!'**
+  String get relevanceTitle;
+
+  /// No description provided for @relevanceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This file doesn\'t seem to match \"{subject}\". Your tutor works best with notes from that subject.'**
+  String relevanceBody(String subject);
+
+  /// No description provided for @relevanceGoBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Go Back'**
+  String get relevanceGoBack;
+
+  /// No description provided for @relevanceAddAnyway.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Anyway'**
+  String get relevanceAddAnyway;
+
+  /// No description provided for @routerGoHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Go home'**
+  String get routerGoHome;
+
+  /// No description provided for @appAsyncDefaultError.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Pull down to retry.'**
+  String get appAsyncDefaultError;
+
+  /// No description provided for @moduleItemsLearn.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} learn'**
+  String moduleItemsLearn(int count);
+
+  /// No description provided for @moduleItemsTest.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} test'**
+  String moduleItemsTest(int count);
+
+  /// No description provided for @moduleItemsProve.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} prove'**
+  String moduleItemsProve(int count);
 }
 
 class _AppLocalizationsDelegate

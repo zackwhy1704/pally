@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/shared/widgets/app_error_view.dart';
 import 'package:pally/shared/widgets/app_empty_view.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 /// Renders an [AsyncValue<T>] into the standard four-state widget set:
 ///  • loading → [PallyLoadingSpinner]
@@ -50,7 +51,10 @@ class AppAsync<T> extends StatelessWidget {
     return value.when(
       loading: () => loadingWidget ?? const PallyLoadingSpinner(),
       error: (e, _) => AppErrorView(
-        message: errorMessage ?? _defaultError(e),
+        // Never surface raw exception text — keep it user-safe, localized at
+        // render time.
+        message:
+            errorMessage ?? AppLocalizations.of(context).appAsyncDefaultError,
         onRetry: onRetry,
       ),
       data: (d) {
@@ -66,8 +70,4 @@ class AppAsync<T> extends StatelessWidget {
     );
   }
 
-  static String _defaultError(Object e) {
-    // Never surface raw exception text — keep it user-safe.
-    return 'Something went wrong. Pull down to retry.';
-  }
 }

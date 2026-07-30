@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -766,13 +767,14 @@ GoRouter buildAppRouter({
             const Icon(Icons.error_outline_rounded,
                 size: 48, color: AppColors.text3),
             const SizedBox(height: AppSpacing.md),
-            Text('Something went wrong.', style: AppTextStyles.title),
+            Text(AppLocalizations.of(context).commonSomethingWrong,
+                style: AppTextStyles.title),
             const SizedBox(height: AppSpacing.sm),
             FilledButton(
               onPressed: () => context.go('/'),
               style: FilledButton.styleFrom(
                   backgroundColor: AppColors.purple),
-              child: const Text('Go home'),
+              child: Text(AppLocalizations.of(context).routerGoHome),
             ),
           ],
         ),

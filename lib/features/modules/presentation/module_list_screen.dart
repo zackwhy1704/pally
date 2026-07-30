@@ -372,7 +372,8 @@ class _ModuleCard extends StatelessWidget {
                       spacing: AppSpacing.sm,
                       children: module.itemCounts.entries.map((e) {
                         return Text(
-                          '${e.value} ${e.key}',
+                          _itemCountLabel(
+                              AppLocalizations.of(context), e.key, e.value),
                           style: AppTextStyles.caption.copyWith(
                             color: AppColors.text2,
                           ),
@@ -447,3 +448,16 @@ class _StageBadge extends StatelessWidget {
     );
   }
 }
+
+/// Localizes a module item-count chip. The backend emits a CLOSED key set
+/// ('learn' / 'test' / 'prove' — ModuleProgressionService.itemCounts); one
+/// switch on the canonical code, the ARB holds the per-locale strings, and an
+/// unknown key falls back to the raw backend form (never crashes on a new
+/// stage).
+String _itemCountLabel(AppLocalizations l, String key, int count) =>
+    switch (key) {
+      'learn' => l.moduleItemsLearn(count),
+      'test' => l.moduleItemsTest(count),
+      'prove' => l.moduleItemsProve(count),
+      _ => '$count $key',
+    };
