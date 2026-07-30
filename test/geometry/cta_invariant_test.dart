@@ -246,13 +246,15 @@ void main() {
 
   // ── paywall (small + tall) ─────────────────────────────────────────────────
   testWidgets('paywall — "See plans" on screen @360x640', (tester) async {
+    final l = await AppLocalizations.delegate.load(_activeLocale);
     await _pump(tester, const PaywallScreen());
-    _expectCtaOnScreen(tester, find.text('See plans'), 'paywall@640');
+    _expectCtaOnScreen(tester, find.text(l.paywallSeePlans), 'paywall@640');
   });
 
   testWidgets('paywall — "See plans" on screen @360x850', (tester) async {
+    final l = await AppLocalizations.delegate.load(_activeLocale);
     await _pump(tester, const PaywallScreen(), height: _tall);
-    _expectCtaOnScreen(tester, find.text('See plans'), 'paywall@850',
+    _expectCtaOnScreen(tester, find.text(l.paywallSeePlans), 'paywall@850',
         height: _tall);
   });
 

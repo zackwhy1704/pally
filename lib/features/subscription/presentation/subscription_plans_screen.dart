@@ -9,74 +9,77 @@ import 'package:pally/features/subscription/trial_status_provider.dart';
 import 'package:pally/shared/models/entitlement.dart';
 import 'package:pally/features/subscription/web_billing.dart';
 import 'package:pally/features/subscription/widgets/web_upgrade_cta.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
-// Plan descriptor — all data needed to render a card.
+// Plan descriptor — id + price data only. All DISPLAY text (title, subtitle,
+// features, badge) is localized at render via the _plan* resolvers below, keyed
+// on the stable [id]; the const list holds only the price strings (which stay
+// literal + gated for App Store anti-steering) and layout flags.
 class _Plan {
   const _Plan({
     required this.id,
-    required this.title,
-    required this.subtitle,
     required this.price,
     required this.annualPrice,
-    required this.features,
     this.recommended = false,
-    this.badge,
   });
 
   final String id;        // matches backend plan key
-  final String title;
-  final String subtitle;
   final String price;       // monthly price string
   final String annualPrice; // annual price string (shown in toggle)
-  final List<String> features;
   final bool recommended;
-  final String? badge; // "Best value" etc.
 }
 
 const _plans = [
+  _Plan(id: 'pro_monthly', price: r'US$9.99/mo', annualPrice: r'US$79/yr'),
   _Plan(
-    id: 'pro_monthly',
-    title: 'Pro',
-    subtitle: '1 student · all AI features',
-    price: r'US$9.99/mo',
-    annualPrice: r'US$79/yr',
-    features: [
-      '100 AI messages / day',
-      'Up to 5 Mochis',
-      'Quiz & flashcards',
-      'Homework photo scan',
-    ],
-  ),
-  _Plan(
-    id: 'max_monthly',
-    title: 'Max',
-    subtitle: '1 student · smarter AI for hard problems',
-    price: r'US$19.99/mo',
-    annualPrice: r'US$159/yr',
-    features: [
-      'Unlimited AI messages',
-      'Unlimited Mochis',
-      'Sonnet model for complex questions',
-      'All Pro features',
-    ],
-    recommended: true,
-    badge: 'Best for exams',
-  ),
-  _Plan(
-    id: 'family_monthly',
-    title: 'Family',
-    subtitle: 'Up to 4 students',
-    price: r'US$34.99/mo',
-    annualPrice: r'US$279/yr',
-    features: [
-      'Everything in Max',
-      'Up to 4 child accounts',
-      'Parent dashboard',
-      'Shared star rewards',
-    ],
-    badge: 'Most popular',
-  ),
+      id: 'max_monthly',
+      price: r'US$19.99/mo',
+      annualPrice: r'US$159/yr',
+      recommended: true),
+  _Plan(id: 'family_monthly', price: r'US$34.99/mo', annualPrice: r'US$279/yr'),
 ];
+
+// ── Per-plan localized display (keyed on the stable backend plan id) ──────────
+// A semantic switch on the canonical id — the ARB holds the per-locale strings,
+// no language conditional (B-EXT.2). Unknown ids degrade to the raw id / empty.
+String _planTitle(AppLocalizations l, String id) => switch (id) {
+      'pro_monthly' => l.tierPro,
+      'max_monthly' => l.tierMax,
+      'family_monthly' => l.tierFamily,
+      _ => id,
+    };
+String _planSubtitle(AppLocalizations l, String id) => switch (id) {
+      'pro_monthly' => l.subPlansProSubtitle,
+      'max_monthly' => l.subPlansMaxSubtitle,
+      'family_monthly' => l.subPlansFamilySubtitle,
+      _ => '',
+    };
+List<String> _planFeatures(AppLocalizations l, String id) => switch (id) {
+      'pro_monthly' => [
+          l.subPlansProFeat1,
+          l.subPlansProFeat2(l.mascotName),
+          l.subPlansProFeat3,
+          l.subPlansProFeat4,
+        ],
+      'max_monthly' => [
+          l.subPlansMaxFeat1,
+          l.subPlansMaxFeat2(l.mascotName),
+          l.subPlansMaxFeat3,
+          l.subPlansMaxFeat4,
+        ],
+      'family_monthly' => [
+          l.subPlansFamilyFeat1,
+          l.subPlansFamilyFeat2,
+          l.subPlansFamilyFeat3,
+          l.subPlansFamilyFeat4,
+        ],
+      _ => const [],
+    };
+String? _planBadge(AppLocalizations l, String id) => switch (id) {
+      'max_monthly' => l.subPlansBadgeExams,
+      'family_monthly' => l.subPlansBadgePopular,
+      _ => null,
+    };
 
 // Map from backend plan string to plan ID used above.
 String? _planIdFromBackend(String? planKey) {
@@ -125,6 +128,7 @@ class _SubscriptionPlansScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final entAsync = ref.watch(entitlementVmProvider);
     final trialAsync = ref.watch(trialStatusProvider);
 
@@ -138,11 +142,11 @@ class _SubscriptionPlansScreenState
         appBar: AppBar(
           backgroundColor: AppColors.bg,
           elevation: 0,
-          title: Text('Choose your plan', style: AppTextStyles.title),
+          title: Text(l10n.subPlansChooseTitle, style: AppTextStyles.title),
           centerTitle: true,
         ),
-        body: const Center(
-          child: Text('Could not load subscription info. Try again.'),
+        body: Center(
+          child: Text(l10n.subPlansLoadError),
         ),
       ),
       data: (ent) {
@@ -172,7 +176,7 @@ class _SubscriptionPlansScreenState
             backgroundColor: AppColors.bg,
             elevation: 0,
             title: Text(
-              isPremium ? 'Your subscription' : 'Upgrade Apalchi',
+              isPremium ? l10n.subPlansYourSubscription : l10n.subPlansUpgradeTitle,
               style: AppTextStyles.title,
             ),
             centerTitle: true,
@@ -191,14 +195,14 @@ class _SubscriptionPlansScreenState
                         // Header copy
                         Text(
                           isCentreSourced
-                              ? 'Your Premium comes from your centre. Enjoy unlimited chat and Mochis!'
+                              ? l10n.subPlansHeaderCentre(l10n.mascotName)
                               : isOnTrial
-                                  ? 'Your free trial ends in $trialDaysLeft day${trialDaysLeft == 1 ? '' : 's'}.'
-                                      ' Subscribe to keep all your Mochis.'
+                                  ? l10n.subPlansHeaderTrial(
+                                      trialDaysLeft, l10n.mascotName)
                                   : isPremium
-                                      ? 'You\'re on ${tier ?? prettyTier(ent.plan)}.'
-                                          ' Manage or cancel anytime on the web.'
-                                      : 'Start with a 7-day free trial. Cancel anytime.',
+                                      ? l10n.subPlansHeaderPremium(
+                                          tier ?? prettyTier(ent.plan))
+                                      : l10n.subPlansHeaderFree,
                           style: AppTextStyles.body
                               .copyWith(color: AppColors.text2),
                         ),
@@ -263,12 +267,13 @@ class _BillingToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Flexible(child: _tab('Monthly', !annual, () => onToggle(false))),
+        Flexible(child: _tab(l10n.subPlansMonthly, !annual, () => onToggle(false))),
         const SizedBox(width: AppSpacing.xs),
-        Flexible(child: _tab('Annual  (save ~34%)', annual, () => onToggle(true))),
+        Flexible(child: _tab(l10n.subPlansAnnual, annual, () => onToggle(true))),
       ],
     );
   }
@@ -306,6 +311,7 @@ class _BillingToggle extends StatelessWidget {
 class _FreeTierBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: AppSpacing.card,
       decoration: BoxDecoration(
@@ -321,9 +327,9 @@ class _FreeTierBanner extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Free', style: AppTextStyles.title),
+                Text(l10n.tierFree, style: AppTextStyles.title),
                 Text(
-                  '20 messages/day · 1 Mochi · basic features',
+                  l10n.subPlansFreeFeatures(l10n.mascotName),
                   style: AppTextStyles.bodySmall,
                 ),
               ],
@@ -335,7 +341,7 @@ class _FreeTierBanner extends StatelessWidget {
               color: AppColors.outline,
               borderRadius: BorderRadius.circular(6),
             ),
-            child: Text('Current',
+            child: Text(l10n.subPlansCurrent,
                 style:
                     AppTextStyles.caption.copyWith(color: AppColors.text2)),
           ),
@@ -367,6 +373,8 @@ class _PlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final badge = _planBadge(l, plan.id);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -408,18 +416,18 @@ class _PlanCard extends StatelessWidget {
                   const SizedBox(width: AppSpacing.sm),
                   // Title + badges
                   Flexible(
-                    child: Text(plan.title,
+                    child: Text(_planTitle(l, plan.id),
                         style: AppTextStyles.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis),
                   ),
                   const SizedBox(width: AppSpacing.xs),
                   if (isCurrent)
-                    const _Badge('Current', AppColors.teal)
-                  else if (plan.badge != null)
-                    _Badge(plan.badge!, AppColors.gold)
+                    _Badge(l.subPlansCurrent, AppColors.teal)
+                  else if (badge != null)
+                    _Badge(badge, AppColors.gold)
                   else if (plan.recommended)
-                    const _Badge('Best value', AppColors.purple),
+                    _Badge(l.subPlansBestValue, AppColors.purple),
                   // Price pushed to right — hidden on gated iOS (anti-steering).
                   const Spacer(),
                   if (allowPrice)
@@ -436,10 +444,11 @@ class _PlanCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(plan.subtitle, style: AppTextStyles.bodySmall),
+                    Text(_planSubtitle(l, plan.id),
+                        style: AppTextStyles.bodySmall),
                     if (selected) ...[
                       const SizedBox(height: AppSpacing.sm),
-                      for (final f in plan.features)
+                      for (final f in _planFeatures(l, plan.id))
                         Padding(
                           padding: const EdgeInsets.only(bottom: 2),
                           child: Row(
@@ -532,12 +541,11 @@ class _ActionArea extends StatelessWidget {
           if (isCentreSourced)
             const _CentreBanner()
           else if (showManage)
-            const WebUpgradeCta(
+            WebUpgradeCta(
               url: kWebAccountUrl,
               displayUrl: kWebAccountDisplay,
-              intro: 'Manage your plan, update your card, or cancel anytime on '
-                  'the Apalchi website.',
-              launchLabel: 'Manage on web',
+              intro: AppLocalizations.of(context).subPlansManageIntro,
+              launchLabel: AppLocalizations.of(context).subPlansManageOnWeb,
               showRefresh: false,
               showEmailLink: false,
             )
@@ -563,7 +571,7 @@ class _CentreBanner extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          '⭐ Premium via your centre',
+          AppLocalizations.of(context).subPlansCentreBanner,
           style: AppTextStyles.body.copyWith(
             color: AppColors.teal,
             fontWeight: FontWeight.w700,

@@ -75,6 +75,7 @@ class _TrialExpiredScreenState extends ConsumerState<TrialExpiredScreen> {
     final avatarsAsync = ref.watch(homeViewModelProvider);
     final avatars = avatarsAsync.valueOrNull ?? [];
     final hasMultiple = avatars.length > 1;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -92,12 +93,11 @@ class _TrialExpiredScreenState extends ConsumerState<TrialExpiredScreen> {
                     width: 90, height: 90),
               ),
               const SizedBox(height: AppSpacing.md),
-              Text('Your free week is up! ⏰',
+              Text(l10n.trialExpiredTitle,
                   style: AppTextStyles.heading1, textAlign: TextAlign.center),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                'You still have all your Mochis — nothing was deleted. '
-                'Subscribe to keep them all, or pick one to stay free.',
+                l10n.trialExpiredBody(l10n.mascotName),
                 style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 textAlign: TextAlign.center,
               ),
@@ -116,8 +116,8 @@ class _TrialExpiredScreenState extends ConsumerState<TrialExpiredScreen> {
                 ),
                 child: Column(
                   children: [
-                    const Text('⭐ Keep all your Mochis',
-                        style: TextStyle(
+                    Text(l10n.trialExpiredKeepAll(l10n.mascotName),
+                        style: const TextStyle(
                           fontFamily: 'Nunito',
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
@@ -125,7 +125,7 @@ class _TrialExpiredScreenState extends ConsumerState<TrialExpiredScreen> {
                         )),
                     const SizedBox(height: 4),
                     Text(
-                      'Unlimited Mochis, unlimited chat, full flashcards & quizzes.',
+                      l10n.trialExpiredPerks(l10n.mascotName),
                       style: TextStyle(
                           fontFamily: 'Nunito',
                           fontSize: 13,
@@ -137,7 +137,7 @@ class _TrialExpiredScreenState extends ConsumerState<TrialExpiredScreen> {
                       children: [
                         Expanded(
                           child: _PlanButton(
-                            label: 'Max',
+                            label: l10n.tierMax,
                             price: allowPriceDisplay(ref) ? 'US\$19.99/mo' : null,
                             onTap: () => context.push('/subscription/plans'),
                           ),
@@ -145,10 +145,10 @@ class _TrialExpiredScreenState extends ConsumerState<TrialExpiredScreen> {
                         const SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: _PlanButton(
-                            label: 'Family',
+                            label: l10n.tierFamily,
                             price:
                                 allowPriceDisplay(ref) ? 'US\$34.99/mo' : null,
-                            subtitle: 'up to 4 kids',
+                            subtitle: l10n.trialExpiredUpTo4Kids,
                             onTap: () => context.push('/subscription/plans'),
                           ),
                         ),
@@ -162,13 +162,12 @@ class _TrialExpiredScreenState extends ConsumerState<TrialExpiredScreen> {
               // Mochi picker (only when >1 Mochi exists)
               if (hasMultiple) ...[
                 Text(
-                  'Or — continue free with 1 Mochi',
+                  l10n.trialExpiredOrContinue(l10n.mascotName),
                   style: AppTextStyles.title.copyWith(fontSize: 16),
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  'Choose which Mochi stays active. The rest are locked '
-                  '(🔒) but not deleted — subscribing restores them instantly.',
+                  l10n.trialExpiredPickBody(l10n.mascotName),
                   style: AppTextStyles.bodySmall
                       .copyWith(color: AppColors.text2),
                 ),
@@ -189,7 +188,8 @@ class _TrialExpiredScreenState extends ConsumerState<TrialExpiredScreen> {
                         borderRadius: BorderRadius.circular(14)),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
-                  child: Text('Continue free with $_selectedKeeperName'),
+                  child: Text(
+                      l10n.trialExpiredContinueWith(_selectedKeeperName(l10n))),
                 ),
               ] else ...[
                 // Only 1 Mochi — just offer subscribe or continue free
@@ -202,7 +202,8 @@ class _TrialExpiredScreenState extends ConsumerState<TrialExpiredScreen> {
                         borderRadius: BorderRadius.circular(14)),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
-                  child: const Text('Continue free with 1 Mochi'),
+                  child: Text(l10n.trialExpiredContinueWith(
+                      l10n.trialKeeperFallback(l10n.mascotName))),
                 ),
               ],
 
@@ -214,13 +215,13 @@ class _TrialExpiredScreenState extends ConsumerState<TrialExpiredScreen> {
     );
   }
 
-  String get _selectedKeeperName {
+  String _selectedKeeperName(AppLocalizations l) {
     if (_selectedKeeperId == null) return '…';
     final avatars = ref.read(homeViewModelProvider).valueOrNull ?? [];
     return avatars
         .where((a) => a.id == _selectedKeeperId)
         .map((a) => a.name)
-        .firstOrNull ?? '1 Mochi';
+        .firstOrNull ?? l.trialKeeperFallback(l.mascotName);
   }
 }
 

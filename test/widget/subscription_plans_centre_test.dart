@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
 import 'package:pally/features/subscription/presentation/subscription_plans_screen.dart';
@@ -19,7 +20,11 @@ final _router = GoRouter(
 
 Widget _wrap(List<Override> overrides) => ProviderScope(
       overrides: overrides,
-      child: MaterialApp.router(routerConfig: _router),
+      child: MaterialApp.router(
+        routerConfig: _router,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+      ),
     );
 
 // Stub notifier: returns a fixed Entitlement without hitting the network.

@@ -4316,4 +4316,429 @@ class AppLocalizationsEn extends AppLocalizations {
   String moduleItemsProve(int count) {
     return '$count prove';
   }
+
+  @override
+  String get subReturnTitle => 'Subscription';
+
+  @override
+  String get subReturnSuccess => 'You are premium!';
+
+  @override
+  String subReturnSuccessBody(String mascot) {
+    return 'Everything just unlocked — unlimited ${mascot}s, family sharing, parent dashboard, and more.';
+  }
+
+  @override
+  String get subReturnStartExploring => 'Start exploring';
+
+  @override
+  String get subReturnStillConfirming => 'Still confirming…';
+
+  @override
+  String get subReturnTimeoutBody =>
+      'Your payment may still be processing. You can check Settings → Subscription in a minute or two.';
+
+  @override
+  String get subReturnBackToApalchi => 'Back to Apalchi';
+
+  @override
+  String get subReturnConfirming => 'Confirming your subscription…';
+
+  @override
+  String get webCtaDefaultIntro =>
+      'Subscriptions are managed on the Apalchi website. Sign in with the same account to upgrade — your app unlocks automatically.';
+
+  @override
+  String get webCtaContinueOnWeb => 'Continue on web';
+
+  @override
+  String get webCtaCouldntOpenBrowser =>
+      'Couldn\'t open your browser. Tap “Copy link” above and paste it.';
+
+  @override
+  String get webCtaEmailFailNow =>
+      'Couldn\'t send right now — copy the link above instead.';
+
+  @override
+  String get webCtaEmailBothSent =>
+      'Sent! Check your email — we also pushed a notification with the link.';
+
+  @override
+  String get webCtaEmailSent => 'Sent! Check your email for the link.';
+
+  @override
+  String get webCtaPushSent => 'Sent you a notification with the link.';
+
+  @override
+  String get webCtaRateLimited =>
+      'You\'ve requested this a few times — try again in a little while.';
+
+  @override
+  String get webCtaEmailError =>
+      'Couldn\'t send the link. Check your connection and try again.';
+
+  @override
+  String get webCtaNotActiveYet =>
+      'Not active yet. Finish checkout in your browser, then tap again.';
+
+  @override
+  String get webCtaCopied => 'Copied';
+
+  @override
+  String get webCtaCopyLink => 'Copy link';
+
+  @override
+  String get webCtaSending => 'Sending…';
+
+  @override
+  String get webCtaEmailLink => 'Email me the link';
+
+  @override
+  String get webCtaChecking => 'Checking…';
+
+  @override
+  String get webCtaUpgradedRefresh => 'I\'ve upgraded — refresh';
+
+  @override
+  String trialTimeHoursLeft(int hours) {
+    return '${hours}h left';
+  }
+
+  @override
+  String trialTimeDaysLeft(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days left',
+      one: '1 day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String trialBannerUrgent(String mascot, String time) {
+    return 'Last day of Premium! ⏳ $time — keep your ${mascot}s.';
+  }
+
+  @override
+  String trialBannerWarning(String mascot, String time) {
+    return '$time of Premium — subscribe to keep all your ${mascot}s.';
+  }
+
+  @override
+  String trialBannerCalm(String mascot, String time) {
+    return '$time of Premium · Enjoying unlimited ${mascot}s? Keep them after.';
+  }
+
+  @override
+  String get trialKeepPremium => 'Keep Premium';
+
+  @override
+  String get trialWhenEnds => 'When your trial ends:';
+
+  @override
+  String trialLockMochis(String mascot) {
+    return '🔒 Extra ${mascot}s locked (you keep 1 free)';
+  }
+
+  @override
+  String get trialLockChat => '💬 Chat capped at 80/day (was unlimited)';
+
+  @override
+  String get trialLockQuiz => '📊 Advanced quiz & study plan limited';
+
+  @override
+  String get trialWelcomeTitle => '🎁 Premium is on us\nfor 7 days!';
+
+  @override
+  String get trialWelcomeSubtitle =>
+      'No card needed. We\'ll remind you before it ends.';
+
+  @override
+  String trialWelcomePerk1Title(String mascot) {
+    return 'Unlimited ${mascot}s';
+  }
+
+  @override
+  String trialWelcomePerk1Sub(String mascot) {
+    return 'One $mascot for every subject you study';
+  }
+
+  @override
+  String get trialWelcomePerk2Title => 'Unlimited chat';
+
+  @override
+  String get trialWelcomePerk2Sub => 'Ask anything, any time — no daily limit';
+
+  @override
+  String get trialWelcomePerk3Title => 'Full flashcards & quizzes';
+
+  @override
+  String get trialWelcomePerk3Sub => 'Every feature, zero restrictions';
+
+  @override
+  String get trialWelcomeStart => 'Start exploring! 🚀';
+
+  @override
+  String get trialWelcomeSubscribeNow => 'Subscribe now';
+
+  @override
+  String get trialExpiredTitle => 'Your free week is up! ⏰';
+
+  @override
+  String trialExpiredBody(String mascot) {
+    return 'You still have all your ${mascot}s — nothing was deleted. Subscribe to keep them all, or pick one to stay free.';
+  }
+
+  @override
+  String trialExpiredKeepAll(String mascot) {
+    return '⭐ Keep all your ${mascot}s';
+  }
+
+  @override
+  String trialExpiredPerks(String mascot) {
+    return 'Unlimited ${mascot}s, unlimited chat, full flashcards & quizzes.';
+  }
+
+  @override
+  String get trialExpiredUpTo4Kids => 'up to 4 kids';
+
+  @override
+  String trialExpiredOrContinue(String mascot) {
+    return 'Or — continue free with 1 $mascot';
+  }
+
+  @override
+  String trialExpiredPickBody(String mascot) {
+    return 'Choose which $mascot stays active. The rest are locked (🔒) but not deleted — subscribing restores them instantly.';
+  }
+
+  @override
+  String trialExpiredContinueWith(String name) {
+    return 'Continue free with $name';
+  }
+
+  @override
+  String trialKeeperFallback(String mascot) {
+    return '1 $mascot';
+  }
+
+  @override
+  String get subPlansChooseTitle => 'Choose your plan';
+
+  @override
+  String get subPlansLoadError =>
+      'Could not load subscription info. Try again.';
+
+  @override
+  String get subPlansYourSubscription => 'Your subscription';
+
+  @override
+  String get subPlansUpgradeTitle => 'Upgrade Apalchi';
+
+  @override
+  String get subPlansProSubtitle => '1 student · all AI features';
+
+  @override
+  String get subPlansMaxSubtitle => '1 student · smarter AI for hard problems';
+
+  @override
+  String get subPlansFamilySubtitle => 'Up to 4 students';
+
+  @override
+  String get subPlansProFeat1 => '100 AI messages / day';
+
+  @override
+  String subPlansProFeat2(String mascot) {
+    return 'Up to 5 ${mascot}s';
+  }
+
+  @override
+  String get subPlansProFeat3 => 'Quiz & flashcards';
+
+  @override
+  String get subPlansProFeat4 => 'Homework photo scan';
+
+  @override
+  String get subPlansMaxFeat1 => 'Unlimited AI messages';
+
+  @override
+  String subPlansMaxFeat2(String mascot) {
+    return 'Unlimited ${mascot}s';
+  }
+
+  @override
+  String get subPlansMaxFeat3 => 'Sonnet model for complex questions';
+
+  @override
+  String get subPlansMaxFeat4 => 'All Pro features';
+
+  @override
+  String get subPlansFamilyFeat1 => 'Everything in Max';
+
+  @override
+  String get subPlansFamilyFeat2 => 'Up to 4 child accounts';
+
+  @override
+  String get subPlansFamilyFeat3 => 'Parent dashboard';
+
+  @override
+  String get subPlansFamilyFeat4 => 'Shared star rewards';
+
+  @override
+  String get subPlansBadgeExams => 'Best for exams';
+
+  @override
+  String get subPlansBadgePopular => 'Most popular';
+
+  @override
+  String get subPlansBestValue => 'Best value';
+
+  @override
+  String get subPlansCurrent => 'Current';
+
+  @override
+  String get subPlansMonthly => 'Monthly';
+
+  @override
+  String get subPlansAnnual => 'Annual  (save ~34%)';
+
+  @override
+  String subPlansFreeFeatures(String mascot) {
+    return '20 messages/day · 1 $mascot · basic features';
+  }
+
+  @override
+  String get subPlansCentreBanner => '⭐ Premium via your centre';
+
+  @override
+  String subPlansHeaderCentre(String mascot) {
+    return 'Your Premium comes from your centre. Enjoy unlimited chat and ${mascot}s!';
+  }
+
+  @override
+  String subPlansHeaderTrial(int days, String mascot) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return 'Your free trial ends in $_temp0. Subscribe to keep all your ${mascot}s.';
+  }
+
+  @override
+  String subPlansHeaderPremium(String tier) {
+    return 'You\'re on $tier. Manage or cancel anytime on the web.';
+  }
+
+  @override
+  String get subPlansHeaderFree =>
+      'Start with a 7-day free trial. Cancel anytime.';
+
+  @override
+  String get subPlansManageIntro =>
+      'Manage your plan, update your card, or cancel anytime on the Apalchi website.';
+
+  @override
+  String get subPlansManageOnWeb => 'Manage on web';
+
+  @override
+  String paywallHeadCreateTutor(String mascot) {
+    return 'Want more ${mascot}s?';
+  }
+
+  @override
+  String get paywallHeadUpload => 'Need more uploads?';
+
+  @override
+  String get paywallHeadCompile => 'Compiled all your chapters';
+
+  @override
+  String get paywallHeadChat => 'Out of chats for today';
+
+  @override
+  String get paywallHeadParent => 'Parent dashboard is premium';
+
+  @override
+  String get paywallHeadCurriculum => 'Curriculum journey is premium';
+
+  @override
+  String get paywallHeadFreeze => 'Stack more streak freezes';
+
+  @override
+  String get paywallHeadGroups => 'Study groups are premium';
+
+  @override
+  String get paywallHeadAddStudent => 'Need more student accounts?';
+
+  @override
+  String get paywallHeadDefault => 'Unlock Apalchi Premium';
+
+  @override
+  String paywallSubCreateTutor(String mascot) {
+    return 'Free users get 1 $mascot. Sign up for premium for unlimited ${mascot}s so each subject gets its own $mascot. Or, level up to level 5 to unlock your next $mascot slot!';
+  }
+
+  @override
+  String paywallSubUpload(String mascot) {
+    return 'Uploads are unlimited — free or premium. The gate is how many ${mascot}s you can have. Premium gives you one per subject.';
+  }
+
+  @override
+  String paywallSubCompile(String mascot) {
+    return 'Big documents split into chapters so you pick what $mascot reads. Free plans include a handful of chapter compiles a month; premium plans give you many more — reset on a rolling 30 days.';
+  }
+
+  @override
+  String get paywallSubChat =>
+      'Free users get 20 chats a day. Pro lifts the cap to 100; Max and above remove it entirely.';
+
+  @override
+  String get paywallSubParent =>
+      'Parents track progress, set goals, and read weekly reports.';
+
+  @override
+  String get paywallSubCurriculum =>
+      'Plan ahead with a syllabus-aware journey across every topic.';
+
+  @override
+  String get paywallSubFreeze =>
+      'Premium lets you stack up to 3 streak freezes so a missed day never costs your streak.';
+
+  @override
+  String get paywallSubGroups =>
+      'Collaborate with classmates in shared study groups. Available on Pro and above.';
+
+  @override
+  String get paywallSubAddStudent =>
+      'Family plan supports up to 4 students. Centre plan supports up to 15 students.';
+
+  @override
+  String paywallSubDefault(String mascot) {
+    return 'Get everything Apalchi has to offer — unlimited ${mascot}s, family sharing, premium analytics.';
+  }
+
+  @override
+  String paywallPerk1(String mascot) {
+    return 'Unlimited ${mascot}s + uploads';
+  }
+
+  @override
+  String get paywallPerk2 => 'Unlimited daily chats';
+
+  @override
+  String get paywallPerk3 => 'Family sharing — up to 4 kids';
+
+  @override
+  String get paywallPerk4 => 'Parent dashboard + weekly reports';
+
+  @override
+  String get paywallPerk5 => '3 streak freezes (up from 1)';
+
+  @override
+  String get paywallSeePlans => 'See plans';
+
+  @override
+  String get paywallMaybeLater => 'Maybe later';
 }

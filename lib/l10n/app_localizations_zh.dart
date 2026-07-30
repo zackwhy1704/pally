@@ -4091,4 +4091,410 @@ class AppLocalizationsZh extends AppLocalizations {
   String moduleItemsProve(int count) {
     return '挑战 $count 项';
   }
+
+  @override
+  String get subReturnTitle => '订阅';
+
+  @override
+  String get subReturnSuccess => '你已是高级版用户！';
+
+  @override
+  String subReturnSuccessBody(String mascot) {
+    return '一切都已解锁 — 无限个$mascot、家庭共享、家长面板等等。';
+  }
+
+  @override
+  String get subReturnStartExploring => '开始探索';
+
+  @override
+  String get subReturnStillConfirming => '仍在确认中…';
+
+  @override
+  String get subReturnTimeoutBody => '你的付款可能仍在处理中。你可以过一两分钟到「设置 → 订阅」查看。';
+
+  @override
+  String get subReturnBackToApalchi => '返回 Apalchi';
+
+  @override
+  String get subReturnConfirming => '正在确认你的订阅…';
+
+  @override
+  String get webCtaDefaultIntro =>
+      '订阅在 Apalchi 网站上管理。用同一个账户登录即可升级 — 你的应用会自动解锁。';
+
+  @override
+  String get webCtaContinueOnWeb => '在网页上继续';
+
+  @override
+  String get webCtaCouldntOpenBrowser => '无法打开你的浏览器。点上面的「复制链接」再粘贴。';
+
+  @override
+  String get webCtaEmailFailNow => '暂时无法发送 — 请改用上面的复制链接。';
+
+  @override
+  String get webCtaEmailBothSent => '已发送！请查收电子邮件 — 我们也推送了一条带链接的通知。';
+
+  @override
+  String get webCtaEmailSent => '已发送！请到电子邮件查收链接。';
+
+  @override
+  String get webCtaPushSent => '已给你推送一条带链接的通知。';
+
+  @override
+  String get webCtaRateLimited => '你已请求了几次 — 请稍后再试。';
+
+  @override
+  String get webCtaEmailError => '无法发送链接。请检查网络连接后重试。';
+
+  @override
+  String get webCtaNotActiveYet => '尚未生效。请在浏览器完成结账，然后再点一次。';
+
+  @override
+  String get webCtaCopied => '已复制';
+
+  @override
+  String get webCtaCopyLink => '复制链接';
+
+  @override
+  String get webCtaSending => '发送中…';
+
+  @override
+  String get webCtaEmailLink => '把链接发到我的邮箱';
+
+  @override
+  String get webCtaChecking => '检查中…';
+
+  @override
+  String get webCtaUpgradedRefresh => '我已升级 — 刷新';
+
+  @override
+  String trialTimeHoursLeft(int hours) {
+    return '还剩 $hours 小时';
+  }
+
+  @override
+  String trialTimeDaysLeft(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '还剩 $days 天',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String trialBannerUrgent(String mascot, String time) {
+    return '高级版最后一天！⏳ $time — 记得保留你的$mascot。';
+  }
+
+  @override
+  String trialBannerWarning(String mascot, String time) {
+    return '$time的高级版 — 订阅即可保留你所有的$mascot。';
+  }
+
+  @override
+  String trialBannerCalm(String mascot, String time) {
+    return '$time的高级版 · 喜欢无限个$mascot吗？之后也留住它们。';
+  }
+
+  @override
+  String get trialKeepPremium => '保留高级版';
+
+  @override
+  String get trialWhenEnds => '试用结束后：';
+
+  @override
+  String trialLockMochis(String mascot) {
+    return '🔒 额外的$mascot被锁定（你保留 1 个免费）';
+  }
+
+  @override
+  String get trialLockChat => '💬 聊天限制为每天 80 条（原本无限）';
+
+  @override
+  String get trialLockQuiz => '📊 高级测验和学习计划受限';
+
+  @override
+  String get trialWelcomeTitle => '🎁 高级版免费畅享\n7 天！';
+
+  @override
+  String get trialWelcomeSubtitle => '无需信用卡。结束前我们会提醒你。';
+
+  @override
+  String trialWelcomePerk1Title(String mascot) {
+    return '无限个$mascot';
+  }
+
+  @override
+  String trialWelcomePerk1Sub(String mascot) {
+    return '每个学习科目都能有一个$mascot';
+  }
+
+  @override
+  String get trialWelcomePerk2Title => '无限畅聊';
+
+  @override
+  String get trialWelcomePerk2Sub => '随时想问就问 — 没有每日限制';
+
+  @override
+  String get trialWelcomePerk3Title => '完整的记忆卡和测验';
+
+  @override
+  String get trialWelcomePerk3Sub => '所有功能，毫无限制';
+
+  @override
+  String get trialWelcomeStart => '开始探索吧！🚀';
+
+  @override
+  String get trialWelcomeSubscribeNow => '立即订阅';
+
+  @override
+  String get trialExpiredTitle => '你的免费一周结束啦！⏰';
+
+  @override
+  String trialExpiredBody(String mascot) {
+    return '你所有的$mascot都还在 — 没有删除任何东西。订阅即可全部保留，或选一个继续免费使用。';
+  }
+
+  @override
+  String trialExpiredKeepAll(String mascot) {
+    return '⭐ 保留你所有的$mascot';
+  }
+
+  @override
+  String trialExpiredPerks(String mascot) {
+    return '无限个$mascot、无限畅聊、完整的记忆卡和测验。';
+  }
+
+  @override
+  String get trialExpiredUpTo4Kids => '最多 4 个孩子';
+
+  @override
+  String trialExpiredOrContinue(String mascot) {
+    return '或者 — 继续免费使用 1 个$mascot';
+  }
+
+  @override
+  String trialExpiredPickBody(String mascot) {
+    return '选择保留哪个$mascot继续使用。其余的会被锁定（🔒）但不会删除 — 订阅后立即恢复。';
+  }
+
+  @override
+  String trialExpiredContinueWith(String name) {
+    return '继续免费使用 $name';
+  }
+
+  @override
+  String trialKeeperFallback(String mascot) {
+    return '1 个$mascot';
+  }
+
+  @override
+  String get subPlansChooseTitle => '选择你的方案';
+
+  @override
+  String get subPlansLoadError => '无法加载订阅信息。请重试。';
+
+  @override
+  String get subPlansYourSubscription => '你的订阅';
+
+  @override
+  String get subPlansUpgradeTitle => '升级 Apalchi';
+
+  @override
+  String get subPlansProSubtitle => '1 名学生 · 全部 AI 功能';
+
+  @override
+  String get subPlansMaxSubtitle => '1 名学生 · 更聪明的 AI，攻克难题';
+
+  @override
+  String get subPlansFamilySubtitle => '最多 4 名学生';
+
+  @override
+  String get subPlansProFeat1 => '每天 100 条 AI 消息';
+
+  @override
+  String subPlansProFeat2(String mascot) {
+    return '最多 5 个$mascot';
+  }
+
+  @override
+  String get subPlansProFeat3 => '测验和记忆卡';
+
+  @override
+  String get subPlansProFeat4 => '功课拍照扫描';
+
+  @override
+  String get subPlansMaxFeat1 => '无限 AI 消息';
+
+  @override
+  String subPlansMaxFeat2(String mascot) {
+    return '无限个$mascot';
+  }
+
+  @override
+  String get subPlansMaxFeat3 => 'Sonnet 模型应对复杂问题';
+
+  @override
+  String get subPlansMaxFeat4 => '所有 Pro 功能';
+
+  @override
+  String get subPlansFamilyFeat1 => 'Max 的全部功能';
+
+  @override
+  String get subPlansFamilyFeat2 => '最多 4 个孩子账户';
+
+  @override
+  String get subPlansFamilyFeat3 => '家长面板';
+
+  @override
+  String get subPlansFamilyFeat4 => '共享星星奖励';
+
+  @override
+  String get subPlansBadgeExams => '备考首选';
+
+  @override
+  String get subPlansBadgePopular => '最受欢迎';
+
+  @override
+  String get subPlansBestValue => '最划算';
+
+  @override
+  String get subPlansCurrent => '当前';
+
+  @override
+  String get subPlansMonthly => '每月';
+
+  @override
+  String get subPlansAnnual => '每年 （省约 34%）';
+
+  @override
+  String subPlansFreeFeatures(String mascot) {
+    return '每天 20 条消息 · 1 个$mascot · 基础功能';
+  }
+
+  @override
+  String get subPlansCentreBanner => '⭐ 由你的中心提供的高级版';
+
+  @override
+  String subPlansHeaderCentre(String mascot) {
+    return '你的高级版由你的中心提供。尽情享受无限畅聊和无限个$mascot吧！';
+  }
+
+  @override
+  String subPlansHeaderTrial(int days, String mascot) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days 天',
+    );
+    return '你的免费试用还剩 $_temp0。订阅即可保留你所有的$mascot。';
+  }
+
+  @override
+  String subPlansHeaderPremium(String tier) {
+    return '你当前是$tier。可随时在网页上管理或取消。';
+  }
+
+  @override
+  String get subPlansHeaderFree => '先开始 7 天免费试用。可随时取消。';
+
+  @override
+  String get subPlansManageIntro => '在 Apalchi 网站上管理你的方案、更新银行卡，或随时取消。';
+
+  @override
+  String get subPlansManageOnWeb => '在网页上管理';
+
+  @override
+  String paywallHeadCreateTutor(String mascot) {
+    return '想要更多$mascot吗？';
+  }
+
+  @override
+  String get paywallHeadUpload => '需要上传更多吗？';
+
+  @override
+  String get paywallHeadCompile => '已编译你所有的章节';
+
+  @override
+  String get paywallHeadChat => '今天的聊天次数已用完';
+
+  @override
+  String get paywallHeadParent => '家长面板是高级版功能';
+
+  @override
+  String get paywallHeadCurriculum => '课程学习路径是高级版功能';
+
+  @override
+  String get paywallHeadFreeze => '累积更多连胜冻结';
+
+  @override
+  String get paywallHeadGroups => '学习小组是高级版功能';
+
+  @override
+  String get paywallHeadAddStudent => '需要更多学生账户吗？';
+
+  @override
+  String get paywallHeadDefault => '解锁 Apalchi 高级版';
+
+  @override
+  String paywallSubCreateTutor(String mascot) {
+    return '免费用户可拥有 1 个$mascot。订阅高级版即可拥有无限个$mascot，让每个科目都有自己的$mascot。或者升到 5 级，解锁下一个$mascot名额！';
+  }
+
+  @override
+  String paywallSubUpload(String mascot) {
+    return '上传次数无限 — 免费或高级版都一样。限制的是你能拥有多少个$mascot。高级版让你每个科目都能有一个。';
+  }
+
+  @override
+  String paywallSubCompile(String mascot) {
+    return '大文件会拆分成章节，让你选择$mascot要读哪些。免费方案每月包含少量章节编译；高级版方案则多得多 — 按滚动的 30 天重置。';
+  }
+
+  @override
+  String get paywallSubChat => '免费用户每天可聊 20 次。Pro 将上限提高到 100；Max 及以上则完全取消上限。';
+
+  @override
+  String get paywallSubParent => '家长可以追踪进度、设定目标，并查看每周报告。';
+
+  @override
+  String get paywallSubCurriculum => '用贴合教学大纲的学习路径，提前规划每个主题。';
+
+  @override
+  String get paywallSubFreeze => '高级版让你最多累积 3 个连胜冻结，这样漏了一天也不会中断连胜。';
+
+  @override
+  String get paywallSubGroups => '在共享学习小组里和同学一起学习。Pro 及以上可用。';
+
+  @override
+  String get paywallSubAddStudent => '家庭方案最多支持 4 名学生。中心方案最多支持 15 名学生。';
+
+  @override
+  String paywallSubDefault(String mascot) {
+    return '尽享 Apalchi 的全部功能 — 无限个$mascot、家庭共享、高级分析。';
+  }
+
+  @override
+  String paywallPerk1(String mascot) {
+    return '无限个$mascot + 上传';
+  }
+
+  @override
+  String get paywallPerk2 => '每天无限畅聊';
+
+  @override
+  String get paywallPerk3 => '家庭共享 — 最多 4 个孩子';
+
+  @override
+  String get paywallPerk4 => '家长面板 + 每周报告';
+
+  @override
+  String get paywallPerk5 => '3 个连胜冻结（原本 1 个）';
+
+  @override
+  String get paywallSeePlans => '查看方案';
+
+  @override
+  String get paywallMaybeLater => '以后再说';
 }

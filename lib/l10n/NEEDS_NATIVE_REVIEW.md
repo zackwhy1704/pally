@@ -778,3 +778,134 @@ via `mascotName`. Module item-count chips localize the closed backend set (learn
 | `moduleItemsLearn` | {count} learn | 学习 {count} 项 | |
 | `moduleItemsTest` | {count} test | 测试 {count} 项 | |
 | `moduleItemsProve` | {count} prove | 挑战 {count} 项 | |
+
+
+---
+
+## PR-F — subscription surface (en source of truth + zh machine draft)
+
+Total PR-F keys: 113. en byte-identical to the pre-PR source (verified). Prices stay as gated literals (not localized). {mascot}=Mochi(en)/小伴(zh).
+
+### 🔒 TOP-PRIORITY native-compliance review (App Store 3.1.1 anti-steering)
+These MUST be vetted by a native SG reviewer that the zh does NOT imply external payment or add purchase steering the en doesn't contain, BEFORE any zh flag flips.
+
+| key | en (source of truth) | zh (machine draft) |
+|-----|----------------------|--------------------|
+| `subPlansHeaderFree` | Start with a 7-day free trial. Cancel anytime. | 先开始 7 天免费试用。可随时取消。 |
+| `subPlansHeaderPremium` | You're on {tier}. Manage or cancel anytime on the web. | 你当前是{tier}。可随时在网页上管理或取消。 |
+| `subPlansManageIntro` | Manage your plan, update your card, or cancel anytime on the Apalchi website. | 在 Apalchi 网站上管理你的方案、更新银行卡，或随时取消。 |
+| `subPlansManageOnWeb` | Manage on web | 在网页上管理 |
+| `subReturnTimeoutBody` | Your payment may still be processing. You can check Settings → Subscription in a minute or two. | 你的付款可能仍在处理中。你可以过一两分钟到「设置 → 订阅」查看。 |
+| `webCtaContinueOnWeb` | Continue on web | 在网页上继续 |
+| `webCtaDefaultIntro` | Subscriptions are managed on the Apalchi website. Sign in with the same account to upgrade — your app unlocks automatically. | 订阅在 Apalchi 网站上管理。用同一个账户登录即可升级 — 你的应用会自动解锁。 |
+| `webCtaNotActiveYet` | Not active yet. Finish checkout in your browser, then tap again. | 尚未生效。请在浏览器完成结账，然后再点一次。 |
+
+### Remaining PR-F strings (marketing / UI — standard native review)
+
+| key | en | zh |
+|-----|----|----|
+| `paywallHeadAddStudent` | Need more student accounts? | 需要更多学生账户吗？ |
+| `paywallHeadChat` | Out of chats for today | 今天的聊天次数已用完 |
+| `paywallHeadCompile` | Compiled all your chapters | 已编译你所有的章节 |
+| `paywallHeadCreateTutor` | Want more {mascot}s? | 想要更多{mascot}吗？ |
+| `paywallHeadCurriculum` | Curriculum journey is premium | 课程学习路径是高级版功能 |
+| `paywallHeadDefault` | Unlock Apalchi Premium | 解锁 Apalchi 高级版 |
+| `paywallHeadFreeze` | Stack more streak freezes | 累积更多连胜冻结 |
+| `paywallHeadGroups` | Study groups are premium | 学习小组是高级版功能 |
+| `paywallHeadParent` | Parent dashboard is premium | 家长面板是高级版功能 |
+| `paywallHeadUpload` | Need more uploads? | 需要上传更多吗？ |
+| `paywallMaybeLater` | Maybe later | 以后再说 |
+| `paywallPerk1` | Unlimited {mascot}s + uploads | 无限个{mascot} + 上传 |
+| `paywallPerk2` | Unlimited daily chats | 每天无限畅聊 |
+| `paywallPerk3` | Family sharing — up to 4 kids | 家庭共享 — 最多 4 个孩子 |
+| `paywallPerk4` | Parent dashboard + weekly reports | 家长面板 + 每周报告 |
+| `paywallPerk5` | 3 streak freezes (up from 1) | 3 个连胜冻结（原本 1 个） |
+| `paywallSeePlans` | See plans | 查看方案 |
+| `paywallSubAddStudent` | Family plan supports up to 4 students. Centre plan supports up to 15 students. | 家庭方案最多支持 4 名学生。中心方案最多支持 15 名学生。 |
+| `paywallSubChat` | Free users get 20 chats a day. Pro lifts the cap to 100; Max and above remove it entirely. | 免费用户每天可聊 20 次。Pro 将上限提高到 100；Max 及以上则完全取消上限。 |
+| `paywallSubCompile` | Big documents split into chapters so you pick what {mascot} reads. Free plans include a handful of chapter compiles a month; premium plans give you many more — reset on a rolling 30 days. | 大文件会拆分成章节，让你选择{mascot}要读哪些。免费方案每月包含少量章节编译；高级版方案则多得多 — 按滚动的 30 天重置。 |
+| `paywallSubCreateTutor` | Free users get 1 {mascot}. Sign up for premium for unlimited {mascot}s so each subject gets its own {mascot}. Or, level up to level 5 to unlock your next {mascot} slot! | 免费用户可拥有 1 个{mascot}。订阅高级版即可拥有无限个{mascot}，让每个科目都有自己的{mascot}。或者升到 5 级，解锁下一个{mascot}名额！ |
+| `paywallSubCurriculum` | Plan ahead with a syllabus-aware journey across every topic. | 用贴合教学大纲的学习路径，提前规划每个主题。 |
+| `paywallSubDefault` | Get everything Apalchi has to offer — unlimited {mascot}s, family sharing, premium analytics. | 尽享 Apalchi 的全部功能 — 无限个{mascot}、家庭共享、高级分析。 |
+| `paywallSubFreeze` | Premium lets you stack up to 3 streak freezes so a missed day never costs your streak. | 高级版让你最多累积 3 个连胜冻结，这样漏了一天也不会中断连胜。 |
+| `paywallSubGroups` | Collaborate with classmates in shared study groups. Available on Pro and above. | 在共享学习小组里和同学一起学习。Pro 及以上可用。 |
+| `paywallSubParent` | Parents track progress, set goals, and read weekly reports. | 家长可以追踪进度、设定目标，并查看每周报告。 |
+| `paywallSubUpload` | Uploads are unlimited — free or premium. The gate is how many {mascot}s you can have. Premium gives you one per subject. | 上传次数无限 — 免费或高级版都一样。限制的是你能拥有多少个{mascot}。高级版让你每个科目都能有一个。 |
+| `subPlansAnnual` | Annual  (save ~34%) | 每年 （省约 34%） |
+| `subPlansBadgeExams` | Best for exams | 备考首选 |
+| `subPlansBadgePopular` | Most popular | 最受欢迎 |
+| `subPlansBestValue` | Best value | 最划算 |
+| `subPlansCentreBanner` | ⭐ Premium via your centre | ⭐ 由你的中心提供的高级版 |
+| `subPlansChooseTitle` | Choose your plan | 选择你的方案 |
+| `subPlansCurrent` | Current | 当前 |
+| `subPlansFamilyFeat1` | Everything in Max | Max 的全部功能 |
+| `subPlansFamilyFeat2` | Up to 4 child accounts | 最多 4 个孩子账户 |
+| `subPlansFamilyFeat3` | Parent dashboard | 家长面板 |
+| `subPlansFamilyFeat4` | Shared star rewards | 共享星星奖励 |
+| `subPlansFamilySubtitle` | Up to 4 students | 最多 4 名学生 |
+| `subPlansFreeFeatures` | 20 messages/day · 1 {mascot} · basic features | 每天 20 条消息 · 1 个{mascot} · 基础功能 |
+| `subPlansHeaderCentre` | Your Premium comes from your centre. Enjoy unlimited chat and {mascot}s! | 你的高级版由你的中心提供。尽情享受无限畅聊和无限个{mascot}吧！ |
+| `subPlansHeaderTrial` | Your free trial ends in {days, plural, one{1 day} other{{days} days}}. Subscribe to keep all your {mascot}s. | 你的免费试用还剩 {days, plural, other{{days} 天}}。订阅即可保留你所有的{mascot}。 |
+| `subPlansLoadError` | Could not load subscription info. Try again. | 无法加载订阅信息。请重试。 |
+| `subPlansMaxFeat1` | Unlimited AI messages | 无限 AI 消息 |
+| `subPlansMaxFeat2` | Unlimited {mascot}s | 无限个{mascot} |
+| `subPlansMaxFeat3` | Sonnet model for complex questions | Sonnet 模型应对复杂问题 |
+| `subPlansMaxFeat4` | All Pro features | 所有 Pro 功能 |
+| `subPlansMaxSubtitle` | 1 student · smarter AI for hard problems | 1 名学生 · 更聪明的 AI，攻克难题 |
+| `subPlansMonthly` | Monthly | 每月 |
+| `subPlansProFeat1` | 100 AI messages / day | 每天 100 条 AI 消息 |
+| `subPlansProFeat2` | Up to 5 {mascot}s | 最多 5 个{mascot} |
+| `subPlansProFeat3` | Quiz & flashcards | 测验和记忆卡 |
+| `subPlansProFeat4` | Homework photo scan | 功课拍照扫描 |
+| `subPlansProSubtitle` | 1 student · all AI features | 1 名学生 · 全部 AI 功能 |
+| `subPlansUpgradeTitle` | Upgrade Apalchi | 升级 Apalchi |
+| `subPlansYourSubscription` | Your subscription | 你的订阅 |
+| `subReturnBackToApalchi` | Back to Apalchi | 返回 Apalchi |
+| `subReturnConfirming` | Confirming your subscription… | 正在确认你的订阅… |
+| `subReturnStartExploring` | Start exploring | 开始探索 |
+| `subReturnStillConfirming` | Still confirming… | 仍在确认中… |
+| `subReturnSuccess` | You are premium! | 你已是高级版用户！ |
+| `subReturnSuccessBody` | Everything just unlocked — unlimited {mascot}s, family sharing, parent dashboard, and more. | 一切都已解锁 — 无限个{mascot}、家庭共享、家长面板等等。 |
+| `subReturnTitle` | Subscription | 订阅 |
+| `trialBannerCalm` | {time} of Premium · Enjoying unlimited {mascot}s? Keep them after. | {time}的高级版 · 喜欢无限个{mascot}吗？之后也留住它们。 |
+| `trialBannerUrgent` | Last day of Premium! ⏳ {time} — keep your {mascot}s. | 高级版最后一天！⏳ {time} — 记得保留你的{mascot}。 |
+| `trialBannerWarning` | {time} of Premium — subscribe to keep all your {mascot}s. | {time}的高级版 — 订阅即可保留你所有的{mascot}。 |
+| `trialExpiredBody` | You still have all your {mascot}s — nothing was deleted. Subscribe to keep them all, or pick one to stay free. | 你所有的{mascot}都还在 — 没有删除任何东西。订阅即可全部保留，或选一个继续免费使用。 |
+| `trialExpiredContinueWith` | Continue free with {name} | 继续免费使用 {name} |
+| `trialExpiredKeepAll` | ⭐ Keep all your {mascot}s | ⭐ 保留你所有的{mascot} |
+| `trialExpiredOrContinue` | Or — continue free with 1 {mascot} | 或者 — 继续免费使用 1 个{mascot} |
+| `trialExpiredPerks` | Unlimited {mascot}s, unlimited chat, full flashcards & quizzes. | 无限个{mascot}、无限畅聊、完整的记忆卡和测验。 |
+| `trialExpiredPickBody` | Choose which {mascot} stays active. The rest are locked (🔒) but not deleted — subscribing restores them instantly. | 选择保留哪个{mascot}继续使用。其余的会被锁定（🔒）但不会删除 — 订阅后立即恢复。 |
+| `trialExpiredTitle` | Your free week is up! ⏰ | 你的免费一周结束啦！⏰ |
+| `trialExpiredUpTo4Kids` | up to 4 kids | 最多 4 个孩子 |
+| `trialKeepPremium` | Keep Premium | 保留高级版 |
+| `trialKeeperFallback` | 1 {mascot} | 1 个{mascot} |
+| `trialLockChat` | 💬 Chat capped at 80/day (was unlimited) | 💬 聊天限制为每天 80 条（原本无限） |
+| `trialLockMochis` | 🔒 Extra {mascot}s locked (you keep 1 free) | 🔒 额外的{mascot}被锁定（你保留 1 个免费） |
+| `trialLockQuiz` | 📊 Advanced quiz & study plan limited | 📊 高级测验和学习计划受限 |
+| `trialTimeDaysLeft` | {days, plural, one{1 day left} other{{days} days left}} | {days, plural, other{还剩 {days} 天}} |
+| `trialTimeHoursLeft` | {hours}h left | 还剩 {hours} 小时 |
+| `trialWelcomePerk1Sub` | One {mascot} for every subject you study | 每个学习科目都能有一个{mascot} |
+| `trialWelcomePerk1Title` | Unlimited {mascot}s | 无限个{mascot} |
+| `trialWelcomePerk2Sub` | Ask anything, any time — no daily limit | 随时想问就问 — 没有每日限制 |
+| `trialWelcomePerk2Title` | Unlimited chat | 无限畅聊 |
+| `trialWelcomePerk3Sub` | Every feature, zero restrictions | 所有功能，毫无限制 |
+| `trialWelcomePerk3Title` | Full flashcards & quizzes | 完整的记忆卡和测验 |
+| `trialWelcomeStart` | Start exploring! 🚀 | 开始探索吧！🚀 |
+| `trialWelcomeSubscribeNow` | Subscribe now | 立即订阅 |
+| `trialWelcomeSubtitle` | No card needed. We'll remind you before it ends. | 无需信用卡。结束前我们会提醒你。 |
+| `trialWelcomeTitle` | 🎁 Premium is on us / for 7 days! | 🎁 高级版免费畅享 / 7 天！ |
+| `trialWhenEnds` | When your trial ends: | 试用结束后： |
+| `webCtaChecking` | Checking… | 检查中… |
+| `webCtaCopied` | Copied | 已复制 |
+| `webCtaCopyLink` | Copy link | 复制链接 |
+| `webCtaCouldntOpenBrowser` | Couldn't open your browser. Tap “Copy link” above and paste it. | 无法打开你的浏览器。点上面的「复制链接」再粘贴。 |
+| `webCtaEmailBothSent` | Sent! Check your email — we also pushed a notification with the link. | 已发送！请查收电子邮件 — 我们也推送了一条带链接的通知。 |
+| `webCtaEmailError` | Couldn't send the link. Check your connection and try again. | 无法发送链接。请检查网络连接后重试。 |
+| `webCtaEmailFailNow` | Couldn't send right now — copy the link above instead. | 暂时无法发送 — 请改用上面的复制链接。 |
+| `webCtaEmailLink` | Email me the link | 把链接发到我的邮箱 |
+| `webCtaEmailSent` | Sent! Check your email for the link. | 已发送！请到电子邮件查收链接。 |
+| `webCtaPushSent` | Sent you a notification with the link. | 已给你推送一条带链接的通知。 |
+| `webCtaRateLimited` | You've requested this a few times — try again in a little while. | 你已请求了几次 — 请稍后再试。 |
+| `webCtaSending` | Sending… | 发送中… |
+| `webCtaUpgradedRefresh` | I've upgraded — refresh | 我已升级 — 刷新 |

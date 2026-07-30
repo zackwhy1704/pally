@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 /// Maps a feature code to the cheapest plan tier that unlocks it.
 /// Used to pre-select the recommended plan on the plans screen.
@@ -27,54 +28,35 @@ class PaywallScreen extends ConsumerWidget {
   /// Drives the headline and the recommended tier on the plans screen.
   final String? feature;
 
-  String get _headline => switch (feature) {
-        'CREATE_TUTOR' => 'Want more Mochis?',
-        'UPLOAD_DOC' => 'Need more uploads?',
-        'CHUNK_COMPILE' => 'Compiled all your chapters',
-        'CHAT_DAILY' => 'Out of chats for today',
-        'PARENT_DASHBOARD' => 'Parent dashboard is premium',
-        'CURRICULUM' => 'Curriculum journey is premium',
-        'EXTRA_FREEZE' => 'Stack more streak freezes',
-        'GROUPS' => 'Study groups are premium',
-        'ADD_STUDENT' => 'Need more student accounts?',
-        _ => 'Unlock Apalchi Premium',
+  String _headline(AppLocalizations l) => switch (feature) {
+        'CREATE_TUTOR' => l.paywallHeadCreateTutor(l.mascotName),
+        'UPLOAD_DOC' => l.paywallHeadUpload,
+        'CHUNK_COMPILE' => l.paywallHeadCompile,
+        'CHAT_DAILY' => l.paywallHeadChat,
+        'PARENT_DASHBOARD' => l.paywallHeadParent,
+        'CURRICULUM' => l.paywallHeadCurriculum,
+        'EXTRA_FREEZE' => l.paywallHeadFreeze,
+        'GROUPS' => l.paywallHeadGroups,
+        'ADD_STUDENT' => l.paywallHeadAddStudent,
+        _ => l.paywallHeadDefault,
       };
 
-  String get _subhead => switch (feature) {
-        'CREATE_TUTOR' =>
-            'Free users get 1 Mochi. Sign up for premium for unlimited Mochis '
-                'so each subject gets its own Mochi. Or, level up to level 5 '
-                'to unlock your next Mochi slot!',
-        'UPLOAD_DOC' =>
-            'Uploads are unlimited — free or premium. The gate is how many '
-                'Mochis you can have. Premium gives you one per subject.',
-        'CHUNK_COMPILE' =>
-            'Big documents split into chapters so you pick what Mochi reads. '
-                'Free plans include a handful of chapter compiles a month; '
-                'premium plans give you many more — reset on a rolling 30 days.',
-        'CHAT_DAILY' =>
-            'Free users get 20 chats a day. Pro lifts the cap to 100; '
-                'Max and above remove it entirely.',
-        'PARENT_DASHBOARD' =>
-            'Parents track progress, set goals, and read weekly reports.',
-        'CURRICULUM' =>
-            'Plan ahead with a syllabus-aware journey across every topic.',
-        'EXTRA_FREEZE' =>
-            'Premium lets you stack up to 3 streak freezes so a missed day '
-                'never costs your streak.',
-        'GROUPS' =>
-            'Collaborate with classmates in shared study groups. '
-                'Available on Pro and above.',
-        'ADD_STUDENT' =>
-            'Family plan supports up to 4 students. '
-                'Centre plan supports up to 15 students.',
-        _ =>
-            'Get everything Apalchi has to offer — unlimited Mochis, family '
-                'sharing, premium analytics.',
+  String _subhead(AppLocalizations l) => switch (feature) {
+        'CREATE_TUTOR' => l.paywallSubCreateTutor(l.mascotName),
+        'UPLOAD_DOC' => l.paywallSubUpload(l.mascotName),
+        'CHUNK_COMPILE' => l.paywallSubCompile(l.mascotName),
+        'CHAT_DAILY' => l.paywallSubChat,
+        'PARENT_DASHBOARD' => l.paywallSubParent,
+        'CURRICULUM' => l.paywallSubCurriculum,
+        'EXTRA_FREEZE' => l.paywallSubFreeze,
+        'GROUPS' => l.paywallSubGroups,
+        'ADD_STUDENT' => l.paywallSubAddStudent,
+        _ => l.paywallSubDefault(l.mascotName),
       };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.bg,
       appBar: AppBar(
@@ -125,11 +107,11 @@ class PaywallScreen extends ConsumerWidget {
                             child: Text('⭐', style: TextStyle(fontSize: 44))),
                       ),
                     const SizedBox(height: AppSpacing.lg),
-                    Text(_headline,
+                    Text(_headline(l10n),
                         style: AppTextStyles.heading1,
                         textAlign: TextAlign.center),
                     const SizedBox(height: AppSpacing.sm),
-                    Text(_subhead,
+                    Text(_subhead(l10n),
                         style:
                             AppTextStyles.body.copyWith(color: AppColors.text2),
                         textAlign: TextAlign.center),
@@ -162,7 +144,7 @@ class PaywallScreen extends ConsumerWidget {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16)),
                     ),
-                    child: const Text('See plans'),
+                    child: Text(l10n.paywallSeePlans),
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   Center(
@@ -174,7 +156,7 @@ class PaywallScreen extends ConsumerWidget {
                           context.go('/progress');
                         }
                       },
-                      child: const Text('Maybe later'),
+                      child: Text(l10n.paywallMaybeLater),
                     ),
                   ),
                 ],
@@ -192,12 +174,13 @@ class _PremiumPerks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const perks = [
-      ('🧠', 'Unlimited Mochis + uploads'),
-      ('💬', 'Unlimited daily chats'),
-      ('👨‍👩‍👧', 'Family sharing — up to 4 kids'),
-      ('📊', 'Parent dashboard + weekly reports'),
-      ('🔥', '3 streak freezes (up from 1)'),
+    final l = AppLocalizations.of(context);
+    final perks = [
+      ('🧠', l.paywallPerk1(l.mascotName)),
+      ('💬', l.paywallPerk2),
+      ('👨‍👩‍👧', l.paywallPerk3),
+      ('📊', l.paywallPerk4),
+      ('🔥', l.paywallPerk5),
     ];
     return Container(
       padding: AppSpacing.card,

@@ -12,6 +12,7 @@ import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
 import 'package:pally/features/subscription/subscription_service.dart';
 import 'package:pally/features/subscription/web_billing.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 /// The ONE informational upgrade surface. Purchasing is web-only, so this never
 /// starts a payment in the app:
@@ -25,17 +26,13 @@ import 'package:pally/features/subscription/web_billing.dart';
 /// Both platforms get an "I've upgraded — refresh" action that silently polls
 /// the backend entitlement; once the web purchase's webhook lands, the watching
 /// screen flips to premium on its own.
-const String _defaultIntro =
-    'Subscriptions are managed on the Apalchi website. Sign in with the same '
-    'account to upgrade — your app unlocks automatically.';
-
 class WebUpgradeCta extends ConsumerStatefulWidget {
   const WebUpgradeCta({
     super.key,
     this.url = kWebBillingUrl,
     this.displayUrl = kWebBillingDisplay,
-    this.intro = _defaultIntro,
-    this.launchLabel = 'Continue on web',
+    this.intro,
+    this.launchLabel,
     this.showRefresh = true,
     this.showEmailLink = true,
   });
@@ -44,8 +41,11 @@ class WebUpgradeCta extends ConsumerStatefulWidget {
   /// [kWebAccountUrl] for the manage-subscription variant.
   final String url;
   final String displayUrl;
-  final String intro;
-  final String launchLabel;
+  // Null → the localized default is resolved at render (this widget must not
+  // bake English defaults into a const constructor). Callers pass a localized
+  // override (e.g. the manage variant) resolved at their own call site.
+  final String? intro;
+  final String? launchLabel;
 
   /// Whether to show the "I've upgraded — refresh" poll action. True for the
   /// upgrade flow, false for manage (nothing to unlock).
@@ -79,6 +79,7 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
 
   Future<void> _continueOnWeb() async {
     if (_launching) return; // re-entry guard
+    final l10n = AppLocalizations.of(context);
     setState(() {
       _launching = true;
       _statusMsg = null;
@@ -88,8 +89,7 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
           await ref.read(subscriptionServiceProvider).launchExternal(widget.url);
       if (!mounted) return;
       if (!opened) {
-        setState(() => _statusMsg =
-            "Couldn't open your browser. Tap “Copy link” above and paste it.");
+        setState(() => _statusMsg = l10n.webCtaCouldntOpenBrowser);
       }
     } finally {
       if (mounted) setState(() => _launching = false);
@@ -98,6 +98,7 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
 
   Future<void> _sendEmailLink() async {
     if (_emailing) return; // re-entry guard
+    final l10n = AppLocalizations.of(context);
     setState(() {
       _emailing = true;
       _emailMsg = null;
@@ -109,14 +110,13 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
       setState(() {
         _emailOk = result.anySent;
         if (!result.anySent) {
-          _emailMsg = "Couldn't send right now — copy the link above instead.";
+          _emailMsg = l10n.webCtaEmailFailNow;
         } else if (result.emailSent && result.pushSent) {
-          _emailMsg =
-              'Sent! Check your email — we also pushed a notification with the link.';
+          _emailMsg = l10n.webCtaEmailBothSent;
         } else if (result.emailSent) {
-          _emailMsg = 'Sent! Check your email for the link.';
+          _emailMsg = l10n.webCtaEmailSent;
         } else {
-          _emailMsg = 'Sent you a notification with the link.';
+          _emailMsg = l10n.webCtaPushSent;
         }
       });
     } on DioException catch (e) {
@@ -125,8 +125,8 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
       setState(() {
         _emailOk = false;
         _emailMsg = tooMany
-            ? "You've requested this a few times — try again in a little while."
-            : "Couldn't send the link. Check your connection and try again.";
+            ? l10n.webCtaRateLimited
+            : l10n.webCtaEmailError;
       });
     } finally {
       if (mounted) setState(() => _emailing = false);
@@ -135,6 +135,7 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
 
   Future<void> _refresh() async {
     if (_refreshing) return; // re-entry guard
+    final l10n = AppLocalizations.of(context);
     setState(() {
       _refreshing = true;
       _statusMsg = null;
@@ -146,8 +147,7 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
       // On success the parent screen (watching entitlement) rebuilds into its
       // premium state, so we only need to message the not-yet case.
       if (!becamePremium) {
-        setState(() => _statusMsg =
-            'Not active yet. Finish checkout in your browser, then tap again.');
+        setState(() => _statusMsg = l10n.webCtaNotActiveYet);
       }
     } finally {
       if (mounted) setState(() => _refreshing = false);
@@ -161,12 +161,15 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
     // ios_external_link_enabled and the button appears. Android/host always show it.
     final allowLaunch = !Platform.isIOS ||
         isFlagEnabled(ref, FeatureFlags.iosExternalLinkEnabled);
+    final l10n = AppLocalizations.of(context);
+    final intro = widget.intro ?? l10n.webCtaDefaultIntro;
+    final launchLabel = widget.launchLabel ?? l10n.webCtaContinueOnWeb;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          widget.intro,
+          intro,
           style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
           textAlign: TextAlign.center,
         ),
@@ -201,7 +204,7 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
                 const SizedBox(width: AppSpacing.xs),
                 TextButton(
                   onPressed: _copyLink,
-                  child: Text(_copied ? 'Copied' : 'Copy link',
+                  child: Text(_copied ? l10n.webCtaCopied : l10n.webCtaCopyLink,
                       style: AppTextStyles.label.copyWith(
                         color: _copied ? AppColors.green : AppColors.purple,
                       )),
@@ -226,7 +229,7 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
                         color: AppColors.purple, strokeWidth: 2),
                   )
                 : const Icon(Icons.mail_outline_rounded, size: 18),
-            label: Text(_emailing ? 'Sending…' : 'Email me the link'),
+            label: Text(_emailing ? l10n.webCtaSending : l10n.webCtaEmailLink),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.purple,
               side: const BorderSide(color: AppColors.outline),
@@ -267,7 +270,7 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
                     child: CircularProgressIndicator(
                         color: Colors.white, strokeWidth: 2),
                   )
-                : Text(widget.launchLabel),
+                : Text(launchLabel),
           ),
           const SizedBox(height: AppSpacing.xs),
         ],
@@ -288,12 +291,12 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
                           color: AppColors.purple, strokeWidth: 2),
                     ),
                     const SizedBox(width: AppSpacing.sm),
-                    Text('Checking…',
+                    Text(l10n.webCtaChecking,
                         style: AppTextStyles.bodySmall
                             .copyWith(color: AppColors.text2)),
                   ],
                 )
-              : Text("I've upgraded — refresh",
+              : Text(l10n.webCtaUpgradedRefresh,
                   style: AppTextStyles.bodySmall
                       .copyWith(color: AppColors.purple)),
         ),

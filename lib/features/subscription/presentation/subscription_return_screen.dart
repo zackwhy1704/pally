@@ -8,6 +8,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/adaptive_center.dart';
 import 'package:pally/features/subscription/entitlement_provider.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 /// Polls entitlement after the user returns from Stripe checkout. The
 /// webhook usually beats the redirect, but not always — so we keep
@@ -68,13 +69,14 @@ class _SubscriptionReturnScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final timedOut = !_done && _attempts >= _maxAttempts;
     return Scaffold(
       backgroundColor: AppColors.bg,
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Subscription', style: AppTextStyles.title),
+        title: Text(l10n.subReturnTitle, style: AppTextStyles.title),
         centerTitle: true,
       ),
       body: AdaptiveCenter(
@@ -85,11 +87,10 @@ class _SubscriptionReturnScreenState
             if (_done) ...[
                 const Text('🎉', style: TextStyle(fontSize: 56)),
                 const SizedBox(height: AppSpacing.sm),
-                Text('You are premium!', style: AppTextStyles.heading1),
+                Text(l10n.subReturnSuccess, style: AppTextStyles.heading1),
                 const SizedBox(height: AppSpacing.md),
                 Text(
-                  'Everything just unlocked — unlimited Mochis, family '
-                  'sharing, parent dashboard, and more.',
+                  l10n.subReturnSuccessBody(l10n.mascotName),
                   style: AppTextStyles.body.copyWith(color: AppColors.text2),
                   textAlign: TextAlign.center,
                 ),
@@ -101,30 +102,29 @@ class _SubscriptionReturnScreenState
                     padding: const EdgeInsets.symmetric(
                         horizontal: 32, vertical: 14),
                   ),
-                  child: const Text('Start exploring'),
+                  child: Text(l10n.subReturnStartExploring),
                 ),
               ] else if (timedOut) ...[
                 const Icon(Icons.hourglass_bottom_rounded,
                     size: 56, color: AppColors.text3),
                 const SizedBox(height: AppSpacing.sm),
-                Text('Still confirming…', style: AppTextStyles.title),
+                Text(l10n.subReturnStillConfirming, style: AppTextStyles.title),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
-                  'Your payment may still be processing. You can check '
-                  'Settings → Subscription in a minute or two.',
+                  l10n.subReturnTimeoutBody,
                   style: AppTextStyles.body.copyWith(color: AppColors.text2),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 OutlinedButton(
                   onPressed: () => context.go('/progress'),
-                  child: const Text('Back to Apalchi'),
+                  child: Text(l10n.subReturnBackToApalchi),
                 ),
               ] else ...[
                 const CircularProgressIndicator(
                     color: AppColors.purple),
                 const SizedBox(height: AppSpacing.md),
-                Text('Confirming your subscription…',
+                Text(l10n.subReturnConfirming,
                     style: AppTextStyles.body),
               ],
             ],

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/subscription/presentation/trial_countdown_banner.dart';
 import 'package:pally/features/subscription/trial_status_provider.dart';
 
 Widget _wrap(List<Override> overrides) => ProviderScope(
       overrides: overrides,
       child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(body: TrialCountdownBanner()),
       ),
     );

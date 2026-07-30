@@ -7099,6 +7099,684 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} prove'**
   String moduleItemsProve(int count);
+
+  /// No description provided for @subReturnTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription'**
+  String get subReturnTitle;
+
+  /// No description provided for @subReturnSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'You are premium!'**
+  String get subReturnSuccess;
+
+  /// No description provided for @subReturnSuccessBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything just unlocked — unlimited {mascot}s, family sharing, parent dashboard, and more.'**
+  String subReturnSuccessBody(String mascot);
+
+  /// No description provided for @subReturnStartExploring.
+  ///
+  /// In en, this message translates to:
+  /// **'Start exploring'**
+  String get subReturnStartExploring;
+
+  /// No description provided for @subReturnStillConfirming.
+  ///
+  /// In en, this message translates to:
+  /// **'Still confirming…'**
+  String get subReturnStillConfirming;
+
+  /// No description provided for @subReturnTimeoutBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your payment may still be processing. You can check Settings → Subscription in a minute or two.'**
+  String get subReturnTimeoutBody;
+
+  /// No description provided for @subReturnBackToApalchi.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Apalchi'**
+  String get subReturnBackToApalchi;
+
+  /// No description provided for @subReturnConfirming.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirming your subscription…'**
+  String get subReturnConfirming;
+
+  /// No description provided for @webCtaDefaultIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscriptions are managed on the Apalchi website. Sign in with the same account to upgrade — your app unlocks automatically.'**
+  String get webCtaDefaultIntro;
+
+  /// No description provided for @webCtaContinueOnWeb.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue on web'**
+  String get webCtaContinueOnWeb;
+
+  /// No description provided for @webCtaCouldntOpenBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open your browser. Tap “Copy link” above and paste it.'**
+  String get webCtaCouldntOpenBrowser;
+
+  /// No description provided for @webCtaEmailFailNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t send right now — copy the link above instead.'**
+  String get webCtaEmailFailNow;
+
+  /// No description provided for @webCtaEmailBothSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent! Check your email — we also pushed a notification with the link.'**
+  String get webCtaEmailBothSent;
+
+  /// No description provided for @webCtaEmailSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent! Check your email for the link.'**
+  String get webCtaEmailSent;
+
+  /// No description provided for @webCtaPushSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent you a notification with the link.'**
+  String get webCtaPushSent;
+
+  /// No description provided for @webCtaRateLimited.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve requested this a few times — try again in a little while.'**
+  String get webCtaRateLimited;
+
+  /// No description provided for @webCtaEmailError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t send the link. Check your connection and try again.'**
+  String get webCtaEmailError;
+
+  /// No description provided for @webCtaNotActiveYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not active yet. Finish checkout in your browser, then tap again.'**
+  String get webCtaNotActiveYet;
+
+  /// No description provided for @webCtaCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get webCtaCopied;
+
+  /// No description provided for @webCtaCopyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy link'**
+  String get webCtaCopyLink;
+
+  /// No description provided for @webCtaSending.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending…'**
+  String get webCtaSending;
+
+  /// No description provided for @webCtaEmailLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Email me the link'**
+  String get webCtaEmailLink;
+
+  /// No description provided for @webCtaChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking…'**
+  String get webCtaChecking;
+
+  /// No description provided for @webCtaUpgradedRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ve upgraded — refresh'**
+  String get webCtaUpgradedRefresh;
+
+  /// No description provided for @trialTimeHoursLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours}h left'**
+  String trialTimeHoursLeft(int hours);
+
+  /// No description provided for @trialTimeDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, one{1 day left} other{{days} days left}}'**
+  String trialTimeDaysLeft(int days);
+
+  /// No description provided for @trialBannerUrgent.
+  ///
+  /// In en, this message translates to:
+  /// **'Last day of Premium! ⏳ {time} — keep your {mascot}s.'**
+  String trialBannerUrgent(String mascot, String time);
+
+  /// No description provided for @trialBannerWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'{time} of Premium — subscribe to keep all your {mascot}s.'**
+  String trialBannerWarning(String mascot, String time);
+
+  /// No description provided for @trialBannerCalm.
+  ///
+  /// In en, this message translates to:
+  /// **'{time} of Premium · Enjoying unlimited {mascot}s? Keep them after.'**
+  String trialBannerCalm(String mascot, String time);
+
+  /// No description provided for @trialKeepPremium.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Premium'**
+  String get trialKeepPremium;
+
+  /// No description provided for @trialWhenEnds.
+  ///
+  /// In en, this message translates to:
+  /// **'When your trial ends:'**
+  String get trialWhenEnds;
+
+  /// No description provided for @trialLockMochis.
+  ///
+  /// In en, this message translates to:
+  /// **'🔒 Extra {mascot}s locked (you keep 1 free)'**
+  String trialLockMochis(String mascot);
+
+  /// No description provided for @trialLockChat.
+  ///
+  /// In en, this message translates to:
+  /// **'💬 Chat capped at 80/day (was unlimited)'**
+  String get trialLockChat;
+
+  /// No description provided for @trialLockQuiz.
+  ///
+  /// In en, this message translates to:
+  /// **'📊 Advanced quiz & study plan limited'**
+  String get trialLockQuiz;
+
+  /// No description provided for @trialWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'🎁 Premium is on us\nfor 7 days!'**
+  String get trialWelcomeTitle;
+
+  /// No description provided for @trialWelcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No card needed. We\'ll remind you before it ends.'**
+  String get trialWelcomeSubtitle;
+
+  /// No description provided for @trialWelcomePerk1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited {mascot}s'**
+  String trialWelcomePerk1Title(String mascot);
+
+  /// No description provided for @trialWelcomePerk1Sub.
+  ///
+  /// In en, this message translates to:
+  /// **'One {mascot} for every subject you study'**
+  String trialWelcomePerk1Sub(String mascot);
+
+  /// No description provided for @trialWelcomePerk2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited chat'**
+  String get trialWelcomePerk2Title;
+
+  /// No description provided for @trialWelcomePerk2Sub.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask anything, any time — no daily limit'**
+  String get trialWelcomePerk2Sub;
+
+  /// No description provided for @trialWelcomePerk3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Full flashcards & quizzes'**
+  String get trialWelcomePerk3Title;
+
+  /// No description provided for @trialWelcomePerk3Sub.
+  ///
+  /// In en, this message translates to:
+  /// **'Every feature, zero restrictions'**
+  String get trialWelcomePerk3Sub;
+
+  /// No description provided for @trialWelcomeStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start exploring! 🚀'**
+  String get trialWelcomeStart;
+
+  /// No description provided for @trialWelcomeSubscribeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe now'**
+  String get trialWelcomeSubscribeNow;
+
+  /// No description provided for @trialExpiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your free week is up! ⏰'**
+  String get trialExpiredTitle;
+
+  /// No description provided for @trialExpiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You still have all your {mascot}s — nothing was deleted. Subscribe to keep them all, or pick one to stay free.'**
+  String trialExpiredBody(String mascot);
+
+  /// No description provided for @trialExpiredKeepAll.
+  ///
+  /// In en, this message translates to:
+  /// **'⭐ Keep all your {mascot}s'**
+  String trialExpiredKeepAll(String mascot);
+
+  /// No description provided for @trialExpiredPerks.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited {mascot}s, unlimited chat, full flashcards & quizzes.'**
+  String trialExpiredPerks(String mascot);
+
+  /// No description provided for @trialExpiredUpTo4Kids.
+  ///
+  /// In en, this message translates to:
+  /// **'up to 4 kids'**
+  String get trialExpiredUpTo4Kids;
+
+  /// No description provided for @trialExpiredOrContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Or — continue free with 1 {mascot}'**
+  String trialExpiredOrContinue(String mascot);
+
+  /// No description provided for @trialExpiredPickBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose which {mascot} stays active. The rest are locked (🔒) but not deleted — subscribing restores them instantly.'**
+  String trialExpiredPickBody(String mascot);
+
+  /// No description provided for @trialExpiredContinueWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue free with {name}'**
+  String trialExpiredContinueWith(String name);
+
+  /// No description provided for @trialKeeperFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'1 {mascot}'**
+  String trialKeeperFallback(String mascot);
+
+  /// No description provided for @subPlansChooseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your plan'**
+  String get subPlansChooseTitle;
+
+  /// No description provided for @subPlansLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load subscription info. Try again.'**
+  String get subPlansLoadError;
+
+  /// No description provided for @subPlansYourSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your subscription'**
+  String get subPlansYourSubscription;
+
+  /// No description provided for @subPlansUpgradeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade Apalchi'**
+  String get subPlansUpgradeTitle;
+
+  /// No description provided for @subPlansProSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'1 student · all AI features'**
+  String get subPlansProSubtitle;
+
+  /// No description provided for @subPlansMaxSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'1 student · smarter AI for hard problems'**
+  String get subPlansMaxSubtitle;
+
+  /// No description provided for @subPlansFamilySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 4 students'**
+  String get subPlansFamilySubtitle;
+
+  /// No description provided for @subPlansProFeat1.
+  ///
+  /// In en, this message translates to:
+  /// **'100 AI messages / day'**
+  String get subPlansProFeat1;
+
+  /// No description provided for @subPlansProFeat2.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 5 {mascot}s'**
+  String subPlansProFeat2(String mascot);
+
+  /// No description provided for @subPlansProFeat3.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz & flashcards'**
+  String get subPlansProFeat3;
+
+  /// No description provided for @subPlansProFeat4.
+  ///
+  /// In en, this message translates to:
+  /// **'Homework photo scan'**
+  String get subPlansProFeat4;
+
+  /// No description provided for @subPlansMaxFeat1.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited AI messages'**
+  String get subPlansMaxFeat1;
+
+  /// No description provided for @subPlansMaxFeat2.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited {mascot}s'**
+  String subPlansMaxFeat2(String mascot);
+
+  /// No description provided for @subPlansMaxFeat3.
+  ///
+  /// In en, this message translates to:
+  /// **'Sonnet model for complex questions'**
+  String get subPlansMaxFeat3;
+
+  /// No description provided for @subPlansMaxFeat4.
+  ///
+  /// In en, this message translates to:
+  /// **'All Pro features'**
+  String get subPlansMaxFeat4;
+
+  /// No description provided for @subPlansFamilyFeat1.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything in Max'**
+  String get subPlansFamilyFeat1;
+
+  /// No description provided for @subPlansFamilyFeat2.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 4 child accounts'**
+  String get subPlansFamilyFeat2;
+
+  /// No description provided for @subPlansFamilyFeat3.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent dashboard'**
+  String get subPlansFamilyFeat3;
+
+  /// No description provided for @subPlansFamilyFeat4.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared star rewards'**
+  String get subPlansFamilyFeat4;
+
+  /// No description provided for @subPlansBadgeExams.
+  ///
+  /// In en, this message translates to:
+  /// **'Best for exams'**
+  String get subPlansBadgeExams;
+
+  /// No description provided for @subPlansBadgePopular.
+  ///
+  /// In en, this message translates to:
+  /// **'Most popular'**
+  String get subPlansBadgePopular;
+
+  /// No description provided for @subPlansBestValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Best value'**
+  String get subPlansBestValue;
+
+  /// No description provided for @subPlansCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get subPlansCurrent;
+
+  /// No description provided for @subPlansMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get subPlansMonthly;
+
+  /// No description provided for @subPlansAnnual.
+  ///
+  /// In en, this message translates to:
+  /// **'Annual  (save ~34%)'**
+  String get subPlansAnnual;
+
+  /// No description provided for @subPlansFreeFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'20 messages/day · 1 {mascot} · basic features'**
+  String subPlansFreeFeatures(String mascot);
+
+  /// No description provided for @subPlansCentreBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'⭐ Premium via your centre'**
+  String get subPlansCentreBanner;
+
+  /// No description provided for @subPlansHeaderCentre.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Premium comes from your centre. Enjoy unlimited chat and {mascot}s!'**
+  String subPlansHeaderCentre(String mascot);
+
+  /// No description provided for @subPlansHeaderTrial.
+  ///
+  /// In en, this message translates to:
+  /// **'Your free trial ends in {days, plural, one{1 day} other{{days} days}}. Subscribe to keep all your {mascot}s.'**
+  String subPlansHeaderTrial(int days, String mascot);
+
+  /// No description provided for @subPlansHeaderPremium.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re on {tier}. Manage or cancel anytime on the web.'**
+  String subPlansHeaderPremium(String tier);
+
+  /// No description provided for @subPlansHeaderFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Start with a 7-day free trial. Cancel anytime.'**
+  String get subPlansHeaderFree;
+
+  /// No description provided for @subPlansManageIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your plan, update your card, or cancel anytime on the Apalchi website.'**
+  String get subPlansManageIntro;
+
+  /// No description provided for @subPlansManageOnWeb.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage on web'**
+  String get subPlansManageOnWeb;
+
+  /// No description provided for @paywallHeadCreateTutor.
+  ///
+  /// In en, this message translates to:
+  /// **'Want more {mascot}s?'**
+  String paywallHeadCreateTutor(String mascot);
+
+  /// No description provided for @paywallHeadUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Need more uploads?'**
+  String get paywallHeadUpload;
+
+  /// No description provided for @paywallHeadCompile.
+  ///
+  /// In en, this message translates to:
+  /// **'Compiled all your chapters'**
+  String get paywallHeadCompile;
+
+  /// No description provided for @paywallHeadChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of chats for today'**
+  String get paywallHeadChat;
+
+  /// No description provided for @paywallHeadParent.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent dashboard is premium'**
+  String get paywallHeadParent;
+
+  /// No description provided for @paywallHeadCurriculum.
+  ///
+  /// In en, this message translates to:
+  /// **'Curriculum journey is premium'**
+  String get paywallHeadCurriculum;
+
+  /// No description provided for @paywallHeadFreeze.
+  ///
+  /// In en, this message translates to:
+  /// **'Stack more streak freezes'**
+  String get paywallHeadFreeze;
+
+  /// No description provided for @paywallHeadGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Study groups are premium'**
+  String get paywallHeadGroups;
+
+  /// No description provided for @paywallHeadAddStudent.
+  ///
+  /// In en, this message translates to:
+  /// **'Need more student accounts?'**
+  String get paywallHeadAddStudent;
+
+  /// No description provided for @paywallHeadDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock Apalchi Premium'**
+  String get paywallHeadDefault;
+
+  /// No description provided for @paywallSubCreateTutor.
+  ///
+  /// In en, this message translates to:
+  /// **'Free users get 1 {mascot}. Sign up for premium for unlimited {mascot}s so each subject gets its own {mascot}. Or, level up to level 5 to unlock your next {mascot} slot!'**
+  String paywallSubCreateTutor(String mascot);
+
+  /// No description provided for @paywallSubUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploads are unlimited — free or premium. The gate is how many {mascot}s you can have. Premium gives you one per subject.'**
+  String paywallSubUpload(String mascot);
+
+  /// No description provided for @paywallSubCompile.
+  ///
+  /// In en, this message translates to:
+  /// **'Big documents split into chapters so you pick what {mascot} reads. Free plans include a handful of chapter compiles a month; premium plans give you many more — reset on a rolling 30 days.'**
+  String paywallSubCompile(String mascot);
+
+  /// No description provided for @paywallSubChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Free users get 20 chats a day. Pro lifts the cap to 100; Max and above remove it entirely.'**
+  String get paywallSubChat;
+
+  /// No description provided for @paywallSubParent.
+  ///
+  /// In en, this message translates to:
+  /// **'Parents track progress, set goals, and read weekly reports.'**
+  String get paywallSubParent;
+
+  /// No description provided for @paywallSubCurriculum.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan ahead with a syllabus-aware journey across every topic.'**
+  String get paywallSubCurriculum;
+
+  /// No description provided for @paywallSubFreeze.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium lets you stack up to 3 streak freezes so a missed day never costs your streak.'**
+  String get paywallSubFreeze;
+
+  /// No description provided for @paywallSubGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Collaborate with classmates in shared study groups. Available on Pro and above.'**
+  String get paywallSubGroups;
+
+  /// No description provided for @paywallSubAddStudent.
+  ///
+  /// In en, this message translates to:
+  /// **'Family plan supports up to 4 students. Centre plan supports up to 15 students.'**
+  String get paywallSubAddStudent;
+
+  /// No description provided for @paywallSubDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Get everything Apalchi has to offer — unlimited {mascot}s, family sharing, premium analytics.'**
+  String paywallSubDefault(String mascot);
+
+  /// No description provided for @paywallPerk1.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited {mascot}s + uploads'**
+  String paywallPerk1(String mascot);
+
+  /// No description provided for @paywallPerk2.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited daily chats'**
+  String get paywallPerk2;
+
+  /// No description provided for @paywallPerk3.
+  ///
+  /// In en, this message translates to:
+  /// **'Family sharing — up to 4 kids'**
+  String get paywallPerk3;
+
+  /// No description provided for @paywallPerk4.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent dashboard + weekly reports'**
+  String get paywallPerk4;
+
+  /// No description provided for @paywallPerk5.
+  ///
+  /// In en, this message translates to:
+  /// **'3 streak freezes (up from 1)'**
+  String get paywallPerk5;
+
+  /// No description provided for @paywallSeePlans.
+  ///
+  /// In en, this message translates to:
+  /// **'See plans'**
+  String get paywallSeePlans;
+
+  /// No description provided for @paywallMaybeLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe later'**
+  String get paywallMaybeLater;
 }
 
 class _AppLocalizationsDelegate

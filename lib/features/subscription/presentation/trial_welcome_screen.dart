@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 const _kSeenKey = 'trial_welcome_seen_v1';
 
@@ -30,14 +31,15 @@ class TrialWelcomeScreen {
 class _TrialWelcomeSheet extends ConsumerWidget {
   const _TrialWelcomeSheet();
 
-  static const _perks = [
-    ('🐾', 'Unlimited Mochis', 'One Mochi for every subject you study'),
-    ('💬', 'Unlimited chat', 'Ask anything, any time — no daily limit'),
-    ('📚', 'Full flashcards & quizzes', 'Every feature, zero restrictions'),
-  ];
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final perks = [
+      ('🐾', l10n.trialWelcomePerk1Title(l10n.mascotName),
+          l10n.trialWelcomePerk1Sub(l10n.mascotName)),
+      ('💬', l10n.trialWelcomePerk2Title, l10n.trialWelcomePerk2Sub),
+      ('📚', l10n.trialWelcomePerk3Title, l10n.trialWelcomePerk3Sub),
+    ];
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.sizeOf(context).height * 0.85,
@@ -67,8 +69,8 @@ class _TrialWelcomeSheet extends ConsumerWidget {
           const SizedBox(height: AppSpacing.lg),
           Image.asset('assets/images/mochi.png', width: 90, height: 90),
           const SizedBox(height: AppSpacing.md),
-          const Text('🎁 Premium is on us\nfor 7 days!',
-              style: TextStyle(
+          Text(l10n.trialWelcomeTitle,
+              style: const TextStyle(
                 fontFamily: 'Nunito',
                 fontSize: 26,
                 fontWeight: FontWeight.w800,
@@ -78,7 +80,7 @@ class _TrialWelcomeSheet extends ConsumerWidget {
               textAlign: TextAlign.center),
           const SizedBox(height: 6),
           Text(
-            'No card needed. We\'ll remind you before it ends.',
+            l10n.trialWelcomeSubtitle,
             style: TextStyle(
               fontFamily: 'Nunito',
               fontSize: 14,
@@ -87,7 +89,7 @@ class _TrialWelcomeSheet extends ConsumerWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.xl),
-          ..._perks.map((p) {
+          ...perks.map((p) {
             final (emoji, title, sub) = p;
             return Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -139,8 +141,8 @@ class _TrialWelcomeSheet extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(14)),
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              child: const Text('Start exploring! 🚀',
-                  style: TextStyle(
+              child: Text(l10n.trialWelcomeStart,
+                  style: const TextStyle(
                       fontFamily: 'Nunito',
                       fontWeight: FontWeight.w800,
                       fontSize: 16)),
@@ -155,7 +157,7 @@ class _TrialWelcomeSheet extends ConsumerWidget {
             child: Text(
                 allowPriceDisplay(ref)
                     ? 'Subscribe now from US\$9.99/mo'
-                    : 'Subscribe now',
+                    : l10n.trialWelcomeSubscribeNow,
                 style: TextStyle(
                     fontFamily: 'Nunito',
                     color: Colors.white.withValues(alpha: 0.7),

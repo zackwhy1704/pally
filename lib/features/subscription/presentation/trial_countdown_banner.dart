@@ -6,6 +6,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/features/subscription/trial_status_provider.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 /// Escalating trial countdown banner shown on the home screen.
 /// One banner, never stacked. Dismissible per-session; returns next launch.
@@ -27,6 +28,7 @@ class _TrialCountdownBannerState extends ConsumerState<TrialCountdownBanner> {
     final trialAsync = ref.watch(trialStatusProvider);
     final trial = trialAsync.valueOrNull;
     if (trial == null || !trial.isOnTrial) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context);
 
     final days  = trial.trialDaysLeft;
     final hours = trial.trialHoursLeft;
@@ -41,14 +43,14 @@ class _TrialCountdownBannerState extends ConsumerState<TrialCountdownBanner> {
     final border = fg.withValues(alpha: 0.35);
 
     final timeLabel = isUrgent
-        ? '${hours}h left'
-        : '$days day${days == 1 ? '' : 's'} left';
+        ? l10n.trialTimeHoursLeft(hours)
+        : l10n.trialTimeDaysLeft(days);
 
     final body = isUrgent
-        ? 'Last day of Premium! ⏳ $timeLabel — keep your Mochis.'
+        ? l10n.trialBannerUrgent(l10n.mascotName, timeLabel)
         : isWarning
-            ? '$timeLabel of Premium — subscribe to keep all your Mochis.'
-            : '$timeLabel of Premium · Enjoying unlimited Mochis? Keep them after.';
+            ? l10n.trialBannerWarning(l10n.mascotName, timeLabel)
+            : l10n.trialBannerCalm(l10n.mascotName, timeLabel);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -111,7 +113,7 @@ class _TrialCountdownBannerState extends ConsumerState<TrialCountdownBanner> {
                       child: Text(
                           allowPriceDisplay(ref)
                               ? 'Keep Premium from US\$9.99/mo'
-                              : 'Keep Premium',
+                              : l10n.trialKeepPremium,
                           style: const TextStyle(
                               fontFamily: 'Nunito',
                               fontWeight: FontWeight.w800,
@@ -177,14 +179,15 @@ class _WhatLocksCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('When your trial ends:',
+          Text(AppLocalizations.of(context).trialWhenEnds,
               style: AppTextStyles.caption.copyWith(
                   color: fgColor, fontWeight: FontWeight.w800)),
           const SizedBox(height: 4),
           ...[
-            '🔒 Extra Mochis locked (you keep 1 free)',
-            '💬 Chat capped at 80/day (was unlimited)',
-            '📊 Advanced quiz & study plan limited',
+            AppLocalizations.of(context)
+                .trialLockMochis(AppLocalizations.of(context).mascotName),
+            AppLocalizations.of(context).trialLockChat,
+            AppLocalizations.of(context).trialLockQuiz,
           ].map((s) => Padding(
                 padding: const EdgeInsets.only(bottom: 2),
                 child: Text(s,

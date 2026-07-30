@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/subscription/subscription_service.dart';
 import 'package:pally/features/subscription/widgets/web_upgrade_cta.dart';
 
@@ -24,6 +25,8 @@ Widget _wrap(_FakeSender sender) => ProviderScope(
       ],
       // No Scaffold needed; the CTA is a plain Column.
       child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(body: SingleChildScrollView(child: WebUpgradeCta())),
       ),
     );
