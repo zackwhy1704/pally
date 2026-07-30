@@ -436,3 +436,9 @@ Reuses moduleAnswer, progressCharacterShop; mascot via {mascot}. Converted stati
 ICU plurals for question counts (photoQuestionCount/photoIFound/photoQuestionsFound/photoSendQuestions).
 Reuses commonTryAgain; mascot via {mascot}. Fixed cta_invariant to match the send CTA by its locale-stable
 ' ✨' suffix and Try-Again per-locale. (upload + ocr_awareness dirs are separate follow-up PRs.)
+
+### PR-G2 — OCR-awareness (27 keys)
+
+`ocr_confidence_preview`, `ocr_quality_warning`, `ocr_tips_overlay`, `ocr_what_can_read`,
+`ocr_diagram_warning`, and `confidence_utils` (warning-note/fix-instruction helpers, l threaded).
+"What can Apalchi read", photo-tips, quality-warning, diagram/maths-detected copy. Mascot via {mascot}.

@@ -2371,4 +2371,99 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get photoWhatToDo => 'What would you like to do?';
+
+  @override
+  String get ocrFixManually => 'Fix text manually';
+
+  @override
+  String ocrHowWellReads(String mascot) {
+    return 'How well $mascot can read each question';
+  }
+
+  @override
+  String ocrQuestionLine(int n, String text) {
+    return 'Q$n: $text';
+  }
+
+  @override
+  String get ocrReadingConfidence => 'Reading confidence';
+
+  @override
+  String get ocrSendAnyway => 'Send anyway';
+
+  @override
+  String get ocrIssuesDetected => 'Issues detected';
+
+  @override
+  String get ocrQualityLow => 'Photo quality is low';
+
+  @override
+  String get ocrQualityScore => 'Quality score';
+
+  @override
+  String get ocrRetakePhoto => 'Retake photo 📸';
+
+  @override
+  String get ocrMayMisread => 'Your tutor may misread some questions';
+
+  @override
+  String get ocrBestResults => 'Get the best results from your camera';
+
+  @override
+  String get ocrGotItTakePhoto => 'Got it — take photo';
+
+  @override
+  String get ocrMightNeedFix => 'Might need manual fix';
+
+  @override
+  String get ocrPhotoTips => 'Photo tips for better reading';
+
+  @override
+  String get ocrWhatReadsWell => 'What reads well';
+
+  @override
+  String get ocrBestTip =>
+      'Best tip: snap the words & numbers, then type any graph values yourself.';
+
+  @override
+  String get ocrCantSee =>
+      'But it can\'t truly \"see\" pictures like graphs or shapes — it only reads the text around them.';
+
+  @override
+  String ocrReadsWell(String mascot) {
+    return '$mascot reads text & numbers really well';
+  }
+
+  @override
+  String get ocrWhatCanRead => 'What can Apalchi read?';
+
+  @override
+  String get ocrWarnDiagram =>
+      'This image contains a diagram or chart. Text reading may miss visual elements.';
+
+  @override
+  String get ocrWarnMaths =>
+      'Maths symbols and equations may not be read perfectly by OCR.';
+
+  @override
+  String get ocrWarnGeneric =>
+      'Some content in this image may not be read accurately.';
+
+  @override
+  String get ocrFixDiagram =>
+      'Tap \"Fix text manually\" to describe what the diagram shows.';
+
+  @override
+  String get ocrFixSymbols =>
+      'Tap \"Fix text manually\" to correct any misread symbols.';
+
+  @override
+  String get ocrFixGeneric =>
+      'Tap \"Fix text manually\" to review and correct the text.';
+
+  @override
+  String get ocrDiagramDetected => 'Diagram detected';
+
+  @override
+  String get ocrMathsDetected => 'Maths symbols detected';
 }

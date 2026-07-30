@@ -2263,4 +2263,91 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get photoWhatToDo => '你想做什么？';
+
+  @override
+  String get ocrFixManually => '手动修正文字';
+
+  @override
+  String ocrHowWellReads(String mascot) {
+    return '$mascot 对每道题的识别程度';
+  }
+
+  @override
+  String ocrQuestionLine(int n, String text) {
+    return '第 $n 题：$text';
+  }
+
+  @override
+  String get ocrReadingConfidence => '识别置信度';
+
+  @override
+  String get ocrSendAnyway => '仍然发送';
+
+  @override
+  String get ocrIssuesDetected => '检测到问题';
+
+  @override
+  String get ocrQualityLow => '照片质量较低';
+
+  @override
+  String get ocrQualityScore => '质量评分';
+
+  @override
+  String get ocrRetakePhoto => '重拍照片 📸';
+
+  @override
+  String get ocrMayMisread => '你的导师可能会误读某些题目';
+
+  @override
+  String get ocrBestResults => '让你的相机发挥最佳效果';
+
+  @override
+  String get ocrGotItTakePhoto => '明白了——拍照';
+
+  @override
+  String get ocrMightNeedFix => '可能需要手动修正';
+
+  @override
+  String get ocrPhotoTips => '提升识别效果的拍照技巧';
+
+  @override
+  String get ocrWhatReadsWell => '哪些内容识别良好';
+
+  @override
+  String get ocrBestTip => '最佳建议：拍下文字和数字，然后自行输入任何图表数值。';
+
+  @override
+  String get ocrCantSee => '但它无法真正“看到”图形或形状之类的图片——它只能读取周围的文字。';
+
+  @override
+  String ocrReadsWell(String mascot) {
+    return '$mascot 对文字和数字的识别非常出色';
+  }
+
+  @override
+  String get ocrWhatCanRead => 'Apalchi 能读取什么？';
+
+  @override
+  String get ocrWarnDiagram => '这张图片包含示意图或图表。文字识别可能会遗漏视觉元素。';
+
+  @override
+  String get ocrWarnMaths => 'OCR 可能无法完美识别数学符号和方程式。';
+
+  @override
+  String get ocrWarnGeneric => '这张图片中的某些内容可能无法准确识别。';
+
+  @override
+  String get ocrFixDiagram => '点按“手动修正文字”来描述示意图的内容。';
+
+  @override
+  String get ocrFixSymbols => '点按“手动修正文字”来更正任何被误读的符号。';
+
+  @override
+  String get ocrFixGeneric => '点按“手动修正文字”来检查并更正文字。';
+
+  @override
+  String get ocrDiagramDetected => '检测到示意图';
+
+  @override
+  String get ocrMathsDetected => '检测到数学符号';
 }

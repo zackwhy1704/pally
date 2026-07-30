@@ -252,39 +252,11 @@ features/modules/presentation/module_list_screen.dart	Modules
 features/modules/presentation/module_player_screen.dart	${playerState.currentIndex + 1}/${playerState.totalItems}
 features/modules/presentation/module_player_screen.dart	Complete
 features/modules/presentation/widgets/complete_body.dart	$pct%
-features/ocr_awareness/screens/ocr_confidence_preview.dart	Fix text manually
-features/ocr_awareness/screens/ocr_confidence_preview.dart	How well Mochi can read each question
-features/ocr_awareness/screens/ocr_confidence_preview.dart	Q${e.key + 1}: ${item.text}
-features/ocr_awareness/screens/ocr_confidence_preview.dart	Reading confidence
-features/ocr_awareness/screens/ocr_confidence_preview.dart	Send anyway
 features/ocr_awareness/screens/ocr_quality_warning.dart	${(_barAnimation.value * 100).round()}%
-features/ocr_awareness/screens/ocr_quality_warning.dart	Issues detected
-features/ocr_awareness/screens/ocr_quality_warning.dart	Photo quality is low
-features/ocr_awareness/screens/ocr_quality_warning.dart	Quality score
-features/ocr_awareness/screens/ocr_quality_warning.dart	Retake photo 📸
-features/ocr_awareness/screens/ocr_quality_warning.dart	Send anyway
-features/ocr_awareness/screens/ocr_quality_warning.dart	Your tutor may misread some questions
-features/ocr_awareness/screens/ocr_tips_overlay.dart	Get the best results from your camera
-features/ocr_awareness/screens/ocr_tips_overlay.dart	Got it — take photo
-features/ocr_awareness/screens/ocr_tips_overlay.dart	Might need manual fix
-features/ocr_awareness/screens/ocr_tips_overlay.dart	Photo tips for better reading
-features/ocr_awareness/screens/ocr_tips_overlay.dart	What reads well
-features/ocr_awareness/screens/ocr_what_can_read.dart	Best tip: snap the words & numbers, then type any graph values yourself.
-features/ocr_awareness/screens/ocr_what_can_read.dart	But it can't truly "see" pictures like graphs or shapes — 
-features/ocr_awareness/screens/ocr_what_can_read.dart	Mochi reads text & numbers really well
-features/ocr_awareness/screens/ocr_what_can_read.dart	What can Apalchi read?
 features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}%
 features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}% ⚠
 features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}% ✓
 features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}% ✗
-features/ocr_awareness/utils/confidence_utils.dart	Maths symbols and equations may not be read perfectly by OCR.
-features/ocr_awareness/utils/confidence_utils.dart	Some content in this image may not be read accurately.
-features/ocr_awareness/utils/confidence_utils.dart	Tap "Fix text manually" to correct any misread symbols.
-features/ocr_awareness/utils/confidence_utils.dart	Tap "Fix text manually" to describe what the diagram shows.
-features/ocr_awareness/utils/confidence_utils.dart	Tap "Fix text manually" to review and correct the text.
-features/ocr_awareness/utils/confidence_utils.dart	This image contains a diagram or chart. Text reading may miss visual elements.
-features/ocr_awareness/widgets/ocr_diagram_warning.dart	Diagram detected
-features/ocr_awareness/widgets/ocr_diagram_warning.dart	Maths symbols detected
 features/onboarding/presentation/direct_onboarding_view_model.dart	No internet connection. Check your WiFi and try again.
 features/onboarding/presentation/feature_tour.dart	A Mochi for every subject
 features/onboarding/presentation/feature_tour.dart	Hi, I'm Mochi!

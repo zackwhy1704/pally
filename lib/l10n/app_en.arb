@@ -3302,5 +3302,131 @@
   "photoWhatToDo": "What would you like to do?",
   "@photoWhatToDo": {
     "description": "PR-G photo_question."
+  },
+  "ocrFixManually": "Fix text manually",
+  "@ocrFixManually": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrHowWellReads": "How well {mascot} can read each question",
+  "@ocrHowWellReads": {
+    "description": "PR-G2 ocr_awareness.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "ocrQuestionLine": "Q{n}: {text}",
+  "@ocrQuestionLine": {
+    "description": "PR-G2 ocr_awareness.",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "ocrReadingConfidence": "Reading confidence",
+  "@ocrReadingConfidence": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrSendAnyway": "Send anyway",
+  "@ocrSendAnyway": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrIssuesDetected": "Issues detected",
+  "@ocrIssuesDetected": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrQualityLow": "Photo quality is low",
+  "@ocrQualityLow": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrQualityScore": "Quality score",
+  "@ocrQualityScore": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrRetakePhoto": "Retake photo 📸",
+  "@ocrRetakePhoto": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrMayMisread": "Your tutor may misread some questions",
+  "@ocrMayMisread": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrBestResults": "Get the best results from your camera",
+  "@ocrBestResults": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrGotItTakePhoto": "Got it — take photo",
+  "@ocrGotItTakePhoto": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrMightNeedFix": "Might need manual fix",
+  "@ocrMightNeedFix": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrPhotoTips": "Photo tips for better reading",
+  "@ocrPhotoTips": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrWhatReadsWell": "What reads well",
+  "@ocrWhatReadsWell": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrBestTip": "Best tip: snap the words & numbers, then type any graph values yourself.",
+  "@ocrBestTip": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrCantSee": "But it can't truly \"see\" pictures like graphs or shapes — it only reads the text around them.",
+  "@ocrCantSee": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrReadsWell": "{mascot} reads text & numbers really well",
+  "@ocrReadsWell": {
+    "description": "PR-G2 ocr_awareness.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "ocrWhatCanRead": "What can Apalchi read?",
+  "@ocrWhatCanRead": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrWarnDiagram": "This image contains a diagram or chart. Text reading may miss visual elements.",
+  "@ocrWarnDiagram": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrWarnMaths": "Maths symbols and equations may not be read perfectly by OCR.",
+  "@ocrWarnMaths": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrWarnGeneric": "Some content in this image may not be read accurately.",
+  "@ocrWarnGeneric": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrFixDiagram": "Tap \"Fix text manually\" to describe what the diagram shows.",
+  "@ocrFixDiagram": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrFixSymbols": "Tap \"Fix text manually\" to correct any misread symbols.",
+  "@ocrFixSymbols": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrFixGeneric": "Tap \"Fix text manually\" to review and correct the text.",
+  "@ocrFixGeneric": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrDiagramDetected": "Diagram detected",
+  "@ocrDiagramDetected": {
+    "description": "PR-G2 ocr_awareness."
+  },
+  "ocrMathsDetected": "Maths symbols detected",
+  "@ocrMathsDetected": {
+    "description": "PR-G2 ocr_awareness."
   }
 }

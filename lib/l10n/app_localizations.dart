@@ -4009,6 +4009,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'What would you like to do?'**
   String get photoWhatToDo;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Fix text manually'**
+  String get ocrFixManually;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'How well {mascot} can read each question'**
+  String ocrHowWellReads(String mascot);
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Q{n}: {text}'**
+  String ocrQuestionLine(int n, String text);
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading confidence'**
+  String get ocrReadingConfidence;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Send anyway'**
+  String get ocrSendAnyway;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Issues detected'**
+  String get ocrIssuesDetected;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo quality is low'**
+  String get ocrQualityLow;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Quality score'**
+  String get ocrQualityScore;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Retake photo 📸'**
+  String get ocrRetakePhoto;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Your tutor may misread some questions'**
+  String get ocrMayMisread;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Get the best results from your camera'**
+  String get ocrBestResults;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it — take photo'**
+  String get ocrGotItTakePhoto;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Might need manual fix'**
+  String get ocrMightNeedFix;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo tips for better reading'**
+  String get ocrPhotoTips;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'What reads well'**
+  String get ocrWhatReadsWell;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Best tip: snap the words & numbers, then type any graph values yourself.'**
+  String get ocrBestTip;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'But it can\'t truly \"see\" pictures like graphs or shapes — it only reads the text around them.'**
+  String get ocrCantSee;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} reads text & numbers really well'**
+  String ocrReadsWell(String mascot);
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'What can Apalchi read?'**
+  String get ocrWhatCanRead;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'This image contains a diagram or chart. Text reading may miss visual elements.'**
+  String get ocrWarnDiagram;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Maths symbols and equations may not be read perfectly by OCR.'**
+  String get ocrWarnMaths;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Some content in this image may not be read accurately.'**
+  String get ocrWarnGeneric;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap \"Fix text manually\" to describe what the diagram shows.'**
+  String get ocrFixDiagram;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap \"Fix text manually\" to correct any misread symbols.'**
+  String get ocrFixSymbols;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap \"Fix text manually\" to review and correct the text.'**
+  String get ocrFixGeneric;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagram detected'**
+  String get ocrDiagramDetected;
+
+  /// PR-G2 ocr_awareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Maths symbols detected'**
+  String get ocrMathsDetected;
 }
 
 class _AppLocalizationsDelegate

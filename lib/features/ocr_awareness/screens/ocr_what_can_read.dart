@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -9,6 +10,7 @@ class OcrWhatCanReadScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.bg,
       appBar: AppBar(
@@ -18,7 +20,7 @@ class OcrWhatCanReadScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_rounded, color: AppColors.text1),
           onPressed: () => context.pop(),
         ),
-        title: Text('What can Apalchi read?',
+        title: Text(l.ocrWhatCanRead,
             style: AppTextStyles.title.copyWith(fontSize: 16)),
         centerTitle: true,
       ),
@@ -110,6 +112,7 @@ class _IntroBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: AppSpacing.card,
       decoration: BoxDecoration(
@@ -129,7 +132,7 @@ class _IntroBanner extends StatelessWidget {
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(
-                  'Mochi reads text & numbers really well',
+                  l.ocrReadsWell(l.mascotName),
                   style: AppTextStyles.title
                       .copyWith(color: Colors.white, fontSize: 16),
                 ),
@@ -138,8 +141,7 @@ class _IntroBanner extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'But it can\'t truly "see" pictures like graphs or shapes — '
-            'it only reads the text around them.',
+            l.ocrCantSee,
             style:
                 AppTextStyles.bodySmall.copyWith(color: Colors.white70),
           ),
@@ -317,6 +319,7 @@ class _FooterTip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: AppSpacing.card,
       decoration: BoxDecoration(
@@ -330,7 +333,7 @@ class _FooterTip extends StatelessWidget {
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
-              'Best tip: snap the words & numbers, then type any graph values yourself.',
+              l.ocrBestTip,
               style:
                   AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
             ),

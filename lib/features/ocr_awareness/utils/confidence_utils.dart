@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 abstract class ConfidenceUtils {
   static Color colorFor(double confidence) {
@@ -27,25 +28,25 @@ abstract class ConfidenceUtils {
         .contains(detectedType.toLowerCase());
   }
 
-  static String warningNote(String detectedType) {
+  static String warningNote(AppLocalizations l, String detectedType) {
     final type = detectedType.toLowerCase();
     if (type == 'diagram' || type == 'graph' || type == 'chart') {
-      return 'This image contains a diagram or chart. Text reading may miss visual elements.';
+      return l.ocrWarnDiagram;
     }
     if (type == 'formula' || type == 'equation' || type == 'symbol') {
-      return 'Maths symbols and equations may not be read perfectly by OCR.';
+      return l.ocrWarnMaths;
     }
-    return 'Some content in this image may not be read accurately.';
+    return l.ocrWarnGeneric;
   }
 
-  static String fixInstruction(String detectedType) {
+  static String fixInstruction(AppLocalizations l, String detectedType) {
     final type = detectedType.toLowerCase();
     if (type == 'diagram' || type == 'graph' || type == 'chart') {
-      return 'Tap "Fix text manually" to describe what the diagram shows.';
+      return l.ocrFixDiagram;
     }
     if (type == 'formula' || type == 'equation' || type == 'symbol') {
-      return 'Tap "Fix text manually" to correct any misread symbols.';
+      return l.ocrFixSymbols;
     }
-    return 'Tap "Fix text manually" to review and correct the text.';
+    return l.ocrFixGeneric;
   }
 }

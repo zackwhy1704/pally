@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -30,6 +31,7 @@ class _OcrTipsOverlayState extends State<OcrTipsOverlay> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return DraggableScrollableSheet(
       initialChildSize: 0.62,
       minChildSize: 0.0,
@@ -77,10 +79,10 @@ class _OcrTipsOverlayState extends State<OcrTipsOverlay> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Photo tips for better reading',
+                      Text(l.ocrPhotoTips,
                           style: AppTextStyles.title.copyWith(fontSize: 15)),
                       const SizedBox(height: 2),
-                      Text('Get the best results from your camera',
+                      Text(l.ocrBestResults,
                           style: AppTextStyles.bodySmall),
                     ],
                   ),
@@ -108,7 +110,7 @@ class _OcrTipsOverlayState extends State<OcrTipsOverlay> {
             const Divider(color: AppColors.outline),
             const SizedBox(height: AppSpacing.sm),
 
-            Text('What reads well', style: AppTextStyles.label),
+            Text(l.ocrWhatReadsWell, style: AppTextStyles.label),
             const SizedBox(height: 8),
             Wrap(
               spacing: 6,
@@ -119,7 +121,7 @@ class _OcrTipsOverlayState extends State<OcrTipsOverlay> {
             ),
 
             const SizedBox(height: AppSpacing.md),
-            Text('Might need manual fix', style: AppTextStyles.label),
+            Text(l.ocrMightNeedFix, style: AppTextStyles.label),
             const SizedBox(height: 8),
             Wrap(
               spacing: 6,
@@ -139,7 +141,7 @@ class _OcrTipsOverlayState extends State<OcrTipsOverlay> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14)),
               ),
-              child: const Text('Got it — take photo',
+              child: Text(l.ocrGotItTakePhoto,
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,

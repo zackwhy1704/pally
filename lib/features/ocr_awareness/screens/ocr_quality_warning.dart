@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -87,6 +88,7 @@ class _OcrQualityWarningState extends State<OcrQualityWarning>
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.surface,
@@ -131,10 +133,10 @@ class _OcrQualityWarningState extends State<OcrQualityWarning>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Photo quality is low',
+                      Text(l.ocrQualityLow,
                           style: AppTextStyles.title.copyWith(fontSize: 15)),
                       const SizedBox(height: 2),
-                      Text('Your tutor may misread some questions',
+                      Text(l.ocrMayMisread,
                           style: AppTextStyles.bodySmall),
                     ],
                   ),
@@ -175,7 +177,7 @@ class _OcrQualityWarningState extends State<OcrQualityWarning>
             // Quality score bar
             Row(
               children: [
-                Text('Quality score',
+                Text(l.ocrQualityScore,
                     style: AppTextStyles.label.copyWith(
                         color: AppColors.text2)),
                 const Spacer(),
@@ -207,7 +209,7 @@ class _OcrQualityWarningState extends State<OcrQualityWarning>
 
             if (widget.issues.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.md),
-              Text('Issues detected', style: AppTextStyles.label),
+              Text(l.ocrIssuesDetected, style: AppTextStyles.label),
               const SizedBox(height: 8),
               ...widget.issues.map((issue) => Padding(
                     padding: const EdgeInsets.only(bottom: 6),
@@ -261,8 +263,8 @@ class _OcrQualityWarningState extends State<OcrQualityWarning>
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14)),
                 ),
-                child: const Text('Retake photo 📸',
-                    style: TextStyle(
+                child: Text(l.ocrRetakePhoto,
+                    style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
                         fontSize: 14)),
@@ -276,7 +278,7 @@ class _OcrQualityWarningState extends State<OcrQualityWarning>
               child: GestureDetector(
                 onTap: widget.onSendAnyway,
                 child: Text(
-                  'Send anyway',
+                  l.ocrSendAnyway,
                   style: AppTextStyles.bodySmall.copyWith(
                     color: AppColors.text3,
                     decoration: TextDecoration.underline,

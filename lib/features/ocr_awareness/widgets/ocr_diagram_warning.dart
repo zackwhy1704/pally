@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/features/ocr_awareness/utils/confidence_utils.dart';
@@ -30,6 +31,7 @@ class OcrDiagramWarning extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     if (!_hasDiagram && !_hasSymbol) return const SizedBox.shrink();
 
     return Padding(
@@ -41,8 +43,8 @@ class OcrDiagramWarning extends StatelessWidget {
             color: AppColors.amber,
             bgColor: AppColors.amberL,
             icon: '📊',
-            title: 'Diagram detected',
-            body: ConfidenceUtils.warningNote('diagram'),
+            title: l.ocrDiagramDetected,
+            body: ConfidenceUtils.warningNote(l, 'diagram'),
             chips: const ['Describe the diagram', 'What does the graph show?'],
             onChipTap: onChipTap,
           ),
@@ -51,8 +53,8 @@ class OcrDiagramWarning extends StatelessWidget {
             color: AppColors.purple,
             bgColor: AppColors.purpleL,
             icon: '∑',
-            title: 'Maths symbols detected',
-            body: ConfidenceUtils.warningNote('symbol'),
+            title: l.ocrMathsDetected,
+            body: ConfidenceUtils.warningNote(l, 'symbol'),
             chips: const ['Fix the equation', 'Retype the formula'],
             onChipTap: onChipTap,
           ),

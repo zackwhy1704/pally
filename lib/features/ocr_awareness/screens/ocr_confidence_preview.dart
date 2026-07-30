@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -74,6 +75,7 @@ class _OcrConfidencePreviewState extends State<OcrConfidencePreview>
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.surface,
@@ -118,10 +120,10 @@ class _OcrConfidencePreviewState extends State<OcrConfidencePreview>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Reading confidence',
+                      Text(l.ocrReadingConfidence,
                           style: AppTextStyles.title.copyWith(fontSize: 15)),
                       const SizedBox(height: 2),
-                      Text('How well Mochi can read each question',
+                      Text(l.ocrHowWellReads(l.mascotName),
                           style: AppTextStyles.bodySmall),
                     ],
                   ),
@@ -148,7 +150,7 @@ class _OcrConfidencePreviewState extends State<OcrConfidencePreview>
                       children: [
                         Expanded(
                           child: Text(
-                            'Q${e.key + 1}: ${item.text}',
+                            l.ocrQuestionLine(e.key + 1, item.text),
                             style: AppTextStyles.bodySmall,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -198,7 +200,7 @@ class _OcrConfidencePreviewState extends State<OcrConfidencePreview>
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text('Fix text manually',
+                    child: Text(l.ocrFixManually,
                         style: TextStyle(fontSize: 13,
                             fontWeight: FontWeight.w600)),
                   ),
@@ -213,7 +215,7 @@ class _OcrConfidencePreviewState extends State<OcrConfidencePreview>
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text('Send anyway',
+                    child: Text(l.ocrSendAnyway,
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 13,
