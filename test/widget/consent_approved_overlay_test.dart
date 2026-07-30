@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/features/consent/presentation/consent_approved_overlay.dart';
 
@@ -6,6 +7,8 @@ void main() {
   testWidgets('shows the Mochi celebration with kid-friendly copy + Let\'s go',
       (tester) async {
     await tester.pumpWidget(MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(
         body: Builder(
           builder: (ctx) => Center(

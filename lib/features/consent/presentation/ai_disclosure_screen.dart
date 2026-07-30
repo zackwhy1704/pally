@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/error/pally_error.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -85,6 +86,7 @@ class _AiDisclosureScreenState extends ConsumerState<AiDisclosureScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final info = widget.informationOnly;
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -102,39 +104,34 @@ class _AiDisclosureScreenState extends ConsumerState<AiDisclosureScreen> {
                       child: Text('🤖', style: TextStyle(fontSize: 48)),
                     ),
                     const SizedBox(height: AppSpacing.md),
-                    Text('A quick note about AI', style: AppTextStyles.heading1),
+                    Text(l.aiDisclosureTitle, style: AppTextStyles.heading1),
                     const SizedBox(height: AppSpacing.sm),
                     // Year-7 reading level: short sentences, no legal jargon.
                     Text(
-                      'Apalchi uses AI helpers to turn your notes into lessons. '
-                      'Your notes are sent to two AI companies — Anthropic '
-                      '(Claude) and Google (Gemini) — whose computers are '
-                      'outside Singapore. They only use your notes to make '
-                      'your study material.',
+                      l.aiDisclosureBody,
                       style:
                           AppTextStyles.body.copyWith(color: AppColors.text2),
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
                       info
-                          ? 'A grown-up looks after this choice for you.'
-                          : 'OK to continue?',
+                          ? l.aiDisclosureGrownup
+                          : l.aiDisclosureOkToContinue,
                       style: AppTextStyles.body.copyWith(
                           color: AppColors.text1,
                           fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: AppSpacing.lg),
-                    const _ProviderCard(
+                    _ProviderCard(
                       emoji: '🧠',
-                      name: 'Anthropic (Claude)',
-                      detail:
-                          'Makes your explanations, quizzes and chat replies.',
+                      name: l.aiDisclosureAnthropic,
+                      detail: l.aiDisclosureAnthropicDesc,
                     ),
                     const SizedBox(height: AppSpacing.sm),
-                    const _ProviderCard(
+                    _ProviderCard(
                       emoji: '✨',
-                      name: 'Google (Gemini)',
-                      detail: 'Helps read and understand your notes.',
+                      name: l.aiDisclosureGoogle,
+                      detail: l.aiDisclosureGoogleDesc,
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Container(
@@ -150,8 +147,7 @@ class _AiDisclosureScreenState extends ConsumerState<AiDisclosureScreen> {
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
-                              'These companies are outside Singapore. We only '
-                              'send what we need to make your study material.',
+                              l.aiDisclosureOutside,
                               style: AppTextStyles.caption
                                   .copyWith(color: AppColors.purple),
                             ),
@@ -170,7 +166,7 @@ class _AiDisclosureScreenState extends ConsumerState<AiDisclosureScreen> {
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                         child: Text(
-                          'Read more',
+                          l.aiDisclosureReadMore,
                           style: AppTextStyles.body.copyWith(
                             color: AppColors.purple,
                             fontWeight: FontWeight.w700,
@@ -195,7 +191,7 @@ class _AiDisclosureScreenState extends ConsumerState<AiDisclosureScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(
                   AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.md),
-              child: info ? _buildInfoActions() : _buildConsentActions(),
+              child: info ? _buildInfoActions(l) : _buildConsentActions(l),
             ),
           ],
         ),
@@ -204,7 +200,7 @@ class _AiDisclosureScreenState extends ConsumerState<AiDisclosureScreen> {
   }
 
   /// Under-13 informational variant — single "OK" dismiss, no consent.
-  Widget _buildInfoActions() {
+  Widget _buildInfoActions(AppLocalizations l) {
     return SizedBox(
       height: AppSizing.buttonHeight,
       child: FilledButton(
@@ -214,13 +210,13 @@ class _AiDisclosureScreenState extends ConsumerState<AiDisclosureScreen> {
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14)),
         ),
-        child: const Text('OK'),
+        child: Text(l.aiDisclosureOk),
       ),
     );
   }
 
   /// 13+ self-consent variant — "I agree" records consent, "Not now" backs out.
-  Widget _buildConsentActions() {
+  Widget _buildConsentActions(AppLocalizations l) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -240,7 +236,7 @@ class _AiDisclosureScreenState extends ConsumerState<AiDisclosureScreen> {
                     child: CircularProgressIndicator(
                         color: Colors.white, strokeWidth: 2),
                   )
-                : const Text('I agree'),
+                : Text(l.aiDisclosureAgree),
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -248,7 +244,7 @@ class _AiDisclosureScreenState extends ConsumerState<AiDisclosureScreen> {
           height: AppSizing.buttonHeightSm,
           child: TextButton(
             onPressed: _loading ? null : _notNow,
-            child: Text('Not now',
+            child: Text(l.consentNotNow,
                 style:
                     AppTextStyles.body.copyWith(color: AppColors.text2)),
           ),

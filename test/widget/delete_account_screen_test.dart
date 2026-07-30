@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,7 +12,10 @@ class _MockDio extends Mock implements Dio {}
 
 Widget _harness(Dio dio) => ProviderScope(
       overrides: [dioProvider.overrideWithValue(dio)],
-      child: const MaterialApp(home: DeleteAccountScreen()),
+      child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const DeleteAccountScreen()),
     );
 
 void main() {
@@ -74,6 +78,8 @@ void main() {
   testWidgets('restore surface renders the scheduled message + Restore action',
       (tester) async {
     await tester.pumpWidget(MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: Builder(
         builder: (ctx) => Scaffold(
           body: Center(
@@ -107,8 +113,10 @@ void main() {
 
     await tester.pumpWidget(ProviderScope(
       overrides: [dioProvider.overrideWithValue(_MockDio())],
-      child: const MaterialApp(
-        home: MediaQuery(
+      child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const MediaQuery(
           data: MediaQueryData(textScaler: TextScaler.linear(2.0)),
           child: DeleteAccountScreen(),
         ),

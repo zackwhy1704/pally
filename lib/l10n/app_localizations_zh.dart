@@ -3016,4 +3016,282 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get answerCardShow => '显示 →';
+
+  @override
+  String get aiDisclosureTitle => '关于 AI 的简短说明';
+
+  @override
+  String get aiDisclosureBody =>
+      'Apalchi 使用 AI 助手把你的笔记变成课程。你的笔记会发送给两家 AI 公司 — Anthropic（Claude）和 Google（Gemini）— 它们的服务器位于新加坡境外。它们只会用你的笔记来生成你的学习材料。';
+
+  @override
+  String get aiDisclosureGrownup => '这个选择由大人替你把关。';
+
+  @override
+  String get aiDisclosureOkToContinue => '可以继续吗？';
+
+  @override
+  String get aiDisclosureAnthropic => 'Anthropic（Claude）';
+
+  @override
+  String get aiDisclosureAnthropicDesc => '生成你的讲解、测验和聊天回复。';
+
+  @override
+  String get aiDisclosureGoogle => 'Google（Gemini）';
+
+  @override
+  String get aiDisclosureGoogleDesc => '帮助读取和理解你的笔记。';
+
+  @override
+  String get aiDisclosureOutside => '这些公司位于新加坡境外。我们只发送生成你的学习材料所需的内容。';
+
+  @override
+  String get aiDisclosureReadMore => '了解更多';
+
+  @override
+  String get aiDisclosureOk => '好的';
+
+  @override
+  String get aiDisclosureAgree => '我同意';
+
+  @override
+  String get consentNotNow => '暂不';
+
+  @override
+  String get consentApprovedTitle => '已批准';
+
+  @override
+  String consentApprovedBody(String mascot) {
+    return '大人已经同意 — 你的账户已就绪。一起和 $mascot 开始学习吧！';
+  }
+
+  @override
+  String get consentPendingSend => '发送';
+
+  @override
+  String consentPendingResent(String email) {
+    return '批准邮件已重新发送至 $email — 请查看收件箱和垃圾邮件。';
+  }
+
+  @override
+  String get consentPendingSending => '发送中……';
+
+  @override
+  String consentPendingResendIn(int seconds) {
+    return '$seconds 秒后可重发';
+  }
+
+  @override
+  String get consentPendingResendEmail => '重新发送邮件';
+
+  @override
+  String get consentPendingTitle => '就快好了！🎉';
+
+  @override
+  String get consentPendingSubtitle => '我们只需要一位大人点头同意。';
+
+  @override
+  String get consentPendingAskEmailBefore => '请他们查看邮箱 ';
+
+  @override
+  String get consentPendingAskEmailAfter => '，并点击其中的链接。';
+
+  @override
+  String get consentPendingSpamNote =>
+      '这可能需要一会儿。如果他们没看到，请让他们检查垃圾邮件文件夹，并点击「不是垃圾邮件」，好让下一封能正常送达。';
+
+  @override
+  String get consentPendingAutoUnlock => '他们一同意，我们就会自动解锁 — 你可以关闭应用，回来时就绪。';
+
+  @override
+  String get consentPendingNotApproved => '尚未批准 — 请让大人点击链接，然后再试一次。';
+
+  @override
+  String get consentPendingGotIt => '知道了';
+
+  @override
+  String get deleteAccountAppBar => '删除账户';
+
+  @override
+  String get deleteAccountTitle => '删除你的账户？';
+
+  @override
+  String get deleteAccountIntro => '这将永久删除你的账户。恢复期结束后将无法撤销。';
+
+  @override
+  String get deleteAccountWhatDeleted => '将删除哪些内容';
+
+  @override
+  String deleteAccountItem1(String mascot) {
+    return '你的 $mascot 以及它们从你笔记中学到的一切';
+  }
+
+  @override
+  String get deleteAccountItem2 => '你上传的笔记、课程、测验和记忆卡';
+
+  @override
+  String get deleteAccountItem3 => '你的学习进度、连续记录、星星和聊天记录';
+
+  @override
+  String get deleteAccountGrace =>
+      '你有 14 天可以反悔。在此期间重新登录即可恢复你的账户和所有数据。14 天后将永久消失。';
+
+  @override
+  String get deleteAccountKeep => '保留我的账户';
+
+  @override
+  String get deleteAccountConfirmTitle => '确认是你本人';
+
+  @override
+  String get deleteAccountConfirmBody => '为了你的安全，在我们安排删除之前请确认你的身份。';
+
+  @override
+  String get deleteAccountEmailCode => '改为向我发送验证码';
+
+  @override
+  String get deleteAccountCodeSent => '我们已向你发送 6 位验证码。请在下方输入以确认。';
+
+  @override
+  String get deleteAccountCodeLabel => '6 位验证码';
+
+  @override
+  String get deleteAccountConfirmBtn => '删除我的账户';
+
+  @override
+  String get deleteAccountBack => '返回';
+
+  @override
+  String get deleteAccountScheduledTitle => '你的账户已排定删除';
+
+  @override
+  String deleteAccountScheduledOn(String date) {
+    return '将于 $date 永久删除。';
+  }
+
+  @override
+  String get deleteAccountScheduledGeneric => '将在 14 天恢复期结束后永久删除。';
+
+  @override
+  String get deleteAccountChangedMind => '改变主意了？在那之前重新登录即可恢复你的账户和所有数据。';
+
+  @override
+  String get deleteAccountManualCancel =>
+      '如果你是通过 App Store 或 Google Play 订阅的，请记得在设备的订阅设置中取消订阅 — 在此删除账户并不会取消订阅。';
+
+  @override
+  String get deleteAccountErrEnterCredential => '请输入你的密码或收到的验证码以确认。';
+
+  @override
+  String get restoreScheduledTitle => '此账户已排定删除';
+
+  @override
+  String restoreScheduledOn(String date) {
+    return '将于 $date 永久删除。立即恢复以保留你的账户和所有数据。';
+  }
+
+  @override
+  String get restoreGeneric => '立即恢复以保留你的账户和所有数据。';
+
+  @override
+  String get restoreBtn => '恢复我的账户';
+
+  @override
+  String get completeProfileTitle => '还有一件小事';
+
+  @override
+  String get completeProfileSubtitle => '告诉我们你的年龄段，好让我们安全地设置你的账户。';
+
+  @override
+  String get completeProfileAgeGroup => '年龄段';
+
+  @override
+  String get completeProfile13Plus => '我 13 岁或以上';
+
+  @override
+  String get completeProfileUnder13 => '我未满 13 岁';
+
+  @override
+  String get completeProfileErrSelectAge => '请选择你的年龄段以继续。';
+
+  @override
+  String get completeProfileErrParentEmail => '请输入你家长的电子邮箱地址。';
+
+  @override
+  String get completeProfileErrGeneric => '出了点问题。请再试一次。';
+
+  @override
+  String get monthJan => '1月';
+
+  @override
+  String get monthFeb => '2月';
+
+  @override
+  String get monthMar => '3月';
+
+  @override
+  String get monthApr => '4月';
+
+  @override
+  String get monthMay => '5月';
+
+  @override
+  String get monthJun => '6月';
+
+  @override
+  String get monthJul => '7月';
+
+  @override
+  String get monthAug => '8月';
+
+  @override
+  String get monthSep => '9月';
+
+  @override
+  String get monthOct => '10月';
+
+  @override
+  String get monthNov => '11月';
+
+  @override
+  String get monthDec => '12月';
+
+  @override
+  String dateFormatDMY(int day, String month, int year) {
+    return '$year年$month$day日';
+  }
+
+  @override
+  String get consentApprovedAllSet => '一切就绪！🎉';
+
+  @override
+  String get consentApprovedLetsGo => '开始吧！';
+
+  @override
+  String get consentPendingEmailLabel => '你大人的电子邮箱';
+
+  @override
+  String get consentPendingHelperText => '我们会改为把批准链接发送到这里。';
+
+  @override
+  String get consentPendingResendFailed => '刚才无法重发 — 请稍后再试。';
+
+  @override
+  String get consentPendingRefresh => '我已批准 — 刷新';
+
+  @override
+  String get consentPendingChangeEmail => '大人的邮箱填错了？点此修改';
+
+  @override
+  String get completeProfileParentEmailLabel => '家长的电子邮箱地址';
+
+  @override
+  String get completeProfileParentEmailRequired => '请输入你家长的电子邮箱';
+
+  @override
+  String get completeProfileParentEmailInvalid =>
+      '请输入你家长的有效电子邮箱（例如 parent@example.com）';
+
+  @override
+  String get completeProfileParentEmailHelper =>
+      '在你使用 AI 功能之前，我们会发邮件请你的家长批准你的账户。';
 }

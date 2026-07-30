@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/features/auth/auth_state.dart';
@@ -21,6 +22,8 @@ void main() {
       // instantiate (and, on teardown, dispose) the real AuthNotifier singleton.
       overrides: [authStateProvider.overrideWith((ref) => const AuthState())],
       child: MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: ParentalConsentPendingSheet(
             maskedEmail: maskedEmail,

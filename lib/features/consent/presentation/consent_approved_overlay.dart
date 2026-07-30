@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -12,11 +13,12 @@ class ConsentApprovedOverlay {
   ConsentApprovedOverlay._();
 
   static Future<void> show(BuildContext context) async {
+    final l = AppLocalizations.of(context);
     HapticFeedback.heavyImpact();
     await showGeneralDialog<void>(
       context: context,
       barrierDismissible: true,
-      barrierLabel: 'Approved',
+      barrierLabel: l.consentApprovedTitle,
       barrierColor: const Color(0xBB1F1733),
       transitionDuration: const Duration(milliseconds: 500),
       pageBuilder: (_, __, ___) => const SizedBox.shrink(),
@@ -31,6 +33,7 @@ class _CelebrationLayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Stack(
       children: [
         Positioned.fill(child: ConfettiBurst(progress: anim)),
@@ -70,7 +73,7 @@ class _CelebrationLayer extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          "You're all set! 🎉",
+                          l.consentApprovedAllSet,
                           style: AppTextStyles.heading1.copyWith(
                             color: AppColors.text1,
                             fontSize: 22,
@@ -79,8 +82,7 @@ class _CelebrationLayer extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Your grown-up said yes — your account is ready. '
-                          "Let's start learning with Mochi!",
+                          l.consentApprovedBody(l.mascotName),
                           style: AppTextStyles.body
                               .copyWith(color: AppColors.text2),
                           textAlign: TextAlign.center,
@@ -99,7 +101,7 @@ class _CelebrationLayer extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16)),
                             ),
-                            child: Text("Let's go!",
+                            child: Text(l.consentApprovedLetsGo,
                                 style: AppTextStyles.body.copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w700)),

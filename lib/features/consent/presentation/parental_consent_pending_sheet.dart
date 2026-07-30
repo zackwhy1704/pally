@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:pally/l10n/app_localizations.dart';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -33,26 +34,27 @@ class _ChangeEmailDialogState extends State<_ChangeEmailDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return AlertDialog(
-      title: const Text("Your grown-up's email"),
+      title: Text(l.consentPendingEmailLabel),
       content: TextField(
         controller: _controller,
         keyboardType: TextInputType.emailAddress,
         autofocus: true,
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           hintText: 'grownup@email.com',
-          helperText: "We'll send the approval link here instead.",
+          helperText: l.consentPendingHelperText,
         ),
         onSubmitted: (v) => Navigator.of(context).pop(v.trim()),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l.commonCancel),
         ),
         FilledButton(
           onPressed: () => Navigator.of(context).pop(_controller.text.trim()),
-          child: const Text('Send'),
+          child: Text(l.consentPendingSend),
         ),
       ],
     );
@@ -292,9 +294,10 @@ class _ParentalConsentPendingSheetState
   /// false app-wide, so every unlock path dismisses this one sheet.
   void _onUnlocked() {
     if (_dismissed || !mounted) return;
+    final l = AppLocalizations.of(context);
     _dismissed = true;
     showAppSnackBar(
-      const SnackBar(content: Text("You're all set! 🎉")),
+      SnackBar(content: Text(l.consentApprovedAllSet)),
     );
     Navigator.of(context).maybePop();
   }
@@ -329,10 +332,9 @@ class _ParentalConsentPendingSheetState
     }
   }
 
-  String get _statusLine => switch (_ui) {
-        _ResendUi.sent =>
-          'Approval email re-sent to $_maskedEmail — check inbox and spam.',
-        _ResendUi.failed => "Couldn't resend just now — try again shortly.",
+  String _statusLine(AppLocalizations l) => switch (_ui) {
+        _ResendUi.sent => l.consentPendingResent(_maskedEmail),
+        _ResendUi.failed => l.consentPendingResendFailed,
         _ => '',
       };
 
@@ -341,14 +343,15 @@ class _ParentalConsentPendingSheetState
 
   bool get _buttonEnabled => _ui != _ResendUi.sending && _cooldown <= 0;
 
-  String get _buttonLabel {
-    if (_ui == _ResendUi.sending) return 'Sending…';
-    if (_cooldown > 0) return 'Resend in ${_cooldown}s';
-    return 'Resend email';
+  String _buttonLabel(AppLocalizations l) {
+    if (_ui == _ResendUi.sending) return l.consentPendingSending;
+    if (_cooldown > 0) return l.consentPendingResendIn(_cooldown);
+    return l.consentPendingResendEmail;
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     // Any unlock path (push / resume / manual) flips awaitingConsent false —
     // dismiss this sheet the moment it does.
     ref.listen(authStateProvider, (prev, next) {
@@ -388,11 +391,11 @@ class _ParentalConsentPendingSheetState
                   width: 72, height: 72),
             ),
             const SizedBox(height: AppSpacing.sm),
-            Text('Almost there! 🎉',
+            Text(l.consentPendingTitle,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.heading1.copyWith(fontSize: 20)),
             const SizedBox(height: AppSpacing.xs),
-            Text('We just need a grown-up to say yes.',
+            Text(l.consentPendingSubtitle,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.body.copyWith(color: AppColors.text2)),
             const SizedBox(height: AppSpacing.sm),
@@ -401,41 +404,38 @@ class _ParentalConsentPendingSheetState
               TextSpan(
                 style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 children: [
-                  const TextSpan(text: 'Ask them to check their email at '),
+                  TextSpan(text: l.consentPendingAskEmailBefore),
                   TextSpan(
                     text: _maskedEmail,
                     style: AppTextStyles.body.copyWith(
                         color: AppColors.text1, fontWeight: FontWeight.w700),
                   ),
-                  const TextSpan(text: ' and tap the link.'),
+                  TextSpan(text: l.consentPendingAskEmailAfter),
                 ],
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              "It can take a minute. If they don't see it, ask them to check "
-              "their spam or junk folder and tap 'Not spam' so the next one "
-              'arrives properly.',
+              l.consentPendingSpamNote,
               style: AppTextStyles.bodySmall.copyWith(color: AppColors.text3),
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              "We'll unlock automatically the moment they do — you can close the "
-              "app, it'll be ready when you're back.",
+              l.consentPendingAutoUnlock,
               style: AppTextStyles.bodySmall.copyWith(color: AppColors.text3),
             ),
             if (_notYet) ...[
               const SizedBox(height: AppSpacing.sm),
               Text(
-                'Not approved yet — ask your grown-up to tap the link, then try again.',
+                l.consentPendingNotApproved,
                 style: AppTextStyles.body
                     .copyWith(color: AppColors.text2, fontWeight: FontWeight.w600),
               ),
             ],
-            if (_statusLine.isNotEmpty) ...[
+            if (_statusLine(l).isNotEmpty) ...[
               const SizedBox(height: AppSpacing.md),
               Text(
-                _statusLine,
+                _statusLine(l),
                 style: AppTextStyles.body
                     .copyWith(color: _statusColor, fontWeight: FontWeight.w600),
               ),
@@ -458,7 +458,7 @@ class _ParentalConsentPendingSheetState
                         child: CircularProgressIndicator(
                             strokeWidth: 2, color: Colors.white),
                       )
-                    : const Text("I've approved — refresh"),
+                    : Text(l.consentPendingRefresh),
               ),
               const SizedBox(height: AppSpacing.sm),
             ],
@@ -478,13 +478,13 @@ class _ParentalConsentPendingSheetState
                       child: CircularProgressIndicator(
                           strokeWidth: 2, color: Colors.white),
                     )
-                  : Text(_buttonLabel),
+                  : Text(_buttonLabel(l)),
             ),
             if (widget.onChangeEmail != null) ...[
               const SizedBox(height: AppSpacing.xs),
               TextButton(
                 onPressed: _ui == _ResendUi.sending ? null : _changeEmail,
-                child: Text("Wrong grown-up's email? Change it",
+                child: Text(l.consentPendingChangeEmail,
                     style: AppTextStyles.body.copyWith(
                         color: AppColors.purple, fontWeight: FontWeight.w600)),
               ),
@@ -492,7 +492,7 @@ class _ParentalConsentPendingSheetState
             const SizedBox(height: AppSpacing.sm),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Got it',
+              child: Text(l.consentPendingGotIt,
                   style: AppTextStyles.body.copyWith(color: AppColors.text2)),
             ),
           ],

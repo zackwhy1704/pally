@@ -5227,6 +5227,522 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show →'**
   String get answerCardShow;
+
+  /// No description provided for @aiDisclosureTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A quick note about AI'**
+  String get aiDisclosureTitle;
+
+  /// No description provided for @aiDisclosureBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Apalchi uses AI helpers to turn your notes into lessons. Your notes are sent to two AI companies — Anthropic (Claude) and Google (Gemini) — whose computers are outside Singapore. They only use your notes to make your study material.'**
+  String get aiDisclosureBody;
+
+  /// No description provided for @aiDisclosureGrownup.
+  ///
+  /// In en, this message translates to:
+  /// **'A grown-up looks after this choice for you.'**
+  String get aiDisclosureGrownup;
+
+  /// No description provided for @aiDisclosureOkToContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'OK to continue?'**
+  String get aiDisclosureOkToContinue;
+
+  /// No description provided for @aiDisclosureAnthropic.
+  ///
+  /// In en, this message translates to:
+  /// **'Anthropic (Claude)'**
+  String get aiDisclosureAnthropic;
+
+  /// No description provided for @aiDisclosureAnthropicDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Makes your explanations, quizzes and chat replies.'**
+  String get aiDisclosureAnthropicDesc;
+
+  /// No description provided for @aiDisclosureGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Google (Gemini)'**
+  String get aiDisclosureGoogle;
+
+  /// No description provided for @aiDisclosureGoogleDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Helps read and understand your notes.'**
+  String get aiDisclosureGoogleDesc;
+
+  /// No description provided for @aiDisclosureOutside.
+  ///
+  /// In en, this message translates to:
+  /// **'These companies are outside Singapore. We only send what we need to make your study material.'**
+  String get aiDisclosureOutside;
+
+  /// No description provided for @aiDisclosureReadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Read more'**
+  String get aiDisclosureReadMore;
+
+  /// No description provided for @aiDisclosureOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get aiDisclosureOk;
+
+  /// No description provided for @aiDisclosureAgree.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree'**
+  String get aiDisclosureAgree;
+
+  /// No description provided for @consentNotNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get consentNotNow;
+
+  /// No description provided for @consentApprovedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get consentApprovedTitle;
+
+  /// No description provided for @consentApprovedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your grown-up said yes — your account is ready. Let\'s start learning with {mascot}!'**
+  String consentApprovedBody(String mascot);
+
+  /// No description provided for @consentPendingSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get consentPendingSend;
+
+  /// No description provided for @consentPendingResent.
+  ///
+  /// In en, this message translates to:
+  /// **'Approval email re-sent to {email} — check inbox and spam.'**
+  String consentPendingResent(String email);
+
+  /// No description provided for @consentPendingSending.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending…'**
+  String get consentPendingSending;
+
+  /// No description provided for @consentPendingResendIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend in {seconds}s'**
+  String consentPendingResendIn(int seconds);
+
+  /// No description provided for @consentPendingResendEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend email'**
+  String get consentPendingResendEmail;
+
+  /// No description provided for @consentPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost there! 🎉'**
+  String get consentPendingTitle;
+
+  /// No description provided for @consentPendingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We just need a grown-up to say yes.'**
+  String get consentPendingSubtitle;
+
+  /// No description provided for @consentPendingAskEmailBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask them to check their email at '**
+  String get consentPendingAskEmailBefore;
+
+  /// No description provided for @consentPendingAskEmailAfter.
+  ///
+  /// In en, this message translates to:
+  /// **' and tap the link.'**
+  String get consentPendingAskEmailAfter;
+
+  /// No description provided for @consentPendingSpamNote.
+  ///
+  /// In en, this message translates to:
+  /// **'It can take a minute. If they don\'t see it, ask them to check their spam or junk folder and tap \'Not spam\' so the next one arrives properly.'**
+  String get consentPendingSpamNote;
+
+  /// No description provided for @consentPendingAutoUnlock.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll unlock automatically the moment they do — you can close the app, it\'ll be ready when you\'re back.'**
+  String get consentPendingAutoUnlock;
+
+  /// No description provided for @consentPendingNotApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Not approved yet — ask your grown-up to tap the link, then try again.'**
+  String get consentPendingNotApproved;
+
+  /// No description provided for @consentPendingGotIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get consentPendingGotIt;
+
+  /// No description provided for @deleteAccountAppBar.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccountAppBar;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account?'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'This permanently deletes your account. It cannot be undone after the restore window closes.'**
+  String get deleteAccountIntro;
+
+  /// No description provided for @deleteAccountWhatDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'What gets deleted'**
+  String get deleteAccountWhatDeleted;
+
+  /// No description provided for @deleteAccountItem1.
+  ///
+  /// In en, this message translates to:
+  /// **'Your {mascot}s and everything they learned from your notes'**
+  String deleteAccountItem1(String mascot);
+
+  /// No description provided for @deleteAccountItem2.
+  ///
+  /// In en, this message translates to:
+  /// **'Your uploaded notes, lessons, quizzes and flashcards'**
+  String get deleteAccountItem2;
+
+  /// No description provided for @deleteAccountItem3.
+  ///
+  /// In en, this message translates to:
+  /// **'Your progress, streaks, stars and chat history'**
+  String get deleteAccountItem3;
+
+  /// No description provided for @deleteAccountGrace.
+  ///
+  /// In en, this message translates to:
+  /// **'You have 14 days to change your mind. Sign back in during that time to restore your account and all your data. After 14 days it is gone for good.'**
+  String get deleteAccountGrace;
+
+  /// No description provided for @deleteAccountKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep my account'**
+  String get deleteAccountKeep;
+
+  /// No description provided for @deleteAccountConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm it\'s you'**
+  String get deleteAccountConfirmTitle;
+
+  /// No description provided for @deleteAccountConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'For your security, confirm your identity before we schedule the deletion.'**
+  String get deleteAccountConfirmBody;
+
+  /// No description provided for @deleteAccountEmailCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Email me a code instead'**
+  String get deleteAccountEmailCode;
+
+  /// No description provided for @deleteAccountCodeSent.
+  ///
+  /// In en, this message translates to:
+  /// **'We emailed you a 6-digit code. Enter it below to confirm.'**
+  String get deleteAccountCodeSent;
+
+  /// No description provided for @deleteAccountCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'6-digit code'**
+  String get deleteAccountCodeLabel;
+
+  /// No description provided for @deleteAccountConfirmBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my account'**
+  String get deleteAccountConfirmBtn;
+
+  /// No description provided for @deleteAccountBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get deleteAccountBack;
+
+  /// No description provided for @deleteAccountScheduledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is scheduled for deletion'**
+  String get deleteAccountScheduledTitle;
+
+  /// No description provided for @deleteAccountScheduledOn.
+  ///
+  /// In en, this message translates to:
+  /// **'It will be permanently deleted on {date}.'**
+  String deleteAccountScheduledOn(String date);
+
+  /// No description provided for @deleteAccountScheduledGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'It will be permanently deleted after the 14-day restore window.'**
+  String get deleteAccountScheduledGeneric;
+
+  /// No description provided for @deleteAccountChangedMind.
+  ///
+  /// In en, this message translates to:
+  /// **'Changed your mind? Sign back in before then to restore your account and all your data.'**
+  String get deleteAccountChangedMind;
+
+  /// No description provided for @deleteAccountManualCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'If you subscribed through the App Store or Google Play, remember to cancel your subscription in your device\'s subscription settings — deleting your account here does not cancel it.'**
+  String get deleteAccountManualCancel;
+
+  /// No description provided for @deleteAccountErrEnterCredential.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password or the emailed code to confirm.'**
+  String get deleteAccountErrEnterCredential;
+
+  /// No description provided for @restoreScheduledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This account is scheduled for deletion'**
+  String get restoreScheduledTitle;
+
+  /// No description provided for @restoreScheduledOn.
+  ///
+  /// In en, this message translates to:
+  /// **'It will be permanently deleted on {date}. Restore it now to keep your account and all your data.'**
+  String restoreScheduledOn(String date);
+
+  /// No description provided for @restoreGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore it now to keep your account and all your data.'**
+  String get restoreGeneric;
+
+  /// No description provided for @restoreBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore my account'**
+  String get restoreBtn;
+
+  /// No description provided for @completeProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'One quick thing'**
+  String get completeProfileTitle;
+
+  /// No description provided for @completeProfileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us your age group so we can set up your account safely.'**
+  String get completeProfileSubtitle;
+
+  /// No description provided for @completeProfileAgeGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Age group'**
+  String get completeProfileAgeGroup;
+
+  /// No description provided for @completeProfile13Plus.
+  ///
+  /// In en, this message translates to:
+  /// **'I am 13 or older'**
+  String get completeProfile13Plus;
+
+  /// No description provided for @completeProfileUnder13.
+  ///
+  /// In en, this message translates to:
+  /// **'I am under 13'**
+  String get completeProfileUnder13;
+
+  /// No description provided for @completeProfileErrSelectAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select your age group to continue.'**
+  String get completeProfileErrSelectAge;
+
+  /// No description provided for @completeProfileErrParentEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your parent\'s email address.'**
+  String get completeProfileErrParentEmail;
+
+  /// No description provided for @completeProfileErrGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get completeProfileErrGeneric;
+
+  /// No description provided for @monthJan.
+  ///
+  /// In en, this message translates to:
+  /// **'January'**
+  String get monthJan;
+
+  /// No description provided for @monthFeb.
+  ///
+  /// In en, this message translates to:
+  /// **'February'**
+  String get monthFeb;
+
+  /// No description provided for @monthMar.
+  ///
+  /// In en, this message translates to:
+  /// **'March'**
+  String get monthMar;
+
+  /// No description provided for @monthApr.
+  ///
+  /// In en, this message translates to:
+  /// **'April'**
+  String get monthApr;
+
+  /// No description provided for @monthMay.
+  ///
+  /// In en, this message translates to:
+  /// **'May'**
+  String get monthMay;
+
+  /// No description provided for @monthJun.
+  ///
+  /// In en, this message translates to:
+  /// **'June'**
+  String get monthJun;
+
+  /// No description provided for @monthJul.
+  ///
+  /// In en, this message translates to:
+  /// **'July'**
+  String get monthJul;
+
+  /// No description provided for @monthAug.
+  ///
+  /// In en, this message translates to:
+  /// **'August'**
+  String get monthAug;
+
+  /// No description provided for @monthSep.
+  ///
+  /// In en, this message translates to:
+  /// **'September'**
+  String get monthSep;
+
+  /// No description provided for @monthOct.
+  ///
+  /// In en, this message translates to:
+  /// **'October'**
+  String get monthOct;
+
+  /// No description provided for @monthNov.
+  ///
+  /// In en, this message translates to:
+  /// **'November'**
+  String get monthNov;
+
+  /// No description provided for @monthDec.
+  ///
+  /// In en, this message translates to:
+  /// **'December'**
+  String get monthDec;
+
+  /// No description provided for @dateFormatDMY.
+  ///
+  /// In en, this message translates to:
+  /// **'{day} {month} {year}'**
+  String dateFormatDMY(int day, String month, int year);
+
+  /// No description provided for @consentApprovedAllSet.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all set! 🎉'**
+  String get consentApprovedAllSet;
+
+  /// No description provided for @consentApprovedLetsGo.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s go!'**
+  String get consentApprovedLetsGo;
+
+  /// No description provided for @consentPendingEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your grown-up\'s email'**
+  String get consentPendingEmailLabel;
+
+  /// No description provided for @consentPendingHelperText.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll send the approval link here instead.'**
+  String get consentPendingHelperText;
+
+  /// No description provided for @consentPendingResendFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t resend just now — try again shortly.'**
+  String get consentPendingResendFailed;
+
+  /// No description provided for @consentPendingRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ve approved — refresh'**
+  String get consentPendingRefresh;
+
+  /// No description provided for @consentPendingChangeEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong grown-up\'s email? Change it'**
+  String get consentPendingChangeEmail;
+
+  /// No description provided for @completeProfileParentEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent\'s email address'**
+  String get completeProfileParentEmailLabel;
+
+  /// No description provided for @completeProfileParentEmailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your parent\'s email'**
+  String get completeProfileParentEmailRequired;
+
+  /// No description provided for @completeProfileParentEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your parent\'s valid email (e.g. parent@example.com)'**
+  String get completeProfileParentEmailInvalid;
+
+  /// No description provided for @completeProfileParentEmailHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll email your parent to approve your account before you can use AI features.'**
+  String get completeProfileParentEmailHelper;
 }
 
 class _AppLocalizationsDelegate

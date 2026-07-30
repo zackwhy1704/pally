@@ -30,30 +30,6 @@ core/ui/scaffold_shell.dart	Me
 core/utils/device_info.dart	${a.manufacturer} ${a.model}
 core/utils/device_info.dart	Unknown device
 core/widgets/loading/mochi_generating.dart	Cancel
-features/account_deletion/presentation/delete_account_screen.dart	${local.day} ${months[local.month - 1]} ${local.year}
-features/account_deletion/presentation/delete_account_screen.dart	6-digit code
-features/account_deletion/presentation/delete_account_screen.dart	Back
-features/account_deletion/presentation/delete_account_screen.dart	Changed your mind? Sign back in before then to restore your account 
-features/account_deletion/presentation/delete_account_screen.dart	Confirm it's you
-features/account_deletion/presentation/delete_account_screen.dart	Continue
-features/account_deletion/presentation/delete_account_screen.dart	Delete account
-features/account_deletion/presentation/delete_account_screen.dart	Delete my account
-features/account_deletion/presentation/delete_account_screen.dart	Delete your account?
-features/account_deletion/presentation/delete_account_screen.dart	Email me a code instead
-features/account_deletion/presentation/delete_account_screen.dart	For your security, confirm your identity before we schedule the 
-features/account_deletion/presentation/delete_account_screen.dart	If you subscribed through the App Store or Google Play, remember 
-features/account_deletion/presentation/delete_account_screen.dart	Keep my account
-features/account_deletion/presentation/delete_account_screen.dart	Password
-features/account_deletion/presentation/delete_account_screen.dart	Sign out
-features/account_deletion/presentation/delete_account_screen.dart	This permanently deletes your account. It cannot be undone after the 
-features/account_deletion/presentation/delete_account_screen.dart	We emailed you a 6-digit code. Enter it below to confirm.
-features/account_deletion/presentation/delete_account_screen.dart	What gets deleted
-features/account_deletion/presentation/delete_account_screen.dart	You have 14 days to change your mind. Sign back in during that time 
-features/account_deletion/presentation/delete_account_screen.dart	Your account is scheduled for deletion
-features/account_deletion/presentation/restore_account_sheet.dart	${local.day} ${months[local.month - 1]} ${local.year}
-features/account_deletion/presentation/restore_account_sheet.dart	Not now
-features/account_deletion/presentation/restore_account_sheet.dart	Restore my account
-features/account_deletion/presentation/restore_account_sheet.dart	This account is scheduled for deletion
 features/app_update/force_update_screen.dart	A newer version of Apalchi is ready with important improvements. 
 features/app_update/force_update_screen.dart	Time to update!
 features/app_update/force_update_screen.dart	Update now
@@ -70,15 +46,6 @@ features/auth/screens/centre_block_screen.dart	Back to Sign In
 features/auth/screens/centre_block_screen.dart	Log in at apalchi.com
 features/auth/screens/centre_block_screen.dart	The Apalchi app is for students only. 
 features/auth/screens/centre_block_screen.dart	This is a Centre account
-features/auth/screens/complete_profile_screen.dart	Age group
-features/auth/screens/complete_profile_screen.dart	I am 13 or older
-features/auth/screens/complete_profile_screen.dart	I am under 13
-features/auth/screens/complete_profile_screen.dart	One quick thing
-features/auth/screens/complete_profile_screen.dart	Parent's email address
-features/auth/screens/complete_profile_screen.dart	Please enter your parent's email
-features/auth/screens/complete_profile_screen.dart	Please enter your parent's valid email (e.g. parent@example.com)
-features/auth/screens/complete_profile_screen.dart	Tell us your age group so we can set up your account safely.
-features/auth/screens/complete_profile_screen.dart	We'll email your parent to approve your account before you can use AI features.
 features/auth/screens/splash_screen.dart	Mochi
 features/avatar_hub/presentation/avatar_hub_screen.dart	$title. $subtitle
 features/avatar_hub/presentation/avatar_hub_screen.dart	${l.hubLearn}. $subtitle
@@ -128,31 +95,6 @@ features/chat/widgets/teaching_mode_toggle.dart	Just answer
 features/collection/presentation/collection_screen.dart	$owned / $total
 features/collection/presentation/collection_screen.dart	Collection
 features/collection/presentation/collection_screen.dart	Mochi Album
-features/consent/presentation/ai_disclosure_screen.dart	A quick note about AI
-features/consent/presentation/ai_disclosure_screen.dart	Apalchi uses AI helpers to turn your notes into lessons. 
-features/consent/presentation/ai_disclosure_screen.dart	I agree
-features/consent/presentation/ai_disclosure_screen.dart	Not now
-features/consent/presentation/ai_disclosure_screen.dart	Read more
-features/consent/presentation/ai_disclosure_screen.dart	These companies are outside Singapore. We only 
-features/consent/presentation/consent_approved_overlay.dart	Let's go!
-features/consent/presentation/consent_approved_overlay.dart	You're all set! 🎉
-features/consent/presentation/consent_approved_overlay.dart	Your grown-up said yes — your account is ready. 
-features/consent/presentation/parental_consent_pending_sheet.dart	Almost there! 🎉
-features/consent/presentation/parental_consent_pending_sheet.dart	Cancel
-features/consent/presentation/parental_consent_pending_sheet.dart	Got it
-features/consent/presentation/parental_consent_pending_sheet.dart	I've approved — refresh
-features/consent/presentation/parental_consent_pending_sheet.dart	It can take a minute. If they don't see it, ask them to check 
-features/consent/presentation/parental_consent_pending_sheet.dart	Not approved yet — ask your grown-up to tap the link, then try again.
-features/consent/presentation/parental_consent_pending_sheet.dart	Resend email
-features/consent/presentation/parental_consent_pending_sheet.dart	Resend in ${_cooldown}s
-features/consent/presentation/parental_consent_pending_sheet.dart	Send
-features/consent/presentation/parental_consent_pending_sheet.dart	Sending…
-features/consent/presentation/parental_consent_pending_sheet.dart	We just need a grown-up to say yes.
-features/consent/presentation/parental_consent_pending_sheet.dart	We'll send the approval link here instead.
-features/consent/presentation/parental_consent_pending_sheet.dart	We'll unlock automatically the moment they do — you can close the 
-features/consent/presentation/parental_consent_pending_sheet.dart	Wrong grown-up's email? Change it
-features/consent/presentation/parental_consent_pending_sheet.dart	You're all set! 🎉
-features/consent/presentation/parental_consent_pending_sheet.dart	Your grown-up's email
 features/create_tutor/presentation/character_picker_step.dart	Retry
 features/create_tutor/presentation/grade_step.dart	WHAT DO YOU WISH MOCHI TO HELP YOU WITH?
 features/create_tutor/presentation/name_step.dart	Next

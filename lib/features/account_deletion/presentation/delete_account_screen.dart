@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
+import 'package:pally/features/account_deletion/presentation/delete_account_error_localizer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -40,13 +42,14 @@ class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final state = ref.watch(deleteAccountViewModelProvider);
     return Scaffold(
       backgroundColor: AppColors.bg,
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Delete account', style: AppTextStyles.title),
+        title: Text(l.deleteAccountAppBar, style: AppTextStyles.title),
       ),
       body: SafeArea(
         child: Center(
@@ -95,23 +98,23 @@ class _Consequences extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Delete your account?', style: AppTextStyles.heading1),
+        Text(l.deleteAccountTitle, style: AppTextStyles.heading1),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          'This permanently deletes your account. It cannot be undone after the '
-          'restore window closes.',
+          l.deleteAccountIntro,
           style: AppTextStyles.body.copyWith(color: AppColors.text2),
         ),
         const SizedBox(height: AppSpacing.lg),
-        Text('What gets deleted', style: AppTextStyles.title),
+        Text(l.deleteAccountWhatDeleted, style: AppTextStyles.title),
         const SizedBox(height: AppSpacing.sm),
-        ...const [
-          'Your Mochis and everything they learned from your notes',
-          'Your uploaded notes, lessons, quizzes and flashcards',
-          'Your progress, streaks, stars and chat history',
+        ...[
+          l.deleteAccountItem1(l.mascotName),
+          l.deleteAccountItem2,
+          l.deleteAccountItem3,
         ].map((t) => _Bullet(text: t)),
         const SizedBox(height: AppSpacing.md),
         Container(
@@ -121,22 +124,20 @@ class _Consequences extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppSpacing.sm),
           ),
           child: Text(
-            'You have 14 days to change your mind. Sign back in during that time '
-            'to restore your account and all your data. After 14 days it is gone '
-            'for good.',
+            l.deleteAccountGrace,
             style: AppTextStyles.bodySmall.copyWith(color: AppColors.text1),
           ),
         ),
         const SizedBox(height: AppSpacing.xl),
         PallyButton(
-          label: 'Continue',
+          label: l.moduleCtaContinue,
           variant: PallyButtonVariant.destructive,
           fullWidth: true,
           onPressed: onContinue,
         ),
         const SizedBox(height: AppSpacing.sm),
         PallyButton(
-          label: 'Keep my account',
+          label: l.deleteAccountKeep,
           variant: PallyButtonVariant.ghost,
           fullWidth: true,
           onPressed: onCancel,
@@ -194,14 +195,14 @@ class _Reauth extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Confirm it\'s you', style: AppTextStyles.heading1),
+        Text(l.deleteAccountConfirmTitle, style: AppTextStyles.heading1),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          'For your security, confirm your identity before we schedule the '
-          'deletion.',
+          l.deleteAccountConfirmBody,
           style: AppTextStyles.body.copyWith(color: AppColors.text2),
         ),
         const SizedBox(height: AppSpacing.lg),
@@ -210,19 +211,19 @@ class _Reauth extends StatelessWidget {
             controller: passwordController,
             obscureText: true,
             enabled: !state.isLoading,
-            decoration: const InputDecoration(
-              labelText: 'Password',
+            decoration: InputDecoration(
+              labelText: l.signInPasswordLabel,
               border: OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
           TextButton(
             onPressed: state.isLoading ? null : onSendCode,
-            child: const Text('Email me a code instead'),
+            child: Text(l.deleteAccountEmailCode),
           ),
         ] else ...[
           Text(
-            'We emailed you a 6-digit code. Enter it below to confirm.',
+            l.deleteAccountCodeSent,
             style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -230,19 +231,19 @@ class _Reauth extends StatelessWidget {
             controller: codeController,
             keyboardType: TextInputType.number,
             enabled: !state.isLoading,
-            decoration: const InputDecoration(
-              labelText: '6-digit code',
+            decoration: InputDecoration(
+              labelText: l.deleteAccountCodeLabel,
               border: OutlineInputBorder(),
             ),
           ),
         ],
         if (state.error != null) ...[
           const SizedBox(height: AppSpacing.md),
-          _InlineError(message: state.error!),
+          _InlineError(message: localizedDeleteAccountError(l, state.error!)),
         ],
         const SizedBox(height: AppSpacing.xl),
         PallyButton(
-          label: 'Delete my account',
+          label: l.deleteAccountConfirmBtn,
           variant: PallyButtonVariant.destructive,
           fullWidth: true,
           loading: state.isLoading,
@@ -250,7 +251,7 @@ class _Reauth extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.sm),
         PallyButton(
-          label: 'Back',
+          label: l.deleteAccountBack,
           variant: PallyButtonVariant.ghost,
           fullWidth: true,
           enabled: !state.isLoading,
@@ -271,24 +272,24 @@ class _Scheduled extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Icon(Icons.schedule_rounded, size: 40, color: AppColors.teal),
         const SizedBox(height: AppSpacing.md),
-        Text('Your account is scheduled for deletion',
+        Text(l.deleteAccountScheduledTitle,
             style: AppTextStyles.heading1),
         const SizedBox(height: AppSpacing.sm),
         Text(
           state.graceEndsAt != null
-              ? 'It will be permanently deleted on ${_formatDate(state.graceEndsAt!)}.'
-              : 'It will be permanently deleted after the 14-day restore window.',
+              ? l.deleteAccountScheduledOn(_formatDate(l, state.graceEndsAt!))
+              : l.deleteAccountScheduledGeneric,
           style: AppTextStyles.body.copyWith(color: AppColors.text2),
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          'Changed your mind? Sign back in before then to restore your account '
-          'and all your data.',
+          l.deleteAccountChangedMind,
           style: AppTextStyles.body.copyWith(color: AppColors.text2),
         ),
         if (state.needsManualCancellation) ...[
@@ -300,16 +301,14 @@ class _Scheduled extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppSpacing.sm),
             ),
             child: Text(
-              'If you subscribed through the App Store or Google Play, remember '
-              'to cancel your subscription in your device\'s subscription '
-              'settings — deleting your account here does not cancel it.',
+              l.deleteAccountManualCancel,
               style: AppTextStyles.bodySmall.copyWith(color: AppColors.text1),
             ),
           ),
         ],
         const SizedBox(height: AppSpacing.xl),
         PallyButton(
-          label: 'Sign out',
+          label: l.homeConsentSignOut,
           variant: PallyButtonVariant.filled,
           fullWidth: true,
           onPressed: onDone,
@@ -318,23 +317,13 @@ class _Scheduled extends StatelessWidget {
     );
   }
 
-  static String _formatDate(DateTime d) {
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
+  static String _formatDate(AppLocalizations l, DateTime d) {
+    final months = [
+      l.monthJan, l.monthFeb, l.monthMar, l.monthApr, l.monthMay, l.monthJun,
+      l.monthJul, l.monthAug, l.monthSep, l.monthOct, l.monthNov, l.monthDec,
     ];
     final local = d.toLocal();
-    return '${local.day} ${months[local.month - 1]} ${local.year}';
+    return l.dateFormatDMY(local.day, months[local.month - 1], local.year);
   }
 }
 

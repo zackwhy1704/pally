@@ -6,6 +6,16 @@ import 'package:pally/features/auth/services/auth_service.dart';
 
 part 'complete_profile_view_model.g.dart';
 
+/// Typed complete-profile failure. VM owns identity; the screen localizes at
+/// render (complete_profile_error_localizer) — the PR-G3 layering pattern.
+enum CompleteProfileErrorKind { selectAge, parentEmail, authFailed, generic }
+
+class CompleteProfileError {
+  const CompleteProfileError(this.kind, {this.detail});
+  final CompleteProfileErrorKind kind;
+  final String? detail;
+}
+
 /// State for the birth-year completion step (backend 403
 /// `PROFILE_COMPLETION_REQUIRED`). Social/legacy accounts missing a birth year
 /// are routed here; on submit we derive a synthetic birth year the same way the
@@ -22,7 +32,7 @@ class CompleteProfileState {
   /// null = not yet selected; true = under 13; false = 13+.
   final bool? isUnder13;
   final bool isLoading;
-  final String? error;
+  final CompleteProfileError? error;
 
   /// Fires once after a successful completion; the screen listens and dismisses.
   final bool done;
@@ -36,7 +46,7 @@ class CompleteProfileState {
     return CompleteProfileState(
       isUnder13: isUnder13 == _sentinel ? this.isUnder13 : isUnder13 as bool?,
       isLoading: isLoading ?? this.isLoading,
-      error: error == _sentinel ? this.error : error as String?,
+      error: error == _sentinel ? this.error : error as CompleteProfileError?,
       done: done ?? this.done,
     );
   }
@@ -60,11 +70,13 @@ class CompleteProfileViewModel extends _$CompleteProfileViewModel {
 
     final under13 = state.isUnder13;
     if (under13 == null) {
-      state = state.copyWith(error: 'Please select your age group to continue.');
+      state = state.copyWith(
+          error: const CompleteProfileError(CompleteProfileErrorKind.selectAge));
       return;
     }
     if (under13 && (parentEmail == null || parentEmail.trim().isEmpty)) {
-      state = state.copyWith(error: "Please enter your parent's email address.");
+      state = state.copyWith(
+          error: const CompleteProfileError(CompleteProfileErrorKind.parentEmail));
       return;
     }
 
@@ -92,12 +104,15 @@ class CompleteProfileViewModel extends _$CompleteProfileViewModel {
       state = state.copyWith(isLoading: false, done: true);
     } on AuthException catch (e) {
       appLog.w('[CompleteProfile] Submit failed: ${e.message}');
-      state = state.copyWith(isLoading: false, error: e.message);
+      state = state.copyWith(
+          isLoading: false,
+          error: CompleteProfileError(CompleteProfileErrorKind.authFailed,
+              detail: e.message));
     } catch (e, st) {
       appLog.e('[CompleteProfile] Unexpected error', error: e, stackTrace: st);
       state = state.copyWith(
         isLoading: false,
-        error: 'Something went wrong. Please try again.',
+        error: const CompleteProfileError(CompleteProfileErrorKind.generic),
       );
     }
   }

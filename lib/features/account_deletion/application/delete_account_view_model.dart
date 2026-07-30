@@ -7,6 +7,18 @@ import 'package:pally/core/utils/logger.dart';
 
 part 'delete_account_view_model.g.dart';
 
+/// Typed delete-account failure. VM owns identity; the screen localizes at
+/// render (delete_account_error_localizer) — the PR-G3 layering pattern.
+/// serverMessage carries the backend guard's own copy (401/409) OR the shared
+/// PallyError mapping, passed through verbatim.
+enum DeleteAccountErrorKind { enterCredential, serverMessage }
+
+class DeleteAccountError {
+  const DeleteAccountError(this.kind, {this.detail});
+  final DeleteAccountErrorKind kind;
+  final String? detail;
+}
+
 /// The three steps of the delete-account flow: read the consequences → re-auth →
 /// the account is scheduled (grace window).
 enum DeleteAccountStep { consequences, reauth, scheduled }
@@ -27,7 +39,7 @@ class DeleteAccountState {
 
   /// Persistent inline error (never a vanishing toast) with a Retry affordance
   /// in the UI. Null when there is none.
-  final String? error;
+  final DeleteAccountError? error;
 
   /// True once a re-auth code has been emailed (passwordless / social accounts).
   final bool codeSent;
@@ -51,7 +63,7 @@ class DeleteAccountState {
     return DeleteAccountState(
       step: step ?? this.step,
       isLoading: isLoading ?? this.isLoading,
-      error: error == _sentinel ? this.error : error as String?,
+      error: error == _sentinel ? this.error : error as DeleteAccountError?,
       codeSent: codeSent ?? this.codeSent,
       graceEndsAt: graceEndsAt == _sentinel
           ? this.graceEndsAt
@@ -95,7 +107,10 @@ class DeleteAccountViewModel extends _$DeleteAccountViewModel {
       state = state.copyWith(isLoading: false, codeSent: true);
     } catch (e) {
       appLog.w('[DeleteAccount] send-code failed: $e');
-      state = state.copyWith(isLoading: false, error: _message(e));
+      state = state.copyWith(
+          isLoading: false,
+          error: DeleteAccountError(DeleteAccountErrorKind.serverMessage,
+              detail: _message(e)));
     }
   }
 
@@ -109,7 +124,8 @@ class DeleteAccountViewModel extends _$DeleteAccountViewModel {
     final hasCode = code != null && code.isNotEmpty;
     if (!hasPassword && !hasCode) {
       state = state.copyWith(
-          error: 'Enter your password or the emailed code to confirm.');
+          error: const DeleteAccountError(
+              DeleteAccountErrorKind.enterCredential));
       return;
     }
     state = state.copyWith(isLoading: true, error: null);
@@ -138,7 +154,10 @@ class DeleteAccountViewModel extends _$DeleteAccountViewModel {
       appLog.i('[DeleteAccount] Scheduled; graceEndsAt=${state.graceEndsAt}');
     } catch (e) {
       appLog.w('[DeleteAccount] request failed: $e');
-      state = state.copyWith(isLoading: false, error: _message(e));
+      state = state.copyWith(
+          isLoading: false,
+          error: DeleteAccountError(DeleteAccountErrorKind.serverMessage,
+              detail: _message(e)));
     }
   }
 

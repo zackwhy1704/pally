@@ -4444,5 +4444,225 @@
   "photoReadingHomework": "Hold on, I'm reading your homework… 🔍",
   "@photoReadingHomework": {},
   "answerCardShow": "Show →",
-  "@answerCardShow": {}
+  "@answerCardShow": {},
+  "aiDisclosureTitle": "A quick note about AI",
+  "@aiDisclosureTitle": {},
+  "aiDisclosureBody": "Apalchi uses AI helpers to turn your notes into lessons. Your notes are sent to two AI companies — Anthropic (Claude) and Google (Gemini) — whose computers are outside Singapore. They only use your notes to make your study material.",
+  "@aiDisclosureBody": {},
+  "aiDisclosureGrownup": "A grown-up looks after this choice for you.",
+  "@aiDisclosureGrownup": {},
+  "aiDisclosureOkToContinue": "OK to continue?",
+  "@aiDisclosureOkToContinue": {},
+  "aiDisclosureAnthropic": "Anthropic (Claude)",
+  "@aiDisclosureAnthropic": {},
+  "aiDisclosureAnthropicDesc": "Makes your explanations, quizzes and chat replies.",
+  "@aiDisclosureAnthropicDesc": {},
+  "aiDisclosureGoogle": "Google (Gemini)",
+  "@aiDisclosureGoogle": {},
+  "aiDisclosureGoogleDesc": "Helps read and understand your notes.",
+  "@aiDisclosureGoogleDesc": {},
+  "aiDisclosureOutside": "These companies are outside Singapore. We only send what we need to make your study material.",
+  "@aiDisclosureOutside": {},
+  "aiDisclosureReadMore": "Read more",
+  "@aiDisclosureReadMore": {},
+  "aiDisclosureOk": "OK",
+  "@aiDisclosureOk": {},
+  "aiDisclosureAgree": "I agree",
+  "@aiDisclosureAgree": {},
+  "consentNotNow": "Not now",
+  "@consentNotNow": {},
+  "consentApprovedTitle": "Approved",
+  "@consentApprovedTitle": {},
+  "consentApprovedBody": "Your grown-up said yes — your account is ready. Let's start learning with {mascot}!",
+  "@consentApprovedBody": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "consentPendingSend": "Send",
+  "@consentPendingSend": {},
+  "consentPendingResent": "Approval email re-sent to {email} — check inbox and spam.",
+  "@consentPendingResent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "consentPendingSending": "Sending…",
+  "@consentPendingSending": {},
+  "consentPendingResendIn": "Resend in {seconds}s",
+  "@consentPendingResendIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "consentPendingResendEmail": "Resend email",
+  "@consentPendingResendEmail": {},
+  "consentPendingTitle": "Almost there! 🎉",
+  "@consentPendingTitle": {},
+  "consentPendingSubtitle": "We just need a grown-up to say yes.",
+  "@consentPendingSubtitle": {},
+  "consentPendingAskEmailBefore": "Ask them to check their email at ",
+  "@consentPendingAskEmailBefore": {},
+  "consentPendingAskEmailAfter": " and tap the link.",
+  "@consentPendingAskEmailAfter": {},
+  "consentPendingSpamNote": "It can take a minute. If they don't see it, ask them to check their spam or junk folder and tap 'Not spam' so the next one arrives properly.",
+  "@consentPendingSpamNote": {},
+  "consentPendingAutoUnlock": "We'll unlock automatically the moment they do — you can close the app, it'll be ready when you're back.",
+  "@consentPendingAutoUnlock": {},
+  "consentPendingNotApproved": "Not approved yet — ask your grown-up to tap the link, then try again.",
+  "@consentPendingNotApproved": {},
+  "consentPendingGotIt": "Got it",
+  "@consentPendingGotIt": {},
+  "deleteAccountAppBar": "Delete account",
+  "@deleteAccountAppBar": {},
+  "deleteAccountTitle": "Delete your account?",
+  "@deleteAccountTitle": {},
+  "deleteAccountIntro": "This permanently deletes your account. It cannot be undone after the restore window closes.",
+  "@deleteAccountIntro": {},
+  "deleteAccountWhatDeleted": "What gets deleted",
+  "@deleteAccountWhatDeleted": {},
+  "deleteAccountItem1": "Your {mascot}s and everything they learned from your notes",
+  "@deleteAccountItem1": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteAccountItem2": "Your uploaded notes, lessons, quizzes and flashcards",
+  "@deleteAccountItem2": {},
+  "deleteAccountItem3": "Your progress, streaks, stars and chat history",
+  "@deleteAccountItem3": {},
+  "deleteAccountGrace": "You have 14 days to change your mind. Sign back in during that time to restore your account and all your data. After 14 days it is gone for good.",
+  "@deleteAccountGrace": {},
+  "deleteAccountKeep": "Keep my account",
+  "@deleteAccountKeep": {},
+  "deleteAccountConfirmTitle": "Confirm it's you",
+  "@deleteAccountConfirmTitle": {},
+  "deleteAccountConfirmBody": "For your security, confirm your identity before we schedule the deletion.",
+  "@deleteAccountConfirmBody": {},
+  "deleteAccountEmailCode": "Email me a code instead",
+  "@deleteAccountEmailCode": {},
+  "deleteAccountCodeSent": "We emailed you a 6-digit code. Enter it below to confirm.",
+  "@deleteAccountCodeSent": {},
+  "deleteAccountCodeLabel": "6-digit code",
+  "@deleteAccountCodeLabel": {},
+  "deleteAccountConfirmBtn": "Delete my account",
+  "@deleteAccountConfirmBtn": {},
+  "deleteAccountBack": "Back",
+  "@deleteAccountBack": {},
+  "deleteAccountScheduledTitle": "Your account is scheduled for deletion",
+  "@deleteAccountScheduledTitle": {},
+  "deleteAccountScheduledOn": "It will be permanently deleted on {date}.",
+  "@deleteAccountScheduledOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteAccountScheduledGeneric": "It will be permanently deleted after the 14-day restore window.",
+  "@deleteAccountScheduledGeneric": {},
+  "deleteAccountChangedMind": "Changed your mind? Sign back in before then to restore your account and all your data.",
+  "@deleteAccountChangedMind": {},
+  "deleteAccountManualCancel": "If you subscribed through the App Store or Google Play, remember to cancel your subscription in your device's subscription settings — deleting your account here does not cancel it.",
+  "@deleteAccountManualCancel": {},
+  "deleteAccountErrEnterCredential": "Enter your password or the emailed code to confirm.",
+  "@deleteAccountErrEnterCredential": {},
+  "restoreScheduledTitle": "This account is scheduled for deletion",
+  "@restoreScheduledTitle": {},
+  "restoreScheduledOn": "It will be permanently deleted on {date}. Restore it now to keep your account and all your data.",
+  "@restoreScheduledOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "restoreGeneric": "Restore it now to keep your account and all your data.",
+  "@restoreGeneric": {},
+  "restoreBtn": "Restore my account",
+  "@restoreBtn": {},
+  "completeProfileTitle": "One quick thing",
+  "@completeProfileTitle": {},
+  "completeProfileSubtitle": "Tell us your age group so we can set up your account safely.",
+  "@completeProfileSubtitle": {},
+  "completeProfileAgeGroup": "Age group",
+  "@completeProfileAgeGroup": {},
+  "completeProfile13Plus": "I am 13 or older",
+  "@completeProfile13Plus": {},
+  "completeProfileUnder13": "I am under 13",
+  "@completeProfileUnder13": {},
+  "completeProfileErrSelectAge": "Please select your age group to continue.",
+  "@completeProfileErrSelectAge": {},
+  "completeProfileErrParentEmail": "Please enter your parent's email address.",
+  "@completeProfileErrParentEmail": {},
+  "completeProfileErrGeneric": "Something went wrong. Please try again.",
+  "@completeProfileErrGeneric": {},
+  "monthJan": "January",
+  "@monthJan": {},
+  "monthFeb": "February",
+  "@monthFeb": {},
+  "monthMar": "March",
+  "@monthMar": {},
+  "monthApr": "April",
+  "@monthApr": {},
+  "monthMay": "May",
+  "@monthMay": {},
+  "monthJun": "June",
+  "@monthJun": {},
+  "monthJul": "July",
+  "@monthJul": {},
+  "monthAug": "August",
+  "@monthAug": {},
+  "monthSep": "September",
+  "@monthSep": {},
+  "monthOct": "October",
+  "@monthOct": {},
+  "monthNov": "November",
+  "@monthNov": {},
+  "monthDec": "December",
+  "@monthDec": {},
+  "dateFormatDMY": "{day} {month} {year}",
+  "@dateFormatDMY": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "month": {
+        "type": "String"
+      },
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "consentApprovedAllSet": "You're all set! 🎉",
+  "@consentApprovedAllSet": {},
+  "consentApprovedLetsGo": "Let's go!",
+  "@consentApprovedLetsGo": {},
+  "consentPendingEmailLabel": "Your grown-up's email",
+  "@consentPendingEmailLabel": {},
+  "consentPendingHelperText": "We'll send the approval link here instead.",
+  "@consentPendingHelperText": {},
+  "consentPendingResendFailed": "Couldn't resend just now — try again shortly.",
+  "@consentPendingResendFailed": {},
+  "consentPendingRefresh": "I've approved — refresh",
+  "@consentPendingRefresh": {},
+  "consentPendingChangeEmail": "Wrong grown-up's email? Change it",
+  "@consentPendingChangeEmail": {},
+  "completeProfileParentEmailLabel": "Parent's email address",
+  "@completeProfileParentEmailLabel": {},
+  "completeProfileParentEmailRequired": "Please enter your parent's email",
+  "@completeProfileParentEmailRequired": {},
+  "completeProfileParentEmailInvalid": "Please enter your parent's valid email (e.g. parent@example.com)",
+  "@completeProfileParentEmailInvalid": {},
+  "completeProfileParentEmailHelper": "We'll email your parent to approve your account before you can use AI features.",
+  "@completeProfileParentEmailHelper": {}
 }

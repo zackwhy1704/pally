@@ -96,7 +96,7 @@ void main() {
     await vm().requestDeletion(password: 'hunter2');
 
     // NOT the generic PallyError 409 ("slot locked") — the specific guard copy.
-    expect(read().error, contains('transfer or close your centre'));
+    expect(read().error?.detail, contains('transfer or close your centre'));
     expect(read().step, DeleteAccountStep.reauth);
   });
 
@@ -107,7 +107,7 @@ void main() {
 
     await vm().requestDeletion(password: 'wrong');
 
-    expect(read().error, 'Incorrect password');
+    expect(read().error?.detail, 'Incorrect password');
     expect(read().step, DeleteAccountStep.consequences);
   });
 

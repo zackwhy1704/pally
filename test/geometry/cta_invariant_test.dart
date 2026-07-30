@@ -223,8 +223,9 @@ void main() {
 
   // ── complete_profile ───────────────────────────────────────────────────────
   testWidgets('complete_profile — "Continue" on screen', (tester) async {
+    final l = await AppLocalizations.delegate.load(_activeLocale);
     await _pump(tester, const CompleteProfileScreen());
-    _expectCtaOnScreen(tester, find.text('Continue'), 'complete_profile');
+    _expectCtaOnScreen(tester, find.text(l.moduleCtaContinue), 'complete_profile');
   });
 
   // ── join / centre_join ─────────────────────────────────────────────────────

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -86,6 +87,7 @@ class _RestoreAccountSheetState extends State<_RestoreAccountSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
@@ -95,14 +97,13 @@ class _RestoreAccountSheetState extends State<_RestoreAccountSheet> {
           children: [
             const Icon(Icons.restore_rounded, size: 36, color: AppColors.teal),
             const SizedBox(height: AppSpacing.md),
-            Text('This account is scheduled for deletion',
+            Text(l.restoreScheduledTitle,
                 style: AppTextStyles.title),
             const SizedBox(height: AppSpacing.sm),
             Text(
               widget.graceEndsAt != null
-                  ? 'It will be permanently deleted on ${_formatDate(widget.graceEndsAt!)}. '
-                      'Restore it now to keep your account and all your data.'
-                  : 'Restore it now to keep your account and all your data.',
+                  ? l.restoreScheduledOn(_formatDate(l, widget.graceEndsAt!))
+                  : l.restoreGeneric,
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
             ),
             if (_error != null) ...[
@@ -120,7 +121,7 @@ class _RestoreAccountSheetState extends State<_RestoreAccountSheet> {
             ],
             const SizedBox(height: AppSpacing.lg),
             PallyButton(
-              label: 'Restore my account',
+              label: l.restoreBtn,
               variant: PallyButtonVariant.filled,
               fullWidth: true,
               loading: _loading,
@@ -128,7 +129,7 @@ class _RestoreAccountSheetState extends State<_RestoreAccountSheet> {
             ),
             const SizedBox(height: AppSpacing.sm),
             PallyButton(
-              label: 'Not now',
+              label: l.consentNotNow,
               variant: PallyButtonVariant.ghost,
               fullWidth: true,
               enabled: !_loading,
@@ -140,22 +141,12 @@ class _RestoreAccountSheetState extends State<_RestoreAccountSheet> {
     );
   }
 
-  static String _formatDate(DateTime d) {
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
+  static String _formatDate(AppLocalizations l, DateTime d) {
+    final months = [
+      l.monthJan, l.monthFeb, l.monthMar, l.monthApr, l.monthMay, l.monthJun,
+      l.monthJul, l.monthAug, l.monthSep, l.monthOct, l.monthNov, l.monthDec,
     ];
     final local = d.toLocal();
-    return '${local.day} ${months[local.month - 1]} ${local.year}';
+    return l.dateFormatDMY(local.day, months[local.month - 1], local.year);
   }
 }

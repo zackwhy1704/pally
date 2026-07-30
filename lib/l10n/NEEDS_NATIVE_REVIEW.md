@@ -489,3 +489,34 @@ DEFERRED (not string-extraction work — ledgered, NOT silently skipped):
   in the bubble from the kind), which is a data-model change out of scope here.
 - The two **consent** lines in `chat_view_model` (`'Your account is waiting for a grown-up…'`,
   `'Mochi needs your consent to chat…'`) are COMPLIANCE copy → belong to **PR-J** with the byte-faithful care.
+
+### PR-J — 🔒 COMPLIANCE: consent + account-deletion + auth (84 keys)
+
+**These zh renderings are LEGAL ARTIFACTS — a mistranslated consent or deletion line is what the DPIA
+and the App Store / Play data-safety declarations describe. Native-SG review is a launch precondition
+for this set, alongside the anti-steering price copy (PR10/PR-F). en was extracted BYTE-FAITHFULLY — no
+"improving" the source while localizing.**
+
+Files: `ai_disclosure_screen` (the AI-companies disclosure — Anthropic/Google, data-leaves-Singapore,
+grown-up-looks-after-this), `consent_approved_overlay`, `parental_consent_pending_sheet` (grown-up email,
+resend/cooldown, spam-folder guidance, auto-unlock), `delete_account_screen` + `delete_account_view_model`
+(what-gets-deleted, 14-day grace/restore, re-auth, store-cancellation note), `restore_account_sheet`,
+`complete_profile_screen` + `complete_profile_view_model` (age-gate, parent-email + approval helper).
+
+Typed errors (PR-G3 pattern): `CompleteProfileError` + `DeleteAccountError` — VMs hold identity, screens
+localize at render (`*_error_localizer`); serverMessage/authFailed carry the backend/AuthException/PallyError
+copy verbatim. Shared month names + `dateFormatDMY` ({year}年{month}{day}日 for zh) localize the deletion
+dates in both delete + restore. Reuses commonCancel / signInPasswordLabel / moduleCtaContinue /
+homeConsentSignOut / commonTryAgain.
+
+DELIBERATELY NOT WIRED (honest boundary — flagged for the reviewer, drafted zh below):
+- The two `chat_view_model` **consent MESSAGES** are written into the persisted message stream
+  (`_markStreamingMessageWithText` sets `content`), so localizing at generation-time would BAKE the
+  language into saved history (the exact content_language trap). They ride the deferred typed-system-
+  message-kind refactor (see PR-I ledger). Drafted zh for the native reviewer:
+    • "Your account is waiting for a grown-up to approve it. Ask them to check their email."
+      → "你的账户正在等待一位大人批准。请他们查看邮箱。"
+    • "Mochi needs your consent to chat. Tap to give consent." (Mochi = {mascot} = 小伴)
+      → "{mascot} 需要你的同意才能聊天。点击以给予同意。"
+- The shared `PallyError.userMessage` network-error strings (surfaced via delete VM serverMessage
+  passthrough) remain English — localizing the central error mapper is a separate cross-cutting PR.

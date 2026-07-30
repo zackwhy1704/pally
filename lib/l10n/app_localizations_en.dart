@@ -3179,4 +3179,305 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get answerCardShow => 'Show →';
+
+  @override
+  String get aiDisclosureTitle => 'A quick note about AI';
+
+  @override
+  String get aiDisclosureBody =>
+      'Apalchi uses AI helpers to turn your notes into lessons. Your notes are sent to two AI companies — Anthropic (Claude) and Google (Gemini) — whose computers are outside Singapore. They only use your notes to make your study material.';
+
+  @override
+  String get aiDisclosureGrownup =>
+      'A grown-up looks after this choice for you.';
+
+  @override
+  String get aiDisclosureOkToContinue => 'OK to continue?';
+
+  @override
+  String get aiDisclosureAnthropic => 'Anthropic (Claude)';
+
+  @override
+  String get aiDisclosureAnthropicDesc =>
+      'Makes your explanations, quizzes and chat replies.';
+
+  @override
+  String get aiDisclosureGoogle => 'Google (Gemini)';
+
+  @override
+  String get aiDisclosureGoogleDesc => 'Helps read and understand your notes.';
+
+  @override
+  String get aiDisclosureOutside =>
+      'These companies are outside Singapore. We only send what we need to make your study material.';
+
+  @override
+  String get aiDisclosureReadMore => 'Read more';
+
+  @override
+  String get aiDisclosureOk => 'OK';
+
+  @override
+  String get aiDisclosureAgree => 'I agree';
+
+  @override
+  String get consentNotNow => 'Not now';
+
+  @override
+  String get consentApprovedTitle => 'Approved';
+
+  @override
+  String consentApprovedBody(String mascot) {
+    return 'Your grown-up said yes — your account is ready. Let\'s start learning with $mascot!';
+  }
+
+  @override
+  String get consentPendingSend => 'Send';
+
+  @override
+  String consentPendingResent(String email) {
+    return 'Approval email re-sent to $email — check inbox and spam.';
+  }
+
+  @override
+  String get consentPendingSending => 'Sending…';
+
+  @override
+  String consentPendingResendIn(int seconds) {
+    return 'Resend in ${seconds}s';
+  }
+
+  @override
+  String get consentPendingResendEmail => 'Resend email';
+
+  @override
+  String get consentPendingTitle => 'Almost there! 🎉';
+
+  @override
+  String get consentPendingSubtitle => 'We just need a grown-up to say yes.';
+
+  @override
+  String get consentPendingAskEmailBefore =>
+      'Ask them to check their email at ';
+
+  @override
+  String get consentPendingAskEmailAfter => ' and tap the link.';
+
+  @override
+  String get consentPendingSpamNote =>
+      'It can take a minute. If they don\'t see it, ask them to check their spam or junk folder and tap \'Not spam\' so the next one arrives properly.';
+
+  @override
+  String get consentPendingAutoUnlock =>
+      'We\'ll unlock automatically the moment they do — you can close the app, it\'ll be ready when you\'re back.';
+
+  @override
+  String get consentPendingNotApproved =>
+      'Not approved yet — ask your grown-up to tap the link, then try again.';
+
+  @override
+  String get consentPendingGotIt => 'Got it';
+
+  @override
+  String get deleteAccountAppBar => 'Delete account';
+
+  @override
+  String get deleteAccountTitle => 'Delete your account?';
+
+  @override
+  String get deleteAccountIntro =>
+      'This permanently deletes your account. It cannot be undone after the restore window closes.';
+
+  @override
+  String get deleteAccountWhatDeleted => 'What gets deleted';
+
+  @override
+  String deleteAccountItem1(String mascot) {
+    return 'Your ${mascot}s and everything they learned from your notes';
+  }
+
+  @override
+  String get deleteAccountItem2 =>
+      'Your uploaded notes, lessons, quizzes and flashcards';
+
+  @override
+  String get deleteAccountItem3 =>
+      'Your progress, streaks, stars and chat history';
+
+  @override
+  String get deleteAccountGrace =>
+      'You have 14 days to change your mind. Sign back in during that time to restore your account and all your data. After 14 days it is gone for good.';
+
+  @override
+  String get deleteAccountKeep => 'Keep my account';
+
+  @override
+  String get deleteAccountConfirmTitle => 'Confirm it\'s you';
+
+  @override
+  String get deleteAccountConfirmBody =>
+      'For your security, confirm your identity before we schedule the deletion.';
+
+  @override
+  String get deleteAccountEmailCode => 'Email me a code instead';
+
+  @override
+  String get deleteAccountCodeSent =>
+      'We emailed you a 6-digit code. Enter it below to confirm.';
+
+  @override
+  String get deleteAccountCodeLabel => '6-digit code';
+
+  @override
+  String get deleteAccountConfirmBtn => 'Delete my account';
+
+  @override
+  String get deleteAccountBack => 'Back';
+
+  @override
+  String get deleteAccountScheduledTitle =>
+      'Your account is scheduled for deletion';
+
+  @override
+  String deleteAccountScheduledOn(String date) {
+    return 'It will be permanently deleted on $date.';
+  }
+
+  @override
+  String get deleteAccountScheduledGeneric =>
+      'It will be permanently deleted after the 14-day restore window.';
+
+  @override
+  String get deleteAccountChangedMind =>
+      'Changed your mind? Sign back in before then to restore your account and all your data.';
+
+  @override
+  String get deleteAccountManualCancel =>
+      'If you subscribed through the App Store or Google Play, remember to cancel your subscription in your device\'s subscription settings — deleting your account here does not cancel it.';
+
+  @override
+  String get deleteAccountErrEnterCredential =>
+      'Enter your password or the emailed code to confirm.';
+
+  @override
+  String get restoreScheduledTitle => 'This account is scheduled for deletion';
+
+  @override
+  String restoreScheduledOn(String date) {
+    return 'It will be permanently deleted on $date. Restore it now to keep your account and all your data.';
+  }
+
+  @override
+  String get restoreGeneric =>
+      'Restore it now to keep your account and all your data.';
+
+  @override
+  String get restoreBtn => 'Restore my account';
+
+  @override
+  String get completeProfileTitle => 'One quick thing';
+
+  @override
+  String get completeProfileSubtitle =>
+      'Tell us your age group so we can set up your account safely.';
+
+  @override
+  String get completeProfileAgeGroup => 'Age group';
+
+  @override
+  String get completeProfile13Plus => 'I am 13 or older';
+
+  @override
+  String get completeProfileUnder13 => 'I am under 13';
+
+  @override
+  String get completeProfileErrSelectAge =>
+      'Please select your age group to continue.';
+
+  @override
+  String get completeProfileErrParentEmail =>
+      'Please enter your parent\'s email address.';
+
+  @override
+  String get completeProfileErrGeneric =>
+      'Something went wrong. Please try again.';
+
+  @override
+  String get monthJan => 'January';
+
+  @override
+  String get monthFeb => 'February';
+
+  @override
+  String get monthMar => 'March';
+
+  @override
+  String get monthApr => 'April';
+
+  @override
+  String get monthMay => 'May';
+
+  @override
+  String get monthJun => 'June';
+
+  @override
+  String get monthJul => 'July';
+
+  @override
+  String get monthAug => 'August';
+
+  @override
+  String get monthSep => 'September';
+
+  @override
+  String get monthOct => 'October';
+
+  @override
+  String get monthNov => 'November';
+
+  @override
+  String get monthDec => 'December';
+
+  @override
+  String dateFormatDMY(int day, String month, int year) {
+    return '$day $month $year';
+  }
+
+  @override
+  String get consentApprovedAllSet => 'You\'re all set! 🎉';
+
+  @override
+  String get consentApprovedLetsGo => 'Let\'s go!';
+
+  @override
+  String get consentPendingEmailLabel => 'Your grown-up\'s email';
+
+  @override
+  String get consentPendingHelperText =>
+      'We\'ll send the approval link here instead.';
+
+  @override
+  String get consentPendingResendFailed =>
+      'Couldn\'t resend just now — try again shortly.';
+
+  @override
+  String get consentPendingRefresh => 'I\'ve approved — refresh';
+
+  @override
+  String get consentPendingChangeEmail => 'Wrong grown-up\'s email? Change it';
+
+  @override
+  String get completeProfileParentEmailLabel => 'Parent\'s email address';
+
+  @override
+  String get completeProfileParentEmailRequired =>
+      'Please enter your parent\'s email';
+
+  @override
+  String get completeProfileParentEmailInvalid =>
+      'Please enter your parent\'s valid email (e.g. parent@example.com)';
+
+  @override
+  String get completeProfileParentEmailHelper =>
+      'We\'ll email your parent to approve your account before you can use AI features.';
 }

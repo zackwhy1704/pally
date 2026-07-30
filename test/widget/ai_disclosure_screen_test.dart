@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,7 +22,10 @@ Widget _wrap(Widget child, {ConsentService? service}) => ProviderScope(
         if (service != null)
           consentServiceProvider.overrideWithValue(service),
       ],
-      child: MaterialApp(home: child),
+      child: MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: child),
     );
 
 void main() {
@@ -68,8 +72,10 @@ void main() {
             consentServiceProvider
                 .overrideWithValue(_FakeConsentService()),
           ],
-          child: const MaterialApp(
-            home: MediaQuery(
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: const MediaQuery(
               data: MediaQueryData(textScaler: TextScaler.linear(1.3)),
               child: AiDisclosureScreen(),
             ),
@@ -128,8 +134,10 @@ void main() {
             consentServiceProvider
                 .overrideWithValue(_FakeConsentService()),
           ],
-          child: const MaterialApp(
-            home: MediaQuery(
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: const MediaQuery(
               data: MediaQueryData(textScaler: TextScaler.linear(1.3)),
               child: AiDisclosureScreen(informationOnly: true),
             ),

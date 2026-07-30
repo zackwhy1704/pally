@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
+import 'package:pally/features/auth/screens/complete_profile_error_localizer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -46,6 +48,7 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final vm = ref.watch(completeProfileViewModelProvider);
     final notifier = ref.read(completeProfileViewModelProvider.notifier);
 
@@ -80,38 +83,38 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   Text(
-                    'One quick thing',
+                    l.completeProfileTitle,
                     style: AppTextStyles.heading1,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    'Tell us your age group so we can set up your account safely.',
+                    l.completeProfileSubtitle,
                     style: AppTextStyles.body.copyWith(color: AppColors.text2),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   Text(
-                    'Age group',
+                    l.completeProfileAgeGroup,
                     style: AppTextStyles.label
                         .copyWith(fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   _AgeGroupTile(
-                    label: 'I am 13 or older',
+                    label: l.completeProfile13Plus,
                     selected: isUnder13 == false,
                     onTap: () => notifier.setAgeGroup(isUnder13: false),
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   _AgeGroupTile(
-                    label: 'I am under 13',
+                    label: l.completeProfileUnder13,
                     selected: isUnder13 == true,
                     onTap: () => notifier.setAgeGroup(isUnder13: true),
                   ),
                   if (isUnder13 == true) ...[
                     const SizedBox(height: AppSpacing.md),
                     Text(
-                      "Parent's email address",
+                      l.completeProfileParentEmailLabel,
                       style: AppTextStyles.label
                           .copyWith(fontWeight: FontWeight.w600),
                     ),
@@ -141,17 +144,17 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                       ),
                       validator: (v) {
                         if (v == null || v.trim().isEmpty) {
-                          return "Please enter your parent's email";
+                          return l.completeProfileParentEmailRequired;
                         }
                         if (!_kEmailRegex.hasMatch(v.trim())) {
-                          return "Please enter your parent's valid email (e.g. parent@example.com)";
+                          return l.completeProfileParentEmailInvalid;
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: AppSpacing.xs),
                     Text(
-                      "We'll email your parent to approve your account before you can use AI features.",
+                      l.completeProfileParentEmailHelper,
                       style: AppTextStyles.bodySmall
                           .copyWith(color: AppColors.text2),
                     ),
@@ -173,7 +176,7 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                           const SizedBox(width: AppSpacing.sm),
                           Expanded(
                             child: Text(
-                              vm.error!,
+                              localizedCompleteProfileError(l, vm.error!),
                               style: AppTextStyles.bodySmall
                                   .copyWith(color: AppColors.coral),
                             ),
@@ -200,7 +203,7 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                                   strokeWidth: 2, color: Colors.white),
                             )
                           : Text(
-                              vm.error != null ? 'Try again' : 'Continue',
+                              vm.error != null ? l.commonTryAgain : l.moduleCtaContinue,
                               style: AppTextStyles.body.copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700),

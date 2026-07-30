@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/features/auth/screens/complete_profile_screen.dart';
@@ -7,7 +8,10 @@ import 'package:pally/features/auth/screens/complete_profile_view_model.dart';
 Widget _wrap(Widget child, {List<Override> overrides = const []}) =>
     ProviderScope(
       overrides: overrides,
-      child: MaterialApp(home: child),
+      child: MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: child),
     );
 
 void main() {
@@ -73,7 +77,7 @@ void main() {
 
       expect(find.text('No account found for this email'), findsOneWidget);
       // The primary action doubles as Retry — never a toast-only error.
-      expect(find.text('Try again'), findsOneWidget);
+      expect(find.text('Try Again'), findsOneWidget);
       final button =
           tester.widget<FilledButton>(find.byType(FilledButton));
       expect(button.onPressed, isNotNull); // re-enabled to retry
@@ -107,6 +111,7 @@ class _ErrorVM extends CompleteProfileViewModel {
   @override
   CompleteProfileState build() => const CompleteProfileState(
         isUnder13: false,
-        error: 'No account found for this email',
+        error: CompleteProfileError(CompleteProfileErrorKind.authFailed,
+            detail: 'No account found for this email'),
       );
 }
