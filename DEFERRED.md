@@ -50,7 +50,10 @@ SG-specific term 小伴 itself is part of the standing native-SG review.
 - ✅ **PR-G** photo_question (58 keys) — MERGED `@5f71ef8`. Baseline 588→527. SPLIT: upload + ocr_awareness
   are follow-up PRs (upload has VM error strings needing l threaded).
 - ✅ **PR-G2** ocr_awareness (27 keys) — MERGED `@5f9678a`. Baseline 527→499.
-- **PR-G3** upload (42 — includes VM error strings needing l threaded)
+- ✅ **PR-G3** upload flow + TYPED upload errors (64 keys) — MERGED `@da1b3c8`. Baseline 499→460.
+  VM returns typed `UploadError{kind,fileName?,detail?}`; `localizedUploadError` resolves at render (notifier
+  never imports AppLocalizations — layering; re-localizes on live locale switch). The reusable pattern for any
+  VM-string localization. Tiny follow-up: scanner-missed `_sourceTypes` dropdown (Textbook/Notes/Website/Other).
 - **PR-H** wiki_viewer+compiled+chapters · **PR-I** chat-residue+create-tutor · **PR-J** consent+account_deletion+auth
 - **PR-K** long tail (homework/exam_prep/study_plan/brain_health/teach_mochi/centre/assignments/etc.)
 Each: same recipe; delegates on any screen-rendering test; lock→3.32.1 before push; coverage guard must
