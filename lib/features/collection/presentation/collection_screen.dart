@@ -5,6 +5,7 @@ import 'package:pally/core/widgets/loading/pally_skeleton.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
+import 'package:pally/core/i18n/label_localizer.dart';
 import 'package:pally/features/collection/presentation/collection_view_model.dart';
 import 'package:pally/l10n/app_localizations.dart';
 
@@ -172,6 +173,7 @@ class _AlbumTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final char = entry.character;
     final bg = char?.bgColor ?? AppColors.surf2;
     final accent = char?.accentColor ?? AppColors.outline;
@@ -212,7 +214,7 @@ class _AlbumTile extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  char?.displayName ?? entry.id,
+                  char?.displayName(l) ?? entry.id,
                   style: AppTextStyles.caption.copyWith(
                     color: entry.unlocked
                         ? AppColors.text1
@@ -234,7 +236,7 @@ class _AlbumTile extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      entry.rarity,
+                      localizedRarity(l, entry.rarity),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 9,

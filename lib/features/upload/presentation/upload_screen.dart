@@ -4,6 +4,7 @@ import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
+import 'package:pally/core/i18n/label_localizer.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_sizing.dart';
@@ -278,10 +279,10 @@ class _UploadScreenContentState extends ConsumerState<_UploadScreenContent>
                     .copyWith(fontWeight: FontWeight.w700, fontSize: 13),
                 unselectedLabelStyle: AppTextStyles.body
                     .copyWith(fontWeight: FontWeight.w500, fontSize: 13),
-                tabs: const [
-                  Tab(text: 'Type'),
-                  Tab(text: 'Photo'),
-                  Tab(text: 'File'),
+                tabs: [
+                  Tab(text: l.uploadTabType),
+                  Tab(text: l.uploadTabPhoto),
+                  Tab(text: l.uploadTabFile),
                 ],
               ),
             ),
@@ -835,9 +836,14 @@ class _HeroPanel extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _SpeechBubble(
+                  // Deliberately SHORT — the caption right below already says
+                  // "Your notes become my brain."; the bubble used to repeat
+                  // that same idea in its own English-only tail clause, so a
+                  // zh device showed both languages stacked for one thought.
                   text: avatar != null
-                      ? 'Teach me your ${avatar!.subject} material — your notes become my brain!'
-                      : 'Teach me your material — I only learn from what you give me!',
+                      ? l.uploadHeroSpeechSubject(
+                          localizedSubject(l, avatar!.subject))
+                      : l.uploadHeroSpeechGeneric,
                 ),
                 SizedBox(height: 4),
                 Text(
@@ -1130,24 +1136,24 @@ class _UploadLoadingScreen extends StatelessWidget {
     final fileName = state.pendingFile?.name ?? '';
 
     final stepLabels = switch (stage) {
-      UploadStage.checkingRelevance => const [
-          'Step 1 of 3 — Reviewing content...',
-          'Step 1 of 3 — Checking relevance...',
+      UploadStage.checkingRelevance => [
+          l.uploadStepReviewing,
+          l.uploadStepCheckingRelevance,
         ],
-      UploadStage.uploading when isLarge => const [
-          'Step 2 of 3 — Sending to server...',
-          'Step 2 of 3 — Processing document...',
-          'Step 2 of 3 — Extracting text...',
-          'Step 2 of 3 — Almost there...',
+      UploadStage.uploading when isLarge => [
+          l.uploadStepSendingToServer,
+          l.uploadStepProcessingDoc,
+          l.uploadStepExtractingText,
+          l.uploadStepAlmostThere,
         ],
       UploadStage.compilingBrain || UploadStage.chunkedCompile => [
-          'Step 3 of 3 — Reading your notes...',
-          'Step 3 of 3 — Finding key concepts...',
-          'Step 3 of 3 — Building brain pages...',
-          if (isLarge) 'Step 3 of 3 — Processing sections...',
-          'Step 3 of 3 — Almost ready...',
+          l.uploadStepReadingNotes,
+          l.uploadStepFindingConcepts,
+          l.uploadStepBuildingPages,
+          if (isLarge) l.uploadStepProcessingSections,
+          l.uploadStepAlmostReady,
         ],
-      _ => ['Step 2 of 3 — Sending...', 'Step 2 of 3 — Processing...'],
+      _ => [l.uploadStepSending, l.uploadStepProcessing],
     };
 
     final stepDuration = isCompiling
@@ -1160,23 +1166,23 @@ class _UploadLoadingScreen extends StatelessWidget {
     } else if (isCompiling && isLarge) {
       lines.add(l.uploadSplittingSections(localizedUploadEstimate(l, state.estimatedCompileTime)));
     } else if (isCompiling) {
-      lines.add('This usually takes 30-60 seconds');
+      lines.add(l.uploadTakes30to60s);
     } else if (stage == UploadStage.uploading && isLarge) {
       lines.add('File: ${_sizeLabel(l, state.pendingFileSizeBytes)}${fileName.isNotEmpty ? " · $fileName" : ""}');
     } else if (stage == UploadStage.uploading && fileName.isNotEmpty) {
       lines.add(fileName);
     } else if (stage == UploadStage.checkingRelevance) {
-      lines.add('Making sure this fits the subject...');
+      lines.add(l.uploadCheckingSubjectFit);
     }
 
     final combinedLabel = [
       switch (stage) {
-        UploadStage.checkingRelevance => 'Checking your notes...',
-        UploadStage.uploading when isLarge => 'Uploading large document...',
-        UploadStage.uploading => 'Uploading...',
+        UploadStage.checkingRelevance => l.uploadCheckingNotes,
+        UploadStage.uploading when isLarge => l.uploadUploadingLargeDoc,
+        UploadStage.uploading => l.uploadUploading,
         UploadStage.compilingBrain => l.signupReadingNotes(l.mascotName),
         UploadStage.chunkedCompile => l.uploadBuildingSections,
-        _ => 'Processing...',
+        _ => l.uploadProcessing,
       },
       ...lines,
     ].join('\n');

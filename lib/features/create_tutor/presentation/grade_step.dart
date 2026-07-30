@@ -23,13 +23,23 @@ const _ageOptions = [
 ];
 
 // What the user wants Mochi to help with — goal-oriented, not geography-based.
+// Icon + backend id only; the DISPLAY label resolves at render via
+// _examSystemLabel — a closed id set, same resolver shape as label_localizer.
 const _examSystems = [
-  ('📝', 'Examination Preparation', 'EXAM_PREP'),
-  ('🎓', 'University — Midterms / Finals', 'UNIVERSITY'),
-  ('💻', 'Coding Interview Preparation', 'CODING_INTERVIEW'),
-  ('📊', 'Professional Examinations', 'PROFESSIONAL'),
-  ('🌐', 'Others', 'OTHER'),
+  ('📝', 'EXAM_PREP'),
+  ('🎓', 'UNIVERSITY'),
+  ('💻', 'CODING_INTERVIEW'),
+  ('📊', 'PROFESSIONAL'),
+  ('🌐', 'OTHER'),
 ];
+
+String _examSystemLabel(AppLocalizations l, String id) => switch (id) {
+      'EXAM_PREP' => l.createTutorExamPrep,
+      'UNIVERSITY' => l.createTutorUniversity,
+      'CODING_INTERVIEW' => l.createTutorCodingInterview,
+      'PROFESSIONAL' => l.createTutorProfessional,
+      _ => l.createTutorOtherGoal,
+    };
 
 class GradeStep extends StatelessWidget {
   const GradeStep({
@@ -83,7 +93,7 @@ class GradeStep extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('AGE',
+                  Text(l.createTutorAgeLabel,
                       style: AppTextStyles.label.copyWith(
                           color: AppColors.text3, letterSpacing: 0.8)),
                   const SizedBox(height: AppSpacing.sm),
@@ -137,7 +147,8 @@ class GradeStep extends StatelessWidget {
                           color: AppColors.text3, letterSpacing: 0.8)),
                   const SizedBox(height: AppSpacing.sm),
                   ..._examSystems.map((e) {
-                    final (icon, label, id) = e;
+                    final (icon, id) = e;
+                    final label = _examSystemLabel(l, id);
                     final isActive = curriculumType == id;
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 6),

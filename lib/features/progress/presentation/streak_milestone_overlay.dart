@@ -42,15 +42,15 @@ class _Layer extends StatelessWidget {
   final Animation<double> anim;
   final int milestone;
 
-  String get _subtitle => switch (milestone) {
-        3 => 'Three days in a row — habit forming!',
-        7 => 'A whole week! Week Warrior unlocked 🏅',
-        14 => 'Two weeks. You\'re on fire.',
-        30 => 'Thirty days. Legendary 👑',
-        60 => 'Sixty days — that\'s elite focus.',
-        100 => 'Triple digits. Unreal 🚀',
-        365 => 'A whole year. Take a bow.',
-        _ => 'Keep that streak burning!',
+  String _subtitle(AppLocalizations l) => switch (milestone) {
+        3 => l.streakMilestone3,
+        7 => l.streakMilestone7,
+        14 => l.streakMilestone14,
+        30 => l.streakMilestone30,
+        60 => l.streakMilestone60,
+        100 => l.streakMilestone100,
+        365 => l.streakMilestone365,
+        _ => l.streakMilestoneDefault,
       };
 
   @override
@@ -105,7 +105,7 @@ class _Layer extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Text(_subtitle,
+                    Text(_subtitle(l),
                         style: AppTextStyles.body
                             .copyWith(color: AppColors.text1),
                         textAlign: TextAlign.center),

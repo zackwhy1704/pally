@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/core/i18n/label_localizer.dart';
 import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
@@ -617,7 +618,7 @@ class _MysteryOddsPanel extends ConsumerWidget {
             )
           else
             Text(
-              _formatOdds(odds),
+              _formatOdds(l, odds),
               style: AppTextStyles.caption.copyWith(
                 color: AppColors.text2,
               ),
@@ -627,20 +628,30 @@ class _MysteryOddsPanel extends ConsumerWidget {
     );
   }
 
-  String _formatOdds(List<MysteryBoxOdds> odds) {
+  // Resolves the STABLE character code (not the data model's own `.name`,
+  // which may be a raw English fallback) to the same {mascot}-suffixed
+  // cosmetic name shown everywhere else — so a zh device never sees an
+  // English name mid-sentence, whether the odds came from the live API or
+  // the network-failure fallback.
+  String _shortName(AppLocalizations l, String code) {
+    final character = MochiCharacter.fromJson(code);
+    return character.displayName(l);
+  }
+
+  String _formatOdds(AppLocalizations l, List<MysteryBoxOdds> odds) {
     final commons = odds.where((o) => o.rarity == 'COMMON').toList();
     final rares = odds.where((o) => o.rarity == 'RARE').toList();
     final secrets = odds.where((o) => o.rarity == 'SECRET').toList();
     final parts = <String>[];
     if (commons.isNotEmpty) {
       final pct = commons.first.percent;
-      parts.add('${commons.length} commons = $pct% each');
+      parts.add(l.shopOddsCommons(commons.length, pct));
     }
     for (final r in rares) {
-      parts.add('Rare (${r.name}) = ${r.percent}%');
+      parts.add(l.shopOddsNamed(l.rarityRare, _shortName(l, r.character), r.percent));
     }
     for (final s in secrets) {
-      parts.add('Secret (${s.name}) = ${s.percent}%');
+      parts.add(l.shopOddsNamed(l.raritySecret, _shortName(l, s.character), s.percent));
     }
     return parts.join('  ·  ');
   }
@@ -950,15 +961,12 @@ class _UnlockedDialog extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              character.displayName,
+              character.displayName(l),
               style: AppTextStyles.heading1,
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              character.displayName,
-              style: AppTextStyles.bodySmall,
-            ),
+            // (the redundant second copy of this same name, previously shown
+            // again right here at bodySmall, added no information — removed)
             if (character.rarity != MochiRarity.standard) ...[
               const SizedBox(height: AppSpacing.xs),
               Container(
@@ -969,7 +977,7 @@ class _UnlockedDialog extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  l.shopRarityBadge(character.rarity.label),
+                  l.shopRarityBadge(localizedRarity(l, character.rarity.label)),
                   style: AppTextStyles.label.copyWith(
                     color: AppColors.gold,
                     fontWeight: FontWeight.w700,
@@ -1030,7 +1038,7 @@ class _DuplicateDialog extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              character.displayName,
+              character.displayName(l),
               style: AppTextStyles.heading1,
               textAlign: TextAlign.center,
             ),

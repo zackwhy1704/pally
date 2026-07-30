@@ -66,7 +66,7 @@ void main() {
 
     test('copyWith clears nullable fields with explicit null', () {
       const state = DirectOnboardingState(
-        error: 'Some error',
+        error: DirectOnboardingError(DirectOnboardingErrorKind.unknown),
         avatarId: 'avatar-123',
       );
       final updated = state.copyWith(error: null, avatarId: null);
@@ -111,19 +111,6 @@ void main() {
     });
   });
 
-  group('subjectLabel', () {
-    test('returns correct labels for known subjects', () {
-      expect(subjectLabel('MATHS'), 'Maths');
-      expect(subjectLabel('SCIENCE'), 'Science');
-      expect(subjectLabel('ENGLISH'), 'English');
-      expect(subjectLabel('CODING'), 'Coding');
-    });
-
-    test('returns raw value for unknown subjects', () {
-      expect(subjectLabel('ASTRONOMY'), 'ASTRONOMY');
-    });
-  });
-
   group('directOnboardingSubjects', () {
     test('contains expected subjects', () {
       expect(directOnboardingSubjects, contains('MATHS'));
@@ -140,19 +127,6 @@ void main() {
       expect(directOnboardingLevels, contains('HIGH_SCHOOL'));
       expect(directOnboardingLevels, contains('UNIVERSITY'));
       expect(directOnboardingLevels.length, 4);
-    });
-  });
-
-  group('levelLabel', () {
-    test('returns human-readable labels', () {
-      expect(levelLabel('PRIMARY'), 'Primary School');
-      expect(levelLabel('SECONDARY'), 'Secondary School');
-      expect(levelLabel('HIGH_SCHOOL'), 'High School');
-      expect(levelLabel('UNIVERSITY'), 'University / Adult');
-    });
-
-    test('returns raw value for unknown stage', () {
-      expect(levelLabel('GRADUATE'), 'GRADUATE');
     });
   });
 }

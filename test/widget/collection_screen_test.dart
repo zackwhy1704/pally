@@ -70,7 +70,9 @@ void main() {
     expect(find.text('🔒'), findsNWidgets(2));
   });
 
-  testWidgets('renders SECRET badge for secret-rarity entries', (tester) async {
+  testWidgets(
+      'renders the LOCALIZED rarity badge for a SECRET-rarity entry — the '
+      'backend code never renders verbatim', (tester) async {
     const state = CollectionState(entries: [
       CollectionEntry(
           id: 'GOLDSTAR',
@@ -80,7 +82,8 @@ void main() {
     ]);
     await tester.pumpWidget(_wrap(state));
     await tester.pump();
-    expect(find.text('SECRET'), findsOneWidget);
+    expect(find.text('Secret'), findsOneWidget);
+    expect(find.text('SECRET'), findsNothing);
   });
 
   testWidgets('renders "Complete!" copy when fully owned', (tester) async {

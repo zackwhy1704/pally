@@ -176,7 +176,7 @@ class _MochiCard extends StatelessWidget {
           ],
         ),
         content: Text(
-          l.createTutorUnlockPrompt(character.displayName),
+          l.createTutorUnlockPrompt(character.displayName(l)),
           style: AppTextStyles.body.copyWith(color: AppColors.text2),
         ),
         actions: [
@@ -243,7 +243,7 @@ class _MochiCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: Text(
-                      character.displayName,
+                      character.displayName(l),
                       style: AppTextStyles.caption.copyWith(
                         color: AppColors.text1,
                         fontWeight: FontWeight.w600,

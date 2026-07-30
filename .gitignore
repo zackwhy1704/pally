@@ -69,3 +69,6 @@ test/golden/failures/
 
 # Claude Code agent worktrees (never commit)
 .claude/worktrees/
+
+# FVM Version Cache
+.fvm/

@@ -14,6 +14,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/auth/auth_state.dart';
+import 'package:pally/features/onboarding/presentation/direct_onboarding_error_localizer.dart';
 import 'package:pally/features/onboarding/presentation/direct_onboarding_view_model.dart';
 import 'package:pally/features/onboarding/presentation/widgets/onboarding_legal_footer.dart';
 import 'package:pally/features/chapters/presentation/chapter_picker_sheet.dart';
@@ -95,7 +96,9 @@ class _DirectOnboardingScreenState
         if (next.error != null && next.error != prev?.error) {
           showAppSnackBar(
             SnackBar(
-              content: Text(next.error!,
+              content: Text(
+                  localizedDirectOnboardingError(
+                      AppLocalizations.of(context), next.error!),
                   style:
                       AppTextStyles.bodySmall.copyWith(color: Colors.white)),
               backgroundColor: AppColors.coral,

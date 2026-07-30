@@ -7,6 +7,105 @@
 
 ---
 
+## zh audit follow-up (2026-07-30) — mobile content_language gate + guard-extension round 2
+
+**Two workstreams, sequenced deliberately: the root-cause gate first (alone, verified), then the
+string sweep it exposed.**
+
+### Workstream 1 — mobile create-tutor never sent `content_language` (MERGED `@8ab271f`)
+The real bug: a native Chinese speaker creating a tutor on mobile got an ENGLISH avatar regardless of
+device/UI locale, because `CreateTutorViewModel` never sent `content_language` in the create-avatar
+POST — not a generation-pipeline defect, a missing entry point. Fixed:
+- `CreateAvatarRequest`/`Avatar` gained `contentLanguage`; the wizard's `grade_step.dart` gained a
+  language-chip picker, defaulting from `localeControllerProvider` (the resolved UI locale) via
+  `AppLanguages.all` — not hardcoded to 'en'.
+- **Post-creation change capability**, mirroring memoly's `CreateClassModal`/`EditClassModal` pattern
+  (`@95fa2ec`): a new `PallyAvatarLanguageSheet` (API-call UX contract compliant — loading/success/error,
+  re-entry guard, timeout) reachable from Home, PATCHing the existing avatar's content language.
+- Tests: `create_tutor_content_language_test.dart` + `pally_avatar_language_sheet_test.dart`, both
+  asserting the actual POST/PATCH body via an `HttpClientAdapter` stub, not just VM state.
+
+### Workstream 2 — guard-extension pass + the sweep it surfaced (this commit)
+The trigger ledgered under item 3 below ("guard-extension pass after PR-F") fired: the sink regex was
+widened to see switch-arm results (`=>`), and list/tuple literals where the first element is a short
+emoji/icon (this codebase's "icon + label(+code)" const-list idiom). The wider scanner surfaced **105
+new candidates spanning entirely new sub-features** — far beyond the ~7 items the triggering audit had
+enumerated by hand. All of it was localized this pass, not just the enumerated list:
+- **Upload family**: tips banner (`upload_tips_banner.dart`), step-label/tab switches in
+  `upload_screen.dart`, and a genuine duplicate-content bug in the hero speech bubble (an English-only
+  tail clause repeated what the caption below it already said — deleted, not translated) plus a
+  co-located raw `avatar!.subject` interpolation (now `localizedSubject`).
+- **OCR awareness**: `ocr_what_can_read.dart` (24 keys) and `ocr_tips_overlay.dart` (24 keys) — tier
+  labels + tips + readable/tricky content chips, all switch/const-list blind spots.
+- **Chapter picker**: `_StateBadge`'s tuple-returning switch + a bare `Text(cond ? 'A' : 'B')` ternary.
+- **Subject-vocabulary triple-dedup**: `create_group_screen.dart`'s chip label and `subject_step.dart`'s
+  quick-pick chip label now route through `localizedSubject` — display-only, the SENT/stored value is
+  untouched (the risky sibling, `SubjectStep`'s own text-field prefill, is deliberately left alone: it
+  round-trips through `_subjectToJson`'s canonicalization, so localizing the field itself would break
+  saves on edit — same reasoning as the free-text passthrough philosophy already documented in
+  `label_localizer.dart`).
+- **Onboarding**: `direct_onboarding_view_model.dart` gained a typed `DirectOnboardingErrorKind` (17
+  variants) + `direct_onboarding_error_localizer.dart`, replacing ad-hoc `_friendlyError` string-building
+  (mirrors the PR-G3/PR-J typed-error pattern); dead `subjectLabel`/`levelLabel`/`levelSubtitle` getters
+  (19 strings, superseded by `label_localizer.dart` since PR-B) deleted rather than localized.
+- **Streak/progress**: `streak_milestone_overlay.dart` + `daily_goal_ring.dart` getters converted to
+  methods(l); `grade_step.dart`'s exam-systems list + a stray `'AGE'` label fixed.
+- **Shop cosmetics** (product decision surfaced, not made unilaterally): `MochiCharacter.displayName`
+  went from a hardcoded getter ('Pencil Mochi', etc.) to `displayName(AppLocalizations l)`. Asked
+  whether the cosmetic NAMES should translate or stay brand-like — **decided: translate**
+  ('Pencil Mochi'→'铅笔小伴' etc., using 小伴 as the compound suffix, consistent with every other
+  mascot-bearing string). Also fixed two real bugs found while wiring it: `_UnlockedDialog` rendered the
+  character name TWICE (redundant duplicate `Text`, deleted); `_formatOdds`'s mystery-box odds sentence
+  now resolves the short name from the STABLE `character` code via `MochiCharacter.fromJson(code)`
+  instead of the data model's own `.name` field (so the network-failure fallback and the live API both
+  render the same localized name, never a raw English one on a zh device).
+- **Debug/identifier residue reasoned, not silenced**: `api_client.dart`'s Dio-logger diagnostic switch,
+  `feature_flags.dart`/`auth_service.dart`/`milestone_invite_nudge.dart`/
+  `streak_milestone_controller.dart`'s cache/storage-key builders, `json_reader.dart`'s
+  `JsonParseException.toString()`, and `mochi_config.dart`'s default `toString()` are all developer-only
+  (traced every call site — each feeds only `appLog.e`/a storage key/an uncaught-exception message, never
+  a widget) — reasoned `debug-log`/`storage-key` in the baseline, two new categories added to the
+  vocabulary. `module_list_screen.dart`'s `'$count $key'` and `module_player_view_model.dart`'s `'• $e'`
+  are `format` (a passthrough fallback and a bullet + already-server-localized content string,
+  respectively — no client-added natural-language token in either).
+- **Found and fixed a real duplication bug** (not just residue): `invite_screen.dart` had its OWN
+  hardcoded, unlocalized share message ("Join me on Apalchi — the study buddy that learns YOUR notes...")
+  duplicating `referral_screen.dart`'s already-localized `l10n.referralShareMessage(code)` for the exact
+  same referral flow, with different wording. Deleted the duplicate, reused the existing key. Also found
+  its sibling "Show QR"/"Hide QR" ternary label unlocalized (the "ternary not adjacent to a sink keyword"
+  blind spot) — 2 new ARB keys (`inviteShowQr`/`inviteHideQr`).
+- **`MochiCharacter.defaultSubject`'s free-text-prefill values** ('General', 'English', 'Science', …)
+  reasoned `backend-label` in the final regen — same shape as the `SubjectStep` prefill above: it feeds
+  `CreateTutorState.subject`, sent as free-text/canonical English, DISPLAY-localized via
+  `localizedSubject` wherever actually shown.
+- **Reported, not fixed** (premise didn't hold under trace): the audit assumed level-rewards
+  (`LevelReward`/`LevelRoadmap`) were a const client-side reward list — the guard-blind-spot shape. Traced
+  through `level_roadmap_provider.dart` to the backend's `LevelRewards.java`: genuinely server-owned
+  static data. Out of scope for a client PR — needs a backend `content_language` track, same family as
+  the LEDGERED PallyError item below. The audit's "home screen 5th banner" could not be located anywhere
+  in current source despite exhaustive searching — reported as unverifiable rather than fabricating a fix.
+
+**Baseline: 66 → 88** (net growth, not a regression — the widened scanner now sees real `debug-log`/
+`storage-key`/additional `backend-label` residue that was always there but structurally invisible to the
+narrower sink regex before this pass; every one of the 88 lines carries an enforced, specific reason).
+Full reason-category counts: `format` 43 · `backend-label` 21 · `debug-log` 10 · `storage-key` 4 ·
+`nav-fallback` 4 · `emoji-escape` 2 · `device-meta` 2 · `deferred-persisted` 1 · `brand` 1.
+
+### LEDGERED (unchanged by this pass, still open, still the real critical path)
+1. **PallyError central-mapper localization** — unchanged since PR-K3; now joined by **level-rewards**
+   as a second backend-owned English-data item needing its own `content_language` track (see above).
+2. **Typed system-message refactor** (chat_view_model persisted messages) — unchanged since PR-I/J.
+3. ~~Coverage-guard blind spot: list/switch string literals~~ — **CLOSED by this pass** (the trigger that
+   fired this workstream). The regex now sees `=>` switch arms and emoji-first-element const lists.
+   Residual, documented blind spots the scanner STILL can't see (found only by manual full-file reads
+   during this sweep, not by the regex): a plain `const List<String>` with no switch/tuple shape; a
+   ternary not textually adjacent to a sink keyword (`invite_screen.dart`'s "Show QR"/"Hide QR" was
+   exactly this); `_natural()`'s all-caps filter hiding genuinely user-facing ALL-CAPS labels. No trigger
+   set for a further extension — closing these needs either a smarter heuristic or continued manual
+   review, not a mechanical regex tweak.
+
+---
+
 ## Branch B — UI localization (zh) — CLIENT EXTRACTION COMPLETE, BY MEASUREMENT (2026-07-30)
 
 **STATUS: the coverage baseline is 66 = reasoned permanent-ish allows ONLY. Zero un-localized

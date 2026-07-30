@@ -4770,4 +4770,537 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get avatarLanguageSaved => 'Teaching language updated';
+
+  @override
+  String get onboardErrWrongPassword =>
+      'Wrong password. Already have an account? Tap \'Already have an account? Sign in\' below.';
+
+  @override
+  String get onboardErrAccountExists =>
+      'An account with this email already exists. Try signing in instead.';
+
+  @override
+  String get onboardErrInvalidEmail => 'Please enter a valid email address.';
+
+  @override
+  String get onboardErrParentEmailInvalid =>
+      'A valid parent email is required. Please go back and correct it.';
+
+  @override
+  String get onboardErrParentEmailMissing =>
+      'Please enter your parent\'s email address.';
+
+  @override
+  String get onboardErrConsentPending =>
+      'Your account is pending parental approval. Ask your parent to check their email.';
+
+  @override
+  String get onboardErrRateLimited =>
+      'Too many requests. Wait a moment and try again.';
+
+  @override
+  String get onboardErrServerError =>
+      'Account setup hit a temporary error. If you already have an account, please try signing in instead.';
+
+  @override
+  String get onboardErrServerMessageFallback =>
+      'Please check your details and try again.';
+
+  @override
+  String get onboardErrConsentEmailFailed =>
+      'Could not send the parental consent email. Please ask your parent to check their inbox for a confirmation link.';
+
+  @override
+  String get onboardErrSignUpRequired => 'Please complete sign-up first.';
+
+  @override
+  String get onboardErrFileReadFailed => 'Could not read the file. Try again.';
+
+  @override
+  String get onboardErrUploadFailed => 'Upload failed. Please try again.';
+
+  @override
+  String get onboardErrResendRateLimited =>
+      'Please wait 60 seconds before resending.';
+
+  @override
+  String get onboardErrResendFailed => 'Could not resend. Try again shortly.';
+
+  @override
+  String get streakMilestone3 => 'Three days in a row — habit forming!';
+
+  @override
+  String get streakMilestone7 => 'A whole week! Week Warrior unlocked 🏅';
+
+  @override
+  String get streakMilestone14 => 'Two weeks. You\'re on fire.';
+
+  @override
+  String get streakMilestone30 => 'Thirty days. Legendary 👑';
+
+  @override
+  String get streakMilestone60 => 'Sixty days — that\'s elite focus.';
+
+  @override
+  String get streakMilestone100 => 'Triple digits. Unreal 🚀';
+
+  @override
+  String get streakMilestone365 => 'A whole year. Take a bow.';
+
+  @override
+  String get streakMilestoneDefault => 'Keep that streak burning!';
+
+  @override
+  String get dailyGoalUnitXp => 'XP';
+
+  @override
+  String get dailyGoalUnitMin => 'min';
+
+  @override
+  String dailyGoalUnitQuiz(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'quizzes',
+      one: 'quiz',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dailyGoalVerbXp => 'XP earned today';
+
+  @override
+  String get dailyGoalVerbMinutes => 'minutes today';
+
+  @override
+  String dailyGoalVerbQuiz(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'quizzes today',
+      one: 'daily quiz',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dailyGoalMet => 'Goal';
+
+  @override
+  String dailyGoalRemaining(int target, String unit) {
+    return '/ $target $unit';
+  }
+
+  @override
+  String get dailyGoalCompleteStreak => 'Goal complete! Streak safe 🔥';
+
+  @override
+  String dailyGoalProgressOf(int pct, String verb) {
+    return '$pct% of your $verb';
+  }
+
+  @override
+  String get createTutorAgeLabel => 'AGE';
+
+  @override
+  String get createTutorExamPrep => 'Examination Preparation';
+
+  @override
+  String get createTutorUniversity => 'University — Midterms / Finals';
+
+  @override
+  String get createTutorCodingInterview => 'Coding Interview Preparation';
+
+  @override
+  String get createTutorProfessional => 'Professional Examinations';
+
+  @override
+  String get createTutorOtherGoal => 'Others';
+
+  @override
+  String get uploadTipSectionBefore => 'Before you upload';
+
+  @override
+  String get uploadTipMaxSize => 'Files must be under 25 MB.';
+
+  @override
+  String get uploadTipBigFiles =>
+      'Big files (a whole book) can be slow or time out — upload a chapter or topic at a time.';
+
+  @override
+  String get uploadTipPdfText =>
+      'PDFs need selectable text. A scanned, image-only PDF can\'t be read — photograph the pages instead.';
+
+  @override
+  String uploadTipSectionReadsWell(String mascot) {
+    return '$mascot reads these well';
+  }
+
+  @override
+  String get uploadTipTypedText =>
+      'Typed or printed text, clean PDFs, and screenshots.';
+
+  @override
+  String get uploadTipNeatHandwriting =>
+      'Neat handwriting — clear, reasonably large, dark ink.';
+
+  @override
+  String get uploadTipSectionHardToRead => 'Type these instead — hard to read';
+
+  @override
+  String get uploadTipCursive => 'Cursive or messy handwriting.';
+
+  @override
+  String get uploadTipGlare =>
+      'Glare, shadows, or a photo of a screen — shoot the page directly.';
+
+  @override
+  String get uploadTipTinyText =>
+      'Tiny text (footnotes, shrunk photocopies) — zoom in.';
+
+  @override
+  String get uploadTipFaint =>
+      'Faint pencil or low-contrast pages — go over it in pen.';
+
+  @override
+  String get uploadTipCropped =>
+      'Cropped edges — capture the whole page, flat and filling the frame.';
+
+  @override
+  String get uploadTipCluttered =>
+      'Cluttered multi-column layouts — one clean column per photo.';
+
+  @override
+  String get uploadTipSectionCheck => 'One quick check';
+
+  @override
+  String uploadTipGlanceCheck(String mascot) {
+    return 'After a photo or handwriting, glance at what $mascot read — if something looks off, retake or type it.';
+  }
+
+  @override
+  String get uploadTipHide => 'Hide';
+
+  @override
+  String get uploadTipWhatReadsBest => 'What reads best?';
+
+  @override
+  String get uploadStepReviewing => 'Step 1 of 3 — Reviewing content...';
+
+  @override
+  String get uploadStepCheckingRelevance =>
+      'Step 1 of 3 — Checking relevance...';
+
+  @override
+  String get uploadStepSendingToServer => 'Step 2 of 3 — Sending to server...';
+
+  @override
+  String get uploadStepProcessingDoc => 'Step 2 of 3 — Processing document...';
+
+  @override
+  String get uploadStepExtractingText => 'Step 2 of 3 — Extracting text...';
+
+  @override
+  String get uploadStepAlmostThere => 'Step 2 of 3 — Almost there...';
+
+  @override
+  String get uploadStepReadingNotes => 'Step 3 of 3 — Reading your notes...';
+
+  @override
+  String get uploadStepFindingConcepts =>
+      'Step 3 of 3 — Finding key concepts...';
+
+  @override
+  String get uploadStepBuildingPages => 'Step 3 of 3 — Building brain pages...';
+
+  @override
+  String get uploadStepProcessingSections =>
+      'Step 3 of 3 — Processing sections...';
+
+  @override
+  String get uploadStepAlmostReady => 'Step 3 of 3 — Almost ready...';
+
+  @override
+  String get uploadStepSending => 'Step 2 of 3 — Sending...';
+
+  @override
+  String get uploadStepProcessing => 'Step 2 of 3 — Processing...';
+
+  @override
+  String get uploadTakes30to60s => 'This usually takes 30-60 seconds';
+
+  @override
+  String get uploadCheckingSubjectFit => 'Making sure this fits the subject...';
+
+  @override
+  String get uploadCheckingNotes => 'Checking your notes...';
+
+  @override
+  String get uploadUploadingLargeDoc => 'Uploading large document...';
+
+  @override
+  String get uploadUploading => 'Uploading...';
+
+  @override
+  String get uploadProcessing => 'Processing...';
+
+  @override
+  String uploadHeroSpeechSubject(String subject) {
+    return 'Teach me your $subject material!';
+  }
+
+  @override
+  String get uploadHeroSpeechGeneric => 'Teach me your material!';
+
+  @override
+  String get uploadTabType => 'Type';
+
+  @override
+  String get uploadTabPhoto => 'Photo';
+
+  @override
+  String get uploadTabFile => 'File';
+
+  @override
+  String get ocrTierGreat => '✅  Reads great';
+
+  @override
+  String get ocrTierOk => '⚠️  Usually OK — check it';
+
+  @override
+  String get ocrTierTypeIt => '🚫  Best to type it yourself';
+
+  @override
+  String get ocrItemPrintedText => 'Printed text';
+
+  @override
+  String get ocrNotePrintedText =>
+      'Clear printed questions — reads almost perfectly';
+
+  @override
+  String get ocrItemNumbers => 'Numbers & basic maths';
+
+  @override
+  String get ocrNoteNumbers => 'Digits and operators (+, −, ×, ÷) read well';
+
+  @override
+  String get ocrItemMcqLabels => 'Multiple choice labels';
+
+  @override
+  String get ocrNoteMcqLabels => 'A. B. C. D. labels are reliably detected';
+
+  @override
+  String get ocrItemHandwriting => 'Neat handwriting';
+
+  @override
+  String get ocrNoteHandwriting =>
+      'Clear block letters work; cursive may need fixing';
+
+  @override
+  String get ocrItemEquations => 'Maths equations';
+
+  @override
+  String get ocrNoteEquations =>
+      'Simple equations OK; complex fractions may need editing';
+
+  @override
+  String get ocrItemFormulas => 'Chemical formulas';
+
+  @override
+  String get ocrNoteFormulas =>
+      'Subscripts & superscripts often need manual correction';
+
+  @override
+  String get ocrItemGraphs => 'Graphs & charts';
+
+  @override
+  String ocrNoteGraphs(String mascot) {
+    return '$mascot may read labels but cannot read bar heights, line values, or data points.';
+  }
+
+  @override
+  String ocrActionGraphs(String mascot) {
+    return 'Tell $mascot the numbers yourself';
+  }
+
+  @override
+  String get ocrItemGeometry => 'Geometry figures';
+
+  @override
+  String ocrNoteGeometry(String mascot) {
+    return '$mascot can\'t measure a drawing — it can\'t see angles or lengths from lines on paper.';
+  }
+
+  @override
+  String get ocrActionGeometry => 'Type the sides & angles instead';
+
+  @override
+  String get ocrItemCursive => 'Cursive handwriting';
+
+  @override
+  String get ocrNoteCursive =>
+      'Very variable — cursive letters often get mixed up.';
+
+  @override
+  String get ocrActionCursive => 'Type it out for accurate results';
+
+  @override
+  String get ocrTipDigitalTitle => 'Digital is best';
+
+  @override
+  String get ocrTipDigitalBody => 'A clear PDF or screenshot beats a photo';
+
+  @override
+  String get ocrTipLightingTitle => 'Good lighting';
+
+  @override
+  String get ocrTipLightingBody =>
+      'Bright, even light — avoid shadows on the page';
+
+  @override
+  String get ocrTipFlatTitle => 'Flat and straight';
+
+  @override
+  String get ocrTipFlatBody =>
+      'Hold your phone directly above, not at an angle';
+
+  @override
+  String get ocrTipFillFrameTitle => 'Fill the frame';
+
+  @override
+  String get ocrTipFillFrameBody =>
+      'Get close enough so text is large and clear';
+
+  @override
+  String get ocrTipOneTopicTitle => 'One topic per upload';
+
+  @override
+  String get ocrTipOneTopicBody =>
+      'Separate topics read better than a mixed dump';
+
+  @override
+  String get ocrTipMathTitle => 'Math? Type it';
+
+  @override
+  String get ocrTipMathBody =>
+      'For equations, a typed copy or very clear photo reads best';
+
+  @override
+  String get ocrReadablePrinted => 'Printed text';
+
+  @override
+  String get ocrReadableTyped => 'Typed questions';
+
+  @override
+  String get ocrReadableNumbers => 'Numbers';
+
+  @override
+  String get ocrReadableMcq => 'Multiple choice';
+
+  @override
+  String get ocrReadableFillBlank => 'Fill in the blank';
+
+  @override
+  String get ocrReadableShortParagraphs => 'Short paragraphs';
+
+  @override
+  String get ocrTrickyHandwriting => 'Handwriting';
+
+  @override
+  String get ocrTrickyDiagrams => 'Diagrams';
+
+  @override
+  String get ocrTrickyGraphs => 'Graphs';
+
+  @override
+  String get ocrTrickyMathSymbols => 'Maths symbols';
+
+  @override
+  String get ocrTrickyChemFormulas => 'Chemical formulas';
+
+  @override
+  String get ocrTrickyTables => 'Tables';
+
+  @override
+  String chapterCompileCount(int count) {
+    return 'Compile ($count)';
+  }
+
+  @override
+  String get chapterCompile => 'Compile';
+
+  @override
+  String get chapterStateCompiled => '✓ Compiled';
+
+  @override
+  String get chapterStateCompiling => 'Compiling…';
+
+  @override
+  String get chapterStateNotCompiled => 'Not compiled';
+
+  @override
+  String get rarityCommon => 'Common';
+
+  @override
+  String get rarityRare => 'Rare';
+
+  @override
+  String get raritySecret => 'Secret';
+
+  @override
+  String shopOddsCommons(int count, int pct) {
+    return '$count commons = $pct% each';
+  }
+
+  @override
+  String shopOddsNamed(String rarity, String name, int pct) {
+    return '$rarity ($name) = $pct%';
+  }
+
+  @override
+  String mochiNamePencil(String mascot) {
+    return 'Pencil $mascot';
+  }
+
+  @override
+  String mochiNameScience(String mascot) {
+    return 'Science $mascot';
+  }
+
+  @override
+  String mochiNamePe(String mascot) {
+    return 'PE $mascot';
+  }
+
+  @override
+  String mochiNameArt(String mascot) {
+    return 'Art $mascot';
+  }
+
+  @override
+  String mochiNameLunchbox(String mascot) {
+    return 'Lunch Box $mascot';
+  }
+
+  @override
+  String mochiNameLibrary(String mascot) {
+    return 'Library $mascot';
+  }
+
+  @override
+  String mochiNameHeadmaster(String mascot) {
+    return 'Headmaster $mascot';
+  }
+
+  @override
+  String mochiNameGoldstar(String mascot) {
+    return 'Gold Star $mascot';
+  }
+
+  @override
+  String get inviteShowQr => 'Show QR';
+
+  @override
+  String get inviteHideQr => 'Hide QR';
 }

@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/mochi_character.dart';
 
 /// Locks the F1 reset of the Mochi roster:
@@ -8,10 +11,15 @@ import 'package:pally/shared/models/mochi_character.dart';
 ///    mystery box now),
 ///  - jsonValue round-trip still works for every value.
 void main() {
+  late AppLocalizations en;
+  setUpAll(() async {
+    en = await AppLocalizations.delegate.load(const Locale('en'));
+  });
+
   group('MochiCharacter — F1 reset', () {
     test('mochi enum value exists with base.png asset', () {
       expect(MochiCharacter.mochi.assetPath, 'assets/images/base.png');
-      expect(MochiCharacter.mochi.displayName, 'Mochi');
+      expect(MochiCharacter.mochi.displayName(en), 'Mochi');
     });
 
     test('mochi is the only default-unlocked character', () {

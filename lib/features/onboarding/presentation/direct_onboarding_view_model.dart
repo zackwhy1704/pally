@@ -33,22 +33,6 @@ const directOnboardingSubjects = [
   'GENERAL',
 ];
 
-/// Display-friendly labels for subjects.
-String subjectLabel(String subject) => switch (subject) {
-      'MATHS' => 'Maths',
-      'SCIENCE' => 'Science',
-      'ENGLISH' => 'English',
-      'HISTORY' => 'History',
-      'CODING' => 'Coding',
-      'GEOGRAPHY' => 'Geography',
-      'LITERATURE' => 'Literature',
-      'ART' => 'Art',
-      'MUSIC' => 'Music',
-      'LANGUAGES' => 'Languages',
-      'GENERAL' => 'General',
-      _ => subject,
-    };
-
 /// Global education stages sent as the `level` field to the backend.
 const directOnboardingLevels = [
   'PRIMARY',
@@ -57,23 +41,46 @@ const directOnboardingLevels = [
   'UNIVERSITY',
 ];
 
-/// Human-readable label for a level value.
-String levelLabel(String level) => switch (level) {
-      'PRIMARY' => 'Primary School',
-      'SECONDARY' => 'Secondary School',
-      'HIGH_SCHOOL' => 'High School',
-      'UNIVERSITY' => 'University / Adult',
-      _ => level,
-    };
+// NOTE: subject/level DISPLAY labels resolve at the screen via the shared
+// label_localizer.dart resolvers (localizedSubject/localizedLevel/
+// localizedLevelSubtitle) — this file used to carry its own SECOND, dead copy
+// (subjectLabel/levelLabel/levelSubtitle, called from nowhere) which has been
+// deleted rather than localized. See DEFERRED.md for how this duplicate arose.
 
-/// Age-range hint shown under each stage tile.
-String levelSubtitle(String level) => switch (level) {
-      'PRIMARY' => 'Ages ~6–11',
-      'SECONDARY' => 'Ages ~11–16',
-      'HIGH_SCHOOL' => 'Ages ~16–18',
-      'UNIVERSITY' => 'Ages 18+',
-      _ => '',
-    };
+/// Typed onboarding failure. The view-model owns the error IDENTITY; the
+/// screen resolves it to wording at render (see
+/// direct_onboarding_error_localizer.dart), so the notifier never imports
+/// AppLocalizations — the same PR-G3/PR-I/PR-K2 layering pattern used by every
+/// other typed VM error in this app.
+enum DirectOnboardingErrorKind {
+  noInternet,
+  wrongPassword,
+  accountExists,
+  invalidEmail,
+  parentEmailInvalid, // server rejected the parent email itself
+  parentEmailMissing, // client-side: submitted with no parent email at all
+  consentPending,
+  rateLimited,
+  serverError,
+  serverMessage, // backend's own message, passed through verbatim (detail)
+  unknown, // catch-all; detail carries the backend message when present
+  consentEmailFailed,
+  signUpRequired,
+  fileReadFailed,
+  uploadFailed,
+  resendRateLimited,
+  resendFailed,
+}
+
+@immutable
+class DirectOnboardingError {
+  const DirectOnboardingError(this.kind, {this.detail});
+  final DirectOnboardingErrorKind kind;
+
+  /// Backend's own message when present (serverMessage/unknown), shown
+  /// verbatim — never re-translated, mirrors UploadError/CreateTutorError.
+  final String? detail;
+}
 
 @immutable
 class DirectOnboardingState {
@@ -98,7 +105,7 @@ class DirectOnboardingState {
 
   final int step;
   final bool isLoading;
-  final String? error;
+  final DirectOnboardingError? error;
   final String? avatarId;
   final String? selectedSubject;
   final String? selectedLevel;
@@ -119,7 +126,7 @@ class DirectOnboardingState {
   final String? maskedParentEmail;
 
   /// Inline error shown only on the consent-pending screen.
-  final String? consentResendError;
+  final DirectOnboardingError? consentResendError;
 
   /// Fires once after a successful under-13 registration; the screen listens
   /// and navigates to the dashboard. Resets to false on rebuild.
@@ -133,6 +140,7 @@ class DirectOnboardingState {
     int? step,
     bool? isLoading,
     Object? error = _sentinel,
+    Object? consentResendError = _sentinel,
     Object? avatarId = _sentinel,
     String? selectedSubject,
     String? selectedLevel,
@@ -143,14 +151,13 @@ class DirectOnboardingState {
     Object? parentEmail = _sentinel,
     bool? awaitingConsent,
     Object? maskedParentEmail = _sentinel,
-    Object? consentResendError = _sentinel,
     bool? goHome,
     Object? irrelevantReason = _sentinel,
   }) {
     return DirectOnboardingState(
       step: step ?? this.step,
       isLoading: isLoading ?? this.isLoading,
-      error: error == _sentinel ? this.error : error as String?,
+      error: error == _sentinel ? this.error : error as DirectOnboardingError?,
       avatarId: avatarId == _sentinel ? this.avatarId : avatarId as String?,
       selectedSubject: selectedSubject ?? this.selectedSubject,
       selectedLevel: selectedLevel ?? this.selectedLevel,
@@ -170,7 +177,7 @@ class DirectOnboardingState {
           : maskedParentEmail as String?,
       consentResendError: consentResendError == _sentinel
           ? this.consentResendError
-          : consentResendError as String?,
+          : consentResendError as DirectOnboardingError?,
       goHome: goHome ?? this.goHome,
       irrelevantReason: irrelevantReason == _sentinel
           ? this.irrelevantReason
@@ -242,14 +249,17 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
       state = state.copyWith(isLoading: false);
     } on DioException catch (e) {
       final status = e.response?.statusCode;
-      final msg = status == 429
-          ? 'Please wait 60 seconds before resending.'
-          : 'Could not resend. Try again shortly.';
-      state = state.copyWith(isLoading: false, consentResendError: msg);
+      final kind = status == 429
+          ? DirectOnboardingErrorKind.resendRateLimited
+          : DirectOnboardingErrorKind.resendFailed;
+      state = state.copyWith(
+          isLoading: false,
+          consentResendError: DirectOnboardingError(kind));
     } catch (_) {
       state = state.copyWith(
         isLoading: false,
-        consentResendError: 'Could not resend. Try again shortly.',
+        consentResendError:
+            const DirectOnboardingError(DirectOnboardingErrorKind.resendFailed),
       );
     }
   }
@@ -289,7 +299,8 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
     if (isUnder13 && (state.parentEmail == null || state.parentEmail!.trim().isEmpty)) {
       state = state.copyWith(
         isLoading: false,
-        error: "Please enter your parent's email address.",
+        error: const DirectOnboardingError(
+            DirectOnboardingErrorKind.parentEmailMissing),
       );
       return;
     }
@@ -388,13 +399,12 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
     } on DioException catch (e, st) {
       appLog.e('[DirectOnboard] Quick onboard failed',
           error: e, stackTrace: st);
-      final msg = _friendlyError(e);
-      state = state.copyWith(isLoading: false, error: msg);
+      state = state.copyWith(isLoading: false, error: friendlyError(e));
     } catch (e, st) {
       appLog.e('[DirectOnboard] Unexpected error', error: e, stackTrace: st);
       state = state.copyWith(
         isLoading: false,
-        error: 'Something went wrong. Please try again.',
+        error: const DirectOnboardingError(DirectOnboardingErrorKind.unknown),
       );
     }
   }
@@ -404,7 +414,8 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
     if (parentEmail == null || parentEmail.isEmpty) {
       state = state.copyWith(
         isLoading: false,
-        error: 'Please enter your parent\'s email address.',
+        error: const DirectOnboardingError(
+            DirectOnboardingErrorKind.parentEmailMissing),
       );
       return;
     }
@@ -433,15 +444,15 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
       appLog.e('[DirectOnboard] Consent request failed', error: e, stackTrace: st);
       state = state.copyWith(
         isLoading: false,
-        error: _friendlyError(e),
+        error: friendlyError(e),
       );
     } catch (e, st) {
       appLog.e('[DirectOnboard] Consent request unexpected error',
           error: e, stackTrace: st);
       state = state.copyWith(
         isLoading: false,
-        error:
-            'Could not send the parental consent email. Please ask your parent to check their inbox for a confirmation link.',
+        error: const DirectOnboardingError(
+            DirectOnboardingErrorKind.consentEmailFailed),
       );
     }
   }
@@ -451,12 +462,16 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
     _pendingFile = file;
     final avatarId = state.avatarId;
     if (avatarId == null || avatarId.isEmpty) {
-      state = state.copyWith(error: 'Please complete sign-up first.');
+      state = state.copyWith(
+          error: const DirectOnboardingError(
+              DirectOnboardingErrorKind.signUpRequired));
       return;
     }
 
     if (file.path == null) {
-      state = state.copyWith(error: 'Could not read the file. Try again.');
+      state = state.copyWith(
+          error: const DirectOnboardingError(
+              DirectOnboardingErrorKind.fileReadFailed));
       return;
     }
 
@@ -521,14 +536,15 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
       appLog.e('[DirectOnboard] Upload failed', error: e, stackTrace: st);
       state = state.copyWith(
         uploadStage: DirectUploadStage.failed,
-        error: _friendlyError(e),
+        error: friendlyError(e),
       );
     } catch (e, st) {
       appLog.e('[DirectOnboard] Unexpected upload error',
           error: e, stackTrace: st);
       state = state.copyWith(
         uploadStage: DirectUploadStage.failed,
-        error: 'Upload failed. Please try again.',
+        error: const DirectOnboardingError(
+            DirectOnboardingErrorKind.uploadFailed),
       );
     }
   }
@@ -653,7 +669,9 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
     state = state.copyWith(uploadStage: DirectUploadStage.ready);
   }
 
-  String _friendlyError(DioException e) {
+  /// Public (not `_friendlyError`) so the status-code → KIND mapping is unit-
+  /// testable directly, mirroring UploadViewModel.friendlyUploadError.
+  DirectOnboardingError friendlyError(DioException e) {
     final status = e.response?.statusCode;
     final body = e.response?.data;
     final serverMsg = body is Map ? body['error'] as String? : null;
@@ -661,30 +679,30 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
 
     if (e.type == DioExceptionType.connectionError ||
         e.type == DioExceptionType.connectionTimeout) {
-      return 'No internet connection. Check your WiFi and try again.';
+      return const DirectOnboardingError(DirectOnboardingErrorKind.noInternet);
     }
 
     return switch (status) {
-      401 =>
-        "Wrong password. Already have an account? Tap 'Already have an account? Sign in' below.",
-      409 =>
-        'An account with this email already exists. Try signing in instead.',
+      401 => const DirectOnboardingError(DirectOnboardingErrorKind.wrongPassword),
+      409 => const DirectOnboardingError(DirectOnboardingErrorKind.accountExists),
       400 when msgLow.contains('valid address') ||
               msgLow.contains('valid email') =>
-        'Please enter a valid email address.',
+        const DirectOnboardingError(DirectOnboardingErrorKind.invalidEmail),
       400 when msgLow.contains('parent') || msgLow.contains('guardian') =>
-        'A valid parent email is required. Please go back and correct it.',
+        const DirectOnboardingError(
+            DirectOnboardingErrorKind.parentEmailInvalid),
       403 =>
-        'Your account is pending parental approval. Ask your parent to check their email.',
-      422 => serverMsg ?? 'Please check your details and try again.',
-      429 => 'Too many requests. Wait a moment and try again.',
-      500 =>
-        'Account setup hit a temporary error. If you already have an account, please try signing in instead.',
+        const DirectOnboardingError(DirectOnboardingErrorKind.consentPending),
+      422 => DirectOnboardingError(DirectOnboardingErrorKind.serverMessage,
+          detail: serverMsg),
+      429 => const DirectOnboardingError(DirectOnboardingErrorKind.rateLimited),
+      500 => const DirectOnboardingError(DirectOnboardingErrorKind.serverError),
       _ when msgLow.contains('pending') ||
               msgLow.contains('consent') ||
               msgLow.contains('elevation') =>
-        'Your account is pending parental approval. Ask your parent to check their email.',
-      _ => serverMsg ?? 'Something went wrong. Please try again.',
+        const DirectOnboardingError(DirectOnboardingErrorKind.consentPending),
+      _ => DirectOnboardingError(DirectOnboardingErrorKind.unknown,
+          detail: serverMsg),
     };
   }
 }

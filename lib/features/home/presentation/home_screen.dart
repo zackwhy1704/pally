@@ -29,6 +29,7 @@ import 'package:pally/features/subscription/presentation/trial_expired_screen.da
 import 'package:pally/features/subscription/presentation/trial_welcome_screen.dart';
 import 'package:pally/features/subscription/trial_status_provider.dart';
 import 'package:pally/features/onboarding/presentation/feature_tour.dart';
+import 'package:pally/features/onboarding/presentation/direct_onboarding_error_localizer.dart';
 import 'package:pally/features/onboarding/presentation/direct_onboarding_view_model.dart';
 import 'package:pally/l10n/app_localizations.dart';
 
@@ -1196,7 +1197,8 @@ class ConsentPendingBannerState extends ConsumerState<ConsentPendingBanner> {
           if (consentVm.consentResendError != null) ...[
             const SizedBox(height: AppSpacing.xs),
             Text(
-              consentVm.consentResendError!,
+              localizedDirectOnboardingError(
+                  l10n, consentVm.consentResendError!),
               style:
                   AppTextStyles.bodySmall.copyWith(color: AppColors.coral),
             ),

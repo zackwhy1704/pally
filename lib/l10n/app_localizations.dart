@@ -7825,6 +7825,900 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Teaching language updated'**
   String get avatarLanguageSaved;
+
+  /// No description provided for @onboardErrWrongPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong password. Already have an account? Tap \'Already have an account? Sign in\' below.'**
+  String get onboardErrWrongPassword;
+
+  /// No description provided for @onboardErrAccountExists.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with this email already exists. Try signing in instead.'**
+  String get onboardErrAccountExists;
+
+  /// No description provided for @onboardErrInvalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address.'**
+  String get onboardErrInvalidEmail;
+
+  /// No description provided for @onboardErrParentEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'A valid parent email is required. Please go back and correct it.'**
+  String get onboardErrParentEmailInvalid;
+
+  /// No description provided for @onboardErrParentEmailMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your parent\'s email address.'**
+  String get onboardErrParentEmailMissing;
+
+  /// No description provided for @onboardErrConsentPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is pending parental approval. Ask your parent to check their email.'**
+  String get onboardErrConsentPending;
+
+  /// No description provided for @onboardErrRateLimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many requests. Wait a moment and try again.'**
+  String get onboardErrRateLimited;
+
+  /// No description provided for @onboardErrServerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Account setup hit a temporary error. If you already have an account, please try signing in instead.'**
+  String get onboardErrServerError;
+
+  /// No description provided for @onboardErrServerMessageFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your details and try again.'**
+  String get onboardErrServerMessageFallback;
+
+  /// No description provided for @onboardErrConsentEmailFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send the parental consent email. Please ask your parent to check their inbox for a confirmation link.'**
+  String get onboardErrConsentEmailFailed;
+
+  /// No description provided for @onboardErrSignUpRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please complete sign-up first.'**
+  String get onboardErrSignUpRequired;
+
+  /// No description provided for @onboardErrFileReadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read the file. Try again.'**
+  String get onboardErrFileReadFailed;
+
+  /// No description provided for @onboardErrUploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload failed. Please try again.'**
+  String get onboardErrUploadFailed;
+
+  /// No description provided for @onboardErrResendRateLimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait 60 seconds before resending.'**
+  String get onboardErrResendRateLimited;
+
+  /// No description provided for @onboardErrResendFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not resend. Try again shortly.'**
+  String get onboardErrResendFailed;
+
+  /// No description provided for @streakMilestone3.
+  ///
+  /// In en, this message translates to:
+  /// **'Three days in a row — habit forming!'**
+  String get streakMilestone3;
+
+  /// No description provided for @streakMilestone7.
+  ///
+  /// In en, this message translates to:
+  /// **'A whole week! Week Warrior unlocked 🏅'**
+  String get streakMilestone7;
+
+  /// No description provided for @streakMilestone14.
+  ///
+  /// In en, this message translates to:
+  /// **'Two weeks. You\'re on fire.'**
+  String get streakMilestone14;
+
+  /// No description provided for @streakMilestone30.
+  ///
+  /// In en, this message translates to:
+  /// **'Thirty days. Legendary 👑'**
+  String get streakMilestone30;
+
+  /// No description provided for @streakMilestone60.
+  ///
+  /// In en, this message translates to:
+  /// **'Sixty days — that\'s elite focus.'**
+  String get streakMilestone60;
+
+  /// No description provided for @streakMilestone100.
+  ///
+  /// In en, this message translates to:
+  /// **'Triple digits. Unreal 🚀'**
+  String get streakMilestone100;
+
+  /// No description provided for @streakMilestone365.
+  ///
+  /// In en, this message translates to:
+  /// **'A whole year. Take a bow.'**
+  String get streakMilestone365;
+
+  /// No description provided for @streakMilestoneDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep that streak burning!'**
+  String get streakMilestoneDefault;
+
+  /// No description provided for @dailyGoalUnitXp.
+  ///
+  /// In en, this message translates to:
+  /// **'XP'**
+  String get dailyGoalUnitXp;
+
+  /// No description provided for @dailyGoalUnitMin.
+  ///
+  /// In en, this message translates to:
+  /// **'min'**
+  String get dailyGoalUnitMin;
+
+  /// No description provided for @dailyGoalUnitQuiz.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{quiz} other{quizzes}}'**
+  String dailyGoalUnitQuiz(int count);
+
+  /// No description provided for @dailyGoalVerbXp.
+  ///
+  /// In en, this message translates to:
+  /// **'XP earned today'**
+  String get dailyGoalVerbXp;
+
+  /// No description provided for @dailyGoalVerbMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'minutes today'**
+  String get dailyGoalVerbMinutes;
+
+  /// No description provided for @dailyGoalVerbQuiz.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{daily quiz} other{quizzes today}}'**
+  String dailyGoalVerbQuiz(int count);
+
+  /// No description provided for @dailyGoalMet.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal'**
+  String get dailyGoalMet;
+
+  /// No description provided for @dailyGoalRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'/ {target} {unit}'**
+  String dailyGoalRemaining(int target, String unit);
+
+  /// No description provided for @dailyGoalCompleteStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal complete! Streak safe 🔥'**
+  String get dailyGoalCompleteStreak;
+
+  /// No description provided for @dailyGoalProgressOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{pct}% of your {verb}'**
+  String dailyGoalProgressOf(int pct, String verb);
+
+  /// No description provided for @createTutorAgeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'AGE'**
+  String get createTutorAgeLabel;
+
+  /// No description provided for @createTutorExamPrep.
+  ///
+  /// In en, this message translates to:
+  /// **'Examination Preparation'**
+  String get createTutorExamPrep;
+
+  /// No description provided for @createTutorUniversity.
+  ///
+  /// In en, this message translates to:
+  /// **'University — Midterms / Finals'**
+  String get createTutorUniversity;
+
+  /// No description provided for @createTutorCodingInterview.
+  ///
+  /// In en, this message translates to:
+  /// **'Coding Interview Preparation'**
+  String get createTutorCodingInterview;
+
+  /// No description provided for @createTutorProfessional.
+  ///
+  /// In en, this message translates to:
+  /// **'Professional Examinations'**
+  String get createTutorProfessional;
+
+  /// No description provided for @createTutorOtherGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Others'**
+  String get createTutorOtherGoal;
+
+  /// No description provided for @uploadTipSectionBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'Before you upload'**
+  String get uploadTipSectionBefore;
+
+  /// No description provided for @uploadTipMaxSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Files must be under 25 MB.'**
+  String get uploadTipMaxSize;
+
+  /// No description provided for @uploadTipBigFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Big files (a whole book) can be slow or time out — upload a chapter or topic at a time.'**
+  String get uploadTipBigFiles;
+
+  /// No description provided for @uploadTipPdfText.
+  ///
+  /// In en, this message translates to:
+  /// **'PDFs need selectable text. A scanned, image-only PDF can\'t be read — photograph the pages instead.'**
+  String get uploadTipPdfText;
+
+  /// No description provided for @uploadTipSectionReadsWell.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} reads these well'**
+  String uploadTipSectionReadsWell(String mascot);
+
+  /// No description provided for @uploadTipTypedText.
+  ///
+  /// In en, this message translates to:
+  /// **'Typed or printed text, clean PDFs, and screenshots.'**
+  String get uploadTipTypedText;
+
+  /// No description provided for @uploadTipNeatHandwriting.
+  ///
+  /// In en, this message translates to:
+  /// **'Neat handwriting — clear, reasonably large, dark ink.'**
+  String get uploadTipNeatHandwriting;
+
+  /// No description provided for @uploadTipSectionHardToRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Type these instead — hard to read'**
+  String get uploadTipSectionHardToRead;
+
+  /// No description provided for @uploadTipCursive.
+  ///
+  /// In en, this message translates to:
+  /// **'Cursive or messy handwriting.'**
+  String get uploadTipCursive;
+
+  /// No description provided for @uploadTipGlare.
+  ///
+  /// In en, this message translates to:
+  /// **'Glare, shadows, or a photo of a screen — shoot the page directly.'**
+  String get uploadTipGlare;
+
+  /// No description provided for @uploadTipTinyText.
+  ///
+  /// In en, this message translates to:
+  /// **'Tiny text (footnotes, shrunk photocopies) — zoom in.'**
+  String get uploadTipTinyText;
+
+  /// No description provided for @uploadTipFaint.
+  ///
+  /// In en, this message translates to:
+  /// **'Faint pencil or low-contrast pages — go over it in pen.'**
+  String get uploadTipFaint;
+
+  /// No description provided for @uploadTipCropped.
+  ///
+  /// In en, this message translates to:
+  /// **'Cropped edges — capture the whole page, flat and filling the frame.'**
+  String get uploadTipCropped;
+
+  /// No description provided for @uploadTipCluttered.
+  ///
+  /// In en, this message translates to:
+  /// **'Cluttered multi-column layouts — one clean column per photo.'**
+  String get uploadTipCluttered;
+
+  /// No description provided for @uploadTipSectionCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'One quick check'**
+  String get uploadTipSectionCheck;
+
+  /// No description provided for @uploadTipGlanceCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'After a photo or handwriting, glance at what {mascot} read — if something looks off, retake or type it.'**
+  String uploadTipGlanceCheck(String mascot);
+
+  /// No description provided for @uploadTipHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get uploadTipHide;
+
+  /// No description provided for @uploadTipWhatReadsBest.
+  ///
+  /// In en, this message translates to:
+  /// **'What reads best?'**
+  String get uploadTipWhatReadsBest;
+
+  /// No description provided for @uploadStepReviewing.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 1 of 3 — Reviewing content...'**
+  String get uploadStepReviewing;
+
+  /// No description provided for @uploadStepCheckingRelevance.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 1 of 3 — Checking relevance...'**
+  String get uploadStepCheckingRelevance;
+
+  /// No description provided for @uploadStepSendingToServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 2 of 3 — Sending to server...'**
+  String get uploadStepSendingToServer;
+
+  /// No description provided for @uploadStepProcessingDoc.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 2 of 3 — Processing document...'**
+  String get uploadStepProcessingDoc;
+
+  /// No description provided for @uploadStepExtractingText.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 2 of 3 — Extracting text...'**
+  String get uploadStepExtractingText;
+
+  /// No description provided for @uploadStepAlmostThere.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 2 of 3 — Almost there...'**
+  String get uploadStepAlmostThere;
+
+  /// No description provided for @uploadStepReadingNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 3 of 3 — Reading your notes...'**
+  String get uploadStepReadingNotes;
+
+  /// No description provided for @uploadStepFindingConcepts.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 3 of 3 — Finding key concepts...'**
+  String get uploadStepFindingConcepts;
+
+  /// No description provided for @uploadStepBuildingPages.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 3 of 3 — Building brain pages...'**
+  String get uploadStepBuildingPages;
+
+  /// No description provided for @uploadStepProcessingSections.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 3 of 3 — Processing sections...'**
+  String get uploadStepProcessingSections;
+
+  /// No description provided for @uploadStepAlmostReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 3 of 3 — Almost ready...'**
+  String get uploadStepAlmostReady;
+
+  /// No description provided for @uploadStepSending.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 2 of 3 — Sending...'**
+  String get uploadStepSending;
+
+  /// No description provided for @uploadStepProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 2 of 3 — Processing...'**
+  String get uploadStepProcessing;
+
+  /// No description provided for @uploadTakes30to60s.
+  ///
+  /// In en, this message translates to:
+  /// **'This usually takes 30-60 seconds'**
+  String get uploadTakes30to60s;
+
+  /// No description provided for @uploadCheckingSubjectFit.
+  ///
+  /// In en, this message translates to:
+  /// **'Making sure this fits the subject...'**
+  String get uploadCheckingSubjectFit;
+
+  /// No description provided for @uploadCheckingNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking your notes...'**
+  String get uploadCheckingNotes;
+
+  /// No description provided for @uploadUploadingLargeDoc.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading large document...'**
+  String get uploadUploadingLargeDoc;
+
+  /// No description provided for @uploadUploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading...'**
+  String get uploadUploading;
+
+  /// No description provided for @uploadProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing...'**
+  String get uploadProcessing;
+
+  /// No description provided for @uploadHeroSpeechSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Teach me your {subject} material!'**
+  String uploadHeroSpeechSubject(String subject);
+
+  /// No description provided for @uploadHeroSpeechGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Teach me your material!'**
+  String get uploadHeroSpeechGeneric;
+
+  /// No description provided for @uploadTabType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get uploadTabType;
+
+  /// No description provided for @uploadTabPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get uploadTabPhoto;
+
+  /// No description provided for @uploadTabFile.
+  ///
+  /// In en, this message translates to:
+  /// **'File'**
+  String get uploadTabFile;
+
+  /// No description provided for @ocrTierGreat.
+  ///
+  /// In en, this message translates to:
+  /// **'✅  Reads great'**
+  String get ocrTierGreat;
+
+  /// No description provided for @ocrTierOk.
+  ///
+  /// In en, this message translates to:
+  /// **'⚠️  Usually OK — check it'**
+  String get ocrTierOk;
+
+  /// No description provided for @ocrTierTypeIt.
+  ///
+  /// In en, this message translates to:
+  /// **'🚫  Best to type it yourself'**
+  String get ocrTierTypeIt;
+
+  /// No description provided for @ocrItemPrintedText.
+  ///
+  /// In en, this message translates to:
+  /// **'Printed text'**
+  String get ocrItemPrintedText;
+
+  /// No description provided for @ocrNotePrintedText.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear printed questions — reads almost perfectly'**
+  String get ocrNotePrintedText;
+
+  /// No description provided for @ocrItemNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'Numbers & basic maths'**
+  String get ocrItemNumbers;
+
+  /// No description provided for @ocrNoteNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'Digits and operators (+, −, ×, ÷) read well'**
+  String get ocrNoteNumbers;
+
+  /// No description provided for @ocrItemMcqLabels.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple choice labels'**
+  String get ocrItemMcqLabels;
+
+  /// No description provided for @ocrNoteMcqLabels.
+  ///
+  /// In en, this message translates to:
+  /// **'A. B. C. D. labels are reliably detected'**
+  String get ocrNoteMcqLabels;
+
+  /// No description provided for @ocrItemHandwriting.
+  ///
+  /// In en, this message translates to:
+  /// **'Neat handwriting'**
+  String get ocrItemHandwriting;
+
+  /// No description provided for @ocrNoteHandwriting.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear block letters work; cursive may need fixing'**
+  String get ocrNoteHandwriting;
+
+  /// No description provided for @ocrItemEquations.
+  ///
+  /// In en, this message translates to:
+  /// **'Maths equations'**
+  String get ocrItemEquations;
+
+  /// No description provided for @ocrNoteEquations.
+  ///
+  /// In en, this message translates to:
+  /// **'Simple equations OK; complex fractions may need editing'**
+  String get ocrNoteEquations;
+
+  /// No description provided for @ocrItemFormulas.
+  ///
+  /// In en, this message translates to:
+  /// **'Chemical formulas'**
+  String get ocrItemFormulas;
+
+  /// No description provided for @ocrNoteFormulas.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscripts & superscripts often need manual correction'**
+  String get ocrNoteFormulas;
+
+  /// No description provided for @ocrItemGraphs.
+  ///
+  /// In en, this message translates to:
+  /// **'Graphs & charts'**
+  String get ocrItemGraphs;
+
+  /// No description provided for @ocrNoteGraphs.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} may read labels but cannot read bar heights, line values, or data points.'**
+  String ocrNoteGraphs(String mascot);
+
+  /// No description provided for @ocrActionGraphs.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell {mascot} the numbers yourself'**
+  String ocrActionGraphs(String mascot);
+
+  /// No description provided for @ocrItemGeometry.
+  ///
+  /// In en, this message translates to:
+  /// **'Geometry figures'**
+  String get ocrItemGeometry;
+
+  /// No description provided for @ocrNoteGeometry.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} can\'t measure a drawing — it can\'t see angles or lengths from lines on paper.'**
+  String ocrNoteGeometry(String mascot);
+
+  /// No description provided for @ocrActionGeometry.
+  ///
+  /// In en, this message translates to:
+  /// **'Type the sides & angles instead'**
+  String get ocrActionGeometry;
+
+  /// No description provided for @ocrItemCursive.
+  ///
+  /// In en, this message translates to:
+  /// **'Cursive handwriting'**
+  String get ocrItemCursive;
+
+  /// No description provided for @ocrNoteCursive.
+  ///
+  /// In en, this message translates to:
+  /// **'Very variable — cursive letters often get mixed up.'**
+  String get ocrNoteCursive;
+
+  /// No description provided for @ocrActionCursive.
+  ///
+  /// In en, this message translates to:
+  /// **'Type it out for accurate results'**
+  String get ocrActionCursive;
+
+  /// No description provided for @ocrTipDigitalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Digital is best'**
+  String get ocrTipDigitalTitle;
+
+  /// No description provided for @ocrTipDigitalBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A clear PDF or screenshot beats a photo'**
+  String get ocrTipDigitalBody;
+
+  /// No description provided for @ocrTipLightingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Good lighting'**
+  String get ocrTipLightingTitle;
+
+  /// No description provided for @ocrTipLightingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Bright, even light — avoid shadows on the page'**
+  String get ocrTipLightingBody;
+
+  /// No description provided for @ocrTipFlatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Flat and straight'**
+  String get ocrTipFlatTitle;
+
+  /// No description provided for @ocrTipFlatBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold your phone directly above, not at an angle'**
+  String get ocrTipFlatBody;
+
+  /// No description provided for @ocrTipFillFrameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill the frame'**
+  String get ocrTipFillFrameTitle;
+
+  /// No description provided for @ocrTipFillFrameBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Get close enough so text is large and clear'**
+  String get ocrTipFillFrameBody;
+
+  /// No description provided for @ocrTipOneTopicTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'One topic per upload'**
+  String get ocrTipOneTopicTitle;
+
+  /// No description provided for @ocrTipOneTopicBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Separate topics read better than a mixed dump'**
+  String get ocrTipOneTopicBody;
+
+  /// No description provided for @ocrTipMathTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Math? Type it'**
+  String get ocrTipMathTitle;
+
+  /// No description provided for @ocrTipMathBody.
+  ///
+  /// In en, this message translates to:
+  /// **'For equations, a typed copy or very clear photo reads best'**
+  String get ocrTipMathBody;
+
+  /// No description provided for @ocrReadablePrinted.
+  ///
+  /// In en, this message translates to:
+  /// **'Printed text'**
+  String get ocrReadablePrinted;
+
+  /// No description provided for @ocrReadableTyped.
+  ///
+  /// In en, this message translates to:
+  /// **'Typed questions'**
+  String get ocrReadableTyped;
+
+  /// No description provided for @ocrReadableNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'Numbers'**
+  String get ocrReadableNumbers;
+
+  /// No description provided for @ocrReadableMcq.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple choice'**
+  String get ocrReadableMcq;
+
+  /// No description provided for @ocrReadableFillBlank.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in the blank'**
+  String get ocrReadableFillBlank;
+
+  /// No description provided for @ocrReadableShortParagraphs.
+  ///
+  /// In en, this message translates to:
+  /// **'Short paragraphs'**
+  String get ocrReadableShortParagraphs;
+
+  /// No description provided for @ocrTrickyHandwriting.
+  ///
+  /// In en, this message translates to:
+  /// **'Handwriting'**
+  String get ocrTrickyHandwriting;
+
+  /// No description provided for @ocrTrickyDiagrams.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagrams'**
+  String get ocrTrickyDiagrams;
+
+  /// No description provided for @ocrTrickyGraphs.
+  ///
+  /// In en, this message translates to:
+  /// **'Graphs'**
+  String get ocrTrickyGraphs;
+
+  /// No description provided for @ocrTrickyMathSymbols.
+  ///
+  /// In en, this message translates to:
+  /// **'Maths symbols'**
+  String get ocrTrickyMathSymbols;
+
+  /// No description provided for @ocrTrickyChemFormulas.
+  ///
+  /// In en, this message translates to:
+  /// **'Chemical formulas'**
+  String get ocrTrickyChemFormulas;
+
+  /// No description provided for @ocrTrickyTables.
+  ///
+  /// In en, this message translates to:
+  /// **'Tables'**
+  String get ocrTrickyTables;
+
+  /// No description provided for @chapterCompileCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Compile ({count})'**
+  String chapterCompileCount(int count);
+
+  /// No description provided for @chapterCompile.
+  ///
+  /// In en, this message translates to:
+  /// **'Compile'**
+  String get chapterCompile;
+
+  /// No description provided for @chapterStateCompiled.
+  ///
+  /// In en, this message translates to:
+  /// **'✓ Compiled'**
+  String get chapterStateCompiled;
+
+  /// No description provided for @chapterStateCompiling.
+  ///
+  /// In en, this message translates to:
+  /// **'Compiling…'**
+  String get chapterStateCompiling;
+
+  /// No description provided for @chapterStateNotCompiled.
+  ///
+  /// In en, this message translates to:
+  /// **'Not compiled'**
+  String get chapterStateNotCompiled;
+
+  /// No description provided for @rarityCommon.
+  ///
+  /// In en, this message translates to:
+  /// **'Common'**
+  String get rarityCommon;
+
+  /// No description provided for @rarityRare.
+  ///
+  /// In en, this message translates to:
+  /// **'Rare'**
+  String get rarityRare;
+
+  /// No description provided for @raritySecret.
+  ///
+  /// In en, this message translates to:
+  /// **'Secret'**
+  String get raritySecret;
+
+  /// No description provided for @shopOddsCommons.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} commons = {pct}% each'**
+  String shopOddsCommons(int count, int pct);
+
+  /// No description provided for @shopOddsNamed.
+  ///
+  /// In en, this message translates to:
+  /// **'{rarity} ({name}) = {pct}%'**
+  String shopOddsNamed(String rarity, String name, int pct);
+
+  /// No description provided for @mochiNamePencil.
+  ///
+  /// In en, this message translates to:
+  /// **'Pencil {mascot}'**
+  String mochiNamePencil(String mascot);
+
+  /// No description provided for @mochiNameScience.
+  ///
+  /// In en, this message translates to:
+  /// **'Science {mascot}'**
+  String mochiNameScience(String mascot);
+
+  /// No description provided for @mochiNamePe.
+  ///
+  /// In en, this message translates to:
+  /// **'PE {mascot}'**
+  String mochiNamePe(String mascot);
+
+  /// No description provided for @mochiNameArt.
+  ///
+  /// In en, this message translates to:
+  /// **'Art {mascot}'**
+  String mochiNameArt(String mascot);
+
+  /// No description provided for @mochiNameLunchbox.
+  ///
+  /// In en, this message translates to:
+  /// **'Lunch Box {mascot}'**
+  String mochiNameLunchbox(String mascot);
+
+  /// No description provided for @mochiNameLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Library {mascot}'**
+  String mochiNameLibrary(String mascot);
+
+  /// No description provided for @mochiNameHeadmaster.
+  ///
+  /// In en, this message translates to:
+  /// **'Headmaster {mascot}'**
+  String mochiNameHeadmaster(String mascot);
+
+  /// No description provided for @mochiNameGoldstar.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold Star {mascot}'**
+  String mochiNameGoldstar(String mascot);
+
+  /// No description provided for @inviteShowQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Show QR'**
+  String get inviteShowQr;
+
+  /// No description provided for @inviteHideQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide QR'**
+  String get inviteHideQr;
 }
 
 class _AppLocalizationsDelegate

@@ -4,13 +4,24 @@
 # Reason vocabulary: brand / format / nav-fallback / backend-label / device-meta /
 # emoji-escape / deferred-<owner>. deferred-* = English-by-design debt with a named owner,
 # NOT a permanent allow. See DEFERRED.md for the ledger.
+app/api_client.dart	BAD RESPONSE — server returned HTTP errorn	debug-log: _describeError's only call site feeds appLog.e in the Dio error interceptor; user-facing error text is mapped separately (never this branch)
+app/api_client.dart	BAD SSL CERTIFICATEn	debug-log: _describeError's only call site feeds appLog.e in the Dio error interceptor; user-facing error text is mapped separately (never this branch)
+app/api_client.dart	CONNECTION ERROR — network unreachable or backend downn	debug-log: _describeError's only call site feeds appLog.e in the Dio error interceptor; user-facing error text is mapped separately (never this branch)
+app/api_client.dart	CONNECTION TIMEOUT — backend unreachable or too slown	debug-log: _describeError's only call site feeds appLog.e in the Dio error interceptor; user-facing error text is mapped separately (never this branch)
+app/api_client.dart	RECEIVE TIMEOUT — backend connected but response too slown	debug-log: _describeError's only call site feeds appLog.e in the Dio error interceptor; user-facing error text is mapped separately (never this branch)
+app/api_client.dart	REQUEST CANCELLEDn  URL: ${req.baseUrl}${req.path}	debug-log: _describeError's only call site feeds appLog.e in the Dio error interceptor; user-facing error text is mapped separately (never this branch)
+app/api_client.dart	SEND TIMEOUT — request body took too long to uploadn	debug-log: _describeError's only call site feeds appLog.e in the Dio error interceptor; user-facing error text is mapped separately (never this branch)
+app/api_client.dart	UNKNOWN ERRORn	debug-log: _describeError's only call site feeds appLog.e in the Dio error interceptor; user-facing error text is mapped separately (never this branch)
 app/pally_app.dart	Pally	brand: MaterialApp.title app identifier (proper noun, kept verbatim in every locale)
+core/services/feature_flags.dart	feature_flags_v2_$userId	storage-key: SharedPreferences cache key, never rendered
 core/ui/scaffold_shell.dart	Groups	nav-fallback: const TabSpec.label; DISPLAY localizes via _navLabel branchIndex-> navHome/navLibrary/navGroups/navMe (scaffold_shell.dart:69-75,109). Unreachable for tabs 0-3 (nav_shell_localized_test proves zh render).
 core/ui/scaffold_shell.dart	Home	nav-fallback: const TabSpec.label; DISPLAY localizes via _navLabel branchIndex-> navHome/navLibrary/navGroups/navMe (scaffold_shell.dart:69-75,109). Unreachable for tabs 0-3 (nav_shell_localized_test proves zh render).
 core/ui/scaffold_shell.dart	Library	nav-fallback: const TabSpec.label; DISPLAY localizes via _navLabel branchIndex-> navHome/navLibrary/navGroups/navMe (scaffold_shell.dart:69-75,109). Unreachable for tabs 0-3 (nav_shell_localized_test proves zh render).
 core/ui/scaffold_shell.dart	Me	nav-fallback: const TabSpec.label; DISPLAY localizes via _navLabel branchIndex-> navHome/navLibrary/navGroups/navMe (scaffold_shell.dart:69-75,109). Unreachable for tabs 0-3 (nav_shell_localized_test proves zh render).
 core/utils/device_info.dart	${a.manufacturer} ${a.model}	device-meta: device-derived diagnostic (manufacturer/model), not user-facing UI copy
 core/utils/device_info.dart	Unknown device	device-meta: device-derived diagnostic (manufacturer/model), not user-facing UI copy
+core/utils/json_reader.dart	JsonParseException(key=$key, reason=$reason)	debug-log: Exception.toString(), only reaches appLog.e / a thrown+caught exception, never a widget
+features/auth/services/auth_service.dart	biometric_secret_$deviceId	storage-key: secure-storage key identifier, never rendered
 features/avatar_hub/presentation/avatar_hub_screen.dart	$title. $subtitle	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
 features/avatar_hub/presentation/avatar_hub_screen.dart	${l.hubLearn}. $subtitle	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
 features/brain_health/presentation/brain_health_screen.dart	$q	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
@@ -25,15 +36,17 @@ features/flashcards/presentation/flashcard_screen.dart	$current / $total	format:
 features/groups/presentation/challenge_card.dart	$m:$s	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
 features/groups/presentation/challenge_card.dart	$pct%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
 features/home/widgets/module_progress_banner.dart	${avatar.name} — ${module.masteryDisplayPct}%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/invite/presentation/milestone_invite_nudge.dart	invite_nudge_streak_${widget.userId ?? 	storage-key: SharedPreferences "seen" key identifier, never rendered
+features/modules/presentation/module_list_screen.dart	$count $key	format: fallback passthrough in _itemCountLabel for a stage key outside learn/test/prove (mirrors localizedSubject's free-text passthrough) — unreached for the 3 known keys, which resolve via l.moduleItemsLearn/Test/Prove
 features/modules/presentation/module_list_screen.dart	$masteryPct%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
 features/modules/presentation/module_player_screen.dart	${playerState.currentIndex + 1}/${playerState.totalItems}	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/modules/presentation/module_player_view_model.dart	• $e	format: bullet symbol + backend-supplied content string (expectedKeyPoints entries), already content_language-localized server-side — no client-added natural-language token
 features/modules/presentation/widgets/complete_body.dart	$pct%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
 features/ocr_awareness/screens/ocr_quality_warning.dart	${(_barAnimation.value * 100).round()}%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
 features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
 features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}% ⚠	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
 features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}% ✓	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
 features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}% ✗	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
-features/onboarding/presentation/direct_onboarding_view_model.dart	No internet connection. Check your WiFi and try again.	deferred-pallyerror: VM friendly-error prose; localize with the PallyError central-mapper pass. Debt, not a permanent allow. See DEFERRED.md.
 features/onboarding/presentation/onboarding_screen.dart	u{1F4CA}	emoji-escape: unicode escape-sequence literal (u{1F...}), not translatable text
 features/onboarding/presentation/onboarding_screen.dart	u{1F9E0}	emoji-escape: unicode escape-sequence literal (u{1F...}), not translatable text
 features/photo_question/presentation/widgets/edit_questions_sheet.dart	${index + 1}	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
@@ -44,6 +57,7 @@ features/progress/presentation/mastery_card.dart	${subject.mastered}/${subject.t
 features/progress/presentation/progress_screen.dart	$pct%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
 features/progress/presentation/streak_card.dart	$freezes	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
 features/progress/presentation/streak_card.dart	$value	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
+features/progress/presentation/streak_milestone_controller.dart	${_prefsKeyBase}_${userId ?? 	storage-key: SharedPreferences "seen" key identifier, never rendered
 features/progress/presentation/streak_milestone_overlay.dart	$milestone	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
 features/quiz/presentation/quiz_screen.dart	$percentage%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
 features/quiz/presentation/quiz_screen.dart	${((current / total) * 100).round()}%	format: sink literal is interpolation placeholders + numerals/symbols/punctuation/emoji only — no natural-language tokens to translate
@@ -70,3 +84,11 @@ shared/models/avatar.dart	Music	backend-label: canonical backend enum label; DIS
 shared/models/avatar.dart	Physical Education	backend-label: canonical backend enum label; DISPLAY localizes at render via label_localizer.dart (localizedSubject/localizedTier). Source-of-truth form kept English.
 shared/models/avatar.dart	Science	backend-label: canonical backend enum label; DISPLAY localizes at render via label_localizer.dart (localizedSubject/localizedTier). Source-of-truth form kept English.
 shared/models/entitlement.dart	Premium	backend-label: canonical backend enum label; DISPLAY localizes at render via label_localizer.dart (localizedSubject/localizedTier). Source-of-truth form kept English.
+shared/models/mochi_character.dart	Art	backend-label: MochiCharacter.defaultSubject prefills CreateTutorState.subject, which is sent to the backend as free-text/canonical English (matches _subjectToJson's round-trip); DISPLAY localizes via localizedSubject since PR-B
+shared/models/mochi_character.dart	English	backend-label: MochiCharacter.defaultSubject prefills CreateTutorState.subject, which is sent to the backend as free-text/canonical English (matches _subjectToJson's round-trip); DISPLAY localizes via localizedSubject since PR-B
+shared/models/mochi_character.dart	General	backend-label: MochiCharacter.defaultSubject prefills CreateTutorState.subject, which is sent to the backend as free-text/canonical English (matches _subjectToJson's round-trip); DISPLAY localizes via localizedSubject since PR-B
+shared/models/mochi_character.dart	Health	backend-label: MochiCharacter.defaultSubject prefills CreateTutorState.subject, which is sent to the backend as free-text/canonical English (matches _subjectToJson's round-trip); DISPLAY localizes via localizedSubject since PR-B
+shared/models/mochi_character.dart	Literature	backend-label: MochiCharacter.defaultSubject prefills CreateTutorState.subject, which is sent to the backend as free-text/canonical English (matches _subjectToJson's round-trip); DISPLAY localizes via localizedSubject since PR-B
+shared/models/mochi_character.dart	Physical Education	backend-label: MochiCharacter.defaultSubject prefills CreateTutorState.subject, which is sent to the backend as free-text/canonical English (matches _subjectToJson's round-trip); DISPLAY localizes via localizedSubject since PR-B
+shared/models/mochi_character.dart	Science	backend-label: MochiCharacter.defaultSubject prefills CreateTutorState.subject, which is sent to the backend as free-text/canonical English (matches _subjectToJson's round-trip); DISPLAY localizes via localizedSubject since PR-B
+shared/models/mochi_config.dart	MochiConfig(body: $body, accessory: $accessory, aura: $aura)	debug-log: default toString() debug repr, no explicit call site — never rendered to a widget

@@ -27,61 +27,55 @@ class OcrWhatCanReadScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(
             AppSpacing.md, 0, AppSpacing.md, AppSpacing.xl),
-        children: const [
-          _IntroBanner(),
-          SizedBox(height: AppSpacing.md),
+        children: [
+          const _IntroBanner(),
+          const SizedBox(height: AppSpacing.md),
           _TierSection(
             tier: _Tier.great,
             items: [
-              _TierItem('📝', 'Printed text', 97,
-                  'Clear printed questions — reads almost perfectly'),
-              _TierItem('🔢', 'Numbers & basic maths', 92,
-                  'Digits and operators (+, −, ×, ÷) read well'),
-              _TierItem('🅰️', 'Multiple choice labels', 90,
-                  'A. B. C. D. labels are reliably detected'),
+              _TierItem('📝', l.ocrItemPrintedText, 97, l.ocrNotePrintedText),
+              _TierItem('🔢', l.ocrItemNumbers, 92, l.ocrNoteNumbers),
+              _TierItem('🅰️', l.ocrItemMcqLabels, 90, l.ocrNoteMcqLabels),
             ],
           ),
-          SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.md),
           _TierSection(
             tier: _Tier.ok,
             items: [
-              _TierItem('✏️', 'Neat handwriting', 72,
-                  'Clear block letters work; cursive may need fixing'),
-              _TierItem('📐', 'Maths equations', 65,
-                  'Simple equations OK; complex fractions may need editing'),
-              _TierItem('🧪', 'Chemical formulas', 55,
-                  'Subscripts & superscripts often need manual correction'),
+              _TierItem('✏️', l.ocrItemHandwriting, 72, l.ocrNoteHandwriting),
+              _TierItem('📐', l.ocrItemEquations, 65, l.ocrNoteEquations),
+              _TierItem('🧪', l.ocrItemFormulas, 55, l.ocrNoteFormulas),
             ],
           ),
-          SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.md),
           _TierSection(
             tier: _Tier.typeIt,
             items: [
               _TierItem.withAction(
                 '📊',
-                'Graphs & charts',
+                l.ocrItemGraphs,
                 20,
-                'Mochi may read labels but cannot read bar heights, line values, or data points.',
-                action: 'Tell Mochi the numbers yourself',
+                l.ocrNoteGraphs(l.mascotName),
+                action: l.ocrActionGraphs(l.mascotName),
               ),
               _TierItem.withAction(
                 '📐',
-                'Geometry figures',
+                l.ocrItemGeometry,
                 15,
-                'Mochi can\'t measure a drawing — it can\'t see angles or lengths from lines on paper.',
-                action: 'Type the sides & angles instead',
+                l.ocrNoteGeometry(l.mascotName),
+                action: l.ocrActionGeometry,
               ),
               _TierItem.withAction(
                 '🔤',
-                'Cursive handwriting',
+                l.ocrItemCursive,
                 20,
-                'Very variable — cursive letters often get mixed up.',
-                action: 'Type it out for accurate results',
+                l.ocrNoteCursive,
+                action: l.ocrActionCursive,
               ),
             ],
           ),
-          SizedBox(height: AppSpacing.md),
-          _FooterTip(),
+          const SizedBox(height: AppSpacing.md),
+          const _FooterTip(),
         ],
       ),
     );
@@ -161,21 +155,22 @@ class _TierSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final (label, labelColor, headerBg, borderColor) = switch (tier) {
       _Tier.great => (
-          '✅  Reads great',
+          l.ocrTierGreat,
           AppColors.green,
           AppColors.greenL,
           AppColors.green,
         ),
       _Tier.ok => (
-          '⚠️  Usually OK — check it',
+          l.ocrTierOk,
           AppColors.amber,
           AppColors.amberL,
           AppColors.amber,
         ),
       _Tier.typeIt => (
-          '🚫  Best to type it yourself',
+          l.ocrTierTypeIt,
           AppColors.coral,
           AppColors.coralL,
           AppColors.coral,

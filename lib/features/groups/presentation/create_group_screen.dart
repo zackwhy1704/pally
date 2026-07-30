@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/core/i18n/label_localizer.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/groups/presentation/groups_view_model.dart';
 
@@ -21,6 +22,12 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
   String? _subject;
   bool _busy = false;
 
+  // These EXACT title-case strings are the wire value sent to
+  // POST /groups (StudyGroupService stores subject as free text, no
+  // canonicalization) — unchanged for backward-compat with existing groups.
+  // localizedSubject() accepts either this form or the backend UPPER_CASE
+  // code (see its own doc comment), so DISPLAY resolves through it below
+  // without altering what's actually sent or stored.
   static const _subjects = [
     'Maths',
     'Science',
@@ -112,7 +119,7 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
               children: _subjects.map((s) {
                 final on = _subject == s;
                 return ChoiceChip(
-                  label: Text(s),
+                  label: Text(localizedSubject(l, s)),
                   selected: on,
                   selectedColor: AppColors.purpleL,
                   labelStyle: AppTextStyles.body.copyWith(

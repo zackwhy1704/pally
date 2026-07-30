@@ -68,3 +68,18 @@ String localizedTier(AppLocalizations l, String? raw) {
     _ => raw[0].toUpperCase() + raw.substring(1).toLowerCase(),
   };
 }
+
+/// Localize a cosmetic rarity tier ('COMMON'/'RARE'/'SECRET'/'STANDARD' — the
+/// SAME closed vocabulary appears independently on [MochiRarityDisplay.label],
+/// the collection screen's backend-provided `CollectionEntry.rarity`, and the
+/// shop's mystery-box odds — one resolver instead of three copies. Unknown
+/// codes (a future rarity tier the client hasn't caught up to) pass through
+/// title-cased, never crash.
+String localizedRarity(AppLocalizations l, String rarity) => switch (_key(rarity)) {
+      'COMMON' || 'STANDARD' => l.rarityCommon,
+      'RARE' => l.rarityRare,
+      'SECRET' => l.raritySecret,
+      _ => rarity.isEmpty
+          ? rarity
+          : rarity[0].toUpperCase() + rarity.substring(1).toLowerCase(),
+    };

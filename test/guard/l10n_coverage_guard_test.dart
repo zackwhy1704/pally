@@ -174,8 +174,37 @@ Set<String> _scan() {
 }
 
 /// UI text sinks: a string literal in one of these positions is user-facing.
+///
+/// EXTENDED (post-PR-F, the ledgered trigger): two more shapes, found live —
+///   1. Switch-EXPRESSION arm results (`'KEY' => 'Display text'`) — the module-
+///      stage-title / mochi-character-name / streak-milestone-message class.
+///      This ALSO matches switch arms that return debug/log-only strings (an
+///      internal Dio error dump, a prefs-key format) — those are real matches
+///      for the SHAPE, not false positives in the regex sense, but they are not
+///      user-facing. They get a `debug`/`format` reasoned allow like any other
+///      non-UI string the guard has always surfaced; the guard does not (and
+///      cannot, without a real parser) know intent — the baseline's human
+///      curation step is exactly where that judgment belongs.
+///   2. A short emoji/icon-glyph as a tuple's first element, followed by a
+///      second string (`('📝', 'Examination Preparation', 'EXAM_PREP')`) — this
+///      codebase's own established "icon + label(+ code)" const-list idiom
+///      (grade_step's exam systems, the OCR tips lists, the old subscription
+///      perks lists). Deliberately narrow (first element must be OUTSIDE ASCII,
+///      ≤6 chars) so it doesn't fire on ordinary 2-arg calls with a short first
+///      string — validated empirically against a live scan with zero observed
+///      false positives for this specific shape, vs. many for a looser "any
+///      short first string" version.
+/// Still NOT seen (residual, documented rather than silently missed): a plain
+/// `const List<String>` with no switch/tuple/sink shape around it, and a
+/// ternary whose branches are not both string literals adjacent to an existing
+/// sink keyword. Also: `_natural()`'s all-caps filter hides a genuinely
+/// user-facing ALL-CAPS section label (e.g. a bare `Text('AGE', ...)`) the same
+/// way it correctly hides a real enum code — a DIFFERENT, orthogonal gap from
+/// sink-shape coverage, not fixed by this extension (loosening the all-caps
+/// filter broadly would false-positive on the many legitimate backend/enum
+/// codes it exists to exclude).
 final _sink = RegExp(
-  r'''(?:\bText\(\s*|\bText\.rich\(\s*|\b(?:label|title|subtitle|hintText|labelText|helperText|errorText|content|message|tooltip|semanticLabel|prefixText|suffixText|counterText|heroTitle|heroSubtitle|header|placeholder|caption)\s*:\s*|PallyToast\.\w+\(\s*[^,\n]+,\s*|\breturn\s+)(['"])''',
+  r'''(?:\bText\(\s*|\bText\.rich\(\s*|\b(?:label|title|subtitle|hintText|labelText|helperText|errorText|content|message|tooltip|semanticLabel|prefixText|suffixText|counterText|heroTitle|heroSubtitle|header|placeholder|caption)\s*:\s*|PallyToast\.\w+\(\s*[^,\n]+,\s*|\breturn\s+|=>\s*|\(\s*(?:'[^\x00-\x7F]{1,6}'|"[^\x00-\x7F]{1,6}")\s*,\s*)(['"])''',
 );
 
 /// Extract the string literal beginning at [quoteIndex] (handling escapes).

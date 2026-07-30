@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 enum MochiCharacter {
   mochi,
@@ -11,16 +12,21 @@ enum MochiCharacter {
   headmaster,
   goldstar;
 
-  String get displayName => switch (this) {
-    MochiCharacter.mochi => 'Mochi',
-    MochiCharacter.pencil => 'Pencil Mochi',
-    MochiCharacter.science => 'Science Mochi',
-    MochiCharacter.pe => 'PE Mochi',
-    MochiCharacter.art => 'Art Mochi',
-    MochiCharacter.lunchbox => 'Lunch Box Mochi',
-    MochiCharacter.library => 'Library Mochi',
-    MochiCharacter.headmaster => 'Headmaster Mochi',
-    MochiCharacter.goldstar => 'Gold Star Mochi',
+  // Cosmetic character names — user-decided (2026-07-30): translate the
+  // descriptor, using {mascot} (小伴) as the compound suffix, same convention
+  // as every other mascot-bearing string in the app. Takes AppLocalizations
+  // (was a bare getter) since MochiCharacter has no BuildContext of its own;
+  // every call site now threads `l` through.
+  String displayName(AppLocalizations l) => switch (this) {
+    MochiCharacter.mochi => l.mascotName,
+    MochiCharacter.pencil => l.mochiNamePencil(l.mascotName),
+    MochiCharacter.science => l.mochiNameScience(l.mascotName),
+    MochiCharacter.pe => l.mochiNamePe(l.mascotName),
+    MochiCharacter.art => l.mochiNameArt(l.mascotName),
+    MochiCharacter.lunchbox => l.mochiNameLunchbox(l.mascotName),
+    MochiCharacter.library => l.mochiNameLibrary(l.mascotName),
+    MochiCharacter.headmaster => l.mochiNameHeadmaster(l.mascotName),
+    MochiCharacter.goldstar => l.mochiNameGoldstar(l.mascotName),
   };
 
   String get assetPath => switch (this) {

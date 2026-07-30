@@ -379,7 +379,9 @@ class _ChapterPickerSheetState extends ConsumerState<ChapterPickerSheet> {
               child: _compiling
                   ? const SizedBox(
                       width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                  : Text(selectedCount > 0 ? 'Compile ($selectedCount)' : 'Compile'),
+                  : Text(selectedCount > 0
+                      ? l.chapterCompileCount(selectedCount)
+                      : l.chapterCompile),
             ),
           ],
         ),
@@ -394,10 +396,11 @@ class _StateBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final (label, color) = switch (state) {
-      ChapterState.compiled => ('✓ Compiled', AppColors.green),
-      ChapterState.compiling => ('Compiling…', AppColors.purple),
-      ChapterState.locked => ('Not compiled', AppColors.text3),
+      ChapterState.compiled => (l.chapterStateCompiled, AppColors.green),
+      ChapterState.compiling => (l.chapterStateCompiling, AppColors.purple),
+      ChapterState.locked => (l.chapterStateNotCompiled, AppColors.text3),
     };
     return Text(label,
         style: AppTextStyles.caption.copyWith(color: color, fontWeight: FontWeight.w600));

@@ -52,10 +52,6 @@ class _InviteFriendCard extends ConsumerStatefulWidget {
 class _InviteFriendCardState extends ConsumerState<_InviteFriendCard> {
   bool _showQr = false;
 
-  String _message(String code) =>
-      'Join me on Apalchi — the study buddy that learns YOUR notes. '
-      'Use my code $code at sign-up and we both earn bonus stars on your first quiz. 🎁';
-
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
@@ -101,7 +97,7 @@ class _InviteFriendCardState extends ConsumerState<_InviteFriendCard> {
                       side: const BorderSide(color: AppColors.purple),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    label: Text(_showQr ? 'Hide QR' : 'Show QR'),
+                    label: Text(_showQr ? l.inviteHideQr : l.inviteShowQr),
                   ),
                 ),
                 const SizedBox(width: AppSpacing.sm),
@@ -109,7 +105,8 @@ class _InviteFriendCardState extends ConsumerState<_InviteFriendCard> {
                   child: FilledButton.icon(
                     onPressed: code.isEmpty
                         ? null
-                        : () => share_plus.Share.share(_message(code)),
+                        : () => share_plus.Share.share(
+                            l.referralShareMessage(code)),
                     icon: const Icon(Icons.ios_share_rounded, size: 18),
                     style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
                     label: Text(l.inviteShare),

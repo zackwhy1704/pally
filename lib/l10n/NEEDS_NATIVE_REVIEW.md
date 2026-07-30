@@ -909,3 +909,264 @@ These MUST be vetted by a native SG reviewer that the zh does NOT imply external
 | `webCtaRateLimited` | You've requested this a few times — try again in a little while. | 你已请求了几次 — 请稍后再试。 |
 | `webCtaSending` | Sending… | 发送中… |
 | `webCtaUpgradedRefresh` | I've upgraded — refresh | 我已升级 — 刷新 |
+---
+
+
+## zh audit follow-up — Workstream 2 guard-extension sweep (2026-07-30)
+
+
+149 new keys, surfaced by widening the coverage guard's sink regex (switch-arm `=>` results + emoji-first-element const lists) and a full manual read of every touched file. See `DEFERRED.md`'s "zh audit follow-up" section for the fixed bugs (upload hero-bubble duplication, shop `_UnlockedDialog` double-name, invite-screen share-message duplication) found alongside the string extraction.
+
+
+### Onboarding — typed error kinds (`DirectOnboardingErrorKind`)
+
+
+Replaces ad-hoc `_friendlyError` string building with a typed enum (mirrors PR-G3/PR-J). 🔒 **`onboardErrConsentPending` / `onboardErrConsentEmailFailed` touch parental-consent copy** — flag alongside the PR-J consent set for the same native-review priority.
+
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `onboardErrWrongPassword` | Wrong password. Already have an account? Tap 'Already have an account? Sign in' below. | 密码错误。已经有账户了吗？点击下面的"已经有账户？登录"。 | |
+| `onboardErrAccountExists` | An account with this email already exists. Try signing in instead. | 这个邮箱已经有账户了。请改为登录。 | |
+| `onboardErrInvalidEmail` | Please enter a valid email address. | 请输入有效的电子邮箱地址。 | |
+| `onboardErrParentEmailInvalid` | A valid parent email is required. Please go back and correct it. | 需要有效的家长邮箱地址。请返回更正。 | |
+| `onboardErrParentEmailMissing` | Please enter your parent's email address. | 请输入你家长的电子邮箱地址。 | |
+| `onboardErrConsentPending` | Your account is pending parental approval. Ask your parent to check their email. | 你的账户正在等待家长批准。请让你的家长查看邮箱。 | |
+| `onboardErrRateLimited` | Too many requests. Wait a moment and try again. | 请求太频繁了。请稍等片刻再试。 | |
+| `onboardErrServerError` | Account setup hit a temporary error. If you already have an account, please try signing in instead. | 账户设置遇到临时错误。如果你已经有账户，请改为登录。 | |
+| `onboardErrServerMessageFallback` | Please check your details and try again. | 请检查你的信息后再试一次。 | |
+| `onboardErrConsentEmailFailed` | Could not send the parental consent email. Please ask your parent to check their inbox for a confirmation link. | 无法发送家长同意邮件。请让你的家长查看收件箱中的确认链接。 | |
+| `onboardErrSignUpRequired` | Please complete sign-up first. | 请先完成注册。 | |
+| `onboardErrFileReadFailed` | Could not read the file. Try again. | 无法读取文件，请再试一次。 | |
+| `onboardErrUploadFailed` | Upload failed. Please try again. | 上传失败，请再试一次。 | |
+| `onboardErrResendRateLimited` | Please wait 60 seconds before resending. | 请等待 60 秒后再重新发送。 | |
+| `onboardErrResendFailed` | Could not resend. Try again shortly. | 无法重新发送，请稍后再试。 | |
+
+
+### Streak milestone overlay
+
+
+`_subtitle` getter → method(l); no change to milestone thresholds.
+
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `streakMilestone3` | Three days in a row — habit forming! | 连续三天了 — 习惯正在养成！ | |
+| `streakMilestone7` | A whole week! Week Warrior unlocked 🏅 | 整整一周！解锁"一周勇士"🏅 | |
+| `streakMilestone14` | Two weeks. You're on fire. | 两周了。你势不可挡。 | |
+| `streakMilestone30` | Thirty days. Legendary 👑 | 三十天。传奇 👑 | |
+| `streakMilestone60` | Sixty days — that's elite focus. | 六十天 — 这是顶级的专注力。 | |
+| `streakMilestone100` | Triple digits. Unreal 🚀 | 三位数了。太不可思议 🚀 | |
+| `streakMilestone365` | A whole year. Take a bow. | 整整一年。为自己鼓掌吧。 | |
+| `streakMilestoneDefault` | Keep that streak burning! | 继续保持你的连胜吧！ | |
+
+
+### Daily goal ring
+
+
+`_unit`/`_verb` getters → methods(l); ICU plural on the quiz unit/verb.
+
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `dailyGoalUnitXp` | XP | XP | |
+| `dailyGoalUnitMin` | min | 分钟 | |
+| `dailyGoalUnitQuiz` | {count, plural, one{quiz} other{quizzes}} | {count, plural, other{测验}} | |
+| `dailyGoalVerbXp` | XP earned today | 今天赚取的 XP | |
+| `dailyGoalVerbMinutes` | minutes today | 今天的学习分钟数 | |
+| `dailyGoalVerbQuiz` | {count, plural, one{daily quiz} other{quizzes today}} | {count, plural, other{今天的测验}} | |
+| `dailyGoalMet` | Goal | 目标 | |
+| `dailyGoalRemaining` | / {target} {unit} | / {target} {unit} | |
+| `dailyGoalCompleteStreak` | Goal complete! Streak safe 🔥 | 目标达成！连胜保住了 🔥 | |
+| `dailyGoalProgressOf` | {pct}% of your {verb} | 已完成{verb}的 {pct}% | |
+
+
+### Create-tutor grade step — exam systems + stray 'AGE' label
+
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `createTutorAgeLabel` | AGE | 年龄 | |
+| `createTutorExamPrep` | Examination Preparation | 考试准备 | |
+| `createTutorUniversity` | University — Midterms / Finals | 大学 — 期中/期末考试 | |
+| `createTutorCodingInterview` | Coding Interview Preparation | 编程面试准备 | |
+| `createTutorProfessional` | Professional Examinations | 专业资格考试 | |
+| `createTutorOtherGoal` | Others | 其他 | |
+
+
+### Upload tips banner
+
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `uploadTipSectionBefore` | Before you upload | 上传前须知 | |
+| `uploadTipMaxSize` | Files must be under 25 MB. | 文件必须小于 25 MB。 | |
+| `uploadTipBigFiles` | Big files (a whole book) can be slow or time out — upload a chapter or topic at a time. | 大文件（一整本书）可能会很慢或超时 — 请一次上传一个章节或主题。 | |
+| `uploadTipPdfText` | PDFs need selectable text. A scanned, image-only PDF can't be read — photograph the pages instead. | PDF 需要可选取的文字。纯图像扫描的 PDF 无法读取 — 请改为拍摄页面照片。 | |
+| `uploadTipSectionReadsWell` | {mascot} reads these well | {mascot}能很好地读懂这些 | |
+| `uploadTipTypedText` | Typed or printed text, clean PDFs, and screenshots. | 打印或打字的文字、清晰的 PDF 和截图。 | |
+| `uploadTipNeatHandwriting` | Neat handwriting — clear, reasonably large, dark ink. | 工整的手写字 — 清晰、字体适中、墨色够深。 | |
+| `uploadTipSectionHardToRead` | Type these instead — hard to read | 以下内容建议改为打字 — 难以读取 | |
+| `uploadTipCursive` | Cursive or messy handwriting. | 连笔字或潦草的手写字。 | |
+| `uploadTipGlare` | Glare, shadows, or a photo of a screen — shoot the page directly. | 反光、阴影，或对着屏幕拍照 — 请直接拍摄纸面。 | |
+| `uploadTipTinyText` | Tiny text (footnotes, shrunk photocopies) — zoom in. | 字体过小（脚注、缩印复印件）— 请拉近拍摄。 | |
+| `uploadTipFaint` | Faint pencil or low-contrast pages — go over it in pen. | 铅笔字迹太淡或对比度低的页面 — 请用笔重新描一遍。 | |
+| `uploadTipCropped` | Cropped edges — capture the whole page, flat and filling the frame. | 边缘被裁切 — 请拍摄整页内容，平整并填满画面。 | |
+| `uploadTipCluttered` | Cluttered multi-column layouts — one clean column per photo. | 杂乱的多栏排版 — 每张照片只拍一栏清晰的内容。 | |
+| `uploadTipSectionCheck` | One quick check | 快速检查一下 | |
+| `uploadTipGlanceCheck` | After a photo or handwriting, glance at what {mascot} read — if something looks off, retake or type it. | 拍照或手写笔记上传后，看一眼{mascot}读到了什么内容 — 如果不对劲，就重拍或改为打字。 | |
+| `uploadTipHide` | Hide | 收起 | |
+| `uploadTipWhatReadsBest` | What reads best? | 什么内容最容易读懂？ | |
+
+
+### Upload screen — step/tab labels + hero speech bubble
+
+
+`uploadHeroSpeechSubject`/`uploadHeroSpeechGeneric` replace a duplicate-content bug (the bubble repeated the caption below it in English-only) — SHORTER by design, not a literal 1:1 translation of the old text.
+
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `uploadStepReviewing` | Step 1 of 3 — Reviewing content... | 第 1/3 步 — 正在审阅内容… | |
+| `uploadStepCheckingRelevance` | Step 1 of 3 — Checking relevance... | 第 1/3 步 — 正在检查相关性… | |
+| `uploadStepSendingToServer` | Step 2 of 3 — Sending to server... | 第 2/3 步 — 正在发送到服务器… | |
+| `uploadStepProcessingDoc` | Step 2 of 3 — Processing document... | 第 2/3 步 — 正在处理文档… | |
+| `uploadStepExtractingText` | Step 2 of 3 — Extracting text... | 第 2/3 步 — 正在提取文字… | |
+| `uploadStepAlmostThere` | Step 2 of 3 — Almost there... | 第 2/3 步 — 快好了… | |
+| `uploadStepReadingNotes` | Step 3 of 3 — Reading your notes... | 第 3/3 步 — 正在阅读你的笔记… | |
+| `uploadStepFindingConcepts` | Step 3 of 3 — Finding key concepts... | 第 3/3 步 — 正在寻找关键概念… | |
+| `uploadStepBuildingPages` | Step 3 of 3 — Building brain pages... | 第 3/3 步 — 正在构建知识页面… | |
+| `uploadStepProcessingSections` | Step 3 of 3 — Processing sections... | 第 3/3 步 — 正在处理章节… | |
+| `uploadStepAlmostReady` | Step 3 of 3 — Almost ready... | 第 3/3 步 — 快准备好了… | |
+| `uploadStepSending` | Step 2 of 3 — Sending... | 第 2/3 步 — 正在发送… | |
+| `uploadStepProcessing` | Step 2 of 3 — Processing... | 第 2/3 步 — 正在处理… | |
+| `uploadTakes30to60s` | This usually takes 30-60 seconds | 通常需要 30-60 秒 | |
+| `uploadCheckingSubjectFit` | Making sure this fits the subject... | 正在确认内容是否符合科目… | |
+| `uploadCheckingNotes` | Checking your notes... | 正在检查你的笔记… | |
+| `uploadUploadingLargeDoc` | Uploading large document... | 正在上传大文件… | |
+| `uploadUploading` | Uploading... | 正在上传… | |
+| `uploadProcessing` | Processing... | 正在处理… | |
+| `uploadHeroSpeechSubject` | Teach me your {subject} material! | 教我你的{subject}资料吧！ | |
+| `uploadHeroSpeechGeneric` | Teach me your material! | 教我你的资料吧！ | |
+| `uploadTabType` | Type | 输入 | |
+| `uploadTabPhoto` | Photo | 照片 | |
+| `uploadTabFile` | File | 文件 | |
+
+
+### OCR awareness — what-{mascot}-can-read + tips overlay
+
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `ocrTierGreat` | ✅  Reads great | ✅  读得很好 | |
+| `ocrTierOk` | ⚠️  Usually OK — check it | ⚠️  一般还行 — 建议检查一下 | |
+| `ocrTierTypeIt` | 🚫  Best to type it yourself | 🚫  建议自己打字输入 | |
+| `ocrItemPrintedText` | Printed text | 印刷文字 | |
+| `ocrNotePrintedText` | Clear printed questions — reads almost perfectly | 清晰的印刷题目 — 几乎能完美识别 | |
+| `ocrItemNumbers` | Numbers & basic maths | 数字和基础数学 | |
+| `ocrNoteNumbers` | Digits and operators (+, −, ×, ÷) read well | 数字和运算符号（+、−、×、÷）识别效果好 | |
+| `ocrItemMcqLabels` | Multiple choice labels | 选择题选项标签 | |
+| `ocrNoteMcqLabels` | A. B. C. D. labels are reliably detected | A. B. C. D. 等选项标签能可靠识别 | |
+| `ocrItemHandwriting` | Neat handwriting | 工整的手写字 | |
+| `ocrNoteHandwriting` | Clear block letters work; cursive may need fixing | 清晰的印刷体字母效果好；连笔字可能需要修改 | |
+| `ocrItemEquations` | Maths equations | 数学方程式 | |
+| `ocrNoteEquations` | Simple equations OK; complex fractions may need editing | 简单方程式没问题；复杂分数可能需要修改 | |
+| `ocrItemFormulas` | Chemical formulas | 化学方程式 | |
+| `ocrNoteFormulas` | Subscripts & superscripts often need manual correction | 上标和下标通常需要手动修正 | |
+| `ocrItemGraphs` | Graphs & charts | 图表和图形 | |
+| `ocrNoteGraphs` | {mascot} may read labels but cannot read bar heights, line values, or data points. | {mascot}也许能读取标签，但无法读取柱状图高度、折线数值或数据点。 | |
+| `ocrActionGraphs` | Tell {mascot} the numbers yourself | 请自己把数字告诉{mascot} | |
+| `ocrItemGeometry` | Geometry figures | 几何图形 | |
+| `ocrNoteGeometry` | {mascot} can't measure a drawing — it can't see angles or lengths from lines on paper. | {mascot}无法测量图形 — 它看不出纸上线条的角度或长度。 | |
+| `ocrActionGeometry` | Type the sides & angles instead | 请改为输入边长和角度 | |
+| `ocrItemCursive` | Cursive handwriting | 连笔手写字 | |
+| `ocrNoteCursive` | Very variable — cursive letters often get mixed up. | 差异很大 — 连笔字母经常会被认错。 | |
+| `ocrActionCursive` | Type it out for accurate results | 请打字输入以确保准确 | |
+| `ocrTipDigitalTitle` | Digital is best | 电子文档最好 | |
+| `ocrTipDigitalBody` | A clear PDF or screenshot beats a photo | 清晰的 PDF 或截图效果比照片好 | |
+| `ocrTipLightingTitle` | Good lighting | 光线要充足 | |
+| `ocrTipLightingBody` | Bright, even light — avoid shadows on the page | 明亮均匀的光线 — 避免页面上出现阴影 | |
+| `ocrTipFlatTitle` | Flat and straight | 放平放正 | |
+| `ocrTipFlatBody` | Hold your phone directly above, not at an angle | 手机要正对着上方，不要倾斜角度 | |
+| `ocrTipFillFrameTitle` | Fill the frame | 拍满画面 | |
+| `ocrTipFillFrameBody` | Get close enough so text is large and clear | 靠近一点，让文字够大够清晰 | |
+| `ocrTipOneTopicTitle` | One topic per upload | 每次上传一个主题 | |
+| `ocrTipOneTopicBody` | Separate topics read better than a mixed dump | 分开主题上传，效果比混在一起好 | |
+| `ocrTipMathTitle` | Math? Type it | 数学？请打字 | |
+| `ocrTipMathBody` | For equations, a typed copy or very clear photo reads best | 方程式建议打字输入，或拍非常清晰的照片 | |
+| `ocrReadablePrinted` | Printed text | 印刷文字 | |
+| `ocrReadableTyped` | Typed questions | 打字输入的题目 | |
+| `ocrReadableNumbers` | Numbers | 数字 | |
+| `ocrReadableMcq` | Multiple choice | 选择题 | |
+| `ocrReadableFillBlank` | Fill in the blank | 填空题 | |
+| `ocrReadableShortParagraphs` | Short paragraphs | 短段落 | |
+| `ocrTrickyHandwriting` | Handwriting | 手写字 | |
+| `ocrTrickyDiagrams` | Diagrams | 图示 | |
+| `ocrTrickyGraphs` | Graphs | 图表 | |
+| `ocrTrickyMathSymbols` | Maths symbols | 数学符号 | |
+| `ocrTrickyChemFormulas` | Chemical formulas | 化学方程式 | |
+| `ocrTrickyTables` | Tables | 表格 | |
+
+
+### Chapter picker sheet — state badge
+
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `chapterCompileCount` | Compile ({count}) | 编译（{count}） | |
+| `chapterCompile` | Compile | 编译 | |
+| `chapterStateCompiled` | ✓ Compiled | ✓ 已编译 | |
+| `chapterStateCompiling` | Compiling… | 编译中… | |
+| `chapterStateNotCompiled` | Not compiled | 尚未编译 | |
+
+
+### Cosmetic rarity tier (shared `localizedRarity` resolver)
+
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `rarityCommon` | Common | 普通 | |
+| `rarityRare` | Rare | 稀有 | |
+| `raritySecret` | Secret | 隐藏 | |
+
+
+### Shop — mystery-box odds sentence
+
+
+`_formatOdds` now resolves the short name from the stable `character` code, not the data model's own `.name` field.
+
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `shopOddsCommons` | {count} commons = {pct}% each | {count} 个普通款 = 各 {pct}% | |
+| `shopOddsNamed` | {rarity} ({name}) = {pct}% | {rarity}（{name}）= {pct}% | |
+
+
+### Shop — cosmetic character NAMES (product decision: translate)
+
+
+🎯 **Product decision (2026-07-30): translate, not brand-like.** 'Pencil Mochi' → '铅笔小伴' etc., using 小伴 (mascotName) as the compound suffix — these are descriptive labels (subject + mascot), not invented proper nouns. Flag if any reads awkwardly in SG register.
+
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `mochiNamePencil` | Pencil {mascot} | 铅笔{mascot} | |
+| `mochiNameScience` | Science {mascot} | 科学{mascot} | |
+| `mochiNamePe` | PE {mascot} | 体育{mascot} | |
+| `mochiNameArt` | Art {mascot} | 美术{mascot} | |
+| `mochiNameLunchbox` | Lunch Box {mascot} | 饭盒{mascot} | |
+| `mochiNameLibrary` | Library {mascot} | 图书馆{mascot} | |
+| `mochiNameHeadmaster` | Headmaster {mascot} | 校长{mascot} | |
+| `mochiNameGoldstar` | Gold Star {mascot} | 金星{mascot} | |
+
+
+### Invite screen — QR toggle label
+
+
+Found unlocalized alongside a duplicate-share-message bug (fixed by reusing `referralShareMessage`, not a new key).
+
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `inviteShowQr` | Show QR | 显示二维码 | |
+| `inviteHideQr` | Hide QR | 隐藏二维码 | |

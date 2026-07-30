@@ -100,7 +100,7 @@ class _OcrTipsOverlayState extends State<OcrTipsOverlay> {
             const SizedBox(height: AppSpacing.md),
 
             // Tips
-            ..._kTips.map((tip) => _TipRow(
+            ..._tips(l).map((tip) => _TipRow(
                   icon: tip.icon,
                   title: tip.title,
                   subtitle: tip.subtitle,
@@ -115,7 +115,7 @@ class _OcrTipsOverlayState extends State<OcrTipsOverlay> {
             Wrap(
               spacing: 6,
               runSpacing: 6,
-              children: _kReadableContent
+              children: _readableContent(l)
                   .map((label) => _Chip(label: label, color: AppColors.teal))
                   .toList(),
             ),
@@ -126,7 +126,7 @@ class _OcrTipsOverlayState extends State<OcrTipsOverlay> {
             Wrap(
               spacing: 6,
               runSpacing: 6,
-              children: _kTrickyContent
+              children: _trickyContent(l)
                   .map((label) => _Chip(label: label, color: AppColors.amber))
                   .toList(),
             ),
@@ -236,29 +236,29 @@ class _TipData {
   final String subtitle;
 }
 
-const _kTips = [
-  _TipData('💻', 'Digital is best', 'A clear PDF or screenshot beats a photo'),
-  _TipData('☀️', 'Good lighting', 'Bright, even light — avoid shadows on the page'),
-  _TipData('📐', 'Flat and straight', 'Hold your phone directly above, not at an angle'),
-  _TipData('🔍', 'Fill the frame', 'Get close enough so text is large and clear'),
-  _TipData('📄', 'One topic per upload', 'Separate topics read better than a mixed dump'),
-  _TipData('🔢', 'Math? Type it', 'For equations, a typed copy or very clear photo reads best'),
-];
+List<_TipData> _tips(AppLocalizations l) => [
+      _TipData('💻', l.ocrTipDigitalTitle, l.ocrTipDigitalBody),
+      _TipData('☀️', l.ocrTipLightingTitle, l.ocrTipLightingBody),
+      _TipData('📐', l.ocrTipFlatTitle, l.ocrTipFlatBody),
+      _TipData('🔍', l.ocrTipFillFrameTitle, l.ocrTipFillFrameBody),
+      _TipData('📄', l.ocrTipOneTopicTitle, l.ocrTipOneTopicBody),
+      _TipData('🔢', l.ocrTipMathTitle, l.ocrTipMathBody),
+    ];
 
-const _kReadableContent = [
-  'Printed text',
-  'Typed questions',
-  'Numbers',
-  'Multiple choice',
-  'Fill in the blank',
-  'Short paragraphs',
-];
+List<String> _readableContent(AppLocalizations l) => [
+      l.ocrReadablePrinted,
+      l.ocrReadableTyped,
+      l.ocrReadableNumbers,
+      l.ocrReadableMcq,
+      l.ocrReadableFillBlank,
+      l.ocrReadableShortParagraphs,
+    ];
 
-const _kTrickyContent = [
-  'Handwriting',
-  'Diagrams',
-  'Graphs',
-  'Maths symbols',
-  'Chemical formulas',
-  'Tables',
-];
+List<String> _trickyContent(AppLocalizations l) => [
+      l.ocrTrickyHandwriting,
+      l.ocrTrickyDiagrams,
+      l.ocrTrickyGraphs,
+      l.ocrTrickyMathSymbols,
+      l.ocrTrickyChemFormulas,
+      l.ocrTrickyTables,
+    ];

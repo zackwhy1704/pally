@@ -44,16 +44,16 @@ class _Body extends ConsumerWidget {
   const _Body({required this.goal});
   final DailyGoal goal;
 
-  String get _unit => switch (goal.goalType) {
-        'XP' => 'XP',
-        'MINUTES' => 'min',
-        _ => goal.goalTarget == 1 ? 'quiz' : 'quizzes',
+  String _unit(AppLocalizations l) => switch (goal.goalType) {
+        'XP' => l.dailyGoalUnitXp,
+        'MINUTES' => l.dailyGoalUnitMin,
+        _ => l.dailyGoalUnitQuiz(goal.goalTarget),
       };
 
-  String get _verb => switch (goal.goalType) {
-        'XP' => 'XP earned today',
-        'MINUTES' => 'minutes today',
-        _ => goal.goalTarget == 1 ? 'daily quiz' : 'quizzes today',
+  String _verb(AppLocalizations l) => switch (goal.goalType) {
+        'XP' => l.dailyGoalVerbXp,
+        'MINUTES' => l.dailyGoalVerbMinutes,
+        _ => l.dailyGoalVerbQuiz(goal.goalTarget),
       };
 
   @override
@@ -91,8 +91,9 @@ class _Body extends ConsumerWidget {
                     ),
                     Text(
                       goal.met
-                          ? 'Goal'
-                          : '/ ${goal.goalTarget} $_unit',
+                          ? l.dailyGoalMet
+                          : l.dailyGoalRemaining(
+                              goal.goalTarget, _unit(l)),
                       style: AppTextStyles.caption,
                     ),
                   ],
@@ -109,8 +110,8 @@ class _Body extends ConsumerWidget {
                 const SizedBox(height: 2),
                 Text(
                   goal.met
-                      ? 'Goal complete! Streak safe 🔥'
-                      : '$pct% of your $_verb',
+                      ? l.dailyGoalCompleteStreak
+                      : l.dailyGoalProgressOf(pct, _verb(l)),
                   style: AppTextStyles.bodySmall
                       .copyWith(color: AppColors.text2),
                   maxLines: 2,

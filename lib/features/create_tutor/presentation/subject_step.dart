@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/create_tutor/presentation/create_tutor_view_model.dart';
+import 'package:pally/core/i18n/label_localizer.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -10,7 +11,12 @@ import 'package:pally/shared/models/mochi_character.dart';
 // Order reflects the most-used picks for Singapore O/A-level kids first
 // (Maths / Science / English / Literature) and falls back to the broader
 // "General" catch-all so a child who isn't picking a syllabus subject
-// still has a one-tap path forward.
+// still has a one-tap path forward. These EXACT strings are what tapping a
+// chip WRITES into the free-text field (unchanged — the field itself stays
+// English-canonical passthrough per label_localizer's documented "never
+// machine-translate a teacher's own words" rule); only the chip's own
+// visible LABEL localizes below via localizedSubject, same safe display-
+// only pattern as create_group_screen's subject chips.
 const _suggestions = [
   'Maths',
   'Science',
@@ -148,7 +154,7 @@ class _SubjectStepState extends State<SubjectStep> {
                               .toLowerCase() ==
                           s.toLowerCase();
                       return ActionChip(
-                        label: Text(s),
+                        label: Text(localizedSubject(l, s)),
                         onPressed: () => _pickSuggestion(s),
                         backgroundColor:
                             isActive ? accentColor : AppColors.surface,

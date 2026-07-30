@@ -19,32 +19,31 @@ class _UploadTipsBannerState extends State<UploadTipsBanner> {
   bool _expanded = false;
 
   // (emoji, tip) grouped by section. Content is conservative + accurate to the
-  // audited limits — no fake claims (e.g. no invented page cap).
-  static const _sections = <(String, List<(String, String)>)>[
-    ('Before you upload', [
-      ('📦', 'Files must be under 25 MB.'),
-      ('📚', 'Big files (a whole book) can be slow or time out — upload a '
-          'chapter or topic at a time.'),
-      ('📄', "PDFs need selectable text. A scanned, image-only PDF can't be "
-          'read — photograph the pages instead.'),
-    ]),
-    ('Mochi reads these well', [
-      ('✅', 'Typed or printed text, clean PDFs, and screenshots.'),
-      ('✅', 'Neat handwriting — clear, reasonably large, dark ink.'),
-    ]),
-    ('Type these instead — hard to read', [
-      ('✍️', 'Cursive or messy handwriting.'),
-      ('🔦', 'Glare, shadows, or a photo of a screen — shoot the page directly.'),
-      ('🔍', 'Tiny text (footnotes, shrunk photocopies) — zoom in.'),
-      ('🌗', 'Faint pencil or low-contrast pages — go over it in pen.'),
-      ('✂️', 'Cropped edges — capture the whole page, flat and filling the frame.'),
-      ('📐', 'Cluttered multi-column layouts — one clean column per photo.'),
-    ]),
-    ('One quick check', [
-      ('👀', 'After a photo or handwriting, glance at what Mochi read — if '
-          'something looks off, retake or type it.'),
-    ]),
-  ];
+  // audited limits — no fake claims (e.g. no invented page cap). Pure static UI
+  // copy (no backend id), so built directly from AppLocalizations at render —
+  // no id-keyed resolver needed, unlike the subject/character/module lists.
+  List<(String, List<(String, String)>)> _sections(AppLocalizations l) => [
+        (l.uploadTipSectionBefore, [
+          ('📦', l.uploadTipMaxSize),
+          ('📚', l.uploadTipBigFiles),
+          ('📄', l.uploadTipPdfText),
+        ]),
+        (l.uploadTipSectionReadsWell(l.mascotName), [
+          ('✅', l.uploadTipTypedText),
+          ('✅', l.uploadTipNeatHandwriting),
+        ]),
+        (l.uploadTipSectionHardToRead, [
+          ('✍️', l.uploadTipCursive),
+          ('🔦', l.uploadTipGlare),
+          ('🔍', l.uploadTipTinyText),
+          ('🌗', l.uploadTipFaint),
+          ('✂️', l.uploadTipCropped),
+          ('📐', l.uploadTipCluttered),
+        ]),
+        (l.uploadTipSectionCheck, [
+          ('👀', l.uploadTipGlanceCheck(l.mascotName)),
+        ]),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -74,14 +73,14 @@ class _UploadTipsBannerState extends State<UploadTipsBanner> {
               GestureDetector(
                 onTap: () => setState(() => _expanded = !_expanded),
                 child: Text(
-                  _expanded ? 'Hide' : 'What reads best?',
+                  _expanded ? l.uploadTipHide : l.uploadTipWhatReadsBest,
                   style: AppTextStyles.label.copyWith(color: AppColors.purple),
                 ),
               ),
             ],
           ),
           if (_expanded)
-            for (final section in _sections) _section(section.$1, section.$2),
+            for (final section in _sections(l)) _section(section.$1, section.$2),
         ],
       ),
     );

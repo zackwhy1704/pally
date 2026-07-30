@@ -4525,4 +4525,503 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get avatarLanguageSaved => '教学语言已更新';
+
+  @override
+  String get onboardErrWrongPassword => '密码错误。已经有账户了吗？点击下面的\"已经有账户？登录\"。';
+
+  @override
+  String get onboardErrAccountExists => '这个邮箱已经有账户了。请改为登录。';
+
+  @override
+  String get onboardErrInvalidEmail => '请输入有效的电子邮箱地址。';
+
+  @override
+  String get onboardErrParentEmailInvalid => '需要有效的家长邮箱地址。请返回更正。';
+
+  @override
+  String get onboardErrParentEmailMissing => '请输入你家长的电子邮箱地址。';
+
+  @override
+  String get onboardErrConsentPending => '你的账户正在等待家长批准。请让你的家长查看邮箱。';
+
+  @override
+  String get onboardErrRateLimited => '请求太频繁了。请稍等片刻再试。';
+
+  @override
+  String get onboardErrServerError => '账户设置遇到临时错误。如果你已经有账户，请改为登录。';
+
+  @override
+  String get onboardErrServerMessageFallback => '请检查你的信息后再试一次。';
+
+  @override
+  String get onboardErrConsentEmailFailed => '无法发送家长同意邮件。请让你的家长查看收件箱中的确认链接。';
+
+  @override
+  String get onboardErrSignUpRequired => '请先完成注册。';
+
+  @override
+  String get onboardErrFileReadFailed => '无法读取文件，请再试一次。';
+
+  @override
+  String get onboardErrUploadFailed => '上传失败，请再试一次。';
+
+  @override
+  String get onboardErrResendRateLimited => '请等待 60 秒后再重新发送。';
+
+  @override
+  String get onboardErrResendFailed => '无法重新发送，请稍后再试。';
+
+  @override
+  String get streakMilestone3 => '连续三天了 — 习惯正在养成！';
+
+  @override
+  String get streakMilestone7 => '整整一周！解锁\"一周勇士\"🏅';
+
+  @override
+  String get streakMilestone14 => '两周了。你势不可挡。';
+
+  @override
+  String get streakMilestone30 => '三十天。传奇 👑';
+
+  @override
+  String get streakMilestone60 => '六十天 — 这是顶级的专注力。';
+
+  @override
+  String get streakMilestone100 => '三位数了。太不可思议 🚀';
+
+  @override
+  String get streakMilestone365 => '整整一年。为自己鼓掌吧。';
+
+  @override
+  String get streakMilestoneDefault => '继续保持你的连胜吧！';
+
+  @override
+  String get dailyGoalUnitXp => 'XP';
+
+  @override
+  String get dailyGoalUnitMin => '分钟';
+
+  @override
+  String dailyGoalUnitQuiz(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '测验',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dailyGoalVerbXp => '今天赚取的 XP';
+
+  @override
+  String get dailyGoalVerbMinutes => '今天的学习分钟数';
+
+  @override
+  String dailyGoalVerbQuiz(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '今天的测验',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dailyGoalMet => '目标';
+
+  @override
+  String dailyGoalRemaining(int target, String unit) {
+    return '/ $target $unit';
+  }
+
+  @override
+  String get dailyGoalCompleteStreak => '目标达成！连胜保住了 🔥';
+
+  @override
+  String dailyGoalProgressOf(int pct, String verb) {
+    return '已完成$verb的 $pct%';
+  }
+
+  @override
+  String get createTutorAgeLabel => '年龄';
+
+  @override
+  String get createTutorExamPrep => '考试准备';
+
+  @override
+  String get createTutorUniversity => '大学 — 期中/期末考试';
+
+  @override
+  String get createTutorCodingInterview => '编程面试准备';
+
+  @override
+  String get createTutorProfessional => '专业资格考试';
+
+  @override
+  String get createTutorOtherGoal => '其他';
+
+  @override
+  String get uploadTipSectionBefore => '上传前须知';
+
+  @override
+  String get uploadTipMaxSize => '文件必须小于 25 MB。';
+
+  @override
+  String get uploadTipBigFiles => '大文件（一整本书）可能会很慢或超时 — 请一次上传一个章节或主题。';
+
+  @override
+  String get uploadTipPdfText => 'PDF 需要可选取的文字。纯图像扫描的 PDF 无法读取 — 请改为拍摄页面照片。';
+
+  @override
+  String uploadTipSectionReadsWell(String mascot) {
+    return '$mascot能很好地读懂这些';
+  }
+
+  @override
+  String get uploadTipTypedText => '打印或打字的文字、清晰的 PDF 和截图。';
+
+  @override
+  String get uploadTipNeatHandwriting => '工整的手写字 — 清晰、字体适中、墨色够深。';
+
+  @override
+  String get uploadTipSectionHardToRead => '以下内容建议改为打字 — 难以读取';
+
+  @override
+  String get uploadTipCursive => '连笔字或潦草的手写字。';
+
+  @override
+  String get uploadTipGlare => '反光、阴影，或对着屏幕拍照 — 请直接拍摄纸面。';
+
+  @override
+  String get uploadTipTinyText => '字体过小（脚注、缩印复印件）— 请拉近拍摄。';
+
+  @override
+  String get uploadTipFaint => '铅笔字迹太淡或对比度低的页面 — 请用笔重新描一遍。';
+
+  @override
+  String get uploadTipCropped => '边缘被裁切 — 请拍摄整页内容，平整并填满画面。';
+
+  @override
+  String get uploadTipCluttered => '杂乱的多栏排版 — 每张照片只拍一栏清晰的内容。';
+
+  @override
+  String get uploadTipSectionCheck => '快速检查一下';
+
+  @override
+  String uploadTipGlanceCheck(String mascot) {
+    return '拍照或手写笔记上传后，看一眼$mascot读到了什么内容 — 如果不对劲，就重拍或改为打字。';
+  }
+
+  @override
+  String get uploadTipHide => '收起';
+
+  @override
+  String get uploadTipWhatReadsBest => '什么内容最容易读懂？';
+
+  @override
+  String get uploadStepReviewing => '第 1/3 步 — 正在审阅内容…';
+
+  @override
+  String get uploadStepCheckingRelevance => '第 1/3 步 — 正在检查相关性…';
+
+  @override
+  String get uploadStepSendingToServer => '第 2/3 步 — 正在发送到服务器…';
+
+  @override
+  String get uploadStepProcessingDoc => '第 2/3 步 — 正在处理文档…';
+
+  @override
+  String get uploadStepExtractingText => '第 2/3 步 — 正在提取文字…';
+
+  @override
+  String get uploadStepAlmostThere => '第 2/3 步 — 快好了…';
+
+  @override
+  String get uploadStepReadingNotes => '第 3/3 步 — 正在阅读你的笔记…';
+
+  @override
+  String get uploadStepFindingConcepts => '第 3/3 步 — 正在寻找关键概念…';
+
+  @override
+  String get uploadStepBuildingPages => '第 3/3 步 — 正在构建知识页面…';
+
+  @override
+  String get uploadStepProcessingSections => '第 3/3 步 — 正在处理章节…';
+
+  @override
+  String get uploadStepAlmostReady => '第 3/3 步 — 快准备好了…';
+
+  @override
+  String get uploadStepSending => '第 2/3 步 — 正在发送…';
+
+  @override
+  String get uploadStepProcessing => '第 2/3 步 — 正在处理…';
+
+  @override
+  String get uploadTakes30to60s => '通常需要 30-60 秒';
+
+  @override
+  String get uploadCheckingSubjectFit => '正在确认内容是否符合科目…';
+
+  @override
+  String get uploadCheckingNotes => '正在检查你的笔记…';
+
+  @override
+  String get uploadUploadingLargeDoc => '正在上传大文件…';
+
+  @override
+  String get uploadUploading => '正在上传…';
+
+  @override
+  String get uploadProcessing => '正在处理…';
+
+  @override
+  String uploadHeroSpeechSubject(String subject) {
+    return '教我你的$subject资料吧！';
+  }
+
+  @override
+  String get uploadHeroSpeechGeneric => '教我你的资料吧！';
+
+  @override
+  String get uploadTabType => '输入';
+
+  @override
+  String get uploadTabPhoto => '照片';
+
+  @override
+  String get uploadTabFile => '文件';
+
+  @override
+  String get ocrTierGreat => '✅  读得很好';
+
+  @override
+  String get ocrTierOk => '⚠️  一般还行 — 建议检查一下';
+
+  @override
+  String get ocrTierTypeIt => '🚫  建议自己打字输入';
+
+  @override
+  String get ocrItemPrintedText => '印刷文字';
+
+  @override
+  String get ocrNotePrintedText => '清晰的印刷题目 — 几乎能完美识别';
+
+  @override
+  String get ocrItemNumbers => '数字和基础数学';
+
+  @override
+  String get ocrNoteNumbers => '数字和运算符号（+、−、×、÷）识别效果好';
+
+  @override
+  String get ocrItemMcqLabels => '选择题选项标签';
+
+  @override
+  String get ocrNoteMcqLabels => 'A. B. C. D. 等选项标签能可靠识别';
+
+  @override
+  String get ocrItemHandwriting => '工整的手写字';
+
+  @override
+  String get ocrNoteHandwriting => '清晰的印刷体字母效果好；连笔字可能需要修改';
+
+  @override
+  String get ocrItemEquations => '数学方程式';
+
+  @override
+  String get ocrNoteEquations => '简单方程式没问题；复杂分数可能需要修改';
+
+  @override
+  String get ocrItemFormulas => '化学方程式';
+
+  @override
+  String get ocrNoteFormulas => '上标和下标通常需要手动修正';
+
+  @override
+  String get ocrItemGraphs => '图表和图形';
+
+  @override
+  String ocrNoteGraphs(String mascot) {
+    return '$mascot也许能读取标签，但无法读取柱状图高度、折线数值或数据点。';
+  }
+
+  @override
+  String ocrActionGraphs(String mascot) {
+    return '请自己把数字告诉$mascot';
+  }
+
+  @override
+  String get ocrItemGeometry => '几何图形';
+
+  @override
+  String ocrNoteGeometry(String mascot) {
+    return '$mascot无法测量图形 — 它看不出纸上线条的角度或长度。';
+  }
+
+  @override
+  String get ocrActionGeometry => '请改为输入边长和角度';
+
+  @override
+  String get ocrItemCursive => '连笔手写字';
+
+  @override
+  String get ocrNoteCursive => '差异很大 — 连笔字母经常会被认错。';
+
+  @override
+  String get ocrActionCursive => '请打字输入以确保准确';
+
+  @override
+  String get ocrTipDigitalTitle => '电子文档最好';
+
+  @override
+  String get ocrTipDigitalBody => '清晰的 PDF 或截图效果比照片好';
+
+  @override
+  String get ocrTipLightingTitle => '光线要充足';
+
+  @override
+  String get ocrTipLightingBody => '明亮均匀的光线 — 避免页面上出现阴影';
+
+  @override
+  String get ocrTipFlatTitle => '放平放正';
+
+  @override
+  String get ocrTipFlatBody => '手机要正对着上方，不要倾斜角度';
+
+  @override
+  String get ocrTipFillFrameTitle => '拍满画面';
+
+  @override
+  String get ocrTipFillFrameBody => '靠近一点，让文字够大够清晰';
+
+  @override
+  String get ocrTipOneTopicTitle => '每次上传一个主题';
+
+  @override
+  String get ocrTipOneTopicBody => '分开主题上传，效果比混在一起好';
+
+  @override
+  String get ocrTipMathTitle => '数学？请打字';
+
+  @override
+  String get ocrTipMathBody => '方程式建议打字输入，或拍非常清晰的照片';
+
+  @override
+  String get ocrReadablePrinted => '印刷文字';
+
+  @override
+  String get ocrReadableTyped => '打字输入的题目';
+
+  @override
+  String get ocrReadableNumbers => '数字';
+
+  @override
+  String get ocrReadableMcq => '选择题';
+
+  @override
+  String get ocrReadableFillBlank => '填空题';
+
+  @override
+  String get ocrReadableShortParagraphs => '短段落';
+
+  @override
+  String get ocrTrickyHandwriting => '手写字';
+
+  @override
+  String get ocrTrickyDiagrams => '图示';
+
+  @override
+  String get ocrTrickyGraphs => '图表';
+
+  @override
+  String get ocrTrickyMathSymbols => '数学符号';
+
+  @override
+  String get ocrTrickyChemFormulas => '化学方程式';
+
+  @override
+  String get ocrTrickyTables => '表格';
+
+  @override
+  String chapterCompileCount(int count) {
+    return '编译（$count）';
+  }
+
+  @override
+  String get chapterCompile => '编译';
+
+  @override
+  String get chapterStateCompiled => '✓ 已编译';
+
+  @override
+  String get chapterStateCompiling => '编译中…';
+
+  @override
+  String get chapterStateNotCompiled => '尚未编译';
+
+  @override
+  String get rarityCommon => '普通';
+
+  @override
+  String get rarityRare => '稀有';
+
+  @override
+  String get raritySecret => '隐藏';
+
+  @override
+  String shopOddsCommons(int count, int pct) {
+    return '$count 个普通款 = 各 $pct%';
+  }
+
+  @override
+  String shopOddsNamed(String rarity, String name, int pct) {
+    return '$rarity（$name）= $pct%';
+  }
+
+  @override
+  String mochiNamePencil(String mascot) {
+    return '铅笔$mascot';
+  }
+
+  @override
+  String mochiNameScience(String mascot) {
+    return '科学$mascot';
+  }
+
+  @override
+  String mochiNamePe(String mascot) {
+    return '体育$mascot';
+  }
+
+  @override
+  String mochiNameArt(String mascot) {
+    return '美术$mascot';
+  }
+
+  @override
+  String mochiNameLunchbox(String mascot) {
+    return '饭盒$mascot';
+  }
+
+  @override
+  String mochiNameLibrary(String mascot) {
+    return '图书馆$mascot';
+  }
+
+  @override
+  String mochiNameHeadmaster(String mascot) {
+    return '校长$mascot';
+  }
+
+  @override
+  String mochiNameGoldstar(String mascot) {
+    return '金星$mascot';
+  }
+
+  @override
+  String get inviteShowQr => '显示二维码';
+
+  @override
+  String get inviteHideQr => '隐藏二维码';
 }
