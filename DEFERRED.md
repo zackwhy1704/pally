@@ -59,8 +59,14 @@ SG-specific term 小伴 itself is part of the standing native-SG review.
   on every chapter count; helper-scope `l` threaded (getter `_statusLabel`→method(l); `_header`/`_footer`/`_row`/
   `_timeAgo` take `AppLocalizations`). Delegate ripples fixed on 4 screen-rendering tests. Also folded the
   upload `_sourceTypes` dropdown here. AI/teacher content (conflict + delete dialogs, page bodies) untouched.
-- **PR-I** chat-residue+create-tutor · **PR-J** consent+account_deletion+auth (QUIET COMPLIANCE — byte-faithful
-  meaning, no "improving" the English, flag zh for native reviewer alongside the 🔒 set)
+- ✅ **PR-I** create-tutor flow + chat residue (44 keys) — MERGED `@666951e`. Baseline 392→348.
+  create-tutor stepper + typed `CreateTutorError` (PR-G3 pattern); report sheet, homework-scan bubble, photo
+  bubbles, answer-card, source-badge chips. ICU plurals on solved/detected counts. DELIBERATELY DEFERRED (ledgered,
+  not skipped): `chat_view_model` system-message CONTENT is persisted into the stream + synced to backend →
+  needs a typed system-message-kind on the Message model (data-model change, not string extraction); its two
+  consent lines are compliance copy → **routed to PR-J**.
+- **PR-J** consent+account_deletion+auth (QUIET COMPLIANCE — byte-faithful meaning, no "improving" the English,
+  flag zh for native reviewer alongside the 🔒 set) — INCLUDES the two chat_view_model consent lines from PR-I
 - **PR-K** long tail (homework/exam_prep/study_plan/brain_health/teach_mochi/centre/assignments/etc.)
 - **PR-F** subscription — RESERVED, own session (re-prove ios_price_gate_guard before+after, human eyes on zh)
 Each: same recipe; delegates on any screen-rendering test; lock→3.32.1 before push; coverage guard must
