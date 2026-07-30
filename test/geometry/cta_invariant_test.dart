@@ -300,11 +300,13 @@ void main() {
               .overrideWith(_DetectedPhotoPreviewVM.new),
         ],
       );
+      // The send CTA ends with ' ✨' in every locale (zh: 发送… ✨) — locale-stable.
       _expectCtaOnScreen(
-          tester, find.textContaining('Send'), 'photo_preview detected');
+          tester, find.textContaining('✨'), 'photo_preview detected');
     });
 
     testWidgets('Error state — "Try Again" on screen', (tester) async {
+      final l = await AppLocalizations.delegate.load(_activeLocale);
       await _pump(
         tester,
         const PhotoPreviewScreen(photoPath: _photoPath, avatarId: 'av-1'),
@@ -314,7 +316,7 @@ void main() {
         ],
       );
       _expectCtaOnScreen(
-          tester, find.text('Try Again'), 'photo_preview error');
+          tester, find.text(l.commonTryAgain), 'photo_preview error');
     });
   });
 
@@ -328,7 +330,7 @@ void main() {
         avatarId: 'av-1',
       ),
     );
-    _expectCtaOnScreen(tester, find.textContaining('Send'), 'photo_review');
+    _expectCtaOnScreen(tester, find.textContaining('✨'), 'photo_review');
   });
     }); // group('locale=…')
   } // for (lang in AppLanguages.all)

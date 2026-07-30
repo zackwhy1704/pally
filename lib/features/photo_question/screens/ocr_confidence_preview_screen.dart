@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -63,10 +64,10 @@ class _OcrConfidencePreviewScreenState
     return AppColors.coral;
   }
 
-  String _badgeLabel(double conf) {
-    if (conf >= 0.85) return 'Great! ✓';
-    if (conf >= 0.50) return 'OK-ish';
-    return 'Tricky ⚠️';
+  String _badgeLabel(AppLocalizations l, double conf) {
+    if (conf >= 0.85) return l.photoGreat;
+    if (conf >= 0.50) return l.photoConfOkish;
+    return l.photoTrickyWarn;
   }
 
   void _sendAnyway() {
@@ -88,6 +89,7 @@ class _OcrConfidencePreviewScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final result = widget.result;
     final overall = result.overallConfidence;
     final items = result.items;
@@ -107,17 +109,17 @@ class _OcrConfidencePreviewScreenState
             Container(
               height: 58,
               color: Colors.black.withValues(alpha: 0.6),
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                    icon: Icon(Icons.arrow_back_ios_new_rounded,
                         color: Colors.white, size: 20),
                     onPressed: () => context.pop(),
                   ),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      "Mochi's Reading Report",
+                      l.photoReadingReport(l.mascotName),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           color: Colors.white,
@@ -133,18 +135,18 @@ class _OcrConfidencePreviewScreenState
 
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.all(AppSpacing.md),
+                padding: EdgeInsets.all(AppSpacing.md),
                 children: [
                   // Thumbnail + overall score card
                   _ThumbnailCard(
                       photoFile: result.photoFile,
                       overallConfidence: overall),
 
-                  const SizedBox(height: AppSpacing.md),
+                  SizedBox(height: AppSpacing.md),
 
                   // Section title
-                  const Text(
-                    "Here's what Mochi found in your photo:",
+                  Text(
+                    l.photoFoundInPhoto(l.mascotName),
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 12,
@@ -163,26 +165,26 @@ class _OcrConfidencePreviewScreenState
                       total: items.length,
                     ),
 
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
 
                   // Legend
-                  const Row(
+                  Row(
                     children: [
                       _LegendDot(
-                          color: AppColors.green, label: 'High (>85%)'),
+                          color: AppColors.green, label: l.photoConfHigh),
                       SizedBox(width: 12),
                       _LegendDot(
-                          color: AppColors.amber, label: 'Tricky (50–85%)'),
+                          color: AppColors.amber, label: l.photoConfTricky),
                       SizedBox(width: 12),
                       _LegendDot(
-                          color: AppColors.coral, label: 'Risky (<50%)'),
+                          color: AppColors.coral, label: l.photoConfRisky),
                     ],
                   ),
 
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
 
                   Text(
-                    'Per question:',
+                    l.photoPerQuestion,
                     style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.55),
                         fontSize: 10,
@@ -202,7 +204,7 @@ class _OcrConfidencePreviewScreenState
                       child: _ItemCard(
                         item: item,
                         color: color,
-                        badgeLabel: _badgeLabel(item.confidence),
+                        badgeLabel: _badgeLabel(l, item.confidence),
                         barAnimation: _barAnimations[i],
                       ),
                     );
@@ -543,6 +545,7 @@ class _BottomButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: EdgeInsets.fromLTRB(
           AppSpacing.md,
@@ -568,7 +571,7 @@ class _BottomButtons extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14)),
               ),
               child: Text(
-                '✏️  Fix text manually',
+                l.photoFixManually,
                 style: AppTextStyles.body.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
@@ -590,16 +593,16 @@ class _BottomButtons extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12)),
               ),
               child: Text(
-                'Send anyway (Mochi will do its best)',
+                l.photoSendAnyway(l.mascotName),
                 style: AppTextStyles.bodySmall.copyWith(
                   color: Colors.white.withValues(alpha: 0.8),
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
-            '💡 Better quality photos = more accurate answers',
+            l.photoBetterQuality,
             style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.35),
                 fontSize: 9,

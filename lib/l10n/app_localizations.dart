@@ -3661,6 +3661,354 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Done'**
   String get flashcardFilterDone;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Better photo = better answers from {mascot}'**
+  String photoBetterPhoto(String mascot);
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Bright light'**
+  String get photoBrightLight;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Charts ✕'**
+  String get photoChartsX;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear numbers ✓'**
+  String get photoClearNumbers;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagrams ⚠️'**
+  String get photoDiagramsWarn;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill the frame'**
+  String get photoFillFrame;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it, close tips'**
+  String get photoCloseTips;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Graphs, charts & shapes don\'t scan well. Type those values yourself.'**
+  String get photoGraphsWarn;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold still'**
+  String get photoHoldStill;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it straight'**
+  String get photoKeepStraight;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Neat handwriting ✓'**
+  String get photoNeatHandwriting;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Printed text ✓'**
+  String get photoPrintedText;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Symbols ⚠️'**
+  String get photoSymbolsWarn;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Type instead'**
+  String get photoTypeInstead;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'What {mascot} reads:'**
+  String photoWhatReads(String mascot);
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'What can I read? ›'**
+  String get photoWhatCanRead;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'📚 Point at your homework question'**
+  String get photoPointHomework;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'📷 Tips for best results'**
+  String get photoTipsBest;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Homework Results'**
+  String get photoHomeworkResults;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to share yet.'**
+  String get photoNothingShare;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Share results'**
+  String get photoShareResults;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'What next?'**
+  String get photoWhatNext;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'🎯 Quiz me on this'**
+  String get photoQuizMe;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'💡 Another example'**
+  String get photoAnotherExample;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'📝 Show full working'**
+  String get photoShowWorking;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 question} other{{count} questions}}'**
+  String photoQuestionCount(int count);
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{🔍 I found 1 question! Here are the solutions:} other{🔍 I found {count} questions! Here are the solutions:}}'**
+  String photoIFound(int count);
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 question found} other{{count} questions found}}'**
+  String photoQuestionsFound(int count);
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Send 1 question to {mascot} ✨} other{Send {count} questions to {mascot} ✨}}'**
+  String photoSendQuestions(int count, String mascot);
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read photo'**
+  String get photoCouldNotRead;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Detecting questions… 🔍'**
+  String get photoDetecting;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit questions'**
+  String get photoEditQuestions;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Retake'**
+  String get photoRetake;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Done — use these questions ✓'**
+  String get photoDoneUse;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Fix any text {mascot} misread'**
+  String photoFixMisread(String mascot);
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'✏️  Edit Questions'**
+  String get photoEditQuestionsTitle;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from Gallery'**
+  String get photoChooseGallery;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Photo'**
+  String get photoKeepPhoto;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Retake photo?'**
+  String get photoRetakeConfirm;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll lose the current scan. Choose what to do:'**
+  String get photoRetakeBody;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Great! ✓'**
+  String get photoGreat;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Here\'s what {mascot} found in your photo:'**
+  String photoFoundInPhoto(String mascot);
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'High (>85%)'**
+  String get photoConfHigh;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot}\'s Reading Report'**
+  String photoReadingReport(String mascot);
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'OK-ish'**
+  String get photoConfOkish;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Per question:'**
+  String get photoPerQuestion;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Risky (<50%)'**
+  String get photoConfRisky;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Send anyway ({mascot} will do its best)'**
+  String photoSendAnyway(String mascot);
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Tricky (50–85%)'**
+  String get photoConfTricky;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Tricky ⚠️'**
+  String get photoTrickyWarn;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'✏️  Fix text manually'**
+  String get photoFixManually;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'💡 Better quality photos = more accurate answers'**
+  String get photoBetterQuality;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get photoChooseGalleryLower;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get photoDone;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit question text…'**
+  String get photoEditText;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep this photo'**
+  String get photoKeepThisPhoto;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'Retake photo'**
+  String get photoRetakePhoto;
+
+  /// PR-G photo_question.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like to do?'**
+  String get photoWhatToDo;
 }
 
 class _AppLocalizationsDelegate

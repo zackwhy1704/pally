@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -147,6 +148,7 @@ class _PhotoReviewScreenState extends ConsumerState<PhotoReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final selectedCount = _questions.where((q) => q.selected).length;
 
     return Scaffold(
@@ -214,14 +216,14 @@ class _PhotoReviewScreenState extends ConsumerState<PhotoReviewScreen> {
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                               horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
                             color: _teal,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            '${_questions.length} question${_questions.length == 1 ? '' : 's'} found',
+                            l.photoQuestionsFound(_questions.length),
                             style: AppTextStyles.caption.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
@@ -256,14 +258,14 @@ class _PhotoReviewScreenState extends ConsumerState<PhotoReviewScreen> {
                         onPressed: selectedCount > 0 ? _onSend : null,
                         style: FilledButton.styleFrom(
                           backgroundColor: _teal,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          padding: EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
                           ),
                         ),
                         child: Text(
                           selectedCount > 0
-                              ? 'Send $selectedCount question${selectedCount == 1 ? '' : 's'} to Mochi ✨'
+                              ? l.photoSendQuestions(selectedCount, l.mascotName)
                               : 'Select at least 1 question',
                           style: AppTextStyles.body.copyWith(
                             color: Colors.white,
@@ -300,6 +302,7 @@ class _QuestionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final color = question.color;
     final selected = question.selected;
 
@@ -410,31 +413,31 @@ class _QuestionRow extends StatelessWidget {
                             controller: question.controller,
                             autofocus: true,
                             maxLines: null,
-                            style: const TextStyle(
+                            style: TextStyle(
                                 color: Colors.white, fontSize: 13),
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               isDense: true,
                               contentPadding: EdgeInsets.zero,
-                              hintText: 'Edit question text…',
+                              hintText: l.photoEditText,
                               hintStyle: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.4),
                                 fontSize: 13,
                               ),
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8),
                           GestureDetector(
                             onTap: onCommitEdit,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
+                              padding: EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 6),
                               decoration: BoxDecoration(
                                 color: color,
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: const Text(
-                                'Done',
+                              child: Text(
+                                l.photoDone,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 12,
@@ -463,6 +466,7 @@ class _RetakeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -474,14 +478,14 @@ class _RetakeButton extends StatelessWidget {
           border:
               Border.all(color: Colors.white.withValues(alpha: 0.4), width: 1),
         ),
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text('↺', style: TextStyle(color: Colors.white, fontSize: 13)),
             SizedBox(width: 4),
             Flexible(
               child: Text(
-                'Retake',
+                l.photoRetake,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: Colors.white,
@@ -512,6 +516,7 @@ class _RetakeConfirmSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return DraggableScrollableSheet(
       initialChildSize: 0.38,
       minChildSize: 0.2,
@@ -542,30 +547,30 @@ class _RetakeConfirmSheet extends StatelessWidget {
             ),
 
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text('What would you like to do?',
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(l.photoWhatToDo,
                   style: AppTextStyles.title.copyWith(fontSize: 16)),
             ),
 
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
 
             _SheetOption(
               emoji: '✅',
-              label: 'Keep this photo',
+              label: l.photoKeepThisPhoto,
               description: 'Continue with current scan',
               color: AppColors.teal,
               onTap: onKeep,
             ),
             _SheetOption(
               emoji: '📸',
-              label: 'Retake photo',
+              label: l.photoRetakePhoto,
               description: 'Take a new photo with camera',
               color: AppColors.purple,
               onTap: onRetake,
             ),
             _SheetOption(
               emoji: '🖼️',
-              label: 'Choose from gallery',
+              label: l.photoChooseGalleryLower,
               description: 'Pick an existing photo',
               color: AppColors.amber,
               onTap: onGallery,

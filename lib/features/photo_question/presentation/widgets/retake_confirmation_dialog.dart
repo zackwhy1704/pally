@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 
@@ -9,6 +10,7 @@ class RetakeConfirmationDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.symmetric(horizontal: 32),
@@ -26,61 +28,61 @@ class RetakeConfirmationDialog extends StatelessWidget {
             Container(
               width: 56,
               height: 56,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: AppColors.amberL,
                 shape: BoxShape.circle,
               ),
-              child: const Center(
+              child: Center(
                 child: Text('📷', style: TextStyle(fontSize: 26)),
               ),
             ),
 
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
 
             Text(
-              'Retake photo?',
+              l.photoRetakeConfirm,
               style: AppTextStyles.title,
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: 6),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: EdgeInsets.symmetric(horizontal: 24),
               child: Text(
-                'You\'ll lose the current scan. Choose what to do:',
+                l.photoRetakeBody,
                 style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
                 textAlign: TextAlign.center,
               ),
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
 
             // Divider
-            const Divider(color: AppColors.outline, height: 1),
+            Divider(color: AppColors.outline, height: 1),
 
             // Keep Photo
             _DialogOption(
-              label: 'Keep Photo',
+              label: l.photoKeepPhoto,
               emoji: '✅',
               description: 'Continue with the current scan',
               color: AppColors.teal,
               onTap: () => Navigator.of(context).pop(RetakeChoice.keepPhoto),
             ),
 
-            const Divider(color: AppColors.outline, height: 1),
+            Divider(color: AppColors.outline, height: 1),
 
             // Retake
             _DialogOption(
-              label: 'Retake',
+              label: l.photoRetake,
               emoji: '📸',
               description: 'Take a new photo with your camera',
               color: AppColors.purple,
               onTap: () => Navigator.of(context).pop(RetakeChoice.retake),
             ),
 
-            const Divider(color: AppColors.outline, height: 1),
+            Divider(color: AppColors.outline, height: 1),
 
             // Gallery
             _DialogOption(
-              label: 'Choose from Gallery',
+              label: l.photoChooseGallery,
               emoji: '🖼️',
               description: 'Pick an existing photo',
               color: AppColors.amber,

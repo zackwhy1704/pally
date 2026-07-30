@@ -1,4 +1,5 @@
 import 'package:camera/camera.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -212,7 +213,7 @@ class _CameraScreenState extends State<CameraScreen>
                 bottom: screenH * 0.27,
                 left: 40,
                 right: 40,
-                child: const IgnorePointer(child: _InstructionBanner()),
+                child: IgnorePointer(child: _InstructionBanner()),
               ),
 
             // ── LAYER 5: Bottom controls ──────────────────────────────────
@@ -386,6 +387,7 @@ class _TipsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
         color: _kDark.withValues(alpha: 0.97),
@@ -393,7 +395,7 @@ class _TipsSheet extends StatelessWidget {
       ),
       child: ListView(
         controller: scrollController,
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+        padding: EdgeInsets.fromLTRB(20, 12, 20, 24),
         children: [
           Center(
             child: Container(
@@ -405,62 +407,62 @@ class _TipsSheet extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16),
-          const Text('📷 Tips for best results',
+          SizedBox(height: 16),
+          Text(l.photoTipsBest,
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   fontFamily: 'Nunito')),
-          const SizedBox(height: 4),
-          Text('Better photo = better answers from Mochi',
+          SizedBox(height: 4),
+          Text(l.photoBetterPhoto(l.mascotName),
               style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.55),
                   fontSize: 10,
                   fontFamily: 'Nunito')),
-          const SizedBox(height: 16),
-          const _TipRow(
+          SizedBox(height: 16),
+          _TipRow(
               emoji: '☀️',
-              label: 'Bright light',
+              label: l.photoBrightLight,
               sub: 'No shadows across the text'),
-          const _TipRow(
+          _TipRow(
               emoji: '🤚',
-              label: 'Hold still',
+              label: l.photoHoldStill,
               sub: 'Wait for the image to focus'),
-          const _TipRow(
+          _TipRow(
               emoji: '📄',
-              label: 'Fill the frame',
+              label: l.photoFillFrame,
               sub: 'Bring the page edge-to-edge'),
-          const _TipRow(
+          _TipRow(
               emoji: '📐',
-              label: 'Keep it straight',
+              label: l.photoKeepStraight,
               sub: 'Flat page, not tilted or curved'),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Container(
               height: 1,
               color: Colors.white.withValues(alpha: 0.12)),
-          const SizedBox(height: 12),
-          Text('What Mochi reads:',
+          SizedBox(height: 12),
+          Text(l.photoWhatReads(l.mascotName),
               style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.55),
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   fontFamily: 'Nunito')),
-          const SizedBox(height: 8),
-          const Wrap(spacing: 6, runSpacing: 6, children: [
-            _ContentChip(label: 'Printed text ✓', color: AppColors.green),
+          SizedBox(height: 8),
+          Wrap(spacing: 6, runSpacing: 6, children: [
+            _ContentChip(label: l.photoPrintedText, color: AppColors.green),
             _ContentChip(
-                label: 'Clear numbers ✓', color: AppColors.green),
+                label: l.photoClearNumbers, color: AppColors.green),
             _ContentChip(
-                label: 'Neat handwriting ✓', color: AppColors.teal),
+                label: l.photoNeatHandwriting, color: AppColors.teal),
           ]),
-          const SizedBox(height: 8),
-          const Wrap(spacing: 6, runSpacing: 6, children: [
-            _ContentChip(label: 'Diagrams ⚠️', color: AppColors.amber),
-            _ContentChip(label: 'Symbols ⚠️', color: AppColors.amber),
-            _ContentChip(label: 'Charts ✕', color: AppColors.coral),
+          SizedBox(height: 8),
+          Wrap(spacing: 6, runSpacing: 6, children: [
+            _ContentChip(label: l.photoDiagramsWarn, color: AppColors.amber),
+            _ContentChip(label: l.photoSymbolsWarn, color: AppColors.amber),
+            _ContentChip(label: l.photoChartsX, color: AppColors.coral),
           ]),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
             height: 44,
@@ -473,7 +475,7 @@ class _TipsSheet extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('Got it, close tips',
+              child: Text(l.photoCloseTips,
                   style: TextStyle(fontFamily: 'Nunito', fontSize: 13)),
             ),
           ),
@@ -616,18 +618,19 @@ class _BracketPainter extends CustomPainter {
 // ── Instruction banner ────────────────────────────────────────────────────────
 
 class _InstructionBanner extends StatelessWidget {
-  const _InstructionBanner();
+  _InstructionBanner();
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        '📚 Point at your homework question',
+        l.photoPointHomework,
         style: AppTextStyles.bodySmall.copyWith(
           color: Colors.white,
           fontWeight: FontWeight.w600,
@@ -748,10 +751,11 @@ class _GraphWarningStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
       child: Container(
-        padding: const EdgeInsets.symmetric(
+        padding: EdgeInsets.symmetric(
             horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
         decoration: BoxDecoration(
           color: AppColors.amber.withValues(alpha: 0.92),
@@ -759,11 +763,11 @@ class _GraphWarningStrip extends StatelessWidget {
         ),
         child: Row(
           children: [
-            const Text('⚠️', style: TextStyle(fontSize: 13)),
-            const SizedBox(width: 6),
-            const Expanded(
+            Text('⚠️', style: TextStyle(fontSize: 13)),
+            SizedBox(width: 6),
+            Expanded(
               child: Text(
-                'Graphs, charts & shapes don\'t scan well. Type those values yourself.',
+                l.photoGraphsWarn,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 10,
@@ -774,11 +778,11 @@ class _GraphWarningStrip extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            const SizedBox(width: 4),
+            SizedBox(width: 4),
             GestureDetector(
               onTap: onLearnMore,
               child: Text(
-                'What can I read? ›',
+                l.photoWhatCanRead,
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.85),
                   fontSize: 9,
@@ -789,18 +793,18 @@ class _GraphWarningStrip extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 6),
+            SizedBox(width: 6),
             GestureDetector(
               onTap: onTypeInstead,
               child: Container(
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                     horizontal: 6, vertical: 3),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: const Text(
-                  'Type instead',
+                child: Text(
+                  l.photoTypeInstead,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 9,

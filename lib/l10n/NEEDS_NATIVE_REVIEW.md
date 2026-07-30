@@ -428,3 +428,11 @@ Also fixed cta_invariant_test to resolve the join CTA per test-locale (was hardc
 Reuses moduleAnswer, progressCharacterShop; mascot via {mascot}. Converted static-const record lists
 (_items powerups, filter chips) to l-taking methods (scanner-missed strings). `flashcard_view_model`'s
 'your Mochi' fallback left (VM, no context) — one baseline remnant.
+
+### PR-G — photo-question / camera / OCR-preview (58 keys)
+
+`camera_screen` (capture tips, content chips), `photo_preview`/`photo_review` (detect/send/retake),
+`edit_questions_sheet`, `retake_confirmation_dialog`, `homework_scan_detail`, `ocr_confidence_preview`.
+ICU plurals for question counts (photoQuestionCount/photoIFound/photoQuestionsFound/photoSendQuestions).
+Reuses commonTryAgain; mascot via {mascot}. Fixed cta_invariant to match the send CTA by its locale-stable
+' ✨' suffix and Try-Again per-locale. (upload + ocr_awareness dirs are separate follow-up PRs.)

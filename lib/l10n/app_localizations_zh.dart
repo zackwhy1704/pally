@@ -2069,4 +2069,198 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get flashcardFilterDone => '已完成';
+
+  @override
+  String photoBetterPhoto(String mascot) {
+    return '更好的照片 = $mascot 给出更好的答案';
+  }
+
+  @override
+  String get photoBrightLight => '光线充足';
+
+  @override
+  String get photoChartsX => '图表 ✕';
+
+  @override
+  String get photoClearNumbers => '清晰的数字 ✓';
+
+  @override
+  String get photoDiagramsWarn => '示意图 ⚠️';
+
+  @override
+  String get photoFillFrame => '填满画面';
+
+  @override
+  String get photoCloseTips => '明白了，关闭提示';
+
+  @override
+  String get photoGraphsWarn => '图形、图表和形状扫描效果不佳。请自行输入这些数值。';
+
+  @override
+  String get photoHoldStill => '保持稳定';
+
+  @override
+  String get photoKeepStraight => '保持平直';
+
+  @override
+  String get photoNeatHandwriting => '工整的手写 ✓';
+
+  @override
+  String get photoPrintedText => '印刷文字 ✓';
+
+  @override
+  String get photoSymbolsWarn => '符号 ⚠️';
+
+  @override
+  String get photoTypeInstead => '改为输入';
+
+  @override
+  String photoWhatReads(String mascot) {
+    return '$mascot 能读取的内容：';
+  }
+
+  @override
+  String get photoWhatCanRead => '我能读取什么？ ›';
+
+  @override
+  String get photoPointHomework => '📚 对准你的作业题目';
+
+  @override
+  String get photoTipsBest => '📷 获得最佳效果的技巧';
+
+  @override
+  String get photoHomeworkResults => '作业结果';
+
+  @override
+  String get photoNothingShare => '暂时没有可分享的内容。';
+
+  @override
+  String get photoShareResults => '分享结果';
+
+  @override
+  String get photoWhatNext => '接下来做什么？';
+
+  @override
+  String get photoQuizMe => '🎯 就这个测验我';
+
+  @override
+  String get photoAnotherExample => '💡 再来一个例子';
+
+  @override
+  String get photoShowWorking => '📝 显示完整解题过程';
+
+  @override
+  String photoQuestionCount(int count) {
+    return '$count 道题';
+  }
+
+  @override
+  String photoIFound(int count) {
+    return '🔍 我找到了 $count 道题！以下是解答：';
+  }
+
+  @override
+  String photoQuestionsFound(int count) {
+    return '找到 $count 道题';
+  }
+
+  @override
+  String photoSendQuestions(int count, String mascot) {
+    return '发送 $count 道题给 $mascot ✨';
+  }
+
+  @override
+  String get photoCouldNotRead => '无法读取照片';
+
+  @override
+  String get photoDetecting => '正在识别题目…… 🔍';
+
+  @override
+  String get photoEditQuestions => '编辑题目';
+
+  @override
+  String get photoRetake => '重拍';
+
+  @override
+  String get photoDoneUse => '完成——使用这些题目 ✓';
+
+  @override
+  String photoFixMisread(String mascot) {
+    return '修正 $mascot 误读的任何文字';
+  }
+
+  @override
+  String get photoEditQuestionsTitle => '✏️  编辑题目';
+
+  @override
+  String get photoChooseGallery => '从相册选择';
+
+  @override
+  String get photoKeepPhoto => '保留照片';
+
+  @override
+  String get photoRetakeConfirm => '重拍照片？';
+
+  @override
+  String get photoRetakeBody => '你将丢失当前的扫描。请选择要做什么：';
+
+  @override
+  String get photoGreat => '很好！ ✓';
+
+  @override
+  String photoFoundInPhoto(String mascot) {
+    return '以下是 $mascot 在你照片中找到的内容：';
+  }
+
+  @override
+  String get photoConfHigh => '高（>85%）';
+
+  @override
+  String photoReadingReport(String mascot) {
+    return '$mascot 的识别报告';
+  }
+
+  @override
+  String get photoConfOkish => '一般';
+
+  @override
+  String get photoPerQuestion => '每道题：';
+
+  @override
+  String get photoConfRisky => '有风险（<50%）';
+
+  @override
+  String photoSendAnyway(String mascot) {
+    return '仍然发送（$mascot 会尽力）';
+  }
+
+  @override
+  String get photoConfTricky => '有点难（50–85%）';
+
+  @override
+  String get photoTrickyWarn => '有点难 ⚠️';
+
+  @override
+  String get photoFixManually => '✏️  手动修正文字';
+
+  @override
+  String get photoBetterQuality => '💡 照片质量越好 = 答案越准确';
+
+  @override
+  String get photoChooseGalleryLower => '从相册选择';
+
+  @override
+  String get photoDone => '完成';
+
+  @override
+  String get photoEditText => '编辑题目文字……';
+
+  @override
+  String get photoKeepThisPhoto => '保留这张照片';
+
+  @override
+  String get photoRetakePhoto => '重拍照片';
+
+  @override
+  String get photoWhatToDo => '你想做什么？';
 }

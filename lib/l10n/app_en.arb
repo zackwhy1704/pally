@@ -3017,5 +3017,290 @@
   "flashcardFilterDone": "Done",
   "@flashcardFilterDone": {
     "description": "PR-E shop/flashcard (const-list strings the scanner missed)."
+  },
+  "photoBetterPhoto": "Better photo = better answers from {mascot}",
+  "@photoBetterPhoto": {
+    "description": "PR-G photo_question.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "photoBrightLight": "Bright light",
+  "@photoBrightLight": {
+    "description": "PR-G photo_question."
+  },
+  "photoChartsX": "Charts ✕",
+  "@photoChartsX": {
+    "description": "PR-G photo_question."
+  },
+  "photoClearNumbers": "Clear numbers ✓",
+  "@photoClearNumbers": {
+    "description": "PR-G photo_question."
+  },
+  "photoDiagramsWarn": "Diagrams ⚠️",
+  "@photoDiagramsWarn": {
+    "description": "PR-G photo_question."
+  },
+  "photoFillFrame": "Fill the frame",
+  "@photoFillFrame": {
+    "description": "PR-G photo_question."
+  },
+  "photoCloseTips": "Got it, close tips",
+  "@photoCloseTips": {
+    "description": "PR-G photo_question."
+  },
+  "photoGraphsWarn": "Graphs, charts & shapes don't scan well. Type those values yourself.",
+  "@photoGraphsWarn": {
+    "description": "PR-G photo_question."
+  },
+  "photoHoldStill": "Hold still",
+  "@photoHoldStill": {
+    "description": "PR-G photo_question."
+  },
+  "photoKeepStraight": "Keep it straight",
+  "@photoKeepStraight": {
+    "description": "PR-G photo_question."
+  },
+  "photoNeatHandwriting": "Neat handwriting ✓",
+  "@photoNeatHandwriting": {
+    "description": "PR-G photo_question."
+  },
+  "photoPrintedText": "Printed text ✓",
+  "@photoPrintedText": {
+    "description": "PR-G photo_question."
+  },
+  "photoSymbolsWarn": "Symbols ⚠️",
+  "@photoSymbolsWarn": {
+    "description": "PR-G photo_question."
+  },
+  "photoTypeInstead": "Type instead",
+  "@photoTypeInstead": {
+    "description": "PR-G photo_question."
+  },
+  "photoWhatReads": "What {mascot} reads:",
+  "@photoWhatReads": {
+    "description": "PR-G photo_question.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "photoWhatCanRead": "What can I read? ›",
+  "@photoWhatCanRead": {
+    "description": "PR-G photo_question."
+  },
+  "photoPointHomework": "📚 Point at your homework question",
+  "@photoPointHomework": {
+    "description": "PR-G photo_question."
+  },
+  "photoTipsBest": "📷 Tips for best results",
+  "@photoTipsBest": {
+    "description": "PR-G photo_question."
+  },
+  "photoHomeworkResults": "Homework Results",
+  "@photoHomeworkResults": {
+    "description": "PR-G photo_question."
+  },
+  "photoNothingShare": "Nothing to share yet.",
+  "@photoNothingShare": {
+    "description": "PR-G photo_question."
+  },
+  "photoShareResults": "Share results",
+  "@photoShareResults": {
+    "description": "PR-G photo_question."
+  },
+  "photoWhatNext": "What next?",
+  "@photoWhatNext": {
+    "description": "PR-G photo_question."
+  },
+  "photoQuizMe": "🎯 Quiz me on this",
+  "@photoQuizMe": {
+    "description": "PR-G photo_question."
+  },
+  "photoAnotherExample": "💡 Another example",
+  "@photoAnotherExample": {
+    "description": "PR-G photo_question."
+  },
+  "photoShowWorking": "📝 Show full working",
+  "@photoShowWorking": {
+    "description": "PR-G photo_question."
+  },
+  "photoQuestionCount": "{count, plural, =1{1 question} other{{count} questions}}",
+  "@photoQuestionCount": {
+    "description": "PR-G photo_question.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "photoIFound": "{count, plural, =1{🔍 I found 1 question! Here are the solutions:} other{🔍 I found {count} questions! Here are the solutions:}}",
+  "@photoIFound": {
+    "description": "PR-G photo_question.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "photoQuestionsFound": "{count, plural, =1{1 question found} other{{count} questions found}}",
+  "@photoQuestionsFound": {
+    "description": "PR-G photo_question.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "photoSendQuestions": "{count, plural, =1{Send 1 question to {mascot} ✨} other{Send {count} questions to {mascot} ✨}}",
+  "@photoSendQuestions": {
+    "description": "PR-G photo_question.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "photoCouldNotRead": "Could not read photo",
+  "@photoCouldNotRead": {
+    "description": "PR-G photo_question."
+  },
+  "photoDetecting": "Detecting questions… 🔍",
+  "@photoDetecting": {
+    "description": "PR-G photo_question."
+  },
+  "photoEditQuestions": "Edit questions",
+  "@photoEditQuestions": {
+    "description": "PR-G photo_question."
+  },
+  "photoRetake": "Retake",
+  "@photoRetake": {
+    "description": "PR-G photo_question."
+  },
+  "photoDoneUse": "Done — use these questions ✓",
+  "@photoDoneUse": {
+    "description": "PR-G photo_question."
+  },
+  "photoFixMisread": "Fix any text {mascot} misread",
+  "@photoFixMisread": {
+    "description": "PR-G photo_question.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "photoEditQuestionsTitle": "✏️  Edit Questions",
+  "@photoEditQuestionsTitle": {
+    "description": "PR-G photo_question."
+  },
+  "photoChooseGallery": "Choose from Gallery",
+  "@photoChooseGallery": {
+    "description": "PR-G photo_question."
+  },
+  "photoKeepPhoto": "Keep Photo",
+  "@photoKeepPhoto": {
+    "description": "PR-G photo_question."
+  },
+  "photoRetakeConfirm": "Retake photo?",
+  "@photoRetakeConfirm": {
+    "description": "PR-G photo_question."
+  },
+  "photoRetakeBody": "You'll lose the current scan. Choose what to do:",
+  "@photoRetakeBody": {
+    "description": "PR-G photo_question."
+  },
+  "photoGreat": "Great! ✓",
+  "@photoGreat": {
+    "description": "PR-G photo_question."
+  },
+  "photoFoundInPhoto": "Here's what {mascot} found in your photo:",
+  "@photoFoundInPhoto": {
+    "description": "PR-G photo_question.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "photoConfHigh": "High (>85%)",
+  "@photoConfHigh": {
+    "description": "PR-G photo_question."
+  },
+  "photoReadingReport": "{mascot}'s Reading Report",
+  "@photoReadingReport": {
+    "description": "PR-G photo_question.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "photoConfOkish": "OK-ish",
+  "@photoConfOkish": {
+    "description": "PR-G photo_question."
+  },
+  "photoPerQuestion": "Per question:",
+  "@photoPerQuestion": {
+    "description": "PR-G photo_question."
+  },
+  "photoConfRisky": "Risky (<50%)",
+  "@photoConfRisky": {
+    "description": "PR-G photo_question."
+  },
+  "photoSendAnyway": "Send anyway ({mascot} will do its best)",
+  "@photoSendAnyway": {
+    "description": "PR-G photo_question.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "photoConfTricky": "Tricky (50–85%)",
+  "@photoConfTricky": {
+    "description": "PR-G photo_question."
+  },
+  "photoTrickyWarn": "Tricky ⚠️",
+  "@photoTrickyWarn": {
+    "description": "PR-G photo_question."
+  },
+  "photoFixManually": "✏️  Fix text manually",
+  "@photoFixManually": {
+    "description": "PR-G photo_question."
+  },
+  "photoBetterQuality": "💡 Better quality photos = more accurate answers",
+  "@photoBetterQuality": {
+    "description": "PR-G photo_question."
+  },
+  "photoChooseGalleryLower": "Choose from gallery",
+  "@photoChooseGalleryLower": {
+    "description": "PR-G photo_question."
+  },
+  "photoDone": "Done",
+  "@photoDone": {
+    "description": "PR-G photo_question."
+  },
+  "photoEditText": "Edit question text…",
+  "@photoEditText": {
+    "description": "PR-G photo_question."
+  },
+  "photoKeepThisPhoto": "Keep this photo",
+  "@photoKeepThisPhoto": {
+    "description": "PR-G photo_question."
+  },
+  "photoRetakePhoto": "Retake photo",
+  "@photoRetakePhoto": {
+    "description": "PR-G photo_question."
+  },
+  "photoWhatToDo": "What would you like to do?",
+  "@photoWhatToDo": {
+    "description": "PR-G photo_question."
   }
 }

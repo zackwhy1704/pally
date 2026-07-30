@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -112,7 +113,7 @@ class _PhotoPreviewScreenState extends ConsumerState<PhotoPreviewScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: switch (state) {
-        PhotoPreviewDetecting() => const _DetectingView(),
+        PhotoPreviewDetecting() => _DetectingView(),
         PhotoPreviewDetected(:final questions, :final photoPath) =>
           _DetectedView(
             photoPath: photoPath,
@@ -145,18 +146,19 @@ class _PhotoPreviewScreenState extends ConsumerState<PhotoPreviewScreen> {
 // ── Detecting ────────────────────────────────────────────────────────────────
 
 class _DetectingView extends StatelessWidget {
-  const _DetectingView();
+  _DetectingView();
 
   @override
   Widget build(BuildContext context) {
-    return const AdaptiveCenter(
+    final l = AppLocalizations.of(context);
+    return AdaptiveCenter(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(color: AppColors.teal),
           SizedBox(height: AppSpacing.md),
           Text(
-            'Detecting questions… 🔍',
+            l.photoDetecting,
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
         ],
@@ -186,6 +188,7 @@ class _DetectedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final selectedCount = questions.where((q) => q.isSelected).length;
     return Stack(
       fit: StackFit.expand,
@@ -237,14 +240,14 @@ class _DetectedView extends StatelessWidget {
                     border: Border.all(
                         color: Colors.white.withValues(alpha: 0.4), width: 1),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text('↺', style: TextStyle(color: Colors.white, fontSize: 13)),
                       SizedBox(width: 4),
                       Flexible(
                         child: Text(
-                          'Retake',
+                          l.photoRetake,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                               color: Colors.white,
@@ -278,14 +281,14 @@ class _DetectedView extends StatelessWidget {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                             horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
                           color: AppColors.teal,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          '${questions.length} question${questions.length == 1 ? '' : 's'} found',
+                          l.photoQuestionsFound(questions.length),
                           style: AppTextStyles.caption.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
@@ -304,13 +307,13 @@ class _DetectedView extends StatelessWidget {
                             border: Border.all(
                                 color: Colors.white.withValues(alpha: 0.3)),
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text('✏️', style: TextStyle(fontSize: 11)),
                               SizedBox(width: 5),
                               Text(
-                                'Edit questions',
+                                l.photoEditQuestions,
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 11,
@@ -378,14 +381,14 @@ class _DetectedView extends StatelessWidget {
                       onPressed: selectedCount > 0 ? onConfirm : null,
                       style: FilledButton.styleFrom(
                         backgroundColor: AppColors.teal,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        padding: EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
                       child: Text(
                         selectedCount > 0
-                            ? 'Send $selectedCount question${selectedCount == 1 ? '' : 's'} to Mochi ✨'
+                            ? l.photoSendQuestions(selectedCount, l.mascotName)
                             : 'Select at least 1 question',
                         style: AppTextStyles.body.copyWith(
                           color: Colors.white,
@@ -413,28 +416,29 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return AdaptiveCenter(
-      padding: const EdgeInsets.all(AppSpacing.xl),
+      padding: EdgeInsets.all(AppSpacing.xl),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline_rounded,
+          Icon(Icons.error_outline_rounded,
               color: AppColors.coral, size: 64),
-            const SizedBox(height: AppSpacing.md),
-            Text('Could not read photo',
+            SizedBox(height: AppSpacing.md),
+            Text(l.photoCouldNotRead,
                 style: AppTextStyles.title.copyWith(color: Colors.white)),
-            const SizedBox(height: AppSpacing.sm),
+            SizedBox(height: AppSpacing.sm),
             Text(message,
                 style: AppTextStyles.body.copyWith(color: Colors.white70),
                 textAlign: TextAlign.center),
-            const SizedBox(height: AppSpacing.lg),
+            SizedBox(height: AppSpacing.lg),
             OutlinedButton(
               onPressed: onRetake,
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.white,
-                side: const BorderSide(color: Colors.white54),
+                side: BorderSide(color: Colors.white54),
               ),
-              child: const Text('Try Again'),
+              child: Text(l.commonTryAgain),
             ),
           ],
         ),

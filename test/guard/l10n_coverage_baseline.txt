@@ -295,71 +295,10 @@ features/onboarding/presentation/feature_tour.dart	Skip
 features/onboarding/presentation/feature_tour.dart	← Back
 features/onboarding/presentation/onboarding_screen.dart	u{1F4CA}
 features/onboarding/presentation/onboarding_screen.dart	u{1F9E0}
-features/photo_question/presentation/camera_screen.dart	Better photo = better answers from Mochi
-features/photo_question/presentation/camera_screen.dart	Bright light
-features/photo_question/presentation/camera_screen.dart	Charts ✕
-features/photo_question/presentation/camera_screen.dart	Clear numbers ✓
-features/photo_question/presentation/camera_screen.dart	Diagrams ⚠️
-features/photo_question/presentation/camera_screen.dart	Fill the frame
-features/photo_question/presentation/camera_screen.dart	Got it, close tips
-features/photo_question/presentation/camera_screen.dart	Graphs, charts & shapes don't scan well. Type those values yourself.
-features/photo_question/presentation/camera_screen.dart	Hold still
-features/photo_question/presentation/camera_screen.dart	Keep it straight
-features/photo_question/presentation/camera_screen.dart	Neat handwriting ✓
-features/photo_question/presentation/camera_screen.dart	Printed text ✓
-features/photo_question/presentation/camera_screen.dart	Symbols ⚠️
-features/photo_question/presentation/camera_screen.dart	Type instead
-features/photo_question/presentation/camera_screen.dart	What Mochi reads:
-features/photo_question/presentation/camera_screen.dart	What can I read? ›
-features/photo_question/presentation/camera_screen.dart	📚 Point at your homework question
-features/photo_question/presentation/camera_screen.dart	📷 Tips for best results
-features/photo_question/presentation/homework_scan_detail_screen.dart	$questionCount question${questionCount == 1 ? 
 features/photo_question/presentation/homework_scan_detail_screen.dart	+$xpEarned XP
-features/photo_question/presentation/homework_scan_detail_screen.dart	Homework Results
-features/photo_question/presentation/homework_scan_detail_screen.dart	Nothing to share yet.
-features/photo_question/presentation/homework_scan_detail_screen.dart	Share results
-features/photo_question/presentation/homework_scan_detail_screen.dart	What next?
-features/photo_question/presentation/homework_scan_detail_screen.dart	🎯 Quiz me on this
-features/photo_question/presentation/homework_scan_detail_screen.dart	💡 Another example
-features/photo_question/presentation/homework_scan_detail_screen.dart	📝 Show full working
-features/photo_question/presentation/homework_scan_detail_screen.dart	🔍 I found $count question${count == 1 ? 
-features/photo_question/presentation/photo_preview_screen.dart	${questions.length} question${questions.length == 1 ? 
-features/photo_question/presentation/photo_preview_screen.dart	Could not read photo
-features/photo_question/presentation/photo_preview_screen.dart	Detecting questions… 🔍
-features/photo_question/presentation/photo_preview_screen.dart	Edit questions
-features/photo_question/presentation/photo_preview_screen.dart	Retake
-features/photo_question/presentation/photo_preview_screen.dart	Try Again
 features/photo_question/presentation/widgets/edit_questions_sheet.dart	${index + 1}
-features/photo_question/presentation/widgets/edit_questions_sheet.dart	Done — use these questions ✓
-features/photo_question/presentation/widgets/edit_questions_sheet.dart	Fix any text Mochi misread
-features/photo_question/presentation/widgets/edit_questions_sheet.dart	✏️  Edit Questions
-features/photo_question/presentation/widgets/retake_confirmation_dialog.dart	Choose from Gallery
-features/photo_question/presentation/widgets/retake_confirmation_dialog.dart	Keep Photo
-features/photo_question/presentation/widgets/retake_confirmation_dialog.dart	Retake
-features/photo_question/presentation/widgets/retake_confirmation_dialog.dart	Retake photo?
-features/photo_question/presentation/widgets/retake_confirmation_dialog.dart	You'll lose the current scan. Choose what to do:
 features/photo_question/screens/ocr_confidence_preview_screen.dart	$pct%
 features/photo_question/screens/ocr_confidence_preview_screen.dart	${(item.confidence * 100).round()}%
-features/photo_question/screens/ocr_confidence_preview_screen.dart	Great! ✓
-features/photo_question/screens/ocr_confidence_preview_screen.dart	Here's what Mochi found in your photo:
-features/photo_question/screens/ocr_confidence_preview_screen.dart	High (>85%)
-features/photo_question/screens/ocr_confidence_preview_screen.dart	Mochi's Reading Report
-features/photo_question/screens/ocr_confidence_preview_screen.dart	OK-ish
-features/photo_question/screens/ocr_confidence_preview_screen.dart	Per question:
-features/photo_question/screens/ocr_confidence_preview_screen.dart	Risky (<50%)
-features/photo_question/screens/ocr_confidence_preview_screen.dart	Send anyway (Mochi will do its best)
-features/photo_question/screens/ocr_confidence_preview_screen.dart	Tricky (50–85%)
-features/photo_question/screens/ocr_confidence_preview_screen.dart	Tricky ⚠️
-features/photo_question/screens/ocr_confidence_preview_screen.dart	✏️  Fix text manually
-features/photo_question/screens/ocr_confidence_preview_screen.dart	💡 Better quality photos = more accurate answers
-features/photo_question/screens/photo_review_screen.dart	${_questions.length} question${_questions.length == 1 ? 
-features/photo_question/screens/photo_review_screen.dart	Choose from gallery
-features/photo_question/screens/photo_review_screen.dart	Done
-features/photo_question/screens/photo_review_screen.dart	Edit question text…
-features/photo_question/screens/photo_review_screen.dart	Keep this photo
-features/photo_question/screens/photo_review_screen.dart	Retake
-features/photo_question/screens/photo_review_screen.dart	Retake photo
-features/photo_question/screens/photo_review_screen.dart	What would you like to do?
 features/progress/presentation/level_up_overlay.dart	$newLevel
 features/progress/presentation/mastery_card.dart	${subject.mastered}/${subject.total}  $pct%
 features/progress/presentation/progress_screen.dart	$pct%

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/shared/models/photo_question.dart';
@@ -58,6 +59,7 @@ class _EditQuestionsSheetState extends State<EditQuestionsSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.sizeOf(context).height * 0.85,
@@ -87,18 +89,18 @@ class _EditQuestionsSheetState extends State<EditQuestionsSheet> {
 
           // Header
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 16, 4),
+            padding: EdgeInsets.fromLTRB(20, 8, 16, 4),
             child: Row(
               children: [
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('✏️  Edit Questions',
+                      Text(l.photoEditQuestionsTitle,
                           style: AppTextStyles.title.copyWith(fontSize: 16)),
-                      const SizedBox(height: 2),
+                      SizedBox(height: 2),
                       Text(
-                        'Fix any text Mochi misread',
+                        l.photoFixMisread(l.mascotName),
                         style: AppTextStyles.bodySmall
                             .copyWith(color: AppColors.text2),
                       ),
@@ -168,8 +170,8 @@ class _EditQuestionsSheetState extends State<EditQuestionsSheet> {
                 widget.onSave(updated);
                 Navigator.of(context).pop();
               },
-              child: const Text(
-                'Done — use these questions ✓',
+              child: Text(
+                l.photoDoneUse,
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,

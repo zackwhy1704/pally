@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -37,6 +38,7 @@ class _HomeworkScanDetailScreenState extends State<HomeworkScanDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final result = widget.result;
     final answers = result.answers;
 
@@ -46,19 +48,19 @@ class _HomeworkScanDetailScreenState extends State<HomeworkScanDetailScreen> {
         backgroundColor: AppColors.surface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+          icon: Icon(Icons.arrow_back_ios_new_rounded,
               color: AppColors.text1, size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text('Homework Results',
+        title: Text(l.photoHomeworkResults,
             style: AppTextStyles.title.copyWith(fontSize: 16)),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.share_rounded,
+            icon: Icon(Icons.share_rounded,
                 color: AppColors.purple, size: 22),
             onPressed: _share,
-            tooltip: 'Share results',
+            tooltip: l.photoShareResults,
           ),
         ],
       ),
@@ -109,7 +111,7 @@ class _HomeworkScanDetailScreenState extends State<HomeworkScanDetailScreen> {
             );
           }),
 
-          const SizedBox(height: AppSpacing.sm),
+          SizedBox(height: AppSpacing.sm),
 
           // Follow-up actions
           _FollowUpSection(result: result),
@@ -119,10 +121,11 @@ class _HomeworkScanDetailScreenState extends State<HomeworkScanDetailScreen> {
   }
 
   void _share() {
+    final l = AppLocalizations.of(context);
     final answers = widget.result.answers;
     if (answers.isEmpty) {
       showAppSnackBar(
-        const SnackBar(content: Text('Nothing to share yet.')),
+        SnackBar(content: Text(l.photoNothingShare)),
       );
       return;
     }
@@ -188,11 +191,12 @@ class _StatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Row(
       children: [
         _StatChip(
           icon: '🔍',
-          label: '$questionCount question${questionCount == 1 ? '' : 's'}',
+          label: l.photoQuestionCount(questionCount),
           color: AppColors.purple,
           bgColor: AppColors.purpleL,
         ),
@@ -264,16 +268,17 @@ class _ResultBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: AppColors.purpleL,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.purple.withValues(alpha: 0.2)),
       ),
       child: Text(
-        '🔍 I found $count question${count == 1 ? '' : 's'}! Here are the solutions:',
+        l.photoIFound(count),
         style: AppTextStyles.bodySmall.copyWith(
           color: AppColors.purple,
           fontWeight: FontWeight.w600,
@@ -286,32 +291,33 @@ class _ResultBanner extends StatelessWidget {
 // ── Follow-up section ─────────────────────────────────────────────────────────
 
 class _FollowUpSection extends StatelessWidget {
-  const _FollowUpSection({required this.result});
+  _FollowUpSection({required this.result});
   final HomeworkScanResult result;
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('What next?',
+        Text(l.photoWhatNext,
             style:
                 AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700)),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: AppSpacing.sm),
         Wrap(
           spacing: AppSpacing.sm,
           runSpacing: AppSpacing.sm,
           children: [
             _ActionChip(
-              label: '📝 Show full working',
+              label: l.photoShowWorking,
               onTap: () {},
             ),
             _ActionChip(
-              label: '💡 Another example',
+              label: l.photoAnotherExample,
               onTap: () {},
             ),
             _ActionChip(
-              label: '🎯 Quiz me on this',
+              label: l.photoQuizMe,
               onTap: () {},
             ),
           ],

@@ -2150,4 +2150,225 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get flashcardFilterDone => 'Done';
+
+  @override
+  String photoBetterPhoto(String mascot) {
+    return 'Better photo = better answers from $mascot';
+  }
+
+  @override
+  String get photoBrightLight => 'Bright light';
+
+  @override
+  String get photoChartsX => 'Charts ✕';
+
+  @override
+  String get photoClearNumbers => 'Clear numbers ✓';
+
+  @override
+  String get photoDiagramsWarn => 'Diagrams ⚠️';
+
+  @override
+  String get photoFillFrame => 'Fill the frame';
+
+  @override
+  String get photoCloseTips => 'Got it, close tips';
+
+  @override
+  String get photoGraphsWarn =>
+      'Graphs, charts & shapes don\'t scan well. Type those values yourself.';
+
+  @override
+  String get photoHoldStill => 'Hold still';
+
+  @override
+  String get photoKeepStraight => 'Keep it straight';
+
+  @override
+  String get photoNeatHandwriting => 'Neat handwriting ✓';
+
+  @override
+  String get photoPrintedText => 'Printed text ✓';
+
+  @override
+  String get photoSymbolsWarn => 'Symbols ⚠️';
+
+  @override
+  String get photoTypeInstead => 'Type instead';
+
+  @override
+  String photoWhatReads(String mascot) {
+    return 'What $mascot reads:';
+  }
+
+  @override
+  String get photoWhatCanRead => 'What can I read? ›';
+
+  @override
+  String get photoPointHomework => '📚 Point at your homework question';
+
+  @override
+  String get photoTipsBest => '📷 Tips for best results';
+
+  @override
+  String get photoHomeworkResults => 'Homework Results';
+
+  @override
+  String get photoNothingShare => 'Nothing to share yet.';
+
+  @override
+  String get photoShareResults => 'Share results';
+
+  @override
+  String get photoWhatNext => 'What next?';
+
+  @override
+  String get photoQuizMe => '🎯 Quiz me on this';
+
+  @override
+  String get photoAnotherExample => '💡 Another example';
+
+  @override
+  String get photoShowWorking => '📝 Show full working';
+
+  @override
+  String photoQuestionCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count questions',
+      one: '1 question',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String photoIFound(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '🔍 I found $count questions! Here are the solutions:',
+      one: '🔍 I found 1 question! Here are the solutions:',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String photoQuestionsFound(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count questions found',
+      one: '1 question found',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String photoSendQuestions(int count, String mascot) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Send $count questions to $mascot ✨',
+      one: 'Send 1 question to $mascot ✨',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get photoCouldNotRead => 'Could not read photo';
+
+  @override
+  String get photoDetecting => 'Detecting questions… 🔍';
+
+  @override
+  String get photoEditQuestions => 'Edit questions';
+
+  @override
+  String get photoRetake => 'Retake';
+
+  @override
+  String get photoDoneUse => 'Done — use these questions ✓';
+
+  @override
+  String photoFixMisread(String mascot) {
+    return 'Fix any text $mascot misread';
+  }
+
+  @override
+  String get photoEditQuestionsTitle => '✏️  Edit Questions';
+
+  @override
+  String get photoChooseGallery => 'Choose from Gallery';
+
+  @override
+  String get photoKeepPhoto => 'Keep Photo';
+
+  @override
+  String get photoRetakeConfirm => 'Retake photo?';
+
+  @override
+  String get photoRetakeBody =>
+      'You\'ll lose the current scan. Choose what to do:';
+
+  @override
+  String get photoGreat => 'Great! ✓';
+
+  @override
+  String photoFoundInPhoto(String mascot) {
+    return 'Here\'s what $mascot found in your photo:';
+  }
+
+  @override
+  String get photoConfHigh => 'High (>85%)';
+
+  @override
+  String photoReadingReport(String mascot) {
+    return '$mascot\'s Reading Report';
+  }
+
+  @override
+  String get photoConfOkish => 'OK-ish';
+
+  @override
+  String get photoPerQuestion => 'Per question:';
+
+  @override
+  String get photoConfRisky => 'Risky (<50%)';
+
+  @override
+  String photoSendAnyway(String mascot) {
+    return 'Send anyway ($mascot will do its best)';
+  }
+
+  @override
+  String get photoConfTricky => 'Tricky (50–85%)';
+
+  @override
+  String get photoTrickyWarn => 'Tricky ⚠️';
+
+  @override
+  String get photoFixManually => '✏️  Fix text manually';
+
+  @override
+  String get photoBetterQuality =>
+      '💡 Better quality photos = more accurate answers';
+
+  @override
+  String get photoChooseGalleryLower => 'Choose from gallery';
+
+  @override
+  String get photoDone => 'Done';
+
+  @override
+  String get photoEditText => 'Edit question text…';
+
+  @override
+  String get photoKeepThisPhoto => 'Keep this photo';
+
+  @override
+  String get photoRetakePhoto => 'Retake photo';
+
+  @override
+  String get photoWhatToDo => 'What would you like to do?';
 }
