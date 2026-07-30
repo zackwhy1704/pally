@@ -2995,4 +2995,188 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get wikiSelectChapters => 'Select one or more chapters';
+
+  @override
+  String get createTutorSubjectTitle => 'What subject?';
+
+  @override
+  String createTutorSubjectPrompt(String name) {
+    return 'What will $name help you with?';
+  }
+
+  @override
+  String get createTutorSubjectHint => 'e.g. Maths, Science, Guitar…';
+
+  @override
+  String get createTutorQuickPicks => 'Quick picks';
+
+  @override
+  String get createTutorGradeTitle => 'Almost there! 🎓';
+
+  @override
+  String createTutorGradePrompt(String name) {
+    return 'Help $name teach at the right level. (Optional)';
+  }
+
+  @override
+  String get createTutorSelectAge => 'Select age (optional)';
+
+  @override
+  String get createTutorNotSet => '— Not set —';
+
+  @override
+  String createTutorCreateName(String name) {
+    return 'Create $name! 🎉';
+  }
+
+  @override
+  String createTutorNameTitle(String mascot) {
+    return 'Give your $mascot a name';
+  }
+
+  @override
+  String createTutorNamePrompt(String mascot) {
+    return 'What would you like to call your $mascot?';
+  }
+
+  @override
+  String get createTutorNameHint => 'e.g. Robo, Prof. Felix…';
+
+  @override
+  String createTutorChooseTitle(String mascot) {
+    return 'Choose Your $mascot';
+  }
+
+  @override
+  String createTutorChooseSubtitle(String mascot) {
+    return 'Pick a $mascot that matches your vibe! 🎉';
+  }
+
+  @override
+  String createTutorLoadFailed(String mascot) {
+    return 'Could not load ${mascot}s — tap to retry.';
+  }
+
+  @override
+  String get createTutorCharLocked => 'Character Locked';
+
+  @override
+  String createTutorUnlockPrompt(String name) {
+    return 'Earn XP to open a mystery box and unlock $name!';
+  }
+
+  @override
+  String get createTutorOpenMysteryBox => 'Open Mystery Box';
+
+  @override
+  String get createTutorStarsToUnlock => '600 ⭐ to unlock';
+
+  @override
+  String createTutorScreenTitle(String mascot) {
+    return 'Create $mascot';
+  }
+
+  @override
+  String createTutorErrFailed(String mascot) {
+    return 'Could not create $mascot. Please try again.';
+  }
+
+  @override
+  String get chatGeneralKnowledge =>
+      '🌐 general knowledge — upload notes for tailored answers';
+
+  @override
+  String get chatFromYourNotes => '📖 from your notes';
+
+  @override
+  String get reportTitle => 'Report this message';
+
+  @override
+  String reportBlurb(String mascot) {
+    return 'Help us keep $mascot safe and helpful. We\'ll look into it.';
+  }
+
+  @override
+  String reportReasonUnsafe(String mascot) {
+    return 'Something $mascot said was not safe or upsetting';
+  }
+
+  @override
+  String reportReasonWrong(String mascot) {
+    return '$mascot got it wrong or was confusing';
+  }
+
+  @override
+  String get reportReasonOther => 'Something else';
+
+  @override
+  String get reportCommentLabel => 'Want to tell us more? (optional)';
+
+  @override
+  String get reportCommentHint => 'Type here…';
+
+  @override
+  String get reportSend => 'Send report';
+
+  @override
+  String reportFooter(String mascot) {
+    return 'Your report helps keep $mascot safe.';
+  }
+
+  @override
+  String get homeworkCouldNotSolve =>
+      'Could not solve these questions. Please try again with a clearer photo.';
+
+  @override
+  String get homeworkViewFullResults => 'Tap to view full results →';
+
+  @override
+  String homeworkSolvedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Solved $count questions!',
+      one: 'Solved 1 question!',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String homeworkXpEarned(int xp) {
+    return '+$xp XP earned';
+  }
+
+  @override
+  String get homeworkShowWorking => '📝 Show full working';
+
+  @override
+  String get homeworkAnotherExample => '🔄 Another example';
+
+  @override
+  String get homeworkQuizMe => '⚡ Quiz me on this';
+
+  @override
+  String homeworkFromPage(String page) {
+    return '📖 from $page.md';
+  }
+
+  @override
+  String photoQuestionsDetected(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count questions detected',
+      one: '1 question detected',
+    );
+    return '📷 $_temp0';
+  }
+
+  @override
+  String get photoHomeworkPhoto => '📷 Homework photo';
+
+  @override
+  String get photoReadingHomework => 'Hold on, I\'m reading your homework… 🔍';
+
+  @override
+  String get answerCardShow => 'Show →';
 }

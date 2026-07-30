@@ -465,3 +465,27 @@ off-topic, get-it-checked / share-review-link / fix-my-notes, could-not-save). I
 counts (`wikiChaptersNotCompiled`, `wikiHasntReadChapters`, `wikiChaptersOverLimit`,
 `wikiChaptersSelectedCount`, `wikiCompileAll`); mascot via {mascot}. serverMessage-style backend copy
 (conflict/delete dialogs) untouched — those are AI/teacher content, not chrome.
+
+### PR-I — create-tutor flow + chat residue (44 keys)
+
+`subject_step`, `grade_step`, `name_step`, `character_picker_step`, `create_tutor_screen` +
+`create_tutor_view_model` (typed error), and the chat widget residue after PR6:
+`chat_screen` (source-badge chips), `report_message_sheet`, `homework_scan_result_bubble`,
+`photo_message_bubble`, `photo_processing_bubble`, `answer_card`.
+
+The create-tutor stepper (subject/age/name/character prompts, quick-picks, mystery-box unlock),
+the report-message sheet (title, blurb, 3 reason tiles, comment field, send/footer), homework-scan
+result (solved-count plural, XP earned, follow-up chips, source badge), photo bubbles (questions-detected
+plural, homework-photo caption), the answer-card "Show →". ICU plurals on `homeworkSolvedCount` /
+`photoQuestionsDetected`; mascot via {mascot}; tutor-name via {name}. Architectural: `create_tutor_view_model`
+now returns a typed `CreateTutorError{kind, detail?}` resolved by `create_tutor_error_localizer` at render
+(same PR-G3 layering pattern — notifier free of AppLocalizations). Reuses `onboardingNext`/`inviteDismiss`/
+`commonTryAgain`/`uploadErrNoInternet`.
+
+DEFERRED (not string-extraction work — ledgered, NOT silently skipped):
+- `chat_view_model` **system-message CONTENT** (`'Sorry, I had trouble answering that…'`, `'📷 Homework photo'`
+  as a persisted message, the two consent lines) is written into the message stream and saved to the local DB +
+  synced to the backend — localizing it needs a typed system-message-kind on the Message model (render the words
+  in the bubble from the kind), which is a data-model change out of scope here.
+- The two **consent** lines in `chat_view_model` (`'Your account is waiting for a grown-up…'`,
+  `'Mochi needs your consent to chat…'`) are COMPLIANCE copy → belong to **PR-J** with the byte-faithful care.

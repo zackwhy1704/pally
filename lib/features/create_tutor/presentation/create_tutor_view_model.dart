@@ -11,6 +11,21 @@ part 'create_tutor_view_model.g.dart';
 
 enum CreateTutorStep { character, name, subject, grade }
 
+/// Typed create-tutor failure. The view-model owns the error IDENTITY; the
+/// screen resolves it to wording at render (see create_tutor_error_localizer),
+/// so the notifier never imports AppLocalizations (layering) and the message
+/// re-localizes after a live locale switch — the PR-G3 upload pattern.
+enum CreateTutorErrorKind { noInternet, createFailed }
+
+@immutable
+class CreateTutorError {
+  const CreateTutorError(this.kind, {this.detail});
+  final CreateTutorErrorKind kind;
+
+  /// Backend's own message when present (createFailed), shown verbatim.
+  final String? detail;
+}
+
 @immutable
 class CreateTutorState {
   const CreateTutorState({
@@ -31,7 +46,7 @@ class CreateTutorState {
   final String? curriculumType;
   final CreateTutorStep step;
   final bool isLoading;
-  final String? error;
+  final CreateTutorError? error;
 
   bool get canCreate =>
       selectedCharacter != null &&
@@ -63,7 +78,7 @@ class CreateTutorState {
       curriculumType: curriculumType == _sentinel ? this.curriculumType : curriculumType as String?,
       step: step ?? this.step,
       isLoading: isLoading ?? this.isLoading,
-      error: error == _sentinel ? this.error : error as String?,
+      error: error == _sentinel ? this.error : error as CreateTutorError?,
     );
   }
 }
@@ -149,10 +164,12 @@ class CreateTutorViewModel extends _$CreateTutorViewModel {
       // Real failure: surface an actionable error so the user can retry.
       final isNetwork = e.type == DioExceptionType.connectionError ||
           e.type == DioExceptionType.unknown;
-      final message = isNetwork
-          ? 'No internet connection. Check your WiFi and try again.'
-          : (e.message ?? 'Could not create Mochi. Please try again.');
-      state = state.copyWith(error: message);
+      state = state.copyWith(
+        error: isNetwork
+            ? const CreateTutorError(CreateTutorErrorKind.noInternet)
+            : CreateTutorError(CreateTutorErrorKind.createFailed,
+                detail: e.message),
+      );
       return null;
     }
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -38,6 +39,7 @@ class _HomeworkScanResultBubbleState extends State<HomeworkScanResultBubble> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final answers = widget.result.answers;
 
     // Backend error sentinel: when Claude couldn't parse the photo, we get
@@ -61,7 +63,7 @@ class _HomeworkScanResultBubbleState extends State<HomeworkScanResultBubble> {
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(
-                  'Could not solve these questions. Please try again with a clearer photo.',
+                  l.homeworkCouldNotSolve,
                   style: AppTextStyles.body
                       .copyWith(color: AppColors.coral),
                 ),
@@ -121,7 +123,7 @@ class _HomeworkScanResultBubbleState extends State<HomeworkScanResultBubble> {
             ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Tap to view full results →',
+            l.homeworkViewFullResults,
             style: AppTextStyles.caption.copyWith(color: AppColors.text3),
           ),
         ],
@@ -139,6 +141,7 @@ class _ResultHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: const BoxDecoration(
@@ -156,7 +159,7 @@ class _ResultHeader extends StatelessWidget {
           const Text('🎉', style: TextStyle(fontSize: 16)),
           const SizedBox(width: 6),
           Text(
-            'Solved $count question${count == 1 ? '' : 's'}!',
+            l.homeworkSolvedCount(count),
             style:
                 AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700),
           ),
@@ -174,6 +177,7 @@ class _XpBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
@@ -187,7 +191,7 @@ class _XpBadge extends StatelessWidget {
           const Text('⭐', style: TextStyle(fontSize: 14)),
           const SizedBox(width: 4),
           Text(
-            '+$xp XP earned',
+            l.homeworkXpEarned(xp),
             style: AppTextStyles.caption.copyWith(
               color: AppColors.amber,
               fontWeight: FontWeight.w700,
@@ -204,13 +208,14 @@ class _XpBadge extends StatelessWidget {
 class _FollowUpChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Wrap(
       spacing: AppSpacing.xs,
       runSpacing: AppSpacing.xs,
       children: [
-        _Chip(label: '📝 Show full working', onTap: () {}),
-        _Chip(label: '🔄 Another example', onTap: () {}),
-        _Chip(label: '⚡ Quiz me on this', onTap: () {}),
+        _Chip(label: l.homeworkShowWorking, onTap: () {}),
+        _Chip(label: l.homeworkAnotherExample, onTap: () {}),
+        _Chip(label: l.homeworkQuizMe, onTap: () {}),
       ],
     );
   }
@@ -252,6 +257,7 @@ class _SourceBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
@@ -260,7 +266,7 @@ class _SourceBadge extends StatelessWidget {
         border: Border.all(color: AppColors.teal.withValues(alpha: 0.4)),
       ),
       child: Text(
-        '📖 from $pageSlug.md',
+        l.homeworkFromPage(pageSlug),
         style: AppTextStyles.caption.copyWith(
           color: AppColors.teal,
           fontWeight: FontWeight.w600,

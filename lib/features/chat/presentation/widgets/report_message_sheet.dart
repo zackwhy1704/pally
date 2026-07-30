@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -121,6 +122,7 @@ class _ReportForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,19 +143,19 @@ class _ReportForm extends StatelessWidget {
             const Icon(Icons.flag_outlined, color: AppColors.coral, size: 22),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
-              child: Text('Report this message', style: AppTextStyles.title),
+              child: Text(l.reportTitle, style: AppTextStyles.title),
             ),
           ],
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
-          "Help us keep Mochi safe and helpful. We'll look into it.",
+          l.reportBlurb(l.mascotName),
           style: AppTextStyles.bodySmall,
         ),
         const SizedBox(height: AppSpacing.lg),
         _ReasonTile(
           emoji: '😟',
-          label: 'Something Mochi said was not safe or upsetting',
+          label: l.reportReasonUnsafe(l.mascotName),
           selected: selectedReason == ReportReason.unsafe,
           enabled: !isSubmitting,
           onTap: () => onSelectReason(ReportReason.unsafe),
@@ -161,7 +163,7 @@ class _ReportForm extends StatelessWidget {
         const SizedBox(height: AppSpacing.sm),
         _ReasonTile(
           emoji: '🤔',
-          label: 'Mochi got it wrong or was confusing',
+          label: l.reportReasonWrong(l.mascotName),
           selected: selectedReason == ReportReason.wrongOrMisleading,
           enabled: !isSubmitting,
           onTap: () => onSelectReason(ReportReason.wrongOrMisleading),
@@ -169,14 +171,14 @@ class _ReportForm extends StatelessWidget {
         const SizedBox(height: AppSpacing.sm),
         _ReasonTile(
           emoji: '💬',
-          label: 'Something else',
+          label: l.reportReasonOther,
           selected: selectedReason == ReportReason.other,
           enabled: !isSubmitting,
           onTap: () => onSelectReason(ReportReason.other),
         ),
         const SizedBox(height: AppSpacing.lg),
         Text(
-          'Want to tell us more? (optional)',
+          l.reportCommentLabel,
           style: AppTextStyles.label,
         ),
         const SizedBox(height: AppSpacing.xs),
@@ -187,7 +189,7 @@ class _ReportForm extends StatelessWidget {
           maxLength: 500,
           style: AppTextStyles.body,
           decoration: InputDecoration(
-            hintText: 'Type here…',
+            hintText: l.reportCommentHint,
             hintStyle: AppTextStyles.body.copyWith(color: AppColors.text3),
             filled: true,
             fillColor: AppColors.surf2,
@@ -214,7 +216,7 @@ class _ReportForm extends StatelessWidget {
         ],
         const SizedBox(height: AppSpacing.lg),
         PallyButton(
-          label: error != null ? 'Retry' : 'Send report',
+          label: error != null ? l.commonTryAgain : l.reportSend,
           variant: PallyButtonVariant.filled,
           fullWidth: true,
           loading: isSubmitting,
@@ -296,6 +298,7 @@ class _ReportedConfirmation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Builder(
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
@@ -312,7 +315,7 @@ class _ReportedConfirmation extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Your report helps keep Mochi safe.',
+            l.reportFooter(l.mascotName),
             style: AppTextStyles.bodySmall,
             textAlign: TextAlign.center,
           ),

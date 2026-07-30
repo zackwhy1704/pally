@@ -4242,5 +4242,207 @@
     }
   },
   "wikiSelectChapters": "Select one or more chapters",
-  "@wikiSelectChapters": {}
+  "@wikiSelectChapters": {},
+  "createTutorSubjectTitle": "What subject?",
+  "@createTutorSubjectTitle": {},
+  "createTutorSubjectPrompt": "What will {name} help you with?",
+  "@createTutorSubjectPrompt": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "createTutorSubjectHint": "e.g. Maths, Science, Guitar…",
+  "@createTutorSubjectHint": {},
+  "createTutorQuickPicks": "Quick picks",
+  "@createTutorQuickPicks": {},
+  "createTutorGradeTitle": "Almost there! 🎓",
+  "@createTutorGradeTitle": {},
+  "createTutorGradePrompt": "Help {name} teach at the right level. (Optional)",
+  "@createTutorGradePrompt": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "createTutorSelectAge": "Select age (optional)",
+  "@createTutorSelectAge": {},
+  "createTutorNotSet": "— Not set —",
+  "@createTutorNotSet": {},
+  "createTutorCreateName": "Create {name}! 🎉",
+  "@createTutorCreateName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "createTutorNameTitle": "Give your {mascot} a name",
+  "@createTutorNameTitle": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "createTutorNamePrompt": "What would you like to call your {mascot}?",
+  "@createTutorNamePrompt": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "createTutorNameHint": "e.g. Robo, Prof. Felix…",
+  "@createTutorNameHint": {},
+  "createTutorChooseTitle": "Choose Your {mascot}",
+  "@createTutorChooseTitle": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "createTutorChooseSubtitle": "Pick a {mascot} that matches your vibe! 🎉",
+  "@createTutorChooseSubtitle": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "createTutorLoadFailed": "Could not load {mascot}s — tap to retry.",
+  "@createTutorLoadFailed": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "createTutorCharLocked": "Character Locked",
+  "@createTutorCharLocked": {},
+  "createTutorUnlockPrompt": "Earn XP to open a mystery box and unlock {name}!",
+  "@createTutorUnlockPrompt": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "createTutorOpenMysteryBox": "Open Mystery Box",
+  "@createTutorOpenMysteryBox": {},
+  "createTutorStarsToUnlock": "600 ⭐ to unlock",
+  "@createTutorStarsToUnlock": {},
+  "createTutorScreenTitle": "Create {mascot}",
+  "@createTutorScreenTitle": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "createTutorErrFailed": "Could not create {mascot}. Please try again.",
+  "@createTutorErrFailed": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "chatGeneralKnowledge": "🌐 general knowledge — upload notes for tailored answers",
+  "@chatGeneralKnowledge": {},
+  "chatFromYourNotes": "📖 from your notes",
+  "@chatFromYourNotes": {},
+  "reportTitle": "Report this message",
+  "@reportTitle": {},
+  "reportBlurb": "Help us keep {mascot} safe and helpful. We'll look into it.",
+  "@reportBlurb": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "reportReasonUnsafe": "Something {mascot} said was not safe or upsetting",
+  "@reportReasonUnsafe": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "reportReasonWrong": "{mascot} got it wrong or was confusing",
+  "@reportReasonWrong": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "reportReasonOther": "Something else",
+  "@reportReasonOther": {},
+  "reportCommentLabel": "Want to tell us more? (optional)",
+  "@reportCommentLabel": {},
+  "reportCommentHint": "Type here…",
+  "@reportCommentHint": {},
+  "reportSend": "Send report",
+  "@reportSend": {},
+  "reportFooter": "Your report helps keep {mascot} safe.",
+  "@reportFooter": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "homeworkCouldNotSolve": "Could not solve these questions. Please try again with a clearer photo.",
+  "@homeworkCouldNotSolve": {},
+  "homeworkViewFullResults": "Tap to view full results →",
+  "@homeworkViewFullResults": {},
+  "homeworkSolvedCount": "{count, plural, =1{Solved 1 question!} other{Solved {count} questions!}}",
+  "@homeworkSolvedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeworkXpEarned": "+{xp} XP earned",
+  "@homeworkXpEarned": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
+  "homeworkShowWorking": "📝 Show full working",
+  "@homeworkShowWorking": {},
+  "homeworkAnotherExample": "🔄 Another example",
+  "@homeworkAnotherExample": {},
+  "homeworkQuizMe": "⚡ Quiz me on this",
+  "@homeworkQuizMe": {},
+  "homeworkFromPage": "📖 from {page}.md",
+  "@homeworkFromPage": {
+    "placeholders": {
+      "page": {
+        "type": "String"
+      }
+    }
+  },
+  "photoQuestionsDetected": "📷 {count, plural, =1{1 question detected} other{{count} questions detected}}",
+  "@photoQuestionsDetected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "photoHomeworkPhoto": "📷 Homework photo",
+  "@photoHomeworkPhoto": {},
+  "photoReadingHomework": "Hold on, I'm reading your homework… 🔍",
+  "@photoReadingHomework": {},
+  "answerCardShow": "Show →",
+  "@answerCardShow": {}
 }

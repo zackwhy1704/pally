@@ -926,6 +926,7 @@ class _SourceBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     if (_isGeneralKnowledge) {
       return Container(
         padding: const EdgeInsets.symmetric(
@@ -936,7 +937,7 @@ class _SourceBadge extends StatelessWidget {
           border: Border.all(color: AppColors.amber.withValues(alpha: 0.4)),
         ),
         child: Text(
-          '🌐 general knowledge — upload notes for tailored answers',
+          l.chatGeneralKnowledge,
           style: AppTextStyles.caption.copyWith(
             color: AppColors.amberText,
             fontWeight: FontWeight.w600,
@@ -953,7 +954,7 @@ class _SourceBadge extends StatelessWidget {
         border: Border.all(color: AppColors.teal.withValues(alpha: 0.4)),
       ),
       child: Text(
-        '📖 from your notes',
+        l.chatFromYourNotes,
         style: AppTextStyles.caption.copyWith(
           color: AppColors.teal,
           fontWeight: FontWeight.w600,

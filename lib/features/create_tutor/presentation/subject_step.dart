@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
+import 'package:pally/features/create_tutor/presentation/create_tutor_view_model.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -43,7 +45,7 @@ class SubjectStep extends StatefulWidget {
   final ValueChanged<String> onSubjectChanged;
   final bool isLoading;
   final bool canCreate;
-  final String? error;
+  final CreateTutorError? error;
   final VoidCallback? onCreate;
 
   @override
@@ -86,7 +88,8 @@ class _SubjectStepState extends State<SubjectStep> {
 
   @override
   Widget build(BuildContext context) {
-    final name = widget.tutorName.isEmpty ? 'your Mochi' : widget.tutorName;
+    final l = AppLocalizations.of(context);
+    final name = widget.tutorName.isEmpty ? l.mascotName : widget.tutorName;
     final accentColor =
         widget.selectedCharacter?.primaryColor ?? AppColors.purple;
 
@@ -101,10 +104,10 @@ class _SubjectStepState extends State<SubjectStep> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('What subject?', style: AppTextStyles.heading1),
+                  Text(l.createTutorSubjectTitle, style: AppTextStyles.heading1),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    'What will $name help you with?',
+                    l.createTutorSubjectPrompt(name),
                     style:
                         AppTextStyles.body.copyWith(color: AppColors.text2),
                   ),
@@ -114,7 +117,7 @@ class _SubjectStepState extends State<SubjectStep> {
                     onChanged: widget.onSubjectChanged,
                     textCapitalization: TextCapitalization.words,
                     decoration: InputDecoration(
-                      hintText: 'e.g. Maths, Science, Guitar…',
+                      hintText: l.createTutorSubjectHint,
                       prefixIcon: Icon(
                         Icons.menu_book_outlined,
                         color: accentColor,
@@ -129,7 +132,7 @@ class _SubjectStepState extends State<SubjectStep> {
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Text(
-                    'Quick picks',
+                    l.createTutorQuickPicks,
                     style: AppTextStyles.label.copyWith(
                       color: AppColors.text3,
                       letterSpacing: 0.8,
@@ -172,7 +175,7 @@ class _SubjectStepState extends State<SubjectStep> {
             ),
           ),
           PallyButton(
-            label: 'Next →',
+            label: l.onboardingNext,
             onPressed: widget.canCreate ? widget.onCreate : null,
             loading: widget.isLoading,
             fullWidth: true,

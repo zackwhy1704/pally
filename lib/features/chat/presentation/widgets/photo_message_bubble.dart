@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -44,6 +45,7 @@ class PhotoMessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final imagePath = message.imagePath;
     final questionCount = message.photoQuestions.length;
 
@@ -100,7 +102,7 @@ class PhotoMessageBubble extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              '📷 $questionCount question${questionCount == 1 ? '' : 's'} detected',
+                              l.photoQuestionsDetected(questionCount),
                               style: AppTextStyles.caption.copyWith(
                                 color: Colors.white,
                                 fontSize: 8,
@@ -117,7 +119,7 @@ class PhotoMessageBubble extends StatelessWidget {
                 child: Text(
                   message.content.isNotEmpty
                       ? message.content
-                      : '📷 Homework photo',
+                      : l.photoHomeworkPhoto,
                   style: AppTextStyles.bodySmall,
                 ),
               ),

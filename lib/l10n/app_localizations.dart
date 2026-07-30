@@ -4963,6 +4963,270 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select one or more chapters'**
   String get wikiSelectChapters;
+
+  /// No description provided for @createTutorSubjectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What subject?'**
+  String get createTutorSubjectTitle;
+
+  /// No description provided for @createTutorSubjectPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'What will {name} help you with?'**
+  String createTutorSubjectPrompt(String name);
+
+  /// No description provided for @createTutorSubjectHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Maths, Science, Guitar…'**
+  String get createTutorSubjectHint;
+
+  /// No description provided for @createTutorQuickPicks.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick picks'**
+  String get createTutorQuickPicks;
+
+  /// No description provided for @createTutorGradeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost there! 🎓'**
+  String get createTutorGradeTitle;
+
+  /// No description provided for @createTutorGradePrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Help {name} teach at the right level. (Optional)'**
+  String createTutorGradePrompt(String name);
+
+  /// No description provided for @createTutorSelectAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Select age (optional)'**
+  String get createTutorSelectAge;
+
+  /// No description provided for @createTutorNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'— Not set —'**
+  String get createTutorNotSet;
+
+  /// No description provided for @createTutorCreateName.
+  ///
+  /// In en, this message translates to:
+  /// **'Create {name}! 🎉'**
+  String createTutorCreateName(String name);
+
+  /// No description provided for @createTutorNameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Give your {mascot} a name'**
+  String createTutorNameTitle(String mascot);
+
+  /// No description provided for @createTutorNamePrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like to call your {mascot}?'**
+  String createTutorNamePrompt(String mascot);
+
+  /// No description provided for @createTutorNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Robo, Prof. Felix…'**
+  String get createTutorNameHint;
+
+  /// No description provided for @createTutorChooseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Your {mascot}'**
+  String createTutorChooseTitle(String mascot);
+
+  /// No description provided for @createTutorChooseSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a {mascot} that matches your vibe! 🎉'**
+  String createTutorChooseSubtitle(String mascot);
+
+  /// No description provided for @createTutorLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load {mascot}s — tap to retry.'**
+  String createTutorLoadFailed(String mascot);
+
+  /// No description provided for @createTutorCharLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Character Locked'**
+  String get createTutorCharLocked;
+
+  /// No description provided for @createTutorUnlockPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn XP to open a mystery box and unlock {name}!'**
+  String createTutorUnlockPrompt(String name);
+
+  /// No description provided for @createTutorOpenMysteryBox.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Mystery Box'**
+  String get createTutorOpenMysteryBox;
+
+  /// No description provided for @createTutorStarsToUnlock.
+  ///
+  /// In en, this message translates to:
+  /// **'600 ⭐ to unlock'**
+  String get createTutorStarsToUnlock;
+
+  /// No description provided for @createTutorScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create {mascot}'**
+  String createTutorScreenTitle(String mascot);
+
+  /// No description provided for @createTutorErrFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not create {mascot}. Please try again.'**
+  String createTutorErrFailed(String mascot);
+
+  /// No description provided for @chatGeneralKnowledge.
+  ///
+  /// In en, this message translates to:
+  /// **'🌐 general knowledge — upload notes for tailored answers'**
+  String get chatGeneralKnowledge;
+
+  /// No description provided for @chatFromYourNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'📖 from your notes'**
+  String get chatFromYourNotes;
+
+  /// No description provided for @reportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this message'**
+  String get reportTitle;
+
+  /// No description provided for @reportBlurb.
+  ///
+  /// In en, this message translates to:
+  /// **'Help us keep {mascot} safe and helpful. We\'ll look into it.'**
+  String reportBlurb(String mascot);
+
+  /// No description provided for @reportReasonUnsafe.
+  ///
+  /// In en, this message translates to:
+  /// **'Something {mascot} said was not safe or upsetting'**
+  String reportReasonUnsafe(String mascot);
+
+  /// No description provided for @reportReasonWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} got it wrong or was confusing'**
+  String reportReasonWrong(String mascot);
+
+  /// No description provided for @reportReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Something else'**
+  String get reportReasonOther;
+
+  /// No description provided for @reportCommentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Want to tell us more? (optional)'**
+  String get reportCommentLabel;
+
+  /// No description provided for @reportCommentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type here…'**
+  String get reportCommentHint;
+
+  /// No description provided for @reportSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send report'**
+  String get reportSend;
+
+  /// No description provided for @reportFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Your report helps keep {mascot} safe.'**
+  String reportFooter(String mascot);
+
+  /// No description provided for @homeworkCouldNotSolve.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not solve these questions. Please try again with a clearer photo.'**
+  String get homeworkCouldNotSolve;
+
+  /// No description provided for @homeworkViewFullResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to view full results →'**
+  String get homeworkViewFullResults;
+
+  /// No description provided for @homeworkSolvedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Solved 1 question!} other{Solved {count} questions!}}'**
+  String homeworkSolvedCount(int count);
+
+  /// No description provided for @homeworkXpEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'+{xp} XP earned'**
+  String homeworkXpEarned(int xp);
+
+  /// No description provided for @homeworkShowWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'📝 Show full working'**
+  String get homeworkShowWorking;
+
+  /// No description provided for @homeworkAnotherExample.
+  ///
+  /// In en, this message translates to:
+  /// **'🔄 Another example'**
+  String get homeworkAnotherExample;
+
+  /// No description provided for @homeworkQuizMe.
+  ///
+  /// In en, this message translates to:
+  /// **'⚡ Quiz me on this'**
+  String get homeworkQuizMe;
+
+  /// No description provided for @homeworkFromPage.
+  ///
+  /// In en, this message translates to:
+  /// **'📖 from {page}.md'**
+  String homeworkFromPage(String page);
+
+  /// No description provided for @photoQuestionsDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'📷 {count, plural, =1{1 question detected} other{{count} questions detected}}'**
+  String photoQuestionsDetected(int count);
+
+  /// No description provided for @photoHomeworkPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'📷 Homework photo'**
+  String get photoHomeworkPhoto;
+
+  /// No description provided for @photoReadingHomework.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold on, I\'m reading your homework… 🔍'**
+  String get photoReadingHomework;
+
+  /// No description provided for @answerCardShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Show →'**
+  String get answerCardShow;
 }
 
 class _AppLocalizationsDelegate

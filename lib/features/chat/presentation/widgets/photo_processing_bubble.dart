@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -41,6 +42,7 @@ class _PhotoProcessingBubbleState extends State<PhotoProcessingBubble>
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return RepaintBoundary(
       child: Container(
         margin: const EdgeInsets.only(
@@ -60,7 +62,7 @@ class _PhotoProcessingBubbleState extends State<PhotoProcessingBubble>
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Hold on, I\'m reading your homework… 🔍',
+              l.photoReadingHomework,
               style:
                   AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700),
             ),

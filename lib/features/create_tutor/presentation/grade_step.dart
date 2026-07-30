@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -53,7 +54,8 @@ class GradeStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final name = tutorName.isEmpty ? 'your Mochi' : tutorName;
+    final l = AppLocalizations.of(context);
+    final name = tutorName.isEmpty ? l.mascotName : tutorName;
     final accentColor = selectedCharacter?.primaryColor ?? AppColors.purple;
 
     return Padding(
@@ -62,9 +64,9 @@ class GradeStep extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Almost there! 🎓', style: AppTextStyles.heading1),
+          Text(l.createTutorGradeTitle, style: AppTextStyles.heading1),
           const SizedBox(height: AppSpacing.xs),
-          Text('Help $name teach at the right level. (Optional)',
+          Text(l.createTutorGradePrompt(name),
               style: AppTextStyles.body.copyWith(color: AppColors.text2)),
           const SizedBox(height: AppSpacing.lg),
           Expanded(
@@ -81,7 +83,7 @@ class GradeStep extends StatelessWidget {
                   // 13–21+ audience who know their age at a glance.
                   DropdownButtonFormField<String>(
                     value: gradeLevel,
-                    hint: Text('Select age (optional)',
+                    hint: Text(l.createTutorSelectAge,
                         style: AppTextStyles.body
                             .copyWith(color: AppColors.text3)),
                     decoration: InputDecoration(
@@ -107,9 +109,9 @@ class GradeStep extends StatelessWidget {
                     ),
                     items: [
                       // "Clear" option so users can deselect
-                      const DropdownMenuItem<String>(
+                      DropdownMenuItem<String>(
                         value: null,
-                        child: Text('— Not set —'),
+                        child: Text(l.createTutorNotSet),
                       ),
                       ..._ageOptions.map((opt) => DropdownMenuItem<String>(
                             value: opt.value,
@@ -183,7 +185,7 @@ class GradeStep extends StatelessWidget {
                 bottom:
                     AppSpacing.md + MediaQuery.of(context).padding.bottom),
             child: PallyButton(
-                label: 'Create $name! 🎉',
+                label: l.createTutorCreateName(name),
                 onPressed: onCreate,
                 loading: isLoading,
                 fullWidth: true),

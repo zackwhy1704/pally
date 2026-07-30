@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -22,6 +23,7 @@ class CharacterPickerStep extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     // TRUTH RULE: render ONLY the characters the server has released, never the
     // local enum. MochiCharacter.values may carry unreleased painters that must
     // stay invisible until the backend ships them. The released set
@@ -38,10 +40,10 @@ class CharacterPickerStep extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Choose Your Mochi', style: AppTextStyles.heading1),
+              Text(l.createTutorChooseTitle(l.mascotName), style: AppTextStyles.heading1),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                'Pick a Mochi that matches your vibe! 🎉',
+                l.createTutorChooseSubtitle(l.mascotName),
                 style: AppTextStyles.body.copyWith(color: AppColors.text2),
               ),
             ],
@@ -53,7 +55,7 @@ class CharacterPickerStep extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.all(AppSpacing.md),
           child: PallyButton(
-            label: 'Next →',
+            label: l.onboardingNext,
             onPressed: selectedCharacter != null ? onNext : null,
             fullWidth: true,
           ),
@@ -67,6 +69,7 @@ class CharacterPickerStep extends ConsumerWidget {
     WidgetRef ref,
     CollectionState collection,
   ) {
+    final l = AppLocalizations.of(context);
     if (collection.isLoading && collection.entries.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -77,8 +80,8 @@ class CharacterPickerStep extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Could not load Mochis — tap to retry.',
+              Text(
+                l.createTutorLoadFailed(l.mascotName),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppSpacing.sm),
@@ -151,6 +154,7 @@ class _MochiCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   void _showLockedDialog(BuildContext context) {
+    final l = AppLocalizations.of(context);
     showDialog<void>(
       context: context,
       barrierDismissible: true, // tap outside to dismiss
@@ -163,7 +167,7 @@ class _MochiCard extends StatelessWidget {
             const SizedBox(width: 8),
             Flexible(
               child: Text(
-                'Character Locked',
+                l.createTutorCharLocked,
                 style: AppTextStyles.title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -172,14 +176,14 @@ class _MochiCard extends StatelessWidget {
           ],
         ),
         content: Text(
-          'Earn XP to open a mystery box and unlock ${character.displayName}!',
+          l.createTutorUnlockPrompt(character.displayName),
           style: AppTextStyles.body.copyWith(color: AppColors.text2),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
-              'Dismiss',
+              l.inviteDismiss,
               style: AppTextStyles.body.copyWith(color: AppColors.text2),
             ),
           ),
@@ -193,7 +197,7 @@ class _MochiCard extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
             ),
-            child: const Text('Open Mystery Box'),
+            child: Text(l.createTutorOpenMysteryBox),
           ),
         ],
       ),
@@ -202,6 +206,7 @@ class _MochiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return GestureDetector(
       onTap: onTap ?? () => _showLockedDialog(context),
       child: AnimatedContainer(
@@ -274,10 +279,10 @@ class _MochiCard extends StatelessWidget {
                       ),
                     ),
                   if (!isUnlocked)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(top: 2),
                       child: Text(
-                        '600 ⭐ to unlock',
+                        l.createTutorStarsToUnlock,
                         style: TextStyle(color: AppColors.text3, fontSize: 9),
                       ),
                     ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
+import 'package:pally/features/create_tutor/presentation/create_tutor_error_localizer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
@@ -16,12 +18,13 @@ class CreateTutorScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final state = ref.watch(createTutorViewModelProvider);
     final vm = ref.read(createTutorViewModelProvider.notifier);
 
     ref.listen<CreateTutorState>(createTutorViewModelProvider, (_, next) {
       if (next.error != null) {
-        PallyToast.error(context, next.error ?? 'Something went wrong — try again.');
+        PallyToast.error(context, localizedCreateTutorError(l, next.error!));
       }
     });
 
@@ -38,7 +41,7 @@ class CreateTutorScreen extends ConsumerWidget {
             }
           },
         ),
-        title: const Text('Create Mochi'),
+        title: Text(l.createTutorScreenTitle(l.mascotName)),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4),
           child: _StepIndicator(

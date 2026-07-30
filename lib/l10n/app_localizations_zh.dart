@@ -2846,4 +2846,174 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get wikiSelectChapters => '选择一个或多个章节';
+
+  @override
+  String get createTutorSubjectTitle => '学习什么科目？';
+
+  @override
+  String createTutorSubjectPrompt(String name) {
+    return '$name 可以帮你学什么？';
+  }
+
+  @override
+  String get createTutorSubjectHint => '例如：数学、科学、吉他……';
+
+  @override
+  String get createTutorQuickPicks => '快速选择';
+
+  @override
+  String get createTutorGradeTitle => '就快好了！🎓';
+
+  @override
+  String createTutorGradePrompt(String name) {
+    return '帮 $name 按合适的程度教学。（可选）';
+  }
+
+  @override
+  String get createTutorSelectAge => '选择年龄（可选）';
+
+  @override
+  String get createTutorNotSet => '— 未设置 —';
+
+  @override
+  String createTutorCreateName(String name) {
+    return '创建 $name！🎉';
+  }
+
+  @override
+  String createTutorNameTitle(String mascot) {
+    return '给你的 $mascot 取个名字';
+  }
+
+  @override
+  String createTutorNamePrompt(String mascot) {
+    return '你想给你的 $mascot 取什么名字？';
+  }
+
+  @override
+  String get createTutorNameHint => '例如：Robo、Felix 教授……';
+
+  @override
+  String createTutorChooseTitle(String mascot) {
+    return '选择你的 $mascot';
+  }
+
+  @override
+  String createTutorChooseSubtitle(String mascot) {
+    return '挑一个合你心意的 $mascot！🎉';
+  }
+
+  @override
+  String createTutorLoadFailed(String mascot) {
+    return '无法加载 $mascot — 点击重试。';
+  }
+
+  @override
+  String get createTutorCharLocked => '角色未解锁';
+
+  @override
+  String createTutorUnlockPrompt(String name) {
+    return '赚取 XP 打开神秘盒子，解锁 $name！';
+  }
+
+  @override
+  String get createTutorOpenMysteryBox => '打开神秘盒子';
+
+  @override
+  String get createTutorStarsToUnlock => '600 ⭐ 解锁';
+
+  @override
+  String createTutorScreenTitle(String mascot) {
+    return '创建 $mascot';
+  }
+
+  @override
+  String createTutorErrFailed(String mascot) {
+    return '无法创建 $mascot。请再试一次。';
+  }
+
+  @override
+  String get chatGeneralKnowledge => '🌐 通用知识 — 上传笔记以获得针对性解答';
+
+  @override
+  String get chatFromYourNotes => '📖 来自你的笔记';
+
+  @override
+  String get reportTitle => '举报这条消息';
+
+  @override
+  String reportBlurb(String mascot) {
+    return '帮我们让 $mascot 更安全、更有帮助。我们会跟进处理。';
+  }
+
+  @override
+  String reportReasonUnsafe(String mascot) {
+    return '$mascot 说的话不安全或让人难受';
+  }
+
+  @override
+  String reportReasonWrong(String mascot) {
+    return '$mascot 答错了或让人困惑';
+  }
+
+  @override
+  String get reportReasonOther => '其他问题';
+
+  @override
+  String get reportCommentLabel => '想多告诉我们一些吗？（可选）';
+
+  @override
+  String get reportCommentHint => '在此输入……';
+
+  @override
+  String get reportSend => '发送举报';
+
+  @override
+  String reportFooter(String mascot) {
+    return '你的举报有助于保障 $mascot 的安全。';
+  }
+
+  @override
+  String get homeworkCouldNotSolve => '无法解答这些题目。请用更清晰的照片再试一次。';
+
+  @override
+  String get homeworkViewFullResults => '点击查看完整结果 →';
+
+  @override
+  String homeworkSolvedCount(int count) {
+    return '已解答 $count 道题！';
+  }
+
+  @override
+  String homeworkXpEarned(int xp) {
+    return '+$xp XP 到手';
+  }
+
+  @override
+  String get homeworkShowWorking => '📝 显示完整解题步骤';
+
+  @override
+  String get homeworkAnotherExample => '🔄 换个例子';
+
+  @override
+  String get homeworkQuizMe => '⚡ 就这个考考我';
+
+  @override
+  String homeworkFromPage(String page) {
+    return '📖 来自 $page.md';
+  }
+
+  @override
+  String photoQuestionsDetected(int count) {
+    return '📷 检测到 $count 道题';
+  }
+
+  @override
+  String get photoHomeworkPhoto => '📷 作业照片';
+
+  @override
+  String get photoReadingHomework => '稍等，我在看你的作业…… 🔍';
+
+  @override
+  String get answerCardShow => '显示 →';
 }

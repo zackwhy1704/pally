@@ -186,6 +186,6 @@ void main() {
         findsOneWidget);
     // The button relabels to Retry, and the reason picker is still there —
     // never a dead end.
-    expect(find.text('Retry'), findsOneWidget);
+    expect(find.text('Try Again'), findsOneWidget);
   });
 }

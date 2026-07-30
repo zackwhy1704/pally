@@ -102,34 +102,13 @@ features/centre/presentation/centre_join_screen.dart	Join a class
 features/centre/presentation/centre_join_screen.dart	Join class
 features/centre/presentation/centre_join_screen.dart	Joined $className 🎉
 features/chat/presentation/chat_screen.dart	Reported
-features/chat/presentation/chat_screen.dart	🌐 general knowledge — upload notes for tailored answers
-features/chat/presentation/chat_screen.dart	📖 from your notes
 features/chat/presentation/chat_tab_screen.dart	Chat
 features/chat/presentation/chat_view_model.dart	📷 Homework photo
 features/chat/presentation/widgets/answer_card.dart	$questionNumber
 features/chat/presentation/widgets/answer_card.dart	✅  ${answer.answer}
-features/chat/presentation/widgets/homework_scan_result_bubble.dart	+$xp XP earned
-features/chat/presentation/widgets/homework_scan_result_bubble.dart	Could not solve these questions. Please try again with a clearer photo.
-features/chat/presentation/widgets/homework_scan_result_bubble.dart	Solved $count question${count == 1 ? 
-features/chat/presentation/widgets/homework_scan_result_bubble.dart	Tap to view full results →
-features/chat/presentation/widgets/homework_scan_result_bubble.dart	⚡ Quiz me on this
-features/chat/presentation/widgets/homework_scan_result_bubble.dart	📖 from $pageSlug.md
-features/chat/presentation/widgets/homework_scan_result_bubble.dart	📝 Show full working
-features/chat/presentation/widgets/homework_scan_result_bubble.dart	🔄 Another example
-features/chat/presentation/widgets/photo_message_bubble.dart	📷 $questionCount question${questionCount == 1 ? 
-features/chat/presentation/widgets/photo_message_bubble.dart	📷 Homework photo
-features/chat/presentation/widgets/photo_processing_bubble.dart	Hold on, I'm reading your homework… 🔍
 features/chat/presentation/widgets/report_message_sheet.dart	Cancel
 features/chat/presentation/widgets/report_message_sheet.dart	Done
-features/chat/presentation/widgets/report_message_sheet.dart	Help us keep Mochi safe and helpful. We'll look into it.
-features/chat/presentation/widgets/report_message_sheet.dart	Mochi got it wrong or was confusing
-features/chat/presentation/widgets/report_message_sheet.dart	Report this message
-features/chat/presentation/widgets/report_message_sheet.dart	Something Mochi said was not safe or upsetting
-features/chat/presentation/widgets/report_message_sheet.dart	Something else
 features/chat/presentation/widgets/report_message_sheet.dart	Thanks — we'll take a look
-features/chat/presentation/widgets/report_message_sheet.dart	Type here…
-features/chat/presentation/widgets/report_message_sheet.dart	Want to tell us more? (optional)
-features/chat/presentation/widgets/report_message_sheet.dart	Your report helps keep Mochi safe.
 features/chat/widgets/escape_hatch_notification.dart	Added "${widget.topicLabel}" to your practice list
 features/chat/widgets/escape_hatch_notification.dart	Great effort! Here's the answer
 features/chat/widgets/guide_attempt_indicator.dart	Hints: 
@@ -174,32 +153,9 @@ features/consent/presentation/parental_consent_pending_sheet.dart	We'll unlock a
 features/consent/presentation/parental_consent_pending_sheet.dart	Wrong grown-up's email? Change it
 features/consent/presentation/parental_consent_pending_sheet.dart	You're all set! 🎉
 features/consent/presentation/parental_consent_pending_sheet.dart	Your grown-up's email
-features/create_tutor/presentation/character_picker_step.dart	600 ⭐ to unlock
-features/create_tutor/presentation/character_picker_step.dart	Character Locked
-features/create_tutor/presentation/character_picker_step.dart	Choose Your Mochi
-features/create_tutor/presentation/character_picker_step.dart	Could not load Mochis — tap to retry.
-features/create_tutor/presentation/character_picker_step.dart	Dismiss
-features/create_tutor/presentation/character_picker_step.dart	Earn XP to open a mystery box and unlock ${character.displayName}!
-features/create_tutor/presentation/character_picker_step.dart	Next →
-features/create_tutor/presentation/character_picker_step.dart	Open Mystery Box
-features/create_tutor/presentation/character_picker_step.dart	Pick a Mochi that matches your vibe! 🎉
 features/create_tutor/presentation/character_picker_step.dart	Retry
-features/create_tutor/presentation/create_tutor_screen.dart	Create Mochi
-features/create_tutor/presentation/grade_step.dart	Almost there! 🎓
-features/create_tutor/presentation/grade_step.dart	Create $name! 🎉
-features/create_tutor/presentation/grade_step.dart	Help $name teach at the right level. (Optional)
-features/create_tutor/presentation/grade_step.dart	Select age (optional)
 features/create_tutor/presentation/grade_step.dart	WHAT DO YOU WISH MOCHI TO HELP YOU WITH?
-features/create_tutor/presentation/grade_step.dart	— Not set —
-features/create_tutor/presentation/name_step.dart	Give your Mochi a name
 features/create_tutor/presentation/name_step.dart	Next
-features/create_tutor/presentation/name_step.dart	What would you like to call your Mochi?
-features/create_tutor/presentation/name_step.dart	e.g. Robo, Prof. Felix…
-features/create_tutor/presentation/subject_step.dart	Next →
-features/create_tutor/presentation/subject_step.dart	Quick picks
-features/create_tutor/presentation/subject_step.dart	What subject?
-features/create_tutor/presentation/subject_step.dart	What will $name help you with?
-features/create_tutor/presentation/subject_step.dart	e.g. Maths, Science, Guitar…
 features/exam_prep/presentation/exam_prep_screen.dart	$_masteryIcon $pct%
 features/exam_prep/presentation/exam_prep_screen.dart	$daysRemaining
 features/exam_prep/presentation/exam_prep_screen.dart	CONCEPT MASTERY

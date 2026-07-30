@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/features/chat/presentation/widgets/homework_scan_result_bubble.dart';
 import 'package:pally/shared/models/photo_question.dart';
 
-Widget _wrap(Widget child) => MaterialApp(home: Scaffold(body: child));
+Widget _wrap(Widget child) => MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Scaffold(body: child));
 
 const _q1 = PhotoQuestion(id: 'q1', rawText: 'Q1', questionIndex: 1);
 const _q2 = PhotoQuestion(id: 'q2', rawText: 'Q2', questionIndex: 2);

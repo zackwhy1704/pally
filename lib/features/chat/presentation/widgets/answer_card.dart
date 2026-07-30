@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/shared/models/photo_question.dart';
@@ -21,6 +22,7 @@ class AnswerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
       curve: Curves.easeInOut,
@@ -93,7 +95,7 @@ class AnswerCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        isExpanded ? '= ${answer.answer}' : 'Show →',
+                        isExpanded ? '= ${answer.answer}' : l.answerCardShow,
                         style: TextStyle(
                           color: isExpanded ? Colors.white : color,
                           fontSize: 9,

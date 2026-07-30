@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/features/chat/presentation/widgets/answer_card.dart';
@@ -12,7 +13,10 @@ const _testAnswer = QuestionAnswer(
   explanation: 'Simple addition!',
 );
 
-Widget _wrap(Widget child) => MaterialApp(home: Scaffold(body: child));
+Widget _wrap(Widget child) => MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Scaffold(body: child));
 
 void main() {
   group('AnswerCard', () {

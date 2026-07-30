@@ -257,8 +257,10 @@ void main() {
   // ── create_tutor: primary CTA per step (nextStep is ungated) ───────────────
   group('create_tutor stepper CTA', () {
     testWidgets('step 1 (character) — "Next →" on screen', (tester) async {
+      final l = await AppLocalizations.delegate.load(_activeLocale);
       await _pump(tester, const CreateTutorScreen());
-      _expectCtaOnScreen(tester, find.text('Next →'), 'create_tutor character');
+      _expectCtaOnScreen(
+          tester, find.text(l.onboardingNext), 'create_tutor character');
     });
 
     testWidgets('step 2 (name) — "Next" on screen', (tester) async {
@@ -269,12 +271,14 @@ void main() {
     });
 
     testWidgets('step 3 (subject) — "Next →" on screen', (tester) async {
+      final l = await AppLocalizations.delegate.load(_activeLocale);
       final c = await _pump(tester, const CreateTutorScreen());
       c.read(createTutorViewModelProvider.notifier)
         ..nextStep()
         ..nextStep();
       await tester.pump();
-      _expectCtaOnScreen(tester, find.text('Next →'), 'create_tutor subject');
+      _expectCtaOnScreen(
+          tester, find.text(l.onboardingNext), 'create_tutor subject');
     });
 
     testWidgets('step 4 (grade) — "Create" on screen', (tester) async {
@@ -284,8 +288,10 @@ void main() {
         ..nextStep()
         ..nextStep();
       await tester.pump();
+      // createTutorCreateName is 'Create {name}! 🎉' / '创建 {name}！🎉' —
+      // the 🎉 suffix is the locale-stable primary-CTA marker.
       _expectCtaOnScreen(
-          tester, find.textContaining('Create'), 'create_tutor grade');
+          tester, find.textContaining('🎉'), 'create_tutor grade');
     });
   });
 
