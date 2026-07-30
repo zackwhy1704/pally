@@ -7,7 +7,38 @@
 
 ---
 
-## Branch B — UI localization (zh) — EXTRACTION COMPLETE except PR-F, BY MEASUREMENT (2026-07-30)
+## Branch B — UI localization (zh) — CLIENT EXTRACTION COMPLETE, BY MEASUREMENT (2026-07-30)
+
+**STATUS: the coverage baseline is 66 = reasoned permanent-ish allows ONLY. Zero un-localized
+user-facing English remains in the guard's view; every remaining line has an in-file, enforced reason
+(brand / format / nav-fallback / backend-label / device-meta / emoji-escape / deferred-persisted /
+deferred-pallyerror). The two `deferred-*` code items (PallyError central-mapper, typed system-message)
+and the guard-blind-spot extension pass are the only client-side l10n work left — all ledgered below.
+The remaining launch-critical path is HUMAN, not code: native-SG review of `app_zh.arb` (see
+`NEEDS_NATIVE_REVIEW.md`), 🔒 anti-steering + consent/deletion + 小伴 first.**
+
+### PR-F — subscription surface localized IN FULL, not just the 39 measured (2026-07-30, MERGE PENDING at commit below)
+The guard SAW 39 subscription strings; the surface actually had ~115 (the other ~75 were blind-spot:
+switch getters, `const` record/feature lists, default params, ternary `Text` — invisible to the sink
+regex). Localizing only the 39 would have shipped a paywall + countdown banner that render ~90% English
+on a zh device — the exact "measured-looking, wrong in the visible place" failure. So the FULL visible
+surface was localized (113 new keys across all 7 files). Discipline held:
+- **en byte-identical** (App Store 3.1.1 anti-steering copy is a compliance artifact — verified
+  programmatically: every extracted en value, `{mascot}`→Mochi and adjacent-literals joined, matches the
+  pre-PR source).
+- **Prices NOT moved to ARB** — `US$9.99/mo` etc. stay as gated literals behind `allowPriceDisplay`; the
+  conservative compliance choice, and it means the extraction could not blind the price guard.
+- **F0/F3 bracket honoured**: `ios_price_gate_guard` proven to DETECT before (literal path, price-KEY
+  indirection path, anti-vacuous self-check) and STILL detect after the extraction (broke each path,
+  watched it fail, restored, watched it pass).
+- **anti-steering zh flagged 🔒 TOP-PRIORITY** in NEEDS_NATIVE_REVIEW.md (webCtaDefaultIntro,
+  subPlansManageIntro, "Manage/cancel on the web", "Continue on web", etc.) — English-safe today; the zh
+  MUST be vetted (no implied external payment / added steering) before any zh flag flips for real users.
+- Baseline 105 → 66 (all 39 `deferred-PRF` drained, 0 added, 0 unreasoned).
+
+---
+
+## Branch B — earlier history (pre-PR-F)
 
 **CORRECTION (2026-07-29): the earlier "CLIENT EXTRACTION COMPLETE @a8b85d8" claim was SCOPE-based,
 not coverage-based, and was wrong.** 13 PRs localized the surfaces on a scope list (~371 strings). A
