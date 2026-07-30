@@ -4497,4 +4497,32 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get paywallMaybeLater => '以后再说';
+
+  @override
+  String get createTutorLanguageLabel => '教学语言';
+
+  @override
+  String createTutorLanguageHint(String name) {
+    return '$name会用这个语言教你和跟你聊天。';
+  }
+
+  @override
+  String get avatarLanguageMenuLabel => '教学语言';
+
+  @override
+  String get avatarLanguageTitle => '教学语言';
+
+  @override
+  String avatarLanguageBody(String mascot) {
+    return '$mascot会用这个语言生成新的课程、测验和聊天内容。已有的内容会保留创建时的语言 — 重新编译才能用新语言生成。';
+  }
+
+  @override
+  String get avatarLanguageSave => '保存';
+
+  @override
+  String get avatarLanguageSaveError => '无法保存教学语言，请再试一次。';
+
+  @override
+  String get avatarLanguageSaved => '教学语言已更新';
 }

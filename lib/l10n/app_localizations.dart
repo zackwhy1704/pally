@@ -7777,6 +7777,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Maybe later'**
   String get paywallMaybeLater;
+
+  /// No description provided for @createTutorLanguageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'TEACHING LANGUAGE'**
+  String get createTutorLanguageLabel;
+
+  /// No description provided for @createTutorLanguageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} will teach and chat with you in this language.'**
+  String createTutorLanguageHint(String name);
+
+  /// No description provided for @avatarLanguageMenuLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Teaching language'**
+  String get avatarLanguageMenuLabel;
+
+  /// No description provided for @avatarLanguageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Teaching language'**
+  String get avatarLanguageTitle;
+
+  /// No description provided for @avatarLanguageBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} generates new lessons, quizzes and chat in this language. Existing material keeps the language it was created in — recompile to regenerate it.'**
+  String avatarLanguageBody(String mascot);
+
+  /// No description provided for @avatarLanguageSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get avatarLanguageSave;
+
+  /// No description provided for @avatarLanguageSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the teaching language. Please try again.'**
+  String get avatarLanguageSaveError;
+
+  /// No description provided for @avatarLanguageSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Teaching language updated'**
+  String get avatarLanguageSaved;
 }
 
 class _AppLocalizationsDelegate

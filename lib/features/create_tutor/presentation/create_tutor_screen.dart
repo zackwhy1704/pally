@@ -78,8 +78,10 @@ class CreateTutorScreen extends ConsumerWidget {
               curriculumType: state.curriculumType,
               tutorName: state.trimmedName,
               selectedCharacter: state.selectedCharacter,
+              contentLanguage: state.contentLanguage,
               onGradeChanged: vm.setGradeLevel,
               onCurriculumChanged: vm.setCurriculumType,
+              onContentLanguageChanged: vm.setContentLanguage,
               isLoading: state.isLoading,
               onCreate: state.canCreate
                   ? () async {

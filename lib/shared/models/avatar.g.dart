@@ -60,6 +60,7 @@ _$AvatarImpl _$$AvatarImplFromJson(Map<String, dynamic> json) => _$AvatarImpl(
       appearance: _appearanceFromJson(json['appearance']),
       mochiConfig: _mochiConfigFromJson(json['mochiConfig']),
       classId: json['classId'] as String?,
+      contentLanguage: json['contentLanguage'] as String?,
     );
 
 Map<String, dynamic> _$$AvatarImplToJson(_$AvatarImpl instance) =>
@@ -91,6 +92,7 @@ Map<String, dynamic> _$$AvatarImplToJson(_$AvatarImpl instance) =>
       'appearance': _appearanceToJson(instance.appearance),
       'mochiConfig': _mochiConfigToJson(instance.mochiConfig),
       'classId': instance.classId,
+      'contentLanguage': instance.contentLanguage,
     };
 
 _$CreateAvatarRequestImpl _$$CreateAvatarRequestImplFromJson(
@@ -101,6 +103,7 @@ _$CreateAvatarRequestImpl _$$CreateAvatarRequestImplFromJson(
       subject: _subjectFromJson(json['subject']),
       gradeLevel: json['gradeLevel'] as String?,
       curriculumType: json['curriculumType'] as String?,
+      contentLanguage: json['contentLanguage'] as String?,
     );
 
 Map<String, dynamic> _$$CreateAvatarRequestImplToJson(
@@ -111,4 +114,5 @@ Map<String, dynamic> _$$CreateAvatarRequestImplToJson(
       'subject': _subjectToJson(instance.subject),
       'gradeLevel': instance.gradeLevel,
       'curriculumType': instance.curriculumType,
+      'contentLanguage': instance.contentLanguage,
     };

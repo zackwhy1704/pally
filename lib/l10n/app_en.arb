@@ -5342,5 +5342,21 @@
   "paywallSeePlans": "See plans",
   "@paywallSeePlans": {},
   "paywallMaybeLater": "Maybe later",
-  "@paywallMaybeLater": {}
+  "@paywallMaybeLater": {},
+  "createTutorLanguageLabel": "TEACHING LANGUAGE",
+  "@createTutorLanguageLabel": {},
+  "createTutorLanguageHint": "{name} will teach and chat with you in this language.",
+  "@createTutorLanguageHint": {"placeholders": {"name": {"type": "String"}}},
+  "avatarLanguageMenuLabel": "Teaching language",
+  "@avatarLanguageMenuLabel": {},
+  "avatarLanguageTitle": "Teaching language",
+  "@avatarLanguageTitle": {},
+  "avatarLanguageBody": "{mascot} generates new lessons, quizzes and chat in this language. Existing material keeps the language it was created in — recompile to regenerate it.",
+  "@avatarLanguageBody": {"placeholders": {"mascot": {"type": "String"}}},
+  "avatarLanguageSave": "Save",
+  "@avatarLanguageSave": {},
+  "avatarLanguageSaveError": "Could not save the teaching language. Please try again.",
+  "@avatarLanguageSaveError": {},
+  "avatarLanguageSaved": "Teaching language updated",
+  "@avatarLanguageSaved": {}
 }

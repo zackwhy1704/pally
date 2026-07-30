@@ -4741,4 +4741,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paywallMaybeLater => 'Maybe later';
+
+  @override
+  String get createTutorLanguageLabel => 'TEACHING LANGUAGE';
+
+  @override
+  String createTutorLanguageHint(String name) {
+    return '$name will teach and chat with you in this language.';
+  }
+
+  @override
+  String get avatarLanguageMenuLabel => 'Teaching language';
+
+  @override
+  String get avatarLanguageTitle => 'Teaching language';
+
+  @override
+  String avatarLanguageBody(String mascot) {
+    return '$mascot generates new lessons, quizzes and chat in this language. Existing material keeps the language it was created in — recompile to regenerate it.';
+  }
+
+  @override
+  String get avatarLanguageSave => 'Save';
+
+  @override
+  String get avatarLanguageSaveError =>
+      'Could not save the teaching language. Please try again.';
+
+  @override
+  String get avatarLanguageSaved => 'Teaching language updated';
 }

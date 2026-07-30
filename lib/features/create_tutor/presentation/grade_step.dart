@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pally/l10n/app_localizations.dart';
+import 'package:pally/core/i18n/app_languages.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -37,8 +38,10 @@ class GradeStep extends StatelessWidget {
     required this.curriculumType,
     required this.tutorName,
     required this.selectedCharacter,
+    required this.contentLanguage,
     required this.onGradeChanged,
     required this.onCurriculumChanged,
+    required this.onContentLanguageChanged,
     required this.isLoading,
     required this.onCreate,
   });
@@ -47,8 +50,13 @@ class GradeStep extends StatelessWidget {
   final String? curriculumType;
   final String tutorName;
   final MochiCharacter? selectedCharacter;
+
+  /// The language this avatar will generate content in — always a valid
+  /// [AppLanguages] code (defaulted by the view model, never null here).
+  final String contentLanguage;
   final ValueChanged<String?> onGradeChanged;
   final ValueChanged<String?> onCurriculumChanged;
+  final ValueChanged<String> onContentLanguageChanged;
   final bool isLoading;
   final VoidCallback? onCreate;
 
@@ -176,6 +184,28 @@ class GradeStep extends StatelessWidget {
                       ),
                     );
                   }),
+                  const SizedBox(height: AppSpacing.lg),
+                  Text(l.createTutorLanguageLabel,
+                      style: AppTextStyles.label.copyWith(
+                          color: AppColors.text3, letterSpacing: 0.8)),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(l.createTutorLanguageHint(name),
+                      style: AppTextStyles.caption
+                          .copyWith(color: AppColors.text3)),
+                  const SizedBox(height: AppSpacing.sm),
+                  Wrap(
+                    spacing: AppSpacing.sm,
+                    runSpacing: AppSpacing.sm,
+                    children: [
+                      for (final lang in AppLanguages.all)
+                        _LanguageChip(
+                          label: lang.endonym,
+                          selected: contentLanguage == lang.code,
+                          accentColor: accentColor,
+                          onTap: () => onContentLanguageChanged(lang.code),
+                        ),
+                    ],
+                  ),
                   const SizedBox(height: AppSpacing.md),
                 ],
               ),
@@ -193,6 +223,58 @@ class GradeStep extends StatelessWidget {
                 fullWidth: true),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Selectable pill for one [AppLanguages] entry. Deliberately a flat list of
+/// registry entries, not a hardcoded en/zh pair — adding a language later is a
+/// registry edit (see app_languages.dart), never a change here.
+class _LanguageChip extends StatelessWidget {
+  const _LanguageChip({
+    required this.label,
+    required this.selected,
+    required this.accentColor,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final Color accentColor;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: selected
+              ? accentColor.withValues(alpha: 0.1)
+              : AppColors.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+              color: selected ? accentColor : AppColors.outline,
+              width: selected ? 2 : 1),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(label,
+                style: AppTextStyles.body.copyWith(
+                    color: selected ? accentColor : AppColors.text1,
+                    fontWeight:
+                        selected ? FontWeight.w600 : FontWeight.w400,
+                    fontSize: 13)),
+            if (selected) ...[
+              const SizedBox(width: 6),
+              Icon(Icons.check_circle_rounded, color: accentColor, size: 16),
+            ],
+          ],
+        ),
       ),
     );
   }

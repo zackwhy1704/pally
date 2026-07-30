@@ -1279,5 +1279,13 @@
   "paywallPerk4": "家长面板 + 每周报告",
   "paywallPerk5": "3 个连胜冻结（原本 1 个）",
   "paywallSeePlans": "查看方案",
-  "paywallMaybeLater": "以后再说"
+  "paywallMaybeLater": "以后再说",
+  "createTutorLanguageLabel": "教学语言",
+  "createTutorLanguageHint": "{name}会用这个语言教你和跟你聊天。",
+  "avatarLanguageMenuLabel": "教学语言",
+  "avatarLanguageTitle": "教学语言",
+  "avatarLanguageBody": "{mascot}会用这个语言生成新的课程、测验和聊天内容。已有的内容会保留创建时的语言 — 重新编译才能用新语言生成。",
+  "avatarLanguageSave": "保存",
+  "avatarLanguageSaveError": "无法保存教学语言，请再试一次。",
+  "avatarLanguageSaved": "教学语言已更新"
 }

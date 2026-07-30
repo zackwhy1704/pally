@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:pally/core/i18n/locale_controller.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/shared/models/avatar.dart';
@@ -34,6 +35,11 @@ class CreateTutorState {
     this.subject,
     this.gradeLevel,
     this.curriculumType,
+    // Direct construction (tests, or any future call site) falls back to the
+    // literal 'en' (AppLanguages.fallback.code isn't const-foldable here).
+    // The REAL default — the app's currently resolved UI locale — is
+    // computed in [CreateTutorViewModel.build], never here.
+    this.contentLanguage = 'en',
     this.step = CreateTutorStep.character,
     this.isLoading = false,
     this.error,
@@ -44,6 +50,15 @@ class CreateTutorState {
   final String? subject;
   final String? gradeLevel;
   final String? curriculumType;
+
+  /// The language this avatar will generate content in — a code from the
+  /// AppLanguages registry (English, Chinese, …).
+  /// Defaulted at [CreateTutorViewModel.build] to the app's CURRENTLY
+  /// RESOLVED UI locale (persisted choice → device locale → English — the
+  /// same chain main.dart resolves once at bootstrap), not always 'en'. A
+  /// user whose phone/app is already in Chinese gets a Chinese-content Mochi
+  /// by default; the grade step still lets them override it before creating.
+  final String contentLanguage;
   final CreateTutorStep step;
   final bool isLoading;
   final CreateTutorError? error;
@@ -64,6 +79,7 @@ class CreateTutorState {
     Object? subject = _sentinel,
     Object? gradeLevel = _sentinel,
     Object? curriculumType = _sentinel,
+    String? contentLanguage,
     CreateTutorStep? step,
     bool? isLoading,
     Object? error = _sentinel,
@@ -76,6 +92,7 @@ class CreateTutorState {
       subject: subject == _sentinel ? this.subject : subject as String?,
       gradeLevel: gradeLevel == _sentinel ? this.gradeLevel : gradeLevel as String?,
       curriculumType: curriculumType == _sentinel ? this.curriculumType : curriculumType as String?,
+      contentLanguage: contentLanguage ?? this.contentLanguage,
       step: step ?? this.step,
       isLoading: isLoading ?? this.isLoading,
       error: error == _sentinel ? this.error : error as CreateTutorError?,
@@ -88,7 +105,12 @@ const _sentinel = Object();
 @riverpod
 class CreateTutorViewModel extends _$CreateTutorViewModel {
   @override
-  CreateTutorState build() => const CreateTutorState();
+  CreateTutorState build() => CreateTutorState(
+        // Default to the CURRENTLY RESOLVED UI locale, not always 'en'. This
+        // reuses the single already-established chain (persisted → device →
+        // English fallback) rather than re-deriving from PlatformDispatcher.
+        contentLanguage: ref.read(localeControllerProvider).languageCode,
+      );
 
   void selectCharacter(MochiCharacter? character) {
     state = state.copyWith(
@@ -111,6 +133,10 @@ class CreateTutorViewModel extends _$CreateTutorViewModel {
 
   void setCurriculumType(String? curriculum) {
     state = state.copyWith(curriculumType: curriculum);
+  }
+
+  void setContentLanguage(String language) {
+    state = state.copyWith(contentLanguage: language);
   }
 
   void nextStep() {
@@ -142,6 +168,7 @@ class CreateTutorViewModel extends _$CreateTutorViewModel {
         subject: state.subject!.trim(),
         gradeLevel: state.gradeLevel,
         curriculumType: state.curriculumType,
+        contentLanguage: state.contentLanguage,
       );
       final response = await dio.post<Map<String, dynamic>>(
         '/api/v1/avatars',

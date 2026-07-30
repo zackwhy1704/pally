@@ -62,6 +62,33 @@ class HomeViewModel extends _$HomeViewModel {
     }
   }
 
+  /// Sets the language this avatar generates NEW content in — a code from
+  /// the AppLanguages registry —
+  /// V124, PATCH /avatars/{id}/content-language. NO-RETAG: existing pages/
+  /// modules/flashcards keep their compile-time language; only material
+  /// generated AFTER this call follows the change (mirrors memoly's
+  /// EditClassModal semantics for the class corpus avatar). Returns the
+  /// updated [Avatar] on success, null on failure — the caller decides how
+  /// to surface that (an inline error, never a silent no-op).
+  Future<Avatar?> setContentLanguage(
+      String avatarId, String contentLanguage) async {
+    try {
+      final dio = ref.read(dioProvider);
+      final response = await dio.patch<Map<String, dynamic>>(
+        '/api/v1/avatars/$avatarId/content-language',
+        data: {'contentLanguage': contentLanguage},
+      );
+      final avatar = Avatar.fromJson(response.data!);
+      appLog.i(
+          '[Home] Avatar $avatarId content language set to $contentLanguage');
+      await refresh();
+      return avatar;
+    } on DioException catch (e, st) {
+      appLog.e('[Home] Set content language failed', error: e, stackTrace: st);
+      return null;
+    }
+  }
+
   // Computed getters used by UI — no logic in build()
   List<Avatar> filteredAvatars(List<Avatar> avatars, String query) {
     if (query.isEmpty) return avatars;

@@ -318,6 +318,12 @@ mixin _$Avatar {
   @JsonKey(name: 'classId')
   String? get classId => throw _privateConstructorUsedError;
 
+  /// Language this avatar's AI generates NEW content in ('en' | 'zh') — V124.
+  /// Absent (older payloads) means the backend default, 'en'. Changing it
+  /// (PATCH /avatars/{id}/content-language) does NOT retag existing pages/
+  /// modules/flashcards — only material generated after the change follows it.
+  String? get contentLanguage => throw _privateConstructorUsedError;
+
   /// Serializes this Avatar to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -372,7 +378,8 @@ abstract class $AvatarCopyWith<$Res> {
           fromJson: _mochiConfigFromJson,
           toJson: _mochiConfigToJson)
       MochiConfig? mochiConfig,
-      @JsonKey(name: 'classId') String? classId});
+      @JsonKey(name: 'classId') String? classId,
+      String? contentLanguage});
 
   $ClassAppearanceCopyWith<$Res>? get appearance;
 }
@@ -419,6 +426,7 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
     Object? appearance = freezed,
     Object? mochiConfig = freezed,
     Object? classId = freezed,
+    Object? contentLanguage = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -529,6 +537,10 @@ class _$AvatarCopyWithImpl<$Res, $Val extends Avatar>
           ? _value.classId
           : classId // ignore: cast_nullable_to_non_nullable
               as String?,
+      contentLanguage: freezed == contentLanguage
+          ? _value.contentLanguage
+          : contentLanguage // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 
@@ -594,7 +606,8 @@ abstract class _$$AvatarImplCopyWith<$Res> implements $AvatarCopyWith<$Res> {
           fromJson: _mochiConfigFromJson,
           toJson: _mochiConfigToJson)
       MochiConfig? mochiConfig,
-      @JsonKey(name: 'classId') String? classId});
+      @JsonKey(name: 'classId') String? classId,
+      String? contentLanguage});
 
   @override
   $ClassAppearanceCopyWith<$Res>? get appearance;
@@ -640,6 +653,7 @@ class __$$AvatarImplCopyWithImpl<$Res>
     Object? appearance = freezed,
     Object? mochiConfig = freezed,
     Object? classId = freezed,
+    Object? contentLanguage = freezed,
   }) {
     return _then(_$AvatarImpl(
       id: null == id
@@ -750,6 +764,10 @@ class __$$AvatarImplCopyWithImpl<$Res>
           ? _value.classId
           : classId // ignore: cast_nullable_to_non_nullable
               as String?,
+      contentLanguage: freezed == contentLanguage
+          ? _value.contentLanguage
+          : contentLanguage // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -798,7 +816,8 @@ class _$AvatarImpl implements _Avatar {
           fromJson: _mochiConfigFromJson,
           toJson: _mochiConfigToJson)
       this.mochiConfig,
-      @JsonKey(name: 'classId') this.classId});
+      @JsonKey(name: 'classId') this.classId,
+      this.contentLanguage});
 
   factory _$AvatarImpl.fromJson(Map<String, dynamic> json) =>
       _$$AvatarImplFromJson(json);
@@ -910,9 +929,16 @@ class _$AvatarImpl implements _Avatar {
   @JsonKey(name: 'classId')
   final String? classId;
 
+  /// Language this avatar's AI generates NEW content in ('en' | 'zh') — V124.
+  /// Absent (older payloads) means the backend default, 'en'. Changing it
+  /// (PATCH /avatars/{id}/content-language) does NOT retag existing pages/
+  /// modules/flashcards — only material generated after the change follows it.
+  @override
+  final String? contentLanguage;
+
   @override
   String toString() {
-    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate, brainState: $brainState, isActive: $isActive, teacherPreferences: $teacherPreferences, centreManaged: $centreManaged, centreId: $centreId, centreBrandName: $centreBrandName, centreAccentColor: $centreAccentColor, avatarLocked: $avatarLocked, cosmeticEyewear: $cosmeticEyewear, cosmeticClothes: $cosmeticClothes, cosmeticShoes: $cosmeticShoes, kind: $kind, appearance: $appearance, mochiConfig: $mochiConfig, classId: $classId)';
+    return 'Avatar(id: $id, name: $name, character: $character, subject: $subject, wikiPageCount: $wikiPageCount, fileCount: $fileCount, createdAt: $createdAt, updatedAt: $updatedAt, pedagogyMode: $pedagogyMode, gradeLevel: $gradeLevel, curriculumType: $curriculumType, testDate: $testDate, brainState: $brainState, isActive: $isActive, teacherPreferences: $teacherPreferences, centreManaged: $centreManaged, centreId: $centreId, centreBrandName: $centreBrandName, centreAccentColor: $centreAccentColor, avatarLocked: $avatarLocked, cosmeticEyewear: $cosmeticEyewear, cosmeticClothes: $cosmeticClothes, cosmeticShoes: $cosmeticShoes, kind: $kind, appearance: $appearance, mochiConfig: $mochiConfig, classId: $classId, contentLanguage: $contentLanguage)';
   }
 
   @override
@@ -968,7 +994,9 @@ class _$AvatarImpl implements _Avatar {
                 other.appearance == appearance) &&
             (identical(other.mochiConfig, mochiConfig) ||
                 other.mochiConfig == mochiConfig) &&
-            (identical(other.classId, classId) || other.classId == classId));
+            (identical(other.classId, classId) || other.classId == classId) &&
+            (identical(other.contentLanguage, contentLanguage) ||
+                other.contentLanguage == contentLanguage));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1001,7 +1029,8 @@ class _$AvatarImpl implements _Avatar {
         kind,
         appearance,
         mochiConfig,
-        classId
+        classId,
+        contentLanguage
       ]);
 
   /// Create a copy of Avatar
@@ -1062,7 +1091,8 @@ abstract class _Avatar implements Avatar {
           fromJson: _mochiConfigFromJson,
           toJson: _mochiConfigToJson)
       final MochiConfig? mochiConfig,
-      @JsonKey(name: 'classId') final String? classId}) = _$AvatarImpl;
+      @JsonKey(name: 'classId') final String? classId,
+      final String? contentLanguage}) = _$AvatarImpl;
 
   factory _Avatar.fromJson(Map<String, dynamic> json) = _$AvatarImpl.fromJson;
 
@@ -1168,6 +1198,13 @@ abstract class _Avatar implements Avatar {
   @JsonKey(name: 'classId')
   String? get classId;
 
+  /// Language this avatar's AI generates NEW content in ('en' | 'zh') — V124.
+  /// Absent (older payloads) means the backend default, 'en'. Changing it
+  /// (PATCH /avatars/{id}/content-language) does NOT retag existing pages/
+  /// modules/flashcards — only material generated after the change follows it.
+  @override
+  String? get contentLanguage;
+
   /// Create a copy of Avatar
   /// with the given fields replaced by the non-null parameter values.
   @override
@@ -1192,6 +1229,12 @@ mixin _$CreateAvatarRequest {
   String get subject => throw _privateConstructorUsedError;
   String? get gradeLevel => throw _privateConstructorUsedError;
   String? get curriculumType => throw _privateConstructorUsedError;
+
+  /// Language the avatar generates content in ('en' | 'zh') — V124. Sent
+  /// explicitly (never omitted) once the create-tutor wizard resolves a
+  /// default; the backend accepts either value inline at creation, so no
+  /// follow-up call is needed (unlike memoly's class+corpus-avatar split).
+  String? get contentLanguage => throw _privateConstructorUsedError;
 
   /// Serializes this CreateAvatarRequest to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1219,7 +1262,8 @@ abstract class $CreateAvatarRequestCopyWith<$Res> {
       @JsonKey(toJson: _subjectToJson, fromJson: _subjectFromJson)
       String subject,
       String? gradeLevel,
-      String? curriculumType});
+      String? curriculumType,
+      String? contentLanguage});
 }
 
 /// @nodoc
@@ -1242,6 +1286,7 @@ class _$CreateAvatarRequestCopyWithImpl<$Res, $Val extends CreateAvatarRequest>
     Object? subject = null,
     Object? gradeLevel = freezed,
     Object? curriculumType = freezed,
+    Object? contentLanguage = freezed,
   }) {
     return _then(_value.copyWith(
       name: null == name
@@ -1263,6 +1308,10 @@ class _$CreateAvatarRequestCopyWithImpl<$Res, $Val extends CreateAvatarRequest>
       curriculumType: freezed == curriculumType
           ? _value.curriculumType
           : curriculumType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      contentLanguage: freezed == contentLanguage
+          ? _value.contentLanguage
+          : contentLanguage // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -1286,7 +1335,8 @@ abstract class _$$CreateAvatarRequestImplCopyWith<$Res>
       @JsonKey(toJson: _subjectToJson, fromJson: _subjectFromJson)
       String subject,
       String? gradeLevel,
-      String? curriculumType});
+      String? curriculumType,
+      String? contentLanguage});
 }
 
 /// @nodoc
@@ -1307,6 +1357,7 @@ class __$$CreateAvatarRequestImplCopyWithImpl<$Res>
     Object? subject = null,
     Object? gradeLevel = freezed,
     Object? curriculumType = freezed,
+    Object? contentLanguage = freezed,
   }) {
     return _then(_$CreateAvatarRequestImpl(
       name: null == name
@@ -1329,6 +1380,10 @@ class __$$CreateAvatarRequestImplCopyWithImpl<$Res>
           ? _value.curriculumType
           : curriculumType // ignore: cast_nullable_to_non_nullable
               as String?,
+      contentLanguage: freezed == contentLanguage
+          ? _value.contentLanguage
+          : contentLanguage // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -1346,7 +1401,8 @@ class _$CreateAvatarRequestImpl implements _CreateAvatarRequest {
       @JsonKey(toJson: _subjectToJson, fromJson: _subjectFromJson)
       required this.subject,
       this.gradeLevel,
-      this.curriculumType});
+      this.curriculumType,
+      this.contentLanguage});
 
   factory _$CreateAvatarRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$CreateAvatarRequestImplFromJson(json);
@@ -1367,9 +1423,16 @@ class _$CreateAvatarRequestImpl implements _CreateAvatarRequest {
   @override
   final String? curriculumType;
 
+  /// Language the avatar generates content in ('en' | 'zh') — V124. Sent
+  /// explicitly (never omitted) once the create-tutor wizard resolves a
+  /// default; the backend accepts either value inline at creation, so no
+  /// follow-up call is needed (unlike memoly's class+corpus-avatar split).
+  @override
+  final String? contentLanguage;
+
   @override
   String toString() {
-    return 'CreateAvatarRequest(name: $name, character: $character, subject: $subject, gradeLevel: $gradeLevel, curriculumType: $curriculumType)';
+    return 'CreateAvatarRequest(name: $name, character: $character, subject: $subject, gradeLevel: $gradeLevel, curriculumType: $curriculumType, contentLanguage: $contentLanguage)';
   }
 
   @override
@@ -1384,13 +1447,15 @@ class _$CreateAvatarRequestImpl implements _CreateAvatarRequest {
             (identical(other.gradeLevel, gradeLevel) ||
                 other.gradeLevel == gradeLevel) &&
             (identical(other.curriculumType, curriculumType) ||
-                other.curriculumType == curriculumType));
+                other.curriculumType == curriculumType) &&
+            (identical(other.contentLanguage, contentLanguage) ||
+                other.contentLanguage == contentLanguage));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, name, character, subject, gradeLevel, curriculumType);
+  int get hashCode => Object.hash(runtimeType, name, character, subject,
+      gradeLevel, curriculumType, contentLanguage);
 
   /// Create a copy of CreateAvatarRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -1420,7 +1485,8 @@ abstract class _CreateAvatarRequest implements CreateAvatarRequest {
       @JsonKey(toJson: _subjectToJson, fromJson: _subjectFromJson)
       required final String subject,
       final String? gradeLevel,
-      final String? curriculumType}) = _$CreateAvatarRequestImpl;
+      final String? curriculumType,
+      final String? contentLanguage}) = _$CreateAvatarRequestImpl;
 
   factory _CreateAvatarRequest.fromJson(Map<String, dynamic> json) =
       _$CreateAvatarRequestImpl.fromJson;
@@ -1440,6 +1506,13 @@ abstract class _CreateAvatarRequest implements CreateAvatarRequest {
   String? get gradeLevel;
   @override
   String? get curriculumType;
+
+  /// Language the avatar generates content in ('en' | 'zh') — V124. Sent
+  /// explicitly (never omitted) once the create-tutor wizard resolves a
+  /// default; the backend accepts either value inline at creation, so no
+  /// follow-up call is needed (unlike memoly's class+corpus-avatar split).
+  @override
+  String? get contentLanguage;
 
   /// Create a copy of CreateAvatarRequest
   /// with the given fields replaced by the non-null parameter values.

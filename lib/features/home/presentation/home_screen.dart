@@ -13,6 +13,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/ui/painters/character_painter.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/shared/models/avatar.dart';
+import 'package:pally/core/ui/pally_avatar_language_sheet.dart';
 import 'package:pally/core/ui/pally_delete_tutor_dialog.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
@@ -810,6 +811,22 @@ void _showTutorOptions(BuildContext context, WidgetRef ref, Avatar avatar) {
               onTap: () {
                 Navigator.pop(sheetCtx);
                 UploadRoute(avatarId: avatar.id).push(context);
+              },
+            ),
+          if (!isCentre)
+            _OptionTile(
+              icon: Icons.translate_rounded,
+              label: l10n.avatarLanguageMenuLabel,
+              color: AppColors.purple,
+              onTap: () async {
+                Navigator.pop(sheetCtx);
+                final changed = await PallyAvatarLanguageSheet.show(
+                  context: context,
+                  avatar: avatar,
+                );
+                if (changed == true && context.mounted) {
+                  PallyToast.success(context, l10n.avatarLanguageSaved);
+                }
               },
             ),
           if (!isCentre)

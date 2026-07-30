@@ -251,6 +251,11 @@ class Avatar with _$Avatar {
     /// leave-class action.
     @JsonKey(name: 'classId')
     String? classId,
+    /// Language this avatar's AI generates NEW content in ('en' | 'zh') — V124.
+    /// Absent (older payloads) means the backend default, 'en'. Changing it
+    /// (PATCH /avatars/{id}/content-language) does NOT retag existing pages/
+    /// modules/flashcards — only material generated after the change follows it.
+    String? contentLanguage,
   }) = _Avatar;
 
   factory Avatar.fromJson(Map<String, dynamic> json) => _$AvatarFromJson(json);
@@ -280,6 +285,11 @@ class CreateAvatarRequest with _$CreateAvatarRequest {
     required String subject,
     String? gradeLevel,
     String? curriculumType,
+    /// Language the avatar generates content in ('en' | 'zh') — V124. Sent
+    /// explicitly (never omitted) once the create-tutor wizard resolves a
+    /// default; the backend accepts either value inline at creation, so no
+    /// follow-up call is needed (unlike memoly's class+corpus-avatar split).
+    String? contentLanguage,
   }) = _CreateAvatarRequest;
 
   factory CreateAvatarRequest.fromJson(Map<String, dynamic> json) =>
