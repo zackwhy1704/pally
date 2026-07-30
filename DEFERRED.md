@@ -7,7 +7,7 @@
 
 ---
 
-## Branch B — UI localization (zh) — IN PROGRESS, ~33% COVERAGE (2026-07-29)
+## Branch B — UI localization (zh) — EXTRACTION COMPLETE except PR-F, BY MEASUREMENT (2026-07-30)
 
 **CORRECTION (2026-07-29): the earlier "CLIENT EXTRACTION COMPLETE @a8b85d8" claim was SCOPE-based,
 not coverage-based, and was wrong.** 13 PRs localized the surfaces on a scope list (~371 strings). A
@@ -71,8 +71,47 @@ SG-specific term 小伴 itself is part of the standing native-SG review.
   `DeleteAccountError`; shared month names + `dateFormatDMY` (zh {year}年{month}{day}日). NOT WIRED (honest,
   drafted zh in tracker): the 2 chat_view_model consent MESSAGES (persisted → ride the deferred typed-system-
   message refactor) + shared `PallyError` network strings (central-mapper PR).
-- **PR-K** long tail (homework/exam_prep/study_plan/brain_health/teach_mochi/centre/assignments/etc.)
+- ✅ **PR-K1** widget-tree long tail, 20 feature dirs (186 keys) — MERGED `@dcc46ac`. Baseline 290→134.
+  teach_mochi/homework/exam_prep/referral/study_plan/quiz/brain_health/assignments/centre_join/chat family/
+  learning_style/feature tour/voice dialogs/centre_block/splash/avatar_picker/collection/create_tutor/
+  force_update/weakness/upload tips. TeachingModeX.label getter DELETED (label at render); DateFormat now
+  locale-aware. Delegate ripples on 8 test harnesses; cta_invariant centre_join + create_tutor step-2
+  resolve per locale.
+- ✅ **PR-K2** 🔒 consent-gate sheet OUT of api_client (12 keys) — MERGED `@0a404e7`. Baseline 134→128.
+  The kind shape already existed (interceptor threads the reason CODE); the sheet moved to
+  features/consent and localizes at render; interceptor toasts localize via the global-navigator ctx;
+  the hidden 'your grown-up' masked-email fallback (3 context-less call sites) now resolves INSIDE the
+  pending sheet (nullable maskedEmail). Hazard fixed: PARENT_LINK_REQUIRED navigation now runs BEFORE the
+  toast (an l10n throw could previously swallow the redirect). New consent_gate_sheet_test (5 cases).
+  All 12 zh drafts 🔒 flagged with the PR-J set.
+- ✅ **PR-K3** core/shared infra + notifications (56 keys) — MERGED `@fbc461b`. Baseline 128→105.
+  Delete-tutor + relevance dialogs, router error, app_async/app_error_view, mochi_generating; notification
+  pipeline localized CONTEXT-FREE (schedule methods take AppLocalizations; callers resolve
+  lookupAppLocalizations(persisted locale); channels + ICU plural; flashcard 'your Mochi'→notifYourMascot);
+  module item-count chips (closed learn/test/prove set, resolver + raw fallback).
 - **PR-F** subscription — RESERVED, own session (re-prove ios_price_gate_guard before+after, human eyes on zh)
+
+### Baseline END STATE (post-K3): 105 = 39 PR-F + 66 REASONED ALLOWS
+The 66 allows, by category (each stated in the PR-K commit messages): ~44 format-only interpolations
+(numerals/symbols/emoji, no natural language) · `avatar.dart` 13 + `entitlement.dart` 1 (canonical
+backend-adjacent labels; DISPLAY localizes via `label_localizer` since PR-B) · `scaffold_shell` 4
+(TabSpec semantic fallbacks; display via `_navLabel`) · `'Pally'` (MaterialApp.title product identifier) ·
+`device_info` 2 (backend-bound device metadata, not UI) · `onboarding_screen` 2 (emoji escape literals) ·
+`chat_view_model` '📷 Homework photo' (persisted into saved message history → typed-system-message
+refactor below) · `direct_onboarding_view_model` 1 (PallyError ledger below). After PR-F drains its 39,
+the baseline IS the allow list — a new hardcoded user-facing string fails CI.
+
+### LEDGERED (with triggers), not skipped
+1. **PallyError central-mapper localization** — MEASURED 2026-07-30: 32 `.userMessage` sites across 25
+   files, most baking `error: String` into VM state → the PR-G3/PR-J typed-error refactor at full scale,
+   NOT a <20-string mechanical pass. Its curated strings (several say "Mochi") render English under zh.
+   **Trigger: before any zh flag flips for real users** — either typed-kind states per VM (correct) or an
+   interim `localizedPallyError(l, kind)` resolver at the ~15 screen render sites (cheaper, catches most).
+2. **Typed system-message refactor** (chat_view_model persisted messages incl. '📷 Homework photo' + the
+   2 consent lines from PR-I/J) — data-model change; zh drafts already in NEEDS_NATIVE_REVIEW.md.
+3. **Coverage-guard blind spot: list/switch string literals** — the sink regex can't see list elements or
+   switch arms (found live: upload_screen step-label lists, ~15 strings, still English). Trigger: one
+   guard-extension pass (add list/switch sinks) after PR-F, then drain what it surfaces the same way.
 Each: same recipe; delegates on any screen-rendering test; lock→3.32.1 before push; coverage guard must
 shrink (never grow); 🔒 compliance rules if price/subscription copy is touched.
 
