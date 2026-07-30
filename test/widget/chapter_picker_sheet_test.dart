@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/features/chapters/domain/chapter.dart';
@@ -34,6 +35,8 @@ Future<void> _pump(WidgetTester tester, ChaptersResult r,
         chapterPickerViewModelProvider('av1').overrideWith(() => _StubVM(r)),
       ],
       child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: Builder(
             builder: (context) => MediaQuery(

@@ -101,18 +101,6 @@ features/centre/presentation/centre_join_screen.dart	Enter the full class code
 features/centre/presentation/centre_join_screen.dart	Join a class
 features/centre/presentation/centre_join_screen.dart	Join class
 features/centre/presentation/centre_join_screen.dart	Joined $className 🎉
-features/chapters/presentation/chapter_lock_banner.dart	$n chapter${n == 1 ? 
-features/chapters/presentation/chapter_lock_banner.dart	Choose
-features/chapters/presentation/chapter_lock_banner.dart	Mochi hasn't read ${n == 1 ? 'this chapter' : 'these chapters'} yet 
-features/chapters/presentation/chapter_picker_sheet.dart	Choose chapters to compile
-features/chapters/presentation/chapter_picker_sheet.dart	Compile all (${locked.length})
-features/chapters/presentation/chapter_picker_sheet.dart	Couldn't load chapters. Please close and try again.
-features/chapters/presentation/chapter_picker_sheet.dart	Go to Library
-features/chapters/presentation/chapter_picker_sheet.dart	Mochi is reading your chapters!
-features/chapters/presentation/chapter_picker_sheet.dart	Mochi only reads the chapters you pick — start with what you’re studying now.
-features/chapters/presentation/chapter_picker_sheet.dart	No chapters to compile.
-features/chapters/presentation/chapter_picker_sheet.dart	Pages ${c.pageFrom}–${c.pageTo} · ${c.pageCount} 
-features/chapters/presentation/chapter_picker_sheet.dart	This takes a few minutes. You can follow along in Library — Mochi will 
 features/chat/presentation/chat_screen.dart	Reported
 features/chat/presentation/chat_screen.dart	🌐 general knowledge — upload notes for tailored answers
 features/chat/presentation/chat_screen.dart	📖 from your notes
@@ -386,63 +374,7 @@ features/weakness/presentation/weakness_focus_card.dart	Let's focus on
 features/weakness/presentation/weakness_focus_card.dart	Mochi will help you practise these.
 features/weakness/presentation/weakness_focus_card.dart	You improved on ${_pretty(f.recentWins)}! 📈
 features/wiki_compiled/presentation/wiki_compiled_screen.dart	$score/10
-features/wiki_compiled/presentation/wiki_compiled_screen.dart	Ask Mochi Now
-features/wiki_compiled/presentation/wiki_compiled_screen.dart	Brain Quality Score
-features/wiki_compiled/presentation/wiki_compiled_screen.dart	Quick Quiz
-features/wiki_compiled/presentation/wiki_compiled_screen.dart	View Brain
-features/wiki_viewer/presentation/get_it_checked_sheet.dart	Add or re-upload content for this page
-features/wiki_viewer/presentation/get_it_checked_sheet.dart	Ask a grown-up to confirm “${page.title}” is accurate.
-features/wiki_viewer/presentation/get_it_checked_sheet.dart	Fix my notes
-features/wiki_viewer/presentation/get_it_checked_sheet.dart	Get it checked
-features/wiki_viewer/presentation/get_it_checked_sheet.dart	Revoke
-features/wiki_viewer/presentation/get_it_checked_sheet.dart	Send a link to anyone to check it
-features/wiki_viewer/presentation/get_it_checked_sheet.dart	Share review link
-features/wiki_viewer/presentation/review_status_widgets.dart	${page.verifiedBy ?? 
-features/wiki_viewer/presentation/review_status_widgets.dart	Checked by ${page.verifiedBy ?? 
-features/wiki_viewer/presentation/review_status_widgets.dart	Fix my notes
-features/wiki_viewer/presentation/review_status_widgets.dart	Get it checked
-features/wiki_viewer/presentation/review_status_widgets.dart	This was made from limited notes — double-check key facts.
-features/wiki_viewer/presentation/review_status_widgets.dart	Unverified
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	"${file.fileName}" will be removed and Mochi's brain will update automatically.
 features/wiki_viewer/presentation/wiki_viewer_screen.dart	$label · $pct%
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	${diff.inDays}d ago
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	${diff.inHours}h ago
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	${diff.inMinutes} min ago
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Brain is empty
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Cancel
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Checked by $by ✓$more
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Conflict
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Conflicting Info
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Could not save — try again.
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Dismiss
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Edit page content
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Failed
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Fix Now
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Go to Groups
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	How should Mochi teach you?
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Join a group first
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Manage Mochis
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Mochi is reading your notes — new pages will appear here automatically.
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Off-topic
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	RECENT PAGES
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Reading…
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Remove
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Remove document
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Remove document?
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Save
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Search pages…
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Share to which group?
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Source documents (${widget.files.length})
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Tap a style or write your own — e.g. "Use the bar model for fractions" or "Always show full working." Mochi follows this in every lesson and chat.
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Teacher notes
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	This page contains information from multiple sources that may disagree with each other.nnYou can fix the content manually to resolve the conflict.
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	You're not in any study groups yet. Join or create one, then you can share notes!
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Your centre keeps this class's materials up to date.
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	Your centre sets how this class Mochi teaches.
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	e.g. Use model method for fractions. Show all steps.
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	from: ${widget.page.sourceFileNames.join(
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	just now
-features/wiki_viewer/presentation/wiki_viewer_screen.dart	↗ Share
 shared/models/avatar.dart	Art
 shared/models/avatar.dart	Coding
 shared/models/avatar.dart	English

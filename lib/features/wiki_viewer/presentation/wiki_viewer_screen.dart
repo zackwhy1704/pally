@@ -103,6 +103,7 @@ class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final vmState = ref.watch(wikiViewerViewModelProvider(widget.avatarId));
 
     ref.listen<WikiViewerState>(wikiViewerViewModelProvider(widget.avatarId),
@@ -121,7 +122,7 @@ class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen>
             verified.length > 1 ? ' (+${verified.length - 1} more)' : '';
         showAppSnackBar(
           SnackBar(
-            content: Text('Checked by $by ✓$more'),
+            content: Text(l.wikiCheckedByShort(by, more)),
             backgroundColor: AppColors.green,
             behavior: SnackBarBehavior.floating,
           ),
@@ -158,7 +159,7 @@ class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen>
                 color: AppColors.amberL,
                 child: Row(
                   children: [
-                    const SizedBox(
+                    SizedBox(
                       width: AppSizing.spinnerSm,
                       height: AppSizing.spinnerSm,
                       child: CircularProgressIndicator(
@@ -166,10 +167,10 @@ class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen>
                         color: AppColors.amber,
                       ),
                     ),
-                    const SizedBox(width: AppSpacing.sm),
+                    SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
-                        'Mochi is reading your notes — new pages will appear here automatically.',
+                        l.wikiReadingNotes(l.mascotName),
                         style: AppTextStyles.bodySmall
                             .copyWith(color: AppColors.amber),
                       ),
@@ -222,7 +223,7 @@ class _WikiViewerScreenState extends ConsumerState<WikiViewerScreen>
                                       PallyErrorKind.slotLocked
                                   ? TextButton(
                                       onPressed: () => context.go('/'),
-                                      child: const Text('Manage Mochis'),
+                                      child: Text(l.wikiManageMochis(l.mascotName)),
                                     )
                                   : null,
                             ),
@@ -298,6 +299,7 @@ class _BrainHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final topPad = MediaQuery.of(context).padding.top;
     return Container(
       color: AppColors.purpleL,
@@ -325,9 +327,9 @@ class _BrainHeader extends ConsumerWidget {
                 ),
                 // Teacher method preferences
                 IconButton(
-                  icon: const Icon(Icons.school_outlined,
+                  icon: Icon(Icons.school_outlined,
                       color: AppColors.purple),
-                  tooltip: 'Teacher notes',
+                  tooltip: l.wikiTeacherNotes,
                   onPressed: () => _showTeacherPreferencesSheet(context),
                 ),
               ],
@@ -399,16 +401,16 @@ class _BrainHeader extends ConsumerWidget {
             )
           else
             Padding(
-              padding: const EdgeInsets.fromLTRB(
+              padding: EdgeInsets.fromLTRB(
                   AppSpacing.md, 0, AppSpacing.md, AppSpacing.md),
               child: Row(
                 children: [
-                  const Icon(Icons.school_rounded,
+                  Icon(Icons.school_rounded,
                       size: 16, color: AppColors.text2),
-                  const SizedBox(width: AppSpacing.xs),
+                  SizedBox(width: AppSpacing.xs),
                   Expanded(
                     child: Text(
-                      'Your centre keeps this class\'s materials up to date.',
+                      l.wikiCentreKeepsUpdated,
                       style: AppTextStyles.bodySmall
                           .copyWith(color: AppColors.text2),
                     ),
@@ -457,16 +459,17 @@ class _SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       color: AppColors.bg,
-      padding: const EdgeInsets.fromLTRB(
+      padding: EdgeInsets.fromLTRB(
           AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.xs),
       child: TextField(
         controller: controller,
         onChanged: onChanged,
         style: AppTextStyles.body,
         decoration: InputDecoration(
-          hintText: 'Search pages…',
+          hintText: l.wikiSearchPages,
           hintStyle: AppTextStyles.body.copyWith(color: AppColors.text3),
           prefixIcon: const Icon(Icons.search_rounded,
               color: AppColors.text3, size: 20),
@@ -516,12 +519,13 @@ class _PagesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return ListView(
-      padding: const EdgeInsets.only(
+      padding: EdgeInsets.only(
           left: AppSpacing.md, right: AppSpacing.md, bottom: AppSpacing.lg),
       children: [
-        const SizedBox(height: AppSpacing.sm),
-        Text('RECENT PAGES',
+        SizedBox(height: AppSpacing.sm),
+        Text(l.wikiRecentPages,
             style: AppTextStyles.label
                 .copyWith(color: AppColors.text3, letterSpacing: 0.8)),
         const SizedBox(height: AppSpacing.sm),
@@ -586,23 +590,24 @@ class _PageTileState extends ConsumerState<_PageTile> {
   }
 
   Future<void> _shareToGroup(BuildContext context) async {
+    final l = AppLocalizations.of(context);
     final groups = ref.read(groupListViewModelProvider).valueOrNull ?? [];
     if (groups.isEmpty) {
       final goToGroups = await showDialog<bool>(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('Join a group first'),
-          content: const Text(
-              "You're not in any study groups yet. Join or create one, then you can share notes!"),
+          title: Text(l.wikiJoinGroupFirst),
+          content: Text(
+              l.wikiNoGroups),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
+              child: Text(l.commonCancel),
             ),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(true),
               style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
-              child: const Text('Go to Groups'),
+              child: Text(l.wikiGoToGroups),
             ),
           ],
         ),
@@ -635,9 +640,9 @@ class _PageTileState extends ConsumerState<_PageTile> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(
+                    padding: EdgeInsets.fromLTRB(
                         AppSpacing.md, AppSpacing.md, AppSpacing.md, 0),
-                    child: Text('Share to which group?',
+                    child: Text(l.wikiShareToGroup,
                         style: AppTextStyles.title),
                   ),
                   ...groups.map((g) => ListTile(
@@ -719,6 +724,7 @@ class _PageTileState extends ConsumerState<_PageTile> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final filename = '$_slug.md';
 
     return AnimatedSize(
@@ -816,9 +822,9 @@ class _PageTileState extends ConsumerState<_PageTile> {
                   // was compiled from. Hidden when backend doesn't populate it.
                   if (widget.page.sourceFileNames.isNotEmpty)
                     Padding(
-                      padding: const EdgeInsets.only(top: 2),
+                      padding: EdgeInsets.only(top: 2),
                       child: Text(
-                        'from: ${widget.page.sourceFileNames.join(', ')}',
+                        l.wikiFrom(widget.page.sourceFileNames.join(', ')),
                         style: AppTextStyles.caption
                             .copyWith(color: AppColors.teal),
                         maxLines: 1,
@@ -828,7 +834,7 @@ class _PageTileState extends ConsumerState<_PageTile> {
                   const SizedBox(height: AppSpacing.xs),
                   Text(
                     widget.page.updatedAt != null
-                        ? 'Updated ${_timeAgo(widget.page.updatedAt!)}'
+                        ? 'Updated ${_timeAgo(l, widget.page.updatedAt!)}'
                         : 'Just added',
                     style: AppTextStyles.caption,
                   ),
@@ -847,15 +853,15 @@ class _PageTileState extends ConsumerState<_PageTile> {
 
             // Inline editor — only shown when editing
             if (_isEditing) ...[
-              const Divider(height: 1, color: AppColors.outline),
+              Divider(height: 1, color: AppColors.outline),
               Padding(
-                padding: const EdgeInsets.fromLTRB(
+                padding: EdgeInsets.fromLTRB(
                     AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.sm),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'Edit page content',
+                      l.wikiEditPageContent,
                       style: AppTextStyles.label.copyWith(
                           color: AppColors.text2, fontWeight: FontWeight.w700),
                     ),
@@ -896,10 +902,10 @@ class _PageTileState extends ConsumerState<_PageTile> {
                                 : () => setState(() => _isEditing = false),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: AppColors.text2,
-                              side: const BorderSide(color: AppColors.outline),
-                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              side: BorderSide(color: AppColors.outline),
+                              padding: EdgeInsets.symmetric(vertical: 10),
                             ),
-                            child: const Text('Cancel'),
+                            child: Text(l.commonCancel),
                           ),
                         ),
                         const SizedBox(width: AppSpacing.sm),
@@ -908,10 +914,10 @@ class _PageTileState extends ConsumerState<_PageTile> {
                             onPressed: _isSaving ? null : _save,
                             style: FilledButton.styleFrom(
                               backgroundColor: AppColors.purple,
-                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              padding: EdgeInsets.symmetric(vertical: 10),
                             ),
                             child: _isSaving
-                                ? const SizedBox(
+                                ? SizedBox(
                                     width: 16,
                                     height: 16,
                                     child: CircularProgressIndicator(
@@ -919,7 +925,7 @@ class _PageTileState extends ConsumerState<_PageTile> {
                                       strokeWidth: 2,
                                     ),
                                   )
-                                : const Text('Save'),
+                                : Text(l.settingsSave),
                           ),
                         ),
                       ],
@@ -934,12 +940,12 @@ class _PageTileState extends ConsumerState<_PageTile> {
     );
   }
 
-  String _timeAgo(DateTime dt) {
+  String _timeAgo(AppLocalizations l, DateTime dt) {
     final diff = DateTime.now().difference(dt);
-    if (diff.inMinutes < 1) return 'just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes} min ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
-    return '${diff.inDays}d ago';
+    if (diff.inMinutes < 1) return l.timeJustNow;
+    if (diff.inMinutes < 60) return l.wikiMinAgo(diff.inMinutes);
+    if (diff.inHours < 24) return l.timeHourAgo(diff.inHours);
+    return l.timeDayAgo(diff.inDays);
   }
 }
 
@@ -996,6 +1002,7 @@ class _ConflictBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return GestureDetector(
       onTap: () => _showConflictDialog(context),
       child: Container(
@@ -1008,11 +1015,11 @@ class _ConflictBadge extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.warning_amber_rounded,
+            Icon(Icons.warning_amber_rounded,
                 size: 10, color: AppColors.amber),
-            const SizedBox(width: 3),
+            SizedBox(width: 3),
             Text(
-              'Conflict',
+              l.wikiConflict,
               style: AppTextStyles.caption.copyWith(
                 color: AppColors.amber,
                 fontWeight: FontWeight.w600,
@@ -1025,6 +1032,7 @@ class _ConflictBadge extends StatelessWidget {
   }
 
   void _showConflictDialog(BuildContext context) {
+    final l = AppLocalizations.of(context);
     showDialog<void>(
       context: context,
       builder: (_) => AlertDialog(
@@ -1032,12 +1040,12 @@ class _ConflictBadge extends StatelessWidget {
         backgroundColor: AppColors.surface,
         title: Row(
           children: [
-            const Icon(Icons.warning_amber_rounded,
+            Icon(Icons.warning_amber_rounded,
                 color: AppColors.amber, size: 22),
-            const SizedBox(width: AppSpacing.xs),
+            SizedBox(width: AppSpacing.xs),
             Flexible(
               child: Text(
-                'Conflicting Info',
+                l.wikiConflictingInfo,
                 style: AppTextStyles.title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -1046,13 +1054,13 @@ class _ConflictBadge extends StatelessWidget {
           ],
         ),
         content: Text(
-          'This page contains information from multiple sources that may disagree with each other.\n\nYou can fix the content manually to resolve the conflict.',
+          l.wikiConflictBody,
           style: AppTextStyles.body.copyWith(color: AppColors.text2),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Dismiss',
+            child: Text(l.inviteDismiss,
                 style: AppTextStyles.body.copyWith(color: AppColors.text2)),
           ),
           FilledButton(
@@ -1061,7 +1069,7 @@ class _ConflictBadge extends StatelessWidget {
               onFix?.call();
             },
             style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
-            child: const Text('Fix Now'),
+            child: Text(l.wikiFixNow),
           ),
         ],
       ),
@@ -1076,6 +1084,7 @@ class _ShareToGroupButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     // Groups is public (server returns groups_enabled=true for all) — the old
     // pilot gate that hid this button is gone; always offer share-to-group.
     return GestureDetector(
@@ -1088,14 +1097,14 @@ class _ShareToGroupButton extends ConsumerWidget {
           border: Border.all(color: AppColors.teal.withValues(alpha: 0.4)),
         ),
         child: isBusy
-            ? const SizedBox(
+            ? SizedBox(
                 width: 10,
                 height: 10,
                 child: CircularProgressIndicator(
                     strokeWidth: 1.5, color: AppColors.teal),
               )
             : Text(
-                '↗ Share',
+                l.wikiShareArrow,
                 style: AppTextStyles.caption.copyWith(
                   color: AppColors.teal,
                   fontWeight: FontWeight.w600,
@@ -1107,17 +1116,18 @@ class _ShareToGroupButton extends ConsumerWidget {
 }
 
 class _EmptyView extends StatelessWidget {
-  const _EmptyView({this.message});
+  _EmptyView({this.message});
 
   final String? message;
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
+        padding: EdgeInsets.all(AppSpacing.xl),
         child: MochiPlaceholder(
-          title: 'Brain is empty',
+          title: l.wikiBrainEmpty,
           subtitle: message ??
               'Upload content from the Library tab to build the knowledge base.',
         ),
@@ -1188,6 +1198,7 @@ class _SourceDocumentsSectionState extends State<_SourceDocumentsSection> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.fromLTRB(
           AppSpacing.md, AppSpacing.md, AppSpacing.md, 0),
@@ -1202,17 +1213,17 @@ class _SourceDocumentsSectionState extends State<_SourceDocumentsSection> {
           // Header — tap to collapse/expand
           InkWell(
             onTap: () => setState(() => _expanded = !_expanded),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
             child: Padding(
-              padding: const EdgeInsets.symmetric(
+              padding: EdgeInsets.symmetric(
                   horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
               child: Row(
                 children: [
-                  const Icon(Icons.folder_open_rounded,
+                  Icon(Icons.folder_open_rounded,
                       size: 18, color: AppColors.purple),
-                  const SizedBox(width: AppSpacing.xs),
+                  SizedBox(width: AppSpacing.xs),
                   Text(
-                    'Source documents (${widget.files.length})',
+                    l.wikiSourceDocuments(widget.files.length),
                     style: AppTextStyles.bodySmall.copyWith(
                       fontWeight: FontWeight.w700,
                       color: AppColors.text1,
@@ -1271,26 +1282,27 @@ class _SourceDocumentsSectionState extends State<_SourceDocumentsSection> {
   }
 
   void _confirmDelete(BuildContext context, SourceFile file) {
+    final l = AppLocalizations.of(context);
     showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         backgroundColor: AppColors.surface,
-        title: const Text('Remove document?'),
+        title: Text(l.wikiRemoveDocumentConfirm),
         content: Text(
-          '"${file.fileName}" will be removed and Mochi\'s brain will update automatically.',
+          l.wikiRemoveDoc(file.fileName, l.mascotName),
           style: AppTextStyles.body.copyWith(color: AppColors.text2),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text('Cancel',
+            child: Text(l.commonCancel,
                 style: AppTextStyles.body.copyWith(color: AppColors.text2)),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: FilledButton.styleFrom(backgroundColor: AppColors.coral),
-            child: const Text('Remove'),
+            child: Text(l.wikiRemove),
           ),
         ],
       ),
@@ -1332,16 +1344,16 @@ class _SourceFileRow extends StatelessWidget {
     }
   }
 
-  String get _statusLabel {
+  String _statusLabel(AppLocalizations l) {
     switch (file.status.toUpperCase()) {
       case 'READY':
         return file.pageCount > 0 ? '${file.pageCount}p' : 'Ready';
       case 'FAILED':
-        return 'Failed';
+        return l.wikiFailed;
       case 'PROCESSING':
-        return 'Reading…';
+        return l.wikiReading;
       case 'IRRELEVANT':
-        return 'Off-topic';
+        return l.wikiOffTopic;
       default:
         return file.status;
     }
@@ -1349,6 +1361,7 @@ class _SourceFileRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md, vertical: AppSpacing.xs + 2),
@@ -1377,7 +1390,7 @@ class _SourceFileRow extends StatelessWidget {
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
-                    _statusLabel,
+                    _statusLabel(l),
                     style: AppTextStyles.caption.copyWith(color: _statusColor),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -1387,11 +1400,11 @@ class _SourceFileRow extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.delete_outline_rounded,
+            icon: Icon(Icons.delete_outline_rounded,
                 color: AppColors.coral, size: 20),
             visualDensity: VisualDensity.compact,
             onPressed: onDelete,
-            tooltip: 'Remove document',
+            tooltip: l.wikiRemoveDocument,
           ),
         ],
       ),
@@ -1463,6 +1476,7 @@ class _TeacherPreferencesSheetState
 
   Future<void> _save() async {
     if (_saving) return;
+    final l = AppLocalizations.of(context);
     setState(() => _saving = true);
     try {
       final dio = ref.read(dioProvider);
@@ -1474,7 +1488,7 @@ class _TeacherPreferencesSheetState
     } catch (e) {
       if (mounted) {
         showAppSnackBar(
-          const SnackBar(content: Text('Could not save — try again.')),
+          SnackBar(content: Text(l.wikiCouldNotSave)),
         );
       }
     } finally {
@@ -1484,6 +1498,7 @@ class _TeacherPreferencesSheetState
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.sizeOf(context).height * 0.85,
@@ -1510,12 +1525,12 @@ class _TeacherPreferencesSheetState
                   color: AppColors.outline,
                   borderRadius: BorderRadius.circular(2)),
             ),
-            const SizedBox(height: AppSpacing.md),
-            Text('How should Mochi teach you?', style: AppTextStyles.title),
-            const SizedBox(height: AppSpacing.xs),
+            SizedBox(height: AppSpacing.md),
+            Text(l.wikiHowTeach(l.mascotName), style: AppTextStyles.title),
+            SizedBox(height: AppSpacing.xs),
             if (widget.readOnly) ...[
               Text(
-                'Your centre sets how this class Mochi teaches.',
+                l.wikiCentreSetsTeaching(l.mascotName),
                 style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
               ),
               const SizedBox(height: AppSpacing.md),
@@ -1534,10 +1549,10 @@ class _TeacherPreferencesSheetState
                   style: AppTextStyles.body.copyWith(color: AppColors.text1),
                 ),
               ),
-              const SizedBox(height: AppSpacing.md),
+              SizedBox(height: AppSpacing.md),
             ] else ...[
             Text(
-              'Tap a style or write your own — e.g. "Use the bar model for fractions" or "Always show full working." Mochi follows this in every lesson and chat.',
+              l.wikiStylePrompt(l.mascotName),
               style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
             ),
             const SizedBox(height: AppSpacing.md),
@@ -1566,7 +1581,7 @@ class _TeacherPreferencesSheetState
                 );
               }).toList(),
             ),
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: AppSpacing.md),
             TextField(
               controller: _ctrl,
               maxLines: 4,
@@ -1574,7 +1589,7 @@ class _TeacherPreferencesSheetState
               onChanged: (_) => setState(() {}), // keep chip highlights in sync
               decoration: InputDecoration(
                 hintText:
-                    'e.g. Use model method for fractions. Show all steps.',
+                    l.wikiStyleExample,
                 hintStyle:
                     AppTextStyles.bodySmall.copyWith(color: AppColors.text3),
                 filled: true,
@@ -1592,17 +1607,17 @@ class _TeacherPreferencesSheetState
                 onPressed: _saving ? null : _save,
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.purple,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  padding: EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14)),
                 ),
                 child: _saving
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(
                             color: Colors.white, strokeWidth: 2))
-                    : const Text('Save'),
+                    : Text(l.settingsSave),
               ),
             ),
             ],

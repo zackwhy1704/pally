@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -77,6 +78,7 @@ class _BrainQualityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final fraction = score / 10.0;
     final (barColor, status) = score >= 8
         ? (AppColors.green, 'Excellent')
@@ -98,11 +100,11 @@ class _BrainQualityCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text('🧠', style: TextStyle(fontSize: 16)),
-              const SizedBox(width: AppSpacing.xs),
+              Text('🧠', style: TextStyle(fontSize: 16)),
+              SizedBox(width: AppSpacing.xs),
               Flexible(
                 child: Text(
-                  'Brain Quality Score',
+                  l.wikiBrainQuality,
                   overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.label.copyWith(
                     color: AppColors.text2,
@@ -265,40 +267,41 @@ class _ActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         FilledButton.icon(
           onPressed: () => ChatRoute(avatarId: avatarId).push(context),
-          icon: const Icon(Icons.chat_bubble_rounded),
-          label: const Text('Ask Mochi Now'),
+          icon: Icon(Icons.chat_bubble_rounded),
+          label: Text(l.wikiAskMochiNow(l.mascotName)),
           style: FilledButton.styleFrom(
             backgroundColor: AppColors.purple,
-            padding: const EdgeInsets.symmetric(vertical: 14),
+            padding: EdgeInsets.symmetric(vertical: 14),
           ),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: AppSpacing.sm),
         Row(
           children: [
             Expanded(
               child: OutlinedButton.icon(
                 onPressed: () => QuizRoute(avatarId: avatarId).push(context),
-                icon: const Icon(Icons.bolt_rounded, size: 18),
-                label: const Text('Quick Quiz'),
+                icon: Icon(Icons.bolt_rounded, size: 18),
+                label: Text(l.wikiQuickQuiz),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.amber,
-                  side: const BorderSide(color: AppColors.amber),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  side: BorderSide(color: AppColors.amber),
+                  padding: EdgeInsets.symmetric(vertical: 12),
                 ),
               ),
             ),
-            const SizedBox(width: AppSpacing.sm),
+            SizedBox(width: AppSpacing.sm),
             Expanded(
               child: OutlinedButton.icon(
                 onPressed: () =>
                     WikiViewerRoute(avatarId: avatarId).push(context),
-                icon: const Icon(Icons.psychology_rounded, size: 18),
-                label: const Text('View Brain'),
+                icon: Icon(Icons.psychology_rounded, size: 18),
+                label: Text(l.wikiViewBrain),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.teal,
                   side: const BorderSide(color: AppColors.teal),

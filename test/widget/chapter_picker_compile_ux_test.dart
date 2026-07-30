@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:pally/l10n/app_localizations.dart';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -68,6 +69,8 @@ Future<_ControlVM> _openSheet(
         }),
       ],
       child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: Builder(
             builder: (context) => ElevatedButton(

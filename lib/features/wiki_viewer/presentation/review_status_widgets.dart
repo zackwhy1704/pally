@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -47,26 +48,27 @@ class ReviewStateSurface extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     switch (page.reviewState) {
       case WikiReviewState.verified:
         return Padding(
-          padding: const EdgeInsets.only(top: AppSpacing.xs),
+          padding: EdgeInsets.only(top: AppSpacing.xs),
           child: _StatusChip(
             color: AppColors.green,
             bg: AppColors.greenL,
             icon: Icons.verified_rounded,
-            label: 'Checked by ${page.verifiedBy ?? 'a reviewer'} ✓',
+            label: l.wikiCheckedBy(page.verifiedBy ?? l.wikiReviewerFallback),
             onTap: onGetChecked,
           ),
         );
       case WikiReviewState.unverified:
         return Padding(
-          padding: const EdgeInsets.only(top: AppSpacing.xs),
+          padding: EdgeInsets.only(top: AppSpacing.xs),
           child: _StatusChip(
             color: AppColors.text2,
             bg: AppColors.surf2,
             icon: Icons.help_outline_rounded,
-            label: 'Unverified',
+            label: l.wikiUnverified,
             onTap: onGetChecked,
           ),
         );
@@ -76,7 +78,7 @@ class ReviewStateSurface extends StatelessWidget {
           bg: AppColors.amberL,
           icon: Icons.lightbulb_outline_rounded,
           title:
-              'This was made from limited notes — double-check key facts.',
+              l.wikiLimitedNotes,
           onGetChecked: onGetChecked,
           onFixNotes: onFixNotes,
         );
@@ -85,7 +87,7 @@ class ReviewStateSurface extends StatelessWidget {
           color: AppColors.coral,
           bg: AppColors.coralL,
           icon: Icons.flag_rounded,
-          title: '${page.verifiedBy ?? 'A reviewer'} flagged something:',
+          title: l.wikiReviewerFlagged(page.verifiedBy ?? l.wikiReviewerFallbackCap),
           detail: page.flagNote,
           onGetChecked: onGetChecked,
           onFixNotes: onFixNotes,
@@ -162,6 +164,7 @@ class _ReviewBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(top: AppSpacing.sm),
@@ -195,7 +198,7 @@ class _ReviewBanner extends StatelessWidget {
               style: AppTextStyles.bodySmall.copyWith(color: AppColors.text1),
             ),
           ],
-          const SizedBox(height: AppSpacing.sm),
+          SizedBox(height: AppSpacing.sm),
           // Actions row — wraps so two buttons never overflow on narrow cards.
           Wrap(
             spacing: AppSpacing.sm,
@@ -204,14 +207,14 @@ class _ReviewBanner extends StatelessWidget {
               _BannerAction(
                 color: color,
                 icon: Icons.task_alt_rounded,
-                label: 'Get it checked',
+                label: l.wikiGetChecked,
                 onTap: onGetChecked,
               ),
               if (onFixNotes != null)
                 _BannerAction(
                   color: color,
                   icon: Icons.edit_outlined,
-                  label: 'Fix my notes',
+                  label: l.wikiFixNotes,
                   onTap: onFixNotes!,
                 ),
             ],
