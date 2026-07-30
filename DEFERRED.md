@@ -49,7 +49,8 @@ SG-specific term 小伴 itself is part of the standing native-SG review.
 - **PR-F** subscription/premium 🔒 + learning-style (LEFT for a fresh session — compliance)
 - ✅ **PR-G** photo_question (58 keys) — MERGED `@5f71ef8`. Baseline 588→527. SPLIT: upload + ocr_awareness
   are follow-up PRs (upload has VM error strings needing l threaded).
-- **PR-G2** ocr_awareness + upload (rest of the original PR-G group)
+- ✅ **PR-G2** ocr_awareness (27 keys) — MERGED `@5f9678a`. Baseline 527→499.
+- **PR-G3** upload (42 — includes VM error strings needing l threaded)
 - **PR-H** wiki_viewer+compiled+chapters · **PR-I** chat-residue+create-tutor · **PR-J** consent+account_deletion+auth
 - **PR-K** long tail (homework/exam_prep/study_plan/brain_health/teach_mochi/centre/assignments/etc.)
 Each: same recipe; delegates on any screen-rendering test; lock→3.32.1 before push; coverage guard must
