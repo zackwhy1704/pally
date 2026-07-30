@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/weakness/data/weakness_focus.dart';
 import 'package:pally/features/weakness/data/weakness_service.dart';
 import 'package:pally/features/weakness/presentation/weakness_focus_card.dart';
@@ -11,6 +12,8 @@ Future<void> _pump(WidgetTester tester, WeaknessFocus focus) async {
       weaknessFocusProvider('MATHS').overrideWith((ref) async => focus),
     ],
     child: const MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(body: WeaknessFocusCard(backendSubject: 'MATHS')),
     ),
   ));

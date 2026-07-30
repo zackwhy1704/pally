@@ -122,7 +122,9 @@ class GradeStep extends StatelessWidget {
                     onChanged: onGradeChanged,
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  Text('WHAT DO YOU WISH MOCHI TO HELP YOU WITH?',
+                  Text(
+                      AppLocalizations.of(context).createTutorWishHelp(
+                          AppLocalizations.of(context).mascotName),
                       style: AppTextStyles.label.copyWith(
                           color: AppColors.text3, letterSpacing: 0.8)),
                   const SizedBox(height: AppSpacing.sm),

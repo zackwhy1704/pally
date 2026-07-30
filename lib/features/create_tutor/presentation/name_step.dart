@@ -98,7 +98,7 @@ class _NameStepState extends State<NameStep> {
             ),
           ),
           PallyButton(
-            label: 'Next',
+            label: AppLocalizations.of(context).signupNext,
             onPressed: widget.onNext,
             fullWidth: true,
           ),

@@ -6,6 +6,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/features/collection/presentation/collection_view_model.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 /// Mochi Album — the "collect them all" screen. Owned characters show
 /// in colour; unowned ones show as silhouettes with their rarity badge
@@ -24,7 +25,7 @@ class CollectionScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Mochi Album', style: AppTextStyles.title),
+        title: Text(AppLocalizations.of(context).collectionAlbumTitle(AppLocalizations.of(context).mascotName), style: AppTextStyles.title),
         centerTitle: true,
       ),
       body: state.isLoading
@@ -95,7 +96,7 @@ class _ProgressBanner extends StatelessWidget {
               const SizedBox(width: 8),
               Flexible(
                 child: Text(
-                  'Collection',
+                  AppLocalizations.of(context).collectionTitle,
                   overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.heading1.copyWith(color: Colors.white),
                 ),

@@ -23,6 +23,7 @@ class HomeworkListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final listAsync = ref.watch(homeworkListViewModelProvider(avatarId));
 
     return Scaffold(
@@ -31,14 +32,14 @@ class HomeworkListScreen extends ConsumerWidget {
         backgroundColor: AppColors.bg,
         elevation: 0,
         leading: const BackButton(),
-        title: Text('Homework', style: AppTextStyles.title),
+        title: Text(l10n.hwTitle, style: AppTextStyles.title),
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: AppColors.purple,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add_rounded),
-        label: const Text('Submit homework'),
+        label: Text(l10n.hwSubmit),
         onPressed: () => HomeworkSubmitRoute(avatarId: avatarId)
             .push(context)
             .then((_) => ref
@@ -81,6 +82,7 @@ class _EmptyBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return ListView(
       // Scrollable so pull-to-refresh works and it never overflows at large
       // text scale.
@@ -91,12 +93,11 @@ class _EmptyBody extends StatelessWidget {
         const Icon(Icons.assignment_outlined,
             size: 56, color: AppColors.purpleC),
         const SizedBox(height: AppSpacing.md),
-        Text('No homework yet',
+        Text(l10n.hwEmptyTitle,
             style: AppTextStyles.title, textAlign: TextAlign.center),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          'Submit a photo or PDF of your work and your teacher will send '
-          'back feedback here.',
+          l10n.hwEmptyBody,
           style: AppTextStyles.body.copyWith(color: AppColors.text2),
           textAlign: TextAlign.center,
         ),
@@ -184,10 +185,11 @@ class HomeworkStatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final (label, color, bg) = switch (status) {
-      'RELEASED' => ('Feedback ready', AppColors.green, AppColors.greenL),
-      'RETURNED' => ('Please redo', AppColors.coral, AppColors.coralL),
-      _ => ('In review', AppColors.amberText, AppColors.amberL),
+      'RELEASED' => (l10n.hwBadgeFeedbackReady, AppColors.green, AppColors.greenL),
+      'RETURNED' => (l10n.hwBadgeRedo, AppColors.coral, AppColors.coralL),
+      _ => (l10n.hwBadgeInReview, AppColors.amberText, AppColors.amberL),
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

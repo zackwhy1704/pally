@@ -5743,6 +5743,1122 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We\'ll email your parent to approve your account before you can use AI features.'**
   String get completeProfileParentEmailHelper;
+
+  /// No description provided for @commonTryAgainSentence.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get commonTryAgainSentence;
+
+  /// No description provided for @teachTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Teach {mascot}'**
+  String teachTitle(String mascot);
+
+  /// No description provided for @teachIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a topic and TEACH {mascot}! Explaining is the fastest way to know you really understand.'**
+  String teachIntro(String mascot);
+
+  /// No description provided for @teachAboutLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Teach {mascot} about'**
+  String teachAboutLabel(String mascot);
+
+  /// No description provided for @teachHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pretend {mascot} has never heard of this. Use your own words…'**
+  String teachHint(String mascot);
+
+  /// No description provided for @teachSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Done — show me how I did'**
+  String get teachSubmit;
+
+  /// No description provided for @teachPerfect.
+  ///
+  /// In en, this message translates to:
+  /// **'You taught it all!'**
+  String get teachPerfect;
+
+  /// No description provided for @teachGreat.
+  ///
+  /// In en, this message translates to:
+  /// **'Great teaching!'**
+  String get teachGreat;
+
+  /// No description provided for @commonXpPlus.
+  ///
+  /// In en, this message translates to:
+  /// **'+{xp} XP'**
+  String commonXpPlus(int xp);
+
+  /// No description provided for @teachYouExplained.
+  ///
+  /// In en, this message translates to:
+  /// **'You explained'**
+  String get teachYouExplained;
+
+  /// No description provided for @teachMissedConcepts.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed concepts'**
+  String get teachMissedConcepts;
+
+  /// No description provided for @teachMochiAsks.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} asks: {question}'**
+  String teachMochiAsks(String mascot, String question);
+
+  /// No description provided for @teachPickAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick another'**
+  String get teachPickAnother;
+
+  /// No description provided for @teachNoTopics.
+  ///
+  /// In en, this message translates to:
+  /// **'No topics to teach yet'**
+  String get teachNoTopics;
+
+  /// No description provided for @teachNoTopicsPersonalDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload some notes first so {mascot} has something to learn from!'**
+  String teachNoTopicsPersonalDesc(String mascot);
+
+  /// No description provided for @teachCouldntCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} couldn\'t check this one'**
+  String teachCouldntCheck(String mascot);
+
+  /// No description provided for @teachEvalFailedFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong — give it another go.'**
+  String get teachEvalFailedFallback;
+
+  /// No description provided for @hwTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Homework'**
+  String get hwTitle;
+
+  /// No description provided for @hwSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit homework'**
+  String get hwSubmit;
+
+  /// No description provided for @hwEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No homework yet'**
+  String get hwEmptyTitle;
+
+  /// No description provided for @hwEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit a photo or PDF of your work and your teacher will send back feedback here.'**
+  String get hwEmptyBody;
+
+  /// No description provided for @hwBadgeFeedbackReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback ready'**
+  String get hwBadgeFeedbackReady;
+
+  /// No description provided for @hwBadgeRedo.
+  ///
+  /// In en, this message translates to:
+  /// **'Please redo'**
+  String get hwBadgeRedo;
+
+  /// No description provided for @hwBadgeInReview.
+  ///
+  /// In en, this message translates to:
+  /// **'In review'**
+  String get hwBadgeInReview;
+
+  /// No description provided for @hwHintReleasedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your teacher has reviewed your work — read their feedback below.'**
+  String get hwHintReleasedBody;
+
+  /// No description provided for @hwHintReturnedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned for another go'**
+  String get hwHintReturnedTitle;
+
+  /// No description provided for @hwHintReturnedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your teacher asked you to take another look and resubmit.'**
+  String get hwHintReturnedBody;
+
+  /// No description provided for @hwHintInReviewBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your teacher is reviewing your work. You\'ll see their feedback here once they share it.'**
+  String get hwHintInReviewBody;
+
+  /// No description provided for @hwTeacherFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Teacher\'s feedback'**
+  String get hwTeacherFeedback;
+
+  /// No description provided for @hwWhatYouSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'What you submitted'**
+  String get hwWhatYouSubmitted;
+
+  /// No description provided for @hwFieldTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get hwFieldTitle;
+
+  /// No description provided for @hwFieldTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Maths worksheet 3'**
+  String get hwFieldTitleHint;
+
+  /// No description provided for @hwFieldSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject (optional)'**
+  String get hwFieldSubject;
+
+  /// No description provided for @hwFieldSubjectHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Mathematics'**
+  String get hwFieldSubjectHint;
+
+  /// No description provided for @hwYourWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Your work'**
+  String get hwYourWork;
+
+  /// No description provided for @hwSubmitting.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitting…'**
+  String get hwSubmitting;
+
+  /// No description provided for @hwSubmitToTeacher.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit to teacher'**
+  String get hwSubmitToTeacher;
+
+  /// No description provided for @hwReviewNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your teacher reviews every submission before sending feedback back to you.'**
+  String get hwReviewNote;
+
+  /// No description provided for @hwChipScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan'**
+  String get hwChipScan;
+
+  /// No description provided for @hwChipPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get hwChipPhoto;
+
+  /// No description provided for @examPrepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam Prep'**
+  String get examPrepTitle;
+
+  /// No description provided for @examPrepLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load exam prep data.'**
+  String get examPrepLoadError;
+
+  /// No description provided for @examPrepConceptMastery.
+  ///
+  /// In en, this message translates to:
+  /// **'CONCEPT MASTERY'**
+  String get examPrepConceptMastery;
+
+  /// No description provided for @examPrepEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No exam prep data yet'**
+  String get examPrepEmptyTitle;
+
+  /// No description provided for @examPrepEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete some modules first to see your concept mastery.'**
+  String get examPrepEmptyBody;
+
+  /// No description provided for @examPrepDaysUntilExam.
+  ///
+  /// In en, this message translates to:
+  /// **'days until exam'**
+  String get examPrepDaysUntilExam;
+
+  /// No description provided for @examPrepDailyTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Study 1 module/day to finish by exam} other{Study {count} modules/day to finish by exam}}'**
+  String examPrepDailyTarget(int count);
+
+  /// No description provided for @examPrepSelfAssessed.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-assessed'**
+  String get examPrepSelfAssessed;
+
+  /// No description provided for @examPrepRedo.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-do'**
+  String get examPrepRedo;
+
+  /// No description provided for @examPrepStartRevisionError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start revision. Try again.'**
+  String get examPrepStartRevisionError;
+
+  /// No description provided for @commonCouldNotSaveConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save — check your connection'**
+  String get commonCouldNotSaveConnection;
+
+  /// No description provided for @referralTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite friends'**
+  String get referralTitle;
+
+  /// No description provided for @referralFriendsInvited.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends you invited'**
+  String get referralFriendsInvited;
+
+  /// No description provided for @referralLoadInvitesError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your invites'**
+  String get referralLoadInvitesError;
+
+  /// No description provided for @referralYourCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Your invite code'**
+  String get referralYourCode;
+
+  /// No description provided for @referralCodeCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Code copied'**
+  String get referralCodeCopied;
+
+  /// No description provided for @referralShareMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Apalchi — the AI study companion. Use my code {code} at sign-up so we both earn bonus stars when you take your first quiz.'**
+  String referralShareMessage(String code);
+
+  /// No description provided for @referralActivatedOfTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'{activated} of {target} friends activated'**
+  String referralActivatedOfTarget(int activated, int target);
+
+  /// No description provided for @referralNextTier.
+  ///
+  /// In en, this message translates to:
+  /// **'Refer {count} more → +{bonus}⭐ bonus'**
+  String referralNextTier(int count, int bonus);
+
+  /// No description provided for @referralActivatedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends count as \"activated\" after they complete their first quiz.'**
+  String get referralActivatedNote;
+
+  /// No description provided for @referralEmptyInvites.
+  ///
+  /// In en, this message translates to:
+  /// **'No invites yet — share your code above to get started!'**
+  String get referralEmptyInvites;
+
+  /// No description provided for @referralStatusActivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Activated'**
+  String get referralStatusActivated;
+
+  /// No description provided for @referralStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get referralStatusPending;
+
+  /// No description provided for @studyPlanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Study Plan'**
+  String get studyPlanTitle;
+
+  /// No description provided for @studyPlanTodayTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Tasks'**
+  String get studyPlanTodayTasks;
+
+  /// No description provided for @studyPlanAllDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s plan done! 🎉 Keep it up!'**
+  String get studyPlanAllDone;
+
+  /// No description provided for @studyPlanComingUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming Up'**
+  String get studyPlanComingUp;
+
+  /// No description provided for @studyPlanBubbleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Here\'s your plan for today! 📅'**
+  String get studyPlanBubbleTitle;
+
+  /// No description provided for @studyPlanBubbleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete all tasks to keep your streak going and earn bonus stars!'**
+  String get studyPlanBubbleBody;
+
+  /// No description provided for @studyPlanMarkDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get studyPlanMarkDone;
+
+  /// No description provided for @studyPlanStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get studyPlanStart;
+
+  /// No description provided for @studyPlanUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get studyPlanUpcoming;
+
+  /// No description provided for @studyPlanTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get studyPlanTomorrow;
+
+  /// No description provided for @studyPlanIn2Days.
+  ///
+  /// In en, this message translates to:
+  /// **'In 2 days'**
+  String get studyPlanIn2Days;
+
+  /// No description provided for @studyPlanUpcomingTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming Test'**
+  String get studyPlanUpcomingTest;
+
+  /// No description provided for @studyPlanSubjectTest.
+  ///
+  /// In en, this message translates to:
+  /// **'{subject} Test'**
+  String studyPlanSubjectTest(String subject);
+
+  /// No description provided for @studyPlanTestToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get studyPlanTestToday;
+
+  /// No description provided for @studyPlanDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, one{1 day left} other{{days} days left}}'**
+  String studyPlanDaysLeft(int days);
+
+  /// No description provided for @studyPlanSetTestDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a test date in Settings to see a countdown here.'**
+  String get studyPlanSetTestDate;
+
+  /// No description provided for @brainHealthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Brain Health 🧠'**
+  String get brainHealthTitle;
+
+  /// No description provided for @brainHealthWikiPages.
+  ///
+  /// In en, this message translates to:
+  /// **'Wiki Pages'**
+  String get brainHealthWikiPages;
+
+  /// No description provided for @brainHealthWeakTopics.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak Topics'**
+  String get brainHealthWeakTopics;
+
+  /// No description provided for @brainHealthScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Brain Health Score'**
+  String get brainHealthScore;
+
+  /// No description provided for @brainHealthPages.
+  ///
+  /// In en, this message translates to:
+  /// **'Pages'**
+  String get brainHealthPages;
+
+  /// No description provided for @brainHealthVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get brainHealthVerified;
+
+  /// No description provided for @brainHealthAvgQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Quality'**
+  String get brainHealthAvgQuality;
+
+  /// No description provided for @brainHealthErrors.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 error} other{{count} errors}}'**
+  String brainHealthErrors(int count);
+
+  /// No description provided for @quizDailyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Quiz'**
+  String get quizDailyTitle;
+
+  /// No description provided for @quizQuestionOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Question {current} of {total}'**
+  String quizQuestionOf(int current, int total);
+
+  /// No description provided for @quizXpEarnedLong.
+  ///
+  /// In en, this message translates to:
+  /// **'+{xp} XP earned'**
+  String quizXpEarnedLong(int xp);
+
+  /// No description provided for @quizMasteryBreakdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Mastery breakdown'**
+  String get quizMasteryBreakdown;
+
+  /// No description provided for @quizMoreItems.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count} more'**
+  String quizMoreItems(int count);
+
+  /// No description provided for @centreJoinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Join a class'**
+  String get centreJoinTitle;
+
+  /// No description provided for @centreJoinEnterFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the full class code'**
+  String get centreJoinEnterFull;
+
+  /// No description provided for @centreJoinHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the class code'**
+  String get centreJoinHeading;
+
+  /// No description provided for @centreJoinBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask your teacher or tuition centre for the class code on their dashboard, then type it in below.'**
+  String get centreJoinBody;
+
+  /// No description provided for @centreJoinYourClassFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'your class'**
+  String get centreJoinYourClassFallback;
+
+  /// No description provided for @centreJoinSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined {className} 🎉'**
+  String centreJoinSuccess(String className);
+
+  /// No description provided for @centreJoinFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not join — check the code and try again'**
+  String get centreJoinFailed;
+
+  /// No description provided for @centreJoinButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Join class'**
+  String get centreJoinButton;
+
+  /// No description provided for @assignTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment'**
+  String get assignTitle;
+
+  /// No description provided for @assignPickedForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Picked for you'**
+  String get assignPickedForYou;
+
+  /// No description provided for @assignNotReleasedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Answers not released yet'**
+  String get assignNotReleasedTitle;
+
+  /// No description provided for @assignNotReleasedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your teacher hasn\'t shared the model answers. You\'ll be able to compare here once they do.'**
+  String get assignNotReleasedBody;
+
+  /// No description provided for @assignReleasedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare your answers with the model answers below.'**
+  String get assignReleasedBody;
+
+  /// No description provided for @assignQuestionNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Q{n}'**
+  String assignQuestionNumber(int n);
+
+  /// No description provided for @assignYourAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Your answer'**
+  String get assignYourAnswer;
+
+  /// No description provided for @assignNoAnswerRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'No answer recorded'**
+  String get assignNoAnswerRecorded;
+
+  /// No description provided for @assignModelAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Model answer'**
+  String get assignModelAnswer;
+
+  /// No description provided for @assignEvaluation.
+  ///
+  /// In en, this message translates to:
+  /// **'Evaluation'**
+  String get assignEvaluation;
+
+  /// No description provided for @assignEmptyReleased.
+  ///
+  /// In en, this message translates to:
+  /// **'No answers to compare yet'**
+  String get assignEmptyReleased;
+
+  /// No description provided for @assignEmptyNotReleased.
+  ///
+  /// In en, this message translates to:
+  /// **'Come back after answers are released'**
+  String get assignEmptyNotReleased;
+
+  /// No description provided for @learningStyleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning style'**
+  String get learningStyleTitle;
+
+  /// No description provided for @learningStyleDefaultMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Default answer mode'**
+  String get learningStyleDefaultMode;
+
+  /// No description provided for @learningStyleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Guide Me builds understanding — you figure it out, you remember more. You can switch per question with the toggle in chat.'**
+  String get learningStyleBody;
+
+  /// No description provided for @learningStyleSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Default saved!'**
+  String get learningStyleSaved;
+
+  /// No description provided for @learningStyleRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'RECOMMENDED'**
+  String get learningStyleRecommended;
+
+  /// No description provided for @learningStyleGuideDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} guides you to the answer — builds real retention.'**
+  String learningStyleGuideDesc(String mascot);
+
+  /// No description provided for @learningStyleAnswerDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} gives the worked solution — great for checking your work.'**
+  String learningStyleAnswerDesc(String mascot);
+
+  /// No description provided for @chatModeGuideMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Guide Me'**
+  String get chatModeGuideMe;
+
+  /// No description provided for @chatModeJustAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Just answer'**
+  String get chatModeJustAnswer;
+
+  /// No description provided for @chatModeTwoWays.
+  ///
+  /// In en, this message translates to:
+  /// **'Two ways to learn 🎓'**
+  String get chatModeTwoWays;
+
+  /// No description provided for @chatModeSwitchAnyTime.
+  ///
+  /// In en, this message translates to:
+  /// **'You can switch any time with the toggle above the chat.'**
+  String get chatModeSwitchAnyTime;
+
+  /// No description provided for @chatModeGuideDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} asks you guiding questions — you figure it out yourself. What you discover, you remember.'**
+  String chatModeGuideDesc(String mascot);
+
+  /// No description provided for @chatModeAnswerDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} gives you the worked solution directly. Great for checking your work — but you\'ll remember less.'**
+  String chatModeAnswerDesc(String mascot);
+
+  /// No description provided for @chatModeDefaultGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Default: Guide Me'**
+  String get chatModeDefaultGuide;
+
+  /// No description provided for @chatModeGotIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it — let\'s learn!'**
+  String get chatModeGotIt;
+
+  /// No description provided for @chatCoachTapToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the toggle to switch how {mascot} helps you.'**
+  String chatCoachTapToggle(String mascot);
+
+  /// No description provided for @chatAnswerNudge.
+  ///
+  /// In en, this message translates to:
+  /// **'Full answer coming up — try Guide Me sometimes, you\'ll remember more.'**
+  String get chatAnswerNudge;
+
+  /// No description provided for @chatEscapeGreatEffort.
+  ///
+  /// In en, this message translates to:
+  /// **'Great effort! Here\'s the answer'**
+  String get chatEscapeGreatEffort;
+
+  /// No description provided for @chatEscapeAddedPractice.
+  ///
+  /// In en, this message translates to:
+  /// **'Added \"{topic}\" to your practice list'**
+  String chatEscapeAddedPractice(String topic);
+
+  /// No description provided for @chatHints.
+  ///
+  /// In en, this message translates to:
+  /// **'Hints: '**
+  String get chatHints;
+
+  /// No description provided for @chatAnswerReady.
+  ///
+  /// In en, this message translates to:
+  /// **'— answer ready'**
+  String get chatAnswerReady;
+
+  /// No description provided for @chatReported.
+  ///
+  /// In en, this message translates to:
+  /// **'Reported'**
+  String get chatReported;
+
+  /// No description provided for @chatTabTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get chatTabTitle;
+
+  /// No description provided for @reportThanks.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks — we\'ll take a look'**
+  String get reportThanks;
+
+  /// No description provided for @reportDoneButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get reportDoneButton;
+
+  /// No description provided for @commonRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get commonRetry;
+
+  /// No description provided for @centreBlockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a Centre account'**
+  String get centreBlockTitle;
+
+  /// No description provided for @centreBlockBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The Apalchi app is for students only. Centre teachers and owners manage their classes at apalchi.com.'**
+  String get centreBlockBody;
+
+  /// No description provided for @centreBlockLoginWeb.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in at apalchi.com'**
+  String get centreBlockLoginWeb;
+
+  /// No description provided for @centreBlockBackToSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Sign In'**
+  String get centreBlockBackToSignIn;
+
+  /// No description provided for @avatarPickerCreateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not create {mascot} — {message}'**
+  String avatarPickerCreateError(String mascot, String message);
+
+  /// No description provided for @avatarPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Your {mascot} ✨'**
+  String avatarPickerTitle(String mascot);
+
+  /// No description provided for @avatarPickerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Each one is unique 🍡 Pick who you want to learn with!'**
+  String get avatarPickerSubtitle;
+
+  /// No description provided for @collectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection'**
+  String get collectionTitle;
+
+  /// No description provided for @collectionAlbumTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} Album'**
+  String collectionAlbumTitle(String mascot);
+
+  /// No description provided for @createTutorWishHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'WHAT DO YOU WISH {mascot} TO HELP YOU WITH?'**
+  String createTutorWishHelp(String mascot);
+
+  /// No description provided for @groupCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. AB23CD'**
+  String get groupCodeHint;
+
+  /// No description provided for @joinCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 5K7Q2X'**
+  String get joinCodeHint;
+
+  /// No description provided for @moduleListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Modules'**
+  String get moduleListTitle;
+
+  /// No description provided for @uploadTypedNotesTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Typed notes give the best results. Paste from Google Docs or type from your textbook.'**
+  String get uploadTypedNotesTip;
+
+  /// No description provided for @uploadSplitLongNotesTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Consider splitting long notes into separate uploads for better accuracy.'**
+  String get uploadSplitLongNotesTip;
+
+  /// No description provided for @voiceTalkTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Talk to {mascot}'**
+  String voiceTalkTo(String mascot);
+
+  /// No description provided for @voiceExplainer.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} uses your phone\'s speech recognition to turn talking into text — your voice isn\'t saved.'**
+  String voiceExplainer(String mascot);
+
+  /// No description provided for @voiceMicNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone access needed'**
+  String get voiceMicNeeded;
+
+  /// No description provided for @voiceMicGuidance.
+  ///
+  /// In en, this message translates to:
+  /// **'To talk to {mascot}, turn on microphone access in Settings. You can still type your answer.'**
+  String voiceMicGuidance(String mascot);
+
+  /// No description provided for @voiceNotNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get voiceNotNow;
+
+  /// No description provided for @voiceOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get voiceOpenSettings;
+
+  /// No description provided for @weaknessImproved.
+  ///
+  /// In en, this message translates to:
+  /// **'You improved on {topics}! 📈'**
+  String weaknessImproved(String topics);
+
+  /// No description provided for @weaknessFocusOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s focus on'**
+  String get weaknessFocusOn;
+
+  /// No description provided for @weaknessHelpPractise.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} will help you practise these.'**
+  String weaknessHelpPractise(String mascot);
+
+  /// No description provided for @tourStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi, I\'m {mascot}!'**
+  String tourStep1Title(String mascot);
+
+  /// No description provided for @tourStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Let me show you 4 quick things that make Apalchi different from any other study app.'**
+  String get tourStep1Body;
+
+  /// No description provided for @tourStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'A {mascot} for every subject'**
+  String tourStep2Title(String mascot);
+
+  /// No description provided for @tourStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Create one {mascot} per subject — each one learns only YOUR notes, so every answer matches exactly what your teacher taught.'**
+  String tourStep2Body(String mascot);
+
+  /// No description provided for @tourStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn it. Test it. Prove it.'**
+  String get tourStep3Title;
+
+  /// No description provided for @tourStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Every topic becomes a mini-mission: quick cards to learn, hot-takes to test yourself, and a challenge to prove it — what you get wrong, I bring back until it sticks.'**
+  String get tourStep3Body;
+
+  /// No description provided for @tourStep4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'I remember what you find hard'**
+  String get tourStep4Title;
+
+  /// No description provided for @tourStep4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'The Library tracks your mastery by topic. When you get something wrong, I bring it back — spaced and scheduled — until it sticks.'**
+  String get tourStep4Body;
+
+  /// No description provided for @tourStep5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Not a generic AI — a {mascot} that knows yours.'**
+  String tourStep5Title(String mascot);
+
+  /// No description provided for @tourStep5Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload your notes and every answer, quiz, and challenge comes from what YOUR teacher taught.'**
+  String get tourStep5Body;
+
+  /// No description provided for @tourStep5Cta.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get tourStep5Cta;
+
+  /// No description provided for @tourBack.
+  ///
+  /// In en, this message translates to:
+  /// **'← Back'**
+  String get tourBack;
+
+  /// No description provided for @tourDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done!'**
+  String get tourDone;
+
+  /// No description provided for @tourShowMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Show me!'**
+  String get tourShowMe;
+
+  /// No description provided for @tourNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next →'**
+  String get tourNext;
+
+  /// No description provided for @tourSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get tourSkip;
+
+  /// No description provided for @moduleStageTitleLearn.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn'**
+  String get moduleStageTitleLearn;
+
+  /// No description provided for @moduleStageTitleTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Test'**
+  String get moduleStageTitleTest;
+
+  /// No description provided for @moduleStageTitleProve.
+  ///
+  /// In en, this message translates to:
+  /// **'Prove'**
+  String get moduleStageTitleProve;
+
+  /// No description provided for @moduleStageTitleComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete'**
+  String get moduleStageTitleComplete;
+
+  /// No description provided for @forceUpdateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to update!'**
+  String get forceUpdateTitle;
+
+  /// No description provided for @forceUpdateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A newer version of Apalchi is ready with important improvements. Please update to keep learning.'**
+  String get forceUpdateBody;
+
+  /// No description provided for @forceUpdateCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Update now'**
+  String get forceUpdateCta;
+
+  /// No description provided for @uploadLargeFileSizeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'large file'**
+  String get uploadLargeFileSizeLabel;
 }
 
 class _AppLocalizationsDelegate

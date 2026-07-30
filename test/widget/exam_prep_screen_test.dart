@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/exam_prep/presentation/exam_prep_screen.dart';
 import 'package:pally/features/exam_prep/presentation/exam_prep_view_model.dart';
 import 'package:pally/shared/models/exam_prep.dart';
@@ -10,7 +11,9 @@ import 'package:pally/shared/models/exam_prep.dart';
 Widget _wrap(Widget child, {List<Override> overrides = const []}) =>
     ProviderScope(
       overrides: overrides,
-      child: MaterialApp(home: child),
+      child: MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,home: child),
     );
 
 void main() {

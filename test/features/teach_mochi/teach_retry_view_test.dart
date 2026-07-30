@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/teach_mochi/presentation/teach_mochi_screen.dart';
 import 'package:pally/features/teach_mochi/presentation/teach_mochi_view_model.dart';
 
@@ -25,6 +26,8 @@ void main() {
     testWidgets('shows a retry, not a score; tap fires onTryAgain', (tester) async {
       var tapped = false;
       await tester.pumpWidget(MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: TeachRetryView(
             feedback: 'Could not parse feedback.',

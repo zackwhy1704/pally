@@ -215,7 +215,7 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
               inputFormatters: [UpperCaseFormatter()],
               style: AppTextStyles.title.copyWith(color: AppColors.text1, letterSpacing: 2),
               decoration: InputDecoration(
-                hintText: 'e.g. 5K7Q2X',
+                hintText: AppLocalizations.of(context).joinCodeHint,
                 hintStyle: AppTextStyles.title.copyWith(color: AppColors.text3, letterSpacing: 2),
                 filled: true,
                 fillColor: AppColors.surface,

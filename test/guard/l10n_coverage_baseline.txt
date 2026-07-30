@@ -30,113 +30,24 @@ core/ui/scaffold_shell.dart	Me
 core/utils/device_info.dart	${a.manufacturer} ${a.model}
 core/utils/device_info.dart	Unknown device
 core/widgets/loading/mochi_generating.dart	Cancel
-features/app_update/force_update_screen.dart	A newer version of Apalchi is ready with important improvements. 
-features/app_update/force_update_screen.dart	Time to update!
-features/app_update/force_update_screen.dart	Update now
-features/assignments/presentation/assignment_compare_screen.dart	Answers not released yet
-features/assignments/presentation/assignment_compare_screen.dart	Assignment
-features/assignments/presentation/assignment_compare_screen.dart	Compare your answers with the model answers below.
-features/assignments/presentation/assignment_compare_screen.dart	Evaluation
-features/assignments/presentation/assignment_compare_screen.dart	Model answer
-features/assignments/presentation/assignment_compare_screen.dart	Picked for you
-features/assignments/presentation/assignment_compare_screen.dart	Q${question.index + 1}
-features/assignments/presentation/assignment_compare_screen.dart	Your answer
-features/assignments/presentation/assignment_compare_screen.dart	Your teacher hasn't shared the model answers. 
-features/auth/screens/centre_block_screen.dart	Back to Sign In
-features/auth/screens/centre_block_screen.dart	Log in at apalchi.com
-features/auth/screens/centre_block_screen.dart	The Apalchi app is for students only. 
-features/auth/screens/centre_block_screen.dart	This is a Centre account
-features/auth/screens/splash_screen.dart	Mochi
 features/avatar_hub/presentation/avatar_hub_screen.dart	$title. $subtitle
 features/avatar_hub/presentation/avatar_hub_screen.dart	${l.hubLearn}. $subtitle
-features/avatar_picker/screens/avatar_picker_screen.dart	Choose Your Mochi ✨
-features/avatar_picker/screens/avatar_picker_screen.dart	Could not create Mochi — ${e.message}
-features/avatar_picker/screens/avatar_picker_screen.dart	Each one is unique 🍡 Pick who you want to learn with!
-features/brain_health/presentation/brain_health_screen.dart	$count errors
 features/brain_health/presentation/brain_health_screen.dart	$q
 features/brain_health/presentation/brain_health_screen.dart	$score%
-features/brain_health/presentation/brain_health_screen.dart	Avg Quality
-features/brain_health/presentation/brain_health_screen.dart	Brain Health Score
-features/brain_health/presentation/brain_health_screen.dart	Brain Health 🧠
-features/brain_health/presentation/brain_health_screen.dart	Pages
-features/brain_health/presentation/brain_health_screen.dart	Verified
-features/brain_health/presentation/brain_health_screen.dart	Weak Topics
-features/brain_health/presentation/brain_health_screen.dart	Wiki Pages
-features/centre/presentation/centre_join_screen.dart	Ask your teacher or tuition centre for the class code on their 
-features/centre/presentation/centre_join_screen.dart	Enter the class code
-features/centre/presentation/centre_join_screen.dart	Enter the full class code
-features/centre/presentation/centre_join_screen.dart	Join a class
-features/centre/presentation/centre_join_screen.dart	Join class
-features/centre/presentation/centre_join_screen.dart	Joined $className 🎉
-features/chat/presentation/chat_screen.dart	Reported
-features/chat/presentation/chat_tab_screen.dart	Chat
 features/chat/presentation/chat_view_model.dart	📷 Homework photo
 features/chat/presentation/widgets/answer_card.dart	$questionNumber
 features/chat/presentation/widgets/answer_card.dart	✅  ${answer.answer}
-features/chat/presentation/widgets/report_message_sheet.dart	Cancel
-features/chat/presentation/widgets/report_message_sheet.dart	Done
-features/chat/presentation/widgets/report_message_sheet.dart	Thanks — we'll take a look
-features/chat/widgets/escape_hatch_notification.dart	Added "${widget.topicLabel}" to your practice list
-features/chat/widgets/escape_hatch_notification.dart	Great effort! Here's the answer
-features/chat/widgets/guide_attempt_indicator.dart	Hints: 
-features/chat/widgets/guide_attempt_indicator.dart	— answer ready
-features/chat/widgets/mode_coach_mark.dart	Full answer coming up — try Guide Me sometimes, 
-features/chat/widgets/mode_coach_mark.dart	Tap the toggle to switch how Mochi helps you.
-features/chat/widgets/mode_education_overlay.dart	Default: Guide Me
-features/chat/widgets/mode_education_overlay.dart	Got it — let's learn!
-features/chat/widgets/mode_education_overlay.dart	Guide Me
-features/chat/widgets/mode_education_overlay.dart	Just answer
-features/chat/widgets/mode_education_overlay.dart	Mochi asks you guiding questions — you figure it out yourself. 
-features/chat/widgets/mode_education_overlay.dart	Mochi gives you the worked solution directly. 
-features/chat/widgets/mode_education_overlay.dart	Two ways to learn 🎓
-features/chat/widgets/mode_education_overlay.dart	You can switch any time with the toggle above the chat.
-features/chat/widgets/teaching_mode_toggle.dart	Guide Me
-features/chat/widgets/teaching_mode_toggle.dart	Just answer
 features/collection/presentation/collection_screen.dart	$owned / $total
-features/collection/presentation/collection_screen.dart	Collection
-features/collection/presentation/collection_screen.dart	Mochi Album
-features/create_tutor/presentation/character_picker_step.dart	Retry
-features/create_tutor/presentation/grade_step.dart	WHAT DO YOU WISH MOCHI TO HELP YOU WITH?
-features/create_tutor/presentation/name_step.dart	Next
 features/exam_prep/presentation/exam_prep_screen.dart	$_masteryIcon $pct%
 features/exam_prep/presentation/exam_prep_screen.dart	$daysRemaining
-features/exam_prep/presentation/exam_prep_screen.dart	CONCEPT MASTERY
-features/exam_prep/presentation/exam_prep_screen.dart	Complete some modules first to see your concept mastery.
-features/exam_prep/presentation/exam_prep_screen.dart	Could not load exam prep data.
-features/exam_prep/presentation/exam_prep_screen.dart	Could not start revision. Try again.
-features/exam_prep/presentation/exam_prep_screen.dart	Exam Prep
-features/exam_prep/presentation/exam_prep_screen.dart	No exam prep data yet
-features/exam_prep/presentation/exam_prep_screen.dart	Re-do
-features/exam_prep/presentation/exam_prep_screen.dart	Self-assessed
-features/exam_prep/presentation/exam_prep_screen.dart	Study $dailyTarget module${dailyTarget == 1 ? 
-features/exam_prep/presentation/exam_prep_screen.dart	Try again
-features/exam_prep/presentation/exam_prep_screen.dart	days until exam
 features/flashcards/presentation/flashcard_screen.dart	$current / $total
 features/flashcards/presentation/flashcard_view_model.dart	your Mochi
 features/groups/presentation/challenge_card.dart	$m:$s
 features/groups/presentation/challenge_card.dart	$pct%
-features/groups/presentation/group_list_screen.dart	e.g. AB23CD
 features/home/widgets/module_progress_banner.dart	${avatar.name} — ${module.masteryDisplayPct}%
-features/homework/presentation/homework_detail_screen.dart	Homework
-features/homework/presentation/homework_detail_screen.dart	Teacher's feedback
-features/homework/presentation/homework_detail_screen.dart	What you submitted
-features/homework/presentation/homework_list_screen.dart	Homework
-features/homework/presentation/homework_list_screen.dart	No homework yet
-features/homework/presentation/homework_list_screen.dart	Submit a photo or PDF of your work and your teacher will send 
-features/homework/presentation/homework_list_screen.dart	Submit homework
-features/homework/presentation/homework_submit_screen.dart	Photo
-features/homework/presentation/homework_submit_screen.dart	Scan
-features/homework/presentation/homework_submit_screen.dart	Subject (optional)
-features/homework/presentation/homework_submit_screen.dart	Submit homework
-features/homework/presentation/homework_submit_screen.dart	Title
-features/homework/presentation/homework_submit_screen.dart	Your teacher reviews every submission before sending 
-features/homework/presentation/homework_submit_screen.dart	Your work
-features/join/presentation/join_screen.dart	e.g. 5K7Q2X
 features/modules/presentation/module_list_screen.dart	$masteryPct%
 features/modules/presentation/module_list_screen.dart	${e.value} ${e.key}
-features/modules/presentation/module_list_screen.dart	Modules
 features/modules/presentation/module_player_screen.dart	${playerState.currentIndex + 1}/${playerState.totalItems}
-features/modules/presentation/module_player_screen.dart	Complete
 features/modules/presentation/widgets/complete_body.dart	$pct%
 features/ocr_awareness/screens/ocr_quality_warning.dart	${(_barAnimation.value * 100).round()}%
 features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}%
@@ -144,13 +55,6 @@ features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}
 features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}% ✓
 features/ocr_awareness/utils/confidence_utils.dart	${(confidence * 100).round()}% ✗
 features/onboarding/presentation/direct_onboarding_view_model.dart	No internet connection. Check your WiFi and try again.
-features/onboarding/presentation/feature_tour.dart	A Mochi for every subject
-features/onboarding/presentation/feature_tour.dart	Hi, I'm Mochi!
-features/onboarding/presentation/feature_tour.dart	I remember what you find hard
-features/onboarding/presentation/feature_tour.dart	Learn it. Test it. Prove it.
-features/onboarding/presentation/feature_tour.dart	Not a generic AI — a Mochi that knows yours.
-features/onboarding/presentation/feature_tour.dart	Skip
-features/onboarding/presentation/feature_tour.dart	← Back
 features/onboarding/presentation/onboarding_screen.dart	u{1F4CA}
 features/onboarding/presentation/onboarding_screen.dart	u{1F9E0}
 features/photo_question/presentation/homework_scan_detail_screen.dart	+$xpEarned XP
@@ -166,45 +70,11 @@ features/progress/presentation/streak_milestone_overlay.dart	$milestone
 features/quiz/presentation/quiz_screen.dart	$percentage%
 features/quiz/presentation/quiz_screen.dart	${((current / total) * 100).round()}%
 features/quiz/presentation/quiz_screen.dart	${quizState.currentIndex + 1}/${quizState.totalQuestions}
-features/quiz/presentation/quiz_screen.dart	+$xp XP
-features/quiz/presentation/quiz_screen.dart	+$xpEarned XP earned
-features/quiz/presentation/quiz_screen.dart	+${items.length - 3} more
-features/quiz/presentation/quiz_screen.dart	Daily Quiz
-features/quiz/presentation/quiz_screen.dart	Mastery breakdown
-features/quiz/presentation/quiz_screen.dart	Question $current of $total
 features/quiz/presentation/quiz_screen.dart	· $item
-features/referral/presentation/referral_screen.dart	${summary.activatedCount} of $target friends activated
-features/referral/presentation/referral_screen.dart	Code copied
-features/referral/presentation/referral_screen.dart	Copy
-features/referral/presentation/referral_screen.dart	Could not load your invites
-features/referral/presentation/referral_screen.dart	Friends count as "activated" after they complete their first quiz.
-features/referral/presentation/referral_screen.dart	Friends you invited
-features/referral/presentation/referral_screen.dart	Invite friends
-features/referral/presentation/referral_screen.dart	No invites yet — share your code above to get started!
-features/referral/presentation/referral_screen.dart	Refer ${target - summary.activatedCount} more → 
-features/referral/presentation/referral_screen.dart	Share
-features/referral/presentation/referral_screen.dart	Your invite code
 features/referral/presentation/referral_screen.dart	⭐ ${summary.rewardsEarned}
-features/settings/presentation/learning_style_screen.dart	Could not save — check your connection
-features/settings/presentation/learning_style_screen.dart	Default answer mode
-features/settings/presentation/learning_style_screen.dart	Default saved!
-features/settings/presentation/learning_style_screen.dart	Guide Me builds understanding — you figure it out, 
-features/settings/presentation/learning_style_screen.dart	Learning style
 features/shop/presentation/shop_screen.dart	$n
 features/shop/presentation/shop_screen.dart	${(n / 1000).toStringAsFixed(1)}k
 features/shop/presentation/shop_screen.dart	× $count
-features/study_plan/presentation/study_plan_screen.dart	Coming Up
-features/study_plan/presentation/study_plan_screen.dart	Complete all tasks to keep your streak going and earn bonus stars!
-features/study_plan/presentation/study_plan_screen.dart	Could not save — check your connection
-features/study_plan/presentation/study_plan_screen.dart	Done
-features/study_plan/presentation/study_plan_screen.dart	Here's your plan for today! 📅
-features/study_plan/presentation/study_plan_screen.dart	In 2 days
-features/study_plan/presentation/study_plan_screen.dart	Set a test date in Settings to see a countdown here.
-features/study_plan/presentation/study_plan_screen.dart	Start
-features/study_plan/presentation/study_plan_screen.dart	Study Plan
-features/study_plan/presentation/study_plan_screen.dart	Today's Tasks
-features/study_plan/presentation/study_plan_screen.dart	Today's plan done! 🎉 Keep it up!
-features/study_plan/presentation/study_plan_screen.dart	Tomorrow
 features/subscription/presentation/paywall_screen.dart	Maybe later
 features/subscription/presentation/paywall_screen.dart	See plans
 features/subscription/presentation/subscription_plans_screen.dart	1 student · all AI features
@@ -244,33 +114,7 @@ features/subscription/presentation/trial_welcome_screen.dart	Start exploring! �
 features/subscription/presentation/trial_welcome_screen.dart	🎁 Premium is on usnfor 7 days!
 features/subscription/widgets/web_upgrade_cta.dart	Checking…
 features/subscription/widgets/web_upgrade_cta.dart	I've upgraded — refresh
-features/teach_mochi/presentation/teach_mochi_screen.dart	+${eval.xpEarned} XP
-features/teach_mochi/presentation/teach_mochi_screen.dart	Done — show me how I did
-features/teach_mochi/presentation/teach_mochi_screen.dart	Missed concepts
-features/teach_mochi/presentation/teach_mochi_screen.dart	Mochi asks: ${eval.followUpQuestion}
-features/teach_mochi/presentation/teach_mochi_screen.dart	Mochi couldn't check this one
-features/teach_mochi/presentation/teach_mochi_screen.dart	No topics to teach yet
-features/teach_mochi/presentation/teach_mochi_screen.dart	Pick a topic and TEACH Mochi! 
-features/teach_mochi/presentation/teach_mochi_screen.dart	Pick another
-features/teach_mochi/presentation/teach_mochi_screen.dart	Pretend Mochi has never heard of this. Use your own words…
-features/teach_mochi/presentation/teach_mochi_screen.dart	Teach Mochi
-features/teach_mochi/presentation/teach_mochi_screen.dart	Teach Mochi about
-features/teach_mochi/presentation/teach_mochi_screen.dart	Try again
-features/teach_mochi/presentation/teach_mochi_screen.dart	You explained
 features/teach_mochi/presentation/teach_mochi_screen.dart	· $item
-features/upload/presentation/upload_screen.dart	Consider splitting long notes into separate uploads for better accuracy.
-features/upload/presentation/upload_screen.dart	Typed notes give the best results. Paste from Google Docs or type from your textbook.
-features/upload/presentation/upload_screen.dart	large file
-features/voice_input/presentation/voice_input_button.dart	Got it
-features/voice_input/presentation/voice_input_button.dart	Microphone access needed
-features/voice_input/presentation/voice_input_button.dart	Mochi uses your phone's speech recognition to turn talking into 
-features/voice_input/presentation/voice_input_button.dart	Not now
-features/voice_input/presentation/voice_input_button.dart	Open Settings
-features/voice_input/presentation/voice_input_button.dart	Talk to Mochi
-features/voice_input/presentation/voice_input_button.dart	To talk to Mochi, turn on microphone access in Settings. 
-features/weakness/presentation/weakness_focus_card.dart	Let's focus on
-features/weakness/presentation/weakness_focus_card.dart	Mochi will help you practise these.
-features/weakness/presentation/weakness_focus_card.dart	You improved on ${_pretty(f.recentWins)}! 📈
 features/wiki_compiled/presentation/wiki_compiled_screen.dart	$score/10
 features/wiki_viewer/presentation/wiki_viewer_screen.dart	$label · $pct%
 shared/models/avatar.dart	Art

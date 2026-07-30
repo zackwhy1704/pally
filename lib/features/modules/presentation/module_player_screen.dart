@@ -54,13 +54,16 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
         _ => AppColors.text3,
       };
 
-  String _stageTitle(String stage) => switch (stage) {
-        'LEARN' => 'Learn',
-        'TEST' => 'Test',
-        'PROVE' => 'Prove',
-        'COMPLETE' => 'Complete',
-        _ => stage,
-      };
+  String _stageTitle(BuildContext context, String stage) {
+    final l10n = AppLocalizations.of(context);
+    return switch (stage) {
+      'LEARN' => l10n.moduleStageTitleLearn,
+      'TEST' => l10n.moduleStageTitleTest,
+      'PROVE' => l10n.moduleStageTitleProve,
+      'COMPLETE' => l10n.moduleStageTitleComplete,
+      _ => stage,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +94,7 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
     );
 
     final stageColor = _stageColor(playerState.stage);
-    final stageTitle = _stageTitle(playerState.stage);
+    final stageTitle = _stageTitle(context, playerState.stage);
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -109,7 +112,7 @@ class _ModulePlayerScreenState extends ConsumerState<ModulePlayerScreen> {
           },
         ),
         title: playerState.isComplete
-            ? Text('Complete', style: AppTextStyles.title)
+            ? Text(AppLocalizations.of(context).moduleStageTitleComplete, style: AppTextStyles.title)
             : Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [

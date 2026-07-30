@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/features/voice_input/data/voice_input_prefs.dart';
 import 'package:pally/features/voice_input/domain/speech_recognizer.dart';
@@ -78,7 +79,9 @@ void main() {
   Widget wrap(Widget child, {List<Override> overrides = const []}) =>
       ProviderScope(
         overrides: overrides,
-        child: MaterialApp(home: Scaffold(body: child)),
+        child: MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,home: Scaffold(body: child)),
       );
 
   setUp(() {

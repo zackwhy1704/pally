@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/core/widgets/loading/splash_lines.dart';
 import 'package:pally/features/auth/screens/splash_view_model.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -149,9 +150,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 ),
                 const Spacer(flex: 3),
                 // Wordmark
-                const Text(
-                  'Mochi',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context).mascotName,
+                  style: const TextStyle(
                     fontFamily: 'Nunito',
                     fontSize: 18,
                     fontWeight: FontWeight.w700,

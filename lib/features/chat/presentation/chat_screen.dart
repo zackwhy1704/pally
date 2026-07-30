@@ -731,7 +731,7 @@ class _ReportedIndicator extends StatelessWidget {
       children: [
         const Icon(Icons.flag_rounded, size: 12, color: AppColors.text3),
         const SizedBox(width: 3),
-        Text('Reported', style: AppTextStyles.caption),
+        Text(AppLocalizations.of(context).chatReported, style: AppTextStyles.caption),
       ],
     );
   }

@@ -9,6 +9,7 @@ import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/referral/referral_service.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/referral.dart';
 import 'package:share_plus/share_plus.dart' as share_plus;
 
@@ -17,6 +18,7 @@ class ReferralScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final summaryAsync = ref.watch(referralSummaryProvider);
     final redemptionsAsync = ref.watch(referralRedemptionsProvider);
     return Scaffold(
@@ -24,7 +26,7 @@ class ReferralScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Invite friends', style: AppTextStyles.title),
+        title: Text(l10n.referralTitle, style: AppTextStyles.title),
         centerTitle: true,
       ),
       body: summaryAsync.when(
@@ -46,7 +48,7 @@ class ReferralScreen extends ConsumerWidget {
               const SizedBox(height: AppSpacing.md),
               _TierProgress(summary: summary),
               const SizedBox(height: AppSpacing.lg),
-              Text('Friends you invited', style: AppTextStyles.title),
+              Text(l10n.referralFriendsInvited, style: AppTextStyles.title),
               const SizedBox(height: AppSpacing.sm),
               redemptionsAsync.when(
                 loading: () => const Center(
@@ -55,7 +57,7 @@ class ReferralScreen extends ConsumerWidget {
                   child: PallyLoadingSpinner(),
                 )),
                 error: (_, __) => Text(
-                    'Could not load your invites',
+                    l10n.referralLoadInvitesError,
                     style: AppTextStyles.bodySmall
                         .copyWith(color: AppColors.text2)),
                 data: (rows) => rows.isEmpty
@@ -80,6 +82,7 @@ class _CodeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: AppSpacing.card,
       decoration: BoxDecoration(
@@ -94,7 +97,7 @@ class _CodeCard extends StatelessWidget {
         children: [
           const Text('🎁', style: TextStyle(fontSize: 40)),
           const SizedBox(height: AppSpacing.sm),
-          Text('Your invite code',
+          Text(l10n.referralYourCode,
               style: AppTextStyles.bodySmall
                   .copyWith(color: Colors.white70)),
           const SizedBox(height: 4),
@@ -113,12 +116,12 @@ class _CodeCard extends StatelessWidget {
                   onPressed: () {
                     Clipboard.setData(ClipboardData(text: code));
                     HapticFeedback.lightImpact();
-                    PallyToast.success(context, 'Code copied');
+                    PallyToast.success(context, l10n.referralCodeCopied);
                   },
                   icon: const Icon(Icons.copy_rounded,
                       size: 16, color: Colors.white),
-                  label: const Text('Copy',
-                      style: TextStyle(color: Colors.white)),
+                  label: Text(l10n.groupCopy,
+                      style: const TextStyle(color: Colors.white)),
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.white70),
                   ),
@@ -128,11 +131,9 @@ class _CodeCard extends StatelessWidget {
               Expanded(
                 child: FilledButton.icon(
                   onPressed: () => share_plus.Share.share(
-                      'Try Apalchi — the AI study companion. '
-                      'Use my code $code at sign-up so we both earn bonus '
-                      'stars when you take your first quiz.'),
+                      l10n.referralShareMessage(code)),
                   icon: const Icon(Icons.ios_share_rounded, size: 16),
-                  label: const Text('Share'),
+                  label: Text(l10n.inviteShare),
                   style: FilledButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: AppColors.purple,
@@ -153,6 +154,7 @@ class _TierProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final target = summary.nextTierAt;
     final pct = target == 0
         ? 1.0
@@ -171,7 +173,7 @@ class _TierProgress extends StatelessWidget {
             children: [
               Flexible(
                 child: Text(
-                  '${summary.activatedCount} of $target friends activated',
+                  l10n.referralActivatedOfTarget(summary.activatedCount, target),
                   overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.body
                       .copyWith(fontWeight: FontWeight.w700),
@@ -205,14 +207,14 @@ class _TierProgress extends StatelessWidget {
           if (summary.nextTierBonus > 0 &&
               summary.activatedCount < target)
             Text(
-              'Refer ${target - summary.activatedCount} more → '
-              '+${summary.nextTierBonus}⭐ bonus',
+              l10n.referralNextTier(
+                  target - summary.activatedCount, summary.nextTierBonus),
               style: AppTextStyles.label.copyWith(
                   color: AppColors.purple, fontWeight: FontWeight.w700),
             ),
           const SizedBox(height: 4),
           Text(
-            'Friends count as "activated" after they complete their first quiz.',
+            l10n.referralActivatedNote,
             style: AppTextStyles.caption,
           ),
         ],
@@ -227,6 +229,7 @@ class _RedemptionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final activated = redemption.status == 'activated';
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
@@ -260,7 +263,7 @@ class _RedemptionRow extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis),
           ),
-          Text(activated ? 'Activated' : 'Pending',
+          Text(activated ? l10n.referralStatusActivated : l10n.referralStatusPending,
               style: AppTextStyles.caption.copyWith(
                   color: activated ? AppColors.green : AppColors.amber)),
         ],
@@ -272,6 +275,7 @@ class _RedemptionRow extends StatelessWidget {
 class _EmptyInvites extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: AppSpacing.card,
       decoration: BoxDecoration(
@@ -280,7 +284,7 @@ class _EmptyInvites extends StatelessWidget {
         border: Border.all(color: AppColors.outline),
       ),
       child: Text(
-        'No invites yet — share your code above to get started!',
+        l10n.referralEmptyInvites,
         style: AppTextStyles.bodySmall,
         textAlign: TextAlign.center,
       ),

@@ -151,7 +151,7 @@ class _JoinByCodeCardState extends State<_JoinByCodeCard> {
                   maxLength: 6,
                   decoration: InputDecoration(
                     counterText: '',
-                    hintText: 'e.g. AB23CD',
+                    hintText: AppLocalizations.of(context).groupCodeHint,
                     filled: true,
                     fillColor: AppColors.surface,
                     border: OutlineInputBorder(

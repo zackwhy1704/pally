@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/adaptive_center.dart';
@@ -27,14 +28,13 @@ class CentreBlockScreen extends StatelessWidget {
                     textAlign: TextAlign.center),
                 const SizedBox(height: AppSpacing.lg),
                 Text(
-                  'This is a Centre account',
+                  AppLocalizations.of(context).centreBlockTitle,
                   style: AppTextStyles.heading1,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
-                  'The Apalchi app is for students only. '
-                  'Centre teachers and owners manage their classes at apalchi.com.',
+                  AppLocalizations.of(context).centreBlockBody,
                   style: AppTextStyles.body.copyWith(color: AppColors.text2),
                   textAlign: TextAlign.center,
                 ),
@@ -51,7 +51,7 @@ class CentreBlockScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   child: Text(
-                    'Log in at apalchi.com',
+                    AppLocalizations.of(context).centreBlockLoginWeb,
                     style: AppTextStyles.body.copyWith(
                         color: Colors.white, fontWeight: FontWeight.w700),
                   ),
@@ -60,7 +60,7 @@ class CentreBlockScreen extends StatelessWidget {
                 TextButton(
                   onPressed: () => context.go('/auth/signin'),
                   child: Text(
-                    'Back to Sign In',
+                    AppLocalizations.of(context).centreBlockBackToSignIn,
                     style: AppTextStyles.body.copyWith(color: AppColors.text2),
                   ),
                 ),

@@ -85,7 +85,7 @@ class QuizScreen extends ConsumerWidget {
             }
           },
         ),
-        title: Text('Daily Quiz', style: AppTextStyles.title),
+        title: Text(AppLocalizations.of(context).quizDailyTitle, style: AppTextStyles.title),
         centerTitle: true,
         actions: [
           if (!quizState.isLoading && !quizState.isComplete) ...[
@@ -311,7 +311,7 @@ class _ProgressBar extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Question $current of $total', style: AppTextStyles.label),
+            Text(AppLocalizations.of(context).quizQuestionOf(current, total), style: AppTextStyles.label),
             Text('${((current / total) * 100).round()}%',
                 style: AppTextStyles.label.copyWith(color: AppColors.purple)),
           ],
@@ -633,7 +633,7 @@ class _XpBadge extends StatelessWidget {
             const Icon(Icons.star_rounded, color: AppColors.gold, size: 16),
             const SizedBox(width: 4),
             Text(
-              '+$xp XP',
+              AppLocalizations.of(context).commonXpPlus(xp),
               style: AppTextStyles.label.copyWith(
                 color: AppColors.amber,
                 fontWeight: FontWeight.w700,
@@ -713,7 +713,7 @@ class _CompletionView extends StatelessWidget {
                       color: AppColors.gold, size: 20),
                   const SizedBox(width: 6),
                   Text(
-                    '+$xpEarned XP earned',
+                    AppLocalizations.of(context).quizXpEarnedLong(xpEarned),
                     style: AppTextStyles.body.copyWith(
                       color: AppColors.amber,
                       fontWeight: FontWeight.w700,
@@ -971,7 +971,7 @@ class _MasteryMatrixCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Mastery breakdown', style: AppTextStyles.title),
+        Text(AppLocalizations.of(context).quizMasteryBreakdown, style: AppTextStyles.title),
         const SizedBox(height: AppSpacing.sm),
         Row(
           children: [
@@ -1116,7 +1116,7 @@ class _MasteryQuadrant extends StatelessWidget {
                 ),
               ),
             if (items.length > 3)
-              Text('+${items.length - 3} more',
+              Text(AppLocalizations.of(context).quizMoreItems(items.length - 3),
                   style: AppTextStyles.caption.copyWith(color: color)),
           ],
         ],

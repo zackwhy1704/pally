@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 
 /// Shown when the Guide Me hint ladder max fires (after N attempts).
@@ -85,7 +86,7 @@ class _EscapeHatchNotificationState extends State<EscapeHatchNotification>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Great effort! Here's the answer",
+                    AppLocalizations.of(context).chatEscapeGreatEffort,
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.purple,
                       fontWeight: FontWeight.w700,
@@ -94,7 +95,8 @@ class _EscapeHatchNotificationState extends State<EscapeHatchNotification>
                   if (widget.topicLabel != null) ...[
                     const SizedBox(height: 2),
                     Text(
-                      'Added "${widget.topicLabel}" to your practice list',
+                      AppLocalizations.of(context)
+                          .chatEscapeAddedPractice(widget.topicLabel!),
                       style: AppTextStyles.caption.copyWith(
                           color: AppColors.text2),
                     ),

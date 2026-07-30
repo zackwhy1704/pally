@@ -520,3 +520,199 @@ DELIBERATELY NOT WIRED (honest boundary — flagged for the reviewer, drafted zh
       → "{mascot} 需要你的同意才能聊天。点击以给予同意。"
 - The shared `PallyError.userMessage` network-error strings (surfaced via delete VM serverMessage
   passthrough) remain English — localizing the central error mapper is a separate cross-cutting PR.
+
+
+### PR-K1 — feature-dir widget-tree strings (teach/homework/exam-prep/referral/study-plan/quiz/brain-health/assignments/centre-join/chat/learning-style/tour/voice/misc)
+
+Brand/product names kept verbatim in zh: **Apalchi**, **Google Docs**. `{mascot}` placeholders resolve
+through `mascotName` (en Mochi / zh 小伴). SG register notes: homework=功课, assignment=作业,
+quiz=测验 — confirm house style.
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `commonTryAgainSentence` | Try again | 再试一次 | |
+| `teachTitle` | Teach {mascot} | 教{mascot} | |
+| `teachIntro` | Pick a topic and TEACH {mascot}! Explaining is the fastest way to know you really understand. | 选一个主题来教{mascot}吧！把它讲解出来，是检验自己是否真正理解的最快方法。 | |
+| `teachAboutLabel` | Teach {mascot} about | 要教{mascot}的主题 | |
+| `teachHint` | Pretend {mascot} has never heard of this. Use your own words… | 假装{mascot}从来没听过这个内容，用你自己的话来解释…… | |
+| `teachSubmit` | Done — show me how I did | 写好了 — 看看我教得怎么样 | |
+| `teachPerfect` | You taught it all! | 你全教会了！ | |
+| `teachGreat` | Great teaching! | 教得很好！ | |
+| `commonXpPlus` | +{xp} XP | +{xp} XP | |
+| `teachYouExplained` | You explained | 你讲到的概念 | |
+| `teachMissedConcepts` | Missed concepts | 遗漏的概念 | |
+| `teachMochiAsks` | {mascot} asks: {question} | {mascot}问：{question} | |
+| `teachPickAnother` | Pick another | 换一个主题 | |
+| `teachNoTopics` | No topics to teach yet | 还没有可以教的主题 | |
+| `teachNoTopicsPersonalDesc` | Upload some notes first so {mascot} has something to learn from! | 先上传一些笔记，让{mascot}有东西可学！ | |
+| `teachCouldntCheck` | {mascot} couldn't check this one | {mascot}这次没能检查你的讲解 | |
+| `teachEvalFailedFallback` | Something went wrong — give it another go. | 出了点问题 — 再试一次吧。 | |
+| `hwTitle` | Homework | 功课 | |
+| `hwSubmit` | Submit homework | 提交功课 | |
+| `hwEmptyTitle` | No homework yet | 还没有功课 | |
+| `hwEmptyBody` | Submit a photo or PDF of your work and your teacher will send back feedback here. | 把你的功课拍照或以 PDF 提交，老师批改后会在这里发反馈给你。 | |
+| `hwBadgeFeedbackReady` | Feedback ready | 反馈已发布 | |
+| `hwBadgeRedo` | Please redo | 请重做 | |
+| `hwBadgeInReview` | In review | 批改中 | |
+| `hwHintReleasedBody` | Your teacher has reviewed your work — read their feedback below. | 老师已批改你的功课 — 请看下面的反馈。 | |
+| `hwHintReturnedTitle` | Returned for another go | 退回重做 | |
+| `hwHintReturnedBody` | Your teacher asked you to take another look and resubmit. | 老师请你再检查一遍，然后重新提交。 | |
+| `hwHintInReviewBody` | Your teacher is reviewing your work. You'll see their feedback here once they share it. | 老师正在批改你的功课。反馈发布后会显示在这里。 | |
+| `hwTeacherFeedback` | Teacher's feedback | 老师的反馈 | |
+| `hwWhatYouSubmitted` | What you submitted | 你提交的内容 | |
+| `hwFieldTitle` | Title | 标题 | |
+| `hwFieldTitleHint` | e.g. Maths worksheet 3 | 例如:数学练习卷 3 | |
+| `hwFieldSubject` | Subject (optional) | 科目(可不填) | |
+| `hwFieldSubjectHint` | e.g. Mathematics | 例如:数学 | |
+| `hwYourWork` | Your work | 你的功课 | |
+| `hwSubmitting` | Submitting… | 提交中… | |
+| `hwSubmitToTeacher` | Submit to teacher | 提交给老师 | |
+| `hwReviewNote` | Your teacher reviews every submission before sending feedback back to you. | 老师会先审阅每一份提交，然后才把反馈发给你。 | |
+| `hwChipScan` | Scan | 扫描 | |
+| `hwChipPhoto` | Photo | 照片 | |
+| `examPrepTitle` | Exam Prep | 备考 | |
+| `examPrepLoadError` | Could not load exam prep data. | 无法加载备考数据。 | |
+| `examPrepConceptMastery` | CONCEPT MASTERY | 概念掌握度 | |
+| `examPrepEmptyTitle` | No exam prep data yet | 还没有备考数据 | |
+| `examPrepEmptyBody` | Complete some modules first to see your concept mastery. | 先完成一些学习模块，就能看到你的概念掌握度。 | |
+| `examPrepDaysUntilExam` | days until exam | 距离考试的天数 | |
+| `examPrepDailyTarget` | {count, plural, one{Study 1 module/day to finish by exam} other{Study {count} modules/day to finish by exam}} | {count, plural, other{每天学习 {count} 个模块，考试前就能学完}} | |
+| `examPrepSelfAssessed` | Self-assessed | 自我评估 | |
+| `examPrepRedo` | Re-do | 重做 | |
+| `examPrepStartRevisionError` | Could not start revision. Try again. | 无法开始复习，请再试一次。 | |
+| `commonCouldNotSaveConnection` | Could not save — check your connection | 无法保存 — 请检查网络连接 | |
+| `referralTitle` | Invite friends | 邀请朋友 | |
+| `referralFriendsInvited` | Friends you invited | 你邀请的朋友 | |
+| `referralLoadInvitesError` | Could not load your invites | 无法加载你的邀请记录 | |
+| `referralYourCode` | Your invite code | 你的邀请码 | |
+| `referralCodeCopied` | Code copied | 已复制邀请码 | |
+| `referralShareMessage` | Try Apalchi — the AI study companion. Use my code {code} at sign-up so we both earn bonus stars when you take your first quiz. | 来试试 Apalchi — AI 学习伙伴。注册时输入我的邀请码 {code}，你完成第一次测验后，我们俩都能获得奖励星星。 | |
+| `referralActivatedOfTarget` | {activated} of {target} friends activated | 已有 {activated}/{target} 位朋友激活 | |
+| `referralNextTier` | Refer {count} more → +{bonus}⭐ bonus | 再邀请 {count} 位 → 额外 +{bonus}⭐ 奖励 | |
+| `referralActivatedNote` | Friends count as "activated" after they complete their first quiz. | 朋友完成第一次测验后才算“激活”。 | |
+| `referralEmptyInvites` | No invites yet — share your code above to get started! | 还没有邀请记录 — 分享上面的邀请码，开始吧！ | |
+| `referralStatusActivated` | Activated | 已激活 | |
+| `referralStatusPending` | Pending | 待激活 | |
+| `studyPlanTitle` | Study Plan | 学习计划 | |
+| `studyPlanTodayTasks` | Today's Tasks | 今日任务 | |
+| `studyPlanAllDone` | Today's plan done! 🎉 Keep it up! | 今天的计划完成啦！🎉 继续加油！ | |
+| `studyPlanComingUp` | Coming Up | 接下来 | |
+| `studyPlanBubbleTitle` | Here's your plan for today! 📅 | 这是你今天的计划！📅 | |
+| `studyPlanBubbleBody` | Complete all tasks to keep your streak going and earn bonus stars! | 完成所有任务，保持连胜纪录，还能赚取奖励星星！ | |
+| `studyPlanMarkDone` | Done | 完成 | |
+| `studyPlanStart` | Start | 开始 | |
+| `studyPlanUpcoming` | Upcoming | 即将到来 | |
+| `studyPlanTomorrow` | Tomorrow | 明天 | |
+| `studyPlanIn2Days` | In 2 days | 后天 | |
+| `studyPlanUpcomingTest` | Upcoming Test | 即将到来的测验 | |
+| `studyPlanSubjectTest` | {subject} Test | {subject}测验 | |
+| `studyPlanTestToday` | Today | 今天 | |
+| `studyPlanDaysLeft` | {days, plural, one{1 day left} other{{days} days left}} | {days, plural, other{还剩 {days} 天}} | |
+| `studyPlanSetTestDate` | Set a test date in Settings to see a countdown here. | 在设置里选一个测验日期，就能在这里看到倒计时。 | |
+| `brainHealthTitle` | Brain Health 🧠 | 大脑健康 🧠 | |
+| `brainHealthWikiPages` | Wiki Pages | 知识页面 | |
+| `brainHealthWeakTopics` | Weak Topics | 薄弱主题 | |
+| `brainHealthScore` | Brain Health Score | 大脑健康分数 | |
+| `brainHealthPages` | Pages | 页面 | |
+| `brainHealthVerified` | Verified | 已验证 | |
+| `brainHealthAvgQuality` | Avg Quality | 平均质量 | |
+| `brainHealthErrors` | {count, plural, one{1 error} other{{count} errors}} | {count, plural, other{{count} 个错误}} | |
+| `quizDailyTitle` | Daily Quiz | 每日测验 | |
+| `quizQuestionOf` | Question {current} of {total} | 第 {current} 题，共 {total} 题 | |
+| `quizXpEarnedLong` | +{xp} XP earned | 获得 +{xp} XP | |
+| `quizMasteryBreakdown` | Mastery breakdown | 掌握情况 | |
+| `quizMoreItems` | +{count} more | 还有 {count} 个 | |
+| `centreJoinTitle` | Join a class | 加入班级 | |
+| `centreJoinEnterFull` | Enter the full class code | 请输入完整的班级代码 | |
+| `centreJoinHeading` | Enter the class code | 输入班级代码 | |
+| `centreJoinBody` | Ask your teacher or tuition centre for the class code on their dashboard, then type it in below. | 向你的老师或补习中心询问他们控制台上的班级代码，然后在下面输入。 | |
+| `centreJoinYourClassFallback` | your class | 你的班级 | |
+| `centreJoinSuccess` | Joined {className} 🎉 | 已加入{className} 🎉 | |
+| `centreJoinFailed` | Could not join — check the code and try again | 无法加入 — 请检查代码后再试 | |
+| `centreJoinButton` | Join class | 加入班级 | |
+| `assignTitle` | Assignment | 作业 | |
+| `assignPickedForYou` | Picked for you | 为你精选 | |
+| `assignNotReleasedTitle` | Answers not released yet | 答案尚未发布 | |
+| `assignNotReleasedBody` | Your teacher hasn't shared the model answers. You'll be able to compare here once they do. | 老师还没有公布参考答案。公布后你就可以在这里对照。 | |
+| `assignReleasedBody` | Compare your answers with the model answers below. | 把你的答案和下面的参考答案对照一下吧。 | |
+| `assignQuestionNumber` | Q{n} | 第{n}题 | |
+| `assignYourAnswer` | Your answer | 你的答案 | |
+| `assignNoAnswerRecorded` | No answer recorded | 没有记录到答案 | |
+| `assignModelAnswer` | Model answer | 参考答案 | |
+| `assignEvaluation` | Evaluation | 评估 | |
+| `assignEmptyReleased` | No answers to compare yet | 还没有可对照的答案 | |
+| `assignEmptyNotReleased` | Come back after answers are released | 等答案发布后再来吧 | |
+| `learningStyleTitle` | Learning style | 学习方式 | |
+| `learningStyleDefaultMode` | Default answer mode | 默认回答模式 | |
+| `learningStyleBody` | Guide Me builds understanding — you figure it out, you remember more. You can switch per question with the toggle in chat. | “引导我”帮助你建立理解 — 自己想出来的，记得更牢。你也可以在聊天中用开关按题切换。 | |
+| `learningStyleSaved` | Default saved! | 已保存默认设置！ | |
+| `learningStyleRecommended` | RECOMMENDED | 推荐 | |
+| `learningStyleGuideDesc` | {mascot} guides you to the answer — builds real retention. | {mascot}会引导你找到答案 — 建立真正的记忆。 | |
+| `learningStyleAnswerDesc` | {mascot} gives the worked solution — great for checking your work. | {mascot}直接给出完整解答 — 适合用来检查你的功课。 | |
+| `chatModeGuideMe` | Guide Me | 引导我 | |
+| `chatModeJustAnswer` | Just answer | 直接给答案 | |
+| `chatModeTwoWays` | Two ways to learn 🎓 | 两种学习方式 🎓 | |
+| `chatModeSwitchAnyTime` | You can switch any time with the toggle above the chat. | 你随时可以用聊天上方的开关切换。 | |
+| `chatModeGuideDesc` | {mascot} asks you guiding questions — you figure it out yourself. What you discover, you remember. | {mascot}会用问题一步步引导你 — 答案由你自己想出来。自己发现的，记得最牢。 | |
+| `chatModeAnswerDesc` | {mascot} gives you the worked solution directly. Great for checking your work — but you'll remember less. | {mascot}会直接给你完整解答。适合检查功课 — 但你记住的会比较少。 | |
+| `chatModeDefaultGuide` | Default: Guide Me | 默认：引导我 | |
+| `chatModeGotIt` | Got it — let's learn! | 明白了 — 开始学习吧！ | |
+| `chatCoachTapToggle` | Tap the toggle to switch how {mascot} helps you. | 点一下开关，切换{mascot}帮助你的方式。 | |
+| `chatAnswerNudge` | Full answer coming up — try Guide Me sometimes, you'll remember more. | 完整答案马上来 — 偶尔试试“引导我”，你会记得更牢。 | |
+| `chatEscapeGreatEffort` | Great effort! Here's the answer | 很努力了！这是答案 | |
+| `chatEscapeAddedPractice` | Added "{topic}" to your practice list | 已把“{topic}”加入你的练习清单 | |
+| `chatHints` | Hints:  | 提示： | |
+| `chatAnswerReady` | — answer ready | — 可以看答案了 | |
+| `chatReported` | Reported | 已举报 | |
+| `chatTabTitle` | Chat | 聊天 | |
+| `reportThanks` | Thanks — we'll take a look | 谢谢 — 我们会尽快查看 | |
+| `reportDoneButton` | Done | 完成 | |
+| `commonRetry` | Retry | 重试 | |
+| `centreBlockTitle` | This is a Centre account | 这是机构账户 | |
+| `centreBlockBody` | The Apalchi app is for students only. Centre teachers and owners manage their classes at apalchi.com. | Apalchi 应用只供学生使用。机构老师和管理者请到 apalchi.com 管理班级。 | |
+| `centreBlockLoginWeb` | Log in at apalchi.com | 到 apalchi.com 登录 | |
+| `centreBlockBackToSignIn` | Back to Sign In | 返回登录 | |
+| `avatarPickerCreateError` | Could not create {mascot} — {message} | 无法创建{mascot} — {message} | |
+| `avatarPickerTitle` | Choose Your {mascot} ✨ | 选择你的{mascot} ✨ | |
+| `avatarPickerSubtitle` | Each one is unique 🍡 Pick who you want to learn with! | 每一只都独一无二 🍡 选一个和你一起学习的伙伴吧！ | |
+| `collectionTitle` | Collection | 收藏 | |
+| `collectionAlbumTitle` | {mascot} Album | {mascot}图鉴 | |
+| `createTutorWishHelp` | WHAT DO YOU WISH {mascot} TO HELP YOU WITH? | 你希望{mascot}帮你学什么？ | |
+| `groupCodeHint` | e.g. AB23CD | 例如：AB23CD | |
+| `joinCodeHint` | e.g. 5K7Q2X | 例如：5K7Q2X | |
+| `moduleListTitle` | Modules | 学习模块 | |
+| `uploadTypedNotesTip` | Typed notes give the best results. Paste from Google Docs or type from your textbook. | 输入文字笔记效果最好。可以从 Google Docs 粘贴，或照着课本输入。 | |
+| `uploadSplitLongNotesTip` | Consider splitting long notes into separate uploads for better accuracy. | 较长的笔记建议分成几次上传，准确度会更高。 | |
+| `voiceTalkTo` | Talk to {mascot} | 和{mascot}说话 | |
+| `voiceExplainer` | {mascot} uses your phone's speech recognition to turn talking into text — your voice isn't saved. | {mascot}使用你手机的语音识别功能，把说话转成文字 — 你的语音不会被保存。 | |
+| `voiceMicNeeded` | Microphone access needed | 需要麦克风权限 | |
+| `voiceMicGuidance` | To talk to {mascot}, turn on microphone access in Settings. You can still type your answer. | 要和{mascot}说话，请在设置里开启麦克风权限。你也可以继续用打字的方式回答。 | |
+| `voiceNotNow` | Not now | 暂时不要 | |
+| `voiceOpenSettings` | Open Settings | 打开设置 | |
+| `weaknessImproved` | You improved on {topics}! 📈 | 你在{topics}上进步了！📈 | |
+| `weaknessFocusOn` | Let's focus on | 一起来攻克 | |
+| `weaknessHelpPractise` | {mascot} will help you practise these. | {mascot}会帮你练习这些内容。 | |
+| `tourStep1Title` | Hi, I'm {mascot}! | 嗨，我是{mascot}！ | |
+| `tourStep1Body` | Let me show you 4 quick things that make Apalchi different from any other study app. | 让我快速给你看 4 个 Apalchi 和其他学习应用不一样的地方。 | |
+| `tourStep2Title` | A {mascot} for every subject | 每个科目都有自己的{mascot} | |
+| `tourStep2Body` | Create one {mascot} per subject — each one learns only YOUR notes, so every answer matches exactly what your teacher taught. | 每个科目创建一个{mascot} — 它只学习你自己的笔记，所以每个回答都和老师教的完全一致。 | |
+| `tourStep3Title` | Learn it. Test it. Prove it. | 学会它。测试它。证明它。 | |
+| `tourStep3Body` | Every topic becomes a mini-mission: quick cards to learn, hot-takes to test yourself, and a challenge to prove it — what you get wrong, I bring back until it sticks. | 每个主题都是一个小任务：用卡片快速学习，用快问快答自测，再用挑战来证明 — 做错的部分，我会反复帮你复习，直到真正记牢。 | |
+| `tourStep4Title` | I remember what you find hard | 我记得你觉得难的地方 | |
+| `tourStep4Body` | The Library tracks your mastery by topic. When you get something wrong, I bring it back — spaced and scheduled — until it sticks. | 书库会按主题记录你的掌握度。做错的内容，我会按计划间隔安排复习，直到你真正掌握。 | |
+| `tourStep5Title` | Not a generic AI — a {mascot} that knows yours. | 不是通用 AI — 是懂你笔记的{mascot}。 | |
+| `tourStep5Body` | Upload your notes and every answer, quiz, and challenge comes from what YOUR teacher taught. | 上传你的笔记，每个回答、测验和挑战都来自你老师教的内容。 | |
+| `tourStep5Cta` | Start | 开始 | |
+| `tourBack` | ← Back | ← 返回 | |
+| `tourDone` | Done! | 完成！ | |
+| `tourShowMe` | Show me! | 带我看看！ | |
+| `tourNext` | Next → | 下一步 → | |
+| `tourSkip` | Skip | 跳过 | |
+| `moduleStageTitleLearn` | Learn | 学习 | |
+| `moduleStageTitleTest` | Test | 测试 | |
+| `moduleStageTitleProve` | Prove | 挑战 | |
+| `moduleStageTitleComplete` | Complete | 完成 | |
+| `forceUpdateTitle` | Time to update! | 该更新啦！ | |
+| `forceUpdateBody` | A newer version of Apalchi is ready with important improvements. Please update to keep learning. | 新版 Apalchi 已经准备好，包含重要改进。请更新后继续学习。 | |
+| `forceUpdateCta` | Update now | 立即更新 | |
+| `uploadLargeFileSizeLabel` | large file | 大文件 | |

@@ -208,7 +208,9 @@ class _AvatarPickerScreenState extends ConsumerState<AvatarPickerScreen> {
       if (mounted) {
         showAppSnackBar(
           SnackBar(
-            content: Text('Could not create Mochi — ${e.message}',
+            content: Text(
+                AppLocalizations.of(context).avatarPickerCreateError(
+                    AppLocalizations.of(context).mascotName, e.message ?? ''),
                 style: AppTextStyles.bodySmall.copyWith(color: Colors.white)),
             backgroundColor: AppColors.coral,
             behavior: SnackBarBehavior.floating,
@@ -239,7 +241,7 @@ class _AvatarPickerScreenState extends ConsumerState<AvatarPickerScreen> {
               padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.md, vertical: 4),
               child: Text(
-                'Each one is unique 🍡 Pick who you want to learn with!',
+                AppLocalizations.of(context).avatarPickerSubtitle,
                 style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
                 textAlign: TextAlign.center,
               ),
@@ -312,7 +314,8 @@ class _TopBar extends StatelessWidget {
             ),
           Expanded(
             child: Text(
-              'Choose Your Mochi ✨',
+              AppLocalizations.of(context)
+                  .avatarPickerTitle(AppLocalizations.of(context).mascotName),
               style: AppTextStyles.title,
               textAlign: isOnboarding ? TextAlign.center : TextAlign.start,
             ),

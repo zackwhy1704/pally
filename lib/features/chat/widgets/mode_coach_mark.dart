@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 
@@ -74,7 +75,8 @@ class _ModeCoachMarkState extends State<ModeCoachMark> {
                 const SizedBox(width: AppSpacing.sm),
                 Flexible(
                   child: Text(
-                    'Tap the toggle to switch how Mochi helps you.',
+                    AppLocalizations.of(context).chatCoachTapToggle(
+                        AppLocalizations.of(context).mascotName),
                     style: AppTextStyles.bodySmall.copyWith(
                         color: Colors.white, fontWeight: FontWeight.w600),
                   ),
@@ -140,8 +142,7 @@ class _AnswerModeNudgeState extends State<AnswerModeNudge> {
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Text(
-                'Full answer coming up — try Guide Me sometimes, '
-                'you\'ll remember more.',
+                AppLocalizations.of(context).chatAnswerNudge,
                 style: AppTextStyles.bodySmall
                     .copyWith(color: AppColors.amber, fontWeight: FontWeight.w600),
               ),

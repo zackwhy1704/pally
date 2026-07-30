@@ -3480,4 +3480,687 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get completeProfileParentEmailHelper =>
       'We\'ll email your parent to approve your account before you can use AI features.';
+
+  @override
+  String get commonTryAgainSentence => 'Try again';
+
+  @override
+  String teachTitle(String mascot) {
+    return 'Teach $mascot';
+  }
+
+  @override
+  String teachIntro(String mascot) {
+    return 'Pick a topic and TEACH $mascot! Explaining is the fastest way to know you really understand.';
+  }
+
+  @override
+  String teachAboutLabel(String mascot) {
+    return 'Teach $mascot about';
+  }
+
+  @override
+  String teachHint(String mascot) {
+    return 'Pretend $mascot has never heard of this. Use your own words…';
+  }
+
+  @override
+  String get teachSubmit => 'Done — show me how I did';
+
+  @override
+  String get teachPerfect => 'You taught it all!';
+
+  @override
+  String get teachGreat => 'Great teaching!';
+
+  @override
+  String commonXpPlus(int xp) {
+    return '+$xp XP';
+  }
+
+  @override
+  String get teachYouExplained => 'You explained';
+
+  @override
+  String get teachMissedConcepts => 'Missed concepts';
+
+  @override
+  String teachMochiAsks(String mascot, String question) {
+    return '$mascot asks: $question';
+  }
+
+  @override
+  String get teachPickAnother => 'Pick another';
+
+  @override
+  String get teachNoTopics => 'No topics to teach yet';
+
+  @override
+  String teachNoTopicsPersonalDesc(String mascot) {
+    return 'Upload some notes first so $mascot has something to learn from!';
+  }
+
+  @override
+  String teachCouldntCheck(String mascot) {
+    return '$mascot couldn\'t check this one';
+  }
+
+  @override
+  String get teachEvalFailedFallback =>
+      'Something went wrong — give it another go.';
+
+  @override
+  String get hwTitle => 'Homework';
+
+  @override
+  String get hwSubmit => 'Submit homework';
+
+  @override
+  String get hwEmptyTitle => 'No homework yet';
+
+  @override
+  String get hwEmptyBody =>
+      'Submit a photo or PDF of your work and your teacher will send back feedback here.';
+
+  @override
+  String get hwBadgeFeedbackReady => 'Feedback ready';
+
+  @override
+  String get hwBadgeRedo => 'Please redo';
+
+  @override
+  String get hwBadgeInReview => 'In review';
+
+  @override
+  String get hwHintReleasedBody =>
+      'Your teacher has reviewed your work — read their feedback below.';
+
+  @override
+  String get hwHintReturnedTitle => 'Returned for another go';
+
+  @override
+  String get hwHintReturnedBody =>
+      'Your teacher asked you to take another look and resubmit.';
+
+  @override
+  String get hwHintInReviewBody =>
+      'Your teacher is reviewing your work. You\'ll see their feedback here once they share it.';
+
+  @override
+  String get hwTeacherFeedback => 'Teacher\'s feedback';
+
+  @override
+  String get hwWhatYouSubmitted => 'What you submitted';
+
+  @override
+  String get hwFieldTitle => 'Title';
+
+  @override
+  String get hwFieldTitleHint => 'e.g. Maths worksheet 3';
+
+  @override
+  String get hwFieldSubject => 'Subject (optional)';
+
+  @override
+  String get hwFieldSubjectHint => 'e.g. Mathematics';
+
+  @override
+  String get hwYourWork => 'Your work';
+
+  @override
+  String get hwSubmitting => 'Submitting…';
+
+  @override
+  String get hwSubmitToTeacher => 'Submit to teacher';
+
+  @override
+  String get hwReviewNote =>
+      'Your teacher reviews every submission before sending feedback back to you.';
+
+  @override
+  String get hwChipScan => 'Scan';
+
+  @override
+  String get hwChipPhoto => 'Photo';
+
+  @override
+  String get examPrepTitle => 'Exam Prep';
+
+  @override
+  String get examPrepLoadError => 'Could not load exam prep data.';
+
+  @override
+  String get examPrepConceptMastery => 'CONCEPT MASTERY';
+
+  @override
+  String get examPrepEmptyTitle => 'No exam prep data yet';
+
+  @override
+  String get examPrepEmptyBody =>
+      'Complete some modules first to see your concept mastery.';
+
+  @override
+  String get examPrepDaysUntilExam => 'days until exam';
+
+  @override
+  String examPrepDailyTarget(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Study $count modules/day to finish by exam',
+      one: 'Study 1 module/day to finish by exam',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get examPrepSelfAssessed => 'Self-assessed';
+
+  @override
+  String get examPrepRedo => 'Re-do';
+
+  @override
+  String get examPrepStartRevisionError =>
+      'Could not start revision. Try again.';
+
+  @override
+  String get commonCouldNotSaveConnection =>
+      'Could not save — check your connection';
+
+  @override
+  String get referralTitle => 'Invite friends';
+
+  @override
+  String get referralFriendsInvited => 'Friends you invited';
+
+  @override
+  String get referralLoadInvitesError => 'Could not load your invites';
+
+  @override
+  String get referralYourCode => 'Your invite code';
+
+  @override
+  String get referralCodeCopied => 'Code copied';
+
+  @override
+  String referralShareMessage(String code) {
+    return 'Try Apalchi — the AI study companion. Use my code $code at sign-up so we both earn bonus stars when you take your first quiz.';
+  }
+
+  @override
+  String referralActivatedOfTarget(int activated, int target) {
+    return '$activated of $target friends activated';
+  }
+
+  @override
+  String referralNextTier(int count, int bonus) {
+    return 'Refer $count more → +$bonus⭐ bonus';
+  }
+
+  @override
+  String get referralActivatedNote =>
+      'Friends count as \"activated\" after they complete their first quiz.';
+
+  @override
+  String get referralEmptyInvites =>
+      'No invites yet — share your code above to get started!';
+
+  @override
+  String get referralStatusActivated => 'Activated';
+
+  @override
+  String get referralStatusPending => 'Pending';
+
+  @override
+  String get studyPlanTitle => 'Study Plan';
+
+  @override
+  String get studyPlanTodayTasks => 'Today\'s Tasks';
+
+  @override
+  String get studyPlanAllDone => 'Today\'s plan done! 🎉 Keep it up!';
+
+  @override
+  String get studyPlanComingUp => 'Coming Up';
+
+  @override
+  String get studyPlanBubbleTitle => 'Here\'s your plan for today! 📅';
+
+  @override
+  String get studyPlanBubbleBody =>
+      'Complete all tasks to keep your streak going and earn bonus stars!';
+
+  @override
+  String get studyPlanMarkDone => 'Done';
+
+  @override
+  String get studyPlanStart => 'Start';
+
+  @override
+  String get studyPlanUpcoming => 'Upcoming';
+
+  @override
+  String get studyPlanTomorrow => 'Tomorrow';
+
+  @override
+  String get studyPlanIn2Days => 'In 2 days';
+
+  @override
+  String get studyPlanUpcomingTest => 'Upcoming Test';
+
+  @override
+  String studyPlanSubjectTest(String subject) {
+    return '$subject Test';
+  }
+
+  @override
+  String get studyPlanTestToday => 'Today';
+
+  @override
+  String studyPlanDaysLeft(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days left',
+      one: '1 day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get studyPlanSetTestDate =>
+      'Set a test date in Settings to see a countdown here.';
+
+  @override
+  String get brainHealthTitle => 'Brain Health 🧠';
+
+  @override
+  String get brainHealthWikiPages => 'Wiki Pages';
+
+  @override
+  String get brainHealthWeakTopics => 'Weak Topics';
+
+  @override
+  String get brainHealthScore => 'Brain Health Score';
+
+  @override
+  String get brainHealthPages => 'Pages';
+
+  @override
+  String get brainHealthVerified => 'Verified';
+
+  @override
+  String get brainHealthAvgQuality => 'Avg Quality';
+
+  @override
+  String brainHealthErrors(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count errors',
+      one: '1 error',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get quizDailyTitle => 'Daily Quiz';
+
+  @override
+  String quizQuestionOf(int current, int total) {
+    return 'Question $current of $total';
+  }
+
+  @override
+  String quizXpEarnedLong(int xp) {
+    return '+$xp XP earned';
+  }
+
+  @override
+  String get quizMasteryBreakdown => 'Mastery breakdown';
+
+  @override
+  String quizMoreItems(int count) {
+    return '+$count more';
+  }
+
+  @override
+  String get centreJoinTitle => 'Join a class';
+
+  @override
+  String get centreJoinEnterFull => 'Enter the full class code';
+
+  @override
+  String get centreJoinHeading => 'Enter the class code';
+
+  @override
+  String get centreJoinBody =>
+      'Ask your teacher or tuition centre for the class code on their dashboard, then type it in below.';
+
+  @override
+  String get centreJoinYourClassFallback => 'your class';
+
+  @override
+  String centreJoinSuccess(String className) {
+    return 'Joined $className 🎉';
+  }
+
+  @override
+  String get centreJoinFailed =>
+      'Could not join — check the code and try again';
+
+  @override
+  String get centreJoinButton => 'Join class';
+
+  @override
+  String get assignTitle => 'Assignment';
+
+  @override
+  String get assignPickedForYou => 'Picked for you';
+
+  @override
+  String get assignNotReleasedTitle => 'Answers not released yet';
+
+  @override
+  String get assignNotReleasedBody =>
+      'Your teacher hasn\'t shared the model answers. You\'ll be able to compare here once they do.';
+
+  @override
+  String get assignReleasedBody =>
+      'Compare your answers with the model answers below.';
+
+  @override
+  String assignQuestionNumber(int n) {
+    return 'Q$n';
+  }
+
+  @override
+  String get assignYourAnswer => 'Your answer';
+
+  @override
+  String get assignNoAnswerRecorded => 'No answer recorded';
+
+  @override
+  String get assignModelAnswer => 'Model answer';
+
+  @override
+  String get assignEvaluation => 'Evaluation';
+
+  @override
+  String get assignEmptyReleased => 'No answers to compare yet';
+
+  @override
+  String get assignEmptyNotReleased => 'Come back after answers are released';
+
+  @override
+  String get learningStyleTitle => 'Learning style';
+
+  @override
+  String get learningStyleDefaultMode => 'Default answer mode';
+
+  @override
+  String get learningStyleBody =>
+      'Guide Me builds understanding — you figure it out, you remember more. You can switch per question with the toggle in chat.';
+
+  @override
+  String get learningStyleSaved => 'Default saved!';
+
+  @override
+  String get learningStyleRecommended => 'RECOMMENDED';
+
+  @override
+  String learningStyleGuideDesc(String mascot) {
+    return '$mascot guides you to the answer — builds real retention.';
+  }
+
+  @override
+  String learningStyleAnswerDesc(String mascot) {
+    return '$mascot gives the worked solution — great for checking your work.';
+  }
+
+  @override
+  String get chatModeGuideMe => 'Guide Me';
+
+  @override
+  String get chatModeJustAnswer => 'Just answer';
+
+  @override
+  String get chatModeTwoWays => 'Two ways to learn 🎓';
+
+  @override
+  String get chatModeSwitchAnyTime =>
+      'You can switch any time with the toggle above the chat.';
+
+  @override
+  String chatModeGuideDesc(String mascot) {
+    return '$mascot asks you guiding questions — you figure it out yourself. What you discover, you remember.';
+  }
+
+  @override
+  String chatModeAnswerDesc(String mascot) {
+    return '$mascot gives you the worked solution directly. Great for checking your work — but you\'ll remember less.';
+  }
+
+  @override
+  String get chatModeDefaultGuide => 'Default: Guide Me';
+
+  @override
+  String get chatModeGotIt => 'Got it — let\'s learn!';
+
+  @override
+  String chatCoachTapToggle(String mascot) {
+    return 'Tap the toggle to switch how $mascot helps you.';
+  }
+
+  @override
+  String get chatAnswerNudge =>
+      'Full answer coming up — try Guide Me sometimes, you\'ll remember more.';
+
+  @override
+  String get chatEscapeGreatEffort => 'Great effort! Here\'s the answer';
+
+  @override
+  String chatEscapeAddedPractice(String topic) {
+    return 'Added \"$topic\" to your practice list';
+  }
+
+  @override
+  String get chatHints => 'Hints: ';
+
+  @override
+  String get chatAnswerReady => '— answer ready';
+
+  @override
+  String get chatReported => 'Reported';
+
+  @override
+  String get chatTabTitle => 'Chat';
+
+  @override
+  String get reportThanks => 'Thanks — we\'ll take a look';
+
+  @override
+  String get reportDoneButton => 'Done';
+
+  @override
+  String get commonRetry => 'Retry';
+
+  @override
+  String get centreBlockTitle => 'This is a Centre account';
+
+  @override
+  String get centreBlockBody =>
+      'The Apalchi app is for students only. Centre teachers and owners manage their classes at apalchi.com.';
+
+  @override
+  String get centreBlockLoginWeb => 'Log in at apalchi.com';
+
+  @override
+  String get centreBlockBackToSignIn => 'Back to Sign In';
+
+  @override
+  String avatarPickerCreateError(String mascot, String message) {
+    return 'Could not create $mascot — $message';
+  }
+
+  @override
+  String avatarPickerTitle(String mascot) {
+    return 'Choose Your $mascot ✨';
+  }
+
+  @override
+  String get avatarPickerSubtitle =>
+      'Each one is unique 🍡 Pick who you want to learn with!';
+
+  @override
+  String get collectionTitle => 'Collection';
+
+  @override
+  String collectionAlbumTitle(String mascot) {
+    return '$mascot Album';
+  }
+
+  @override
+  String createTutorWishHelp(String mascot) {
+    return 'WHAT DO YOU WISH $mascot TO HELP YOU WITH?';
+  }
+
+  @override
+  String get groupCodeHint => 'e.g. AB23CD';
+
+  @override
+  String get joinCodeHint => 'e.g. 5K7Q2X';
+
+  @override
+  String get moduleListTitle => 'Modules';
+
+  @override
+  String get uploadTypedNotesTip =>
+      'Typed notes give the best results. Paste from Google Docs or type from your textbook.';
+
+  @override
+  String get uploadSplitLongNotesTip =>
+      'Consider splitting long notes into separate uploads for better accuracy.';
+
+  @override
+  String voiceTalkTo(String mascot) {
+    return 'Talk to $mascot';
+  }
+
+  @override
+  String voiceExplainer(String mascot) {
+    return '$mascot uses your phone\'s speech recognition to turn talking into text — your voice isn\'t saved.';
+  }
+
+  @override
+  String get voiceMicNeeded => 'Microphone access needed';
+
+  @override
+  String voiceMicGuidance(String mascot) {
+    return 'To talk to $mascot, turn on microphone access in Settings. You can still type your answer.';
+  }
+
+  @override
+  String get voiceNotNow => 'Not now';
+
+  @override
+  String get voiceOpenSettings => 'Open Settings';
+
+  @override
+  String weaknessImproved(String topics) {
+    return 'You improved on $topics! 📈';
+  }
+
+  @override
+  String get weaknessFocusOn => 'Let\'s focus on';
+
+  @override
+  String weaknessHelpPractise(String mascot) {
+    return '$mascot will help you practise these.';
+  }
+
+  @override
+  String tourStep1Title(String mascot) {
+    return 'Hi, I\'m $mascot!';
+  }
+
+  @override
+  String get tourStep1Body =>
+      'Let me show you 4 quick things that make Apalchi different from any other study app.';
+
+  @override
+  String tourStep2Title(String mascot) {
+    return 'A $mascot for every subject';
+  }
+
+  @override
+  String tourStep2Body(String mascot) {
+    return 'Create one $mascot per subject — each one learns only YOUR notes, so every answer matches exactly what your teacher taught.';
+  }
+
+  @override
+  String get tourStep3Title => 'Learn it. Test it. Prove it.';
+
+  @override
+  String get tourStep3Body =>
+      'Every topic becomes a mini-mission: quick cards to learn, hot-takes to test yourself, and a challenge to prove it — what you get wrong, I bring back until it sticks.';
+
+  @override
+  String get tourStep4Title => 'I remember what you find hard';
+
+  @override
+  String get tourStep4Body =>
+      'The Library tracks your mastery by topic. When you get something wrong, I bring it back — spaced and scheduled — until it sticks.';
+
+  @override
+  String tourStep5Title(String mascot) {
+    return 'Not a generic AI — a $mascot that knows yours.';
+  }
+
+  @override
+  String get tourStep5Body =>
+      'Upload your notes and every answer, quiz, and challenge comes from what YOUR teacher taught.';
+
+  @override
+  String get tourStep5Cta => 'Start';
+
+  @override
+  String get tourBack => '← Back';
+
+  @override
+  String get tourDone => 'Done!';
+
+  @override
+  String get tourShowMe => 'Show me!';
+
+  @override
+  String get tourNext => 'Next →';
+
+  @override
+  String get tourSkip => 'Skip';
+
+  @override
+  String get moduleStageTitleLearn => 'Learn';
+
+  @override
+  String get moduleStageTitleTest => 'Test';
+
+  @override
+  String get moduleStageTitleProve => 'Prove';
+
+  @override
+  String get moduleStageTitleComplete => 'Complete';
+
+  @override
+  String get forceUpdateTitle => 'Time to update!';
+
+  @override
+  String get forceUpdateBody =>
+      'A newer version of Apalchi is ready with important improvements. Please update to keep learning.';
+
+  @override
+  String get forceUpdateCta => 'Update now';
+
+  @override
+  String get uploadLargeFileSizeLabel => 'large file';
 }

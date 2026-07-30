@@ -11,6 +11,7 @@ import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/features/study_plan/presentation/study_plan_view_model.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/avatar.dart';
 import 'package:pally/shared/models/study_plan_item.dart';
 
@@ -21,6 +22,7 @@ class StudyPlanScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final planAsync = ref.watch(studyPlanViewModelProvider);
     final notifier = ref.read(studyPlanViewModelProvider.notifier);
 
@@ -29,7 +31,7 @@ class StudyPlanScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Study Plan', style: AppTextStyles.title),
+        title: Text(l10n.studyPlanTitle, style: AppTextStyles.title),
         centerTitle: true,
         actions: [
           IconButton(
@@ -70,7 +72,7 @@ class StudyPlanScreen extends ConsumerWidget {
                   _TutorSpeechBubble(),
                   const SizedBox(height: AppSpacing.lg),
                   if (todayItems.isNotEmpty) ...[
-                    Text("Today's Tasks", style: AppTextStyles.title),
+                    Text(l10n.studyPlanTodayTasks, style: AppTextStyles.title),
                     const SizedBox(height: AppSpacing.sm),
                     ...todayItems.map((item) => _TaskTile(
                           item: item,
@@ -83,14 +85,14 @@ class StudyPlanScreen extends ConsumerWidget {
                                   notifier.isAllDone) {
                                 PallyToast.success(
                                   context,
-                                  "Today's plan done! 🎉 Keep it up!",
+                                  l10n.studyPlanAllDone,
                                 );
                               }
                             } catch (_) {
                               if (context.mounted) {
                                 PallyToast.error(
                                   context,
-                                  'Could not save — check your connection',
+                                  l10n.commonCouldNotSaveConnection,
                                 );
                               }
                             }
@@ -99,7 +101,7 @@ class StudyPlanScreen extends ConsumerWidget {
                     const SizedBox(height: AppSpacing.lg),
                   ],
                   if (upcomingItems.isNotEmpty) ...[
-                    Text('Coming Up', style: AppTextStyles.title),
+                    Text(l10n.studyPlanComingUp, style: AppTextStyles.title),
                     const SizedBox(height: AppSpacing.sm),
                     ...upcomingItems.map((item) => _UpcomingTile(item: item)),
                   ],
@@ -134,6 +136,7 @@ class StudyPlanScreen extends ConsumerWidget {
 class _TutorSpeechBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: AppSpacing.card,
       decoration: const BoxDecoration(
@@ -164,13 +167,13 @@ class _TutorSpeechBubble extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Here's your plan for today! 📅",
+                  l10n.studyPlanBubbleTitle,
                   style:
                       AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  'Complete all tasks to keep your streak going and earn bonus stars!',
+                  l10n.studyPlanBubbleBody,
                   style:
                       AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
                 ),
@@ -222,6 +225,7 @@ class _TaskTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       padding: AppSpacing.card,
@@ -292,7 +296,7 @@ class _TaskTile extends StatelessWidget {
                           color: AppColors.green.withValues(alpha: 0.4)),
                     ),
                     child: Text(
-                      'Done',
+                      l10n.studyPlanMarkDone,
                       style: AppTextStyles.caption.copyWith(
                         color: AppColors.green,
                         fontWeight: FontWeight.w700,
@@ -313,7 +317,7 @@ class _TaskTile extends StatelessWidget {
                           color: AppColors.purple.withValues(alpha: 0.4)),
                     ),
                     child: Text(
-                      'Start',
+                      l10n.studyPlanStart,
                       style: AppTextStyles.caption.copyWith(
                         color: AppColors.purple,
                         fontWeight: FontWeight.w700,
@@ -336,9 +340,10 @@ class _UpcomingTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final dateLabel = item.scheduledDate != null
-        ? _formatDate(item.scheduledDate!)
-        : 'Upcoming';
+        ? _formatDate(context, item.scheduledDate!)
+        : l10n.studyPlanUpcoming;
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -374,7 +379,8 @@ class _UpcomingTile extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime date) {
+  String _formatDate(BuildContext context, DateTime date) {
+    final l10n = AppLocalizations.of(context);
     final now = DateTime.now();
     final tomorrow = DateTime(now.year, now.month, now.day + 1);
     final dayAfter = DateTime(now.year, now.month, now.day + 2);
@@ -382,13 +388,14 @@ class _UpcomingTile extends StatelessWidget {
     if (date.year == tomorrow.year &&
         date.month == tomorrow.month &&
         date.day == tomorrow.day) {
-      return 'Tomorrow';
+      return l10n.studyPlanTomorrow;
     } else if (date.year == dayAfter.year &&
         date.month == dayAfter.month &&
         date.day == dayAfter.day) {
-      return 'In 2 days';
+      return l10n.studyPlanIn2Days;
     }
-    return DateFormat('MMM d').format(date);
+    return DateFormat.MMMd(Localizations.localeOf(context).toString())
+        .format(date);
   }
 }
 
@@ -399,6 +406,7 @@ class _TestCountdownCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final avatarsAsync = ref.watch(libraryViewModelProvider);
     final Avatar? avatar = avatarsAsync.maybeWhen(
       data: (list) => list.where((a) => a.id == avatarId).firstOrNull,
@@ -436,17 +444,17 @@ class _TestCountdownCard extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  subject.isEmpty ? 'Upcoming Test' : '$subject Test',
+                  subject.isEmpty
+                      ? l10n.studyPlanUpcomingTest
+                      : l10n.studyPlanSubjectTest(subject),
                   style: AppTextStyles.body.copyWith(color: Colors.white70),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   daysLeft <= 0
-                      ? 'Today'
-                      : daysLeft == 1
-                          ? '1 day left'
-                          : '$daysLeft days left',
+                      ? l10n.studyPlanTestToday
+                      : l10n.studyPlanDaysLeft(daysLeft),
                   style: AppTextStyles.title.copyWith(color: Colors.white),
                 ),
               ],
@@ -460,7 +468,8 @@ class _TestCountdownCard extends ConsumerWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
-              DateFormat('MMM d').format(testDate),
+              DateFormat.MMMd(Localizations.localeOf(context).toString())
+                  .format(testDate),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: AppTextStyles.label.copyWith(color: AppColors.coral),
@@ -479,6 +488,7 @@ class _NoTestDateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: AppSpacing.card,
       decoration: BoxDecoration(
@@ -493,7 +503,7 @@ class _NoTestDateCard extends StatelessWidget {
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(
-              'Set a test date in Settings to see a countdown here.',
+              l10n.studyPlanSetTestDate,
               style:
                   AppTextStyles.bodySmall.copyWith(color: AppColors.text2),
             ),

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/features/homework/presentation/homework_detail_screen.dart';
@@ -23,6 +24,8 @@ void main() {
   Widget harness() => ProviderScope(
         overrides: [dioProvider.overrideWithValue(dio)],
         child: const MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
           home: HomeworkDetailScreen(avatarId: 'av-1', submissionId: 's1'),
         ),
       );

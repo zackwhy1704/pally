@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 
 const _kSeenKey = 'seen_mode_education_v1';
@@ -62,9 +63,9 @@ class _EducationSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.md),
-            const Text(
-              'Two ways to learn 🎓',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context).chatModeTwoWays,
+              style: const TextStyle(
                 fontFamily: 'Nunito', fontSize: 22, fontWeight: FontWeight.w800,
                 color: Colors.white,
               ),
@@ -72,7 +73,7 @@ class _EducationSheet extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'You can switch any time with the toggle above the chat.',
+              AppLocalizations.of(context).chatModeSwitchAnyTime,
               style: TextStyle(
                 fontFamily: 'Nunito', fontSize: 13,
                 color: Colors.white.withValues(alpha: 0.75),
@@ -96,8 +97,8 @@ class _EducationSheet extends StatelessWidget {
                     children: [
                       const Text('🧭', style: TextStyle(fontSize: 22)),
                       const SizedBox(width: 8),
-                      const Text('Guide Me',
-                          style: TextStyle(
+                      Text(AppLocalizations.of(context).chatModeGuideMe,
+                          style: const TextStyle(
                             fontFamily: 'Nunito', fontSize: 17,
                             fontWeight: FontWeight.w800, color: Colors.white,
                           )),
@@ -109,8 +110,10 @@ class _EducationSheet extends StatelessWidget {
                           color: AppColors.green,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Text('RECOMMENDED',
-                            style: TextStyle(
+                        child: Text(
+                            AppLocalizations.of(context)
+                                .learningStyleRecommended,
+                            style: const TextStyle(
                               fontFamily: 'Nunito', fontSize: 9,
                               fontWeight: FontWeight.w800, color: Colors.white,
                             )),
@@ -119,8 +122,8 @@ class _EducationSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    'Mochi asks you guiding questions — you figure it out yourself. '
-                    'What you discover, you remember.',
+                    AppLocalizations.of(context).chatModeGuideDesc(
+                        AppLocalizations.of(context).mascotName),
                     style: TextStyle(
                       fontFamily: 'Nunito', fontSize: 13,
                       color: Colors.white.withValues(alpha: 0.85),
@@ -142,12 +145,12 @@ class _EducationSheet extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                  Row(
                     children: [
-                      Text('💡', style: TextStyle(fontSize: 22)),
-                      SizedBox(width: 8),
-                      Text('Just answer',
-                          style: TextStyle(
+                      const Text('💡', style: TextStyle(fontSize: 22)),
+                      const SizedBox(width: 8),
+                      Text(AppLocalizations.of(context).chatModeJustAnswer,
+                          style: const TextStyle(
                             fontFamily: 'Nunito', fontSize: 17,
                             fontWeight: FontWeight.w800, color: Colors.white,
                           )),
@@ -155,8 +158,8 @@ class _EducationSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    'Mochi gives you the worked solution directly. '
-                    'Great for checking your work — but you\'ll remember less.',
+                    AppLocalizations.of(context).chatModeAnswerDesc(
+                        AppLocalizations.of(context).mascotName),
                     style: TextStyle(
                       fontFamily: 'Nunito', fontSize: 13,
                       color: Colors.white.withValues(alpha: 0.75),
@@ -167,7 +170,7 @@ class _EducationSheet extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Default: Guide Me',
+              AppLocalizations.of(context).chatModeDefaultGuide,
               style: TextStyle(
                 fontFamily: 'Nunito', fontSize: 12,
                 color: Colors.white.withValues(alpha: 0.6),
@@ -185,8 +188,8 @@ class _EducationSheet extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14)),
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              child: const Text('Got it — let\'s learn!',
-                  style: TextStyle(
+              child: Text(AppLocalizations.of(context).chatModeGotIt,
+                  style: const TextStyle(
                     fontFamily: 'Nunito', fontWeight: FontWeight.w800,
                     fontSize: 16,
                   )),

@@ -225,7 +225,7 @@ class _ReportForm extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.sm),
         PallyButton(
-          label: 'Cancel',
+          label: AppLocalizations.of(context).commonCancel,
           variant: PallyButtonVariant.ghost,
           fullWidth: true,
           enabled: !isSubmitting,
@@ -309,7 +309,7 @@ class _ReportedConfirmation extends StatelessWidget {
               color: AppColors.green, size: 40),
           const SizedBox(height: AppSpacing.md),
           Text(
-            "Thanks — we'll take a look",
+            l.reportThanks,
             style: AppTextStyles.title,
             textAlign: TextAlign.center,
           ),
@@ -321,7 +321,7 @@ class _ReportedConfirmation extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.lg),
           PallyButton(
-            label: 'Done',
+            label: l.reportDoneButton,
             variant: PallyButtonVariant.filled,
             fullWidth: true,
             onPressed: () => Navigator.of(context).pop(),

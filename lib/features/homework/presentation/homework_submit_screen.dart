@@ -6,6 +6,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/adaptive_content_width.dart';
 import 'package:pally/features/homework/presentation/homework_submit_view_model.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 /// Capture + upload the student's own homework artifact (photos / PDF) to a
 /// centre class. Follows the API-call UX contract: the Submit button shows a
@@ -44,6 +45,7 @@ class _HomeworkSubmitScreenState extends ConsumerState<HomeworkSubmitScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final state = ref.watch(homeworkSubmitViewModelProvider(widget.avatarId));
 
     // On success, pop back to the list (which refreshes on return).
@@ -60,7 +62,7 @@ class _HomeworkSubmitScreenState extends ConsumerState<HomeworkSubmitScreen> {
         backgroundColor: AppColors.bg,
         elevation: 0,
         leading: const BackButton(),
-        title: Text('Submit homework', style: AppTextStyles.title),
+        title: Text(l10n.hwSubmit, style: AppTextStyles.title),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -70,24 +72,24 @@ class _HomeworkSubmitScreenState extends ConsumerState<HomeworkSubmitScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Title',
+                Text(l10n.hwFieldTitle,
                     style: AppTextStyles.label.copyWith(color: AppColors.text2)),
                 const SizedBox(height: AppSpacing.xs),
                 TextField(
                   controller: _titleController,
                   textInputAction: TextInputAction.next,
-                  decoration: _fieldDecoration('e.g. Maths worksheet 3'),
+                  decoration: _fieldDecoration(l10n.hwFieldTitleHint),
                 ),
                 const SizedBox(height: AppSpacing.md),
-                Text('Subject (optional)',
+                Text(l10n.hwFieldSubject,
                     style: AppTextStyles.label.copyWith(color: AppColors.text2)),
                 const SizedBox(height: AppSpacing.xs),
                 TextField(
                   controller: _subjectController,
-                  decoration: _fieldDecoration('e.g. Mathematics'),
+                  decoration: _fieldDecoration(l10n.hwFieldSubjectHint),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                Text('Your work',
+                Text(l10n.hwYourWork,
                     style: AppTextStyles.label.copyWith(color: AppColors.text2)),
                 const SizedBox(height: AppSpacing.sm),
                 _AddButtons(
@@ -126,8 +128,8 @@ class _HomeworkSubmitScreenState extends ConsumerState<HomeworkSubmitScreen> {
                           )
                         : const Icon(Icons.send_rounded, size: 18),
                     label: Text(state.isSubmitting
-                        ? 'Submitting…'
-                        : 'Submit to teacher'),
+                        ? l10n.hwSubmitting
+                        : l10n.hwSubmitToTeacher),
                     style: FilledButton.styleFrom(
                       backgroundColor: AppColors.purple,
                       disabledBackgroundColor: AppColors.outline,
@@ -138,8 +140,7 @@ class _HomeworkSubmitScreenState extends ConsumerState<HomeworkSubmitScreen> {
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
-                  'Your teacher reviews every submission before sending '
-                  'feedback back to you.',
+                  l10n.hwReviewNote,
                   style:
                       AppTextStyles.caption.copyWith(color: AppColors.text3),
                   textAlign: TextAlign.center,
@@ -189,17 +190,18 @@ class _AddButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Wrap(
       spacing: AppSpacing.sm,
       runSpacing: AppSpacing.sm,
       children: [
         _AddChip(
             icon: Icons.document_scanner_rounded,
-            label: 'Scan',
+            label: l10n.hwChipScan,
             onTap: enabled ? onScan : null),
         _AddChip(
             icon: Icons.photo_library_rounded,
-            label: 'Photo',
+            label: l10n.hwChipPhoto,
             onTap: enabled ? onPhoto : null),
         _AddChip(
             icon: Icons.picture_as_pdf_rounded,

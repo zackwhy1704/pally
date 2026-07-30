@@ -86,7 +86,7 @@ class CharacterPickerStep extends ConsumerWidget {
               ),
               const SizedBox(height: AppSpacing.sm),
               PallyButton(
-                label: 'Retry',
+                label: AppLocalizations.of(context).commonRetry,
                 onPressed: () =>
                     ref.read(collectionViewModelProvider.notifier).refresh(),
               ),

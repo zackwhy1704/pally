@@ -5,6 +5,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/wiki_page.dart';
 
 class BrainHealthScreen extends ConsumerWidget {
@@ -24,7 +25,7 @@ class BrainHealthScreen extends ConsumerWidget {
               color: AppColors.text1, size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text('Brain Health 🧠',
+        title: Text(AppLocalizations.of(context).brainHealthTitle,
             style: AppTextStyles.title.copyWith(fontSize: 16)),
         centerTitle: true,
       ),
@@ -76,6 +77,7 @@ class _BrainHealthBodyState extends ConsumerState<_BrainHealthBody> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (_loading) {
       return const Center(
           child: CircularProgressIndicator(color: AppColors.purple));
@@ -101,7 +103,7 @@ class _BrainHealthBodyState extends ConsumerState<_BrainHealthBody> {
 
         // Quality breakdown
         if (pages.isNotEmpty) ...[
-          Text('Wiki Pages', style: AppTextStyles.title),
+          Text(l10n.brainHealthWikiPages, style: AppTextStyles.title),
           const SizedBox(height: AppSpacing.sm),
           ...pages.map((p) => _PageHealthRow(page: p)),
           const SizedBox(height: AppSpacing.md),
@@ -109,7 +111,7 @@ class _BrainHealthBodyState extends ConsumerState<_BrainHealthBody> {
 
         // Error patterns
         if (_errorPatterns != null && _errorPatterns!.isNotEmpty) ...[
-          Text('Weak Topics', style: AppTextStyles.title),
+          Text(l10n.brainHealthWeakTopics, style: AppTextStyles.title),
           const SizedBox(height: AppSpacing.sm),
           ..._errorPatterns!.entries.take(5).map((e) => _ErrorPatternRow(
                 topic: e.key,
@@ -140,6 +142,7 @@ class _HealthScoreCard extends StatelessWidget {
                 avgQuality * 0.5)
             .round();
 
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -150,7 +153,7 @@ class _HealthScoreCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text('Brain Health Score',
+          Text(l10n.brainHealthScore,
               style: AppTextStyles.bodySmall.copyWith(color: AppColors.text2)),
           const SizedBox(height: AppSpacing.xs),
           Text(
@@ -162,11 +165,11 @@ class _HealthScoreCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _StatPill(label: 'Pages', value: '$pageCount',
+              _StatPill(label: l10n.brainHealthPages, value: '$pageCount',
                   color: AppColors.purple),
-              _StatPill(label: 'Verified', value: '$verifiedCount',
+              _StatPill(label: l10n.brainHealthVerified, value: '$verifiedCount',
                   color: AppColors.teal),
-              _StatPill(label: 'Avg Quality', value: '$avgQuality/100',
+              _StatPill(label: l10n.brainHealthAvgQuality, value: '$avgQuality/100',
                   color: AppColors.amber),
             ],
           ),
@@ -275,7 +278,7 @@ class _ErrorPatternRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              '$count errors',
+              AppLocalizations.of(context).brainHealthErrors(count),
               style: AppTextStyles.caption.copyWith(
                   color: AppColors.coral, fontWeight: FontWeight.w700),
             ),

@@ -441,7 +441,7 @@ class _TypeTabState extends ConsumerState<_TypeTab>
             borderRadius: BorderRadius.circular(10),
           ),
           child: Text(
-            'Typed notes give the best results. Paste from Google Docs or type from your textbook.',
+            l.uploadTypedNotesTip,
             style: AppTextStyles.bodySmall.copyWith(color: AppColors.teal),
           ),
         ),
@@ -502,7 +502,7 @@ class _TypeTabState extends ConsumerState<_TypeTab>
           Padding(
             padding: const EdgeInsets.only(top: AppSpacing.xs),
             child: Text(
-              'Consider splitting long notes into separate uploads for better accuracy.',
+              l.uploadSplitLongNotesTip,
               style: AppTextStyles.caption.copyWith(color: AppColors.amber),
             ),
           ),
@@ -1162,7 +1162,7 @@ class _UploadLoadingScreen extends StatelessWidget {
     } else if (isCompiling) {
       lines.add('This usually takes 30-60 seconds');
     } else if (stage == UploadStage.uploading && isLarge) {
-      lines.add('File: ${_sizeLabel(state.pendingFileSizeBytes)}${fileName.isNotEmpty ? " · $fileName" : ""}');
+      lines.add('File: ${_sizeLabel(l, state.pendingFileSizeBytes)}${fileName.isNotEmpty ? " · $fileName" : ""}');
     } else if (stage == UploadStage.uploading && fileName.isNotEmpty) {
       lines.add(fileName);
     } else if (stage == UploadStage.checkingRelevance) {
@@ -1188,8 +1188,8 @@ class _UploadLoadingScreen extends StatelessWidget {
     );
   }
 
-  String _sizeLabel(int bytes) {
-    if (bytes == 0) return 'large file';
+  String _sizeLabel(AppLocalizations l, int bytes) {
+    if (bytes == 0) return l.uploadLargeFileSizeLabel;
     final mb = bytes / (1024 * 1024);
     return mb >= 1 ? '${mb.toStringAsFixed(1)} MB' : '${(bytes / 1024).round()} KB';
   }

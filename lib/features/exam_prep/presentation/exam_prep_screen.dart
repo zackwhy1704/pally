@@ -7,6 +7,7 @@ import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/exam_prep/presentation/exam_prep_view_model.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/exam_prep.dart';
 
 class ExamPrepScreen extends ConsumerWidget {
@@ -15,6 +16,7 @@ class ExamPrepScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final examPrepAsync = ref.watch(examPrepViewModelProvider(avatarId));
 
     return Scaffold(
@@ -22,7 +24,7 @@ class ExamPrepScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Exam Prep', style: AppTextStyles.title),
+        title: Text(l10n.examPrepTitle, style: AppTextStyles.title),
         centerTitle: true,
       ),
       body: examPrepAsync.when(
@@ -39,7 +41,7 @@ class ExamPrepScreen extends ConsumerWidget {
                     size: 48, color: AppColors.coral),
                 const SizedBox(height: AppSpacing.md),
                 Text(
-                  'Could not load exam prep data.',
+                  l10n.examPrepLoadError,
                   style: AppTextStyles.body.copyWith(color: AppColors.text2),
                   textAlign: TextAlign.center,
                 ),
@@ -50,7 +52,7 @@ class ExamPrepScreen extends ConsumerWidget {
                       .refresh(),
                   style: FilledButton.styleFrom(
                       backgroundColor: AppColors.purple),
-                  child: const Text('Try again'),
+                  child: Text(l10n.commonTryAgainSentence),
                 ),
               ],
             ),
@@ -76,6 +78,7 @@ class _ExamPrepBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final concepts = List<ExamConceptMastery>.from(examPrep.concepts);
     // Sort weakest-first
     concepts.sort((a, b) => a.mastery.compareTo(b.mastery));
@@ -104,7 +107,7 @@ class _ExamPrepBody extends ConsumerWidget {
           if (concepts.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.lg),
             Text(
-              'CONCEPT MASTERY',
+              l10n.examPrepConceptMastery,
               style: AppTextStyles.label.copyWith(
                 letterSpacing: 1.2,
                 color: AppColors.text2,
@@ -129,13 +132,13 @@ class _ExamPrepBody extends ConsumerWidget {
                       size: 48, color: AppColors.text3),
                   const SizedBox(height: AppSpacing.md),
                   Text(
-                    'No exam prep data yet',
+                    l10n.examPrepEmptyTitle,
                     style: AppTextStyles.title,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    'Complete some modules first to see your concept mastery.',
+                    l10n.examPrepEmptyBody,
                     style:
                         AppTextStyles.body.copyWith(color: AppColors.text2),
                     textAlign: TextAlign.center,
@@ -164,6 +167,7 @@ class _CountdownCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isUrgent = daysRemaining <= 7;
     final color = isUrgent ? AppColors.coral : AppColors.purple;
     final bgColor = isUrgent ? AppColors.coralL : AppColors.purpleL;
@@ -200,7 +204,7 @@ class _CountdownCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'days until exam',
+                  l10n.examPrepDaysUntilExam,
                   style: AppTextStyles.body.copyWith(
                     color: color,
                     fontWeight: FontWeight.w700,
@@ -227,6 +231,7 @@ class _DailyTargetBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
@@ -244,8 +249,7 @@ class _DailyTargetBanner extends StatelessWidget {
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
-              'Study $dailyTarget module${dailyTarget == 1 ? '' : 's'}/day '
-              'to finish by exam',
+              l10n.examPrepDailyTarget(dailyTarget),
               style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.teal,
                 fontWeight: FontWeight.w600,
@@ -283,6 +287,7 @@ class _ConceptMasteryCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final pct = concept.mastery.round(); // already 0–100
     final color = _masteryColor;
 
@@ -326,7 +331,7 @@ class _ConceptMasteryCard extends ConsumerWidget {
             if (concept.signalType == 'SELF_REPORT') ...[
               const SizedBox(height: AppSpacing.xs),
               Text(
-                'Self-assessed',
+                l10n.examPrepSelfAssessed,
                 style: AppTextStyles.caption.copyWith(color: AppColors.text3),
               ),
             ],
@@ -367,7 +372,7 @@ class _ConceptMasteryCard extends ConsumerWidget {
                           ).push(context);
                         } else if (!ok && context.mounted) {
                           PallyToast.error(context,
-                              'Could not start revision. Try again.');
+                              l10n.examPrepStartRevisionError);
                         }
                       },
                       child: Container(
@@ -380,7 +385,7 @@ class _ConceptMasteryCard extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          'Re-do',
+                          l10n.examPrepRedo,
                           style: AppTextStyles.caption.copyWith(
                             color: AppColors.purple,
                             fontWeight: FontWeight.w700,

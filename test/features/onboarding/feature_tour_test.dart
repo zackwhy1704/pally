@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/onboarding/presentation/feature_tour.dart';
 import 'package:pally/features/subscription/presentation/trial_welcome_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,6 +14,8 @@ void main() {
   // MaterialApp.builder (wraps the Navigator) — a MediaQuery around the button only
   // would not be inherited by the route FeatureTour.show pushes.
   Widget harness({bool reduceMotion = true}) => MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
         builder: (ctx, child) => MediaQuery(
           data: MediaQuery.of(ctx).copyWith(disableAnimations: reduceMotion),
           child: child!,
@@ -143,6 +146,8 @@ void main() {
   // ── Seen-key v3 ──────────────────────────────────────────────────────────────
 
   Widget autoShowHarness(Future<void> Function(BuildContext) onReady) => MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
         builder: (ctx, child) => MediaQuery(
           data: MediaQuery.of(ctx).copyWith(disableAnimations: true),
           child: child!,
@@ -196,6 +201,8 @@ void main() {
 
     // Mount the library-tab anchor at the very bottom (like the bottom nav).
     await tester.pumpWidget(MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       builder: (ctx, child) => MediaQuery(
         data: MediaQuery.of(ctx).copyWith(disableAnimations: true),
         child: child!,
@@ -249,6 +256,8 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     await tester.pumpWidget(MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       builder: (ctx, child) => MediaQuery(
         data: MediaQuery.of(ctx).copyWith(disableAnimations: true),
         child: child!,
@@ -293,6 +302,8 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     await tester.pumpWidget(MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       builder: (ctx, child) => MediaQuery(
         data: MediaQuery.of(ctx).copyWith(
             disableAnimations: true, textScaler: const TextScaler.linear(2.0)),

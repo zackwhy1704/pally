@@ -7,6 +7,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/chat/widgets/teaching_mode_toggle.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const _kDefaultModeKey = 'pref_default_answer_mode';
@@ -51,10 +52,14 @@ class _LearningStyleScreenState extends ConsumerState<LearningStyleScreen> {
         '/api/v1/auth/settings/answer-mode',
         data: {'defaultAnswerMode': mode.isGuide ? 'GUIDE' : 'ANSWER'},
       );
-      if (mounted) PallyToast.success(context, 'Default saved!');
+      if (mounted) {
+        PallyToast.success(
+            context, AppLocalizations.of(context).learningStyleSaved);
+      }
     } on DioException {
       if (mounted) {
-        PallyToast.error(context, 'Could not save — check your connection');
+        PallyToast.error(
+            context, AppLocalizations.of(context).commonCouldNotSaveConnection);
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -63,12 +68,13 @@ class _LearningStyleScreenState extends ConsumerState<LearningStyleScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.bg,
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Learning style', style: AppTextStyles.title),
+        title: Text(l10n.learningStyleTitle, style: AppTextStyles.title),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -76,14 +82,12 @@ class _LearningStyleScreenState extends ConsumerState<LearningStyleScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Default answer mode',
+            Text(l10n.learningStyleDefaultMode,
                 style: AppTextStyles.body
                     .copyWith(fontWeight: FontWeight.w700)),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Guide Me builds understanding — you figure it out, '
-              'you remember more. You can switch per question with the '
-              'toggle in chat.',
+              l10n.learningStyleBody,
               style: AppTextStyles.bodySmall
                   .copyWith(color: AppColors.text2),
             ),
@@ -122,6 +126,7 @@ class _ModeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isGuide = mode.isGuide;
     final accent = isGuide ? AppColors.purple : AppColors.amber;
     return GestureDetector(
@@ -150,7 +155,9 @@ class _ModeCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        mode.label,
+                        isGuide
+                            ? l10n.chatModeGuideMe
+                            : l10n.chatModeJustAnswer,
                         style: AppTextStyles.body.copyWith(
                           fontWeight: FontWeight.w700,
                           color: selected ? accent : AppColors.text1,
@@ -165,8 +172,8 @@ class _ModeCard extends StatelessWidget {
                             color: AppColors.green,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Text('RECOMMENDED',
-                              style: TextStyle(
+                          child: Text(l10n.learningStyleRecommended,
+                              style: const TextStyle(
                                   fontFamily: 'Nunito',
                                   fontSize: 8,
                                   fontWeight: FontWeight.w800,
@@ -178,8 +185,8 @@ class _ModeCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     isGuide
-                        ? 'Mochi guides you to the answer — builds real retention.'
-                        : 'Mochi gives the worked solution — great for checking your work.',
+                        ? l10n.learningStyleGuideDesc(l10n.mascotName)
+                        : l10n.learningStyleAnswerDesc(l10n.mascotName),
                     style: AppTextStyles.bodySmall
                         .copyWith(color: AppColors.text2),
                   ),

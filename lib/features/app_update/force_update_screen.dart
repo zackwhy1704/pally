@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 /// Blocking "please update" screen shown when the running app version is below the
 /// backend's minimum supported version (CA-16). A dead end — back is disabled and
@@ -34,12 +35,11 @@ class ForceUpdateScreen extends StatelessWidget {
                 children: [
                   Image.asset('assets/images/mochi.png', width: 120, height: 120),
                   const SizedBox(height: AppSpacing.lg),
-                  Text('Time to update!',
+                  Text(AppLocalizations.of(context).forceUpdateTitle,
                       style: AppTextStyles.heading1, textAlign: TextAlign.center),
                   const SizedBox(height: AppSpacing.sm),
                   Text(
-                    'A newer version of Apalchi is ready with important improvements. '
-                    'Please update to keep learning.',
+                    AppLocalizations.of(context).forceUpdateBody,
                     style: AppTextStyles.body.copyWith(color: AppColors.text2),
                     textAlign: TextAlign.center,
                   ),
@@ -52,7 +52,7 @@ class ForceUpdateScreen extends StatelessWidget {
                         backgroundColor: AppColors.purple,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
-                      child: const Text('Update now'),
+                      child: Text(AppLocalizations.of(context).forceUpdateCta),
                     ),
                   ),
                 ],

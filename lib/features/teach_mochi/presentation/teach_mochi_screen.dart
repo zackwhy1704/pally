@@ -9,6 +9,7 @@ import 'package:pally/core/ui/no_notes_cta.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/features/progress/presentation/level_up_controller.dart';
 import 'package:pally/features/teach_mochi/presentation/teach_mochi_view_model.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/wiki_page.dart';
 
 /// Single-page experience that walks the child through Feynman-technique
@@ -22,6 +23,7 @@ class TeachMochiScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final state = ref.watch(teachMochiViewModelProvider(avatarId));
     final notifier =
         ref.read(teachMochiViewModelProvider(avatarId).notifier);
@@ -75,7 +77,7 @@ class TeachMochiScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Teach Mochi', style: AppTextStyles.title),
+        title: Text(l10n.teachTitle(l10n.mascotName), style: AppTextStyles.title),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
@@ -105,6 +107,7 @@ class _TopicSelectView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.md),
       children: [
@@ -120,8 +123,7 @@ class _TopicSelectView extends StatelessWidget {
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(
-                  'Pick a topic and TEACH Mochi! '
-                  'Explaining is the fastest way to know you really understand.',
+                  l10n.teachIntro(l10n.mascotName),
                   style: AppTextStyles.body
                       .copyWith(color: AppColors.text1),
                 ),
@@ -213,6 +215,7 @@ class _ExplainViewState extends State<_ExplainView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final canSubmit = widget.text.trim().length >= 10 && !widget.isSubmitting;
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -228,7 +231,7 @@ class _ExplainViewState extends State<_ExplainView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Teach Mochi about',
+                Text(l10n.teachAboutLabel(l10n.mascotName),
                     style: AppTextStyles.label
                         .copyWith(color: AppColors.text2)),
                 const SizedBox(height: 2),
@@ -245,8 +248,7 @@ class _ExplainViewState extends State<_ExplainView> {
               expands: true,
               textAlignVertical: TextAlignVertical.top,
               decoration: InputDecoration(
-                hintText:
-                    'Pretend Mochi has never heard of this. Use your own words…',
+                hintText: l10n.teachHint(l10n.mascotName),
                 hintStyle: AppTextStyles.body
                     .copyWith(color: AppColors.text3),
                 filled: true,
@@ -292,7 +294,7 @@ class _ExplainViewState extends State<_ExplainView> {
                       child: CircularProgressIndicator(
                           color: Colors.white, strokeWidth: 2),
                     )
-                  : const Text('Done — show me how I did'),
+                  : Text(l10n.teachSubmit),
             ),
           ),
         ],
@@ -313,6 +315,7 @@ class _FeedbackView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final eval = state.evaluation!;
 
     // EVAL_FAILED: the evaluator produced no grade — show a retry, never a
@@ -363,8 +366,8 @@ class _FeedbackView extends StatelessWidget {
                     children: [
                       Text(
                         eval.isPerfect
-                            ? 'You taught it all!'
-                            : 'Great teaching!',
+                            ? l10n.teachPerfect
+                            : l10n.teachGreat,
                         style: AppTextStyles.title,
                       ),
                       const SizedBox(height: 2),
@@ -392,7 +395,7 @@ class _FeedbackView extends StatelessWidget {
                   const Icon(Icons.star_rounded,
                       color: AppColors.gold, size: 22),
                   const SizedBox(width: 6),
-                  Text('+${eval.xpEarned} XP',
+                  Text(l10n.commonXpPlus(eval.xpEarned),
                       style: AppTextStyles.body.copyWith(
                           fontWeight: FontWeight.w800,
                           color: AppColors.amber)),
@@ -402,7 +405,7 @@ class _FeedbackView extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           if (eval.coveredConcepts.isNotEmpty)
             _ConceptList(
-              title: 'You explained',
+              title: l10n.teachYouExplained,
               icon: Icons.check_circle_rounded,
               color: AppColors.green,
               bgColor: AppColors.greenL,
@@ -411,7 +414,7 @@ class _FeedbackView extends StatelessWidget {
           if (eval.missedConcepts.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
             _ConceptList(
-              title: 'Missed concepts',
+              title: l10n.teachMissedConcepts,
               icon: Icons.help_outline_rounded,
               color: AppColors.coral,
               bgColor: AppColors.coralL,
@@ -435,7 +438,7 @@ class _FeedbackView extends StatelessWidget {
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(
                     child: Text(
-                      'Mochi asks: ${eval.followUpQuestion}',
+                      l10n.teachMochiAsks(l10n.mascotName, eval.followUpQuestion!),
                       style: AppTextStyles.body.copyWith(
                           fontWeight: FontWeight.w600,
                           color: AppColors.text1),
@@ -459,7 +462,7 @@ class _FeedbackView extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14)),
                   ),
-                  child: const Text('Pick another'),
+                  child: Text(l10n.teachPickAnother),
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -473,7 +476,7 @@ class _FeedbackView extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14)),
                   ),
-                  child: const Text('Try again'),
+                  child: Text(l10n.commonTryAgainSentence),
                 ),
               ),
             ],
@@ -539,15 +542,16 @@ class _NoTopicsState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
         child: MochiPlaceholder(
-          title: 'No topics to teach yet',
+          title: l10n.teachNoTopics,
           action: NoNotesCta(
             avatarId: avatarId,
             personalDescription:
-                'Upload some notes first so Mochi has something to learn from!',
+                l10n.teachNoTopicsPersonalDesc(l10n.mascotName),
           ),
         ),
       ),
@@ -569,6 +573,7 @@ class TeachRetryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.xl),
       child: Column(
@@ -577,7 +582,7 @@ class TeachRetryView extends StatelessWidget {
           const Text('🤔', style: TextStyle(fontSize: 48)),
           const SizedBox(height: AppSpacing.md),
           Text(
-            "Mochi couldn't check this one",
+            l10n.teachCouldntCheck(l10n.mascotName),
             style: AppTextStyles.title,
             textAlign: TextAlign.center,
           ),
@@ -585,7 +590,7 @@ class TeachRetryView extends StatelessWidget {
           Text(
             feedback.isNotEmpty
                 ? feedback
-                : 'Something went wrong — give it another go.',
+                : l10n.teachEvalFailedFallback,
             style: AppTextStyles.body.copyWith(color: AppColors.text2),
             textAlign: TextAlign.center,
           ),
@@ -593,7 +598,7 @@ class TeachRetryView extends StatelessWidget {
           FilledButton(
             onPressed: onTryAgain,
             style: FilledButton.styleFrom(backgroundColor: AppColors.purple),
-            child: const Text('Try again'),
+            child: Text(l10n.commonTryAgainSentence),
           ),
         ],
       ),

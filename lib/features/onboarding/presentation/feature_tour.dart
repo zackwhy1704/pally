@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/features/onboarding/presentation/tour_illustrations.dart';
@@ -35,47 +36,42 @@ class _TourStep {
   final GlobalKey? anchorKey;
 }
 
-List<_TourStep> _buildSteps() => [
-  const _TourStep(
+List<_TourStep> _buildSteps(AppLocalizations l10n) => [
+  _TourStep(
     emoji: '👋',
-    title: 'Hi, I\'m Mochi!',
-    body: 'Let me show you 4 quick things that make Apalchi different from any other study app.',
+    title: l10n.tourStep1Title(l10n.mascotName),
+    body: l10n.tourStep1Body,
     illustration: TourIllustration.mascot,
   ),
   _TourStep(
     emoji: '📚',
-    title: 'A Mochi for every subject',
-    body: 'Create one Mochi per subject — each one learns only YOUR notes, '
-        'so every answer matches exactly what your teacher taught.',
+    title: l10n.tourStep2Title(l10n.mascotName),
+    body: l10n.tourStep2Body(l10n.mascotName),
     illustration: TourIllustration.notesToBrain,
     anchorKey: featureTourCreateMochiKey,
   ),
   _TourStep(
     emoji: '🎯',
-    title: 'Learn it. Test it. Prove it.',
-    body: 'Every topic becomes a mini-mission: quick cards to learn, '
-        'hot-takes to test yourself, and a challenge to prove it — '
-        'what you get wrong, I bring back until it sticks.',
+    title: l10n.tourStep3Title,
+    body: l10n.tourStep3Body,
     illustration: TourIllustration.learnTestProve,
     anchorKey: featureTourLibraryTabKey,
   ),
   _TourStep(
     emoji: '📈',
-    title: 'I remember what you find hard',
-    body: 'The Library tracks your mastery by topic. When you get something wrong, '
-        'I bring it back — spaced and scheduled — until it sticks.',
+    title: l10n.tourStep4Title,
+    body: l10n.tourStep4Body,
     illustration: TourIllustration.mastery,
     anchorKey: featureTourLibraryTabKey,
   ),
-  const _TourStep(
+  _TourStep(
     emoji: '🚀',
-    title: 'Not a generic AI — a Mochi that knows yours.',
-    body: 'Upload your notes and every answer, quiz, and challenge comes from '
-        'what YOUR teacher taught.',
+    title: l10n.tourStep5Title(l10n.mascotName),
+    body: l10n.tourStep5Body,
     illustration: TourIllustration.mascot,
-    // 'Start' — a single short word so the final CTA never wraps to two lines at
+    // A single short word so the final CTA never wraps to two lines at
     // large text scale / on narrow devices (the equal-width Expandeds are fine).
-    cta: 'Start',
+    cta: l10n.tourStep5Cta,
   ),
 ];
 
@@ -115,14 +111,13 @@ class _FeatureTourPage extends StatefulWidget {
 class _FeatureTourPageState extends State<_FeatureTourPage>
     with TickerProviderStateMixin {
   int _step = 0;
-  late final List<_TourStep> _steps;
+  late List<_TourStep> _steps;
   late final AnimationController _fadeCtrl;   // overlay entrance/exit (finite)
   late final AnimationController _pulseCtrl;  // spotlight + pointer loop (gated)
 
   @override
   void initState() {
     super.initState();
-    _steps = _buildSteps();
     _fadeCtrl = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 250))
       ..forward();
@@ -133,6 +128,9 @@ class _FeatureTourPageState extends State<_FeatureTourPage>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // Steps carry localized copy, so they resolve here (Localizations is an
+    // inherited dependency, unavailable in initState).
+    _steps = _buildSteps(AppLocalizations.of(context));
     // Reduced-motion: never start the repeating loop when the platform asks for
     // no animations — otherwise the spotlight/pointer would animate forever AND
     // pumpAndSettle in tests would time out. Static frame instead.
@@ -507,7 +505,7 @@ class _StepCard extends StatelessWidget {
                       padding: EdgeInsets.zero,
                       minimumSize: const Size(48, 40),
                     ),
-                    child: Text('Skip',
+                    child: Text(AppLocalizations.of(context).tourSkip,
                         style: AppTextStyles.bodySmall.copyWith(color: AppColors.text3)),
                   ),
               ],
@@ -540,7 +538,7 @@ class _StepCard extends StatelessWidget {
                         minimumSize: const Size(0, 48),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       ),
-                      child: const Text('← Back'),
+                      child: Text(AppLocalizations.of(context).tourBack),
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),
@@ -555,7 +553,12 @@ class _StepCard extends StatelessWidget {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     ),
                     child: Text(
-                      isLast ? (step.cta ?? 'Done!') : (isFirst ? 'Show me!' : 'Next →'),
+                      isLast
+                          ? (step.cta ??
+                              AppLocalizations.of(context).tourDone)
+                          : (isFirst
+                              ? AppLocalizations.of(context).tourShowMe
+                              : AppLocalizations.of(context).tourNext),
                       style: AppTextStyles.body.copyWith(
                           color: Colors.white, fontWeight: FontWeight.w700),
                     ),

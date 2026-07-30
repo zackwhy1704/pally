@@ -11,6 +11,7 @@ import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 /// Student-side class-join entry. The single code printed on a class card
 /// (e.g. "PFDM4CYB") joins the class AND its centre, then provisions the
@@ -30,7 +31,7 @@ class _CentreJoinScreenState extends ConsumerState<CentreJoinScreen> {
 
   Future<void> _submit() async {
     if (_code.length < 6) {
-      PallyToast.error(context, 'Enter the full class code');
+      PallyToast.error(context, AppLocalizations.of(context).centreJoinEnterFull);
       return;
     }
     setState(() => _loading = true);
@@ -44,20 +45,23 @@ class _CentreJoinScreenState extends ConsumerState<CentreJoinScreen> {
       final body = (data is Map && data['data'] is Map)
           ? Map<String, dynamic>.from(data['data'] as Map)
           : Map<String, dynamic>.from(data as Map);
-      final className = body['className'] as String? ?? 'your class';
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context);
+      final className =
+          body['className'] as String? ?? l10n.centreJoinYourClassFallback;
       // Refresh the avatar surfaces so the new class Mochi appears right away.
       ref.invalidate(homeViewModelProvider);
       ref.invalidate(libraryViewModelProvider);
-      PallyToast.success(context, 'Joined $className 🎉');
+      PallyToast.success(context, l10n.centreJoinSuccess(className));
       context.pop();
     } on DioException catch (e) {
       final raw = e.response?.data;
-      String msg = 'Could not join — check the code and try again';
+      if (!mounted) return;
+      String msg = AppLocalizations.of(context).centreJoinFailed;
       if (raw is Map && raw['error'] != null) {
         msg = raw['error'].toString();
       }
-      if (mounted) PallyToast.error(context, msg);
+      PallyToast.error(context, msg);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -76,7 +80,7 @@ class _CentreJoinScreenState extends ConsumerState<CentreJoinScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Join a class', style: AppTextStyles.title),
+        title: Text(AppLocalizations.of(context).centreJoinTitle, style: AppTextStyles.title),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -91,14 +95,13 @@ class _CentreJoinScreenState extends ConsumerState<CentreJoinScreen> {
               ),
               const SizedBox(height: AppSpacing.md),
               Text(
-                'Enter the class code',
+                AppLocalizations.of(context).centreJoinHeading,
                 style: AppTextStyles.title,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
-                'Ask your teacher or tuition centre for the class code on their '
-                'dashboard, then type it in below.',
+                AppLocalizations.of(context).centreJoinBody,
                 style: AppTextStyles.body.copyWith(color: AppColors.text2),
                 textAlign: TextAlign.center,
               ),
@@ -164,7 +167,7 @@ class _CentreJoinScreenState extends ConsumerState<CentreJoinScreen> {
                           width: AppSizing.spinnerSm,
                           child: CircularProgressIndicator(
                               color: Colors.white, strokeWidth: 2))
-                      : const Text('Join class'),
+                      : Text(AppLocalizations.of(context).centreJoinButton),
                 ),
               ),
             ],

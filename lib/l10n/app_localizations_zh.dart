@@ -3294,4 +3294,656 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get completeProfileParentEmailHelper =>
       '在你使用 AI 功能之前，我们会发邮件请你的家长批准你的账户。';
+
+  @override
+  String get commonTryAgainSentence => '再试一次';
+
+  @override
+  String teachTitle(String mascot) {
+    return '教$mascot';
+  }
+
+  @override
+  String teachIntro(String mascot) {
+    return '选一个主题来教$mascot吧！把它讲解出来，是检验自己是否真正理解的最快方法。';
+  }
+
+  @override
+  String teachAboutLabel(String mascot) {
+    return '要教$mascot的主题';
+  }
+
+  @override
+  String teachHint(String mascot) {
+    return '假装$mascot从来没听过这个内容，用你自己的话来解释……';
+  }
+
+  @override
+  String get teachSubmit => '写好了 — 看看我教得怎么样';
+
+  @override
+  String get teachPerfect => '你全教会了！';
+
+  @override
+  String get teachGreat => '教得很好！';
+
+  @override
+  String commonXpPlus(int xp) {
+    return '+$xp XP';
+  }
+
+  @override
+  String get teachYouExplained => '你讲到的概念';
+
+  @override
+  String get teachMissedConcepts => '遗漏的概念';
+
+  @override
+  String teachMochiAsks(String mascot, String question) {
+    return '$mascot问：$question';
+  }
+
+  @override
+  String get teachPickAnother => '换一个主题';
+
+  @override
+  String get teachNoTopics => '还没有可以教的主题';
+
+  @override
+  String teachNoTopicsPersonalDesc(String mascot) {
+    return '先上传一些笔记，让$mascot有东西可学！';
+  }
+
+  @override
+  String teachCouldntCheck(String mascot) {
+    return '$mascot这次没能检查你的讲解';
+  }
+
+  @override
+  String get teachEvalFailedFallback => '出了点问题 — 再试一次吧。';
+
+  @override
+  String get hwTitle => '功课';
+
+  @override
+  String get hwSubmit => '提交功课';
+
+  @override
+  String get hwEmptyTitle => '还没有功课';
+
+  @override
+  String get hwEmptyBody => '把你的功课拍照或以 PDF 提交，老师批改后会在这里发反馈给你。';
+
+  @override
+  String get hwBadgeFeedbackReady => '反馈已发布';
+
+  @override
+  String get hwBadgeRedo => '请重做';
+
+  @override
+  String get hwBadgeInReview => '批改中';
+
+  @override
+  String get hwHintReleasedBody => '老师已批改你的功课 — 请看下面的反馈。';
+
+  @override
+  String get hwHintReturnedTitle => '退回重做';
+
+  @override
+  String get hwHintReturnedBody => '老师请你再检查一遍，然后重新提交。';
+
+  @override
+  String get hwHintInReviewBody => '老师正在批改你的功课。反馈发布后会显示在这里。';
+
+  @override
+  String get hwTeacherFeedback => '老师的反馈';
+
+  @override
+  String get hwWhatYouSubmitted => '你提交的内容';
+
+  @override
+  String get hwFieldTitle => '标题';
+
+  @override
+  String get hwFieldTitleHint => '例如:数学练习卷 3';
+
+  @override
+  String get hwFieldSubject => '科目(可不填)';
+
+  @override
+  String get hwFieldSubjectHint => '例如:数学';
+
+  @override
+  String get hwYourWork => '你的功课';
+
+  @override
+  String get hwSubmitting => '提交中…';
+
+  @override
+  String get hwSubmitToTeacher => '提交给老师';
+
+  @override
+  String get hwReviewNote => '老师会先审阅每一份提交，然后才把反馈发给你。';
+
+  @override
+  String get hwChipScan => '扫描';
+
+  @override
+  String get hwChipPhoto => '照片';
+
+  @override
+  String get examPrepTitle => '备考';
+
+  @override
+  String get examPrepLoadError => '无法加载备考数据。';
+
+  @override
+  String get examPrepConceptMastery => '概念掌握度';
+
+  @override
+  String get examPrepEmptyTitle => '还没有备考数据';
+
+  @override
+  String get examPrepEmptyBody => '先完成一些学习模块，就能看到你的概念掌握度。';
+
+  @override
+  String get examPrepDaysUntilExam => '距离考试的天数';
+
+  @override
+  String examPrepDailyTarget(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '每天学习 $count 个模块，考试前就能学完',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get examPrepSelfAssessed => '自我评估';
+
+  @override
+  String get examPrepRedo => '重做';
+
+  @override
+  String get examPrepStartRevisionError => '无法开始复习，请再试一次。';
+
+  @override
+  String get commonCouldNotSaveConnection => '无法保存 — 请检查网络连接';
+
+  @override
+  String get referralTitle => '邀请朋友';
+
+  @override
+  String get referralFriendsInvited => '你邀请的朋友';
+
+  @override
+  String get referralLoadInvitesError => '无法加载你的邀请记录';
+
+  @override
+  String get referralYourCode => '你的邀请码';
+
+  @override
+  String get referralCodeCopied => '已复制邀请码';
+
+  @override
+  String referralShareMessage(String code) {
+    return '来试试 Apalchi — AI 学习伙伴。注册时输入我的邀请码 $code，你完成第一次测验后，我们俩都能获得奖励星星。';
+  }
+
+  @override
+  String referralActivatedOfTarget(int activated, int target) {
+    return '已有 $activated/$target 位朋友激活';
+  }
+
+  @override
+  String referralNextTier(int count, int bonus) {
+    return '再邀请 $count 位 → 额外 +$bonus⭐ 奖励';
+  }
+
+  @override
+  String get referralActivatedNote => '朋友完成第一次测验后才算“激活”。';
+
+  @override
+  String get referralEmptyInvites => '还没有邀请记录 — 分享上面的邀请码，开始吧！';
+
+  @override
+  String get referralStatusActivated => '已激活';
+
+  @override
+  String get referralStatusPending => '待激活';
+
+  @override
+  String get studyPlanTitle => '学习计划';
+
+  @override
+  String get studyPlanTodayTasks => '今日任务';
+
+  @override
+  String get studyPlanAllDone => '今天的计划完成啦！🎉 继续加油！';
+
+  @override
+  String get studyPlanComingUp => '接下来';
+
+  @override
+  String get studyPlanBubbleTitle => '这是你今天的计划！📅';
+
+  @override
+  String get studyPlanBubbleBody => '完成所有任务，保持连胜纪录，还能赚取奖励星星！';
+
+  @override
+  String get studyPlanMarkDone => '完成';
+
+  @override
+  String get studyPlanStart => '开始';
+
+  @override
+  String get studyPlanUpcoming => '即将到来';
+
+  @override
+  String get studyPlanTomorrow => '明天';
+
+  @override
+  String get studyPlanIn2Days => '后天';
+
+  @override
+  String get studyPlanUpcomingTest => '即将到来的测验';
+
+  @override
+  String studyPlanSubjectTest(String subject) {
+    return '$subject测验';
+  }
+
+  @override
+  String get studyPlanTestToday => '今天';
+
+  @override
+  String studyPlanDaysLeft(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '还剩 $days 天',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get studyPlanSetTestDate => '在设置里选一个测验日期，就能在这里看到倒计时。';
+
+  @override
+  String get brainHealthTitle => '大脑健康 🧠';
+
+  @override
+  String get brainHealthWikiPages => '知识页面';
+
+  @override
+  String get brainHealthWeakTopics => '薄弱主题';
+
+  @override
+  String get brainHealthScore => '大脑健康分数';
+
+  @override
+  String get brainHealthPages => '页面';
+
+  @override
+  String get brainHealthVerified => '已验证';
+
+  @override
+  String get brainHealthAvgQuality => '平均质量';
+
+  @override
+  String brainHealthErrors(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 个错误',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get quizDailyTitle => '每日测验';
+
+  @override
+  String quizQuestionOf(int current, int total) {
+    return '第 $current 题，共 $total 题';
+  }
+
+  @override
+  String quizXpEarnedLong(int xp) {
+    return '获得 +$xp XP';
+  }
+
+  @override
+  String get quizMasteryBreakdown => '掌握情况';
+
+  @override
+  String quizMoreItems(int count) {
+    return '还有 $count 个';
+  }
+
+  @override
+  String get centreJoinTitle => '加入班级';
+
+  @override
+  String get centreJoinEnterFull => '请输入完整的班级代码';
+
+  @override
+  String get centreJoinHeading => '输入班级代码';
+
+  @override
+  String get centreJoinBody => '向你的老师或补习中心询问他们控制台上的班级代码，然后在下面输入。';
+
+  @override
+  String get centreJoinYourClassFallback => '你的班级';
+
+  @override
+  String centreJoinSuccess(String className) {
+    return '已加入$className 🎉';
+  }
+
+  @override
+  String get centreJoinFailed => '无法加入 — 请检查代码后再试';
+
+  @override
+  String get centreJoinButton => '加入班级';
+
+  @override
+  String get assignTitle => '作业';
+
+  @override
+  String get assignPickedForYou => '为你精选';
+
+  @override
+  String get assignNotReleasedTitle => '答案尚未发布';
+
+  @override
+  String get assignNotReleasedBody => '老师还没有公布参考答案。公布后你就可以在这里对照。';
+
+  @override
+  String get assignReleasedBody => '把你的答案和下面的参考答案对照一下吧。';
+
+  @override
+  String assignQuestionNumber(int n) {
+    return '第$n题';
+  }
+
+  @override
+  String get assignYourAnswer => '你的答案';
+
+  @override
+  String get assignNoAnswerRecorded => '没有记录到答案';
+
+  @override
+  String get assignModelAnswer => '参考答案';
+
+  @override
+  String get assignEvaluation => '评估';
+
+  @override
+  String get assignEmptyReleased => '还没有可对照的答案';
+
+  @override
+  String get assignEmptyNotReleased => '等答案发布后再来吧';
+
+  @override
+  String get learningStyleTitle => '学习方式';
+
+  @override
+  String get learningStyleDefaultMode => '默认回答模式';
+
+  @override
+  String get learningStyleBody => '“引导我”帮助你建立理解 — 自己想出来的，记得更牢。你也可以在聊天中用开关按题切换。';
+
+  @override
+  String get learningStyleSaved => '已保存默认设置！';
+
+  @override
+  String get learningStyleRecommended => '推荐';
+
+  @override
+  String learningStyleGuideDesc(String mascot) {
+    return '$mascot会引导你找到答案 — 建立真正的记忆。';
+  }
+
+  @override
+  String learningStyleAnswerDesc(String mascot) {
+    return '$mascot直接给出完整解答 — 适合用来检查你的功课。';
+  }
+
+  @override
+  String get chatModeGuideMe => '引导我';
+
+  @override
+  String get chatModeJustAnswer => '直接给答案';
+
+  @override
+  String get chatModeTwoWays => '两种学习方式 🎓';
+
+  @override
+  String get chatModeSwitchAnyTime => '你随时可以用聊天上方的开关切换。';
+
+  @override
+  String chatModeGuideDesc(String mascot) {
+    return '$mascot会用问题一步步引导你 — 答案由你自己想出来。自己发现的，记得最牢。';
+  }
+
+  @override
+  String chatModeAnswerDesc(String mascot) {
+    return '$mascot会直接给你完整解答。适合检查功课 — 但你记住的会比较少。';
+  }
+
+  @override
+  String get chatModeDefaultGuide => '默认：引导我';
+
+  @override
+  String get chatModeGotIt => '明白了 — 开始学习吧！';
+
+  @override
+  String chatCoachTapToggle(String mascot) {
+    return '点一下开关，切换$mascot帮助你的方式。';
+  }
+
+  @override
+  String get chatAnswerNudge => '完整答案马上来 — 偶尔试试“引导我”，你会记得更牢。';
+
+  @override
+  String get chatEscapeGreatEffort => '很努力了！这是答案';
+
+  @override
+  String chatEscapeAddedPractice(String topic) {
+    return '已把“$topic”加入你的练习清单';
+  }
+
+  @override
+  String get chatHints => '提示：';
+
+  @override
+  String get chatAnswerReady => '— 可以看答案了';
+
+  @override
+  String get chatReported => '已举报';
+
+  @override
+  String get chatTabTitle => '聊天';
+
+  @override
+  String get reportThanks => '谢谢 — 我们会尽快查看';
+
+  @override
+  String get reportDoneButton => '完成';
+
+  @override
+  String get commonRetry => '重试';
+
+  @override
+  String get centreBlockTitle => '这是机构账户';
+
+  @override
+  String get centreBlockBody => 'Apalchi 应用只供学生使用。机构老师和管理者请到 apalchi.com 管理班级。';
+
+  @override
+  String get centreBlockLoginWeb => '到 apalchi.com 登录';
+
+  @override
+  String get centreBlockBackToSignIn => '返回登录';
+
+  @override
+  String avatarPickerCreateError(String mascot, String message) {
+    return '无法创建$mascot — $message';
+  }
+
+  @override
+  String avatarPickerTitle(String mascot) {
+    return '选择你的$mascot ✨';
+  }
+
+  @override
+  String get avatarPickerSubtitle => '每一只都独一无二 🍡 选一个和你一起学习的伙伴吧！';
+
+  @override
+  String get collectionTitle => '收藏';
+
+  @override
+  String collectionAlbumTitle(String mascot) {
+    return '$mascot图鉴';
+  }
+
+  @override
+  String createTutorWishHelp(String mascot) {
+    return '你希望$mascot帮你学什么？';
+  }
+
+  @override
+  String get groupCodeHint => '例如：AB23CD';
+
+  @override
+  String get joinCodeHint => '例如：5K7Q2X';
+
+  @override
+  String get moduleListTitle => '学习模块';
+
+  @override
+  String get uploadTypedNotesTip => '输入文字笔记效果最好。可以从 Google Docs 粘贴，或照着课本输入。';
+
+  @override
+  String get uploadSplitLongNotesTip => '较长的笔记建议分成几次上传，准确度会更高。';
+
+  @override
+  String voiceTalkTo(String mascot) {
+    return '和$mascot说话';
+  }
+
+  @override
+  String voiceExplainer(String mascot) {
+    return '$mascot使用你手机的语音识别功能，把说话转成文字 — 你的语音不会被保存。';
+  }
+
+  @override
+  String get voiceMicNeeded => '需要麦克风权限';
+
+  @override
+  String voiceMicGuidance(String mascot) {
+    return '要和$mascot说话，请在设置里开启麦克风权限。你也可以继续用打字的方式回答。';
+  }
+
+  @override
+  String get voiceNotNow => '暂时不要';
+
+  @override
+  String get voiceOpenSettings => '打开设置';
+
+  @override
+  String weaknessImproved(String topics) {
+    return '你在$topics上进步了！📈';
+  }
+
+  @override
+  String get weaknessFocusOn => '一起来攻克';
+
+  @override
+  String weaknessHelpPractise(String mascot) {
+    return '$mascot会帮你练习这些内容。';
+  }
+
+  @override
+  String tourStep1Title(String mascot) {
+    return '嗨，我是$mascot！';
+  }
+
+  @override
+  String get tourStep1Body => '让我快速给你看 4 个 Apalchi 和其他学习应用不一样的地方。';
+
+  @override
+  String tourStep2Title(String mascot) {
+    return '每个科目都有自己的$mascot';
+  }
+
+  @override
+  String tourStep2Body(String mascot) {
+    return '每个科目创建一个$mascot — 它只学习你自己的笔记，所以每个回答都和老师教的完全一致。';
+  }
+
+  @override
+  String get tourStep3Title => '学会它。测试它。证明它。';
+
+  @override
+  String get tourStep3Body =>
+      '每个主题都是一个小任务：用卡片快速学习，用快问快答自测，再用挑战来证明 — 做错的部分，我会反复帮你复习，直到真正记牢。';
+
+  @override
+  String get tourStep4Title => '我记得你觉得难的地方';
+
+  @override
+  String get tourStep4Body => '书库会按主题记录你的掌握度。做错的内容，我会按计划间隔安排复习，直到你真正掌握。';
+
+  @override
+  String tourStep5Title(String mascot) {
+    return '不是通用 AI — 是懂你笔记的$mascot。';
+  }
+
+  @override
+  String get tourStep5Body => '上传你的笔记，每个回答、测验和挑战都来自你老师教的内容。';
+
+  @override
+  String get tourStep5Cta => '开始';
+
+  @override
+  String get tourBack => '← 返回';
+
+  @override
+  String get tourDone => '完成！';
+
+  @override
+  String get tourShowMe => '带我看看！';
+
+  @override
+  String get tourNext => '下一步 →';
+
+  @override
+  String get tourSkip => '跳过';
+
+  @override
+  String get moduleStageTitleLearn => '学习';
+
+  @override
+  String get moduleStageTitleTest => '测试';
+
+  @override
+  String get moduleStageTitleProve => '挑战';
+
+  @override
+  String get moduleStageTitleComplete => '完成';
+
+  @override
+  String get forceUpdateTitle => '该更新啦！';
+
+  @override
+  String get forceUpdateBody => '新版 Apalchi 已经准备好，包含重要改进。请更新后继续学习。';
+
+  @override
+  String get forceUpdateCta => '立即更新';
+
+  @override
+  String get uploadLargeFileSizeLabel => '大文件';
 }

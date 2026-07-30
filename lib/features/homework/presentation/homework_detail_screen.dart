@@ -7,6 +7,7 @@ import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
 import 'package:pally/features/homework/presentation/homework_detail_view_model.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/homework_submission.dart';
 
 /// Student view of one homework submission. While the teacher reviews, shows a
@@ -25,6 +26,7 @@ class HomeworkDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final detailAsync =
         ref.watch(homeworkDetailViewModelProvider(avatarId, submissionId));
 
@@ -40,7 +42,7 @@ class HomeworkDetailScreen extends ConsumerWidget {
                   overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.title),
             ) ??
-            Text('Homework', style: AppTextStyles.title),
+            Text(l10n.hwTitle, style: AppTextStyles.title),
         centerTitle: true,
       ),
       body: detailAsync.when(
@@ -80,26 +82,26 @@ class _StatusHint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final (emoji, title, body, color, bg) = switch (submission.status) {
       'RELEASED' => (
           '✅',
-          'Feedback ready',
-          'Your teacher has reviewed your work — read their feedback below.',
+          l10n.hwBadgeFeedbackReady,
+          l10n.hwHintReleasedBody,
           AppColors.green,
           AppColors.greenL,
         ),
       'RETURNED' => (
           '↩️',
-          'Returned for another go',
-          'Your teacher asked you to take another look and resubmit.',
+          l10n.hwHintReturnedTitle,
+          l10n.hwHintReturnedBody,
           AppColors.coral,
           AppColors.coralL,
         ),
       _ => (
           '⏳',
-          'In review',
-          "Your teacher is reviewing your work. You'll see their feedback "
-              'here once they share it.',
+          l10n.hwBadgeInReview,
+          l10n.hwHintInReviewBody,
           AppColors.amberText,
           AppColors.amberL,
         ),
@@ -141,6 +143,7 @@ class _FeedbackCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
       padding: AppSpacing.card,
@@ -154,7 +157,7 @@ class _FeedbackCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text("Teacher's feedback",
+              Text(l10n.hwTeacherFeedback,
                   style: AppTextStyles.label.copyWith(color: AppColors.text3)),
               const Spacer(),
               if (submission.hasGrade)
@@ -190,6 +193,7 @@ class _FilesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (files.isEmpty) return const SizedBox.shrink();
     return Container(
       width: double.infinity,
@@ -202,7 +206,7 @@ class _FilesCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('What you submitted',
+          Text(l10n.hwWhatYouSubmitted,
               style: AppTextStyles.label.copyWith(color: AppColors.text3)),
           const SizedBox(height: AppSpacing.sm),
           ...files.map((f) => Padding(

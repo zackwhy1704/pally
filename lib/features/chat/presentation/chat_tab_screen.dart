@@ -31,7 +31,7 @@ class ChatTabScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
-        title: Text('Chat', style: AppTextStyles.title),
+        title: Text(AppLocalizations.of(context).chatTabTitle, style: AppTextStyles.title),
         centerTitle: true,
       ),
       body: avatarsAsync.when(

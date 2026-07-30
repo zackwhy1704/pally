@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 
 /// Shows how many Guide Me attempts have been made (pip indicators).
@@ -24,7 +25,7 @@ class GuideAttemptIndicator extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Hints: ',
+            AppLocalizations.of(context).chatHints,
             style: AppTextStyles.caption.copyWith(color: AppColors.text3),
           ),
           ...List.generate(maxAttempts, (i) {
@@ -48,7 +49,7 @@ class GuideAttemptIndicator extends StatelessWidget {
           if (attempts >= maxAttempts) ...[
             const SizedBox(width: 6),
             Text(
-              '— answer ready',
+              AppLocalizations.of(context).chatAnswerReady,
               style: AppTextStyles.caption.copyWith(
                 color: AppColors.coral,
                 fontWeight: FontWeight.w700,

@@ -4,6 +4,7 @@ import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/features/weakness/data/weakness_focus.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/weakness/data/weakness_service.dart';
 
 /// The student-visible "closing the loop" card: shows what Mochi is focusing on
@@ -19,12 +20,13 @@ class WeaknessFocusCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final focus = ref.watch(weaknessFocusProvider(backendSubject));
     return focus.maybeWhen(
-      data: (f) => f.hasContent ? _card(f) : const SizedBox.shrink(),
+      data: (f) =>
+          f.hasContent ? _card(context, f) : const SizedBox.shrink(),
       orElse: () => const SizedBox.shrink(),
     );
   }
 
-  Widget _card(WeaknessFocus f) {
+  Widget _card(BuildContext context, WeaknessFocus f) {
     return Container(
       margin: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md, vertical: AppSpacing.sm),
@@ -44,7 +46,8 @@ class WeaknessFocusCard extends ConsumerWidget {
                 const SizedBox(width: AppSpacing.xs),
                 Flexible(
                   child: Text(
-                    'You improved on ${_pretty(f.recentWins)}! 📈',
+                    AppLocalizations.of(context)
+                        .weaknessImproved(_pretty(f.recentWins)),
                     style: AppTextStyles.body.copyWith(
                         color: AppColors.green, fontWeight: FontWeight.w700),
                     maxLines: 2,
@@ -60,7 +63,7 @@ class WeaknessFocusCard extends ConsumerWidget {
               children: [
                 const Text('🎯', style: TextStyle(fontSize: 16)),
                 const SizedBox(width: AppSpacing.xs),
-                Text("Let's focus on",
+                Text(AppLocalizations.of(context).weaknessFocusOn,
                     style: AppTextStyles.title.copyWith(fontSize: 15)),
               ],
             ),
@@ -85,7 +88,9 @@ class WeaknessFocusCard extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.xs),
-            Text('Mochi will help you practise these.',
+            Text(
+                AppLocalizations.of(context).weaknessHelpPractise(
+                    AppLocalizations.of(context).mascotName),
                 style: AppTextStyles.caption.copyWith(color: AppColors.text2)),
           ],
         ],

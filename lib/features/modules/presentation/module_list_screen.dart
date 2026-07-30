@@ -35,7 +35,7 @@ class ModuleListScreen extends ConsumerWidget {
             }
           },
         ),
-        title: Text('Modules', style: AppTextStyles.title),
+        title: Text(AppLocalizations.of(context).moduleListTitle, style: AppTextStyles.title),
         centerTitle: true,
         actions: [
           // Homework is a centre-class feature: show the entry point only once

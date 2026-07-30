@@ -6,6 +6,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/core/ui/pally_loading_spinner.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/assignments/presentation/assignment_detail_view_model.dart';
 import 'package:pally/shared/models/assignment_detail.dart';
 
@@ -41,7 +42,7 @@ class AssignmentCompareScreen extends ConsumerWidget {
                   maxLines: 1, overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.title),
             ) ??
-            Text('Assignment', style: AppTextStyles.title),
+            Text(AppLocalizations.of(context).assignTitle, style: AppTextStyles.title),
         centerTitle: true,
       ),
       body: detailAsync.when(
@@ -109,7 +110,7 @@ class _PickedForYouChip extends StatelessWidget {
           children: [
             const Text('✨', style: TextStyle(fontSize: 12)),
             const SizedBox(width: AppSpacing.xs),
-            Text('Picked for you',
+            Text(AppLocalizations.of(context).assignPickedForYou,
                 style: AppTextStyles.label.copyWith(color: AppColors.purple)),
           ],
         ),
@@ -140,13 +141,12 @@ class _NotReleasedHint extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Answers not released yet',
+                Text(AppLocalizations.of(context).assignNotReleasedTitle,
                     style: AppTextStyles.body
                         .copyWith(fontWeight: FontWeight.w800)),
                 const SizedBox(height: 2),
                 Text(
-                  "Your teacher hasn't shared the model answers. "
-                  "You'll be able to compare here once they do.",
+                  AppLocalizations.of(context).assignNotReleasedBody,
                   style: AppTextStyles.bodySmall
                       .copyWith(color: AppColors.text2),
                 ),
@@ -177,7 +177,7 @@ class _ReleasedHint extends StatelessWidget {
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
-              'Compare your answers with the model answers below.',
+              AppLocalizations.of(context).assignReleasedBody,
               style: AppTextStyles.bodySmall
                   .copyWith(color: AppColors.teal, fontWeight: FontWeight.w700),
             ),
@@ -197,6 +197,7 @@ class _QuestionCompareCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final mine = question.studentAnswer?.trim() ?? '';
     return Container(
       padding: AppSpacing.card,
@@ -219,7 +220,7 @@ class _QuestionCompareCard extends StatelessWidget {
                   color: AppColors.purpleL,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text('Q${question.index + 1}',
+                child: Text(l10n.assignQuestionNumber(question.index + 1),
                     style: AppTextStyles.label.copyWith(
                         color: AppColors.purple,
                         fontWeight: FontWeight.w800)),
@@ -238,10 +239,10 @@ class _QuestionCompareCard extends StatelessWidget {
 
           // Student's own answer
           _AnswerBlock(
-            label: 'Your answer',
+            label: l10n.assignYourAnswer,
             color: AppColors.purple,
             background: AppColors.purpleL,
-            text: mine.isEmpty ? 'No answer recorded' : mine,
+            text: mine.isEmpty ? l10n.assignNoAnswerRecorded : mine,
             muted: mine.isEmpty,
           ),
 
@@ -249,7 +250,7 @@ class _QuestionCompareCard extends StatelessWidget {
           if (released && question.hasModelAnswer) ...[
             const SizedBox(height: AppSpacing.sm),
             _AnswerBlock(
-              label: 'Model answer',
+              label: l10n.assignModelAnswer,
               color: AppColors.green,
               background: AppColors.greenL,
               text: question.modelAnswer!.trim(),
@@ -260,7 +261,7 @@ class _QuestionCompareCard extends StatelessWidget {
           // Per-concept evaluation
           if (question.concepts.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
-            Text('Evaluation',
+            Text(l10n.assignEvaluation,
                 style: AppTextStyles.label.copyWith(color: AppColors.text3)),
             const SizedBox(height: AppSpacing.xs),
             ...question.concepts.map((c) => _ConceptRow(eval: c)),
@@ -371,8 +372,8 @@ class _EmptyCompare extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           Text(
             released
-                ? 'No answers to compare yet'
-                : 'Come back after answers are released',
+                ? AppLocalizations.of(context).assignEmptyReleased
+                : AppLocalizations.of(context).assignEmptyNotReleased,
             style: AppTextStyles.body.copyWith(color: AppColors.text2),
             textAlign: TextAlign.center,
           ),

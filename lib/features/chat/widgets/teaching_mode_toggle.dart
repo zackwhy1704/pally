@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 enum TeachingMode { teaching, direct }
 
 extension TeachingModeX on TeachingMode {
   bool get isGuide => this == TeachingMode.teaching;
-  String get label => isGuide ? 'Guide Me' : 'Just answer';
   String get emoji => isGuide ? '🧭' : '💡';
   String get apiValue => isGuide ? 'TEACHING' : 'DIRECT';
 }
@@ -95,13 +95,13 @@ class TeachingModeToggle extends StatelessWidget {
                 children: [
                   _Segment(
                     emoji: '🧭',
-                    label: 'Guide Me',
+                    label: AppLocalizations.of(context).chatModeGuideMe,
                     selected: isGuide,
                     onTap: enabled && !isGuide ? onToggle : null,
                   ),
                   _Segment(
                     emoji: '💡',
-                    label: 'Just answer',
+                    label: AppLocalizations.of(context).chatModeJustAnswer,
                     selected: !isGuide,
                     onTap: enabled && isGuide ? onToggle : null,
                   ),

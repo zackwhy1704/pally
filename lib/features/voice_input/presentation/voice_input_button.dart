@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/core/theme/app_colors.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/features/voice_input/data/voice_input_prefs.dart';
@@ -261,18 +262,17 @@ class VoiceInputButtonState extends ConsumerState<VoiceInputButton> {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getBool(voiceInputExplainerShownPrefsKey) == true) return;
     if (!mounted) return;
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(context);
     await showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Talk to Mochi'),
-        content: const Text(
-          "Mochi uses your phone's speech recognition to turn talking into "
-          "text — your voice isn't saved.",
-        ),
+        title: Text(l10n.voiceTalkTo(l10n.mascotName)),
+        content: Text(l10n.voiceExplainer(l10n.mascotName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Got it'),
+            child: Text(l10n.consentPendingGotIt),
           ),
         ],
       ),
@@ -301,25 +301,23 @@ class VoiceInputButtonState extends ConsumerState<VoiceInputButton> {
   }
 
   Future<void> _showPermissionGuidance() async {
+    final l10n = AppLocalizations.of(context);
     await showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Microphone access needed'),
-        content: const Text(
-          'To talk to Mochi, turn on microphone access in Settings. '
-          'You can still type your answer.',
-        ),
+        title: Text(l10n.voiceMicNeeded),
+        content: Text(l10n.voiceMicGuidance(l10n.mascotName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Not now'),
+            child: Text(l10n.voiceNotNow),
           ),
           FilledButton(
             onPressed: () {
               Navigator.of(ctx).pop();
               openAppSettings();
             },
-            child: const Text('Open Settings'),
+            child: Text(l10n.voiceOpenSettings),
           ),
         ],
       ),

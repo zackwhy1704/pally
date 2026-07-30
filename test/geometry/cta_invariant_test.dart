@@ -239,8 +239,9 @@ void main() {
   });
 
   testWidgets('centre_join — "Join class" on screen', (tester) async {
+    final l = await AppLocalizations.delegate.load(_activeLocale);
     await _pump(tester, const CentreJoinScreen());
-    _expectCtaOnScreen(tester, find.text('Join class'), 'centre_join');
+    _expectCtaOnScreen(tester, find.text(l.centreJoinButton), 'centre_join');
   });
 
   // ── paywall (small + tall) ─────────────────────────────────────────────────
@@ -265,10 +266,11 @@ void main() {
     });
 
     testWidgets('step 2 (name) — "Next" on screen', (tester) async {
+      final l = await AppLocalizations.delegate.load(_activeLocale);
       final c = await _pump(tester, const CreateTutorScreen());
       c.read(createTutorViewModelProvider.notifier).nextStep();
       await tester.pump();
-      _expectCtaOnScreen(tester, find.text('Next'), 'create_tutor name');
+      _expectCtaOnScreen(tester, find.text(l.signupNext), 'create_tutor name');
     });
 
     testWidgets('step 3 (subject) — "Next →" on screen', (tester) async {
