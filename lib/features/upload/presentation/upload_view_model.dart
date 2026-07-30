@@ -18,19 +18,56 @@ import 'package:pally/features/home/presentation/home_view_model.dart';
 
 part 'upload_view_model.g.dart';
 
-// ── Per-file upload error (shown alongside the file, not as a global toast) ──
+// ── Typed upload errors/warnings ─────────────────────────────────────────────
+// Error IDENTITY is state; error WORDING is presentation. The view-model returns
+// a typed kind (+ any dynamic detail as fields); the widget localizes it at RENDER
+// time via localizedUploadError (upload_error_localizer.dart). This keeps the
+// notifier free of AppLocalizations (layering) and re-localizes for free after a
+// live locale switch — a string baked into state at error-time would stay in the
+// old language. Mirrors the backend FailureKind idiom: the enum crosses the
+// boundary, the surface owns the words.
 
-class FileUploadError {
-  const FileUploadError({required this.fileName, required this.message});
-  final String fileName;
-  final String message;
+/// Every distinct upload failure the UI can render. serverMessage carries the
+/// backend's own honest message verbatim (already localized by content_language).
+enum UploadErrorKind {
+  couldNotRead, empty, tooLargeClient, unsupportedType,
+  corrupted400, sessionExpired, planLimit, noPermission,
+  duplicate, similar, tooLarge413, unsupported415, tooMany,
+  processing500, serverBusy502, mochiBusy503, stillWorking504,
+  timeout, noInternet, failed, unexpected, serverMessage,
+}
+
+class UploadError {
+  const UploadError(this.kind, {this.fileName, this.detail});
+  final UploadErrorKind kind;
+
+  /// The file the error is about (most kinds carry one).
+  final String? fileName;
+
+  /// Dynamic detail whose meaning depends on kind: size in MB (tooLargeClient),
+  /// the extension (unsupportedType), the existing file name (duplicate/similar),
+  /// or the raw backend message (serverMessage).
+  final String? detail;
 }
 
 /// Non-error info notes shown alongside a file (e.g. degraded fallback reader).
-class FileUploadWarning {
-  const FileUploadWarning({required this.fileName, required this.message});
+enum UploadWarningKind { backupReader, lowText }
+
+/// Rough processing-time estimate shown before a large upload.
+enum UploadEstimate { short, medium, long }
+
+// ── Per-file upload error/warning (shown alongside the file, not as a toast) ──
+
+class FileUploadError {
+  const FileUploadError({required this.fileName, required this.error});
   final String fileName;
-  final String message;
+  final UploadError error;
+}
+
+class FileUploadWarning {
+  const FileUploadWarning({required this.fileName, required this.kind});
+  final String fileName;
+  final UploadWarningKind kind;
 }
 
 @immutable
@@ -79,7 +116,7 @@ class UploadState {
   final List<UploadResult> files;
   final bool isUploading;
   final bool isCheckingRelevance;
-  final String? error;
+  final UploadError? error;
   /// Per-file errors for multi-upload: one entry per file that failed so
   /// the user sees which file had which problem.
   final List<FileUploadError> fileErrors;
@@ -143,11 +180,15 @@ class UploadState {
   /// True when the pending file is large enough to trigger chunked compile.
   bool get isLargeFile => pendingFileSizeBytes > 5 * 1024 * 1024 || pendingFilePageCount > 20;
 
-  /// Estimated minutes to compile based on file size.
-  String get estimatedCompileTime {
-    if (pendingFilePageCount > 50 || pendingFileSizeBytes > 15 * 1024 * 1024) return '3–5 min';
-    if (pendingFilePageCount > 20 || pendingFileSizeBytes > 5 * 1024 * 1024) return '1–2 min';
-    return '30–60 sec';
+  /// Estimated compile time bucket based on file size (localized at display).
+  UploadEstimate get estimatedCompileTime {
+    if (pendingFilePageCount > 50 || pendingFileSizeBytes > 15 * 1024 * 1024) {
+      return UploadEstimate.long;
+    }
+    if (pendingFilePageCount > 20 || pendingFileSizeBytes > 5 * 1024 * 1024) {
+      return UploadEstimate.medium;
+    }
+    return UploadEstimate.short;
   }
 
   UploadState copyWith({
@@ -177,7 +218,7 @@ class UploadState {
       files: files ?? this.files,
       isUploading: isUploading ?? this.isUploading,
       isCheckingRelevance: isCheckingRelevance ?? this.isCheckingRelevance,
-      error: error == _sentinel ? this.error : error as String?,
+      error: error == _sentinel ? this.error : error as UploadError?,
       fileErrors: fileErrors ?? this.fileErrors,
       fileWarnings: fileWarnings ?? this.fileWarnings,
       pendingFile: pendingFile == _sentinel
@@ -285,24 +326,25 @@ class UploadViewModel extends _$UploadViewModel {
 
   // ── Client-side file validation ────────────────────────────────────────────
 
-  /// Returns a user-friendly error string if the file is invalid, or null.
-  String? _validateFile(PlatformFile file) {
+  /// Returns a typed error if the file is invalid, or null. Wording is resolved
+  /// at display via localizedUploadError.
+  UploadError? _validateFile(PlatformFile file) {
     if (file.path == null) {
-      return 'Could not read "${file.name}" — try selecting it again.';
+      return UploadError(UploadErrorKind.couldNotRead, fileName: file.name);
     }
     if (file.size == 0) {
-      return '"${file.name}" appears to be empty.';
+      return UploadError(UploadErrorKind.empty, fileName: file.name);
     }
     if (file.size > _maxFileSizeBytes) {
       final mb = (file.size / (1024 * 1024)).toStringAsFixed(1);
-      return '"${file.name}" is ${mb}MB — max is 25MB. '
-          'Try splitting it into smaller sections.';
+      return UploadError(UploadErrorKind.tooLargeClient,
+          fileName: file.name, detail: mb);
     }
     final ext = file.name.split('.').last.toLowerCase();
     const allowed = {'pdf', 'jpg', 'jpeg', 'png', 'heic', 'webp', 'txt'};
     if (!allowed.contains(ext)) {
-      return '"${file.name}" is a .$ext file — only PDFs, images, and text '
-          'files are supported.';
+      return UploadError(UploadErrorKind.unsupportedType,
+          fileName: file.name, detail: ext);
     }
     return null;
   }
@@ -311,12 +353,13 @@ class UploadViewModel extends _$UploadViewModel {
 
   /// Maps HTTP status codes + response bodies to actionable user messages.
   @visibleForTesting
-  String friendlyUploadError(DioException e, String fileName) {
+  UploadError friendlyUploadError(DioException e, String fileName) {
     final status = e.response?.statusCode;
     final body = e.response?.data;
     final serverMsg = body is Map
         ? (body['error'] as String?)?.trim()
         : null;
+    final hasServerMsg = serverMsg != null && serverMsg.isNotEmpty;
 
     // Extract structured 409 payload for duplicate/similar content
     String? dupCode;
@@ -329,51 +372,38 @@ class UploadViewModel extends _$UploadViewModel {
       dupExisting = data['existingFileName'] as String?;
     }
 
+    // A backend message (400/500/default with a body) is the server's own honest,
+    // already-localized wording — pass it through verbatim, never re-translate.
+    UploadError serverOr(UploadErrorKind fallback) => hasServerMsg
+        ? UploadError(UploadErrorKind.serverMessage, detail: serverMsg)
+        : UploadError(fallback, fileName: fileName);
+
     return switch (status) {
-      // A 400 is often a server-side WRITE failure (e.g. a value-too-long on a chapter
-      // title) — surface the backend's honest, non-blaming message rather than blaming the
-      // user's file as "corrupted". Only a bodyless 400 falls back to the generic copy.
-      400 => serverMsg?.isNotEmpty == true
-            ? serverMsg!
-            : '"$fileName" couldn\'t be read — it may be empty or corrupted.',
-      401 => 'Session expired. Please sign in again.',
-      // Neutral, iOS-safe: no price, no purchase CTA. A 402 routes to the gated
-      // paywall via the Dio interceptor, which is the only place an upgrade path
-      // may appear (App Store anti-steering). This inline string is a rare fallback.
-      402 => 'You\'ve reached a plan limit.',
-      403 => 'You don\'t have permission to upload here.',
+      400 => serverOr(UploadErrorKind.corrupted400),
+      401 => const UploadError(UploadErrorKind.sessionExpired),
+      // Neutral, iOS-safe: no price, no purchase CTA (App Store anti-steering).
+      402 => const UploadError(UploadErrorKind.planLimit),
+      403 => const UploadError(UploadErrorKind.noPermission),
       409 when dupCode == 'DUPLICATE_FILE' =>
-            '"$fileName" is identical to '
-            '"${dupExisting ?? 'an existing file'}" already in your Mochi\'s brain. '
-            'No need to upload it again!',
+            UploadError(UploadErrorKind.duplicate,
+                fileName: fileName, detail: dupExisting),
       409 when dupCode == 'SIMILAR_CONTENT' =>
-            '"$fileName" is very similar to '
-            '"${dupExisting ?? 'existing notes'}" already in your Mochi\'s brain. '
-            'Uploading it again won\'t teach Mochi anything new.',
-      413 => '"$fileName" is too large (max 25MB). '
-            'Try splitting it into smaller sections.',
-      415 => '"$fileName" isn\'t a supported file type. '
-            'Use a PDF, image, or text file.',
-      429 => 'Too many uploads at once. Wait a moment and try again.',
-      500 => serverMsg?.isNotEmpty == true
-            ? serverMsg!
-            : '"$fileName" couldn\'t be processed — it may be '
-              'password-protected or corrupted. Try a different version.',
-      502 => 'The server is busy right now. '
-            'Wait a moment and try uploading "$fileName" again.',
-      503 => 'Mochi is busy right now — try again in a moment.',
-      504 => 'Mochi is still working on your notes in the background '
-            '— check back in a few minutes.',
+            UploadError(UploadErrorKind.similar,
+                fileName: fileName, detail: dupExisting),
+      413 => UploadError(UploadErrorKind.tooLarge413, fileName: fileName),
+      415 => UploadError(UploadErrorKind.unsupported415, fileName: fileName),
+      429 => const UploadError(UploadErrorKind.tooMany),
+      500 => serverOr(UploadErrorKind.processing500),
+      502 => UploadError(UploadErrorKind.serverBusy502, fileName: fileName),
+      503 => const UploadError(UploadErrorKind.mochiBusy503),
+      504 => const UploadError(UploadErrorKind.stillWorking504),
       _ when e.type == DioExceptionType.connectionTimeout ||
              e.type == DioExceptionType.receiveTimeout ||
              e.type == DioExceptionType.sendTimeout =>
-            'Upload of "$fileName" timed out. '
-            'Check your connection and try again.',
+            UploadError(UploadErrorKind.timeout, fileName: fileName),
       _ when e.type == DioExceptionType.connectionError =>
-            'No internet connection. Check your WiFi and try again.',
-      _ => serverMsg?.isNotEmpty == true
-            ? serverMsg!
-            : 'Upload of "$fileName" failed. Please try again.',
+            const UploadError(UploadErrorKind.noInternet),
+      _ => serverOr(UploadErrorKind.failed),
     };
   }
 
@@ -433,7 +463,7 @@ class UploadViewModel extends _$UploadViewModel {
     for (final file in result.files) {
       final err = _validateFile(file);
       if (err != null) {
-        newErrors.add(FileUploadError(fileName: file.name, message: err));
+        newErrors.add(FileUploadError(fileName: file.name, error: err));
         appLog.w('[Upload] Client validation failed: ${file.name} — $err');
       } else {
         valid.add(file);
@@ -579,9 +609,9 @@ class UploadViewModel extends _$UploadViewModel {
       {bool skipRelevance = false}) async {
     // Guard: path must be present
     if (file.path == null) {
-      final msg = 'Could not read "${file.name}" — try selecting it again.';
       appLog.w('[Upload] Null path for file: ${file.name}');
-      _appendFileError(FileUploadError(fileName: file.name, message: msg));
+      _appendFileError(FileUploadError(fileName: file.name,
+          error: UploadError(UploadErrorKind.couldNotRead, fileName: file.name)));
       state = state.copyWith(isUploading: false);
       return;
     }
@@ -694,9 +724,7 @@ class UploadViewModel extends _$UploadViewModel {
       final warnings = [...state.fileWarnings];
       if (degraded) {
         warnings.add(FileUploadWarning(
-          fileName: file.name,
-          message: 'I used my backup reader for this one '
-              '— double-check it looks right.',
+          fileName: file.name, kind: UploadWarningKind.backupReader,
         ));
       }
       // Extraction-quality guard: a file that read as almost no text won't train
@@ -704,9 +732,7 @@ class UploadViewModel extends _$UploadViewModel {
       final extractedChars = (data['extractedChars'] as num?)?.toInt() ?? -1;
       if (extractedChars >= 0 && extractedChars < 200) {
         warnings.add(FileUploadWarning(
-          fileName: file.name,
-          message: "I couldn't read much text from this — re-upload a clearer "
-              "copy or type it. It won't train me well as-is.",
+          fileName: file.name, kind: UploadWarningKind.lowText,
         ));
       }
 
@@ -757,16 +783,15 @@ class UploadViewModel extends _$UploadViewModel {
       }
 
       final msg = friendlyUploadError(e, file.name);
-      _appendFileError(FileUploadError(fileName: file.name, message: msg));
+      _appendFileError(FileUploadError(fileName: file.name, error: msg));
       // Reset the stage: a failed POST left uploadStage==uploading, so the UI read a stuck
       // "uploading" spinner behind the error. Back to idle — the error surface carries the state.
       state = state.copyWith(
           isUploading: false, uploadStage: UploadStage.idle, error: msg);
     } catch (e, st) {
       appLog.e('[Upload] Unexpected error: ${file.name}', error: e, stackTrace: st);
-      final msg =
-          'Something unexpected went wrong uploading "${file.name}". Try again.';
-      _appendFileError(FileUploadError(fileName: file.name, message: msg));
+      final msg = UploadError(UploadErrorKind.unexpected, fileName: file.name);
+      _appendFileError(FileUploadError(fileName: file.name, error: msg));
       state = state.copyWith(isUploading: false, error: msg);
     }
   }

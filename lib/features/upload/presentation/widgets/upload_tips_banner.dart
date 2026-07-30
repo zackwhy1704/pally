@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
@@ -47,6 +48,7 @@ class _UploadTipsBannerState extends State<UploadTipsBanner> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -59,12 +61,12 @@ class _UploadTipsBannerState extends State<UploadTipsBanner> {
         children: [
           Row(
             children: [
-              const Icon(Icons.lightbulb_outline_rounded,
+              Icon(Icons.lightbulb_outline_rounded,
                   color: AppColors.amber, size: 20),
-              const SizedBox(width: AppSpacing.sm),
+              SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(
-                  'Tip: clear, typed or printed pages read best.',
+                  l.uploadTipBanner,
                   style: AppTextStyles.bodySmall.copyWith(color: AppColors.text1),
                 ),
               ),

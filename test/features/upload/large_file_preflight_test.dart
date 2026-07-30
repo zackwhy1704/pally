@@ -30,7 +30,7 @@ void main() {
       expect(needsLargeFilePreflight(large.pendingFileSizeBytes), isTrue);
       expect(large.isLargeFile, isTrue);
       // The confirm copy quotes a real, non-trivial estimate for a 19MB doc.
-      expect(large.estimatedCompileTime, '3–5 min');
+      expect(large.estimatedCompileTime, UploadEstimate.long);
     });
 
     test('a small file is neither preflighted nor flagged large', () {

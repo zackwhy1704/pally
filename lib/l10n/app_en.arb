@@ -3428,5 +3428,418 @@
   "ocrMathsDetected": "Maths symbols detected",
   "@ocrMathsDetected": {
     "description": "PR-G2 ocr_awareness."
+  },
+  "uploadErrCouldNotRead": "Could not read \"{fileName}\" — try selecting it again.",
+  "@uploadErrCouldNotRead": {
+    "description": "PR-G3 upload typed errors/warnings/estimates.",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadErrEmpty": "\"{fileName}\" appears to be empty.",
+  "@uploadErrEmpty": {
+    "description": "PR-G3 upload typed errors/warnings/estimates.",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadErrTooLarge": "\"{fileName}\" is {size}MB — max is 25MB. Try splitting it into smaller sections.",
+  "@uploadErrTooLarge": {
+    "description": "PR-G3 upload typed errors/warnings/estimates.",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadErrUnsupported": "\"{fileName}\" is a .{ext} file — only PDFs, images, and text files are supported.",
+  "@uploadErrUnsupported": {
+    "description": "PR-G3 upload typed errors/warnings/estimates.",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      },
+      "ext": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadErrCorrupted": "\"{fileName}\" couldn't be read — it may be empty or corrupted.",
+  "@uploadErrCorrupted": {
+    "description": "PR-G3 upload typed errors/warnings/estimates.",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadErrSession": "Session expired. Please sign in again.",
+  "@uploadErrSession": {
+    "description": "PR-G3 upload typed errors/warnings/estimates."
+  },
+  "uploadErrPlanLimit": "You've reached a plan limit.",
+  "@uploadErrPlanLimit": {
+    "description": "PR-G3 upload typed errors/warnings/estimates."
+  },
+  "uploadErrNoPermission": "You don't have permission to upload here.",
+  "@uploadErrNoPermission": {
+    "description": "PR-G3 upload typed errors/warnings/estimates."
+  },
+  "uploadErrDuplicate": "\"{fileName}\" is identical to \"{existing}\" already in your {mascot}'s brain. No need to upload it again!",
+  "@uploadErrDuplicate": {
+    "description": "PR-G3 upload typed errors/warnings/estimates.",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      },
+      "existing": {
+        "type": "String"
+      },
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadErrSimilar": "\"{fileName}\" is very similar to \"{existing}\" already in your {mascot}'s brain. Uploading it again won't teach {mascot} anything new.",
+  "@uploadErrSimilar": {
+    "description": "PR-G3 upload typed errors/warnings/estimates.",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      },
+      "existing": {
+        "type": "String"
+      },
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadErrTooLarge413": "\"{fileName}\" is too large (max 25MB). Try splitting it into smaller sections.",
+  "@uploadErrTooLarge413": {
+    "description": "PR-G3 upload typed errors/warnings/estimates.",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadErrUnsupported415": "\"{fileName}\" isn't a supported file type. Use a PDF, image, or text file.",
+  "@uploadErrUnsupported415": {
+    "description": "PR-G3 upload typed errors/warnings/estimates.",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadErrTooMany": "Too many uploads at once. Wait a moment and try again.",
+  "@uploadErrTooMany": {
+    "description": "PR-G3 upload typed errors/warnings/estimates."
+  },
+  "uploadErrProcessing": "\"{fileName}\" couldn't be processed — it may be password-protected or corrupted. Try a different version.",
+  "@uploadErrProcessing": {
+    "description": "PR-G3 upload typed errors/warnings/estimates.",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadErrServerBusy": "The server is busy right now. Wait a moment and try uploading \"{fileName}\" again.",
+  "@uploadErrServerBusy": {
+    "description": "PR-G3 upload typed errors/warnings/estimates.",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadErrMochiBusy": "{mascot} is busy right now — try again in a moment.",
+  "@uploadErrMochiBusy": {
+    "description": "PR-G3 upload typed errors/warnings/estimates.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadErrStillWorking": "{mascot} is still working on your notes in the background — check back in a few minutes.",
+  "@uploadErrStillWorking": {
+    "description": "PR-G3 upload typed errors/warnings/estimates.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadErrTimeout": "Upload of \"{fileName}\" timed out. Check your connection and try again.",
+  "@uploadErrTimeout": {
+    "description": "PR-G3 upload typed errors/warnings/estimates.",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadErrNoInternet": "No internet connection. Check your WiFi and try again.",
+  "@uploadErrNoInternet": {
+    "description": "PR-G3 upload typed errors/warnings/estimates."
+  },
+  "uploadErrFailed": "Upload of \"{fileName}\" failed. Please try again.",
+  "@uploadErrFailed": {
+    "description": "PR-G3 upload typed errors/warnings/estimates.",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadErrUnexpected": "Something unexpected went wrong uploading \"{fileName}\". Try again.",
+  "@uploadErrUnexpected": {
+    "description": "PR-G3 upload typed errors/warnings/estimates.",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadExistingFileFallback": "an existing file",
+  "@uploadExistingFileFallback": {
+    "description": "PR-G3 upload typed errors/warnings/estimates."
+  },
+  "uploadExistingNotesFallback": "existing notes",
+  "@uploadExistingNotesFallback": {
+    "description": "PR-G3 upload typed errors/warnings/estimates."
+  },
+  "uploadWarnBackup": "I used my backup reader for this one — double-check it looks right.",
+  "@uploadWarnBackup": {
+    "description": "PR-G3 upload typed errors/warnings/estimates."
+  },
+  "uploadWarnLowText": "I couldn't read much text from this — re-upload a clearer copy or type it. It won't train me well as-is.",
+  "@uploadWarnLowText": {
+    "description": "PR-G3 upload typed errors/warnings/estimates."
+  },
+  "uploadEstShort": "30–60 sec",
+  "@uploadEstShort": {
+    "description": "PR-G3 upload typed errors/warnings/estimates."
+  },
+  "uploadEstMedium": "1–2 min",
+  "@uploadEstMedium": {
+    "description": "PR-G3 upload typed errors/warnings/estimates."
+  },
+  "uploadEstLong": "3–5 min",
+  "@uploadEstLong": {
+    "description": "PR-G3 upload typed errors/warnings/estimates."
+  },
+  "uploadAddKnowledge": "Add Knowledge",
+  "@uploadAddKnowledge": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadBrainUpdated": "Brain updated!",
+  "@uploadBrainUpdated": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadBuildBrain": "Build my brain",
+  "@uploadBuildBrain": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadChoosePdf": "Choose a PDF from your device",
+  "@uploadChoosePdf": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadExtractedTextHint": "Extracted text...",
+  "@uploadExtractedTextHint": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadLargeFile": "Large file — this takes a few minutes",
+  "@uploadLargeFile": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadLooksGood": "Looks good",
+  "@uploadLooksGood": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadPasteClipboard": "Paste from clipboard",
+  "@uploadPasteClipboard": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadReupload": "Re-upload",
+  "@uploadReupload": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadReviewExtracted": "Review extracted text",
+  "@uploadReviewExtracted": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadSaveEdits": "Save edits",
+  "@uploadSaveEdits": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadSnapNotes": "Snap your notes or textbook",
+  "@uploadSnapNotes": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadSource": "Source",
+  "@uploadSource": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadTagOptional": "Tag this upload (optional)",
+  "@uploadTagOptional": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadTakePhoto": "Take a photo",
+  "@uploadTakePhoto": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadTopicHint": "Topic (e.g. Algebra)",
+  "@uploadTopicHint": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadUploadPdf": "Upload PDF",
+  "@uploadUploadPdf": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadNotesBecomeBrain": "Your notes become my brain.",
+  "@uploadNotesBecomeBrain": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadAddingNotesTo": "Adding notes to {subject}",
+  "@uploadAddingNotesTo": {
+    "description": "PR-G3 upload chrome.",
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadFilesUploaded": "{count, plural, =1{1 file uploaded} other{{count} files uploaded}}",
+  "@uploadFilesUploaded": {
+    "description": "PR-G3 upload chrome.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "uploadLargeFileNotice": "This is a large file ({mb}MB). Building your brain from it can take about {estimate}. You can leave this screen — {mascot} keeps building in the background and updates automatically when it's ready.",
+  "@uploadLargeFileNotice": {
+    "description": "PR-G3 upload chrome.",
+    "placeholders": {
+      "mb": {
+        "type": "String"
+      },
+      "estimate": {
+        "type": "String"
+      },
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadSuccessBody": "{mascot} has read your notes and added them to the brain. You can now chat, quiz, and review your notes.",
+  "@uploadSuccessBody": {
+    "description": "PR-G3 upload chrome.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadStartChatting": "Start chatting",
+  "@uploadStartChatting": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadAddMore": "Add more notes",
+  "@uploadAddMore": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadStillBuilding": "Still building your brain",
+  "@uploadStillBuilding": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadTakingLonger": "Taking longer than expected...",
+  "@uploadTakingLonger": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadSomethingWrong": "Something went wrong",
+  "@uploadSomethingWrong": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadLargeTimeoutBody": "Large files take a few minutes to compile. {mascot} is still working on it in the background and will update your brain automatically when it's ready — no need to re-upload.",
+  "@uploadLargeTimeoutBody": {
+    "description": "PR-G3 upload chrome.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadTimeoutBody": "{mascot} is still working on your notes in the background. Check back in a few minutes — the brain will update automatically.",
+  "@uploadTimeoutBody": {
+    "description": "PR-G3 upload chrome.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadFailedBody": "{mascot} couldn't process your notes. Try uploading again with a smaller file or different format.",
+  "@uploadFailedBody": {
+    "description": "PR-G3 upload chrome.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadReturnHome": "Return to home",
+  "@uploadReturnHome": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadSplittingSections": "Large document — splitting into sections (~{estimate})",
+  "@uploadSplittingSections": {
+    "description": "PR-G3 upload chrome.",
+    "placeholders": {
+      "estimate": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadBuildingSections": "Building brain in sections...",
+  "@uploadBuildingSections": {
+    "description": "PR-G3 upload chrome."
+  },
+  "uploadDocLargeExpected": "Your document is large — {mascot} splits it into sections for better accuracy. Expected: {estimate}. You can close this screen; the brain updates automatically.",
+  "@uploadDocLargeExpected": {
+    "description": "PR-G3 upload chrome.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      },
+      "estimate": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadPagesShortly": "New pages will appear in your library shortly. Expected: {estimate}.",
+  "@uploadPagesShortly": {
+    "description": "PR-G3 upload chrome.",
+    "placeholders": {
+      "estimate": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadTipBanner": "Tip: clear, typed or printed pages read best.",
+  "@uploadTipBanner": {
+    "description": "PR-G3 upload chrome."
   }
 }

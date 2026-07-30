@@ -372,48 +372,9 @@ features/teach_mochi/presentation/teach_mochi_screen.dart	Teach Mochi about
 features/teach_mochi/presentation/teach_mochi_screen.dart	Try again
 features/teach_mochi/presentation/teach_mochi_screen.dart	You explained
 features/teach_mochi/presentation/teach_mochi_screen.dart	· $item
-features/upload/presentation/ocr_review_screen.dart	Extracted text...
-features/upload/presentation/ocr_review_screen.dart	Looks good
-features/upload/presentation/ocr_review_screen.dart	Re-upload
-features/upload/presentation/ocr_review_screen.dart	Review extracted text
-features/upload/presentation/ocr_review_screen.dart	Save edits
-features/upload/presentation/ocr_review_screen.dart	Type instead
-features/upload/presentation/upload_screen.dart	$_charCount chars${_charCount < 50 ? 
-features/upload/presentation/upload_screen.dart	$count file${count != 1 ? 
-features/upload/presentation/upload_screen.dart	Add Knowledge
-features/upload/presentation/upload_screen.dart	Add to Mochi
-features/upload/presentation/upload_screen.dart	Adding notes to ${widget.subject}
-features/upload/presentation/upload_screen.dart	Brain updated!
-features/upload/presentation/upload_screen.dart	Build my brain
-features/upload/presentation/upload_screen.dart	Cancel
-features/upload/presentation/upload_screen.dart	Choose a PDF from your device
 features/upload/presentation/upload_screen.dart	Consider splitting long notes into separate uploads for better accuracy.
-features/upload/presentation/upload_screen.dart	Done
-features/upload/presentation/upload_screen.dart	Large file — this takes a few minutes
-features/upload/presentation/upload_screen.dart	Mochi has read your notes and added them to the brain. 
-features/upload/presentation/upload_screen.dart	Paste from clipboard
-features/upload/presentation/upload_screen.dart	Paste or type your notes here...
-features/upload/presentation/upload_screen.dart	Retake photo
-features/upload/presentation/upload_screen.dart	Snap your notes or textbook
-features/upload/presentation/upload_screen.dart	Source
-features/upload/presentation/upload_screen.dart	Tag this upload (optional)
-features/upload/presentation/upload_screen.dart	Take a photo
-features/upload/presentation/upload_screen.dart	This is a large file (${mb}MB). Building your brain from it can 
-features/upload/presentation/upload_screen.dart	Topic (e.g. Algebra)
 features/upload/presentation/upload_screen.dart	Typed notes give the best results. Paste from Google Docs or type from your textbook.
-features/upload/presentation/upload_screen.dart	Upload PDF
-features/upload/presentation/upload_screen.dart	Your notes become my brain.
 features/upload/presentation/upload_screen.dart	large file
-features/upload/presentation/upload_view_model.dart	"${file.name}" appears to be empty.
-features/upload/presentation/upload_view_model.dart	"${file.name}" is ${mb}MB — max is 25MB. 
-features/upload/presentation/upload_view_model.dart	"${file.name}" is a .$ext file — only PDFs, images, and text 
-features/upload/presentation/upload_view_model.dart	1–2 min
-features/upload/presentation/upload_view_model.dart	30–60 sec
-features/upload/presentation/upload_view_model.dart	3–5 min
-features/upload/presentation/upload_view_model.dart	Could not read "${file.name}" — try selecting it again.
-features/upload/presentation/upload_view_model.dart	I couldn't read much text from this — re-upload a clearer 
-features/upload/presentation/upload_view_model.dart	I used my backup reader for this one 
-features/upload/presentation/widgets/upload_tips_banner.dart	Tip: clear, typed or printed pages read best.
 features/voice_input/presentation/voice_input_button.dart	Got it
 features/voice_input/presentation/voice_input_button.dart	Microphone access needed
 features/voice_input/presentation/voice_input_button.dart	Mochi uses your phone's speech recognition to turn talking into 

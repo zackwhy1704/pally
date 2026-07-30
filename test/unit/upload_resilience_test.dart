@@ -102,26 +102,28 @@ void main() {
 
     test('fileWarnings can be set via copyWith', () {
       const state = UploadState();
-      final warnings = [
-        const FileUploadWarning(
+      const warnings = [
+        FileUploadWarning(
           fileName: 'notes.pdf',
-          message: 'I used my backup reader for this one '
-              '— double-check it looks right.',
+          kind: UploadWarningKind.backupReader,
         ),
       ];
       final updated = state.copyWith(fileWarnings: warnings);
       expect(updated.fileWarnings, hasLength(1));
-      expect(updated.fileWarnings.first.message, contains('backup reader'));
+      expect(updated.fileWarnings.first.kind, UploadWarningKind.backupReader);
     });
 
     test('clearErrors pattern clears both fileErrors and fileWarnings', () {
       final state = const UploadState().copyWith(
-        error: 'some error',
+        error: const UploadError(UploadErrorKind.failed, fileName: 'x.pdf'),
         fileErrors: [
-          const FileUploadError(fileName: 'a.pdf', message: 'err'),
+          const FileUploadError(
+              fileName: 'a.pdf',
+              error: UploadError(UploadErrorKind.failed, fileName: 'a.pdf')),
         ],
         fileWarnings: [
-          const FileUploadWarning(fileName: 'b.pdf', message: 'warn'),
+          const FileUploadWarning(
+              fileName: 'b.pdf', kind: UploadWarningKind.lowText),
         ],
       );
       // Simulate clearErrors logic
@@ -140,7 +142,7 @@ void main() {
       // confirms the timeout gives the backend headroom.
       const state = UploadState(pendingFileSizeBytes: 20 * 1024 * 1024);
       // The largest estimate is "3-5 min" — our 5-min timeout covers this.
-      expect(state.estimatedCompileTime, isNotEmpty);
+      expect(state.estimatedCompileTime, isNotNull);
     });
   });
 }

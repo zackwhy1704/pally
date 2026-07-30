@@ -2350,4 +2350,249 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get ocrMathsDetected => '检测到数学符号';
+
+  @override
+  String uploadErrCouldNotRead(String fileName) {
+    return '无法读取“$fileName”——请重新选择。';
+  }
+
+  @override
+  String uploadErrEmpty(String fileName) {
+    return '“$fileName”似乎是空的。';
+  }
+
+  @override
+  String uploadErrTooLarge(String fileName, String size) {
+    return '“$fileName”有 ${size}MB——上限为 25MB。请将它拆分成更小的部分。';
+  }
+
+  @override
+  String uploadErrUnsupported(String fileName, String ext) {
+    return '“$fileName”是 .$ext 文件——只支持 PDF、图片和文本文件。';
+  }
+
+  @override
+  String uploadErrCorrupted(String fileName) {
+    return '无法读取“$fileName”——它可能是空的或已损坏。';
+  }
+
+  @override
+  String get uploadErrSession => '会话已过期。请重新登录。';
+
+  @override
+  String get uploadErrPlanLimit => '你已达到方案上限。';
+
+  @override
+  String get uploadErrNoPermission => '你没有权限在此上传。';
+
+  @override
+  String uploadErrDuplicate(String fileName, String existing, String mascot) {
+    return '“$fileName”与你 $mascot 大脑中已有的“$existing”完全相同。无需重复上传！';
+  }
+
+  @override
+  String uploadErrSimilar(String fileName, String existing, String mascot) {
+    return '“$fileName”与你 $mascot 大脑中已有的“$existing”非常相似。再次上传不会让 $mascot 学到新东西。';
+  }
+
+  @override
+  String uploadErrTooLarge413(String fileName) {
+    return '“$fileName”太大了（上限 25MB）。请将它拆分成更小的部分。';
+  }
+
+  @override
+  String uploadErrUnsupported415(String fileName) {
+    return '“$fileName”不是受支持的文件类型。请使用 PDF、图片或文本文件。';
+  }
+
+  @override
+  String get uploadErrTooMany => '同时上传的文件太多了。请稍候再试。';
+
+  @override
+  String uploadErrProcessing(String fileName) {
+    return '无法处理“$fileName”——它可能有密码保护或已损坏。请尝试另一个版本。';
+  }
+
+  @override
+  String uploadErrServerBusy(String fileName) {
+    return '服务器现在很忙。请稍候再上传“$fileName”。';
+  }
+
+  @override
+  String uploadErrMochiBusy(String mascot) {
+    return '$mascot 现在很忙——请稍后再试。';
+  }
+
+  @override
+  String uploadErrStillWorking(String mascot) {
+    return '$mascot 仍在后台处理你的笔记——请过几分钟再回来查看。';
+  }
+
+  @override
+  String uploadErrTimeout(String fileName) {
+    return '“$fileName”上传超时。请检查你的网络连接后重试。';
+  }
+
+  @override
+  String get uploadErrNoInternet => '没有网络连接。请检查你的 WiFi 后重试。';
+
+  @override
+  String uploadErrFailed(String fileName) {
+    return '“$fileName”上传失败。请重试。';
+  }
+
+  @override
+  String uploadErrUnexpected(String fileName) {
+    return '上传“$fileName”时发生意外错误。请重试。';
+  }
+
+  @override
+  String get uploadExistingFileFallback => '一个已有文件';
+
+  @override
+  String get uploadExistingNotesFallback => '已有的笔记';
+
+  @override
+  String get uploadWarnBackup => '这个我用了备用识别器——请仔细检查一下是否正确。';
+
+  @override
+  String get uploadWarnLowText =>
+      '我没能从中读取到多少文字——请重新上传更清晰的版本或手动输入。照现在这样它无法很好地训练我。';
+
+  @override
+  String get uploadEstShort => '30–60 秒';
+
+  @override
+  String get uploadEstMedium => '1–2 分钟';
+
+  @override
+  String get uploadEstLong => '3–5 分钟';
+
+  @override
+  String get uploadAddKnowledge => '添加知识';
+
+  @override
+  String get uploadBrainUpdated => '大脑已更新！';
+
+  @override
+  String get uploadBuildBrain => '构建我的大脑';
+
+  @override
+  String get uploadChoosePdf => '从你的设备选择一个 PDF';
+
+  @override
+  String get uploadExtractedTextHint => '提取的文字……';
+
+  @override
+  String get uploadLargeFile => '大文件——这需要几分钟';
+
+  @override
+  String get uploadLooksGood => '看起来不错';
+
+  @override
+  String get uploadPasteClipboard => '从剪贴板粘贴';
+
+  @override
+  String get uploadReupload => '重新上传';
+
+  @override
+  String get uploadReviewExtracted => '检查提取的文字';
+
+  @override
+  String get uploadSaveEdits => '保存修改';
+
+  @override
+  String get uploadSnapNotes => '拍下你的笔记或课本';
+
+  @override
+  String get uploadSource => '来源';
+
+  @override
+  String get uploadTagOptional => '为这次上传添加标签（可选）';
+
+  @override
+  String get uploadTakePhoto => '拍一张照片';
+
+  @override
+  String get uploadTopicHint => '主题（例如 代数）';
+
+  @override
+  String get uploadUploadPdf => '上传 PDF';
+
+  @override
+  String get uploadNotesBecomeBrain => '你的笔记会成为我的大脑。';
+
+  @override
+  String uploadAddingNotesTo(String subject) {
+    return '正在向 $subject 添加笔记';
+  }
+
+  @override
+  String uploadFilesUploaded(int count) {
+    return '已上传 $count 个文件';
+  }
+
+  @override
+  String uploadLargeFileNotice(String mb, String estimate, String mascot) {
+    return '这是一个大文件（${mb}MB）。用它构建你的大脑大约需要 $estimate。你可以离开这个页面——$mascot 会在后台持续构建，准备好后自动更新。';
+  }
+
+  @override
+  String uploadSuccessBody(String mascot) {
+    return '$mascot 已阅读你的笔记并添加到大脑中。现在你可以聊天、测验和复习你的笔记了。';
+  }
+
+  @override
+  String get uploadStartChatting => '开始聊天';
+
+  @override
+  String get uploadAddMore => '添加更多笔记';
+
+  @override
+  String get uploadStillBuilding => '仍在构建你的大脑';
+
+  @override
+  String get uploadTakingLonger => '比预期花的时间更长……';
+
+  @override
+  String get uploadSomethingWrong => '出错了';
+
+  @override
+  String uploadLargeTimeoutBody(String mascot) {
+    return '大文件需要几分钟来编译。$mascot 仍在后台处理，准备好后会自动更新你的大脑——无需重新上传。';
+  }
+
+  @override
+  String uploadTimeoutBody(String mascot) {
+    return '$mascot 仍在后台处理你的笔记。请过几分钟再回来查看——大脑会自动更新。';
+  }
+
+  @override
+  String uploadFailedBody(String mascot) {
+    return '$mascot 无法处理你的笔记。请用更小的文件或不同的格式重新上传。';
+  }
+
+  @override
+  String get uploadReturnHome => '返回主页';
+
+  @override
+  String uploadSplittingSections(String estimate) {
+    return '大文档——正在拆分成多个部分（约 $estimate）';
+  }
+
+  @override
+  String get uploadBuildingSections => '正在分段构建大脑……';
+
+  @override
+  String uploadDocLargeExpected(String mascot, String estimate) {
+    return '你的文档很大——$mascot 会将它拆分成多个部分以提高准确度。预计：$estimate。你可以关闭这个页面；大脑会自动更新。';
+  }
+
+  @override
+  String uploadPagesShortly(String estimate) {
+    return '新页面很快会出现在你的学习库中。预计：$estimate。';
+  }
+
+  @override
+  String get uploadTipBanner => '提示：清晰的、打字或印刷的页面识别效果最好。';
 }

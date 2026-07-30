@@ -442,3 +442,14 @@ Reuses commonTryAgain; mascot via {mascot}. Fixed cta_invariant to match the sen
 `ocr_confidence_preview`, `ocr_quality_warning`, `ocr_tips_overlay`, `ocr_what_can_read`,
 `ocr_diagram_warning`, and `confidence_utils` (warning-note/fix-instruction helpers, l threaded).
 "What can Apalchi read", photo-tips, quality-warning, diagram/maths-detected copy. Mascot via {mascot}.
+
+### PR-G3 — upload flow + TYPED upload errors (64 keys)
+
+`upload_screen`, `ocr_review_screen`, `upload_tips_banner`, and the upload view-model's errors/warnings/
+estimates. Architectural: the VM now returns a typed `UploadError{kind, fileName?, detail?}` (+ UploadWarningKind,
+UploadEstimate); `localizedUploadError` (upload_error_localizer.dart) resolves wording at RENDER time — the
+notifier never holds AppLocalizations (layering), and errors re-localize after a live locale switch.
+serverMessage carries the backend's own (content_language-localized) copy verbatim. ~21 error kinds +
+warnings + estimates + upload chrome. Mascot via {mascot}; reuses signupReadingNotes/signupAddToMochi/
+signupNotesHint/signupCharCount/commonCancel/photoDone/photoRetakePhoto/photoTypeInstead. Scanner-missed
+`_sourceTypes` dropdown (Textbook/Notes/Website/Other) left as a tiny follow-up.

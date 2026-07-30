@@ -2466,4 +2466,259 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ocrMathsDetected => 'Maths symbols detected';
+
+  @override
+  String uploadErrCouldNotRead(String fileName) {
+    return 'Could not read \"$fileName\" — try selecting it again.';
+  }
+
+  @override
+  String uploadErrEmpty(String fileName) {
+    return '\"$fileName\" appears to be empty.';
+  }
+
+  @override
+  String uploadErrTooLarge(String fileName, String size) {
+    return '\"$fileName\" is ${size}MB — max is 25MB. Try splitting it into smaller sections.';
+  }
+
+  @override
+  String uploadErrUnsupported(String fileName, String ext) {
+    return '\"$fileName\" is a .$ext file — only PDFs, images, and text files are supported.';
+  }
+
+  @override
+  String uploadErrCorrupted(String fileName) {
+    return '\"$fileName\" couldn\'t be read — it may be empty or corrupted.';
+  }
+
+  @override
+  String get uploadErrSession => 'Session expired. Please sign in again.';
+
+  @override
+  String get uploadErrPlanLimit => 'You\'ve reached a plan limit.';
+
+  @override
+  String get uploadErrNoPermission =>
+      'You don\'t have permission to upload here.';
+
+  @override
+  String uploadErrDuplicate(String fileName, String existing, String mascot) {
+    return '\"$fileName\" is identical to \"$existing\" already in your $mascot\'s brain. No need to upload it again!';
+  }
+
+  @override
+  String uploadErrSimilar(String fileName, String existing, String mascot) {
+    return '\"$fileName\" is very similar to \"$existing\" already in your $mascot\'s brain. Uploading it again won\'t teach $mascot anything new.';
+  }
+
+  @override
+  String uploadErrTooLarge413(String fileName) {
+    return '\"$fileName\" is too large (max 25MB). Try splitting it into smaller sections.';
+  }
+
+  @override
+  String uploadErrUnsupported415(String fileName) {
+    return '\"$fileName\" isn\'t a supported file type. Use a PDF, image, or text file.';
+  }
+
+  @override
+  String get uploadErrTooMany =>
+      'Too many uploads at once. Wait a moment and try again.';
+
+  @override
+  String uploadErrProcessing(String fileName) {
+    return '\"$fileName\" couldn\'t be processed — it may be password-protected or corrupted. Try a different version.';
+  }
+
+  @override
+  String uploadErrServerBusy(String fileName) {
+    return 'The server is busy right now. Wait a moment and try uploading \"$fileName\" again.';
+  }
+
+  @override
+  String uploadErrMochiBusy(String mascot) {
+    return '$mascot is busy right now — try again in a moment.';
+  }
+
+  @override
+  String uploadErrStillWorking(String mascot) {
+    return '$mascot is still working on your notes in the background — check back in a few minutes.';
+  }
+
+  @override
+  String uploadErrTimeout(String fileName) {
+    return 'Upload of \"$fileName\" timed out. Check your connection and try again.';
+  }
+
+  @override
+  String get uploadErrNoInternet =>
+      'No internet connection. Check your WiFi and try again.';
+
+  @override
+  String uploadErrFailed(String fileName) {
+    return 'Upload of \"$fileName\" failed. Please try again.';
+  }
+
+  @override
+  String uploadErrUnexpected(String fileName) {
+    return 'Something unexpected went wrong uploading \"$fileName\". Try again.';
+  }
+
+  @override
+  String get uploadExistingFileFallback => 'an existing file';
+
+  @override
+  String get uploadExistingNotesFallback => 'existing notes';
+
+  @override
+  String get uploadWarnBackup =>
+      'I used my backup reader for this one — double-check it looks right.';
+
+  @override
+  String get uploadWarnLowText =>
+      'I couldn\'t read much text from this — re-upload a clearer copy or type it. It won\'t train me well as-is.';
+
+  @override
+  String get uploadEstShort => '30–60 sec';
+
+  @override
+  String get uploadEstMedium => '1–2 min';
+
+  @override
+  String get uploadEstLong => '3–5 min';
+
+  @override
+  String get uploadAddKnowledge => 'Add Knowledge';
+
+  @override
+  String get uploadBrainUpdated => 'Brain updated!';
+
+  @override
+  String get uploadBuildBrain => 'Build my brain';
+
+  @override
+  String get uploadChoosePdf => 'Choose a PDF from your device';
+
+  @override
+  String get uploadExtractedTextHint => 'Extracted text...';
+
+  @override
+  String get uploadLargeFile => 'Large file — this takes a few minutes';
+
+  @override
+  String get uploadLooksGood => 'Looks good';
+
+  @override
+  String get uploadPasteClipboard => 'Paste from clipboard';
+
+  @override
+  String get uploadReupload => 'Re-upload';
+
+  @override
+  String get uploadReviewExtracted => 'Review extracted text';
+
+  @override
+  String get uploadSaveEdits => 'Save edits';
+
+  @override
+  String get uploadSnapNotes => 'Snap your notes or textbook';
+
+  @override
+  String get uploadSource => 'Source';
+
+  @override
+  String get uploadTagOptional => 'Tag this upload (optional)';
+
+  @override
+  String get uploadTakePhoto => 'Take a photo';
+
+  @override
+  String get uploadTopicHint => 'Topic (e.g. Algebra)';
+
+  @override
+  String get uploadUploadPdf => 'Upload PDF';
+
+  @override
+  String get uploadNotesBecomeBrain => 'Your notes become my brain.';
+
+  @override
+  String uploadAddingNotesTo(String subject) {
+    return 'Adding notes to $subject';
+  }
+
+  @override
+  String uploadFilesUploaded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count files uploaded',
+      one: '1 file uploaded',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String uploadLargeFileNotice(String mb, String estimate, String mascot) {
+    return 'This is a large file (${mb}MB). Building your brain from it can take about $estimate. You can leave this screen — $mascot keeps building in the background and updates automatically when it\'s ready.';
+  }
+
+  @override
+  String uploadSuccessBody(String mascot) {
+    return '$mascot has read your notes and added them to the brain. You can now chat, quiz, and review your notes.';
+  }
+
+  @override
+  String get uploadStartChatting => 'Start chatting';
+
+  @override
+  String get uploadAddMore => 'Add more notes';
+
+  @override
+  String get uploadStillBuilding => 'Still building your brain';
+
+  @override
+  String get uploadTakingLonger => 'Taking longer than expected...';
+
+  @override
+  String get uploadSomethingWrong => 'Something went wrong';
+
+  @override
+  String uploadLargeTimeoutBody(String mascot) {
+    return 'Large files take a few minutes to compile. $mascot is still working on it in the background and will update your brain automatically when it\'s ready — no need to re-upload.';
+  }
+
+  @override
+  String uploadTimeoutBody(String mascot) {
+    return '$mascot is still working on your notes in the background. Check back in a few minutes — the brain will update automatically.';
+  }
+
+  @override
+  String uploadFailedBody(String mascot) {
+    return '$mascot couldn\'t process your notes. Try uploading again with a smaller file or different format.';
+  }
+
+  @override
+  String get uploadReturnHome => 'Return to home';
+
+  @override
+  String uploadSplittingSections(String estimate) {
+    return 'Large document — splitting into sections (~$estimate)';
+  }
+
+  @override
+  String get uploadBuildingSections => 'Building brain in sections...';
+
+  @override
+  String uploadDocLargeExpected(String mascot, String estimate) {
+    return 'Your document is large — $mascot splits it into sections for better accuracy. Expected: $estimate. You can close this screen; the brain updates automatically.';
+  }
+
+  @override
+  String uploadPagesShortly(String estimate) {
+    return 'New pages will appear in your library shortly. Expected: $estimate.';
+  }
+
+  @override
+  String get uploadTipBanner => 'Tip: clear, typed or printed pages read best.';
 }

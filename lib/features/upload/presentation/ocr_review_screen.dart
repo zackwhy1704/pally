@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/theme/app_spacing.dart';
@@ -82,11 +83,12 @@ class _OcrReviewScreenState extends ConsumerState<OcrReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.bg,
       appBar: AppBar(
-        title: const Text('Review extracted text'),
+        title: Text(l.uploadReviewExtracted),
         leading: IconButton(
           icon: const Icon(Icons.close_rounded),
           onPressed: () {
@@ -132,14 +134,14 @@ class _OcrReviewScreenState extends ConsumerState<OcrReviewScreen> {
             Expanded(
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                    EdgeInsets.symmetric(horizontal: AppSpacing.md),
                 child: TextField(
                   controller: _textCtrl,
                   maxLines: null,
                   expands: true,
                   textAlignVertical: TextAlignVertical.top,
                   decoration: InputDecoration(
-                    hintText: 'Extracted text...',
+                    hintText: l.uploadExtractedTextHint,
                     hintStyle:
                         AppTextStyles.body.copyWith(color: AppColors.text3),
                     filled: true,
@@ -177,13 +179,13 @@ class _OcrReviewScreenState extends ConsumerState<OcrReviewScreen> {
                               borderRadius: BorderRadius.circular(14)),
                         ),
                         child: _isSubmitting
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: AppSizing.spinnerSm,
                                 height: AppSizing.spinnerSm,
                                 child: CircularProgressIndicator(
                                     strokeWidth: 2, color: Colors.white),
                               )
-                            : Text('Save edits',
+                            : Text(l.uploadSaveEdits,
                                 style: AppTextStyles.body.copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w700)),
@@ -201,13 +203,13 @@ class _OcrReviewScreenState extends ConsumerState<OcrReviewScreen> {
                               borderRadius: BorderRadius.circular(14)),
                         ),
                         child: _isSubmitting
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: AppSizing.spinnerSm,
                                 height: AppSizing.spinnerSm,
                                 child: CircularProgressIndicator(
                                     strokeWidth: 2, color: Colors.white),
                               )
-                            : Text('Looks good',
+                            : Text(l.uploadLooksGood,
                                 style: AppTextStyles.body.copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w700)),
@@ -222,29 +224,29 @@ class _OcrReviewScreenState extends ConsumerState<OcrReviewScreen> {
                           child: OutlinedButton(
                             onPressed: _isSubmitting ? null : _reUpload,
                             style: OutlinedButton.styleFrom(
-                              side: const BorderSide(color: AppColors.outline),
+                              side: BorderSide(color: AppColors.outline),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12)),
                             ),
-                            child: Text('Re-upload',
+                            child: Text(l.uploadReupload,
                                 style: AppTextStyles.bodySmall.copyWith(
                                     color: AppColors.text2,
                                     fontWeight: FontWeight.w600)),
                           ),
                         ),
                       ),
-                      const SizedBox(width: AppSpacing.sm),
+                      SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: SizedBox(
                           height: AppSizing.buttonHeightSm,
                           child: OutlinedButton(
                             onPressed: _isSubmitting ? null : _typeInstead,
                             style: OutlinedButton.styleFrom(
-                              side: const BorderSide(color: AppColors.outline),
+                              side: BorderSide(color: AppColors.outline),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12)),
                             ),
-                            child: Text('Type instead',
+                            child: Text(l.photoTypeInstead,
                                 style: AppTextStyles.bodySmall.copyWith(
                                     color: AppColors.text2,
                                     fontWeight: FontWeight.w600)),

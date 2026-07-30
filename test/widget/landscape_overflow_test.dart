@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -58,6 +59,8 @@ Future<void> _pumpAt(
     ProviderScope(
       overrides: [dioProvider.overrideWithValue(_stubDio()), ...overrides],
       child: MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
         home: MediaQuery(
           data: MediaQueryData(
             size: size,

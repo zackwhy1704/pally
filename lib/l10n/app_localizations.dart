@@ -4171,6 +4171,390 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Maths symbols detected'**
   String get ocrMathsDetected;
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read \"{fileName}\" — try selecting it again.'**
+  String uploadErrCouldNotRead(String fileName);
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{fileName}\" appears to be empty.'**
+  String uploadErrEmpty(String fileName);
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{fileName}\" is {size}MB — max is 25MB. Try splitting it into smaller sections.'**
+  String uploadErrTooLarge(String fileName, String size);
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{fileName}\" is a .{ext} file — only PDFs, images, and text files are supported.'**
+  String uploadErrUnsupported(String fileName, String ext);
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{fileName}\" couldn\'t be read — it may be empty or corrupted.'**
+  String uploadErrCorrupted(String fileName);
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired. Please sign in again.'**
+  String get uploadErrSession;
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached a plan limit.'**
+  String get uploadErrPlanLimit;
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have permission to upload here.'**
+  String get uploadErrNoPermission;
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{fileName}\" is identical to \"{existing}\" already in your {mascot}\'s brain. No need to upload it again!'**
+  String uploadErrDuplicate(String fileName, String existing, String mascot);
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{fileName}\" is very similar to \"{existing}\" already in your {mascot}\'s brain. Uploading it again won\'t teach {mascot} anything new.'**
+  String uploadErrSimilar(String fileName, String existing, String mascot);
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{fileName}\" is too large (max 25MB). Try splitting it into smaller sections.'**
+  String uploadErrTooLarge413(String fileName);
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{fileName}\" isn\'t a supported file type. Use a PDF, image, or text file.'**
+  String uploadErrUnsupported415(String fileName);
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many uploads at once. Wait a moment and try again.'**
+  String get uploadErrTooMany;
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{fileName}\" couldn\'t be processed — it may be password-protected or corrupted. Try a different version.'**
+  String uploadErrProcessing(String fileName);
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'The server is busy right now. Wait a moment and try uploading \"{fileName}\" again.'**
+  String uploadErrServerBusy(String fileName);
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} is busy right now — try again in a moment.'**
+  String uploadErrMochiBusy(String mascot);
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} is still working on your notes in the background — check back in a few minutes.'**
+  String uploadErrStillWorking(String mascot);
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload of \"{fileName}\" timed out. Check your connection and try again.'**
+  String uploadErrTimeout(String fileName);
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection. Check your WiFi and try again.'**
+  String get uploadErrNoInternet;
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload of \"{fileName}\" failed. Please try again.'**
+  String uploadErrFailed(String fileName);
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'Something unexpected went wrong uploading \"{fileName}\". Try again.'**
+  String uploadErrUnexpected(String fileName);
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'an existing file'**
+  String get uploadExistingFileFallback;
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'existing notes'**
+  String get uploadExistingNotesFallback;
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'I used my backup reader for this one — double-check it looks right.'**
+  String get uploadWarnBackup;
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'I couldn\'t read much text from this — re-upload a clearer copy or type it. It won\'t train me well as-is.'**
+  String get uploadWarnLowText;
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'30–60 sec'**
+  String get uploadEstShort;
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'1–2 min'**
+  String get uploadEstMedium;
+
+  /// PR-G3 upload typed errors/warnings/estimates.
+  ///
+  /// In en, this message translates to:
+  /// **'3–5 min'**
+  String get uploadEstLong;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Knowledge'**
+  String get uploadAddKnowledge;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Brain updated!'**
+  String get uploadBrainUpdated;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Build my brain'**
+  String get uploadBuildBrain;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a PDF from your device'**
+  String get uploadChoosePdf;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Extracted text...'**
+  String get uploadExtractedTextHint;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Large file — this takes a few minutes'**
+  String get uploadLargeFile;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Looks good'**
+  String get uploadLooksGood;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste from clipboard'**
+  String get uploadPasteClipboard;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-upload'**
+  String get uploadReupload;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Review extracted text'**
+  String get uploadReviewExtracted;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Save edits'**
+  String get uploadSaveEdits;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Snap your notes or textbook'**
+  String get uploadSnapNotes;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Source'**
+  String get uploadSource;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag this upload (optional)'**
+  String get uploadTagOptional;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get uploadTakePhoto;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Topic (e.g. Algebra)'**
+  String get uploadTopicHint;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload PDF'**
+  String get uploadUploadPdf;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Your notes become my brain.'**
+  String get uploadNotesBecomeBrain;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Adding notes to {subject}'**
+  String uploadAddingNotesTo(String subject);
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 file uploaded} other{{count} files uploaded}}'**
+  String uploadFilesUploaded(int count);
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a large file ({mb}MB). Building your brain from it can take about {estimate}. You can leave this screen — {mascot} keeps building in the background and updates automatically when it\'s ready.'**
+  String uploadLargeFileNotice(String mb, String estimate, String mascot);
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} has read your notes and added them to the brain. You can now chat, quiz, and review your notes.'**
+  String uploadSuccessBody(String mascot);
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Start chatting'**
+  String get uploadStartChatting;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Add more notes'**
+  String get uploadAddMore;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Still building your brain'**
+  String get uploadStillBuilding;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Taking longer than expected...'**
+  String get uploadTakingLonger;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get uploadSomethingWrong;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Large files take a few minutes to compile. {mascot} is still working on it in the background and will update your brain automatically when it\'s ready — no need to re-upload.'**
+  String uploadLargeTimeoutBody(String mascot);
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} is still working on your notes in the background. Check back in a few minutes — the brain will update automatically.'**
+  String uploadTimeoutBody(String mascot);
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} couldn\'t process your notes. Try uploading again with a smaller file or different format.'**
+  String uploadFailedBody(String mascot);
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Return to home'**
+  String get uploadReturnHome;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Large document — splitting into sections (~{estimate})'**
+  String uploadSplittingSections(String estimate);
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Building brain in sections...'**
+  String get uploadBuildingSections;
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Your document is large — {mascot} splits it into sections for better accuracy. Expected: {estimate}. You can close this screen; the brain updates automatically.'**
+  String uploadDocLargeExpected(String mascot, String estimate);
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'New pages will appear in your library shortly. Expected: {estimate}.'**
+  String uploadPagesShortly(String estimate);
+
+  /// PR-G3 upload chrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Tip: clear, typed or printed pages read best.'**
+  String get uploadTipBanner;
 }
 
 class _AppLocalizationsDelegate
