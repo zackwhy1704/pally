@@ -46,7 +46,10 @@ SG-specific term 小伴 itself is part of the standing native-SG review.
 - ✅ **PR-D** groups+join+invite (67 keys) — MERGED `@1a2d326`. Baseline 699→627. Fixed cta_invariant to
   resolve the join CTA per test-locale.
 - ✅ **PR-E** character shop + flashcards (48 keys) — MERGED `@77358f2`. Baseline 627→588.
-- **PR-F** subscription/premium 🔒 + learning-style · **PR-G** photo_question+upload+ocr
+- **PR-F** subscription/premium 🔒 + learning-style (LEFT for a fresh session — compliance)
+- ✅ **PR-G** photo_question (58 keys) — MERGED `@5f71ef8`. Baseline 588→527. SPLIT: upload + ocr_awareness
+  are follow-up PRs (upload has VM error strings needing l threaded).
+- **PR-G2** ocr_awareness + upload (rest of the original PR-G group)
 - **PR-H** wiki_viewer+compiled+chapters · **PR-I** chat-residue+create-tutor · **PR-J** consent+account_deletion+auth
 - **PR-K** long tail (homework/exam_prep/study_plan/brain_health/teach_mochi/centre/assignments/etc.)
 Each: same recipe; delegates on any screen-rendering test; lock→3.32.1 before push; coverage guard must
