@@ -53,9 +53,16 @@ SG-specific term 小伴 itself is part of the standing native-SG review.
 - ✅ **PR-G3** upload flow + TYPED upload errors (64 keys) — MERGED `@da1b3c8`. Baseline 499→460.
   VM returns typed `UploadError{kind,fileName?,detail?}`; `localizedUploadError` resolves at render (notifier
   never imports AppLocalizations — layering; re-localizes on live locale switch). The reusable pattern for any
-  VM-string localization. Tiny follow-up: scanner-missed `_sourceTypes` dropdown (Textbook/Notes/Website/Other).
-- **PR-H** wiki_viewer+compiled+chapters · **PR-I** chat-residue+create-tutor · **PR-J** consent+account_deletion+auth
+  VM-string localization. `_sourceTypes` dropdown was FOLDED into PR-H (not left a stray follow-up).
+- ✅ **PR-H** wiki_viewer+compiled+chapters (64 `wiki*` keys) — MERGED `@92fda9e`. Baseline 460→392.
+  Chapter lock banner/picker, compiled-brain screen, wiki viewer + get-it-checked + review-status. ICU plurals
+  on every chapter count; helper-scope `l` threaded (getter `_statusLabel`→method(l); `_header`/`_footer`/`_row`/
+  `_timeAgo` take `AppLocalizations`). Delegate ripples fixed on 4 screen-rendering tests. Also folded the
+  upload `_sourceTypes` dropdown here. AI/teacher content (conflict + delete dialogs, page bodies) untouched.
+- **PR-I** chat-residue+create-tutor · **PR-J** consent+account_deletion+auth (QUIET COMPLIANCE — byte-faithful
+  meaning, no "improving" the English, flag zh for native reviewer alongside the 🔒 set)
 - **PR-K** long tail (homework/exam_prep/study_plan/brain_health/teach_mochi/centre/assignments/etc.)
+- **PR-F** subscription — RESERVED, own session (re-prove ios_price_gate_guard before+after, human eyes on zh)
 Each: same recipe; delegates on any screen-rendering test; lock→3.32.1 before push; coverage guard must
 shrink (never grow); 🔒 compliance rules if price/subscription copy is touched.
 
