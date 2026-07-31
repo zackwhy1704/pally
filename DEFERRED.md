@@ -7,6 +7,35 @@
 
 ---
 
+## zh audit round 4, Phase A2 — quick-onboard sends contentLanguage (CLOSED, 2026-07-31)
+
+**Correction to the record:** an earlier round in this thread concluded the "General Mochi" default
+avatar name was user-typed, not a bug — that check only looked at the `create_tutor` wizard. It was
+wrong. `direct_onboarding_view_model.dart`'s `quickOnboard()` — the PRIMARY signup path, not the
+secondary "add another tutor" flow Workstream 1 fixed — sent NO `contentLanguage` at all. See
+`pally-backend/DEFERRED.md`'s "zh audit round 4, Phase A" for the backend half (already merged,
+deployed, and live-verified: a zh signup now produces an avatar named `数学小伴`, not `Maths Mochi`).
+
+**Fixed:** `quickOnboard()`'s request now sends `contentLanguage: ref.read(localeControllerProvider).languageCode`
+— same source Workstream 1's `create_tutor` wizard uses, so whichever UI language the user is
+signing up in is the sensible default here too. The request-body construction was extracted to a
+pure `quickOnboardRequestBody(...)` function (no Dio, no network) specifically so this is
+unit-testable in isolation — `quickOnboard()` constructs its OWN unauthenticated `Dio()` inline
+(deliberately, pre-auth), so it isn't interceptable the same way `create_tutor`'s test intercepts
+`dioProvider`.
+
+Tests: `quickOnboardRequestBody` sends the right language for both zh and en, under-13's
+`parentEmail` still rides alongside it, 13+ correctly omits `parentEmail` (not sent as null).
+
+Gates: analyze 0/0, full suite green (1 known pre-existing unrelated failure), APK builds,
+pubspec.lock reconciled.
+
+**Still open:** the `LocaleController.setLanguage()` provider-invalidation gap (Phase B, a separate
+root cause — server-fetched achievement/progress/library data doesn't refresh on an in-app language
+switch) and the product decision to remove quick-onboard's own avatar-creation path entirely in
+favor of routing everyone through `create_tutor`'s wizard — DECIDED yes by the operator, scoped as
+its own follow-up PR pending a funnel-impact report, not bundled here.
+
 ## Level-up reward-label wiring — CLOSED (2026-07-31, `feat/level-up-reward-label-wiring`)
 
 Follow-up from the achievement/level-reward i18n pass (see `pally-backend/DEFERRED.md`'s

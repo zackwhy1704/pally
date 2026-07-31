@@ -205,6 +205,33 @@ enum DirectUploadStage {
   awaitingChapterPick,
 }
 
+/// Builds the `/api/v1/onboard/quick` request body. Extracted to a pure
+/// function (no Dio, no network) so the request SHAPE — in particular that
+/// `contentLanguage` is actually present and correctly sourced — is directly
+/// unit-testable without needing to intercept the unauthenticated Dio
+/// instance `quickOnboard` constructs inline.
+Map<String, dynamic> quickOnboardRequestBody({
+  required String email,
+  required String password,
+  required String displayName,
+  required String subject,
+  required String level,
+  required int birthYear,
+  required String? parentEmail,
+  required String contentLanguage,
+}) =>
+    {
+      'email': email,
+      'password': password,
+      'displayName': displayName,
+      'subject': subject,
+      'level': level,
+      'birthYear': birthYear,
+      // Required by the backend when birthYear implies under-13.
+      if (parentEmail != null) 'parentEmail': parentEmail,
+      'contentLanguage': contentLanguage,
+    };
+
 @riverpod
 class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
   Timer? _poller;
@@ -325,16 +352,22 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
 
       final res = await dio.post<Map<String, dynamic>>(
         '/api/v1/onboard/quick',
-        data: {
-          'email': email,
-          'password': password,
-          'displayName': displayName,
-          'subject': subject,
-          'level': level,
-          'birthYear': birthYear,
-          // Required by the backend when birthYear implies under-13.
-          if (isUnder13) 'parentEmail': state.parentEmail,
-        },
+        data: quickOnboardRequestBody(
+          email: email,
+          password: password,
+          displayName: displayName,
+          subject: subject,
+          level: level,
+          birthYear: birthYear,
+          parentEmail: isUnder13 ? state.parentEmail : null,
+          // Whichever UI language the user is signing up in is the sensible
+          // default for the FIRST avatar's content — same source as the
+          // create_tutor wizard's contentLanguage default (Workstream 1).
+          // This is the primary signup path virtually every user takes; it
+          // never sent a language at all before this, so the default avatar
+          // was always English regardless of the signup UI's language.
+          contentLanguage: ref.read(localeControllerProvider).languageCode,
+        ),
       );
 
       final data = res.data ?? {};
