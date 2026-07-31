@@ -606,7 +606,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeSectionMyClasses => '我的班级';
 
   @override
-  String get homeSectionYourMochis => '你的 Mochi';
+  String get homeSectionYourMochis => '你的小伴';
 
   @override
   String homeLevelBadge(int level) {
