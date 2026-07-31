@@ -7,6 +7,78 @@
 
 ---
 
+## zh audit round 3 (2026-07-31) — Workstream A: banner-gap trace + shared-widget sweep
+
+**The triggering brief's quoted string ("Upload notes to teach your tutor something new") does not
+exist verbatim anywhere in `lib/`.** Grepped every substring across ALL of `lib/` (not just
+`lib/features/home` — see the regression note below on why that scoping assumption specifically was
+flagged as suspect). Traced the THEME instead (an upload-notes empty-state prompt) to the actual
+canonical widget: `lib/core/ui/no_notes_cta.dart`, the ONE shared "no notes yet" CTA CLAUDE.md names
+as mandatory for every empty-notes surface (flashcards/quiz/modules/avatar_hub/teach_mochi). Found —
+not one banner, but a small family of real gaps in and around it:
+
+1. **`NoNotesCta._centreReminder`** — a `static const` String, hardcoded, literal "Mochi" (not
+   `{mascot}`). Renders on all 5 consuming screens for every centre-managed class with no notes yet.
+2. **`NoNotesCta.personalButtonLabel`'s default parameter value** (`= 'Upload notes'`) — hardcoded.
+   Checked all 5 call sites: NONE overrides it, so this hardcoded default is live on every single
+   personal-Mochi empty-notes screen in the app.
+3. **`flashcard_screen.dart`'s `NoNotesCta` call** — the lone straggler among the 5 call sites still
+   passing a hardcoded literal (`'Upload notes or a document for this Mochi...'`, literal "Mochi"
+   again); the other 4 (quiz/modules/avatar_hub/teach_mochi) were already correctly localized.
+4. **`mochi_tips.dart`'s `kMochiTips`** — a bare `const List<String>` (10 rotating tips shown during
+   AI-wait loading screens, `MochiGenerating`/`MochiThinking`), including the "no random stuff..."
+   line separately flagged in the brief. 2 of 10 mention "Mochi" literally, fixed to `{mascot}`.
+5. **`splash_lines.dart`'s `kSplashLines`** — same shape, one level worse: a `const List<SplashLine>`
+   (a custom class, not even `List<String>`) — shown on **every single app launch** (`splash_screen.dart`)
+   and reused for quiz-generation waits (`quiz_screen.dart`). 2 of 8 lines mention "Mochi" literally.
+6. **`mochi_thinking.dart` was fully DEAD CODE** — zero callers anywhere in `lib/` or `test/`. Deleted
+   rather than localized (its own hardcoded `'Mochi is thinking…'` default would otherwise have been
+   a 6th finding, but there was no live caller to reach it).
+7. **`mochi_generating.dart`'s `stepLabel` default** (`'Working on it…'`) — confirmed UNREACHABLE
+   today (the one live caller, `upload_screen.dart`, always overrides it) but fixed anyway rather than
+   leaving a hardcoded trap for the next caller.
+
+All fixed: 29 new ARB keys, `didChangeDependencies`-based init for the two loading widgets whose tip
+pick used to happen in `initState` (before `AppLocalizations` is reliably available), `splash_screen`/
+`quiz_screen` now carry an index (not the resolved string) across the async gap and resolve content at
+render time. Gates: analyze 0/0, full suite 1066 pass (1 known pre-existing unrelated failure), l10n/
+layering/B-EXT.2 guards green (guard count UNCHANGED by these fixes — proof these were never visible
+to it, see below), APK builds.
+
+### REGRESSION NOTE (as requested): PR-home's banner scope has now been wrong TWICE
+PR-home's "the 4 home banners" enumeration (2026-07-29 era) undercounted then; this round's brief
+independently suspected the same pattern and was right to flag it — the actual gap wasn't in
+`home_screen.dart` at all, and wasn't a "banner" in the literal sense either. **Two things worth
+separating:** (a) a human's memory of "a banner that says X" will keep being approximately right, not
+exactly right, and keep pointing at the wrong file if you trust the wording over the grep; (b) the
+REAL finding here is a new blind-spot category for the coverage guard, not a scoping miss to patch
+with a longer file list.
+
+**Should round-2's guard extension be re-run against `home_screen.dart`'s banner-selection logic
+specifically?** No — traced it: `home_screen.dart`'s 5 banners (`TrialCountdownBanner`,
+`ConsentPendingBanner`, `ModuleProgressBanner`, `AssignmentBanner`, `DueCardsBanner`) are all static
+widget references, not a dynamically-chosen list from a source the scanner can't see. There's no
+banner-selection logic to re-scan there. The real, now twice-independently-discovered blind spot is
+**structural, not location-specific**: three shapes the guard genuinely cannot see, all found this
+round:
+- a bare **`static const String`** assigned via `=` (no `Text(`/switch-arm/tuple pattern adjacent —
+  `_centreReminder` was exactly this),
+- a **default PARAMETER value** in a widget constructor (`= 'literal'` in the param list — both
+  `personalButtonLabel` and `stepLabel` were this),
+- a **`const List<T>`** of anything, including a custom class, not just `List<String>` (`kSplashLines`
+  extends round 2's already-ledgered "plain `const List<String>`" blind spot one level further, to a
+  list of an app-defined type with string fields).
+
+**Trigger for a guard-extension round 3** (not built this round — this is a report, per the
+established "ledger the trigger, don't build speculatively" pattern): add three patterns to the
+scanner — `\w+\s*=\s*(?:const\s+)?['"]` (bare const string assignment), a default-parameter-value
+scan over widget constructors, and a scan into `const List<...>` element literals regardless of
+element type. Until then, the standing mitigation is what round 2 already established: don't trust
+the guard's count as exhaustive — grep + read the actual file for any surface an audit specifically
+names, the same discipline this round applied to find these three gaps.
+
+---
+
 ## zh audit follow-up (2026-07-30) — mobile content_language gate + guard-extension round 2
 
 **Two workstreams, sequenced deliberately: the root-cause gate first (alone, verified), then the

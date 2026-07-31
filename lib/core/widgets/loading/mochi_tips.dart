@@ -1,28 +1,33 @@
 import 'dart:math';
 
+import 'package:pally/l10n/app_localizations.dart';
+
 /// Short warm/teaching tips shown during AI waits (Pattern C + E).
 /// NOT the spicy splash jokes — these are informational, ≤90 chars.
 /// One central list: add/remove here, no logic change needed.
-const List<String> kMochiTips = [
-  'I only learn from what YOU give me — so my answers match your syllabus.',
-  'The more you study, the better I fit you.',
-  'Get one wrong? I bring it back till it clicks.',
-  'One subject per Mochi keeps my answers sharp.',
-  'Your notes → your Mochi. Nothing generic here.',
-  'Hard topics come back. Easy ones get spaced out. No wasted time.',
-  'I track what trips you up — so we can fix it together.',
-  'Every note you upload makes my answers more yours.',
-  'No random internet stuff. Just your material.',
-  'Upload once, study smarter forever.',
-];
+List<String> mochiTips(AppLocalizations l) => [
+      l.mochiTip1,
+      l.mochiTip2,
+      l.mochiTip3,
+      l.mochiTip4(l.mascotName),
+      l.mochiTip5(l.mascotName),
+      l.mochiTip6,
+      l.mochiTip7,
+      l.mochiTip8,
+      l.mochiTip9,
+      l.mochiTip10,
+    ];
 
 /// Picks a random tip. Call once at widget init to stay stable during rotation.
-String randomMochiTip() =>
-    kMochiTips[Random().nextInt(kMochiTips.length)];
+String randomMochiTip(AppLocalizations l) {
+  final tips = mochiTips(l);
+  return tips[Random().nextInt(tips.length)];
+}
 
 /// Picks a DIFFERENT tip from the given one (for 4s+ rotation).
-String nextMochiTip(String current) {
-  if (kMochiTips.length <= 1) return current;
-  final candidates = kMochiTips.where((t) => t != current).toList();
+String nextMochiTip(String current, AppLocalizations l) {
+  final tips = mochiTips(l);
+  if (tips.length <= 1) return current;
+  final candidates = tips.where((t) => t != current).toList();
   return candidates[Random().nextInt(candidates.length)];
 }

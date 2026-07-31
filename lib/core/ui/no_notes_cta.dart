@@ -8,6 +8,7 @@ import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
+import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/models/avatar.dart';
 
 part 'no_notes_cta.g.dart';
@@ -61,20 +62,20 @@ class NoNotesCta extends ConsumerWidget {
   const NoNotesCta({
     required this.avatarId,
     required this.personalDescription,
-    this.personalButtonLabel = 'Upload notes',
+    this.personalButtonLabel,
     super.key,
   });
 
   final String avatarId;
   final String personalDescription;
-  final String personalButtonLabel;
 
-  static const _centreReminder =
-      "This class doesn't have notes yet. Ask your teacher to add some so "
-      'Mochi can help! 📚';
+  /// Null falls back to a localized default at render time (this const
+  /// constructor has no BuildContext to resolve it against directly).
+  final String? personalButtonLabel;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final isCentre = ref.watch(avatarIsCentreClassProvider(avatarId)).valueOrNull;
 
     // Still resolving — show nothing rather than flashing the personal variant.
@@ -84,7 +85,7 @@ class NoNotesCta extends ConsumerWidget {
 
     if (isCentre) {
       return Text(
-        _centreReminder,
+        l.noNotesCentreReminder(l.mascotName),
         style: AppTextStyles.body.copyWith(color: AppColors.text2),
         textAlign: TextAlign.center,
       );
@@ -107,7 +108,7 @@ class NoNotesCta extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(14)),
           ),
           icon: const Icon(Icons.upload_file_rounded, size: 18),
-          label: Text(personalButtonLabel),
+          label: Text(personalButtonLabel ?? l.consentGateFeatureUpload),
         ),
       ],
     );

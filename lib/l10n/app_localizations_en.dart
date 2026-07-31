@@ -5303,4 +5303,107 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get inviteHideQr => 'Hide QR';
+
+  @override
+  String get mochiTip1 =>
+      'I only learn from what YOU give me — so my answers match your syllabus.';
+
+  @override
+  String get mochiTip2 => 'The more you study, the better I fit you.';
+
+  @override
+  String get mochiTip3 => 'Get one wrong? I bring it back till it clicks.';
+
+  @override
+  String mochiTip4(String mascot) {
+    return 'One subject per $mascot keeps my answers sharp.';
+  }
+
+  @override
+  String mochiTip5(String mascot) {
+    return 'Your notes → your $mascot. Nothing generic here.';
+  }
+
+  @override
+  String get mochiTip6 =>
+      'Hard topics come back. Easy ones get spaced out. No wasted time.';
+
+  @override
+  String get mochiTip7 =>
+      'I track what trips you up — so we can fix it together.';
+
+  @override
+  String get mochiTip8 => 'Every note you upload makes my answers more yours.';
+
+  @override
+  String get mochiTip9 => 'No random internet stuff. Just your material.';
+
+  @override
+  String get mochiTip10 => 'Upload once, study smarter forever.';
+
+  @override
+  String get splashHero1 => 'Learn it.';
+
+  @override
+  String get splashSub1 => 'Don\'t just look it up.';
+
+  @override
+  String get splashHero2 => 'Trained on your notes.';
+
+  @override
+  String get splashSub2 => 'Not the whole internet.';
+
+  @override
+  String get splashHero3 => 'A study buddy that did the reading.';
+
+  @override
+  String get splashSub3 => 'Knows your material. Not everyone else\'s.';
+
+  @override
+  String get splashHero4 => 'Not a know-it-all.';
+
+  @override
+  String get splashSub4 => 'A learn-it-with-you.';
+
+  @override
+  String get splashHero5 => 'Your notes, now with a brain.';
+
+  @override
+  String get splashSub5 => 'Feed me a little, and I\'ll quiz you a lot.';
+
+  @override
+  String get splashHero6 => 'Study with someone who gets your syllabus.';
+
+  @override
+  String splashSub6(String mascot) {
+    return 'One $mascot, one subject — nothing gets fuzzy.';
+  }
+
+  @override
+  String get splashHero7 => 'I remember how you learn.';
+
+  @override
+  String get splashSub7 =>
+      'Get it wrong once, and I\'ll bring it back till it clicks.';
+
+  @override
+  String get splashHero8 => 'Looking it up is so last season.';
+
+  @override
+  String splashSub8(String mascot) {
+    return '$mascot saw nothing. 🫣';
+  }
+
+  @override
+  String noNotesCentreReminder(String mascot) {
+    return 'This class doesn\'t have notes yet. Ask your teacher to add some so $mascot can help! 📚';
+  }
+
+  @override
+  String flashcardUploadNotesCta(String mascot) {
+    return 'Upload notes or a document for this $mascot and cards will be made automatically.';
+  }
+
+  @override
+  String get mochiGeneratingDefaultStep => 'Working on it…';
 }

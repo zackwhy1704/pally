@@ -17,7 +17,7 @@ class MochiGenerating extends StatefulWidget {
   const MochiGenerating({
     super.key,
     this.progress,
-    this.stepLabel = 'Working on it…',
+    this.stepLabel,
     this.stepLabels,
     this.stepDuration = const Duration(seconds: 3),
     this.onCancel,
@@ -26,8 +26,10 @@ class MochiGenerating extends StatefulWidget {
   /// True progress 0–1 from the caller. When null, uses indeterminate steps.
   final double? progress;
 
-  /// Single step label (when you have real progress).
-  final String stepLabel;
+  /// Single step label (when you have real progress). Null falls back to a
+  /// localized generic label at render time (resolving it here would need a
+  /// BuildContext this const constructor doesn't have).
+  final String? stepLabel;
 
   /// Ordered list of step labels for timed-phase mode (no real progress signal).
   final List<String>? stepLabels;
@@ -51,11 +53,12 @@ class _MochiGeneratingState extends State<MochiGenerating>
 
   int _stepIndex = 0;
   double _timedProgress = 0;
+  bool _tipInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    _tip = randomMochiTip();
+    _tip = '';
 
     _tipFade = AnimationController(
       vsync: this,
@@ -77,6 +80,17 @@ class _MochiGeneratingState extends State<MochiGenerating>
     }
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // The initial tip needs AppLocalizations, which isn't reliably available
+    // in initState — pick it here instead, once, on first dependency resolve.
+    if (!_tipInitialized) {
+      _tipInitialized = true;
+      _tip = randomMochiTip(AppLocalizations.of(context));
+    }
+  }
+
   void _startPhaseTimer() {
     final labels = widget.stepLabels!;
     final total = labels.length;
@@ -95,7 +109,7 @@ class _MochiGeneratingState extends State<MochiGenerating>
     if (!mounted) return;
     _tipFade.reverse().then((_) {
       if (!mounted) return;
-      setState(() => _tip = nextMochiTip(_tip));
+      setState(() => _tip = nextMochiTip(_tip, AppLocalizations.of(context)));
       _tipFade.forward();
     });
   }
@@ -108,10 +122,10 @@ class _MochiGeneratingState extends State<MochiGenerating>
     super.dispose();
   }
 
-  String get _currentLabel {
+  String _currentLabel(AppLocalizations l) {
     final labels = widget.stepLabels;
     if (labels != null && labels.isNotEmpty) return labels[_stepIndex];
-    return widget.stepLabel;
+    return widget.stepLabel ?? l.mochiGeneratingDefaultStep;
   }
 
   double get _currentProgress {
@@ -144,7 +158,7 @@ class _MochiGeneratingState extends State<MochiGenerating>
               }),
               const SizedBox(height: AppSpacing.lg),
               Text(
-                _currentLabel,
+                _currentLabel(AppLocalizations.of(context)),
                 style: AppTextStyles.title,
                 textAlign: TextAlign.center,
               ),

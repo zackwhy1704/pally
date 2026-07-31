@@ -1170,3 +1170,90 @@ Found unlocalized alongside a duplicate-share-message bug (fixed by reusing `ref
 |-----|----------------------|--------------------|---------------------|
 | `inviteShowQr` | Show QR | 显示二维码 | |
 | `inviteHideQr` | Hide QR | 隐藏二维码 | |
+
+---
+
+
+## zh audit round 3 — Workstream A: loading-screen + shared-widget sweep (2026-07-31)
+
+
+29 new keys. The triggering brief's exact quoted banner string ("Upload notes to teach your tutor something new") does not appear verbatim anywhere in source — the closest real matches were found by tracing the shared `NoNotesCta` widget and the loading-screen tip/splash-line lists instead. See `DEFERRED.md`'s "zh audit round 3" section for the full investigation + the new documented blind-spot category (const-list-of-custom-class, static-const-string, default-parameter-string).
+
+
+### Loading-screen rotating tips (`mochi_tips.dart`)
+
+
+Found via zh-audit-round-3's loading-screen banner lead — `kMochiTips` was a bare `const List<String>`, invisible to the coverage guard (a documented residual blind spot: no switch/tuple shape). Rendered on `MochiGenerating` (upload/wiki-compile/quiz-gen waits).
+
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `mochiTip1` | I only learn from what YOU give me — so my answers match your syllabus. | 我只从你给我的内容中学习——所以我的回答会符合你的课程大纲。 | |
+| `mochiTip2` | The more you study, the better I fit you. | 你学得越多，我就越了解你。 | |
+| `mochiTip3` | Get one wrong? I bring it back till it clicks. | 答错了？我会不断重复出现，直到你真正掌握。 | |
+| `mochiTip4` | One subject per {mascot} keeps my answers sharp. | 每个{mascot}只专注一个科目，回答才够精准。 | |
+| `mochiTip5` | Your notes → your {mascot}. Nothing generic here. | 你的笔记 → 你的{mascot}。这里没有千篇一律的内容。 | |
+| `mochiTip6` | Hard topics come back. Easy ones get spaced out. No wasted time. | 难点会反复出现，简单的会拉开间隔复习。不浪费时间。 | |
+| `mochiTip7` | I track what trips you up — so we can fix it together. | 我会记录你容易出错的地方——这样我们就能一起解决。 | |
+| `mochiTip8` | Every note you upload makes my answers more yours. | 你上传的每一份笔记，都让我的回答更贴合你。 | |
+| `mochiTip9` | No random internet stuff. Just your material. | 没有网络上乱七八糟的内容，只有你自己的资料。 | |
+| `mochiTip10` | Upload once, study smarter forever. | 只需上传一次，从此更聪明地学习。 | |
+
+
+### Splash-screen catchphrases (`splash_lines.dart`)
+
+
+Same blind-spot shape, one level worse: a `const List<SplashLine>` (a custom class, not even `List<String>`). Shown on EVERY app launch (`splash_screen.dart`) and reused during quiz-generation waits (`quiz_screen.dart`).
+
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `splashHero1` | Learn it. | 学会它。 | |
+| `splashSub1` | Don't just look it up. | 而不只是查一下。 | |
+| `splashHero2` | Trained on your notes. | 基于你的笔记训练。 | |
+| `splashSub2` | Not the whole internet. | 而不是整个互联网。 | |
+| `splashHero3` | A study buddy that did the reading. | 一个已经读过资料的学习伙伴。 | |
+| `splashSub3` | Knows your material. Not everyone else's. | 了解你的资料，不是别人的。 | |
+| `splashHero4` | Not a know-it-all. | 不是万事通。 | |
+| `splashSub4` | A learn-it-with-you. | 而是陪你一起学。 | |
+| `splashHero5` | Your notes, now with a brain. | 你的笔记，现在有了大脑。 | |
+| `splashSub5` | Feed me a little, and I'll quiz you a lot. | 给我一点笔记，我就能给你出很多题。 | |
+| `splashHero6` | Study with someone who gets your syllabus. | 和真正懂你课程大纲的伙伴一起学习。 | |
+| `splashSub6` | One {mascot}, one subject — nothing gets fuzzy. | 一个{mascot}，一个科目——绝不含糊。 | |
+| `splashHero7` | I remember how you learn. | 我记得你是怎么学习的。 | |
+| `splashSub7` | Get it wrong once, and I'll bring it back till it clicks. | 错一次，我就会反复出现，直到你真正掌握。 | |
+| `splashHero8` | Looking it up is so last season. | 查资料早就过时了。 | |
+| `splashSub8` | {mascot} saw nothing. 🫣 | {mascot}什么都没看到。🫣 | |
+
+
+### Shared empty-state widget (`no_notes_cta.dart`)
+
+
+Two more real gaps in the ONE canonical widget CLAUDE.md names for every no-notes empty state: a `static const` centre-class reminder (appears on 5 screens for every centre-managed class with no notes) and a default PARAMETER value for the personal upload button (appears on all 5 screens too — no call site ever overrode it). Both were structurally invisible to the guard for the same reason as the lists above.
+
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `noNotesCentreReminder` | This class doesn't have notes yet. Ask your teacher to add some so {mascot} can help! 📚 | 这个班级还没有笔记。请让老师添加一些，这样{mascot}才能帮到你！📚 | |
+
+
+### Flashcards — the one un-migrated `NoNotesCta` call site
+
+
+All 5 `NoNotesCta` call sites were checked; 4 were already localized (quiz, modules, avatar_hub, teach_mochi) and flashcards was the lone straggler, passing a literal '...for this Mochi...' string inline.
+
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `flashcardUploadNotesCta` | Upload notes or a document for this {mascot} and cards will be made automatically. | 为这个{mascot}上传笔记或文档，卡片会自动生成。 | |
+
+
+### Loading widget default (unreachable today, fixed for hygiene)
+
+
+`MochiGenerating.stepLabel`'s default value — the one live caller (`upload_screen.dart`) always overrides it, so this default is currently unreachable, but fixed anyway rather than leaving a hardcoded trap for the next caller.
+
+
+| key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
+|-----|----------------------|--------------------|---------------------|
+| `mochiGeneratingDefaultStep` | Working on it… | 正在处理… | |

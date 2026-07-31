@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:pally/l10n/app_localizations.dart';
+
 /// One catchphrase shown on the splash screen per launch.
 class SplashLine {
   const SplashLine({required this.hero, required this.sub});
@@ -10,53 +12,35 @@ class SplashLine {
 
 /// Central editable list. Add/remove lines here — no logic to change.
 /// Line at index 1 is the FIRST-LAUNCH default (product truth, not a joke).
-const List<SplashLine> kSplashLines = [
-  SplashLine(
-    hero: 'Learn it.',
-    sub: "Don't just look it up.",
-  ),
-  // index 1 — first-ever-launch default: product truth, not a joke
-  SplashLine(
-    hero: 'Trained on your notes.',
-    sub: 'Not the whole internet.',
-  ),
-  SplashLine(
-    hero: 'A study buddy that did the reading.',
-    sub: "Knows your material. Not everyone else's.",
-  ),
-  SplashLine(
-    hero: 'Not a know-it-all.',
-    sub: 'A learn-it-with-you.',
-  ),
-  SplashLine(
-    hero: 'Your notes, now with a brain.',
-    sub: "Feed me a little, and I'll quiz you a lot.",
-  ),
-  SplashLine(
-    hero: 'Study with someone who gets your syllabus.',
-    sub: 'One Mochi, one subject — nothing gets fuzzy.',
-  ),
-  SplashLine(
-    hero: 'I remember how you learn.',
-    sub: "Get it wrong once, and I'll bring it back till it clicks.",
-  ),
-  SplashLine(
-    hero: 'Looking it up is so last season.',
-    sub: 'Mochi saw nothing. 🫣',
-  ),
-];
+List<SplashLine> splashLines(AppLocalizations l) => [
+      SplashLine(hero: l.splashHero1, sub: l.splashSub1),
+      // index 1 — first-ever-launch default: product truth, not a joke
+      SplashLine(hero: l.splashHero2, sub: l.splashSub2),
+      SplashLine(hero: l.splashHero3, sub: l.splashSub3),
+      SplashLine(hero: l.splashHero4, sub: l.splashSub4),
+      SplashLine(hero: l.splashHero5, sub: l.splashSub5),
+      SplashLine(hero: l.splashHero6, sub: l.splashSub6(l.mascotName)),
+      SplashLine(hero: l.splashHero7, sub: l.splashSub7),
+      SplashLine(hero: l.splashHero8, sub: l.splashSub8(l.mascotName)),
+    ];
 
+/// Length of [splashLines] — a plain constant since the count never varies
+/// by locale, so callers don't need an AppLocalizations just to modulo an index.
+const kSplashLineCount = 8;
+
+const _kFirstLaunchIndex = 1;
 const _kHasLaunchedKey = 'pally_has_launched_before';
 
-/// Returns the line to display this launch:
+/// Returns the INDEX of the line to display this launch (not the content —
+/// that needs AppLocalizations, resolved later at render time):
 /// • First-ever launch → index 1 (product truth).
 /// • Subsequent launches → random from the full list.
-Future<SplashLine> pickSplashLine() async {
+Future<int> pickSplashLineIndex() async {
   final prefs = await SharedPreferences.getInstance();
   final hasLaunched = prefs.getBool(_kHasLaunchedKey) ?? false;
   if (!hasLaunched) {
     await prefs.setBool(_kHasLaunchedKey, true);
-    return kSplashLines[1];
+    return _kFirstLaunchIndex;
   }
-  return kSplashLines[Random().nextInt(kSplashLines.length)];
+  return Random().nextInt(kSplashLineCount);
 }

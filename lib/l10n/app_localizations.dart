@@ -8719,6 +8719,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hide QR'**
   String get inviteHideQr;
+
+  /// No description provided for @mochiTip1.
+  ///
+  /// In en, this message translates to:
+  /// **'I only learn from what YOU give me — so my answers match your syllabus.'**
+  String get mochiTip1;
+
+  /// No description provided for @mochiTip2.
+  ///
+  /// In en, this message translates to:
+  /// **'The more you study, the better I fit you.'**
+  String get mochiTip2;
+
+  /// No description provided for @mochiTip3.
+  ///
+  /// In en, this message translates to:
+  /// **'Get one wrong? I bring it back till it clicks.'**
+  String get mochiTip3;
+
+  /// No description provided for @mochiTip4.
+  ///
+  /// In en, this message translates to:
+  /// **'One subject per {mascot} keeps my answers sharp.'**
+  String mochiTip4(String mascot);
+
+  /// No description provided for @mochiTip5.
+  ///
+  /// In en, this message translates to:
+  /// **'Your notes → your {mascot}. Nothing generic here.'**
+  String mochiTip5(String mascot);
+
+  /// No description provided for @mochiTip6.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard topics come back. Easy ones get spaced out. No wasted time.'**
+  String get mochiTip6;
+
+  /// No description provided for @mochiTip7.
+  ///
+  /// In en, this message translates to:
+  /// **'I track what trips you up — so we can fix it together.'**
+  String get mochiTip7;
+
+  /// No description provided for @mochiTip8.
+  ///
+  /// In en, this message translates to:
+  /// **'Every note you upload makes my answers more yours.'**
+  String get mochiTip8;
+
+  /// No description provided for @mochiTip9.
+  ///
+  /// In en, this message translates to:
+  /// **'No random internet stuff. Just your material.'**
+  String get mochiTip9;
+
+  /// No description provided for @mochiTip10.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload once, study smarter forever.'**
+  String get mochiTip10;
+
+  /// No description provided for @splashHero1.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn it.'**
+  String get splashHero1;
+
+  /// No description provided for @splashSub1.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t just look it up.'**
+  String get splashSub1;
+
+  /// No description provided for @splashHero2.
+  ///
+  /// In en, this message translates to:
+  /// **'Trained on your notes.'**
+  String get splashHero2;
+
+  /// No description provided for @splashSub2.
+  ///
+  /// In en, this message translates to:
+  /// **'Not the whole internet.'**
+  String get splashSub2;
+
+  /// No description provided for @splashHero3.
+  ///
+  /// In en, this message translates to:
+  /// **'A study buddy that did the reading.'**
+  String get splashHero3;
+
+  /// No description provided for @splashSub3.
+  ///
+  /// In en, this message translates to:
+  /// **'Knows your material. Not everyone else\'s.'**
+  String get splashSub3;
+
+  /// No description provided for @splashHero4.
+  ///
+  /// In en, this message translates to:
+  /// **'Not a know-it-all.'**
+  String get splashHero4;
+
+  /// No description provided for @splashSub4.
+  ///
+  /// In en, this message translates to:
+  /// **'A learn-it-with-you.'**
+  String get splashSub4;
+
+  /// No description provided for @splashHero5.
+  ///
+  /// In en, this message translates to:
+  /// **'Your notes, now with a brain.'**
+  String get splashHero5;
+
+  /// No description provided for @splashSub5.
+  ///
+  /// In en, this message translates to:
+  /// **'Feed me a little, and I\'ll quiz you a lot.'**
+  String get splashSub5;
+
+  /// No description provided for @splashHero6.
+  ///
+  /// In en, this message translates to:
+  /// **'Study with someone who gets your syllabus.'**
+  String get splashHero6;
+
+  /// No description provided for @splashSub6.
+  ///
+  /// In en, this message translates to:
+  /// **'One {mascot}, one subject — nothing gets fuzzy.'**
+  String splashSub6(String mascot);
+
+  /// No description provided for @splashHero7.
+  ///
+  /// In en, this message translates to:
+  /// **'I remember how you learn.'**
+  String get splashHero7;
+
+  /// No description provided for @splashSub7.
+  ///
+  /// In en, this message translates to:
+  /// **'Get it wrong once, and I\'ll bring it back till it clicks.'**
+  String get splashSub7;
+
+  /// No description provided for @splashHero8.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking it up is so last season.'**
+  String get splashHero8;
+
+  /// No description provided for @splashSub8.
+  ///
+  /// In en, this message translates to:
+  /// **'{mascot} saw nothing. 🫣'**
+  String splashSub8(String mascot);
+
+  /// No description provided for @noNotesCentreReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'This class doesn\'t have notes yet. Ask your teacher to add some so {mascot} can help! 📚'**
+  String noNotesCentreReminder(String mascot);
+
+  /// No description provided for @flashcardUploadNotesCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload notes or a document for this {mascot} and cards will be made automatically.'**
+  String flashcardUploadNotesCta(String mascot);
+
+  /// No description provided for @mochiGeneratingDefaultStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Working on it…'**
+  String get mochiGeneratingDefaultStep;
 }
 
 class _AppLocalizationsDelegate

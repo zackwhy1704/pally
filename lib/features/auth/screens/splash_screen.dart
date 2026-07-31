@@ -15,7 +15,7 @@ class SplashScreen extends ConsumerStatefulWidget {
 class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _fadeCtrl;
-  SplashLine? _line;
+  int? _lineIndex;
 
   static const _minDisplay = Duration(milliseconds: 1200);
 
@@ -31,22 +31,26 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   Future<void> _start() async {
     try {
-      // Pick the catchphrase and run app-init in parallel; enforce minimum display.
+      // Pick the catchphrase INDEX and run app-init in parallel; enforce
+      // minimum display. The content itself resolves later in build() —
+      // pickSplashLineIndex needs no BuildContext, keeping this async
+      // step free of any locale/AppLocalizations dependency.
       final results = await Future.wait([
-        pickSplashLine(),
+        pickSplashLineIndex(),
         _resolveRoute(),
         Future.delayed(_minDisplay),
       ]);
 
       if (!mounted) return;
-      // Defensive casts — Future.wait preserves order so [0] is pickSplashLine
-      // and [1] is _resolveRoute(); both always return their typed values.
-      final line = results[0] is SplashLine
-          ? results[0] as SplashLine
-          : kSplashLines[1]; // fallback to product-truth line
+      // Defensive casts — Future.wait preserves order so [0] is
+      // pickSplashLineIndex and [1] is _resolveRoute(); both always return
+      // their typed values.
+      final lineIndex = results[0] is int
+          ? results[0] as int
+          : 1; // fallback to product-truth line
       final route = results[1] is String ? results[1] as String : '/';
 
-      setState(() => _line = line);
+      setState(() => _lineIndex = lineIndex);
       await _fadeCtrl.forward();
       if (mounted) context.go(route);
     } catch (e, st) {
@@ -68,6 +72,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final line = _lineIndex == null
+        ? null
+        : splashLines(AppLocalizations.of(context))[_lineIndex!];
     return Scaffold(
       backgroundColor: const Color(0xFF7042ED),
       body: Stack(
@@ -112,17 +119,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   );
                 }),
                 const SizedBox(height: 32),
-                // Catchphrase — fades in once _line is ready
+                // Catchphrase — fades in once _lineIndex is ready
                 FadeTransition(
                   opacity: _fadeCtrl,
-                  child: _line == null
+                  child: line == null
                       ? const SizedBox(height: 72)
                       : Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32),
                           child: Column(
                             children: [
                               Text(
-                                _line!.hero,
+                                line.hero,
                                 style: const TextStyle(
                                   fontFamily: 'Nunito',
                                   fontSize: 26,
@@ -134,7 +141,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                _line!.sub,
+                                line.sub,
                                 style: const TextStyle(
                                   fontFamily: 'Nunito',
                                   fontSize: 14,

@@ -5024,4 +5024,103 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get inviteHideQr => '隐藏二维码';
+
+  @override
+  String get mochiTip1 => '我只从你给我的内容中学习——所以我的回答会符合你的课程大纲。';
+
+  @override
+  String get mochiTip2 => '你学得越多，我就越了解你。';
+
+  @override
+  String get mochiTip3 => '答错了？我会不断重复出现，直到你真正掌握。';
+
+  @override
+  String mochiTip4(String mascot) {
+    return '每个$mascot只专注一个科目，回答才够精准。';
+  }
+
+  @override
+  String mochiTip5(String mascot) {
+    return '你的笔记 → 你的$mascot。这里没有千篇一律的内容。';
+  }
+
+  @override
+  String get mochiTip6 => '难点会反复出现，简单的会拉开间隔复习。不浪费时间。';
+
+  @override
+  String get mochiTip7 => '我会记录你容易出错的地方——这样我们就能一起解决。';
+
+  @override
+  String get mochiTip8 => '你上传的每一份笔记，都让我的回答更贴合你。';
+
+  @override
+  String get mochiTip9 => '没有网络上乱七八糟的内容，只有你自己的资料。';
+
+  @override
+  String get mochiTip10 => '只需上传一次，从此更聪明地学习。';
+
+  @override
+  String get splashHero1 => '学会它。';
+
+  @override
+  String get splashSub1 => '而不只是查一下。';
+
+  @override
+  String get splashHero2 => '基于你的笔记训练。';
+
+  @override
+  String get splashSub2 => '而不是整个互联网。';
+
+  @override
+  String get splashHero3 => '一个已经读过资料的学习伙伴。';
+
+  @override
+  String get splashSub3 => '了解你的资料，不是别人的。';
+
+  @override
+  String get splashHero4 => '不是万事通。';
+
+  @override
+  String get splashSub4 => '而是陪你一起学。';
+
+  @override
+  String get splashHero5 => '你的笔记，现在有了大脑。';
+
+  @override
+  String get splashSub5 => '给我一点笔记，我就能给你出很多题。';
+
+  @override
+  String get splashHero6 => '和真正懂你课程大纲的伙伴一起学习。';
+
+  @override
+  String splashSub6(String mascot) {
+    return '一个$mascot，一个科目——绝不含糊。';
+  }
+
+  @override
+  String get splashHero7 => '我记得你是怎么学习的。';
+
+  @override
+  String get splashSub7 => '错一次，我就会反复出现，直到你真正掌握。';
+
+  @override
+  String get splashHero8 => '查资料早就过时了。';
+
+  @override
+  String splashSub8(String mascot) {
+    return '$mascot什么都没看到。🫣';
+  }
+
+  @override
+  String noNotesCentreReminder(String mascot) {
+    return '这个班级还没有笔记。请让老师添加一些，这样$mascot才能帮到你！📚';
+  }
+
+  @override
+  String flashcardUploadNotesCta(String mascot) {
+    return '为这个$mascot上传笔记或文档，卡片会自动生成。';
+  }
+
+  @override
+  String get mochiGeneratingDefaultStep => '正在处理…';
 }

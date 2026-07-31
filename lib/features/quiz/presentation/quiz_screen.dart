@@ -1187,7 +1187,7 @@ class _QuizLoadingViewState extends State<_QuizLoadingView> {
     _timer = Timer.periodic(const Duration(seconds: 3), (_) {
       if (!mounted) return;
       setState(() {
-        _lineIndex = (_lineIndex + 1) % kSplashLines.length;
+        _lineIndex = (_lineIndex + 1) % kSplashLineCount;
       });
     });
   }
@@ -1200,7 +1200,7 @@ class _QuizLoadingViewState extends State<_QuizLoadingView> {
 
   @override
   Widget build(BuildContext context) {
-    final line = kSplashLines[_lineIndex];
+    final line = splashLines(AppLocalizations.of(context))[_lineIndex];
     return AdaptiveCenter(
       padding: const EdgeInsets.all(AppSpacing.xl),
       child: Column(

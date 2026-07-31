@@ -500,7 +500,7 @@ class _EmptyState extends StatelessWidget {
             NoNotesCta(
               avatarId: avatarId,
               personalDescription:
-                  'Upload notes or a document for this Mochi and cards will be made automatically.',
+                  l.flashcardUploadNotesCta(l.mascotName),
             ),
           ],
         ),

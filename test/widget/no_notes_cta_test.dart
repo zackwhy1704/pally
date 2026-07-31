@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pally/core/ui/no_notes_cta.dart';
+import 'package:pally/l10n/app_localizations.dart';
 
 Widget _wrap({required bool isCentre}) => ProviderScope(
       overrides: [
         avatarIsCentreClassProvider('a1').overrideWith((ref) async => isCentre),
       ],
       child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: NoNotesCta(
             avatarId: 'a1',
@@ -28,6 +31,8 @@ Widget _wrapLoading() {
         avatarIsCentreClassProvider('a1').overrideWith((_) => completer.future),
       ],
       child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: NoNotesCta(
             avatarId: 'a1',
