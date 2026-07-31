@@ -7,6 +7,25 @@
 
 ---
 
+## Level-up reward-label wiring — CLOSED (2026-07-31, `feat/level-up-reward-label-wiring`)
+
+Follow-up from the achievement/level-reward i18n pass (see `pally-backend/DEFERRED.md`'s
+"i18n coverage" section): the backend computed `unlockedRewardLabel` from day one but no client
+surface ever showed it. Wired it into the ONE choke point every level-up celebration goes through:
+- `LevelUpController.maybeCelebrate` / `LevelUpOverlay.show` gained `String? rewardLabel`;
+  `_CelebrationLayer` renders a 🎁 chip when non-null. Rendered VERBATIM — the label arrives
+  already locale-resolved server-side (en says "Mochi" literally, zh says "小伴" literally), no
+  client-side {mascot} substitution needed, unlike most other mascot-bearing strings in this app.
+- Threaded from all 3 real client trigger points: `QuizState.rewardLabel` (quiz_screen),
+  `ChatState.pendingRewardLabel` (chat_screen — covers BOTH session-end and photo-question,
+  which share the same `pendingLevelUp` state field), `TeachEvaluation.rewardLabel` (teach_mochi_screen).
+- New tests: `QuizState`/`ChatState` copyWith, `TeachEvaluation.fromJson`, and two widget-test files
+  (`level_up_overlay_test.dart`, `level_up_controller_test.dart`) proving the chip renders/doesn't
+  correctly, including a zh-string-renders-verbatim case.
+- Gates: analyze 0/0, full suite green (1 known pre-existing unrelated failure), APK builds.
+
+---
+
 ## zh audit round 3 (2026-07-31) — Workstream A: banner-gap trace + shared-widget sweep
 
 **The triggering brief's quoted string ("Upload notes to teach your tutor something new") does not

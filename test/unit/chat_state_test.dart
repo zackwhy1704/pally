@@ -56,5 +56,36 @@ void main() {
       const state = ChatState();
       expect(state.messages, isEmpty);
     });
+
+    test('pendingLevelUp and pendingRewardLabel default to nothing-pending', () {
+      const state = ChatState();
+      expect(state.pendingLevelUp, 0);
+      expect(state.pendingRewardLabel, isNull);
+    });
+
+    test('copyWith sets pendingLevelUp and pendingRewardLabel together', () {
+      const original = ChatState();
+      final withReward = original.copyWith(
+          pendingLevelUp: 5, pendingRewardLabel: 'Extra free Mochi slot');
+      expect(withReward.pendingLevelUp, 5);
+      expect(withReward.pendingRewardLabel, 'Extra free Mochi slot');
+    });
+
+    test('copyWith can set pendingRewardLabel to null explicitly '
+        '(a crossing with no reward tier)', () {
+      const original = ChatState(
+          pendingLevelUp: 3, pendingRewardLabel: 'Cloud background unlocked');
+      final cleared = original.copyWith(pendingLevelUp: 4, pendingRewardLabel: null);
+      expect(cleared.pendingLevelUp, 4);
+      expect(cleared.pendingRewardLabel, isNull);
+    });
+
+    test('copyWith preserves pendingRewardLabel when not passed', () {
+      const original = ChatState(
+          pendingLevelUp: 2, pendingRewardLabel: 'New Mochi colour');
+      final copy = original.copyWith(isSending: true);
+      expect(copy.pendingLevelUp, 2);
+      expect(copy.pendingRewardLabel, 'New Mochi colour');
+    });
   });
 }

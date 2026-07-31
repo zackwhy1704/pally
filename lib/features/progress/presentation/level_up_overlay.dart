@@ -18,7 +18,11 @@ class LevelUpOverlay {
 
   static const Duration autoDismiss = Duration(seconds: 4);
 
-  static Future<void> show(BuildContext context, int newLevel) async {
+  static Future<void> show(
+    BuildContext context,
+    int newLevel, {
+    String? rewardLabel,
+  }) async {
     HapticFeedback.heavyImpact();
     Timer? closer;
     await showGeneralDialog<void>(
@@ -36,7 +40,8 @@ class LevelUpOverlay {
             Navigator.of(ctx, rootNavigator: true).pop();
           }
         });
-        return _CelebrationLayer(anim: anim, newLevel: newLevel);
+        return _CelebrationLayer(
+          anim: anim, newLevel: newLevel, rewardLabel: rewardLabel);
       },
     );
     closer?.cancel();
@@ -44,9 +49,19 @@ class LevelUpOverlay {
 }
 
 class _CelebrationLayer extends StatelessWidget {
-  const _CelebrationLayer({required this.anim, required this.newLevel});
+  const _CelebrationLayer({
+    required this.anim,
+    required this.newLevel,
+    this.rewardLabel,
+  });
   final Animation<double> anim;
   final int newLevel;
+
+  /// Already locale-resolved server-side (e.g. "New Mochi colour" /
+  /// "全新小伴配色") — rendered verbatim, same as nextUnlockLabel on the
+  /// progress screen and reward.label on the level-roadmap screen. Null
+  /// when this crossing has no reward tier.
+  final String? rewardLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -119,6 +134,36 @@ class _CelebrationLayer extends StatelessWidget {
                         style: AppTextStyles.bodySmall
                             .copyWith(color: AppColors.text2),
                         textAlign: TextAlign.center),
+                    if (rewardLabel != null) ...[
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: AppColors.goldL,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                              color: AppColors.gold.withValues(alpha: 0.5)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text('🎁', style: TextStyle(fontSize: 16)),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                rewardLabel!,
+                                style: AppTextStyles.label
+                                    .copyWith(color: AppColors.amber),
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 20),
                     FilledButton(
                       onPressed: () =>

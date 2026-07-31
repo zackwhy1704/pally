@@ -65,6 +65,7 @@ class QuizScreen extends ConsumerWidget {
             context,
             levelledUp: true,
             newLevel: next.newLevel,
+            rewardLabel: next.rewardLabel,
           );
         });
       }

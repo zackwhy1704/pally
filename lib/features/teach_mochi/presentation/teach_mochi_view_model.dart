@@ -20,6 +20,7 @@ class TeachEvaluation {
     required this.feedback,
     this.levelledUp = false,
     this.newLevel = 0,
+    this.rewardLabel,
     this.status = 'OK',
   });
 
@@ -32,6 +33,10 @@ class TeachEvaluation {
   final String feedback;
   final bool levelledUp;
   final int newLevel;
+
+  /// Already locale-resolved server-side. Null when this crossing has no
+  /// reward tier, or levelledUp is false.
+  final String? rewardLabel;
 
   /// 'OK' | 'EVAL_FAILED'. On EVAL_FAILED the evaluator produced no grade — the
   /// UI shows a retry, never a 0/0 score card.
@@ -54,6 +59,7 @@ class TeachEvaluation {
         feedback: (json['feedback'] as String?) ?? '',
         levelledUp: json['levelledUp'] == true,
         newLevel: (json['newLevel'] as num?)?.toInt() ?? 0,
+        rewardLabel: json['rewardLabel'] as String?,
         status: (json['status'] as String?) ?? 'OK',
       );
 }

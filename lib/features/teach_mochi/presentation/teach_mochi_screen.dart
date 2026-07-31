@@ -40,6 +40,7 @@ class TeachMochiScreen extends ConsumerWidget {
             context,
             levelledUp: true,
             newLevel: next.evaluation!.newLevel,
+            rewardLabel: next.evaluation!.rewardLabel,
           );
         });
       }

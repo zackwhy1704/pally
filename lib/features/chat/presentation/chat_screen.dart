@@ -144,11 +144,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       if (next.pendingLevelUp > 0 &&
           next.pendingLevelUp != prev?.pendingLevelUp) {
         final newLevel = next.pendingLevelUp;
+        final rewardLabel = next.pendingRewardLabel;
         WidgetsBinding.instance.addPostFrameCallback((_) async {
           await LevelUpController.maybeCelebrate(
             context,
             levelledUp: true,
             newLevel: newLevel,
+            rewardLabel: rewardLabel,
           );
           if (context.mounted) {
             ref

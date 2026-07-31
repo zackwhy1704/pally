@@ -40,6 +40,7 @@ class ChatState {
     this.showEscapeHatch = false,
     this.error,
     this.pendingLevelUp = 0,
+    this.pendingRewardLabel,
     this.historyParseWarning,
     this.reportedMessageIds = const {},
     this.isSubmittingReport = false,
@@ -62,6 +63,9 @@ class ChatState {
   // this carries the new level so the screen can fire LevelUpController.
   // 0 = nothing to celebrate. Cleared by the screen after the overlay shows.
   final int pendingLevelUp;
+  // Paired with pendingLevelUp — already locale-resolved server-side. Null
+  // when the crossing has no reward tier. Cleared alongside pendingLevelUp.
+  final String? pendingRewardLabel;
   // Non-null when ≥1 history message failed to parse (P3: non-silent drops).
   // Displayed as a soft banner — not a crash, not lost silently.
   final String? historyParseWarning;
@@ -106,6 +110,7 @@ class ChatState {
     bool? showEscapeHatch,
     Object? error = _sentinel,
     int? pendingLevelUp,
+    Object? pendingRewardLabel = _sentinel,
     Object? historyParseWarning = _sentinel,
     Set<String>? reportedMessageIds,
     bool? isSubmittingReport,
@@ -126,6 +131,9 @@ class ChatState {
       showEscapeHatch: showEscapeHatch ?? this.showEscapeHatch,
       error: error == _sentinel ? this.error : error as String?,
       pendingLevelUp: pendingLevelUp ?? this.pendingLevelUp,
+      pendingRewardLabel: pendingRewardLabel == _sentinel
+          ? this.pendingRewardLabel
+          : pendingRewardLabel as String?,
       historyParseWarning: historyParseWarning == _sentinel
           ? this.historyParseWarning
           : historyParseWarning as String?,
@@ -188,9 +196,11 @@ class ChatViewModel extends _$ChatViewModel {
       final data = response.data ?? const <String, dynamic>{};
       final levelledUp = data['levelledUp'] == true;
       final newLevel = (data['newLevel'] as num?)?.toInt() ?? 0;
+      final rewardLabel = data['rewardLabel'] as String?;
       if (levelledUp && newLevel > 0) {
         try {
-          state = state.copyWith(pendingLevelUp: newLevel);
+          state = state.copyWith(
+              pendingLevelUp: newLevel, pendingRewardLabel: rewardLabel);
         } catch (_) {/* notifier disposed — overlay will fire next entry */}
       }
       appLog.d('[Cache] Session ended for avatar=$_avatarId levelledUp=$levelledUp');
@@ -203,7 +213,7 @@ class ChatViewModel extends _$ChatViewModel {
   /// celebration only fires once per crossing.
   void clearPendingLevelUp() {
     if (state.pendingLevelUp == 0) return;
-    state = state.copyWith(pendingLevelUp: 0);
+    state = state.copyWith(pendingLevelUp: 0, pendingRewardLabel: null);
   }
 
   Future<void> _loadAvatar() async {
@@ -560,6 +570,8 @@ class ChatViewModel extends _$ChatViewModel {
       final pendingLevel = (data['levelledUp'] == true)
           ? ((data['newLevel'] as num?)?.toInt() ?? 0)
           : 0;
+      final pendingReward =
+          pendingLevel > 0 ? data['rewardLabel'] as String? : null;
       state = state.copyWith(
         messages: state.messages.map((m) {
           if (m.id == messageId) return resultMessage;
@@ -569,6 +581,9 @@ class ChatViewModel extends _$ChatViewModel {
         processingPhotoQuestions: const [],
         pendingLevelUp:
             pendingLevel > 0 ? pendingLevel : state.pendingLevelUp,
+        pendingRewardLabel: pendingLevel > 0
+            ? pendingReward
+            : state.pendingRewardLabel,
       );
       photoSpan.setData('questions_answered', answers.length);
       photoSpan.finish(statusCode: 200);

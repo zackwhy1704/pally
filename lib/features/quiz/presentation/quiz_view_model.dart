@@ -69,6 +69,7 @@ class QuizState {
     this.isComplete = false,
     this.levelledUp = false,
     this.newLevel = 0,
+    this.rewardLabel,
     this.masteryMatrix,
     this.feedback = const [],
     this.error,
@@ -87,6 +88,11 @@ class QuizState {
   final bool isComplete;
   final bool levelledUp;
   final int newLevel;
+
+  /// Already locale-resolved server-side (e.g. "New Mochi colour" /
+  /// "全新小伴配色"). Null when this crossing has no reward tier, or
+  /// levelledUp is false.
+  final String? rewardLabel;
   final MasteryMatrix? masteryMatrix;
   final List<QuizFeedback> feedback;
   final PallyError? error;
@@ -115,6 +121,7 @@ class QuizState {
     bool? isComplete,
     bool? levelledUp,
     int? newLevel,
+    Object? rewardLabel = _sentinel,
     Object? masteryMatrix = _sentinel,
     List<QuizFeedback>? feedback,
     Object? error = _sentinel,
@@ -137,6 +144,9 @@ class QuizState {
       isComplete: isComplete ?? this.isComplete,
       levelledUp: levelledUp ?? this.levelledUp,
       newLevel: newLevel ?? this.newLevel,
+      rewardLabel: rewardLabel == _sentinel
+          ? this.rewardLabel
+          : rewardLabel as String?,
       masteryMatrix: masteryMatrix == _sentinel
           ? this.masteryMatrix
           : masteryMatrix as MasteryMatrix?,
@@ -343,6 +353,7 @@ class QuizViewModel extends _$QuizViewModel {
       final backendScore = (data['score'] as num?)?.toInt() ?? state.score;
       final levelledUp = data['levelledUp'] == true;
       final newLevel = (data['newLevel'] as num?)?.toInt() ?? 0;
+      final rewardLabel = data['rewardLabel'] as String?;
       final matrixJson = data['masteryMatrix'] as Map<String, dynamic>?;
       final matrix = matrixJson == null
           ? null
@@ -380,6 +391,7 @@ class QuizViewModel extends _$QuizViewModel {
         xpEarned: backendXp,
         levelledUp: levelledUp,
         newLevel: newLevel,
+        rewardLabel: rewardLabel,
         masteryMatrix: matrix,
         feedback: feedback,
       );

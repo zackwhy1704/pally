@@ -15,9 +15,10 @@ class LevelUpController {
     BuildContext context, {
     required bool levelledUp,
     required int newLevel,
+    String? rewardLabel,
   }) async {
     if (!levelledUp || newLevel <= 0) return;
     if (!context.mounted) return;
-    await LevelUpOverlay.show(context, newLevel);
+    await LevelUpOverlay.show(context, newLevel, rewardLabel: rewardLabel);
   }
 }
