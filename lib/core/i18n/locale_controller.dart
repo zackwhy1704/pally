@@ -7,6 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/i18n/app_languages.dart';
 import 'package:pally/core/utils/logger.dart';
+import 'package:pally/features/progress/presentation/achievements_provider.dart';
+import 'package:pally/features/progress/presentation/level_roadmap_provider.dart';
+import 'package:pally/features/progress/presentation/progress_view_model.dart';
 
 /// shared_preferences key holding the user's chosen UI-language code
 /// ('en', 'zh', …). Device-level, read ONCE at bootstrap (see main.dart) — the
@@ -89,9 +92,29 @@ class LocaleController extends Notifier<Locale> {
         '/api/v1/auth/settings/locale',
         data: {'preferredLocale': code},
       );
+      // The achievement/level-roadmap/progress endpoints resolve their TEXT
+      // (achievement names, reward labels, nextUnlockLabel) from this SAME
+      // preferred_locale server-side. If any of those screens were ever
+      // fetched once before this switch, their cached response is now
+      // stale-language — nothing else invalidates them (only pull-to-refresh,
+      // retry-after-error, or an XP-earning action do), so a language switch
+      // must. Invalidated AFTER the PATCH succeeds, not before: invalidating
+      // first would race the re-fetch against the server not yet knowing the
+      // new preferred_locale, returning the OLD language again.
+      _invalidateLocaleDependentProviders();
     } catch (e) {
       appLog.w('[locale] server sync failed (non-fatal, local kept): $e');
     }
+  }
+
+  /// Every provider whose backing endpoint resolves text from the server's
+  /// `preferred_locale` (as opposed to the client's own ARB, which rebuilds
+  /// automatically on a `Locale` change, or an avatar's independent
+  /// `content_language`, which this UI-chrome switch never touches).
+  void _invalidateLocaleDependentProviders() {
+    ref.invalidate(achievementsProvider);
+    ref.invalidate(levelRoadmapProvider);
+    ref.invalidate(progressViewModelProvider);
   }
 }
 

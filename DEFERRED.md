@@ -7,6 +7,42 @@
 
 ---
 
+## zh audit round 4, Phase B — locale-switch provider invalidation (CLOSED, 2026-07-31)
+
+**Verified before fixing:** confirmed no `ref.invalidate` call anywhere near `setLanguage()` —
+`achievementsProvider`/`levelRoadmapProvider`/`progressViewModelProvider` only get invalidated on
+pull-to-refresh, retry-after-error, or an XP-earning action. A real device walk found several
+"still English" reports (achievements, level-rewards, progress) that turned out to be THIS bug, not
+missing translations — the server was already correctly resolving zh (independently proven live via
+`curl` in the prior round), but any screen visited once before a language switch keeps its
+`AutoDispose` provider's cached response until one of those unrelated triggers fires.
+
+**Enumerated properly, not guessed:** grepped every `dio.get`/`dio.post` call in `lib/features/progress/`
+and cross-checked against every backend endpoint this thread's rounds made `preferred_locale`-aware.
+Confirmed exactly 3 providers are affected — `coverage_provider.dart` (mastery counts + subject codes
+resolved client-side via `localizedSubject()`, not server text), `daily_goal_provider.dart`, and
+`streak_status_provider.dart`/`study_plan_view_model.dart` (numeric/content_language-scoped, untouched by
+this round's `preferred_locale` work) are NOT in scope.
+
+**Fixed:** `LocaleController._patchLocale` invalidates the 3 providers AFTER the PATCH succeeds — not
+before, and not unconditionally. Sequencing matters: invalidating BEFORE the PATCH lands would race the
+re-fetch against the server not yet knowing the new `preferred_locale`, returning the OLD language
+again. A FAILED PATCH does not invalidate either — no worse than today, and avoids an invalidate that
+would just re-fetch the same stale-language content the server still believes is correct.
+
+**Tests (the fail-without-fix case, proven, not asserted):** a fake adapter tracks the server's OWN
+current `preferredLocale` (updated only when the locale PATCH lands — NOT a naive "first call vs the
+rest" counter, which would falsely pass a switch-back-to-en test regardless of what locale was actually
+requested; caught this exact test-design bug while writing it and fixed the adapter, not the source).
+Providers held alive via `container.listen(...)` across the switch (they're `AutoDispose` — without an
+active listener they'd tear down and refetch on every read regardless of whether `setLanguage` ever
+invalidates anything, which would make the test pass for the wrong reason). Proven: (1) a locale switch
+with no manual invalidate/pull-to-refresh flips all 3 providers' content; (2) en→zh→en returns cleanly to
+en, not stale zh from the middle switch; (3) a failed server PATCH does not invalidate at all.
+
+Gates: analyze 0/0, full suite green (1 known pre-existing unrelated failure), APK builds, pubspec.lock
+reconciled.
+
 ## zh audit round 4, Phase A2 — quick-onboard sends contentLanguage (CLOSED, 2026-07-31)
 
 **Correction to the record:** an earlier round in this thread concluded the "General Mochi" default
