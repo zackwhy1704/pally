@@ -7,6 +7,85 @@
 
 ---
 
+## zh audit round 5, Phase A — "你的 Mochi" ARB value-level leak (CLOSED, 2026-07-31)
+
+**Corrected the prompt's suggested fix before applying it:** the prompt assumed
+`homeSectionYourMochis` should gain a `{mascot}` placeholder like every other mascot-referencing key.
+Traced the EN source (`app_en.arb:864-867`) and found this key is a bare getter with NO placeholder
+mechanism at all, carrying an explicit `@homeSectionYourMochis` description: `"Keep 'Mochis'"` — a
+DELIBERATE translator instruction, not an oversight. The actual bug was simpler: the zh VALUE typed
+the literal English word "Mochi" instead of the established no-placeholder convention used elsewhere
+in this same file for bare mascot mentions (hardcoding "小伴" directly, matching the shop cosmetic
+names and the backend's `AchievementCatalog`/`LevelRewards` zh fields from an earlier round). Fixed by
+changing the VALUE only: `"你的 Mochi"` → `"你的小伴"` — no new placeholder, no new mechanism.
+
+**Full sweep, not stop-at-one:** grepped every `app_zh.arb` value (case-sensitive, excluding `@`-metadata
+lines) for the literal substring "Mochi" — `homeSectionYourMochis` was the ONLY hit. Cross-checked with a
+second, case-insensitive pass excluding `{mascot}`-containing lines to rule out a differently-cased leak
+elsewhere. Nothing else surfaced.
+
+**New permanent guard:** `test/guard/no_raw_mascot_word_in_zh_arb_test.dart` — asserts no `app_zh.arb`
+value contains the raw untranslated word "Mochi". This is a distinct failure mode from "missing key"
+(the existing coverage guard's axis): a key can be PRESENT, translated, and still leak the English brand
+word at the value level. Confirmed RED before the fix (caught exactly the one leak), GREEN after.
+
+Gates: analyze 0/0, full suite green (1 known pre-existing unrelated golden-test failure, see round 4
+Phase B note below), APK builds.
+
+## zh audit round 5, Phase B — forgot-password dialog: crash + missing validation (CLOSED, 2026-07-31)
+
+**Two real bugs, unrelated to i18n, in `sign_in_screen.dart`'s `_showForgotPasswordDialog`.**
+
+**Bug 1 — no email format validation.** Was `if (email.isEmpty) return;` only. Fixed by wrapping the
+field in a `Form`/`TextFormField` with a `validator`, matching the ACTUAL pattern already used by
+`complete_profile_screen.dart` and `direct_onboarding_screen.dart` — block-on-tap with an inline error,
+**not** a disabled-button pattern. The prompt's premise that "the two existing signup screens gate their
+own submit buttons" was checked against source and found wrong: both call `_formKey.currentState
+?.validate()` and return early on failure; neither disables its button. Mirrored what's actually there.
+The regex was already duplicated in both of those files — extracted to
+`lib/core/validation/email_validator.dart` (`emailFormatRegex` + `isValidEmailFormat`) and pointed all
+three call sites at the one copy instead of adding a fourth.
+
+**Bug 2 — the crash (prioritized, since it fired on every normal send, not as a rare flake).** Root cause
+was TWO compounding issues, not the one originally hypothesized:
+1. The button handler's `finally { if (ctx.mounted) setDialogState(...) }` ran even when the SAME method
+   had just called `Navigator.of(ctx).pop()` (success and `AuthException` paths both pop before reaching
+   that finally) — `ctx.mounted` can still read true for one or more frames during the dialog's
+   deactivation window, so the guard didn't prevent the race. Fixed with a local `popped` flag set
+   immediately before each `pop()` call, gating the finally on `!popped && ctx.mounted`.
+2. **Found empirically, not in the original hypothesis:** the OUTER `finally { emailCtrl.dispose(); }`
+   disposes the dialog's `TextEditingController` as soon as `showDialog()`'s future resolves — which can
+   be BEFORE the dialog's element tree (and any in-flight `TextField` frame callback, e.g. caret-visibility
+   scheduling) has actually finished tearing down. A throwaway diagnostic test proved this reproduces on
+   the ORIGINAL, unfixed code (same "_dependents.isEmpty" / disposed-controller cascade), and re-running
+   the real test file after applying ONLY the `popped`-flag fix showed the identical cascade still firing
+   — proof the flag alone doesn't close the bug. Fixed by deferring disposal one frame:
+   `WidgetsBinding.instance.addPostFrameCallback((_) => emailCtrl.dispose());`.
+
+**Sibling audit (clean result, not skipped):** grepped the whole app for the same
+`StatefulBuilder` + `Navigator.pop` + a `finally` touching `setDialogState`/`setState` shape. Only one
+other `StatefulBuilder`-based dialog exists in the app; the other 3 candidates found via a broader
+"pop+finally+setState" grep all guard on their SCREEN's own persistent `State.mounted` (deterministic),
+not an ephemeral dialog `BuildContext.mounted` (can read true mid-deactivation) — confirmed safe, not
+the same shape.
+
+**Tests (fail-without-fix, not just green-suite):** `test/widget/sign_in_forgot_password_dialog_test.dart`
+drives the full success and `AuthException` paths through a stubbed `AuthService` (added a minimal
+`@visibleForTesting debugOverrideHttpClient` seam to the service — a hard singleton with a hardcoded prod
+baseUrl and no other DI seam — so the test never risks a real network call). Confirmed failing before the
+fix (identical crash cascade reproduced against the truly-original code via a throwaway diagnostic,
+deleted once it had served its purpose), green after.
+
+Gates: analyze 0/0, full suite green (1 known pre-existing unrelated golden-test failure — see below),
+APK builds.
+
+**Pre-existing, unrelated failure noted, not chased:** `test/golden/answer_card_golden_test.dart`
+("AnswerCard golden collapsed state") fails on a clean `HEAD` with NONE of this round's changes applied
+(verified by stashing all round-5 changes and re-running the golden test in isolation — it fails
+identically). This is the same pre-existing golden-image flake already documented in the round 4 Phase B
+entry above ("1 known pre-existing unrelated failure") — environment/rendering-sensitive, not caused by
+or related to this round's work.
+
 ## zh audit round 4, Phase B — locale-switch provider invalidation (CLOSED, 2026-07-31)
 
 **Verified before fixing:** confirmed no `ref.invalidate` call anywhere near `setLanguage()` —
