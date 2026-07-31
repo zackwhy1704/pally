@@ -1257,3 +1257,44 @@ All 5 `NoNotesCta` call sites were checked; 4 were already localized (quiz, modu
 | key | en (source of truth) | zh (machine draft) | reviewer notes / ✅ |
 |-----|----------------------|--------------------|---------------------|
 | `mochiGeneratingDefaultStep` | Working on it… | 正在处理… | |
+
+---
+
+## BACKEND-OWNED — achievement + level-reward catalog (2026-07-31)
+
+
+Not client ARB — these live in `pally-backend`'s `domain/progress/AchievementCatalog.java` and `LevelRewards.java` as inline `nameZh`/`descriptionZh`/`labelZh` fields, resolved server-side via `user.preferredLocale` (a third content category this audit round named: not teacher-material-derived, not client-owned — see `pally-backend/DEFERRED.md`). Logged here anyway since this is the one review artifact a native-SG reviewer actually opens; fixes for these rows land in the BACKEND repo, not `app_zh.arb`.
+
+
+### Achievements (`AchievementCatalog.java`)
+
+
+| id | name (en) | name (zh) | description (en) | description (zh) | reviewer notes / ✅ |
+|----|-----------|-----------|-------------------|-------------------|---------------------|
+| `STREAK_3` | On a Roll | 势头正好 | 3-day streak | 连续学习3天 | |
+| `STREAK_7` | Week Warrior | 一周勇士 | 7-day streak | 连续学习7天 | |
+| `STREAK_30` | Month of Mastery | 月度达人 | 30-day streak | 连续学习30天 | |
+| `FIRST_CHAT` | First Question | 初次提问 | Ask your tutor anything | 向你的导师提出任何问题 | |
+| `FIRST_QUIZ` | Pop Quiz | 小测验 | Take your first quiz | 完成你的第一次测验 | |
+| `FIRST_UPLOAD` | Notebook Open | 打开笔记本 | Upload your first study notes | 上传你的第一份学习笔记 | |
+| `PHOTOS_10` | Snap Solver | 拍照解题达人 | Solve 10 photo questions | 解答10道拍照题目 | |
+| `QUIZ_CORRECT_50` | Quiz Whiz | 测验高手 | Get 50 quiz answers correct | 答对50道测验题 | |
+| `QUIZ_CORRECT_250` | Quiz Champion | 测验冠军 | Get 250 quiz answers correct | 答对250道测验题 | |
+| `PERFECT_QUIZ` | Flawless | 完美无瑕 | Get a perfect quiz score | 获得满分测验成绩 | |
+| `LEVEL_5` | Rising Star | 冉冉新星 | Reach Level 5 | 达到第5级 | |
+| `LEVEL_10` | Shining Star | 闪耀之星 | Reach Level 10 | 达到第10级 | |
+
+### Level rewards (`LevelRewards.java`)
+
+
+| level | label (en) | label (zh) | reviewer notes / ✅ |
+|-------|------------|------------|---------------------|
+| 2 | New Mochi colour | 全新小伴配色 | |
+| 3 | Cloud background unlocked | 解锁云朵背景 | |
+| 5 | Extra free Mochi slot | 额外免费小伴名额 | |
+| 8 | Sparkle avatar effect | 闪耀头像特效 | |
+| 10 | Mystery box + Level 10 badge | 神秘宝箱 + 10级徽章 | |
+| 15 | Golden name plate | 黄金名牌 | |
+| 20 | Streak freeze cap raised to 5 | 连胜保护次数上限提升至5次 | |
+| 25 | Legendary Mochi frame | 传奇小伴相框 | |
+| 30 | Max level title — Apalchi Master | 满级称号——Apalchi 大师 | |
