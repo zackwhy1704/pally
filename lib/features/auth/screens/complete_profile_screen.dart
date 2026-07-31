@@ -8,11 +8,8 @@ import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/adaptive_content_width.dart';
+import 'package:pally/core/validation/email_validator.dart';
 import 'package:pally/features/auth/screens/complete_profile_view_model.dart';
-
-// Requires TLD ≥ 2 chars; rejects single-char TLDs like .c
-final _kEmailRegex =
-    RegExp(r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$');
 
 /// Collects a missing birth year (backend 403 `PROFILE_COMPLETION_REQUIRED`).
 /// Reuses the direct-onboarding age-group + parent-email pattern, then hands the
@@ -146,7 +143,7 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                         if (v == null || v.trim().isEmpty) {
                           return l.completeProfileParentEmailRequired;
                         }
-                        if (!_kEmailRegex.hasMatch(v.trim())) {
+                        if (!emailFormatRegex.hasMatch(v.trim())) {
                           return l.completeProfileParentEmailInvalid;
                         }
                         return null;

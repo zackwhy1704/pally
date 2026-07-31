@@ -17,6 +17,7 @@ import 'package:pally/features/auth/auth_state.dart';
 import 'package:pally/features/auth/services/auth_service.dart';
 import 'package:pally/features/account_deletion/presentation/restore_account_sheet.dart';
 import 'package:pally/features/consent/data/consent_unlock.dart';
+import 'package:pally/core/validation/email_validator.dart';
 import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/shared/widgets/language_selector.dart';
 
@@ -218,29 +219,54 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   Future<void> _showForgotPasswordDialog() async {
     final l = AppLocalizations.of(context);
     final emailCtrl = TextEditingController(text: _emailCtrl.text.trim());
+    final formKey = GlobalKey<FormState>();
     try {
     await showDialog<void>(
       context: context,
       builder: (ctx) {
         var sending = false;
+        // Set true immediately before EITHER pop() call below, in the same
+        // method that triggers it. The finally block's setDialogState must
+        // never run after a pop this method itself already fired: ctx.mounted
+        // can still read true for one or more frames during the dialog
+        // element's deactivation window, so that guard alone doesn't prevent
+        // the race — this flag does, deterministically.
+        var popped = false;
         return StatefulBuilder(
           builder: (ctx, setDialogState) => AlertDialog(
             title: Text(l.forgotPasswordTitle),
-            content: TextField(
-              controller: emailCtrl,
-              keyboardType: TextInputType.emailAddress,
-              style: AppTextStyles.body,
-              decoration: InputDecoration(
-                hintText: l.signInEmailHint,
-                hintStyle: AppTextStyles.body.copyWith(color: AppColors.text3),
-                filled: true,
-                fillColor: const Color(0xFFEDE8F5),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide.none,
+            content: Form(
+              key: formKey,
+              child: TextFormField(
+                controller: emailCtrl,
+                keyboardType: TextInputType.emailAddress,
+                style: AppTextStyles.body,
+                decoration: InputDecoration(
+                  hintText: l.signInEmailHint,
+                  hintStyle:
+                      AppTextStyles.body.copyWith(color: AppColors.text3),
+                  filled: true,
+                  fillColor: const Color(0xFFEDE8F5),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide.none,
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: AppColors.coral),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md, vertical: 14),
                 ),
-                contentPadding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md, vertical: 14),
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) {
+                    return l.signupValidatorEmailEmpty;
+                  }
+                  if (!emailFormatRegex.hasMatch(v.trim())) {
+                    return l.signupValidatorEmailInvalid;
+                  }
+                  return null;
+                },
               ),
             ),
             actions: [
@@ -252,12 +278,17 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 onPressed: sending
                     ? null
                     : () async {
+                        if (!(formKey.currentState?.validate() ?? false)) {
+                          return;
+                        }
                         final email = emailCtrl.text.trim();
-                        if (email.isEmpty) return;
                         setDialogState(() => sending = true);
                         try {
                           await AuthService.instance.forgotPassword(email);
-                          if (ctx.mounted) Navigator.of(ctx).pop();
+                          if (ctx.mounted) {
+                            popped = true;
+                            Navigator.of(ctx).pop();
+                          }
                           if (mounted) {
                             showAppSnackBar(
                               SnackBar(
@@ -270,10 +301,13 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                             );
                           }
                         } on AuthException catch (e) {
-                          if (ctx.mounted) Navigator.of(ctx).pop();
+                          if (ctx.mounted) {
+                            popped = true;
+                            Navigator.of(ctx).pop();
+                          }
                           if (mounted) _showError(e.message);
                         } finally {
-                          if (ctx.mounted) {
+                          if (!popped && ctx.mounted) {
                             setDialogState(() => sending = false);
                           }
                         }
@@ -291,7 +325,14 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       },
     );
     } finally {
-      emailCtrl.dispose();
+      // Deferred, not synchronous: showDialog()'s future resolves as soon as
+      // pop() is called, which can be BEFORE the dialog's element tree (and
+      // any in-flight TextField frame callback, e.g. caret-visibility
+      // scheduling) has actually been torn down. Disposing emailCtrl in the
+      // same synchronous tick races that teardown and throws "A
+      // TextEditingController was used after being disposed" — deferring one
+      // frame lets the teardown finish first.
+      WidgetsBinding.instance.addPostFrameCallback((_) => emailCtrl.dispose());
     }
   }
 

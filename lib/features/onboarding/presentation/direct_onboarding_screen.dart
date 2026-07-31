@@ -20,11 +20,8 @@ import 'package:pally/features/onboarding/presentation/widgets/onboarding_legal_
 import 'package:pally/features/chapters/presentation/chapter_picker_sheet.dart';
 import 'package:pally/app/router.dart';
 import 'package:pally/core/i18n/label_localizer.dart';
+import 'package:pally/core/validation/email_validator.dart';
 import 'package:pally/l10n/app_localizations.dart';
-
-// Requires TLD ≥ 2 chars; rejects single-char TLDs like .c
-final _kEmailRegex =
-    RegExp(r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$');
 
 class DirectOnboardingScreen extends ConsumerStatefulWidget {
   const DirectOnboardingScreen({super.key});
@@ -471,7 +468,7 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
                 if (v == null || v.trim().isEmpty) {
                   return l.signupValidatorEmailEmpty;
                 }
-                if (!_kEmailRegex.hasMatch(v.trim())) {
+                if (!emailFormatRegex.hasMatch(v.trim())) {
                   return l.signupValidatorEmailInvalid;
                 }
                 return null;
@@ -532,7 +529,7 @@ class _Step1SignUpState extends ConsumerState<_Step1SignUp> {
                   if (v == null || v.trim().isEmpty) {
                     return l.signupValidatorParentEmailEmpty;
                   }
-                  if (!_kEmailRegex.hasMatch(v.trim())) {
+                  if (!emailFormatRegex.hasMatch(v.trim())) {
                     return l.signupValidatorParentEmailInvalid;
                   }
                   return null;

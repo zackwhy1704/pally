@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/auth/auth_state.dart';
@@ -32,12 +33,19 @@ class AuthService {
 
   static const _storage = FlutterSecureStorage();
 
-  final _http = Dio(BaseOptions(
+  Dio _http = Dio(BaseOptions(
     baseUrl: _baseUrl,
     connectTimeout: const Duration(seconds: 15),
     receiveTimeout: const Duration(seconds: 30),
     headers: {'Content-Type': 'application/json'},
   ));
+
+  /// This is a hard singleton with no dependency-injection seam — swaps the
+  /// internal Dio for tests that need to drive a REAL request/response cycle
+  /// through this service (e.g. the forgot-password dialog's full success/
+  /// error path) without ever reaching the real (hardcoded, prod) baseUrl.
+  @visibleForTesting
+  void debugOverrideHttpClient(Dio dio) => _http = dio;
 
   Future<AuthResult> signInWithEmail(String email, String password) async {
     try {
