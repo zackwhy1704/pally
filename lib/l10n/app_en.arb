@@ -1752,6 +1752,14 @@
   "@signupCreateAccount": {
     "description": "Step 2 submit button (creates the account)."
   },
+  "signupTermsCheckboxLabel": "I agree to the Terms of Use — including zero tolerance for objectionable content or abusive behavior.",
+  "@signupTermsCheckboxLabel": {
+    "description": "Label next to the mandatory terms-acceptance checkbox on the signup step that creates the account. Must name the zero-tolerance policy explicitly, not just link out to it."
+  },
+  "signupViewFullTerms": "Read the full Terms of Use",
+  "@signupViewFullTerms": {
+    "description": "Tappable link next to the terms checkbox opening the full apalchi.com/terms page."
+  },
   "signupBookSplitChapters": "Your book is split into chapters",
   "@signupBookSplitChapters": {
     "description": "Heading for the segmented-upload chapter picker."
@@ -5369,6 +5377,8 @@
   "@onboardErrParentEmailInvalid": {},
   "onboardErrParentEmailMissing": "Please enter your parent's email address.",
   "@onboardErrParentEmailMissing": {},
+  "onboardErrTermsNotAccepted": "Please accept the Terms of Use to create your account.",
+  "@onboardErrTermsNotAccepted": {},
   "onboardErrConsentPending": "Your account is pending parental approval. Ask your parent to check their email.",
   "@onboardErrConsentPending": {},
   "onboardErrRateLimited": "Too many requests. Wait a moment and try again.",

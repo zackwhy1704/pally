@@ -1273,6 +1273,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signupCreateAccount => 'Create account';
 
   @override
+  String get signupTermsCheckboxLabel =>
+      'I agree to the Terms of Use — including zero tolerance for objectionable content or abusive behavior.';
+
+  @override
+  String get signupViewFullTerms => 'Read the full Terms of Use';
+
+  @override
   String get signupBookSplitChapters => 'Your book is split into chapters';
 
   @override
@@ -4789,6 +4796,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get onboardErrParentEmailMissing =>
       'Please enter your parent\'s email address.';
+
+  @override
+  String get onboardErrTermsNotAccepted =>
+      'Please accept the Terms of Use to create your account.';
 
   @override
   String get onboardErrConsentPending =>

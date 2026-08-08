@@ -30,4 +30,6 @@ String localizedDirectOnboardingError(AppLocalizations l, DirectOnboardingError 
       DirectOnboardingErrorKind.resendRateLimited =>
         l.onboardErrResendRateLimited,
       DirectOnboardingErrorKind.resendFailed => l.onboardErrResendFailed,
+      DirectOnboardingErrorKind.termsNotAccepted =>
+        l.onboardErrTermsNotAccepted,
     };

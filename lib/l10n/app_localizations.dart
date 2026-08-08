@@ -2180,6 +2180,18 @@ abstract class AppLocalizations {
   /// **'Create account'**
   String get signupCreateAccount;
 
+  /// Label next to the mandatory terms-acceptance checkbox on the signup step that creates the account. Must name the zero-tolerance policy explicitly, not just link out to it.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the Terms of Use — including zero tolerance for objectionable content or abusive behavior.'**
+  String get signupTermsCheckboxLabel;
+
+  /// Tappable link next to the terms checkbox opening the full apalchi.com/terms page.
+  ///
+  /// In en, this message translates to:
+  /// **'Read the full Terms of Use'**
+  String get signupViewFullTerms;
+
   /// Heading for the segmented-upload chapter picker.
   ///
   /// In en, this message translates to:
@@ -7855,6 +7867,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter your parent\'s email address.'**
   String get onboardErrParentEmailMissing;
+
+  /// No description provided for @onboardErrTermsNotAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Please accept the Terms of Use to create your account.'**
+  String get onboardErrTermsNotAccepted;
 
   /// No description provided for @onboardErrConsentPending.
   ///
