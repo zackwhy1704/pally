@@ -24,6 +24,7 @@ void main() {
         birthYear: 2013,
         parentEmail: null,
         contentLanguage: 'zh',
+        acceptedTerms: true,
       );
 
       expect(body['contentLanguage'], 'zh');
@@ -39,6 +40,7 @@ void main() {
         birthYear: 2013,
         parentEmail: null,
         contentLanguage: 'en',
+        acceptedTerms: true,
       );
 
       expect(body['contentLanguage'], 'en');
@@ -58,6 +60,7 @@ void main() {
         birthYear: 2018,
         parentEmail: 'parent@test.com',
         contentLanguage: 'zh',
+        acceptedTerms: true,
       );
 
       expect(body['parentEmail'], 'parent@test.com');
@@ -74,9 +77,57 @@ void main() {
         birthYear: 2010,
         parentEmail: null,
         contentLanguage: 'en',
+        acceptedTerms: true,
       );
 
       expect(body.containsKey('parentEmail'), isFalse);
+    });
+  });
+
+  // ── EULA/Terms-of-Use gate ─────────────────────────────────────────────────
+  // Pins the SAME class of bug the contentLanguage tests above pin: a field
+  // that must reach the backend on the PRIMARY signup path, not just be
+  // present in the type signature. acceptedTerms has no valid default (unlike
+  // contentLanguage's 'en' fallback) — the request must carry the REAL value,
+  // true or false, verbatim.
+  group('quickOnboardRequestBody — acceptedTerms', () {
+    test('acceptedTerms:true is sent verbatim', () {
+      final body = quickOnboardRequestBody(
+        email: 'kid@test.com',
+        password: 'password123',
+        displayName: 'Kid',
+        subject: 'MATHS',
+        level: 'primary',
+        birthYear: 2013,
+        parentEmail: null,
+        contentLanguage: 'en',
+        acceptedTerms: true,
+      );
+
+      expect(body['acceptedTerms'], isTrue);
+    });
+
+    // The checkbox-gated UI never calls quickOnboard() with this false (the
+    // button disables), but the VIEW MODEL's own guard (a defense-in-depth
+    // check, not just the UI disable) can still reach this function with
+    // false if that guard is ever removed/broken — the request must ALWAYS
+    // carry the real value rather than defaulting to true, so the backend's
+    // own @AssertTrue gate is the thing that actually blocks, not a client
+    // that silently upgrades false to true.
+    test('acceptedTerms:false is sent verbatim, never silently upgraded to true', () {
+      final body = quickOnboardRequestBody(
+        email: 'kid@test.com',
+        password: 'password123',
+        displayName: 'Kid',
+        subject: 'MATHS',
+        level: 'primary',
+        birthYear: 2013,
+        parentEmail: null,
+        contentLanguage: 'en',
+        acceptedTerms: false,
+      );
+
+      expect(body['acceptedTerms'], isFalse);
     });
   });
 }

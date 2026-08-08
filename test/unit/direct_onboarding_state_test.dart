@@ -12,6 +12,7 @@ void main() {
       expect(state.avatarId, isNull);
       expect(state.selectedSubject, isNull);
       expect(state.selectedLevel, isNull);
+      expect(state.acceptedTerms, false);
       expect(state.uploadStage, DirectUploadStage.idle);
       expect(state.firstModuleId, isNull);
       expect(state.firstModuleTitle, isNull);
@@ -85,6 +86,20 @@ void main() {
       // Resetting is explicit.
       final reset = withGoHome.copyWith(goHome: false);
       expect(reset.goHome, false);
+    });
+
+    test('copyWith sets acceptedTerms; defaults false, never silently true', () {
+      const state = DirectOnboardingState();
+      expect(state.acceptedTerms, false);
+
+      final accepted = state.copyWith(acceptedTerms: true);
+      expect(accepted.acceptedTerms, true);
+
+      // A later copyWith that doesn't mention acceptedTerms must PRESERVE the
+      // existing value (Dart's ?? pattern) — not reset it, and not silently
+      // flip it true. Only an explicit `acceptedTerms: false` should un-check.
+      final stillAccepted = accepted.copyWith(step: 3);
+      expect(stillAccepted.acceptedTerms, true);
     });
 
     test('under-13 account creation: goHome set after consent request', () {

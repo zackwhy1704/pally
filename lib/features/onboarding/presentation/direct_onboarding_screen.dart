@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/theme/app_sizing.dart';
@@ -771,13 +772,65 @@ class _Step2SubjectLevel extends ConsumerWidget {
               ),
             );
           }),
-          const SizedBox(height: AppSpacing.xl),
+          const SizedBox(height: AppSpacing.lg),
+          // Mandatory terms acceptance — gates account creation below. Text
+          // names the zero-tolerance policy explicitly (not just a bare link),
+          // per the same "present the clause, don't just link to it" bar this
+          // screen already applies to parental consent.
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Checkbox(
+                value: vm.acceptedTerms,
+                onChanged: (checked) =>
+                    notifier.setAcceptedTerms(checked ?? false),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.sm),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: () => notifier
+                            .setAcceptedTerms(!vm.acceptedTerms),
+                        child: Text(
+                          l.signupTermsCheckboxLabel,
+                          style: AppTextStyles.bodySmall
+                              .copyWith(color: AppColors.text2),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => launchUrl(
+                          Uri.parse('https://apalchi.com/terms'),
+                          mode: LaunchMode.externalApplication,
+                        ),
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.only(top: AppSpacing.xs),
+                          child: Text(
+                            l.signupViewFullTerms,
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.purple,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
           SizedBox(
             height: AppSizing.buttonHeight,
             child: FilledButton(
               onPressed: vm.isLoading ||
                       vm.selectedSubject == null ||
-                      vm.selectedLevel == null
+                      vm.selectedLevel == null ||
+                      !vm.acceptedTerms
                   ? null
                   : () {
                       notifier.quickOnboard(

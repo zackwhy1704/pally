@@ -250,6 +250,37 @@ void main() {
       expect(find.text('University / Adult'), findsOneWidget);
     });
 
+    testWidgets(
+        'step 2 Create account button stays disabled until terms are '
+        'accepted, then enables when the checkbox is tapped', (tester) async {
+      await tester.pumpWidget(_wrap(
+        const DirectOnboardingScreen(),
+        overrides: [
+          directOnboardingViewModelProvider
+              .overrideWith(() => _Step2VMWithSelections()),
+        ],
+      ));
+
+      // Subject and level are already selected but terms are NOT accepted —
+      // the button must stay disabled (onPressed == null), never reachable
+      // by tap.
+      final button = tester.widget<FilledButton>(
+          find.widgetWithText(FilledButton, 'Create account'));
+      expect(button.onPressed, isNull);
+
+      // The checkbox sits below the fold on the default test viewport —
+      // scroll it into view before tapping (mirrors real device behaviour on
+      // a screen with a tall scrollable body).
+      await tester.ensureVisible(find.byType(Checkbox));
+      await tester.pump();
+      await tester.tap(find.byType(Checkbox));
+      await tester.pump();
+
+      final buttonAfterAccepting = tester.widget<FilledButton>(
+          find.widgetWithText(FilledButton, 'Create account'));
+      expect(buttonAfterAccepting.onPressed, isNotNull);
+    });
+
     testWidgets('step 3 renders upload prompt', (tester) async {
       await tester.pumpWidget(_wrap(
         const DirectOnboardingScreen(),
@@ -350,6 +381,17 @@ class _NoopLogoutVM extends DirectOnboardingViewModel {
 class _Step2VM extends DirectOnboardingViewModel {
   @override
   DirectOnboardingState build() => const DirectOnboardingState(step: 2);
+}
+
+/// Step-2 VM with subject/level pre-selected so the terms checkbox is the
+/// ONLY remaining gate on the Create account button.
+class _Step2VMWithSelections extends DirectOnboardingViewModel {
+  @override
+  DirectOnboardingState build() => const DirectOnboardingState(
+        step: 2,
+        selectedSubject: 'MATHS',
+        selectedLevel: 'PRIMARY',
+      );
 }
 
 class _Step3IdleVM extends DirectOnboardingViewModel {

@@ -1225,6 +1225,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get signupCreateAccount => '创建账户';
 
   @override
+  String get signupTermsCheckboxLabel => '我同意《服务条款》——包括对不当内容或辱骂行为零容忍。';
+
+  @override
+  String get signupViewFullTerms => '阅读完整服务条款';
+
+  @override
   String get signupBookSplitChapters => '你的书被分成了多个章节';
 
   @override
@@ -4540,6 +4546,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get onboardErrParentEmailMissing => '请输入你家长的电子邮箱地址。';
+
+  @override
+  String get onboardErrTermsNotAccepted => '请先同意服务条款才能创建账户。';
 
   @override
   String get onboardErrConsentPending => '你的账户正在等待家长批准。请让你的家长查看邮箱。';

@@ -70,6 +70,7 @@ enum DirectOnboardingErrorKind {
   uploadFailed,
   resendRateLimited,
   resendFailed,
+  termsNotAccepted, // client-side: submitted without checking the terms box
 }
 
 @immutable
@@ -91,6 +92,7 @@ class DirectOnboardingState {
     this.avatarId,
     this.selectedSubject,
     this.selectedLevel,
+    this.acceptedTerms = false,
     this.uploadStage = DirectUploadStage.idle,
     this.firstModuleId,
     this.firstModuleTitle,
@@ -109,6 +111,13 @@ class DirectOnboardingState {
   final String? avatarId;
   final String? selectedSubject;
   final String? selectedLevel;
+
+  /// Affirmative Terms-of-Use acceptance — must be explicitly checked before
+  /// [DirectOnboardingViewModel.quickOnboard] will hit the network. Mirrors the
+  /// backend's mandatory `acceptedTerms` gate (QuickOnboardService); this is the
+  /// client-side half so the "Create account" button itself stays disabled
+  /// rather than round-tripping to the server just to learn it was rejected.
+  final bool acceptedTerms;
   final DirectUploadStage uploadStage;
   final String? firstModuleId;
   final String? firstModuleTitle;
@@ -144,6 +153,7 @@ class DirectOnboardingState {
     Object? avatarId = _sentinel,
     String? selectedSubject,
     String? selectedLevel,
+    bool? acceptedTerms,
     DirectUploadStage? uploadStage,
     Object? firstModuleId = _sentinel,
     Object? firstModuleTitle = _sentinel,
@@ -161,6 +171,7 @@ class DirectOnboardingState {
       avatarId: avatarId == _sentinel ? this.avatarId : avatarId as String?,
       selectedSubject: selectedSubject ?? this.selectedSubject,
       selectedLevel: selectedLevel ?? this.selectedLevel,
+      acceptedTerms: acceptedTerms ?? this.acceptedTerms,
       uploadStage: uploadStage ?? this.uploadStage,
       firstModuleId: firstModuleId == _sentinel
           ? this.firstModuleId
@@ -219,6 +230,7 @@ Map<String, dynamic> quickOnboardRequestBody({
   required int birthYear,
   required String? parentEmail,
   required String contentLanguage,
+  required bool acceptedTerms,
 }) =>
     {
       'email': email,
@@ -230,6 +242,12 @@ Map<String, dynamic> quickOnboardRequestBody({
       // Required by the backend when birthYear implies under-13.
       if (parentEmail != null) 'parentEmail': parentEmail,
       'contentLanguage': contentLanguage,
+      // Mandatory server-side (@AssertTrue on QuickOnboardRequest) — the caller
+      // (quickOnboard() below) already refuses to reach this function unless
+      // the checkbox is checked, but the field is always sent explicitly (never
+      // omitted) so a request that somehow got here with acceptedTerms=false is
+      // rejected by the backend exactly the same as one that never checked it.
+      'acceptedTerms': acceptedTerms,
     };
 
 @riverpod
@@ -257,6 +275,10 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
 
   void setLevel(String level) {
     state = state.copyWith(selectedLevel: level);
+  }
+
+  void setAcceptedTerms(bool accepted) {
+    state = state.copyWith(acceptedTerms: accepted);
   }
 
   void setAgeGroup({required bool isUnder13}) {
@@ -317,6 +339,22 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
     required String level,
   }) async {
     if (state.isLoading) return;
+
+    // Client-side half of the mandatory terms gate (mirrors the backend's
+    // QuickOnboardService.execute rejecting acceptedTerms=false with 400) — the
+    // "Create account" button is already disabled until this is true, so
+    // reaching here with it false would mean a caller bypassed the UI gate
+    // (e.g. a future refactor). Fail the same way the button-disable already
+    // prevents, rather than round-tripping to the server to learn the same
+    // thing.
+    if (!state.acceptedTerms) {
+      state = state.copyWith(
+        error: const DirectOnboardingError(
+            DirectOnboardingErrorKind.termsNotAccepted),
+      );
+      return;
+    }
+
     appLog.i('[DirectOnboard] Starting quick onboard for $email');
     state = state.copyWith(isLoading: true, error: null);
 
@@ -367,6 +405,7 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
           // never sent a language at all before this, so the default avatar
           // was always English regardless of the signup UI's language.
           contentLanguage: ref.read(localeControllerProvider).languageCode,
+          acceptedTerms: state.acceptedTerms,
         ),
       );
 
