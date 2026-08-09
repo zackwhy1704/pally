@@ -41,9 +41,15 @@ jobs:
         run: dart run build_runner build --delete-conflicting-outputs
 
       - name: Analyze
-        # Treat the analyzer's findings as gate-blocking; the project
-        # currently ships zero issues so any new info-level finding
-        # surfaces in PRs.
+        # continue-on-error so a failure here does NOT skip Test below — the
+        # analyzer currently flags 298 pre-existing info-level issues across
+        # the tree (not this PR's problem to fix), and analyze-fails-so-test-
+        # never-runs was silently hiding the real test signal on every PR
+        # since 2026-07-30. Analyze still gate-blocks the job overall — see
+        # the "Fail if Analyze had issues" step at the end — it just no
+        # longer does so by skipping everything after it.
+        id: analyze
+        continue-on-error: true
         run: flutter analyze
 
       - name: Test
@@ -84,3 +90,14 @@ jobs:
             coverage/
           retention-days: 7
           if-no-files-found: ignore
+
+      - name: Fail if Analyze had issues
+        # Runs LAST, after Test and the release-bundle gate have had a chance
+        # to produce their own signal. always() so this still surfaces even if
+        # Test/the build also failed for a real, unrelated reason. Preserves
+        # the original gate-blocking intent (any analyzer finding fails the
+        # job) without letting it hide whether the actual tests/build passed.
+        if: always() && steps.analyze.outcome == 'failure'
+        run: |
+          echo "::error::dart analyze found issues — see the Analyze step log above."
+          exit 1
