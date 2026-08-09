@@ -7,6 +7,32 @@
 
 ---
 
+## CI: `Analyze` failure silently skips `Test` — pipeline gives no real signal
+
+**Found:** verifying CI for `feat/eula-terms-acceptance` (`f94a8c5`, merged `1d89029`). The
+`frontend-ci` GitHub Actions workflow runs `Analyze` (`dart analyze`) then `Test` (`flutter test`)
+as sequential job steps with the implicit `if: success()` gate — when `Analyze` fails, `Test` shows
+as `skipped`, not run. `Analyze` currently fails on **298 pre-existing info-level lint issues**
+(not from this or any specific PR — confirmed identical failure on baseline `main` @ `fe40378` and
+every commit back through at least `1d83cff`, 2026-07-30). Locally, `dart analyze lib/` only scans
+`lib/` (216 issues, zero fatal); CI's `Analyze` step evidently scans the whole tree including
+`test/`, and `dart analyze`'s default exit code is 1 on ANY issue regardless of severity — so a
+single `info` hit anywhere fails the step and, as a side effect, skips real test execution for
+every PR going forward. `f94a8c5`'s only actual test evidence is a local `flutter test` run (1100
+passed); CI itself never ran `flutter test` for that SHA. Same story confirmed for the EULA branch
+before it. **This is worse than the lint noise itself** — a pipeline that silently disables its own
+test step gives a false sense of "CI passed" (it shows `failure`, so nobody's actually being
+fooled today, but the next person auto-merging on a *fixed* Analyze step would be trusting a Test
+result CI hasn't actually produced since at least 2026-07-30).
+
+**Closes it:** either (a) make `Analyze` non-fatal on `info`-level issues (`dart analyze --fatal-
+infos=false` or scope it to `lib/` like the local mandatory workflow does), or (b) decouple the
+`Test` step so it runs regardless of `Analyze`'s outcome (`if: always()` or a separate job). Fixing
+the 298 lint issues themselves is not urgent (they're `info`, mostly `prefer_const_constructors`/
+`prefer_single_quotes`); making sure `Test` actually runs on every PR is.
+
+---
+
 ## zh audit round 5, Phase A — "你的 Mochi" ARB value-level leak (CLOSED, 2026-07-31)
 
 **Corrected the prompt's suggested fix before applying it:** the prompt assumed
