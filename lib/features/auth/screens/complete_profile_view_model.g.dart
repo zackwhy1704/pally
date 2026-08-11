@@ -7,7 +7,7 @@ part of 'complete_profile_view_model.dart';
 // **************************************************************************
 
 String _$completeProfileViewModelHash() =>
-    r'9ed78dddf467cbe9b6996efe5ea9beb401a1d7a2';
+    r'50854c6c91a9cdac82513aba8548bca09b54af16';
 
 /// See also [CompleteProfileViewModel].
 @ProviderFor(CompleteProfileViewModel)
