@@ -709,11 +709,15 @@ class UploadViewModel extends _$UploadViewModel {
           '${servedBy != null ? " servedBy=$servedBy" : ""}'
           '${degraded ? " DEGRADED" : ""}'
           '${quality != null ? " quality=$quality" : ""}');
+      // file_type only — never the raw file_name. A child can name a photo
+      // after themselves or their school (e.g. "sarah_tanjongkatong_p3.jpg"),
+      // and that's PII sent to a US third party the same as the identify()
+      // email/display_name issue.
       ref.read(analyticsProvider).event(
         AnalyticsEvents.uploadNote,
         props: {
           'avatar_id': _avatarId,
-          'file_name': file.name,
+          'file_type': file.extension,
           'file_size_bytes': file.size,
           'page_count': result.pageCount,
         },

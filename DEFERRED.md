@@ -7,6 +7,28 @@
 
 ---
 
+## PostHog identify()/event() PII fix — no automated regression test for the two identify() sites
+
+**What shipped 2026-08-12:** `sign_in_screen.dart` and `direct_onboarding_view_model.dart`'s
+`identify()` calls no longer send `email`/`display_name` to PostHog (opaque `userId` only); a full
+app-wide sweep of every `analyticsProvider` call site found one more hit,
+`upload_view_model.dart`'s `uploadNote` event sending the raw `file_name` (a child can name a photo
+after themselves or their school) — fixed to send `file_type` (extension) instead.
+
+**Deliberately not covered by an automated test:** `quickOnboard()` (the call site for the
+onboarding `identify()`) constructs its own `Dio` instance inline with no DI seam — a documented,
+deliberate architectural choice (the user isn't authenticated yet, so it can't reuse the app's
+normal authenticated Dio provider), not a shortcut. No existing test harness drives that network
+path; building one is real new test infrastructure, out of scope for a resubmission-blocking
+privacy fix. `sign_in_screen.dart`'s `identify()` call has the same gap for the same reason
+(post-auth Dio flow, no existing widget-test harness that exercises it end-to-end).
+**Closes it:** when `quickOnboard()`/sign-in get a real Dio-injection seam for OTHER reasons (there
+is no standalone reason to build one just for this), add a widget test overriding
+`analyticsProvider` with a capturing fake and asserting `identify()` is called with no PII props,
+for both call sites. Until then, the guard against regression is that the fix is a one-line
+`identify(userId)` — reintroducing PII means someone has to deliberately add a `props:` argument
+back, not something that happens by default.
+
 ## iOS OCR implementation — CLOSED 2026-08-12 (root cause was a simulator-only arch gap, not a real block)
 
 **Found 2026-08-12** while investigating whether a release build's `Podfile.lock` diff dropped a
