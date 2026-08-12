@@ -54,7 +54,7 @@ blocker now.
 again. If a future Xcode/Google-SDK update ever reintroduces the arm64-simulator gap for a NEW pod
 in this family, the fix is the same one-line `EXCLUDED_ARCHS` addition, not another full strip.
 
-## CI: `Analyze` failure silently skips `Test` — pipeline gives no real signal
+## CI: `Analyze` failure silently skips `Test` — pipeline gives no real signal — CLOSED (`6eee558`, #22, merged to main)
 
 **Found:** verifying CI for `feat/eula-terms-acceptance` (`f94a8c5`, merged `1d89029`). The
 `frontend-ci` GitHub Actions workflow runs `Analyze` (`dart analyze`) then `Test` (`flutter test`)
