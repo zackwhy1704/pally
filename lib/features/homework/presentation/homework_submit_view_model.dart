@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
-import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/error/pally_error.dart';
+import 'package:pally/core/services/document_scanner_service.dart';
 import 'package:pally/core/utils/logger.dart';
 
 part 'homework_submit_view_model.g.dart';
@@ -62,34 +62,18 @@ class HomeworkSubmitViewModel extends _$HomeworkSubmitViewModel {
     return const HomeworkSubmitState();
   }
 
-  /// Scan a page with the ML Kit document scanner (auto-crop/deskew); falls
+  /// Scan a page with the native document scanner (auto-crop/deskew); falls
   /// back to a plain camera capture if the scanner is unavailable.
   Future<void> pickFromCamera() async {
-    try {
-      final paths = await CunningDocumentScanner.getPictures(
-        noOfPages: 1,
-        isGalleryImportAllowed: false,
-      );
-      if (paths == null || paths.isEmpty) return;
-      final path = paths.first;
-      final file = File(path);
-      _addFile(PlatformFile(
-        name: '${DateTime.now().millisecondsSinceEpoch}_homework.jpg',
-        path: path,
-        size: await file.length(),
-      ));
-    } catch (e) {
-      appLog.w('[Homework] scanner unavailable, falling back to ImagePicker: $e');
-      final picker = ImagePicker();
-      final image =
-          await picker.pickImage(source: ImageSource.camera, imageQuality: 90);
-      if (image == null) return;
-      _addFile(PlatformFile(
-        name: image.name,
-        path: image.path,
-        size: await File(image.path).length(),
-      ));
-    }
+    final scanned = await DocumentScannerService.scan(logTag: 'Homework');
+    if (scanned == null) return;
+    final file = File(scanned.path);
+    _addFile(PlatformFile(
+      name: scanned.originalName ??
+          '${DateTime.now().millisecondsSinceEpoch}_homework.jpg',
+      path: scanned.path,
+      size: await file.length(),
+    ));
   }
 
   /// Pick an existing photo of the work from the gallery.

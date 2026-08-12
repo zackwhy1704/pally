@@ -754,3 +754,34 @@ gate the backend moderation false-positive (PERSONAL_DATA/HIGH on comprehension 
   line wraps (never clips). Non-blocking — the guard test already asserts `takeException()==null`.
 
 <!-- Trivial touch to verify GitHub Actions (frontend-ci) still fires after flipping this repo private. -->
+
+---
+
+## Camera-flow dedup (2026-08-12) — no unit test for DocumentScannerService
+
+### Native-scanner + ImagePicker-fallback logic has no automated coverage
+- **What:** extracted the three copy-pasted `CunningDocumentScanner.getPictures()` +
+  `ImagePicker(source: camera)` fallback blocks (upload, direct onboarding, homework submit)
+  into `core/services/document_scanner_service.dart`. No unit test added for the new
+  `DocumentScannerService.scan()`.
+- **Why deferred:** neither `cunning_document_scanner` nor `image_picker` has any existing
+  mock/fake infra in this test suite (`grep` across `test/` for both packages returns nothing)
+  — this is a pre-existing, codebase-wide gap the refactor inherited, not one it introduced.
+  The three original call sites had zero coverage of this logic before the extraction either.
+- **Closes it:** build a platform-channel fake for `cunning_document_scanner` +
+  `image_picker` (or inject a seam) and add a test asserting the scanner-success,
+  scanner-throws-fallback-succeeds, and both-fail-return-null paths.
+
+### Chat's "SNAP" camera vs. the document-scanner flows remain intentionally different
+- **What:** chat's camera button (`photo_question/presentation/camera_screen.dart`) is a
+  fully custom live-preview screen (raw `camera` plugin, OCR tips sheet, graph/chart content
+  warnings) — architecturally unrelated to the native-document-scanner flow used by
+  upload/onboarding/homework. Only the latter three were deduplicated this round.
+- **Why deferred:** the divergence looks like an inconsistency bug but is a legitimate product
+  distinction — chat SNAP captures one homework problem for immediate OCR (needs guidance on
+  what content types OCR can't read), while the other three scan multi-page study documents
+  (want native crop/deskew). Unifying them would remove purpose-built OCR UX; user explicitly
+  scoped this round to the dedup only, not a merge.
+- **Closes it:** a product decision on whether chat should also move to
+  `DocumentScannerService`, made with the OCR tips/warnings UX in view, not as a silent side
+  effect of a refactor.

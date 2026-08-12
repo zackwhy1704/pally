@@ -1,13 +1,12 @@
 import 'dart:io';
 
-import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:pally/core/services/document_scanner_service.dart';
 import 'package:pally/core/theme/app_colors.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/theme/app_sizing.dart';
@@ -956,28 +955,14 @@ class _Step3Upload extends ConsumerWidget {
 
   Future<void> _pickFromCamera(BuildContext context, WidgetRef ref) async {
     try {
-      final paths = await CunningDocumentScanner.getPictures(
-        noOfPages: 1,
-        isGalleryImportAllowed: false,
-      );
-      if (paths == null || paths.isEmpty) return;
+      final scanned =
+          await DocumentScannerService.scan(logTag: 'DirectOnboard');
+      if (scanned == null) return;
       await ref
           .read(directOnboardingViewModelProvider.notifier)
-          .uploadFromCamera(paths.first);
+          .uploadFromCamera(scanned.path);
     } catch (e) {
-      // Fallback to ImagePicker.
-      appLog.w('[DirectOnboard] Scanner unavailable, fallback: $e');
-      try {
-        final picker = ImagePicker();
-        final image =
-            await picker.pickImage(source: ImageSource.camera, imageQuality: 90);
-        if (image == null) return;
-        await ref
-            .read(directOnboardingViewModelProvider.notifier)
-            .uploadFromCamera(image.path);
-      } catch (e2) {
-        appLog.w('[DirectOnboard] Camera fallback also failed: $e2');
-      }
+      appLog.w('[DirectOnboard] Camera fallback also failed: $e');
     }
   }
 

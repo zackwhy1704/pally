@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
-import 'package:cunning_document_scanner/cunning_document_scanner.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/shared/models/avatar.dart';
@@ -12,6 +10,7 @@ import 'package:pally/shared/models/upload_result.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/observability/observability.dart';
 import 'package:pally/core/observability/observability_providers.dart';
+import 'package:pally/core/services/document_scanner_service.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/features/home/presentation/home_view_model.dart';
@@ -409,39 +408,17 @@ class UploadViewModel extends _$UploadViewModel {
 
   // ── Pick & upload flows ────────────────────────────────────────────────────
 
-  /// Launches the ML Kit document scanner (auto-crop + deskew + brightness).
-  /// Falls back to raw ImagePicker on any platform error (e.g. Android < 10,
-  /// or simulator without ML Kit play services).
+  /// Launches the native document scanner (auto-crop + deskew + brightness),
+  /// falling back to a plain camera capture if it's unavailable.
   Future<void> pickFromCamera() async {
-    try {
-      final paths = await CunningDocumentScanner.getPictures(
-        noOfPages: 1,
-        isGalleryImportAllowed: false,
-      );
-      if (paths == null || paths.isEmpty) return;
-      final path = paths.first;
-      final file = File(path);
-      final platformFile = PlatformFile(
-        name: '${DateTime.now().millisecondsSinceEpoch}_scan.jpg',
-        path: path,
-        size: await file.length(),
-      );
-      await _checkRelevanceAndUpload(platformFile);
-    } catch (e) {
-      // Fallback: plain camera capture (no auto-crop/deskew)
-      appLog.w('[Upload] Document scanner unavailable, falling back to ImagePicker: $e');
-      await _pickFromCameraFallback();
-    }
-  }
-
-  Future<void> _pickFromCameraFallback() async {
-    final picker = ImagePicker();
-    final image = await picker.pickImage(source: ImageSource.camera, imageQuality: 90);
-    if (image == null) return;
+    final scanned = await DocumentScannerService.scan(logTag: 'Upload');
+    if (scanned == null) return;
+    final file = File(scanned.path);
     final platformFile = PlatformFile(
-      name: image.name,
-      path: image.path,
-      size: await File(image.path).length(),
+      name: scanned.originalName ??
+          '${DateTime.now().millisecondsSinceEpoch}_scan.jpg',
+      path: scanned.path,
+      size: await file.length(),
     );
     await _checkRelevanceAndUpload(platformFile);
   }
