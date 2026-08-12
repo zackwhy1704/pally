@@ -3,11 +3,19 @@ ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 platform :ios, '15.5'
 
-# Apalchi: iOS uses Apple Vision Framework for text recognition (see
-# Runner/VisionTextRecognitionChannel.swift). google_mlkit_* plugins are
-# Android-only — their iOS pods have no arm64-simulator slice and break the
+# Apalchi: google_mlkit_* plugins have no iOS native implementation wired up in
+# this app — their iOS pods also have no arm64-simulator slice and break the
 # build on Apple Silicon + Xcode 26. Strip them from the iOS plugin list so
 # neither pods nor GeneratedPluginRegistrant registrations get added on iOS.
+#
+# The photo-question/OCR feature (lib/core/services/text_recognition_service.dart)
+# is gated Android-only client-side (lib/features/chat/presentation/chat_screen.dart)
+# until a real native implementation exists — see DEFERRED.md ("iOS OCR
+# implementation"). A prior version of this comment claimed iOS used Apple's
+# Vision framework via a Runner/VisionTextRecognitionChannel.swift file; that
+# file has never existed in this repo's history (verified via `git log --all
+# --full-history`) — the comment was aspirational/stale, not a description of
+# working code. Do not restore that claim until the file actually exists.
 require 'json'
 plugins_dependencies = File.expand_path('../.flutter-plugins-dependencies', __dir__)
 if File.exist?(plugins_dependencies)
