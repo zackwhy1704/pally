@@ -7,50 +7,52 @@
 
 ---
 
-## iOS OCR implementation — feature Android-gated pending a real native handler
+## iOS OCR implementation — CLOSED 2026-08-12 (root cause was a simulator-only arch gap, not a real block)
 
 **Found 2026-08-12** while investigating whether a release build's `Podfile.lock` diff dropped a
-plugin. `ios/Podfile` (added in `ed9a5b7`, 2026-06-19) has always deliberately stripped
-`google_mlkit_*` from the iOS plugin list — no CocoaPods entry, no SPM entry, and it patches
+plugin. `ios/Podfile` (added in `ed9a5b7`, 2026-06-19) had always deliberately stripped
+`google_mlkit_*` from the iOS plugin list — no CocoaPods entry, no SPM entry, and it patched
 `GeneratedPluginRegistrant.m` to remove the registration call too. The comment at the time claimed
 this was safe because "iOS uses Apple Vision Framework for text recognition (see
-`Runner/VisionTextRecognitionChannel.swift`)" — **that file has never existed in this repo's
-history** (`git log --all --full-history -- '**/VisionTextRecognitionChannel.swift'` returns
-nothing), and `ios/Runner/` contains exactly one Swift file (`AppDelegate.swift`), with no
-`MethodChannel` registered for `google_mlkit_text_recognizer` (the channel name the Dart plugin
-actually calls) anywhere in the iOS project.
+`Runner/VisionTextRecognitionChannel.swift`)" — **that file never existed in this repo's history**
+(`git log --all --full-history -- '**/VisionTextRecognitionChannel.swift'` returns nothing), and
+`ios/Runner/` contains exactly one Swift file (`AppDelegate.swift`), with no `MethodChannel`
+registered for `google_mlkit_text_recognizer` (the channel name the Dart plugin actually calls)
+anywhere in the iOS project.
 
-**Effect:** `lib/core/services/text_recognition_service.dart`'s `TextRecognitionService.recognize()`
-has been silently broken on iOS since `ed9a5b7` — every call throws (no native handler registered).
-The failure was never visible as a crash because
-`lib/features/photo_question/presentation/photo_preview_view_model.dart`'s `_runDetection` catches
-ALL exceptions and replaces them with `"Couldn't read text from this photo. Try a clearer shot."` —
-a plausible-sounding, completely misleading message that blames photo quality for what is actually
-a missing native implementation. Anyone who hit this on a real device (including, plausibly, an App
-Review tester) would have seen an ordinary-looking retry prompt, not an error report.
+**Effect (now historical):** `TextRecognitionService.recognize()` was silently broken on iOS since
+`ed9a5b7` — every call threw (no native handler registered). Never visible as a crash because
+`photo_preview_view_model.dart`'s `_runDetection` catches ALL exceptions and replaces them with
+`"Couldn't read text from this photo. Try a clearer shot."` — a plausible-sounding, completely
+misleading message that blamed photo quality for what was actually a missing native implementation.
 
-**Mitigated 2026-08-12:** the camera entry point in `lib/features/chat/presentation/chat_screen.dart`
-(`_InputBar`'s camera button, the only reachable path to `CameraRoute`/`PhotoPreviewRoute` in the
-app — verified via `grep -rn "CameraRoute()\|PhotoPreviewRoute(" lib/`) is now hidden entirely on
-iOS (`if (!Platform.isIOS) ...`), not just disabled — a visible dead button that fails with a
-misleading message is worse than no button. `ios/Podfile`'s comment corrected to state the actual
-situation instead of the aspirational/stale claim. Downstream "retake"/"choose from gallery"
-navigation inside the photo-question flow (`photo_review_screen.dart`, `photo_preview_screen.dart`)
-was checked and confirmed unreachable without first passing through the now-gated camera button.
+**Root cause, and the actual fix:** the stripping logic's own comment named the real reason —
+"their iOS pods have no arm64-simulator slice and break the build on Apple Silicon + Xcode 26" —
+but the fix applied was to remove the plugin from iOS ENTIRELY rather than exclude the one
+architecture that was actually the problem. `EXCLUDED_ARCHS[sdk=iphonesimulator*]` already existed
+in `ios/Podfile`'s `post_install` (excluding `armv7`); adding `arm64` to that same setting is the
+standard, well-documented ML Kit/Firebase-family workaround (many Google-distributed XCFrameworks
+ship without an arm64 SIMULATOR slice, only a device one) and needed zero Swift code.
 
-**NOT tested with an automated regression test**: `Platform.isIOS` (`dart:io`) reflects the actual
-host OS the code is running on, not a Flutter-mockable `TargetPlatform` — `flutter test` runs on
-the dev/CI host, never as a compiled iOS binary, so `Platform.isIOS` is always `false` in the test
-harness regardless of what this code branch does. There is no seam here to inject a fake platform
-without a larger refactor (making `_InputBar` public / injectable) that wasn't in scope for this
-gate. Confirm the button is actually absent with a real device/simulator run before the next iOS
-submission.
+**Verified, not assumed:** removed the whole stripping block (the `.flutter-plugins-dependencies`
+filter + the `GeneratedPluginRegistrant.m` patch), added `arm64` to the simulator exclusion, ran
+`flutter clean && flutter pub get && pod install` (confirmed `google_mlkit_commons` and
+`google_mlkit_text_recognition` + their 15 transitive MLKit/Google pods installed — "7 dependencies
+from the Podfile and 20 total pods installed"), then `flutter build ipa --release`. The RELEASE/
+DEVICE build succeeded cleanly — `Runner.xcarchive` (317.2MB) and a signed IPA (75.2MB) both built.
+The build log's arm64-simulator warning is real but scoped exactly to simulators, as expected; it
+did not block the device archive or the IPA export. The camera-button `Platform.isIOS` gate added
+earlier the same day was removed again — `dart analyze` (0 new issues), `flutter test` (1100
+passed), and a second `flutter build ipa --release` after removing the gate both green, IPA
+unchanged at 75.2MB (the gate only affected UI reachability, not what's linked into the binary).
 
-**Closes it:** implement a real `Runner/VisionTextRecognitionChannel.swift` using Apple's Vision
-framework (`VNRecognizeTextRequest`), register a `MethodChannel` in `AppDelegate.swift` matching the
-channel/method shape `TextRecognitionService` (or a new iOS-native equivalent) expects, remove the
-`Platform.isIOS` gate in `chat_screen.dart`, and update the `ios/Podfile` comment again once it's
-real. Until then, the photo-question feature is Android-only by design, not by accident.
+**Size cost:** IPA grew from 58,909,250 → 75,230,395 bytes (+16.3MB / +27.7%) — MLKit's on-device
+text-recognition model is not small. Worth knowing if app-size becomes a concern later, not a
+blocker now.
+
+**Remaining, genuinely deferred:** none for this specific bug — the feature works on both platforms
+again. If a future Xcode/Google-SDK update ever reintroduces the arm64-simulator gap for a NEW pod
+in this family, the fix is the same one-line `EXCLUDED_ARCHS` addition, not another full strip.
 
 ## CI: `Analyze` failure silently skips `Test` — pipeline gives no real signal
 

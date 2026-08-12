@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -867,50 +866,42 @@ class _InputBar extends StatelessWidget {
           VoiceInputButton(controller: controller),
           const SizedBox(width: AppSpacing.xs),
 
-          // Camera button — teal. iOS-gated: no native OCR implementation
-          // exists (see DEFERRED.md — "iOS OCR implementation"; the mlkit
-          // plugin is deliberately stripped from the iOS build in
-          // ios/Podfile and no native replacement was ever built). Hidden
-          // entirely, not just disabled — a visible dead button that fails
-          // with a misleading "try a clearer shot" error is worse than no
-          // button at all.
-          if (!Platform.isIOS) ...[
-            GestureDetector(
-              onTap: canSend ? onCameraPressed : null,
-              child: Container(
-                width: 44,
-                height: 52,
-                decoration: BoxDecoration(
-                  color: canSend ? AppColors.tealL : AppColors.outline,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: canSend ? AppColors.teal : AppColors.outline,
-                    width: 1.5,
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '📷',
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: canSend ? null : AppColors.text3),
-                    ),
-                    Text(
-                      AppLocalizations.of(context).chatSnap,
-                      style: AppTextStyles.caption.copyWith(
-                        color: canSend ? AppColors.teal : AppColors.text3,
-                        fontSize: 8,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
+          // Camera button — teal
+          GestureDetector(
+            onTap: canSend ? onCameraPressed : null,
+            child: Container(
+              width: 44,
+              height: 52,
+              decoration: BoxDecoration(
+                color: canSend ? AppColors.tealL : AppColors.outline,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: canSend ? AppColors.teal : AppColors.outline,
+                  width: 1.5,
                 ),
               ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '📷',
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: canSend ? null : AppColors.text3),
+                  ),
+                  Text(
+                    AppLocalizations.of(context).chatSnap,
+                    style: AppTextStyles.caption.copyWith(
+                      color: canSend ? AppColors.teal : AppColors.text3,
+                      fontSize: 8,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(width: AppSpacing.xs),
-          ],
+          ),
+          const SizedBox(width: AppSpacing.xs),
 
           // Send button — purple
           FloatingActionButton(
