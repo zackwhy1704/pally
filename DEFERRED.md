@@ -752,3 +752,5 @@ gate the backend moderation false-positive (PERSONAL_DATA/HIGH on comprehension 
   pass at 1.3× on the hero is worth a manual glance.
 - **Closes it:** run the hub on an SE-width device at 1.3× accessibility text; confirm the hero
   line wraps (never clips). Non-blocking — the guard test already asserts `takeException()==null`.
+
+<!-- Trivial touch to verify GitHub Actions (frontend-ci) still fires after flipping this repo private. -->
