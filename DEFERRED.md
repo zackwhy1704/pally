@@ -7,7 +7,76 @@
 
 ---
 
-## CI: `Analyze` failure silently skips `Test` — pipeline gives no real signal
+## PostHog identify()/event() PII fix — no automated regression test for the two identify() sites
+
+**What shipped 2026-08-12:** `sign_in_screen.dart` and `direct_onboarding_view_model.dart`'s
+`identify()` calls no longer send `email`/`display_name` to PostHog (opaque `userId` only); a full
+app-wide sweep of every `analyticsProvider` call site found one more hit,
+`upload_view_model.dart`'s `uploadNote` event sending the raw `file_name` (a child can name a photo
+after themselves or their school) — fixed to send `file_type` (extension) instead.
+
+**Deliberately not covered by an automated test:** `quickOnboard()` (the call site for the
+onboarding `identify()`) constructs its own `Dio` instance inline with no DI seam — a documented,
+deliberate architectural choice (the user isn't authenticated yet, so it can't reuse the app's
+normal authenticated Dio provider), not a shortcut. No existing test harness drives that network
+path; building one is real new test infrastructure, out of scope for a resubmission-blocking
+privacy fix. `sign_in_screen.dart`'s `identify()` call has the same gap for the same reason
+(post-auth Dio flow, no existing widget-test harness that exercises it end-to-end).
+**Closes it:** when `quickOnboard()`/sign-in get a real Dio-injection seam for OTHER reasons (there
+is no standalone reason to build one just for this), add a widget test overriding
+`analyticsProvider` with a capturing fake and asserting `identify()` is called with no PII props,
+for both call sites. Until then, the guard against regression is that the fix is a one-line
+`identify(userId)` — reintroducing PII means someone has to deliberately add a `props:` argument
+back, not something that happens by default.
+
+## iOS OCR implementation — CLOSED 2026-08-12 (root cause was a simulator-only arch gap, not a real block)
+
+**Found 2026-08-12** while investigating whether a release build's `Podfile.lock` diff dropped a
+plugin. `ios/Podfile` (added in `ed9a5b7`, 2026-06-19) had always deliberately stripped
+`google_mlkit_*` from the iOS plugin list — no CocoaPods entry, no SPM entry, and it patched
+`GeneratedPluginRegistrant.m` to remove the registration call too. The comment at the time claimed
+this was safe because "iOS uses Apple Vision Framework for text recognition (see
+`Runner/VisionTextRecognitionChannel.swift`)" — **that file never existed in this repo's history**
+(`git log --all --full-history -- '**/VisionTextRecognitionChannel.swift'` returns nothing), and
+`ios/Runner/` contains exactly one Swift file (`AppDelegate.swift`), with no `MethodChannel`
+registered for `google_mlkit_text_recognizer` (the channel name the Dart plugin actually calls)
+anywhere in the iOS project.
+
+**Effect (now historical):** `TextRecognitionService.recognize()` was silently broken on iOS since
+`ed9a5b7` — every call threw (no native handler registered). Never visible as a crash because
+`photo_preview_view_model.dart`'s `_runDetection` catches ALL exceptions and replaces them with
+`"Couldn't read text from this photo. Try a clearer shot."` — a plausible-sounding, completely
+misleading message that blamed photo quality for what was actually a missing native implementation.
+
+**Root cause, and the actual fix:** the stripping logic's own comment named the real reason —
+"their iOS pods have no arm64-simulator slice and break the build on Apple Silicon + Xcode 26" —
+but the fix applied was to remove the plugin from iOS ENTIRELY rather than exclude the one
+architecture that was actually the problem. `EXCLUDED_ARCHS[sdk=iphonesimulator*]` already existed
+in `ios/Podfile`'s `post_install` (excluding `armv7`); adding `arm64` to that same setting is the
+standard, well-documented ML Kit/Firebase-family workaround (many Google-distributed XCFrameworks
+ship without an arm64 SIMULATOR slice, only a device one) and needed zero Swift code.
+
+**Verified, not assumed:** removed the whole stripping block (the `.flutter-plugins-dependencies`
+filter + the `GeneratedPluginRegistrant.m` patch), added `arm64` to the simulator exclusion, ran
+`flutter clean && flutter pub get && pod install` (confirmed `google_mlkit_commons` and
+`google_mlkit_text_recognition` + their 15 transitive MLKit/Google pods installed — "7 dependencies
+from the Podfile and 20 total pods installed"), then `flutter build ipa --release`. The RELEASE/
+DEVICE build succeeded cleanly — `Runner.xcarchive` (317.2MB) and a signed IPA (75.2MB) both built.
+The build log's arm64-simulator warning is real but scoped exactly to simulators, as expected; it
+did not block the device archive or the IPA export. The camera-button `Platform.isIOS` gate added
+earlier the same day was removed again — `dart analyze` (0 new issues), `flutter test` (1100
+passed), and a second `flutter build ipa --release` after removing the gate both green, IPA
+unchanged at 75.2MB (the gate only affected UI reachability, not what's linked into the binary).
+
+**Size cost:** IPA grew from 58,909,250 → 75,230,395 bytes (+16.3MB / +27.7%) — MLKit's on-device
+text-recognition model is not small. Worth knowing if app-size becomes a concern later, not a
+blocker now.
+
+**Remaining, genuinely deferred:** none for this specific bug — the feature works on both platforms
+again. If a future Xcode/Google-SDK update ever reintroduces the arm64-simulator gap for a NEW pod
+in this family, the fix is the same one-line `EXCLUDED_ARCHS` addition, not another full strip.
+
+## CI: `Analyze` failure silently skips `Test` — pipeline gives no real signal — CLOSED (`6eee558`, #22, merged to main)
 
 **Found:** verifying CI for `feat/eula-terms-acceptance` (`f94a8c5`, merged `1d89029`). The
 `frontend-ci` GitHub Actions workflow runs `Analyze` (`dart analyze`) then `Test` (`flutter test`)

@@ -437,12 +437,12 @@ class DirectOnboardingViewModel extends _$DirectOnboardingViewModel {
       appLog.i(
           '[DirectOnboard] Quick onboard success: userId=$userId avatarId=$avatarId under13=$isUnder13');
 
-      ref.read(analyticsProvider).identify(userId, props: {
-        'email': email,
-        'display_name': displayName,
-        'subject': subject,
-        'level': level,
-      });
+      // Opaque userId only — never email/display_name. PostHog is a US-hosted
+      // third party; sending PII here is an undeclared-tracking risk on a
+      // minors' app (App Privacy label + 5.1.2(i) exposure). subject/level
+      // stay on the event below (event-scoped metadata, not a persistent
+      // identify() profile property).
+      ref.read(analyticsProvider).identify(userId);
       ref.read(analyticsProvider).event(
         AnalyticsEvents.onboardingCompleted,
         props: {

@@ -7,7 +7,7 @@ part of 'flashcard_view_model.dart';
 // **************************************************************************
 
 String _$flashCardViewModelHash() =>
-    r'0fe6f480e1a719fde0f9cebca1c5cd58ca07ba47';
+    r'488f32386a811553efa8f81d41789c6ede08a189';
 
 /// Copied from Dart SDK
 class _SystemHash {

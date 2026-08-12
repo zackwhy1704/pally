@@ -89,9 +89,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         onboardingComplete: result.setupComplete,
         accountType: result.accountType,
       );
-      ref.read(analyticsProvider).identify(result.userId, props: {
-        'email': email,
-      });
+      // Opaque userId only — never email/name. PostHog is a US-hosted
+      // third party; sending PII here is an undeclared-tracking risk on a
+      // minors' app (App Privacy label + 5.1.2(i) exposure).
+      ref.read(analyticsProvider).identify(result.userId);
       ref.read(analyticsProvider).event(AnalyticsEvents.signIn);
       // Fire-and-forget FCM token registration.
       FcmTokenService(ref.read(dioProvider)).registerToken();

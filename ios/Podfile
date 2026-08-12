@@ -3,42 +3,12 @@ ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 platform :ios, '15.5'
 
-# Apalchi: iOS uses Apple Vision Framework for text recognition (see
-# Runner/VisionTextRecognitionChannel.swift). google_mlkit_* plugins are
-# Android-only — their iOS pods have no arm64-simulator slice and break the
-# build on Apple Silicon + Xcode 26. Strip them from the iOS plugin list so
-# neither pods nor GeneratedPluginRegistrant registrations get added on iOS.
-require 'json'
-plugins_dependencies = File.expand_path('../.flutter-plugins-dependencies', __dir__)
-if File.exist?(plugins_dependencies)
-  begin
-    deps = JSON.parse(File.read(plugins_dependencies))
-    ios_plugins = deps.dig('plugins', 'ios')
-    if ios_plugins.is_a?(Array)
-      filtered = ios_plugins.reject { |p| p['name'].to_s.start_with?('google_mlkit_') }
-      if filtered.length != ios_plugins.length
-        deps['plugins']['ios'] = filtered
-        File.write(plugins_dependencies, JSON.pretty_generate(deps))
-        puts "[Apalchi] Stripped google_mlkit_* from iOS plugin list (Android-only)."
-      end
-    end
-  rescue => e
-    puts "[Apalchi] Warning: failed to filter .flutter-plugins-dependencies: #{e}"
-  end
-end
-
-registrant_m = File.expand_path('Runner/GeneratedPluginRegistrant.m', __dir__)
-if File.exist?(registrant_m)
-  original = File.read(registrant_m)
-  patched = original
-    .gsub(/#if __has_include\(<google_mlkit_[^>]+>\).*?#endif\n\n/m, '')
-    .gsub(/^\s*\[GoogleMlKit\w+Plugin registerWithRegistrar:.*\];\n/, '')
-  if patched != original
-    File.write(registrant_m, patched)
-    puts "[Apalchi] Patched GeneratedPluginRegistrant.m to drop google_mlkit_* registrations."
-  end
-end
-
+# Apalchi: google_mlkit_* plugins are NOT stripped from iOS (reverted
+# 2026-08-12 — see DEFERRED.md "iOS OCR implementation" for the full history).
+# The plugin's iOS pods lack an arm64 SIMULATOR slice, not a device slice —
+# EXCLUDED_ARCHS[sdk=iphonesimulator*] below excludes arm64 (in addition to
+# armv7) as the standard ML Kit workaround, so simulator builds skip the pod
+# while real device/release builds link it normally.
 project 'Runner', {
   'Debug' => :debug,
   'Profile' => :release,
@@ -77,7 +47,7 @@ post_install do |installer|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.5'
       config.build_settings['EXCLUDED_ARCHS[sdk=iphoneos*]'] = 'armv7'
-      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'armv7'
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'armv7 arm64'
       defs = config.build_settings['GCC_PREPROCESSOR_DEFINITIONS']
       defs = ['$(inherited)'] if defs.nil?
       defs = [defs] unless defs.is_a?(Array)
