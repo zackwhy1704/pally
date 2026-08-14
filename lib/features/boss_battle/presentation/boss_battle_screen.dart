@@ -7,6 +7,7 @@ import 'package:pally/core/theme/app_sizing.dart';
 import 'package:pally/core/theme/app_spacing.dart';
 import 'package:pally/core/theme/app_text_styles.dart';
 import 'package:pally/core/ui/adaptive_center.dart';
+import 'package:pally/core/ui/confetti_burst.dart';
 import 'package:pally/core/ui/pally_error_card.dart';
 import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/boss_battle/presentation/boss_battle_game.dart';
@@ -29,20 +30,42 @@ class BossBattleScreen extends ConsumerStatefulWidget {
 class _BossBattleScreenState extends ConsumerState<BossBattleScreen> {
   BossBattleGame? _game;
 
+  /// True while the defeat animation is still playing. The screen only
+  /// switches to the victory card once this flips back to false — a
+  /// presentation-sequencing flag, not a game-state one; boss.defeated is
+  /// already server-confirmed the moment this becomes true.
+  bool _showingDefeat = false;
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(bossBattleViewModelProvider(widget.avatarId));
 
+    // Fires the defeat animation exactly once, on the edge where the SERVER
+    // response first reports defeated=true — never derived/guessed locally.
+    ref.listen<BossBattleState>(bossBattleViewModelProvider(widget.avatarId),
+        (previous, next) {
+      final justDefeated =
+          next.boss?.defeated == true && previous?.boss?.defeated != true;
+      if (justDefeated && _game != null) {
+        setState(() => _showingDefeat = true);
+        _game!.playDefeatSequence().then((_) {
+          if (mounted) setState(() => _showingDefeat = false);
+        });
+      }
+    });
+
     // Push server-truth HP/outcome into the already-running game instance —
     // never recreate the game on every rebuild (that would reset its state).
     final boss = state.boss;
-    if (boss != null && boss.active && !boss.defeated) {
+    if (boss != null && boss.active) {
       _game ??= BossBattleGame(hpMax: boss.hpMax, hpRemaining: boss.hpRemaining);
-      _game!.updateBattleState(
-        hpRemaining: boss.hpRemaining,
-        hpMax: boss.hpMax,
-        hitLanded: state.lastHitLanded,
-      );
+      if (!boss.defeated) {
+        _game!.updateBattleState(
+          hpRemaining: boss.hpRemaining,
+          hpMax: boss.hpMax,
+          hitLanded: state.lastHitLanded,
+        );
+      }
     }
 
     return Scaffold(
@@ -83,9 +106,11 @@ class _BossBattleScreenState extends ConsumerState<BossBattleScreen> {
     if (boss == null || !boss.active) {
       return const _NoBossCard();
     }
-    if (boss.defeated) {
+    if (boss.defeated && !_showingDefeat) {
       return _VictoryCard(boss: boss);
     }
+    // Active fight, OR just-defeated-but-still-playing-the-sequence — the
+    // battle canvas stays up so the defeat animation has something to play on.
     return _BattleView(
       state: state,
       game: _game!,
@@ -135,41 +160,114 @@ class _NoBossCard extends StatelessWidget {
   }
 }
 
-class _VictoryCard extends StatelessWidget {
+/// The post-battle celebration. When [BossState.rewardUnlocked] is set (the
+/// server's flag, never derived here), this plays a distinct companion-unlock
+/// beat below the plain "defeated" heading — confetti + a gold badge, reusing
+/// the same [ConfettiBurst] effect the level-up celebration uses so the
+/// visual language matches across reward moments.
+class _VictoryCard extends StatefulWidget {
   const _VictoryCard({required this.boss});
   final BossState boss;
 
   @override
+  State<_VictoryCard> createState() => _VictoryCardState();
+}
+
+class _VictoryCardState extends State<_VictoryCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: AppSizing.iconContainer,
-              height: AppSizing.iconContainer,
-              decoration: const BoxDecoration(
-                color: AppColors.tealL,
-                shape: BoxShape.circle,
+    final boss = widget.boss;
+    return Stack(
+      children: [
+        if (boss.rewardUnlocked)
+          Positioned.fill(child: ConfettiBurst(progress: _controller)),
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.xl),
+            child: ScaleTransition(
+              scale: CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: AppSizing.iconContainer,
+                    height: AppSizing.iconContainer,
+                    decoration: const BoxDecoration(
+                      color: AppColors.tealL,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.celebration_rounded,
+                        color: AppColors.teal, size: 36),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Text(AppLocalizations.of(context).bossBattleDefeatedTitle,
+                      style: AppTextStyles.heading1, textAlign: TextAlign.center),
+                  if (boss.rewardUnlocked) ...[
+                    const SizedBox(height: AppSpacing.lg),
+                    _CompanionUnlockBadge(
+                      message: AppLocalizations.of(context).bossBattleRewardMessage(
+                          AppLocalizations.of(context).mascotName),
+                    ),
+                  ],
+                ],
               ),
-              child: const Icon(Icons.celebration_rounded,
-                  color: AppColors.teal, size: 36),
             ),
-            const SizedBox(height: AppSpacing.md),
-            Text(AppLocalizations.of(context).bossBattleDefeatedTitle,
-                style: AppTextStyles.heading1, textAlign: TextAlign.center),
-            if (boss.rewardUnlocked) ...[
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                  AppLocalizations.of(context)
-                      .bossBattleRewardMessage(AppLocalizations.of(context).mascotName),
-                  style: AppTextStyles.body.copyWith(color: AppColors.text2),
-                  textAlign: TextAlign.center),
-            ],
-          ],
+          ),
         ),
+      ],
+    );
+  }
+}
+
+/// The Mochi companion-unlock moment — distinct from the plain "defeated"
+/// heading above it, gated entirely on the server's rewardUnlocked flag.
+class _CompanionUnlockBadge extends StatelessWidget {
+  const _CompanionUnlockBadge({required this.message});
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 280),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppColors.gold, AppColors.amber],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 32),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            message,
+            style: AppTextStyles.body.copyWith(color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
@@ -229,23 +327,26 @@ class _BattleView extends StatelessWidget {
                 PallyErrorCard(message: state.error!.userMessage, onRetry: onAttack),
                 const SizedBox(height: AppSpacing.sm),
               ],
-              SizedBox(
-                height: AppSizing.buttonHeight,
-                child: FilledButton(
-                  onPressed: (state.isAttacking || state.selectedIndex == null)
-                      ? null
-                      : onAttack,
-                  style: FilledButton.styleFrom(backgroundColor: AppColors.coral),
-                  child: state.isAttacking
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white),
-                        )
-                      : Text(AppLocalizations.of(context).bossBattleAttack),
+              // Defeated (mid defeat-sequence): no question to answer, no
+              // attack to make — the button would just sit there disabled.
+              if (!boss.defeated)
+                SizedBox(
+                  height: AppSizing.buttonHeight,
+                  child: FilledButton(
+                    onPressed: (state.isAttacking || state.selectedIndex == null)
+                        ? null
+                        : onAttack,
+                    style: FilledButton.styleFrom(backgroundColor: AppColors.coral),
+                    child: state.isAttacking
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2, color: Colors.white),
+                          )
+                        : Text(AppLocalizations.of(context).bossBattleAttack),
+                  ),
                 ),
-              ),
             ],
           ),
         ),
