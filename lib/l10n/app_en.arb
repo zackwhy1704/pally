@@ -682,6 +682,47 @@
   "@moduleUnknownStage": {
     "description": "Fallback for an unrecognized module stage."
   },
+  "bossBattleTitle": "Boss Battle",
+  "@bossBattleTitle": {
+    "description": "App bar title on the Phase 1 boss battle screen."
+  },
+  "bossBattleHpRemaining": "{remaining} / {max} hits left",
+  "@bossBattleHpRemaining": {
+    "description": "Server-authoritative HP readout above the boss battle canvas.",
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "bossBattleAttack": "Attack!",
+  "@bossBattleAttack": {
+    "description": "Primary CTA button that submits the selected answer as an attack."
+  },
+  "bossBattleDefeatedTitle": "Boss defeated!",
+  "@bossBattleDefeatedTitle": {
+    "description": "Heading shown once the boss's HP reaches zero."
+  },
+  "bossBattleRewardMessage": "Your {mascot} companion is thrilled with you!",
+  "@bossBattleRewardMessage": {
+    "description": "Shown on the victory card when the defeat unlocked a reward flag.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "bossBattleNoBossTitle": "No boss to fight right now",
+  "@bossBattleNoBossTitle": {
+    "description": "Empty-state heading when no weak topic has produced a boss yet."
+  },
+  "bossBattleNoBossBody": "Keep practicing — a boss shows up once we spot a topic you're finding tricky.",
+  "@bossBattleNoBossBody": {
+    "description": "Empty-state body text under bossBattleNoBossTitle."
+  },
   "quizConfidence": "Confidence",
   "@quizConfidence": {
     "description": "Header for the confidence self-rating on a quiz question."

@@ -908,6 +908,48 @@ abstract class AppLocalizations {
   /// **'Unknown stage'**
   String get moduleUnknownStage;
 
+  /// App bar title on the Phase 1 boss battle screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Boss Battle'**
+  String get bossBattleTitle;
+
+  /// Server-authoritative HP readout above the boss battle canvas.
+  ///
+  /// In en, this message translates to:
+  /// **'{remaining} / {max} hits left'**
+  String bossBattleHpRemaining(int remaining, int max);
+
+  /// Primary CTA button that submits the selected answer as an attack.
+  ///
+  /// In en, this message translates to:
+  /// **'Attack!'**
+  String get bossBattleAttack;
+
+  /// Heading shown once the boss's HP reaches zero.
+  ///
+  /// In en, this message translates to:
+  /// **'Boss defeated!'**
+  String get bossBattleDefeatedTitle;
+
+  /// Shown on the victory card when the defeat unlocked a reward flag.
+  ///
+  /// In en, this message translates to:
+  /// **'Your {mascot} companion is thrilled with you!'**
+  String bossBattleRewardMessage(String mascot);
+
+  /// Empty-state heading when no weak topic has produced a boss yet.
+  ///
+  /// In en, this message translates to:
+  /// **'No boss to fight right now'**
+  String get bossBattleNoBossTitle;
+
+  /// Empty-state body text under bossBattleNoBossTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep practicing — a boss shows up once we spot a topic you\'re finding tricky.'**
+  String get bossBattleNoBossBody;
+
   /// Header for the confidence self-rating on a quiz question.
   ///
   /// In en, this message translates to:

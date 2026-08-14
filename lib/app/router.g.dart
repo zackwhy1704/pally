@@ -13,6 +13,7 @@ List<RouteBase> get $appRoutes => [
       $wikiViewerRoute,
       $wikiCompiledRoute,
       $quizRoute,
+      $bossBattleRoute,
       $flashcardRoute,
       $shopRoute,
       $collectionRoute,
@@ -350,6 +351,30 @@ extension $QuizRouteExtension on QuizRoute {
 
   String get location => GoRouteData.$location(
         '/avatar/${Uri.encodeComponent(avatarId)}/quiz',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $bossBattleRoute => GoRouteData.$route(
+      path: '/avatar/:avatarId/boss',
+      factory: $BossBattleRouteExtension._fromState,
+    );
+
+extension $BossBattleRouteExtension on BossBattleRoute {
+  static BossBattleRoute _fromState(GoRouterState state) => BossBattleRoute(
+        avatarId: state.pathParameters['avatarId']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/avatar/${Uri.encodeComponent(avatarId)}/boss',
       );
 
   void go(BuildContext context) => context.go(location);

@@ -22,6 +22,7 @@ import 'package:pally/features/wiki_viewer/presentation/wiki_viewer_screen.dart'
 import 'package:pally/features/wiki_compiled/presentation/wiki_compiled_screen.dart';
 import 'package:pally/features/library/presentation/library_screen.dart';
 import 'package:pally/features/quiz/presentation/quiz_screen.dart';
+import 'package:pally/features/boss_battle/presentation/boss_battle_screen.dart';
 import 'package:pally/features/flashcards/presentation/flashcard_screen.dart';
 import 'package:pally/features/progress/presentation/achievements_screen.dart';
 import 'package:pally/features/progress/presentation/level_roadmap_screen.dart';
@@ -274,6 +275,16 @@ class QuizRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       QuizScreen(avatarId: avatarId);
+}
+
+@TypedGoRoute<BossBattleRoute>(path: '/avatar/:avatarId/boss')
+class BossBattleRoute extends GoRouteData {
+  const BossBattleRoute({required this.avatarId});
+  final String avatarId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      BossBattleScreen(avatarId: avatarId);
 }
 
 @TypedGoRoute<FlashcardRoute>(path: '/avatar/:avatarId/flashcards')
