@@ -488,6 +488,31 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moduleUnknownStage => '未知阶段';
 
   @override
+  String get bossBattleTitle => '首领战';
+
+  @override
+  String bossBattleHpRemaining(int remaining, int max) {
+    return '还剩 $remaining / $max 次机会';
+  }
+
+  @override
+  String get bossBattleAttack => '攻击！';
+
+  @override
+  String get bossBattleDefeatedTitle => '首领被击败了！';
+
+  @override
+  String bossBattleRewardMessage(String mascot) {
+    return '你的 $mascot 伙伴为你感到骄傲！';
+  }
+
+  @override
+  String get bossBattleNoBossTitle => '现在没有首领可以挑战';
+
+  @override
+  String get bossBattleNoBossBody => '继续练习——一旦我们发现你觉得有点难的主题，首领就会出现。';
+
+  @override
   String get quizConfidence => '确信度';
 
   @override

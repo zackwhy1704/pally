@@ -510,6 +510,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moduleUnknownStage => 'Unknown stage';
 
   @override
+  String get bossBattleTitle => 'Boss Battle';
+
+  @override
+  String bossBattleHpRemaining(int remaining, int max) {
+    return '$remaining / $max hits left';
+  }
+
+  @override
+  String get bossBattleAttack => 'Attack!';
+
+  @override
+  String get bossBattleDefeatedTitle => 'Boss defeated!';
+
+  @override
+  String bossBattleRewardMessage(String mascot) {
+    return 'Your $mascot companion is thrilled with you!';
+  }
+
+  @override
+  String get bossBattleNoBossTitle => 'No boss to fight right now';
+
+  @override
+  String get bossBattleNoBossBody =>
+      'Keep practicing — a boss shows up once we spot a topic you\'re finding tricky.';
+
+  @override
   String get quizConfidence => 'Confidence';
 
   @override
