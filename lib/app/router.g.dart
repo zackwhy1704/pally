@@ -14,6 +14,8 @@ List<RouteBase> get $appRoutes => [
       $wikiCompiledRoute,
       $quizRoute,
       $bossBattleRoute,
+      $classroomJoinRoute,
+      $classroomBattleRoute,
       $flashcardRoute,
       $shopRoute,
       $collectionRoute,
@@ -375,6 +377,56 @@ extension $BossBattleRouteExtension on BossBattleRoute {
 
   String get location => GoRouteData.$location(
         '/avatar/${Uri.encodeComponent(avatarId)}/boss',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $classroomJoinRoute => GoRouteData.$route(
+      path: '/avatar/:avatarId/classroom/join',
+      factory: $ClassroomJoinRouteExtension._fromState,
+    );
+
+extension $ClassroomJoinRouteExtension on ClassroomJoinRoute {
+  static ClassroomJoinRoute _fromState(GoRouterState state) =>
+      ClassroomJoinRoute(
+        avatarId: state.pathParameters['avatarId']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/avatar/${Uri.encodeComponent(avatarId)}/classroom/join',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $classroomBattleRoute => GoRouteData.$route(
+      path: '/avatar/:avatarId/classroom/battle',
+      factory: $ClassroomBattleRouteExtension._fromState,
+    );
+
+extension $ClassroomBattleRouteExtension on ClassroomBattleRoute {
+  static ClassroomBattleRoute _fromState(GoRouterState state) =>
+      ClassroomBattleRoute(
+        avatarId: state.pathParameters['avatarId']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/avatar/${Uri.encodeComponent(avatarId)}/classroom/battle',
       );
 
   void go(BuildContext context) => context.go(location);

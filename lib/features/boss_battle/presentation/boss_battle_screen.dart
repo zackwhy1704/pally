@@ -37,7 +37,8 @@ class _BossBattleScreenState extends ConsumerState<BossBattleScreen> {
     // never recreate the game on every rebuild (that would reset its state).
     final boss = state.boss;
     if (boss != null && boss.active && !boss.defeated) {
-      _game ??= BossBattleGame(hpMax: boss.hpMax, hpRemaining: boss.hpRemaining);
+      _game ??=
+          BossBattleGame(hpMax: boss.hpMax, hpRemaining: boss.hpRemaining);
       _game!.updateBattleState(
         hpRemaining: boss.hpRemaining,
         hpMax: boss.hpMax,
@@ -75,8 +76,9 @@ class _BossBattleScreenState extends ConsumerState<BossBattleScreen> {
     if (state.error != null) {
       return PallyErrorCard(
         message: state.error!.userMessage,
-        onRetry: () =>
-            ref.read(bossBattleViewModelProvider(widget.avatarId).notifier).retry(),
+        onRetry: () => ref
+            .read(bossBattleViewModelProvider(widget.avatarId).notifier)
+            .retry(),
       );
     }
     final boss = state.boss;
@@ -92,8 +94,9 @@ class _BossBattleScreenState extends ConsumerState<BossBattleScreen> {
       onSelect: (i) => ref
           .read(bossBattleViewModelProvider(widget.avatarId).notifier)
           .selectAnswer(i),
-      onAttack: () =>
-          ref.read(bossBattleViewModelProvider(widget.avatarId).notifier).attack(),
+      onAttack: () => ref
+          .read(bossBattleViewModelProvider(widget.avatarId).notifier)
+          .attack(),
     );
   }
 }
@@ -163,8 +166,8 @@ class _VictoryCard extends StatelessWidget {
             if (boss.rewardUnlocked) ...[
               const SizedBox(height: AppSpacing.sm),
               Text(
-                  AppLocalizations.of(context)
-                      .bossBattleRewardMessage(AppLocalizations.of(context).mascotName),
+                  AppLocalizations.of(context).bossBattleRewardMessage(
+                      AppLocalizations.of(context).mascotName),
                   style: AppTextStyles.body.copyWith(color: AppColors.text2),
                   textAlign: TextAlign.center),
             ],
@@ -193,62 +196,64 @@ class _BattleView extends StatelessWidget {
     final boss = state.boss!;
     final question = boss.currentQuestion;
 
-    return SingleChildScrollView(
-      child: AdaptiveCenter(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                  AppLocalizations.of(context)
-                      .bossBattleHpRemaining(boss.hpRemaining, boss.hpMax),
-                  style: AppTextStyles.label.copyWith(color: AppColors.text2),
-                  textAlign: TextAlign.center),
-              const SizedBox(height: AppSpacing.sm),
-              SizedBox(
-                height: 220,
-                child: GameWidget<BossBattleGame>(game: game),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              if (question != null) ...[
-                Text(question.question, style: AppTextStyles.title),
-                const SizedBox(height: AppSpacing.md),
-                for (var i = 0; i < question.options.length; i++)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                    child: _OptionButton(
-                      label: question.options[i],
-                      selected: state.selectedIndex == i,
-                      onTap: state.isAttacking ? null : () => onSelect(i),
-                    ),
-                  ),
-              ],
-              const SizedBox(height: AppSpacing.md),
-              if (state.error != null) ...[
-                PallyErrorCard(message: state.error!.userMessage, onRetry: onAttack),
-                const SizedBox(height: AppSpacing.sm),
-              ],
-              SizedBox(
-                height: AppSizing.buttonHeight,
-                child: FilledButton(
-                  onPressed: (state.isAttacking || state.selectedIndex == null)
-                      ? null
-                      : onAttack,
-                  style: FilledButton.styleFrom(backgroundColor: AppColors.coral),
-                  child: state.isAttacking
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white),
-                        )
-                      : Text(AppLocalizations.of(context).bossBattleAttack),
+    // AdaptiveCenter is ALREADY a scrollable (SafeArea + SingleChildScrollView
+    // + IntrinsicHeight internally) — nesting it inside another
+    // SingleChildScrollView gives it infinite height and crashes layout.
+    // It must be the outermost/sole scroll wrapper here.
+    return AdaptiveCenter(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+              AppLocalizations.of(context)
+                  .bossBattleHpRemaining(boss.hpRemaining, boss.hpMax),
+              style: AppTextStyles.label.copyWith(color: AppColors.text2),
+              textAlign: TextAlign.center),
+          const SizedBox(height: AppSpacing.sm),
+          SizedBox(
+            height: 220,
+            child: GameWidget<BossBattleGame>(game: game),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          if (question != null) ...[
+            Text(question.question, style: AppTextStyles.title),
+            const SizedBox(height: AppSpacing.md),
+            for (var i = 0; i < question.options.length; i++)
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                child: _OptionButton(
+                  label: question.options[i],
+                  selected: state.selectedIndex == i,
+                  onTap: state.isAttacking ? null : () => onSelect(i),
                 ),
               ),
-            ],
-          ),
-        ),
+          ],
+          const SizedBox(height: AppSpacing.md),
+          if (state.error != null) ...[
+            PallyErrorCard(
+                message: state.error!.userMessage, onRetry: onAttack),
+            const SizedBox(height: AppSpacing.sm),
+          ],
+          if (!boss.defeated)
+            SizedBox(
+              height: AppSizing.buttonHeight,
+              child: FilledButton(
+                onPressed: (state.isAttacking || state.selectedIndex == null)
+                    ? null
+                    : onAttack,
+                style: FilledButton.styleFrom(backgroundColor: AppColors.coral),
+                child: state.isAttacking
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.white),
+                      )
+                    : Text(AppLocalizations.of(context).bossBattleAttack),
+              ),
+            ),
+        ],
       ),
     );
   }

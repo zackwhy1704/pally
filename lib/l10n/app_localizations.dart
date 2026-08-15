@@ -950,6 +950,60 @@ abstract class AppLocalizations {
   /// **'Keep practicing — a boss shows up once we spot a topic you\'re finding tricky.'**
   String get bossBattleNoBossBody;
 
+  /// App bar title on the classroom-session join screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Classroom Battle'**
+  String get classroomJoinTitle;
+
+  /// Label above the join-code text field.
+  ///
+  /// In en, this message translates to:
+  /// **'Class code'**
+  String get classroomJoinCodeLabel;
+
+  /// Label above the nickname text field — emphasizes it's ephemeral.
+  ///
+  /// In en, this message translates to:
+  /// **'Your nickname (just for this game)'**
+  String get classroomNicknameLabel;
+
+  /// Primary CTA button on the classroom join screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Battle'**
+  String get classroomJoinCta;
+
+  /// App bar title on the live classroom battle screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Classroom Battle'**
+  String get classroomBattleTitle;
+
+  /// Shown if the battle screen is reached without an active join (e.g. app restart).
+  ///
+  /// In en, this message translates to:
+  /// **'Join a classroom battle first to see this.'**
+  String get classroomNotJoinedYet;
+
+  /// Shown once the live classroom session status becomes ENDED.
+  ///
+  /// In en, this message translates to:
+  /// **'The teacher ended this session.'**
+  String get classroomSessionEnded;
+
+  /// Victory heading for the classroom shared-boss battle.
+  ///
+  /// In en, this message translates to:
+  /// **'The class defeated the boss!'**
+  String get classroomBossDefeated;
+
+  /// Live participant count above the shared HP bar.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} in this battle'**
+  String classroomParticipantCount(int count);
+
   /// Header for the confidence self-rating on a quiz question.
   ///
   /// In en, this message translates to:
