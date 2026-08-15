@@ -7,7 +7,7 @@ part of 'boss_battle_view_model.dart';
 // **************************************************************************
 
 String _$bossBattleViewModelHash() =>
-    r'dd4f3bb13cace6dc3ea86cefcc513fb5b58ee2a0';
+    r'8c4429c5060fc2a553c3b34120ed3ea1140973a4';
 
 /// Copied from Dart SDK
 class _SystemHash {
