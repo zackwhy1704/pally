@@ -290,6 +290,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get hubCardsSubtitle => '快速记忆练习';
 
   @override
+  String get hubBossBattleSubtitle => '答题，打败首领';
+
+  @override
+  String get hubJoinBattle => '加入实时对战';
+
+  @override
+  String get hubJoinBattleSubtitle => '输入老师提供的班级代码';
+
+  @override
   String get hubTeach => '讲解';
 
   @override
