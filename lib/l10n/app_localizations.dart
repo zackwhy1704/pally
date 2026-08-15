@@ -566,6 +566,24 @@ abstract class AppLocalizations {
   /// **'Quick recall practice'**
   String get hubCardsSubtitle;
 
+  /// Hub row subtitle for the solo Boss Battle game.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer questions, defeat the boss'**
+  String get hubBossBattleSubtitle;
+
+  /// Hub row title — join a teacher-hosted classroom boss battle with a code.
+  ///
+  /// In en, this message translates to:
+  /// **'Join a Live Battle'**
+  String get hubJoinBattle;
+
+  /// Hub row subtitle for joining a live classroom battle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a class code from your teacher'**
+  String get hubJoinBattleSubtitle;
+
   /// Hub row title — the Teach-back (PROVE) feature.
   ///
   /// In en, this message translates to:

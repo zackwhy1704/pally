@@ -304,6 +304,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hubCardsSubtitle => 'Quick recall practice';
 
   @override
+  String get hubBossBattleSubtitle => 'Answer questions, defeat the boss';
+
+  @override
+  String get hubJoinBattle => 'Join a Live Battle';
+
+  @override
+  String get hubJoinBattleSubtitle => 'Enter a class code from your teacher';
+
+  @override
   String get hubTeach => 'Teach';
 
   @override

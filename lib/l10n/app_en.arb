@@ -396,6 +396,18 @@
   "@hubCardsSubtitle": {
     "description": "Hub row subtitle for Cards."
   },
+  "hubBossBattleSubtitle": "Answer questions, defeat the boss",
+  "@hubBossBattleSubtitle": {
+    "description": "Hub row subtitle for the solo Boss Battle game."
+  },
+  "hubJoinBattle": "Join a Live Battle",
+  "@hubJoinBattle": {
+    "description": "Hub row title — join a teacher-hosted classroom boss battle with a code."
+  },
+  "hubJoinBattleSubtitle": "Enter a class code from your teacher",
+  "@hubJoinBattleSubtitle": {
+    "description": "Hub row subtitle for joining a live classroom battle."
+  },
   "hubTeach": "Teach",
   "@hubTeach": {
     "description": "Hub row title — the Teach-back (PROVE) feature."
