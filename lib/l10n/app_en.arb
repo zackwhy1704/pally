@@ -723,6 +723,47 @@
   "@bossBattleNoBossBody": {
     "description": "Empty-state body text under bossBattleNoBossTitle."
   },
+  "classroomJoinTitle": "Join Classroom Battle",
+  "@classroomJoinTitle": {
+    "description": "App bar title on the classroom-session join screen."
+  },
+  "classroomJoinCodeLabel": "Class code",
+  "@classroomJoinCodeLabel": {
+    "description": "Label above the join-code text field."
+  },
+  "classroomNicknameLabel": "Your nickname (just for this game)",
+  "@classroomNicknameLabel": {
+    "description": "Label above the nickname text field — emphasizes it's ephemeral."
+  },
+  "classroomJoinCta": "Join Battle",
+  "@classroomJoinCta": {
+    "description": "Primary CTA button on the classroom join screen."
+  },
+  "classroomBattleTitle": "Classroom Battle",
+  "@classroomBattleTitle": {
+    "description": "App bar title on the live classroom battle screen."
+  },
+  "classroomNotJoinedYet": "Join a classroom battle first to see this.",
+  "@classroomNotJoinedYet": {
+    "description": "Shown if the battle screen is reached without an active join (e.g. app restart)."
+  },
+  "classroomSessionEnded": "The teacher ended this session.",
+  "@classroomSessionEnded": {
+    "description": "Shown once the live classroom session status becomes ENDED."
+  },
+  "classroomBossDefeated": "The class defeated the boss!",
+  "@classroomBossDefeated": {
+    "description": "Victory heading for the classroom shared-boss battle."
+  },
+  "classroomParticipantCount": "{count} in this battle",
+  "@classroomParticipantCount": {
+    "description": "Live participant count above the shared HP bar.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "quizConfidence": "Confidence",
   "@quizConfidence": {
     "description": "Header for the confidence self-rating on a quiz question."

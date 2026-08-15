@@ -513,6 +513,35 @@ class AppLocalizationsZh extends AppLocalizations {
   String get bossBattleNoBossBody => '继续练习——一旦我们发现你觉得有点难的主题，首领就会出现。';
 
   @override
+  String get classroomJoinTitle => '加入班级挑战';
+
+  @override
+  String get classroomJoinCodeLabel => '班级代码';
+
+  @override
+  String get classroomNicknameLabel => '你的昵称（仅限本局游戏）';
+
+  @override
+  String get classroomJoinCta => '加入挑战';
+
+  @override
+  String get classroomBattleTitle => '班级挑战';
+
+  @override
+  String get classroomNotJoinedYet => '请先加入班级挑战才能看到这个页面。';
+
+  @override
+  String get classroomSessionEnded => '老师已结束本场挑战。';
+
+  @override
+  String get classroomBossDefeated => '全班一起打败了首领！';
+
+  @override
+  String classroomParticipantCount(int count) {
+    return '本场共有 $count 人';
+  }
+
+  @override
   String get quizConfidence => '确信度';
 
   @override

@@ -24,6 +24,8 @@ import 'package:pally/features/auth/screens/sign_in_screen.dart';
 import 'package:pally/features/avatar_hub/presentation/avatar_hub_screen.dart';
 import 'package:pally/features/avatar_picker/screens/avatar_picker_screen.dart';
 import 'package:pally/features/boss_battle/presentation/boss_battle_screen.dart';
+import 'package:pally/features/classroom/presentation/classroom_join_screen.dart';
+import 'package:pally/features/classroom/presentation/classroom_battle_screen.dart';
 import 'package:pally/features/brain_health/presentation/brain_health_screen.dart';
 import 'package:pally/features/centre/presentation/centre_join_screen.dart';
 import 'package:pally/features/chat/presentation/chat_screen.dart';
@@ -77,7 +79,7 @@ import 'package:pally/shared/models/photo_question.dart';
 /// The glob count of lib/features/**/*_screen.dart. Every screen must be
 /// ENROLLED (pumped) or EXCLUDED (with a reason) — never silently skipped.
 /// Update ONLY when a screen file is genuinely added/removed.
-const int kScaffoldScreenCount = 58;
+const int kScaffoldScreenCount = 60;
 
 const _avatarId = 'av-1';
 
@@ -107,6 +109,8 @@ final List<_Enrolled> _enrolled = [
   _Enrolled('avatar_hub_screen', () => const AvatarHubScreen(avatarId: _avatarId)),
   _Enrolled('avatar_picker_screen', () => const AvatarPickerScreen()),
   _Enrolled('boss_battle_screen', () => const BossBattleScreen(avatarId: _avatarId)),
+  _Enrolled('classroom_join_screen', () => const ClassroomJoinScreen(avatarId: _avatarId)),
+  _Enrolled('classroom_battle_screen', () => const ClassroomBattleScreen(avatarId: _avatarId)),
   _Enrolled('brain_health_screen', () => const BrainHealthScreen(avatarId: _avatarId)),
   _Enrolled('centre_join_screen', () => const CentreJoinScreen()),
   _Enrolled('chat_screen', () => const ChatScreen(avatarId: _avatarId)),

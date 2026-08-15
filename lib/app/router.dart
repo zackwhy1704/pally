@@ -23,6 +23,8 @@ import 'package:pally/features/wiki_compiled/presentation/wiki_compiled_screen.d
 import 'package:pally/features/library/presentation/library_screen.dart';
 import 'package:pally/features/quiz/presentation/quiz_screen.dart';
 import 'package:pally/features/boss_battle/presentation/boss_battle_screen.dart';
+import 'package:pally/features/classroom/presentation/classroom_join_screen.dart';
+import 'package:pally/features/classroom/presentation/classroom_battle_screen.dart';
 import 'package:pally/features/flashcards/presentation/flashcard_screen.dart';
 import 'package:pally/features/progress/presentation/achievements_screen.dart';
 import 'package:pally/features/progress/presentation/level_roadmap_screen.dart';
@@ -285,6 +287,26 @@ class BossBattleRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       BossBattleScreen(avatarId: avatarId);
+}
+
+@TypedGoRoute<ClassroomJoinRoute>(path: '/avatar/:avatarId/classroom/join')
+class ClassroomJoinRoute extends GoRouteData {
+  const ClassroomJoinRoute({required this.avatarId});
+  final String avatarId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      ClassroomJoinScreen(avatarId: avatarId);
+}
+
+@TypedGoRoute<ClassroomBattleRoute>(path: '/avatar/:avatarId/classroom/battle')
+class ClassroomBattleRoute extends GoRouteData {
+  const ClassroomBattleRoute({required this.avatarId});
+  final String avatarId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      ClassroomBattleScreen(avatarId: avatarId);
 }
 
 @TypedGoRoute<FlashcardRoute>(path: '/avatar/:avatarId/flashcards')
