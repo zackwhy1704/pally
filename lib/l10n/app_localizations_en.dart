@@ -304,15 +304,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hubCardsSubtitle => 'Quick recall practice';
 
   @override
-  String get hubBossBattleSubtitle => 'Answer questions, defeat the boss';
-
-  @override
-  String get hubJoinBattle => 'Join a Live Battle';
-
-  @override
-  String get hubJoinBattleSubtitle => 'Enter a class code from your teacher';
-
-  @override
   String get hubTeach => 'Teach';
 
   @override
@@ -517,62 +508,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moduleUnknownStage => 'Unknown stage';
-
-  @override
-  String get bossBattleTitle => 'Boss Battle';
-
-  @override
-  String bossBattleHpRemaining(int remaining, int max) {
-    return '$remaining / $max hits left';
-  }
-
-  @override
-  String get bossBattleAttack => 'Attack!';
-
-  @override
-  String get bossBattleDefeatedTitle => 'Boss defeated!';
-
-  @override
-  String bossBattleRewardMessage(String mascot) {
-    return 'Your $mascot companion is thrilled with you!';
-  }
-
-  @override
-  String get bossBattleNoBossTitle => 'No boss to fight right now';
-
-  @override
-  String get bossBattleNoBossBody =>
-      'Keep practicing — a boss shows up once we spot a topic you\'re finding tricky.';
-
-  @override
-  String get classroomJoinTitle => 'Join Classroom Battle';
-
-  @override
-  String get classroomJoinCodeLabel => 'Class code';
-
-  @override
-  String get classroomNicknameLabel => 'Your nickname (just for this game)';
-
-  @override
-  String get classroomJoinCta => 'Join Battle';
-
-  @override
-  String get classroomBattleTitle => 'Classroom Battle';
-
-  @override
-  String get classroomNotJoinedYet =>
-      'Join a classroom battle first to see this.';
-
-  @override
-  String get classroomSessionEnded => 'The teacher ended this session.';
-
-  @override
-  String get classroomBossDefeated => 'The class defeated the boss!';
-
-  @override
-  String classroomParticipantCount(int count) {
-    return '$count in this battle';
-  }
 
   @override
   String get quizConfidence => 'Confidence';

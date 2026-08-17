@@ -105,22 +105,6 @@ class _HubBody extends StatelessWidget {
               enabled: hasKnowledge,
               onTap: () => FlashcardRoute(avatarId: avatar.id).push(context),
             ),
-            _HubRow(
-              icon: Icons.shield_moon_rounded,
-              color: AppColors.coral,
-              title: l.bossBattleTitle,
-              subtitle: l.hubBossBattleSubtitle,
-              enabled: hasKnowledge,
-              onTap: () => BossBattleRoute(avatarId: avatar.id).push(context),
-            ),
-            _HubRow(
-              icon: Icons.groups_rounded,
-              color: AppColors.pink,
-              title: l.hubJoinBattle,
-              subtitle: l.hubJoinBattleSubtitle,
-              enabled: true,
-              onTap: () => ClassroomJoinRoute(avatarId: avatar.id).push(context),
-            ),
           ],
         ),
         if (!centreManaged)

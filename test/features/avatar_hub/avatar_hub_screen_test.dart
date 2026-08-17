@@ -37,14 +37,12 @@ Avatar _avatar({
           : null,
     );
 
-/// The 9 journey destinations → a stub path so we can prove each row pushes the
+/// The 7 journey destinations → a stub path so we can prove each row pushes the
 /// right typed route via the ambient GoRouter.
 const _dests = {
   'modules': 'DEST_modules',
   'quiz': 'DEST_quiz',
   'flashcards': 'DEST_flashcards',
-  'boss': 'DEST_boss',
-  'classroom/join': 'DEST_join',
   'teach': 'DEST_teach',
   'chat': 'DEST_chat',
   'wiki': 'DEST_wiki',
@@ -113,16 +111,7 @@ void main() {
     // Hero + all seven rows present.
     expect(find.text('Learn'), findsOneWidget);
     expect(find.text('3 modules · 40% mastery'), findsOneWidget);
-    for (final t in [
-      'Quiz',
-      'Cards',
-      'Boss Battle',
-      'Join a Live Battle',
-      'Teach',
-      'Chat',
-      'Notes',
-      'Upload'
-    ]) {
+    for (final t in ['Quiz', 'Cards', 'Teach', 'Chat', 'Notes', 'Upload']) {
       expect(find.text(t), findsOneWidget, reason: '$t row must render');
     }
     expect(find.text('Practice'), findsOneWidget);
@@ -135,8 +124,6 @@ void main() {
     'Learn': 'DEST_modules',
     'Quiz': 'DEST_quiz',
     'Cards': 'DEST_flashcards',
-    'Boss Battle': 'DEST_boss',
-    'Join a Live Battle': 'DEST_join',
     'Teach': 'DEST_teach',
     'Chat': 'DEST_chat',
     'Notes': 'DEST_wiki',
@@ -159,11 +146,10 @@ void main() {
     expect(find.byType(NoNotesCta), findsOneWidget);
     expect(find.textContaining('Upload your notes to unlock'), findsOneWidget);
 
-    // Quiz / Cards / Boss Battle / Teach are disabled → tapping does not navigate.
+    // Quiz / Cards / Teach are disabled → tapping does not navigate.
     for (final entry in {
       'Quiz': 'DEST_quiz',
       'Cards': 'DEST_flashcards',
-      'Boss Battle': 'DEST_boss',
       'Teach': 'DEST_teach',
     }.entries) {
       await tester.tap(find.text(entry.key));
@@ -172,16 +158,6 @@ void main() {
           reason: '${entry.key} must be disabled without knowledge');
     }
 
-    // Joining a live battle needs no knowledge of THIS avatar's own content
-    // (it plays against another class's material) — always enabled.
-    await tester.tap(find.text('Join a Live Battle'));
-    await tester.pumpAndSettle();
-    expect(find.text('DEST_join'), findsOneWidget);
-  });
-
-  testWidgets('(a) knowledge personal avatar — Learn still routes to modules',
-      (tester) async {
-    await _pump(tester, avatar: _avatar(wikiPageCount: 0), moduleCount: 0);
     // The hero stays invitational (not disabled) and still routes to modules.
     expect(find.text('Start your first module'), findsOneWidget);
     await tester.tap(find.text('Learn'));
