@@ -290,6 +290,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get hubCardsSubtitle => '快速记忆练习';
 
   @override
+  String get hubBossBattleSubtitle => '答题，打败首领';
+
+  @override
+  String get hubJoinBattle => '加入实时对战';
+
+  @override
+  String get hubJoinBattleSubtitle => '输入老师提供的班级代码';
+
+  @override
   String get hubTeach => '讲解';
 
   @override
@@ -486,6 +495,60 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get moduleUnknownStage => '未知阶段';
+
+  @override
+  String get bossBattleTitle => '首领战';
+
+  @override
+  String bossBattleHpRemaining(int remaining, int max) {
+    return '还剩 $remaining / $max 次机会';
+  }
+
+  @override
+  String get bossBattleAttack => '攻击！';
+
+  @override
+  String get bossBattleDefeatedTitle => '首领被击败了！';
+
+  @override
+  String bossBattleRewardMessage(String mascot) {
+    return '你的 $mascot 伙伴为你感到骄傲！';
+  }
+
+  @override
+  String get bossBattleNoBossTitle => '现在没有首领可以挑战';
+
+  @override
+  String get bossBattleNoBossBody => '继续练习——一旦我们发现你觉得有点难的主题，首领就会出现。';
+
+  @override
+  String get classroomJoinTitle => '加入班级挑战';
+
+  @override
+  String get classroomJoinCodeLabel => '班级代码';
+
+  @override
+  String get classroomNicknameLabel => '你的昵称（仅限本局游戏）';
+
+  @override
+  String get classroomJoinCta => '加入挑战';
+
+  @override
+  String get classroomBattleTitle => '班级挑战';
+
+  @override
+  String get classroomNotJoinedYet => '请先加入班级挑战才能看到这个页面。';
+
+  @override
+  String get classroomSessionEnded => '老师已结束本场挑战。';
+
+  @override
+  String get classroomBossDefeated => '全班一起打败了首领！';
+
+  @override
+  String classroomParticipantCount(int count) {
+    return '本场共有 $count 人';
+  }
 
   @override
   String get quizConfidence => '确信度';

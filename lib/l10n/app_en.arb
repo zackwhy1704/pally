@@ -396,6 +396,18 @@
   "@hubCardsSubtitle": {
     "description": "Hub row subtitle for Cards."
   },
+  "hubBossBattleSubtitle": "Answer questions, defeat the boss",
+  "@hubBossBattleSubtitle": {
+    "description": "Hub row subtitle for the solo Boss Battle game."
+  },
+  "hubJoinBattle": "Join a Live Battle",
+  "@hubJoinBattle": {
+    "description": "Hub row title — join a teacher-hosted classroom boss battle with a code."
+  },
+  "hubJoinBattleSubtitle": "Enter a class code from your teacher",
+  "@hubJoinBattleSubtitle": {
+    "description": "Hub row subtitle for joining a live classroom battle."
+  },
   "hubTeach": "Teach",
   "@hubTeach": {
     "description": "Hub row title — the Teach-back (PROVE) feature."
@@ -681,6 +693,88 @@
   "moduleUnknownStage": "Unknown stage",
   "@moduleUnknownStage": {
     "description": "Fallback for an unrecognized module stage."
+  },
+  "bossBattleTitle": "Boss Battle",
+  "@bossBattleTitle": {
+    "description": "App bar title on the Phase 1 boss battle screen."
+  },
+  "bossBattleHpRemaining": "{remaining} / {max} hits left",
+  "@bossBattleHpRemaining": {
+    "description": "Server-authoritative HP readout above the boss battle canvas.",
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "bossBattleAttack": "Attack!",
+  "@bossBattleAttack": {
+    "description": "Primary CTA button that submits the selected answer as an attack."
+  },
+  "bossBattleDefeatedTitle": "Boss defeated!",
+  "@bossBattleDefeatedTitle": {
+    "description": "Heading shown once the boss's HP reaches zero."
+  },
+  "bossBattleRewardMessage": "Your {mascot} companion is thrilled with you!",
+  "@bossBattleRewardMessage": {
+    "description": "Shown on the victory card when the defeat unlocked a reward flag.",
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
+  "bossBattleNoBossTitle": "No boss to fight right now",
+  "@bossBattleNoBossTitle": {
+    "description": "Empty-state heading when no weak topic has produced a boss yet."
+  },
+  "bossBattleNoBossBody": "Keep practicing — a boss shows up once we spot a topic you're finding tricky.",
+  "@bossBattleNoBossBody": {
+    "description": "Empty-state body text under bossBattleNoBossTitle."
+  },
+  "classroomJoinTitle": "Join Classroom Battle",
+  "@classroomJoinTitle": {
+    "description": "App bar title on the classroom-session join screen."
+  },
+  "classroomJoinCodeLabel": "Class code",
+  "@classroomJoinCodeLabel": {
+    "description": "Label above the join-code text field."
+  },
+  "classroomNicknameLabel": "Your nickname (just for this game)",
+  "@classroomNicknameLabel": {
+    "description": "Label above the nickname text field — emphasizes it's ephemeral."
+  },
+  "classroomJoinCta": "Join Battle",
+  "@classroomJoinCta": {
+    "description": "Primary CTA button on the classroom join screen."
+  },
+  "classroomBattleTitle": "Classroom Battle",
+  "@classroomBattleTitle": {
+    "description": "App bar title on the live classroom battle screen."
+  },
+  "classroomNotJoinedYet": "Join a classroom battle first to see this.",
+  "@classroomNotJoinedYet": {
+    "description": "Shown if the battle screen is reached without an active join (e.g. app restart)."
+  },
+  "classroomSessionEnded": "The teacher ended this session.",
+  "@classroomSessionEnded": {
+    "description": "Shown once the live classroom session status becomes ENDED."
+  },
+  "classroomBossDefeated": "The class defeated the boss!",
+  "@classroomBossDefeated": {
+    "description": "Victory heading for the classroom shared-boss battle."
+  },
+  "classroomParticipantCount": "{count} in this battle",
+  "@classroomParticipantCount": {
+    "description": "Live participant count above the shared HP bar.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "quizConfidence": "Confidence",
   "@quizConfidence": {
