@@ -87,11 +87,6 @@ dependencies:
   mobile_scanner: ^7.2.0
   qr_flutter: ^4.1.0
 
-  # Boss battle screen rendering only (Phase 1 v1). No game logic lives in
-  # Flame components — the server holds all HP/outcome state; components
-  # only render what BossBattleViewModel already fetched.
-  flame: ^1.18.0
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
