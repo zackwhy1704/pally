@@ -273,13 +273,33 @@ class UploadViewModel extends _$UploadViewModel {
   // files at 5 min even though the backend was still working).
   int _lastCompileProgress = 0;
   DateTime? _lastCompileProgressAt;
+  // Module-generation phase progress (backend now reports modulesCompleted/
+  // modulesTotal on the avatar-status response — see ModuleGenerationProgressStore
+  // on the backend). Tracked separately from _lastCompileProgress: wikiPageCount
+  // is already at its final value by the time module-gen starts, so a plain max()
+  // of the two signals would never detect module-gen advancing.
+  int _lastModulesCompleted = 0;
 
   // Absolute backstop, far above the real worst case (~5-7 min for ~170 pages) —
   // only trips if the job is truly wedged or status keeps erroring.
   static const _compileHardCeiling = Duration(minutes: 15);
-  // Give up early ONLY if the page count hasn't advanced for this long (stalled),
-  // never while pages are still landing.
-  static const _compileStallGrace = Duration(minutes: 4);
+  // Give up (show "still working, come back later") only when NEITHER wiki-page
+  // extraction NOR module generation has produced anything new for this long.
+  //
+  // SUPERSEDES an earlier version of this fix that used a flat 90s-since-compile-
+  // START threshold. That was wrong, proven by real Railway production data (37
+  // module-completion events across the full log retention window, clustered into
+  // 6 real compile sessions): 4 of 6 real CENTRE-tier sessions ran 3.5-6 minutes
+  // total, so a flat 90s elapsed-since-start threshold fired mid-compile on a
+  // healthy, actively-progressing job in the MAJORITY of real cases — not a rare
+  // edge case. The real fix is this: key off "no module has completed recently",
+  // not "how long since compile started". Max observed inter-module gap in that
+  // sample was 86s (kestrel-method-overview → wind-reading session, 8/19).
+  //
+  // 180s is a DELIBERATELY GENEROUS placeholder (~2.1x that 86s max), not a tuned
+  // final number — 6 sessions is too small a sample to lock a threshold in on.
+  // Revisit once there's more production data; don't defend this number as final.
+  static const _moduleProgressStallGrace = Duration(seconds: 180);
   // Poll every 5s — fast enough to detect success, cheap enough not to flood.
   static const _pollInterval = Duration(seconds: 5);
 
@@ -789,9 +809,11 @@ class UploadViewModel extends _$UploadViewModel {
     _compilePoller?.cancel();
     _compileStartedAt = DateTime.now();
     _lastCompileProgress = 0;
+    _lastModulesCompleted = 0;
     _lastCompileProgressAt = DateTime.now();
     appLog.d('[Upload] Compile poller started '
-        '(stallGrace=${_compileStallGrace.inSeconds}s ceiling=${_compileHardCeiling.inSeconds}s)');
+        '(stallGrace=${_moduleProgressStallGrace.inSeconds}s '
+        'ceiling=${_compileHardCeiling.inSeconds}s)');
     _compilePoller = Timer.periodic(_pollInterval, (_) => _pollCompileStatus());
   }
 
@@ -814,20 +836,43 @@ class UploadViewModel extends _$UploadViewModel {
       final wikiPageCount = (data['wikiPageCount'] as num?)?.toInt() ?? 0;
       final pagesCompiled = (data['pagesCompiled'] as num?)?.toInt() ?? 0;
       final pagesTotal = (data['pagesTotal'] as num?)?.toInt();
+      // Module-generation phase — the poll's former blind spot. Null (not 0) when
+      // no generation batch is in flight; a real 0 means "batch just started".
+      final modulesCompleted = (data['modulesCompleted'] as num?)?.toInt();
+      final modulesTotal = (data['modulesTotal'] as num?)?.toInt();
       appLog.d('[Upload] Poll: brainState=$brainState wikiPageCount=$wikiPageCount'
           ' pagesCompiled=$pagesCompiled pagesTotal=$pagesTotal'
+          ' modulesCompleted=$modulesCompleted modulesTotal=$modulesTotal'
           ' elapsed=${elapsed.inSeconds}s');
 
-      // Track real progress: whenever the backend's page count advances, reset the
-      // stall clock. This is what lets a 6-7 min compile keep polling instead of
-      // false-failing on a fixed wall-clock.
-      final progress = pagesCompiled > wikiPageCount ? pagesCompiled : wikiPageCount;
-      if (progress > _lastCompileProgress) {
-        _lastCompileProgress = progress;
+      // Track real progress on BOTH phases — wiki-page extraction AND module
+      // generation are separate signals (wikiPageCount is already at its final
+      // value by the time module-gen starts, so a plain max() across both would
+      // never see module-gen advancing). The stall clock resets whenever EITHER
+      // phase produces something new; that's what lets a multi-minute, multi-
+      // module compile keep polling instead of a flat elapsed-since-start timer
+      // firing mid-compile on a job that is actively, healthily progressing.
+      final pageProgress = pagesCompiled > wikiPageCount ? pagesCompiled : wikiPageCount;
+      bool progressed = false;
+      if (pageProgress > _lastCompileProgress) {
+        _lastCompileProgress = pageProgress;
+        progressed = true;
+      }
+      if (modulesCompleted != null && modulesCompleted > _lastModulesCompleted) {
+        _lastModulesCompleted = modulesCompleted;
+        progressed = true;
+      }
+      if (progressed) {
         _lastCompileProgressAt = now;
       }
-      // Update partial progress display when the backend reports it.
-      if (pagesCompiled > 0 && pagesTotal != null && pagesCompiled < pagesTotal) {
+      // Progress display: prefer the module-generation phase once it starts —
+      // it's the later, longer-running phase and the more relevant "how much
+      // further" signal once wiki-page extraction has already finished.
+      if (modulesCompleted != null && modulesTotal != null && modulesCompleted < modulesTotal) {
+        state = state.copyWith(
+          compileProgress: '$modulesCompleted of $modulesTotal modules built',
+        );
+      } else if (pagesCompiled > 0 && pagesTotal != null && pagesCompiled < pagesTotal) {
         state = state.copyWith(
           compileProgress: '$pagesCompiled of $pagesTotal pages added',
         );
@@ -841,7 +886,7 @@ class UploadViewModel extends _$UploadViewModel {
         elapsed: elapsed,
         sinceLastProgress: sinceProgress,
         hardCeiling: _compileHardCeiling,
-        stallGrace: _compileStallGrace,
+        stallGrace: _moduleProgressStallGrace,
       );
       if (action == CompilePollAction.success) {
         _compilePoller?.cancel();
