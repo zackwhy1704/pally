@@ -70,38 +70,61 @@ void main() {
     });
   });
 
-  group('compileStallGraceFor', () {
-    // Pins the fix for "stuck on the loading screen": a normal-size compile
-    // used to wait the full 4-minute stall grace with zero feedback, 3+
-    // minutes past the "takes 30 to 60s" copy shown on screen, before the
-    // user ever got a way to leave. Large files keep the old grace since
-    // they already got the slower-expectations preflight dialog.
-    test('normal-size file gets the SHORT grace, not the old 4 minutes', () {
-      final grace = compileStallGraceFor(isLargeFile: false);
-      expect(grace, const Duration(seconds: 90));
-    });
+  group('module-progress stall grace (real signal, supersedes the flat-elapsed attempt)', () {
+    // SUPERSEDES an earlier version of this fix (flat 90s-since-compile-start).
+    // That was proven wrong by real Railway production data: 37 module-completion
+    // events across the full log retention window, clustered into 6 real CENTRE-
+    // tier compile sessions. 4 of 6 ran 3.5-6 minutes total, so a flat elapsed-
+    // since-start threshold fired mid-compile on a healthy job in the MAJORITY of
+    // real cases. The real fix keys off "no module has completed recently" (see
+    // upload_view_model.dart's _pollCompileStatus: modulesCompleted/modulesTotal
+    // from the backend feed the SAME sinceLastProgress clock as page progress).
+    // 180s (the production constant, mirrored here as a literal since it's
+    // private) is a deliberately generous placeholder — ~2.1x the 86s max
+    // inter-module gap actually observed in that sample — not a tuned final
+    // number; 6 sessions is too small to lock one in.
+    const moduleProgressStallGrace = Duration(seconds: 180);
 
-    test('large file keeps the LONG grace', () {
-      final grace = compileStallGraceFor(isLargeFile: true);
-      expect(grace, const Duration(minutes: 4));
-    });
-
-    test('a real slow-but-healthy compile (CENTRE tier, ~90s/module, no '
-        'progress signal from the poll) now gets the still-working screen '
-        'well under the old 4-minute wait', () {
-      // Matches the production log this fix was written against: brainState
-      // stays COMPILING, wikiPageCount never advances past its starting
-      // value (module generation isn't reflected by this field), so
-      // sinceLastProgress is effectively just elapsed time.
-      final grace = compileStallGraceFor(isLargeFile: false);
+    test('the real WORST observed production gap (86s) does NOT trip the new grace', () {
+      // 8/19 kestrel-method-overview -> wind-reading session: this exact gap
+      // nearly tripped the superseded 90s flat threshold (86s < 90s, a 4-second
+      // margin). The real per-module signal has real headroom instead.
       final action = decideCompilePoll(
         brainState: 'COMPILING',
         wikiPageCount: 6,
-        elapsed: const Duration(seconds: 95),
-        sinceLastProgress: const Duration(seconds: 95),
-        stallGrace: grace,
+        elapsed: const Duration(minutes: 5, seconds: 29),
+        sinceLastProgress: const Duration(seconds: 86),
+        stallGrace: moduleProgressStallGrace,
+      );
+      expect(action, CompilePollAction.keepPolling);
+    });
+
+    test('a genuine stall (no module progress for longer than the grace) still gives up', () {
+      final action = decideCompilePoll(
+        brainState: 'COMPILING',
+        wikiPageCount: 6,
+        elapsed: const Duration(minutes: 6),
+        sinceLastProgress: const Duration(seconds: 181),
+        stallGrace: moduleProgressStallGrace,
       );
       expect(action, CompilePollAction.stillWorkingBackground);
+    });
+
+    test('a real healthy 15-module session (8/15, max inter-module gap 51s) '
+        'never trips the grace at any point across its full 6m05s run', () {
+      // Every real gap observed in that session: 14,19,42,47,14,38,38,16,19,18,
+      // 13,28,51,8 (seconds). All comfortably under 180s.
+      const gaps = [14, 19, 42, 47, 14, 38, 38, 16, 19, 18, 13, 28, 51, 8];
+      for (final gap in gaps) {
+        final action = decideCompilePoll(
+          brainState: 'COMPILING',
+          wikiPageCount: 15,
+          elapsed: const Duration(minutes: 6, seconds: 5),
+          sinceLastProgress: Duration(seconds: gap),
+          stallGrace: moduleProgressStallGrace,
+        );
+        expect(action, CompilePollAction.keepPolling, reason: 'gap=${gap}s must not trip 180s grace');
+      }
     });
   });
 }
