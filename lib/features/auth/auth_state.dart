@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'package:pally/core/utils/logger.dart';
+
 // ── Auth state ────────────────────────────────────────────────────────────────
 
 class AuthState {
@@ -98,24 +100,32 @@ class AuthNotifier extends ChangeNotifier {
   AuthState get state => _state;
 
   Future<void> load() async {
-    final userId = await _storage.read(key: _keyUserId);
-    final token = await _storage.read(key: _keyToken);
-    final setupRaw = await _storage.read(key: _keySetupComplete);
-    final onboardingRaw = await _storage.read(key: _keyOnboardingComplete);
-    final childName = await _storage.read(key: _keyChildName);
-    final accountType = await _storage.read(key: _keyAccountType);
-    final awaitingConsentRaw = await _storage.read(key: _keyAwaitingConsent);
-    final maskedParentEmail = await _storage.read(key: _keyMaskedParentEmail);
-    _state = AuthState(
-      userId: userId,
-      token: token,
-      isSetupComplete: setupRaw == 'true',
-      isOnboardingComplete: onboardingRaw == 'true',
-      childName: childName,
-      accountType: accountType,
-      awaitingConsent: awaitingConsentRaw == 'true',
-      maskedParentEmail: maskedParentEmail,
-    );
+    // Runs before the first frame — a secure-storage read failure here (corrupted
+    // keychain, OS-level denial) must never brick startup. Best-effort: degrade to
+    // a signed-out AuthState so the app opens to sign-in instead of crashing.
+    try {
+      final userId = await _storage.read(key: _keyUserId);
+      final token = await _storage.read(key: _keyToken);
+      final setupRaw = await _storage.read(key: _keySetupComplete);
+      final onboardingRaw = await _storage.read(key: _keyOnboardingComplete);
+      final childName = await _storage.read(key: _keyChildName);
+      final accountType = await _storage.read(key: _keyAccountType);
+      final awaitingConsentRaw = await _storage.read(key: _keyAwaitingConsent);
+      final maskedParentEmail = await _storage.read(key: _keyMaskedParentEmail);
+      _state = AuthState(
+        userId: userId,
+        token: token,
+        isSetupComplete: setupRaw == 'true',
+        isOnboardingComplete: onboardingRaw == 'true',
+        childName: childName,
+        accountType: accountType,
+        awaitingConsent: awaitingConsentRaw == 'true',
+        maskedParentEmail: maskedParentEmail,
+      );
+    } catch (e) {
+      appLog.w('[Auth] load() failed (non-fatal): $e');
+      _state = const AuthState();
+    }
     notifyListeners();
   }
 
