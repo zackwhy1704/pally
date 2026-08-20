@@ -278,8 +278,15 @@ class UploadViewModel extends _$UploadViewModel {
   // only trips if the job is truly wedged or status keeps erroring.
   static const _compileHardCeiling = Duration(minutes: 15);
   // Give up early ONLY if the page count hasn't advanced for this long (stalled),
-  // never while pages are still landing.
-  static const _compileStallGrace = Duration(minutes: 4);
+  // never while pages are still landing. The avatar-status endpoint this poll
+  // reads never reports pagesCompiled/pagesTotal for the module-generation phase
+  // (only wiki-page extraction does), so for a normal-size upload this IS the
+  // real time-to-feedback — a flat 4 minutes left users staring at "takes 30 to
+  // 60s" copy for 3+ minutes past the promise with zero reassurance. 90s is a
+  // generous buffer over that promise; large files already set slower
+  // expectations up front (the preflight dialog), so they keep the old grace.
+  static const _compileStallGraceNormal = Duration(seconds: 90);
+  static const _compileStallGraceLarge = Duration(minutes: 4);
   // Poll every 5s — fast enough to detect success, cheap enough not to flood.
   static const _pollInterval = Duration(seconds: 5);
 
@@ -790,8 +797,9 @@ class UploadViewModel extends _$UploadViewModel {
     _compileStartedAt = DateTime.now();
     _lastCompileProgress = 0;
     _lastCompileProgressAt = DateTime.now();
+    final stallGrace = compileStallGraceFor(isLargeFile: state.isLargeFile);
     appLog.d('[Upload] Compile poller started '
-        '(stallGrace=${_compileStallGrace.inSeconds}s ceiling=${_compileHardCeiling.inSeconds}s)');
+        '(stallGrace=${stallGrace.inSeconds}s ceiling=${_compileHardCeiling.inSeconds}s)');
     _compilePoller = Timer.periodic(_pollInterval, (_) => _pollCompileStatus());
   }
 
@@ -841,7 +849,7 @@ class UploadViewModel extends _$UploadViewModel {
         elapsed: elapsed,
         sinceLastProgress: sinceProgress,
         hardCeiling: _compileHardCeiling,
-        stallGrace: _compileStallGrace,
+        stallGrace: compileStallGraceFor(isLargeFile: state.isLargeFile),
       );
       if (action == CompilePollAction.success) {
         _compilePoller?.cancel();
@@ -1037,6 +1045,18 @@ CompilePollAction decideCompilePoll({
   }
   return CompilePollAction.keepPolling;
 }
+
+/// Which stall grace applies to THIS compile. A large file already got the
+/// slower-expectations preflight dialog, so it keeps the old 4-minute grace; a
+/// normal-size upload gets the short one — the avatar-status poll never reports
+/// pagesCompiled/pagesTotal during module generation (only wiki-page extraction
+/// does), so for a normal upload the stall grace IS the real time-to-feedback,
+/// and 4 minutes left users staring at "takes 30 to 60s" copy for 3+ minutes
+/// past the promise with no reassurance and no way to leave the loading screen.
+@visibleForTesting
+Duration compileStallGraceFor({required bool isLargeFile}) => isLargeFile
+    ? UploadViewModel._compileStallGraceLarge
+    : UploadViewModel._compileStallGraceNormal;
 
 /// After the client's OWN `/relevance` check, decide what to do next. The client owns
 /// the relevance decision, so on EVERY path where we then proceed to upload we tell the
