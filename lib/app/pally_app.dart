@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pally/app/router.dart';
+import 'package:pally/features/flashcards/providers/srs_reminder_armer.dart';
 import 'package:pally/core/i18n/locale_controller.dart';
 import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/core/services/firebase_ready.dart';
@@ -38,6 +39,13 @@ class _PallyAppState extends ConsumerState<PallyApp>
     // sign-in). One authoritative check on startup — no loop. No-ops when signed out.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(consentUnlockProvider).reconcile();
+      // Arm the SM-2 review reminder at LAUNCH. Previously the only arm site was
+      // inside the flashcard deck screen, so the reminder meant to bring a student
+      // BACK to flashcards could only be set while they were already there — and it
+      // never fired at all for the many students whose cards were generated
+      // server-side during wiki compile. Idempotent (cancel-then-reschedule, one
+      // slot per avatar), so launch + resume re-point the same slot.
+      ref.read(srsReminderArmerProvider).armAll();
     });
   }
 
@@ -86,6 +94,10 @@ class _PallyAppState extends ConsumerState<PallyApp>
       // truth) — same as launch — so a resume unlocks even if the local
       // awaiting-consent flag desynced. One check per resume — never a poll.
       ref.read(consentUnlockProvider).reconcile();
+      // Re-arm the review reminder on resume: due counts drift while the app is
+      // backgrounded (cards come due overnight), and a reinstall/device change
+      // wipes the device-local slot entirely. Same idempotent per-avatar slot.
+      ref.read(srsReminderArmerProvider).armAll();
     }
   }
 
