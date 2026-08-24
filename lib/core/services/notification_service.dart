@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform, visibleForTesting;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz_data;
@@ -26,6 +28,16 @@ class NotificationService {
       2000 + (avatarId.hashCode.abs() % 90000);
   static bool _initialised = false;
 
+  /// Test-only seam. [_initialised] is static and would otherwise leak across
+  /// tests, making the second test in a file silently skip init().
+  @visibleForTesting
+  static void debugResetForTest() => _initialised = false;
+
+  /// Test-only. Lets a test assert init() completed despite a denied or
+  /// throwing permission request.
+  @visibleForTesting
+  static bool get debugIsInitialised => _initialised;
+
   static Future<void> init() async {
     if (_initialised) return;
     try {
@@ -44,6 +56,48 @@ class NotificationService {
       appLog.i('[Notifications] initialised');
     } catch (e, st) {
       appLog.w('[Notifications] init failed (non-fatal)',
+          error: e, stackTrace: st);
+    }
+    // Platform parity: iOS prompts for notification permission inside
+    // initialize() above via DarwinInitializationSettings. Android 13+ needs an
+    // explicit runtime request, which nothing was making — POST_NOTIFICATIONS
+    // arrives in the merged manifest (injected by firebase_messaging) but was
+    // never requested, so Android users silently got no reminders at all.
+    // Deliberately OUTSIDE the try above: a permission failure must not prevent
+    // _initialised being set, and an init failure must not skip the request.
+    await _requestAndroidNotificationPermission();
+  }
+
+  /// Requests the Android 13+ POST_NOTIFICATIONS permission.
+  ///
+  /// Routed through flutter_local_notifications rather than
+  /// firebase_messaging's requestPermission(): that path is gated on
+  /// isFirebaseReady and push ships OFF for v1, so it would be inert.
+  ///
+  /// No "already asked" flag is needed, and adding one would be actively
+  /// wrong. Verified in the plugin's Android source
+  /// (FlutterLocalNotificationsPlugin.java:1886-1901): when the permission is
+  /// already granted it returns immediately via callback.complete(true)
+  /// WITHOUT showing a dialog, and below API 33 it never requests at all —
+  /// it just reports areNotificationsEnabled(). When previously denied,
+  /// Android itself suppresses the dialog. A local flag would only add a way
+  /// to wrongly skip a legitimate re-prompt after the user toggles the
+  /// permission off in system settings.
+  static Future<void> _requestAndroidNotificationPermission() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
+    try {
+      final android = _plugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+      if (android == null) return;
+      final granted = await android.requestNotificationsPermission();
+      appLog.i('[Notifications] Android permission granted=$granted');
+    } catch (e, st) {
+      // Reachable, not defensive padding: the plugin returns
+      // PERMISSION_REQUEST_IN_PROGRESS_ERROR_MESSAGE (a PlatformException)
+      // when a request is already in flight. Denial and failure are both
+      // no-ops here — scheduling calls stay reachable and simply produce
+      // nothing the user can see, exactly as on a denied iOS device.
+      appLog.w('[Notifications] Android permission request failed (non-fatal)',
           error: e, stackTrace: st);
     }
   }
