@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pally/app/api_client.dart';
 import 'package:pally/core/utils/logger.dart';
@@ -30,10 +34,75 @@ class EntitlementVm extends _$EntitlementVm {
     }
   }
 
-  /// Always resolves to an Entitlement — a transient failure reads as free so a
-  /// blip never shows the user a broken paywall.
-  Future<Entitlement> _fetch() async =>
-      await _fetchOrNull() ?? const Entitlement(isPremium: false, source: 'NONE');
+  /// BOUNDED FAIL-OPEN (24h).
+  ///
+  /// On a successful fetch the entitlement is cached with a timestamp. When the
+  /// backend is unreachable we honour that cache for 24 hours from
+  /// `lastVerifiedAt`, then fail CLOSED to free.
+  ///
+  /// Why bounded rather than either extreme: failing closed immediately would cut
+  /// off a paying student mid-session over a tunnel or a flaky lift, which is the
+  /// worst moment to do it. Failing open indefinitely would let a cancelled
+  /// subscriber keep access forever simply by staying offline — the cache would
+  /// become the product. Twenty-four hours caps that exposure at one day while
+  /// covering every realistic connectivity gap.
+  ///
+  /// The boundary is INCLUSIVE: at exactly 24h the cache is stale and we fail
+  /// closed, matching the server-side staleness rule so the two cannot disagree
+  /// about the same instant.
+  Future<Entitlement> _fetch() async {
+    final fresh = await _fetchOrNull();
+    if (fresh != null) {
+      await _cache(fresh);
+      return fresh;
+    }
+    final cached = await _readCache();
+    if (cached != null) {
+      appLog.i('[Entitlement] backend unreachable — honouring cache within 24h');
+      return cached;
+    }
+    return const Entitlement(isPremium: false, source: 'NONE');
+  }
+
+  static const String _kCacheJson = 'entitlement_cache_json';
+  static const String _kCacheAt = 'entitlement_cache_verified_at';
+
+  /// Cache window. Must stay equal to the server's staleness bound.
+  @visibleForTesting
+  static const Duration cacheWindow = Duration(hours: 24);
+
+  Future<void> _cache(Entitlement e) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_kCacheJson, jsonEncode(e.toJson()));
+      await prefs.setInt(_kCacheAt, DateTime.now().toUtc().millisecondsSinceEpoch);
+    } catch (err) {
+      appLog.w('[Entitlement] cache write failed: $err');
+    }
+  }
+
+  /// Returns the cached entitlement only if it is INSIDE the window.
+  /// Anything at or beyond 24h reads as absent, so the caller falls to free.
+  Future<Entitlement?> _readCache() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_kCacheJson);
+      final at = prefs.getInt(_kCacheAt);
+      if (raw == null || at == null) return null;
+      final age = DateTime.now().toUtc().difference(
+          DateTime.fromMillisecondsSinceEpoch(at, isUtc: true));
+      if (age >= cacheWindow) {
+        appLog.i('[Entitlement] cache is ${age.inHours}h old — beyond the '
+            '24h bound, failing CLOSED');
+        return null;
+      }
+      return Entitlement.fromJson(
+          Map<String, dynamic>.from(jsonDecode(raw) as Map));
+    } catch (err) {
+      appLog.w('[Entitlement] cache read failed: $err');
+      return null;
+    }
+  }
 
   Future<void> refresh() async {
     state = const AsyncLoading();
