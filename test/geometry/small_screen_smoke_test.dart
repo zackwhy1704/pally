@@ -73,10 +73,35 @@ import 'package:pally/features/wiki_viewer/presentation/wiki_viewer_screen.dart'
 import 'package:pally/features/photo_question/models/ocr_confidence_result.dart';
 import 'package:pally/shared/models/photo_question.dart';
 
-/// The glob count of lib/features/**/*_screen.dart. Every screen must be
-/// ENROLLED (pumped) or EXCLUDED (with a reason) — never silently skipped.
-/// Update ONLY when a screen file is genuinely added/removed.
-const int kScaffoldScreenCount = 58;
+/// LIVE glob of lib/features/**/*_screen.dart. Every screen must be ENROLLED
+/// (pumped) or EXCLUDED (with a reason) — never silently skipped.
+///
+/// This USED TO BE a hardcoded `const int kScaffoldScreenCount = 57`, which made
+/// the guard assert something its own name did not do: a 58th screen was added
+/// and the test passed, because it compared the registry against a frozen number
+/// rather than against the files on disk. The guard could only ever catch a
+/// screen you had ALREADY remembered to count — precisely the case that needs no
+/// guard.
+///
+/// It now reads the filesystem, so an unregistered screen fails by construction
+/// and no constant needs maintaining.
+List<String> _globScreenFiles() {
+  final dir = Directory('lib/features');
+  if (!dir.existsSync()) {
+    throw StateError(
+        'lib/features not found from ${Directory.current.path} — the geometry '
+        'registry guard cannot glob, so it would silently pass. Run tests from '
+        'the package root.');
+  }
+  return dir
+      .listSync(recursive: true)
+      .whereType<File>()
+      .map((f) => f.path)
+      .where((p) => p.endsWith('_screen.dart'))
+      .map((p) => p.split(Platform.pathSeparator).last.replaceAll('.dart', ''))
+      .toList()
+    ..sort();
+}
 
 const _avatarId = 'av-1';
 
@@ -339,10 +364,27 @@ void main() {
   const tall = Size(360, 850); // taller small phone
 
   group('registry accounts for every screen', () {
-    test('enrolled + excluded == glob count (58)', () {
-      expect(_enrolled.length + _excluded.length, kScaffoldScreenCount,
-          reason: 'Every lib/features/**/*_screen.dart must be enrolled or '
-              'explicitly excluded. New screens force a decision here.');
+    test('every globbed screen is enrolled or excluded BY NAME', () {
+      // Name-by-name, not a count. Two screens could be added and one removed
+      // and a count would still balance while a screen went unregistered.
+      final onDisk = _globScreenFiles().toSet();
+      final registered = <String>{
+        ..._enrolled.map((c) => c.name),
+        ..._excluded.map((e) => e.name),
+      };
+
+      expect(onDisk.difference(registered), isEmpty,
+          reason: 'These lib/features/**/*_screen.dart files are neither '
+              'ENROLLED nor EXCLUDED. Add a case, or exclude it WITH A REASON.');
+      expect(registered.difference(onDisk), isEmpty,
+          reason: 'These registry entries no longer exist on disk — a stale '
+              'entry silently reduces real coverage.');
+    });
+
+    test('the glob actually finds screens (guards against a silent empty glob)', () {
+      // If the glob returned nothing, every assertion above would pass
+      // vacuously — the failure mode this whole guard exists to prevent.
+      expect(_globScreenFiles().length, greaterThan(40));
     });
   });
 
