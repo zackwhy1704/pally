@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/subscription/presentation/trial_countdown_banner.dart';
 import 'package:pally/features/subscription/trial_status_provider.dart';
 
 Widget _wrap(List<Override> overrides) => ProviderScope(
-      overrides: overrides,
+      overrides: [
+      // The banner is hidden when monetization is DORMANT — a countdown toward
+      // a purchase that cannot happen is a clock counting down to a locked
+      // door. These tests assert the LIVE behaviour and remain the control that
+      // dormancy is a state, not a removal.
+      monetizationLiveProvider.overrideWith((ref) async => true),
+        ...overrides,
+      ],
       child: const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,

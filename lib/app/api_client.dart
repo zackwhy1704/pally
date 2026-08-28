@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/l10n/app_localizations.dart';
+import 'package:pally/features/subscription/revenuecat_service.dart';
 import 'package:pally/features/consent/data/consent_gate_guard.dart';
 import 'package:pally/features/consent/presentation/consent_gate_sheet.dart';
 import 'package:pally/features/consent/presentation/parental_consent_pending_sheet.dart';
@@ -198,7 +199,17 @@ class _ServerErrorInterceptor extends Interceptor {
           feature = dataNode['feature']?.toString();
         }
       }
-      if (code == 'UPGRADE_REQUIRED') {
+      // DORMANT MONETIZATION: do NOT force-navigate to a paywall when nothing
+      // is purchasable. This interceptor is global, so it is the single highest-
+      // risk edit here — a reviewer sending 20 chat messages was auto-routed to
+      // a paywall with no price and no purchase path (App Store 3.1.2).
+      //
+      // The error is NOT swallowed. It continues to propagate as a normal
+      // DioException, which every call site already maps through
+      // PallyError.fromDio -> PallyError.dailyLimitReached ("You've reached
+      // today's limit. It resets at midnight.") and renders inline. Audited per
+      // surface before making this change; see the branch report.
+      if (code == 'UPGRADE_REQUIRED' && MonetizationState.isLive) {
         final now = DateTime.now();
         final allowed = _lastPaywallRoute == null ||
             now.difference(_lastPaywallRoute!) > const Duration(seconds: 1);

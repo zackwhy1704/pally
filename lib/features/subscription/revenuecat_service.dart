@@ -12,6 +12,25 @@ import 'package:pally/core/utils/logger.dart';
 /// is held, and IAP configuration must match what the reviewer eventually sees.
 /// Creating them early would put products in front of a reviewer that the review
 /// notes do not describe — the second-rejection risk.
+/// Read-only mirror of the monetization gate for code that has no WidgetRef.
+///
+/// PallyError.from() and the Dio interceptor both need to know whether anything
+/// is purchasable, and neither can watch a provider. This is deliberately a
+/// plain mutable bool rather than a second source of truth: it is WRITTEN only
+/// by monetizationLiveProvider resolving, and read nowhere that could change it.
+/// Defaults to DORMANT so a read before the provider resolves is safe.
+class MonetizationState {
+  MonetizationState._();
+
+  static bool _live = false;
+
+  static bool get isLive => _live;
+  static bool get isDormant => !_live;
+
+  /// Called by monetizationLiveProvider when the offering resolves.
+  static void set(bool live) => _live = live;
+}
+
 class IapProducts {
   IapProducts._();
 
@@ -39,6 +58,19 @@ class IapProducts {
 /// user to RevenueCat, nothing more.
 class RevenueCatService {
   RevenueCatService._();
+
+  /// Public SDK key, supplied at build time:
+  ///   flutter build --dart-define=REVENUECAT_API_KEY=goog_xxx
+  ///
+  /// EMPTY BY DEFAULT, AND THAT IS THE LAUNCH STATE. With no key the SDK is
+  /// never configured, currentOffering() returns null, and monetization reads
+  /// DORMANT — no plan CTAs, no prices, no forced paywall. Free tier only.
+  ///
+  /// Honest limitation: because the key is compile-time, the CURRENT binary
+  /// cannot be woken by configuration alone. Ship one binary carrying the key
+  /// and from then on monetization is genuinely dashboard-driven — publish an
+  /// offering and the app wakes on next launch with no further build.
+  static const String apiKey = String.fromEnvironment('REVENUECAT_API_KEY');
 
   static bool _configured = false;
 
@@ -68,6 +100,13 @@ class RevenueCatService {
   }) async {
     if (_configured) return;
     if (kIsWeb) return;
+    // No key compiled in → stay unconfigured. This is the dormant launch state,
+    // not an error: currentOffering() then returns null and every purchase
+    // surface hides itself.
+    if (apiKey.isEmpty) {
+      appLog.i('[RevenueCat] no API key — SDK not configured (monetization dormant)');
+      return;
+    }
     try {
       final config = PurchasesConfiguration(apiKey)
         // appUserID is the ONLY identifying value sent. Passing null here would

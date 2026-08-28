@@ -8989,6 +8989,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We couldn\'t load your blocked list.'**
   String get blockedListLoadFailed;
+
+  /// No description provided for @plansUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscriptions aren\'t available right now.'**
+  String get plansUnavailable;
 }
 
 class _AppLocalizationsDelegate

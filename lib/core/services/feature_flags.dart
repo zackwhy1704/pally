@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:pally/features/subscription/revenuecat_service.dart';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pally/app/api_client.dart';
@@ -133,3 +135,31 @@ bool isFlagEnabled(WidgetRef ref, String flag) =>
 /// to hide every price string on gated iOS, mirroring WebUpgradeCta's launch gate.
 bool allowPriceDisplay(WidgetRef ref) =>
     !Platform.isIOS || isFlagEnabled(ref, FeatureFlags.iosExternalLinkEnabled);
+
+/// Whether monetization is LIVE — i.e. a purchase could actually complete.
+///
+/// Gated on RevenueCat returning a NON-EMPTY offering, deliberately not on a
+/// server flag. A flag can say "on" while no products exist, which is exactly
+/// today's defect: plan CTAs with no price and no purchase path (App Store
+/// 3.1.2). The offering IS the thing that decides whether a purchase can
+/// complete, so gating on it makes "we show a CTA" and "a purchase can happen"
+/// the same condition by construction. It cannot drift.
+///
+/// DORMANT is the safe default and the launch state:
+///   * no API key compiled in  -> SDK unconfigured -> null offering -> dormant
+///   * SDK configured but no published offering    -> null/empty   -> dormant
+///   * getOfferings throws                          -> null        -> dormant
+/// currentOffering() never throws (it returns null when unconfigured and
+/// catches internally), so this provider cannot fail the gate open.
+final monetizationLiveProvider = FutureProvider<bool>((ref) async {
+  final offering = await RevenueCatService.currentOffering();
+  final live = (offering?.availablePackages.isNotEmpty) ?? false;
+  // Mirror it for code with no WidgetRef (PallyError, the Dio interceptor).
+  MonetizationState.set(live);
+  return live;
+});
+
+/// Synchronous read for `build()`. Resolves to DORMANT while the offering is
+/// still loading — never flash a purchase CTA and retract it a frame later.
+bool monetizationLive(WidgetRef ref) =>
+    ref.watch(monetizationLiveProvider).valueOrNull ?? false;

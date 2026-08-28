@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/subscription/subscription_service.dart';
 import 'package:pally/features/subscription/widgets/web_upgrade_cta.dart';
@@ -21,6 +22,12 @@ class _FakeSender extends UpgradeLinkSender {
 
 Widget _wrap(_FakeSender sender) => ProviderScope(
       overrides: [
+      // Monetization is DORMANT by default now (no RevenueCat offering), which
+      // hides every purchase surface. These tests were written for the LIVE
+      // state and remain the CONTROL that dormancy is a state, not a removal —
+      // so they declare it explicitly.
+      monetizationLiveProvider.overrideWith((ref) async => true),
+
         upgradeLinkSenderProvider.overrideWith((ref) => sender),
       ],
       // No Scaffold needed; the CTA is a plain Column.

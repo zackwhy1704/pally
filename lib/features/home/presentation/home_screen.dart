@@ -27,6 +27,7 @@ import 'package:pally/features/progress/presentation/progress_view_model.dart';
 import 'package:pally/features/subscription/presentation/trial_countdown_banner.dart';
 import 'package:pally/features/subscription/presentation/trial_expired_screen.dart';
 import 'package:pally/features/subscription/presentation/trial_welcome_screen.dart';
+import 'package:pally/core/services/feature_flags.dart';
 import 'package:pally/features/subscription/trial_status_provider.dart';
 import 'package:pally/features/onboarding/presentation/feature_tour.dart';
 import 'package:pally/features/onboarding/presentation/direct_onboarding_error_localizer.dart';
@@ -48,13 +49,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       final trial = ref.read(trialStatusProvider).valueOrNull;
-      if (trial?.isTrialExpired == true) {
+      // DORMANT MONETIZATION: never wall a user behind a trial-expiry screen
+      // when nothing is purchasable. Walling someone out of the free tier and
+      // offering them no way to unlock it is worse than any missed upsell — and
+      // it is what 69 of 73 production accounts were about to hit.
+      // When an offering exists, the original behaviour returns unchanged.
+      final canSell = monetizationLive(ref);
+      if (canSell && trial?.isTrialExpired == true) {
         final show = await TrialExpiredScreen.shouldShow();
         if (show && mounted) {
           const TrialExpiredRoute().go(context);
           return;
         }
-      } else if (trial?.isOnTrial == true) {
+      } else if (canSell && trial?.isOnTrial == true) {
+        // Dormant: the welcome sheet advertises a trial that converts to a
+        // purchase which cannot happen. Suppressed at the call site because
+        // maybeShow() is static and has no ref of its own.
         // First-launch trial: show the welcome sheet ONLY. Skip the tour this
         // launch so the two overlays don't stack — the tour's seen-flag is still
         // unset, so it appears on the next home visit.

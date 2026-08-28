@@ -1481,5 +1481,6 @@
   "blockedListUnblock": "取消屏蔽",
   "blockedListUnblocked": "已取消屏蔽{name}",
   "moderationReportGroup": "举报此小组",
-  "blockedListLoadFailed": "无法加载已屏蔽名单。"
+  "blockedListLoadFailed": "无法加载已屏蔽名单。",
+  "plansUnavailable": "目前无法订阅。"
 }

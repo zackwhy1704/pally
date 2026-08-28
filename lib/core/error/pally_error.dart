@@ -1,3 +1,4 @@
+import 'package:pally/features/subscription/revenuecat_service.dart';
 import 'package:dio/dio.dart';
 import 'package:pally/core/utils/json_reader.dart';
 
@@ -45,6 +46,13 @@ class PallyError {
   static const upgradeRequired = PallyError(
       PallyErrorKind.upgradeRequired,
       'This needs Apalchi Premium.');
+
+  /// The 402 message when monetization is DORMANT. States the limit as a fact
+  /// and sells nothing — there is no purchase to make, so an "upgrade" prompt
+  /// would be a dead end pointing at a product that does not exist.
+  static const dailyLimitReached = PallyError(
+      PallyErrorKind.upgradeRequired,
+      "You've reached today's limit. It resets at midnight.");
   static const permissionDenied = PallyError(
       PallyErrorKind.permissionDenied,
       "You don't have permission to do that.");
@@ -132,7 +140,13 @@ class PallyError {
         final code = e.response?.statusCode ?? 0;
         if (code == 404) return notFound;
         if (code == 401) return unauthorized;
-        if (code == 402) return upgradeRequired;
+        // Dormant: never surface an upgrade prompt for a purchase that
+        // cannot complete. See MonetizationState.
+        if (code == 402) {
+          return MonetizationState.isDormant
+              ? dailyLimitReached
+              : upgradeRequired;
+        }
         if (code == 403) {
           final body = e.response?.data;
           if (body is Map && body['data'] is Map) {

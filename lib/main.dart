@@ -11,6 +11,7 @@ import 'package:pally/core/local_db/pally_database.dart';
 import 'package:pally/core/observability/sentry_observability.dart';
 import 'package:pally/core/services/install_hygiene.dart';
 import 'package:pally/core/services/notification_service.dart';
+import 'package:pally/features/subscription/revenuecat_service.dart';
 import 'package:pally/core/utils/logger.dart';
 import 'package:pally/firebase_options.dart';
 import 'package:pally/features/auth/auth_state.dart';
@@ -67,6 +68,19 @@ Future<void> _bootstrap() async {
 
   // Initialise local notifications. Non-fatal if it fails.
   await NotificationService.init();
+
+  // Configure RevenueCat so the monetization gate has something real to read.
+  // No-ops when no REVENUECAT_API_KEY is compiled in, which is the launch state:
+  // the SDK stays unconfigured, currentOffering() returns null, and every
+  // purchase surface hides itself. Non-fatal by design — a student must be able
+  // to open the app and study when the billing SDK is unavailable.
+  final rcUserId = AuthNotifier.instance.state.userId;
+  if (rcUserId != null && rcUserId.isNotEmpty) {
+    await RevenueCatService.configure(
+      apiKey: RevenueCatService.apiKey,
+      opaqueUserId: rcUserId,
+    );
+  }
 
   // Shared NavigatorState key so the global server-error interceptor can
   // reach a BuildContext for toasts when no screen owns the failed call.
