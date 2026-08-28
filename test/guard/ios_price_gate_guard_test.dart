@@ -41,10 +41,12 @@ void main() {
 
   test('every file that shows a price also gates it with allowPriceDisplay', () {
     final offenders = <String>[];
+    var examined = 0;
     for (final f
         in Directory('lib').listSync(recursive: true).whereType<File>()) {
       if (!f.path.endsWith('.dart') || f.path.endsWith('.g.dart')) continue;
       if (isL10nStringTable(f.path)) continue;
+      examined++;
       final src = f.readAsStringSync();
       final showsLiteralPrice = pricePattern.hasMatch(src);
       final usesPriceKey = priceKeys.any((k) => src.contains('.$k'));
@@ -53,6 +55,14 @@ void main() {
         offenders.add(f.path.replaceFirst('lib/', ''));
       }
     }
+    // VACUOUS-PASS FLOOR. `offenders` being empty is only meaningful if files
+    // were actually read: a filter that stopped matching (an extension rename, a
+    // moved folder) would examine nothing and pass silently. ~300 non-generated
+    // Dart files exist outside l10n; 200 leaves room for real shrinkage while
+    // still failing loudly if the scan collapses.
+    expect(examined, greaterThan(200),
+        reason: 'The price scan examined only $examined files — it is not '
+            'scanning the codebase, so an empty offender list proves nothing.');
     expect(offenders, isEmpty,
         reason: 'These render a price (literal or via a price ARB key) without '
             'an allowPriceDisplay gate (App Store 3.1.1 risk):\n'
