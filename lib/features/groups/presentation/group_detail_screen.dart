@@ -14,6 +14,7 @@ import 'package:pally/core/ui/pally_toast.dart';
 import 'package:pally/features/groups/presentation/challenge_card.dart';
 import 'package:pally/features/groups/presentation/challenge_view_model.dart';
 import 'package:pally/features/groups/presentation/groups_view_model.dart';
+import 'package:pally/features/groups/presentation/widgets/moderation_sheet.dart';
 import 'package:pally/features/library/presentation/library_view_model.dart';
 import 'package:pally/shared/models/avatar.dart';
 
@@ -40,6 +41,25 @@ class GroupDetailScreen extends ConsumerWidget {
             Text(l.groupTitle, style: AppTextStyles.title),
         centerTitle: true,
         actions: [
+          // GUIDELINE 1.2: the group NAME is user-authored free text chosen by the
+          // creator, so it is a reportable surface. Deliberately OUTSIDE the
+          // isClassGroup check below — that check hides the whole menu for class
+          // groups, which would have left a class group's own name unreportable.
+          IconButton(
+            icon: const Icon(Icons.flag_outlined, size: 20),
+            tooltip: AppLocalizations.of(context).moderationReportGroup,
+            onPressed: () async {
+              // A group-level report: no targetUserId, so group_reports records
+              // it against the group alone. There is no user to block here — the
+              // sheet hides the block action when targetUserId is null.
+              await showModerationSheet(
+                context,
+                ref,
+                groupId: groupId,
+                targetName: detailAsync.valueOrNull?.group.name ?? '',
+              );
+            },
+          ),
           // CLASS groups are centre-managed: students get 403 on leave/kick,
           // so the leave control is hidden entirely for them.
           if (detailAsync.valueOrNull?.group.isClassGroup == false)
@@ -145,7 +165,7 @@ class GroupDetailScreen extends ConsumerWidget {
                 if (detail.sharedNotes.isEmpty)
                   _EmptyNotesState(groupId: groupId)
                 else ...[
-                  ...detail.sharedNotes.map((n) => _NoteTile(note: n)),
+                  ...detail.sharedNotes.map((n) => _NoteTile(note: n, groupId: groupId)),
                   const SizedBox(height: AppSpacing.sm),
                   // Always show the "share a note" nudge at the bottom
                   _ShareNudge(groupId: groupId),
@@ -558,6 +578,19 @@ class _MemberTile extends StatelessWidget {
                   ),
                 ),
               ),
+            // GUIDELINE 1.2: a display name is user-authored free text, so the
+            // member list is a UGC surface too and needs report + block.
+            IconButton(
+              icon: const Icon(Icons.more_horiz, size: 20, color: AppColors.text3),
+              tooltip: AppLocalizations.of(context).moderationSheetTitle,
+              onPressed: () => showModerationSheet(
+                context,
+                ref,
+                groupId: groupId,
+                targetUserId: member.userId,
+                targetName: member.displayName,
+              ),
+            ),
           ],
         ),
       ),
@@ -567,9 +600,10 @@ class _MemberTile extends StatelessWidget {
 
 // ── Note tile ─────────────────────────────────────────────────────────────────
 
-class _NoteTile extends StatelessWidget {
-  const _NoteTile({required this.note});
+class _NoteTile extends ConsumerWidget {
+  const _NoteTile({required this.note, required this.groupId});
   final SharedNote note;
+  final String groupId;
 
   String _timeAgo(AppLocalizations l, DateTime dt) {
     final diff = DateTime.now().difference(dt);
@@ -580,7 +614,7 @@ class _NoteTile extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final canNavigate =
         note.avatarId.isNotEmpty;
@@ -595,6 +629,17 @@ class _NoteTile extends StatelessWidget {
           onTap: canNavigate
               ? () => WikiViewerRoute(avatarId: note.avatarId).push(context)
               : null,
+          // GUIDELINE 1.2: this note is another student's content, reachable in
+          // full via the tap above, so it needs report + block. sharedBy is the
+          // author's user id (the server compares it against the viewer's id).
+          onLongPress: () => showModerationSheet(
+            context,
+            ref,
+            groupId: groupId,
+            targetUserId: note.sharedBy,
+            targetName: note.sharedBy,
+            targetNoteId: note.id,
+          ),
           child: Container(
             padding: AppSpacing.card,
             decoration: BoxDecoration(

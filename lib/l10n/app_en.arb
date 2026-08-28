@@ -4676,13 +4676,37 @@
   "commonTryAgainSentence": "Try again",
   "@commonTryAgainSentence": {},
   "teachTitle": "Teach {mascot}",
-  "@teachTitle": {"placeholders": {"mascot": {"type": "String"}}},
+  "@teachTitle": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "teachIntro": "Pick a topic and TEACH {mascot}! Explaining is the fastest way to know you really understand.",
-  "@teachIntro": {"placeholders": {"mascot": {"type": "String"}}},
+  "@teachIntro": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "teachAboutLabel": "Teach {mascot} about",
-  "@teachAboutLabel": {"placeholders": {"mascot": {"type": "String"}}},
+  "@teachAboutLabel": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "teachHint": "Pretend {mascot} has never heard of this. Use your own words…",
-  "@teachHint": {"placeholders": {"mascot": {"type": "String"}}},
+  "@teachHint": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "teachSubmit": "Done — show me how I did",
   "@teachSubmit": {},
   "teachPerfect": "You taught it all!",
@@ -4690,21 +4714,48 @@
   "teachGreat": "Great teaching!",
   "@teachGreat": {},
   "commonXpPlus": "+{xp} XP",
-  "@commonXpPlus": {"placeholders": {"xp": {"type": "int"}}},
+  "@commonXpPlus": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
   "teachYouExplained": "You explained",
   "@teachYouExplained": {},
   "teachMissedConcepts": "Missed concepts",
   "@teachMissedConcepts": {},
   "teachMochiAsks": "{mascot} asks: {question}",
-  "@teachMochiAsks": {"placeholders": {"mascot": {"type": "String"}, "question": {"type": "String"}}},
+  "@teachMochiAsks": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      },
+      "question": {
+        "type": "String"
+      }
+    }
+  },
   "teachPickAnother": "Pick another",
   "@teachPickAnother": {},
   "teachNoTopics": "No topics to teach yet",
   "@teachNoTopics": {},
   "teachNoTopicsPersonalDesc": "Upload some notes first so {mascot} has something to learn from!",
-  "@teachNoTopicsPersonalDesc": {"placeholders": {"mascot": {"type": "String"}}},
+  "@teachNoTopicsPersonalDesc": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "teachCouldntCheck": "{mascot} couldn't check this one",
-  "@teachCouldntCheck": {"placeholders": {"mascot": {"type": "String"}}},
+  "@teachCouldntCheck": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "teachEvalFailedFallback": "Something went wrong — give it another go.",
   "@teachEvalFailedFallback": {},
   "hwTitle": "Homework",
@@ -4766,7 +4817,13 @@
   "examPrepDaysUntilExam": "days until exam",
   "@examPrepDaysUntilExam": {},
   "examPrepDailyTarget": "{count, plural, one{Study 1 module/day to finish by exam} other{Study {count} modules/day to finish by exam}}",
-  "@examPrepDailyTarget": {"placeholders": {"count": {"type": "int"}}},
+  "@examPrepDailyTarget": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "examPrepSelfAssessed": "Self-assessed",
   "@examPrepSelfAssessed": {},
   "examPrepRedo": "Re-do",
@@ -4786,11 +4843,35 @@
   "referralCodeCopied": "Code copied",
   "@referralCodeCopied": {},
   "referralShareMessage": "Try Apalchi — the AI study companion. Use my code {code} at sign-up so we both earn bonus stars when you take your first quiz.",
-  "@referralShareMessage": {"placeholders": {"code": {"type": "String"}}},
+  "@referralShareMessage": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
   "referralActivatedOfTarget": "{activated} of {target} friends activated",
-  "@referralActivatedOfTarget": {"placeholders": {"activated": {"type": "int"}, "target": {"type": "int"}}},
+  "@referralActivatedOfTarget": {
+    "placeholders": {
+      "activated": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
   "referralNextTier": "Refer {count} more → +{bonus}⭐ bonus",
-  "@referralNextTier": {"placeholders": {"count": {"type": "int"}, "bonus": {"type": "int"}}},
+  "@referralNextTier": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "bonus": {
+        "type": "int"
+      }
+    }
+  },
   "referralActivatedNote": "Friends count as \"activated\" after they complete their first quiz.",
   "@referralActivatedNote": {},
   "referralEmptyInvites": "No invites yet — share your code above to get started!",
@@ -4824,11 +4905,23 @@
   "studyPlanUpcomingTest": "Upcoming Test",
   "@studyPlanUpcomingTest": {},
   "studyPlanSubjectTest": "{subject} Test",
-  "@studyPlanSubjectTest": {"placeholders": {"subject": {"type": "String"}}},
+  "@studyPlanSubjectTest": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
   "studyPlanTestToday": "Today",
   "@studyPlanTestToday": {},
   "studyPlanDaysLeft": "{days, plural, one{1 day left} other{{days} days left}}",
-  "@studyPlanDaysLeft": {"placeholders": {"days": {"type": "int"}}},
+  "@studyPlanDaysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "studyPlanSetTestDate": "Set a test date in Settings to see a countdown here.",
   "@studyPlanSetTestDate": {},
   "brainHealthTitle": "Brain Health 🧠",
@@ -4846,17 +4939,44 @@
   "brainHealthAvgQuality": "Avg Quality",
   "@brainHealthAvgQuality": {},
   "brainHealthErrors": "{count, plural, one{1 error} other{{count} errors}}",
-  "@brainHealthErrors": {"placeholders": {"count": {"type": "int"}}},
+  "@brainHealthErrors": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "quizDailyTitle": "Daily Quiz",
   "@quizDailyTitle": {},
   "quizQuestionOf": "Question {current} of {total}",
-  "@quizQuestionOf": {"placeholders": {"current": {"type": "int"}, "total": {"type": "int"}}},
+  "@quizQuestionOf": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "quizXpEarnedLong": "+{xp} XP earned",
-  "@quizXpEarnedLong": {"placeholders": {"xp": {"type": "int"}}},
+  "@quizXpEarnedLong": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
   "quizMasteryBreakdown": "Mastery breakdown",
   "@quizMasteryBreakdown": {},
   "quizMoreItems": "+{count} more",
-  "@quizMoreItems": {"placeholders": {"count": {"type": "int"}}},
+  "@quizMoreItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "centreJoinTitle": "Join a class",
   "@centreJoinTitle": {},
   "centreJoinEnterFull": "Enter the full class code",
@@ -4868,7 +4988,13 @@
   "centreJoinYourClassFallback": "your class",
   "@centreJoinYourClassFallback": {},
   "centreJoinSuccess": "Joined {className} 🎉",
-  "@centreJoinSuccess": {"placeholders": {"className": {"type": "String"}}},
+  "@centreJoinSuccess": {
+    "placeholders": {
+      "className": {
+        "type": "String"
+      }
+    }
+  },
   "centreJoinFailed": "Could not join — check the code and try again",
   "@centreJoinFailed": {},
   "centreJoinButton": "Join class",
@@ -4884,7 +5010,13 @@
   "assignReleasedBody": "Compare your answers with the model answers below.",
   "@assignReleasedBody": {},
   "assignQuestionNumber": "Q{n}",
-  "@assignQuestionNumber": {"placeholders": {"n": {"type": "int"}}},
+  "@assignQuestionNumber": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "assignYourAnswer": "Your answer",
   "@assignYourAnswer": {},
   "assignNoAnswerRecorded": "No answer recorded",
@@ -4908,9 +5040,21 @@
   "learningStyleRecommended": "RECOMMENDED",
   "@learningStyleRecommended": {},
   "learningStyleGuideDesc": "{mascot} guides you to the answer — builds real retention.",
-  "@learningStyleGuideDesc": {"placeholders": {"mascot": {"type": "String"}}},
+  "@learningStyleGuideDesc": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "learningStyleAnswerDesc": "{mascot} gives the worked solution — great for checking your work.",
-  "@learningStyleAnswerDesc": {"placeholders": {"mascot": {"type": "String"}}},
+  "@learningStyleAnswerDesc": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "chatModeGuideMe": "Guide Me",
   "@chatModeGuideMe": {},
   "chatModeJustAnswer": "Just answer",
@@ -4920,21 +5064,45 @@
   "chatModeSwitchAnyTime": "You can switch any time with the toggle above the chat.",
   "@chatModeSwitchAnyTime": {},
   "chatModeGuideDesc": "{mascot} asks you guiding questions — you figure it out yourself. What you discover, you remember.",
-  "@chatModeGuideDesc": {"placeholders": {"mascot": {"type": "String"}}},
+  "@chatModeGuideDesc": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "chatModeAnswerDesc": "{mascot} gives you the worked solution directly. Great for checking your work — but you'll remember less.",
-  "@chatModeAnswerDesc": {"placeholders": {"mascot": {"type": "String"}}},
+  "@chatModeAnswerDesc": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "chatModeDefaultGuide": "Default: Guide Me",
   "@chatModeDefaultGuide": {},
   "chatModeGotIt": "Got it — let's learn!",
   "@chatModeGotIt": {},
   "chatCoachTapToggle": "Tap the toggle to switch how {mascot} helps you.",
-  "@chatCoachTapToggle": {"placeholders": {"mascot": {"type": "String"}}},
+  "@chatCoachTapToggle": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "chatAnswerNudge": "Full answer coming up — try Guide Me sometimes, you'll remember more.",
   "@chatAnswerNudge": {},
   "chatEscapeGreatEffort": "Great effort! Here's the answer",
   "@chatEscapeGreatEffort": {},
   "chatEscapeAddedPractice": "Added \"{topic}\" to your practice list",
-  "@chatEscapeAddedPractice": {"placeholders": {"topic": {"type": "String"}}},
+  "@chatEscapeAddedPractice": {
+    "placeholders": {
+      "topic": {
+        "type": "String"
+      }
+    }
+  },
   "chatHints": "Hints: ",
   "@chatHints": {},
   "chatAnswerReady": "— answer ready",
@@ -4958,17 +5126,44 @@
   "centreBlockBackToSignIn": "Back to Sign In",
   "@centreBlockBackToSignIn": {},
   "avatarPickerCreateError": "Could not create {mascot} — {message}",
-  "@avatarPickerCreateError": {"placeholders": {"mascot": {"type": "String"}, "message": {"type": "String"}}},
+  "@avatarPickerCreateError": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      },
+      "message": {
+        "type": "String"
+      }
+    }
+  },
   "avatarPickerTitle": "Choose Your {mascot} ✨",
-  "@avatarPickerTitle": {"placeholders": {"mascot": {"type": "String"}}},
+  "@avatarPickerTitle": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "avatarPickerSubtitle": "Each one is unique 🍡 Pick who you want to learn with!",
   "@avatarPickerSubtitle": {},
   "collectionTitle": "Collection",
   "@collectionTitle": {},
   "collectionAlbumTitle": "{mascot} Album",
-  "@collectionAlbumTitle": {"placeholders": {"mascot": {"type": "String"}}},
+  "@collectionAlbumTitle": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "createTutorWishHelp": "WHAT DO YOU WISH {mascot} TO HELP YOU WITH?",
-  "@createTutorWishHelp": {"placeholders": {"mascot": {"type": "String"}}},
+  "@createTutorWishHelp": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "groupCodeHint": "e.g. AB23CD",
   "@groupCodeHint": {},
   "joinCodeHint": "e.g. 5K7Q2X",
@@ -4980,31 +5175,79 @@
   "uploadSplitLongNotesTip": "Consider splitting long notes into separate uploads for better accuracy.",
   "@uploadSplitLongNotesTip": {},
   "voiceTalkTo": "Talk to {mascot}",
-  "@voiceTalkTo": {"placeholders": {"mascot": {"type": "String"}}},
+  "@voiceTalkTo": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "voiceExplainer": "{mascot} uses your phone's speech recognition to turn talking into text — your voice isn't saved.",
-  "@voiceExplainer": {"placeholders": {"mascot": {"type": "String"}}},
+  "@voiceExplainer": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "voiceMicNeeded": "Microphone access needed",
   "@voiceMicNeeded": {},
   "voiceMicGuidance": "To talk to {mascot}, turn on microphone access in Settings. You can still type your answer.",
-  "@voiceMicGuidance": {"placeholders": {"mascot": {"type": "String"}}},
+  "@voiceMicGuidance": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "voiceNotNow": "Not now",
   "@voiceNotNow": {},
   "voiceOpenSettings": "Open Settings",
   "@voiceOpenSettings": {},
   "weaknessImproved": "You improved on {topics}! 📈",
-  "@weaknessImproved": {"placeholders": {"topics": {"type": "String"}}},
+  "@weaknessImproved": {
+    "placeholders": {
+      "topics": {
+        "type": "String"
+      }
+    }
+  },
   "weaknessFocusOn": "Let's focus on",
   "@weaknessFocusOn": {},
   "weaknessHelpPractise": "{mascot} will help you practise these.",
-  "@weaknessHelpPractise": {"placeholders": {"mascot": {"type": "String"}}},
+  "@weaknessHelpPractise": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "tourStep1Title": "Hi, I'm {mascot}!",
-  "@tourStep1Title": {"placeholders": {"mascot": {"type": "String"}}},
+  "@tourStep1Title": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "tourStep1Body": "Let me show you 4 quick things that make Apalchi different from any other study app.",
   "@tourStep1Body": {},
   "tourStep2Title": "A {mascot} for every subject",
-  "@tourStep2Title": {"placeholders": {"mascot": {"type": "String"}}},
+  "@tourStep2Title": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "tourStep2Body": "Create one {mascot} per subject — each one learns only YOUR notes, so every answer matches exactly what your teacher taught.",
-  "@tourStep2Body": {"placeholders": {"mascot": {"type": "String"}}},
+  "@tourStep2Body": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "tourStep3Title": "Learn it. Test it. Prove it.",
   "@tourStep3Title": {},
   "tourStep3Body": "Every topic becomes a mini-mission: quick cards to learn, hot-takes to test yourself, and a challenge to prove it — what you get wrong, I bring back until it sticks.",
@@ -5014,7 +5257,13 @@
   "tourStep4Body": "The Library tracks your mastery by topic. When you get something wrong, I bring it back — spaced and scheduled — until it sticks.",
   "@tourStep4Body": {},
   "tourStep5Title": "Not a generic AI — a {mascot} that knows yours.",
-  "@tourStep5Title": {"placeholders": {"mascot": {"type": "String"}}},
+  "@tourStep5Title": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "tourStep5Body": "Upload your notes and every answer, quiz, and challenge comes from what YOUR teacher taught.",
   "@tourStep5Body": {},
   "tourStep5Cta": "Start",
@@ -5048,13 +5297,25 @@
   "consentGateAlmostThere": "Almost there!",
   "@consentGateAlmostThere": {},
   "consentGateBody": "{feature} unlocks once a grown-up approves your account. We've already sent them an email — or tap below to send a reminder.",
-  "@consentGateBody": {"placeholders": {"feature": {"type": "String"}}},
+  "@consentGateBody": {
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      }
+    }
+  },
   "consentGateRemind": "Remind my grown-up",
   "@consentGateRemind": {},
   "consentGateFeatureUpload": "Upload notes",
   "@consentGateFeatureUpload": {},
   "consentGateFeatureCreateTutor": "Create your own {mascot}",
-  "@consentGateFeatureCreateTutor": {"placeholders": {"mascot": {"type": "String"}}},
+  "@consentGateFeatureCreateTutor": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "consentGateFeatureShareNote": "Share notes",
   "@consentGateFeatureShareNote": {},
   "consentGateFeaturePersistChat": "Save conversations",
@@ -5066,7 +5327,13 @@
   "consentGateFinishSetup": "Let's finish setting up your account so you can start learning",
   "@consentGateFinishSetup": {},
   "serverErrorRetry": "Server error ({status}) — please try again",
-  "@serverErrorRetry": {"placeholders": {"status": {"type": "int"}}},
+  "@serverErrorRetry": {
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
   "consentPendingYourGrownUp": "your grown-up",
   "@consentPendingYourGrownUp": {},
   "notifQuizTitle": "Quiz time!",
@@ -5078,7 +5345,16 @@
   "notifQuizChannelDesc": "Reminds you to take your daily quiz",
   "@notifQuizChannelDesc": {},
   "notifSrsTitle": "{count, plural, one{1 card due for {name}} other{{count} cards due for {name}}}",
-  "@notifSrsTitle": {"placeholders": {"count": {"type": "int"}, "name": {"type": "String"}}},
+  "@notifSrsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "notifSrsBodyOverdue": "Quick 2-min review to lock it in your memory 📚",
   "@notifSrsBodyOverdue": {},
   "notifSrsBody": "Spaced repetition works best when you keep the streak 💪",
@@ -5088,9 +5364,21 @@
   "notifSrsChannelDesc": "Reminds you when spaced-repetition flashcards are due",
   "@notifSrsChannelDesc": {},
   "notifYourMascot": "your {mascot}",
-  "@notifYourMascot": {"placeholders": {"mascot": {"type": "String"}}},
+  "@notifYourMascot": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "deleteTutorTitle": "Delete {name}?",
-  "@deleteTutorTitle": {"placeholders": {"name": {"type": "String"}}},
+  "@deleteTutorTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deleteTutorBody": "This permanently deletes this tutor and all their knowledge, chat history, and quiz progress. This cannot be undone.",
   "@deleteTutorBody": {},
   "deleteTutorKnowledgePages": "Knowledge pages",
@@ -5110,7 +5398,13 @@
   "relevanceTitle": "Hmm, this might not fit!",
   "@relevanceTitle": {},
   "relevanceBody": "This file doesn't seem to match \"{subject}\". Your tutor works best with notes from that subject.",
-  "@relevanceBody": {"placeholders": {"subject": {"type": "String"}}},
+  "@relevanceBody": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
   "relevanceGoBack": "Go Back",
   "@relevanceGoBack": {},
   "relevanceAddAnyway": "Add Anyway",
@@ -5120,17 +5414,41 @@
   "appAsyncDefaultError": "Something went wrong. Pull down to retry.",
   "@appAsyncDefaultError": {},
   "moduleItemsLearn": "{count} learn",
-  "@moduleItemsLearn": {"placeholders": {"count": {"type": "int"}}},
+  "@moduleItemsLearn": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "moduleItemsTest": "{count} test",
-  "@moduleItemsTest": {"placeholders": {"count": {"type": "int"}}},
+  "@moduleItemsTest": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "moduleItemsProve": "{count} prove",
-  "@moduleItemsProve": {"placeholders": {"count": {"type": "int"}}},
+  "@moduleItemsProve": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "subReturnTitle": "Subscription",
   "@subReturnTitle": {},
   "subReturnSuccess": "You are premium!",
   "@subReturnSuccess": {},
   "subReturnSuccessBody": "Everything just unlocked — unlimited {mascot}s, family sharing, parent dashboard, and more.",
-  "@subReturnSuccessBody": {"placeholders": {"mascot": {"type": "String"}}},
+  "@subReturnSuccessBody": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "subReturnStartExploring": "Start exploring",
   "@subReturnStartExploring": {},
   "subReturnStillConfirming": "Still confirming…",
@@ -5174,21 +5492,66 @@
   "webCtaUpgradedRefresh": "I've upgraded — refresh",
   "@webCtaUpgradedRefresh": {},
   "trialTimeHoursLeft": "{hours}h left",
-  "@trialTimeHoursLeft": {"placeholders": {"hours": {"type": "int"}}},
+  "@trialTimeHoursLeft": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "trialTimeDaysLeft": "{days, plural, one{1 day left} other{{days} days left}}",
-  "@trialTimeDaysLeft": {"placeholders": {"days": {"type": "int"}}},
+  "@trialTimeDaysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "trialBannerUrgent": "Last day of Premium! ⏳ {time} — keep your {mascot}s.",
-  "@trialBannerUrgent": {"placeholders": {"mascot": {"type": "String"}, "time": {"type": "String"}}},
+  "@trialBannerUrgent": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "trialBannerWarning": "{time} of Premium — subscribe to keep all your {mascot}s.",
-  "@trialBannerWarning": {"placeholders": {"mascot": {"type": "String"}, "time": {"type": "String"}}},
+  "@trialBannerWarning": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "trialBannerCalm": "{time} of Premium · Enjoying unlimited {mascot}s? Keep them after.",
-  "@trialBannerCalm": {"placeholders": {"mascot": {"type": "String"}, "time": {"type": "String"}}},
+  "@trialBannerCalm": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "trialKeepPremium": "Keep Premium",
   "@trialKeepPremium": {},
   "trialWhenEnds": "When your trial ends:",
   "@trialWhenEnds": {},
   "trialLockMochis": "🔒 Extra {mascot}s locked (you keep 1 free)",
-  "@trialLockMochis": {"placeholders": {"mascot": {"type": "String"}}},
+  "@trialLockMochis": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "trialLockChat": "💬 Chat capped at 80/day (was unlimited)",
   "@trialLockChat": {},
   "trialLockQuiz": "📊 Advanced quiz & study plan limited",
@@ -5198,9 +5561,21 @@
   "trialWelcomeSubtitle": "No card needed. We'll remind you before it ends.",
   "@trialWelcomeSubtitle": {},
   "trialWelcomePerk1Title": "Unlimited {mascot}s",
-  "@trialWelcomePerk1Title": {"placeholders": {"mascot": {"type": "String"}}},
+  "@trialWelcomePerk1Title": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "trialWelcomePerk1Sub": "One {mascot} for every subject you study",
-  "@trialWelcomePerk1Sub": {"placeholders": {"mascot": {"type": "String"}}},
+  "@trialWelcomePerk1Sub": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "trialWelcomePerk2Title": "Unlimited chat",
   "@trialWelcomePerk2Title": {},
   "trialWelcomePerk2Sub": "Ask anything, any time — no daily limit",
@@ -5216,21 +5591,63 @@
   "trialExpiredTitle": "Your free week is up! ⏰",
   "@trialExpiredTitle": {},
   "trialExpiredBody": "You still have all your {mascot}s — nothing was deleted. Subscribe to keep them all, or pick one to stay free.",
-  "@trialExpiredBody": {"placeholders": {"mascot": {"type": "String"}}},
+  "@trialExpiredBody": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "trialExpiredKeepAll": "⭐ Keep all your {mascot}s",
-  "@trialExpiredKeepAll": {"placeholders": {"mascot": {"type": "String"}}},
+  "@trialExpiredKeepAll": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "trialExpiredPerks": "Unlimited {mascot}s, unlimited chat, full flashcards & quizzes.",
-  "@trialExpiredPerks": {"placeholders": {"mascot": {"type": "String"}}},
+  "@trialExpiredPerks": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "trialExpiredUpTo4Kids": "up to 4 kids",
   "@trialExpiredUpTo4Kids": {},
   "trialExpiredOrContinue": "Or — continue free with 1 {mascot}",
-  "@trialExpiredOrContinue": {"placeholders": {"mascot": {"type": "String"}}},
+  "@trialExpiredOrContinue": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "trialExpiredPickBody": "Choose which {mascot} stays active. The rest are locked (🔒) but not deleted — subscribing restores them instantly.",
-  "@trialExpiredPickBody": {"placeholders": {"mascot": {"type": "String"}}},
+  "@trialExpiredPickBody": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "trialExpiredContinueWith": "Continue free with {name}",
-  "@trialExpiredContinueWith": {"placeholders": {"name": {"type": "String"}}},
+  "@trialExpiredContinueWith": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "trialKeeperFallback": "1 {mascot}",
-  "@trialKeeperFallback": {"placeholders": {"mascot": {"type": "String"}}},
+  "@trialKeeperFallback": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "subPlansChooseTitle": "Choose your plan",
   "@subPlansChooseTitle": {},
   "subPlansLoadError": "Could not load subscription info. Try again.",
@@ -5248,7 +5665,13 @@
   "subPlansProFeat1": "100 AI messages / day",
   "@subPlansProFeat1": {},
   "subPlansProFeat2": "Up to 5 {mascot}s",
-  "@subPlansProFeat2": {"placeholders": {"mascot": {"type": "String"}}},
+  "@subPlansProFeat2": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "subPlansProFeat3": "Quiz & flashcards",
   "@subPlansProFeat3": {},
   "subPlansProFeat4": "Homework photo scan",
@@ -5256,7 +5679,13 @@
   "subPlansMaxFeat1": "Unlimited AI messages",
   "@subPlansMaxFeat1": {},
   "subPlansMaxFeat2": "Unlimited {mascot}s",
-  "@subPlansMaxFeat2": {"placeholders": {"mascot": {"type": "String"}}},
+  "@subPlansMaxFeat2": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "subPlansMaxFeat3": "Sonnet model for complex questions",
   "@subPlansMaxFeat3": {},
   "subPlansMaxFeat4": "All Pro features",
@@ -5282,15 +5711,42 @@
   "subPlansAnnual": "Annual  (save ~34%)",
   "@subPlansAnnual": {},
   "subPlansFreeFeatures": "20 messages/day · 1 {mascot} · basic features",
-  "@subPlansFreeFeatures": {"placeholders": {"mascot": {"type": "String"}}},
+  "@subPlansFreeFeatures": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "subPlansCentreBanner": "⭐ Premium via your centre",
   "@subPlansCentreBanner": {},
   "subPlansHeaderCentre": "Your Premium comes from your centre. Enjoy unlimited chat and {mascot}s!",
-  "@subPlansHeaderCentre": {"placeholders": {"mascot": {"type": "String"}}},
+  "@subPlansHeaderCentre": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "subPlansHeaderTrial": "Your free trial ends in {days, plural, one{1 day} other{{days} days}}. Subscribe to keep all your {mascot}s.",
-  "@subPlansHeaderTrial": {"placeholders": {"days": {"type": "int"}, "mascot": {"type": "String"}}},
+  "@subPlansHeaderTrial": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "subPlansHeaderPremium": "You're on {tier}. Manage or cancel anytime on the web.",
-  "@subPlansHeaderPremium": {"placeholders": {"tier": {"type": "String"}}},
+  "@subPlansHeaderPremium": {
+    "placeholders": {
+      "tier": {
+        "type": "String"
+      }
+    }
+  },
   "subPlansHeaderFree": "Start with a 7-day free trial. Cancel anytime.",
   "@subPlansHeaderFree": {},
   "subPlansManageIntro": "Manage your plan, update your card, or cancel anytime on the Apalchi website.",
@@ -5298,7 +5754,13 @@
   "subPlansManageOnWeb": "Manage on web",
   "@subPlansManageOnWeb": {},
   "paywallHeadCreateTutor": "Want more {mascot}s?",
-  "@paywallHeadCreateTutor": {"placeholders": {"mascot": {"type": "String"}}},
+  "@paywallHeadCreateTutor": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "paywallHeadUpload": "Need more uploads?",
   "@paywallHeadUpload": {},
   "paywallHeadCompile": "Compiled all your chapters",
@@ -5318,11 +5780,29 @@
   "paywallHeadDefault": "Unlock Apalchi Premium",
   "@paywallHeadDefault": {},
   "paywallSubCreateTutor": "Free users get 1 {mascot}. Sign up for premium for unlimited {mascot}s so each subject gets its own {mascot}. Or, level up to level 5 to unlock your next {mascot} slot!",
-  "@paywallSubCreateTutor": {"placeholders": {"mascot": {"type": "String"}}},
+  "@paywallSubCreateTutor": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "paywallSubUpload": "Uploads are unlimited — free or premium. The gate is how many {mascot}s you can have. Premium gives you one per subject.",
-  "@paywallSubUpload": {"placeholders": {"mascot": {"type": "String"}}},
+  "@paywallSubUpload": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "paywallSubCompile": "Big documents split into chapters so you pick what {mascot} reads. Free plans include a handful of chapter compiles a month; premium plans give you many more — reset on a rolling 30 days.",
-  "@paywallSubCompile": {"placeholders": {"mascot": {"type": "String"}}},
+  "@paywallSubCompile": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "paywallSubChat": "Free users get 20 chats a day. Pro lifts the cap to 100; Max and above remove it entirely.",
   "@paywallSubChat": {},
   "paywallSubParent": "Parents track progress, set goals, and read weekly reports.",
@@ -5336,9 +5816,21 @@
   "paywallSubAddStudent": "Family plan supports up to 4 students. Centre plan supports up to 15 students.",
   "@paywallSubAddStudent": {},
   "paywallSubDefault": "Get everything Apalchi has to offer — unlimited {mascot}s, family sharing, premium analytics.",
-  "@paywallSubDefault": {"placeholders": {"mascot": {"type": "String"}}},
+  "@paywallSubDefault": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "paywallPerk1": "Unlimited {mascot}s + uploads",
-  "@paywallPerk1": {"placeholders": {"mascot": {"type": "String"}}},
+  "@paywallPerk1": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "paywallPerk2": "Unlimited daily chats",
   "@paywallPerk2": {},
   "paywallPerk3": "Family sharing — up to 4 kids",
@@ -5354,13 +5846,25 @@
   "createTutorLanguageLabel": "TEACHING LANGUAGE",
   "@createTutorLanguageLabel": {},
   "createTutorLanguageHint": "{name} will teach and chat with you in this language.",
-  "@createTutorLanguageHint": {"placeholders": {"name": {"type": "String"}}},
+  "@createTutorLanguageHint": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "avatarLanguageMenuLabel": "Teaching language",
   "@avatarLanguageMenuLabel": {},
   "avatarLanguageTitle": "Teaching language",
   "@avatarLanguageTitle": {},
   "avatarLanguageBody": "{mascot} generates new lessons, quizzes and chat in this language. Existing material keeps the language it was created in — recompile to regenerate it.",
-  "@avatarLanguageBody": {"placeholders": {"mascot": {"type": "String"}}},
+  "@avatarLanguageBody": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "avatarLanguageSave": "Save",
   "@avatarLanguageSave": {},
   "avatarLanguageSaveError": "Could not save the teaching language. Please try again.",
@@ -5420,21 +5924,51 @@
   "dailyGoalUnitMin": "min",
   "@dailyGoalUnitMin": {},
   "dailyGoalUnitQuiz": "{count, plural, one{quiz} other{quizzes}}",
-  "@dailyGoalUnitQuiz": {"placeholders": {"count": {"type": "int"}}},
+  "@dailyGoalUnitQuiz": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "dailyGoalVerbXp": "XP earned today",
   "@dailyGoalVerbXp": {},
   "dailyGoalVerbMinutes": "minutes today",
   "@dailyGoalVerbMinutes": {},
   "dailyGoalVerbQuiz": "{count, plural, one{daily quiz} other{quizzes today}}",
-  "@dailyGoalVerbQuiz": {"placeholders": {"count": {"type": "int"}}},
+  "@dailyGoalVerbQuiz": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "dailyGoalMet": "Goal",
   "@dailyGoalMet": {},
   "dailyGoalRemaining": "/ {target} {unit}",
-  "@dailyGoalRemaining": {"placeholders": {"target": {"type": "int"}, "unit": {"type": "String"}}},
+  "@dailyGoalRemaining": {
+    "placeholders": {
+      "target": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
   "dailyGoalCompleteStreak": "Goal complete! Streak safe 🔥",
   "@dailyGoalCompleteStreak": {},
   "dailyGoalProgressOf": "{pct}% of your {verb}",
-  "@dailyGoalProgressOf": {"placeholders": {"pct": {"type": "int"}, "verb": {"type": "String"}}},
+  "@dailyGoalProgressOf": {
+    "placeholders": {
+      "pct": {
+        "type": "int"
+      },
+      "verb": {
+        "type": "String"
+      }
+    }
+  },
   "createTutorAgeLabel": "AGE",
   "@createTutorAgeLabel": {},
   "createTutorExamPrep": "Examination Preparation",
@@ -5456,7 +5990,13 @@
   "uploadTipPdfText": "PDFs need selectable text. A scanned, image-only PDF can't be read — photograph the pages instead.",
   "@uploadTipPdfText": {},
   "uploadTipSectionReadsWell": "{mascot} reads these well",
-  "@uploadTipSectionReadsWell": {"placeholders": {"mascot": {"type": "String"}}},
+  "@uploadTipSectionReadsWell": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "uploadTipTypedText": "Typed or printed text, clean PDFs, and screenshots.",
   "@uploadTipTypedText": {},
   "uploadTipNeatHandwriting": "Neat handwriting — clear, reasonably large, dark ink.",
@@ -5478,7 +6018,13 @@
   "uploadTipSectionCheck": "One quick check",
   "@uploadTipSectionCheck": {},
   "uploadTipGlanceCheck": "After a photo or handwriting, glance at what {mascot} read — if something looks off, retake or type it.",
-  "@uploadTipGlanceCheck": {"placeholders": {"mascot": {"type": "String"}}},
+  "@uploadTipGlanceCheck": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "uploadTipHide": "Hide",
   "@uploadTipHide": {},
   "uploadTipWhatReadsBest": "What reads best?",
@@ -5522,7 +6068,13 @@
   "uploadProcessing": "Processing...",
   "@uploadProcessing": {},
   "uploadHeroSpeechSubject": "Teach me your {subject} material!",
-  "@uploadHeroSpeechSubject": {"placeholders": {"subject": {"type": "String"}}},
+  "@uploadHeroSpeechSubject": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
   "uploadHeroSpeechGeneric": "Teach me your material!",
   "@uploadHeroSpeechGeneric": {},
   "uploadTabType": "Type",
@@ -5564,13 +6116,31 @@
   "ocrItemGraphs": "Graphs & charts",
   "@ocrItemGraphs": {},
   "ocrNoteGraphs": "{mascot} may read labels but cannot read bar heights, line values, or data points.",
-  "@ocrNoteGraphs": {"placeholders": {"mascot": {"type": "String"}}},
+  "@ocrNoteGraphs": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "ocrActionGraphs": "Tell {mascot} the numbers yourself",
-  "@ocrActionGraphs": {"placeholders": {"mascot": {"type": "String"}}},
+  "@ocrActionGraphs": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "ocrItemGeometry": "Geometry figures",
   "@ocrItemGeometry": {},
   "ocrNoteGeometry": "{mascot} can't measure a drawing — it can't see angles or lengths from lines on paper.",
-  "@ocrNoteGeometry": {"placeholders": {"mascot": {"type": "String"}}},
+  "@ocrNoteGeometry": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "ocrActionGeometry": "Type the sides & angles instead",
   "@ocrActionGeometry": {},
   "ocrItemCursive": "Cursive handwriting",
@@ -5628,7 +6198,13 @@
   "ocrTrickyTables": "Tables",
   "@ocrTrickyTables": {},
   "chapterCompileCount": "Compile ({count})",
-  "@chapterCompileCount": {"placeholders": {"count": {"type": "int"}}},
+  "@chapterCompileCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "chapterCompile": "Compile",
   "@chapterCompile": {},
   "chapterStateCompiled": "✓ Compiled",
@@ -5644,25 +6220,94 @@
   "raritySecret": "Secret",
   "@raritySecret": {},
   "shopOddsCommons": "{count} commons = {pct}% each",
-  "@shopOddsCommons": {"placeholders": {"count": {"type": "int"}, "pct": {"type": "int"}}},
+  "@shopOddsCommons": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "pct": {
+        "type": "int"
+      }
+    }
+  },
   "shopOddsNamed": "{rarity} ({name}) = {pct}%",
-  "@shopOddsNamed": {"placeholders": {"rarity": {"type": "String"}, "name": {"type": "String"}, "pct": {"type": "int"}}},
+  "@shopOddsNamed": {
+    "placeholders": {
+      "rarity": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      },
+      "pct": {
+        "type": "int"
+      }
+    }
+  },
   "mochiNamePencil": "Pencil {mascot}",
-  "@mochiNamePencil": {"placeholders": {"mascot": {"type": "String"}}},
+  "@mochiNamePencil": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "mochiNameScience": "Science {mascot}",
-  "@mochiNameScience": {"placeholders": {"mascot": {"type": "String"}}},
+  "@mochiNameScience": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "mochiNamePe": "PE {mascot}",
-  "@mochiNamePe": {"placeholders": {"mascot": {"type": "String"}}},
+  "@mochiNamePe": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "mochiNameArt": "Art {mascot}",
-  "@mochiNameArt": {"placeholders": {"mascot": {"type": "String"}}},
+  "@mochiNameArt": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "mochiNameLunchbox": "Lunch Box {mascot}",
-  "@mochiNameLunchbox": {"placeholders": {"mascot": {"type": "String"}}},
+  "@mochiNameLunchbox": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "mochiNameLibrary": "Library {mascot}",
-  "@mochiNameLibrary": {"placeholders": {"mascot": {"type": "String"}}},
+  "@mochiNameLibrary": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "mochiNameHeadmaster": "Headmaster {mascot}",
-  "@mochiNameHeadmaster": {"placeholders": {"mascot": {"type": "String"}}},
+  "@mochiNameHeadmaster": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "mochiNameGoldstar": "Gold Star {mascot}",
-  "@mochiNameGoldstar": {"placeholders": {"mascot": {"type": "String"}}},
+  "@mochiNameGoldstar": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "inviteShowQr": "Show QR",
   "@inviteShowQr": {},
   "inviteHideQr": "Hide QR",
@@ -5674,9 +6319,21 @@
   "mochiTip3": "Get one wrong? I bring it back till it clicks.",
   "@mochiTip3": {},
   "mochiTip4": "One subject per {mascot} keeps my answers sharp.",
-  "@mochiTip4": {"placeholders": {"mascot": {"type": "String"}}},
+  "@mochiTip4": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "mochiTip5": "Your notes → your {mascot}. Nothing generic here.",
-  "@mochiTip5": {"placeholders": {"mascot": {"type": "String"}}},
+  "@mochiTip5": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "mochiTip6": "Hard topics come back. Easy ones get spaced out. No wasted time.",
   "@mochiTip6": {},
   "mochiTip7": "I track what trips you up — so we can fix it together.",
@@ -5710,7 +6367,13 @@
   "splashHero6": "Study with someone who gets your syllabus.",
   "@splashHero6": {},
   "splashSub6": "One {mascot}, one subject — nothing gets fuzzy.",
-  "@splashSub6": {"placeholders": {"mascot": {"type": "String"}}},
+  "@splashSub6": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "splashHero7": "I remember how you learn.",
   "@splashHero7": {},
   "splashSub7": "Get it wrong once, and I'll bring it back till it clicks.",
@@ -5718,11 +6381,63 @@
   "splashHero8": "Looking it up is so last season.",
   "@splashHero8": {},
   "splashSub8": "{mascot} saw nothing. 🫣",
-  "@splashSub8": {"placeholders": {"mascot": {"type": "String"}}},
+  "@splashSub8": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "noNotesCentreReminder": "This class doesn't have notes yet. Ask your teacher to add some so {mascot} can help! 📚",
-  "@noNotesCentreReminder": {"placeholders": {"mascot": {"type": "String"}}},
+  "@noNotesCentreReminder": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "flashcardUploadNotesCta": "Upload notes or a document for this {mascot} and cards will be made automatically.",
-  "@flashcardUploadNotesCta": {"placeholders": {"mascot": {"type": "String"}}},
+  "@flashcardUploadNotesCta": {
+    "placeholders": {
+      "mascot": {
+        "type": "String"
+      }
+    }
+  },
   "mochiGeneratingDefaultStep": "Working on it…",
-  "@mochiGeneratingDefaultStep": {}
+  "@mochiGeneratingDefaultStep": {},
+  "moderationSheetTitle": "Report or block",
+  "moderationReport": "Report this",
+  "moderationReportHint": "We'll review it. Nothing changes for you right now.",
+  "moderationReportSent": "Thanks — we’ll take a look.",
+  "moderationBlock": "Block {name}",
+  "@moderationBlock": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "moderationBlockHint": "You won't see their notes or name. They stay in the group.",
+  "moderationBlocked": "Blocked {name}",
+  "@moderationBlocked": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "blockedListTitle": "Blocked people",
+  "blockedListEmpty": "You haven't blocked anyone.",
+  "blockedListUnblock": "Unblock",
+  "blockedListUnblocked": "Unblocked {name}",
+  "@blockedListUnblocked": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "moderationReportGroup": "Report this group",
+  "blockedListLoadFailed": "We couldn't load your blocked list."
 }

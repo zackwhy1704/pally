@@ -8911,6 +8911,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Working on it…'**
   String get mochiGeneratingDefaultStep;
+
+  /// No description provided for @moderationSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report or block'**
+  String get moderationSheetTitle;
+
+  /// No description provided for @moderationReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this'**
+  String get moderationReport;
+
+  /// No description provided for @moderationReportHint.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll review it. Nothing changes for you right now.'**
+  String get moderationReportHint;
+
+  /// No description provided for @moderationReportSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks — we’ll take a look.'**
+  String get moderationReportSent;
+
+  /// No description provided for @moderationBlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Block {name}'**
+  String moderationBlock(String name);
+
+  /// No description provided for @moderationBlockHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You won\'t see their notes or name. They stay in the group.'**
+  String get moderationBlockHint;
+
+  /// No description provided for @moderationBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked {name}'**
+  String moderationBlocked(String name);
+
+  /// No description provided for @blockedListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked people'**
+  String get blockedListTitle;
+
+  /// No description provided for @blockedListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t blocked anyone.'**
+  String get blockedListEmpty;
+
+  /// No description provided for @blockedListUnblock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock'**
+  String get blockedListUnblock;
+
+  /// No description provided for @blockedListUnblocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblocked {name}'**
+  String blockedListUnblocked(String name);
+
+  /// No description provided for @moderationReportGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this group'**
+  String get moderationReportGroup;
+
+  /// No description provided for @blockedListLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your blocked list.'**
+  String get blockedListLoadFailed;
 }
 
 class _AppLocalizationsDelegate

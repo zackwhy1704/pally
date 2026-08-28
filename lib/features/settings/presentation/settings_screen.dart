@@ -255,6 +255,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   /// Opens the re-auth + grace deletion flow. (Replaces the old bearer-only
   /// immediate DELETE /auth/account — now 410 GONE — which purged instantly with
   /// no re-auth and no restore window.)
+  /// Guideline 1.2: blocking must be reversible, and reversibility is useless
+  /// if a student cannot find who they blocked.
+  void _openBlockedUsers() => context.push('/settings/blocked');
+
   void _confirmDeleteAccount() => context.push('/settings/delete-account');
 
   @override
@@ -487,6 +491,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     size: 20, color: AppColors.text3),
                 onTap: _confirmSignOut,
                 labelColor: AppColors.coral,
+              ),
+              const Divider(height: 1, color: AppColors.outline),
+              // Guideline 1.2: the unblock surface must be findable, or a block
+              // is a one-way trap.
+              _TappableTile(
+                icon: Icons.person_off_outlined,
+                label: l.blockedListTitle,
+                trailing: const Icon(Icons.chevron_right_rounded,
+                    size: 20, color: AppColors.text3),
+                onTap: _openBlockedUsers,
               ),
               const Divider(height: 1, color: AppColors.outline),
               _TappableTile(

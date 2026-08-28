@@ -43,8 +43,6 @@
 	<string>Apalchi needs camera access to read your homework questions</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Apalchi uses Face ID to unlock your account quickly and securely</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Apalchi does not use your location for any feature. This permission is only referenced by an analytics SDK and your location is never collected or shared.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Apalchi uses speech recognition to turn what you say into text. Your voice isn't saved.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>

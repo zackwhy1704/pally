@@ -5417,4 +5417,51 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mochiGeneratingDefaultStep => 'Working on it…';
+
+  @override
+  String get moderationSheetTitle => 'Report or block';
+
+  @override
+  String get moderationReport => 'Report this';
+
+  @override
+  String get moderationReportHint =>
+      'We\'ll review it. Nothing changes for you right now.';
+
+  @override
+  String get moderationReportSent => 'Thanks — we’ll take a look.';
+
+  @override
+  String moderationBlock(String name) {
+    return 'Block $name';
+  }
+
+  @override
+  String get moderationBlockHint =>
+      'You won\'t see their notes or name. They stay in the group.';
+
+  @override
+  String moderationBlocked(String name) {
+    return 'Blocked $name';
+  }
+
+  @override
+  String get blockedListTitle => 'Blocked people';
+
+  @override
+  String get blockedListEmpty => 'You haven\'t blocked anyone.';
+
+  @override
+  String get blockedListUnblock => 'Unblock';
+
+  @override
+  String blockedListUnblocked(String name) {
+    return 'Unblocked $name';
+  }
+
+  @override
+  String get moderationReportGroup => 'Report this group';
+
+  @override
+  String get blockedListLoadFailed => 'We couldn\'t load your blocked list.';
 }
