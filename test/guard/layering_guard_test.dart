@@ -79,6 +79,31 @@ String _rel(File f) => f.path.replaceFirst('lib/', '');
 void main() {
   final fetch = RegExp(r'dioProvider|DioException|\.get<|\.post<|\.put<|\.delete<');
 
+  // VACUOUS-PASS FLOOR. Every test below asserts an offender list is empty,
+  // which is only meaningful if files were actually read. If _dartFiles() ever
+  // returned nothing — a moved folder, a changed extension filter — all of them
+  // would pass while enforcing nothing. Directory('lib') THROWS when missing, so
+  // the wrong-working-directory case already fails loudly; this covers the
+  // quieter case where the scan silently matches zero files.
+  test('the scan actually reads the codebase', () {
+    final all = _dartFiles();
+    // ~319 non-generated Dart files today; 200 leaves room for real shrinkage.
+    expect(all.length, greaterThan(200),
+        reason: 'Layering scan found only ${all.length} Dart files — it is not '
+            'scanning lib/, so every "no offenders" result below is vacuous.');
+
+    // The screen subset is what the first test actually inspects; a filter that
+    // stopped matching *_screen.dart would leave the file count healthy while
+    // the screens-do-not-fetch check quietly enforced nothing.
+    final screens = all
+        .map(_rel)
+        .where((r) => r.contains('/presentation/') && r.endsWith('_screen.dart'))
+        .length;
+    expect(screens, greaterThan(30),
+        reason: 'Only $screens screen files matched — the screens-do-not-fetch '
+            'check would pass vacuously.');
+  });
+
   test('screens do not fetch (Dio/API belongs in view models)', () {
     final offenders = <String>[];
     for (final f in _dartFiles()) {

@@ -22,13 +22,24 @@ void main() {
     final json = jsonDecode(raw) as Map<String, dynamic>;
 
     final leaks = <String>[];
+    var inspected = 0;
     for (final entry in json.entries) {
       if (entry.key.startsWith('@')) continue; // ARB metadata, not a value
       final value = entry.value;
-      if (value is String && value.contains('Mochi')) {
+      if (value is! String) continue;
+      inspected++;
+      if (value.contains('Mochi')) {
         leaks.add('${entry.key}: "$value"');
       }
     }
+
+    // VACUOUS-PASS FLOOR. "No leaks" only means something if strings were
+    // actually inspected: an ARB that failed to parse into the expected shape,
+    // or a key-prefix filter that swallowed everything, would leave this list
+    // empty and the guard silently toothless. ~1,480 translated values today.
+    expect(inspected, greaterThan(500),
+        reason: 'Only $inspected zh values were inspected — app_zh.arb is not '
+            'being read as expected, so an empty leak list proves nothing.');
 
     expect(leaks, isEmpty,
         reason: 'zh strings must use {mascot} (or, where no placeholder '

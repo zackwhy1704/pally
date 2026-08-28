@@ -18,8 +18,10 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('no ScaffoldMessenger.of(context) in lib/ — every snackbar routes through the root key', () {
     final offenders = <String>[];
+    var scanned = 0;
     for (final entity in Directory('lib').listSync(recursive: true)) {
       if (entity is File && entity.path.endsWith('.dart')) {
+        scanned++;
         for (final line in entity.readAsStringSync().split('\n')) {
           final trimmed = line.trimLeft();
           // Skip comment lines (the helper's own docs mention the banned call by name).
@@ -32,6 +34,14 @@ void main() {
         }
       }
     }
+    // VACUOUS-PASS FLOOR. This guard asserts ZERO matches, which is exactly the
+    // result an empty scan produces. Without this, a filter that stopped
+    // matching .dart files would report a clean codebase forever. ~390 .dart
+    // files under lib/ today (generated ones included, since this scan reads
+    // them too).
+    expect(scanned, greaterThan(250),
+        reason: 'Snackbar scan read only $scanned files — it is not scanning '
+            'lib/, so "zero offenders" is meaningless.');
     expect(
       offenders,
       isEmpty,
