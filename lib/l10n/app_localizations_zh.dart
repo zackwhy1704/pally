@@ -5132,4 +5132,49 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get mochiGeneratingDefaultStep => '正在处理…';
+
+  @override
+  String get moderationSheetTitle => '举报或屏蔽';
+
+  @override
+  String get moderationReport => '举报';
+
+  @override
+  String get moderationReportHint => '我们会查看。目前对你没有影响。';
+
+  @override
+  String get moderationReportSent => '谢谢，我们会查看。';
+
+  @override
+  String moderationBlock(String name) {
+    return '屏蔽$name';
+  }
+
+  @override
+  String get moderationBlockHint => '你将看不到对方的笔记和名字。对方仍在小组中。';
+
+  @override
+  String moderationBlocked(String name) {
+    return '已屏蔽$name';
+  }
+
+  @override
+  String get blockedListTitle => '已屏蔽的人';
+
+  @override
+  String get blockedListEmpty => '你还没有屏蔽任何人。';
+
+  @override
+  String get blockedListUnblock => '取消屏蔽';
+
+  @override
+  String blockedListUnblocked(String name) {
+    return '已取消屏蔽$name';
+  }
+
+  @override
+  String get moderationReportGroup => '举报此小组';
+
+  @override
+  String get blockedListLoadFailed => '无法加载已屏蔽名单。';
 }

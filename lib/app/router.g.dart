@@ -22,6 +22,7 @@ List<RouteBase> get $appRoutes => [
       $teachMochiRoute,
       $studyPlanRoute,
       $settingsRoute,
+      $blockedUsersRoute,
       $deleteAccountRoute,
       $levelRoadmapRoute,
       $achievementsRoute,
@@ -560,6 +561,29 @@ extension $SettingsRouteExtension on SettingsRoute {
 
   String get location => GoRouteData.$location(
         '/settings',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $blockedUsersRoute => GoRouteData.$route(
+      path: '/settings/blocked',
+      factory: $BlockedUsersRouteExtension._fromState,
+    );
+
+extension $BlockedUsersRouteExtension on BlockedUsersRoute {
+  static BlockedUsersRoute _fromState(GoRouterState state) =>
+      const BlockedUsersRoute();
+
+  String get location => GoRouteData.$location(
+        '/settings/blocked',
       );
 
   void go(BuildContext context) => context.go(location);

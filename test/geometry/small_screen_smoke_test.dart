@@ -14,7 +14,7 @@ import 'package:pally/core/i18n/app_languages.dart';
 import 'package:pally/l10n/app_localizations.dart';
 import 'package:pally/features/auth/auth_state.dart';
 
-// ── Screens under audit (all 57 lib/features/**/*_screen.dart) ───────────────
+// ── Screens under audit (all 58 lib/features/**/*_screen.dart) ───────────────
 import 'package:pally/features/account_deletion/presentation/delete_account_screen.dart';
 import 'package:pally/features/app_update/force_update_screen.dart';
 import 'package:pally/features/assignments/presentation/assignment_compare_screen.dart';
@@ -76,7 +76,7 @@ import 'package:pally/shared/models/photo_question.dart';
 /// The glob count of lib/features/**/*_screen.dart. Every screen must be
 /// ENROLLED (pumped) or EXCLUDED (with a reason) — never silently skipped.
 /// Update ONLY when a screen file is genuinely added/removed.
-const int kScaffoldScreenCount = 57;
+const int kScaffoldScreenCount = 58;
 
 const _avatarId = 'av-1';
 
@@ -178,6 +178,12 @@ final List<_Enrolled> _enrolled = [
 ];
 
 final List<_Excluded> _excluded = [
+  const _Excluded('blocked_users_screen',
+      'Server-driven list with no local fixture: it loads GET /api/v1/blocks in '
+          'initState and renders a spinner until that resolves, so a pumped route '
+          'shows no stable layout to measure. Its geometry is a plain ListTile '
+          'list with no fixed widths. ENROLL IT once a dio override exists for '
+          'the geometry harness — excluded with a reason, not silently skipped.'),
   const _Excluded('trial_welcome_screen',
       'Not a Scaffold widget — TrialWelcomeScreen is a static helper class '
           '(maybeShow) that presents a modal bottom sheet; nothing to pump as a route.'),
@@ -333,7 +339,7 @@ void main() {
   const tall = Size(360, 850); // taller small phone
 
   group('registry accounts for every screen', () {
-    test('enrolled + excluded == glob count (57)', () {
+    test('enrolled + excluded == glob count (58)', () {
       expect(_enrolled.length + _excluded.length, kScaffoldScreenCount,
           reason: 'Every lib/features/**/*_screen.dart must be enrolled or '
               'explicitly excluded. New screens force a decision here.');

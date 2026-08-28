@@ -1468,5 +1468,18 @@
   "splashSub8": "{mascot}什么都没看到。🫣",
   "noNotesCentreReminder": "这个班级还没有笔记。请让老师添加一些，这样{mascot}才能帮到你！📚",
   "flashcardUploadNotesCta": "为这个{mascot}上传笔记或文档，卡片会自动生成。",
-  "mochiGeneratingDefaultStep": "正在处理…"
+  "mochiGeneratingDefaultStep": "正在处理…",
+  "moderationSheetTitle": "举报或屏蔽",
+  "moderationReport": "举报",
+  "moderationReportHint": "我们会查看。目前对你没有影响。",
+  "moderationReportSent": "谢谢，我们会查看。",
+  "moderationBlock": "屏蔽{name}",
+  "moderationBlockHint": "你将看不到对方的笔记和名字。对方仍在小组中。",
+  "moderationBlocked": "已屏蔽{name}",
+  "blockedListTitle": "已屏蔽的人",
+  "blockedListEmpty": "你还没有屏蔽任何人。",
+  "blockedListUnblock": "取消屏蔽",
+  "blockedListUnblocked": "已取消屏蔽{name}",
+  "moderationReportGroup": "举报此小组",
+  "blockedListLoadFailed": "无法加载已屏蔽名单。"
 }

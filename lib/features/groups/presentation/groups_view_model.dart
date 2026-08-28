@@ -337,4 +337,44 @@ class GroupDetailViewModel extends _$GroupDetailViewModel {
       _pendingAction = false;
     }
   }
+  /// Files a report against a NOTE or a USER (App Store Guideline 1.2).
+  ///
+  /// Exactly one of [targetUserId] / [targetNoteId] is sent — the backend stores
+  /// them in separate columns (`group_reports.target_user_id` /
+  /// `target_note_id`) so triage can tell "this person" from "this note".
+  ///
+  /// Reporting deliberately does NOT block: they are separate mechanisms.
+  Future<void> report({String? targetUserId, String? targetNoteId}) async {
+    final dio = ref.read(dioProvider);
+    await dio.post<dynamic>(
+      '/api/v1/groups/$groupId/report',
+      data: {
+        if (targetUserId != null) 'targetUserId': targetUserId,
+        if (targetNoteId != null) 'targetNoteId': targetNoteId,
+        'reason': 'OBJECTIONABLE',
+      },
+      options: Options(
+        sendTimeout: const Duration(seconds: 15),
+        receiveTimeout: const Duration(seconds: 15),
+      ),
+    );
+  }
+
+  /// Blocks a user, then refetches so their content disappears.
+  ///
+  /// The refetch is what makes this correct: the SERVER decides what is visible,
+  /// so we re-read rather than filtering the local list. A local filter would
+  /// leave the blocked student's notes sitting in memory on the device.
+  Future<void> block(String targetUserId) async {
+    final dio = ref.read(dioProvider);
+    await dio.post<dynamic>(
+      '/api/v1/blocks/$targetUserId',
+      options: Options(
+        sendTimeout: const Duration(seconds: 15),
+        receiveTimeout: const Duration(seconds: 15),
+      ),
+    );
+    ref.invalidateSelf();
+  }
+
 }

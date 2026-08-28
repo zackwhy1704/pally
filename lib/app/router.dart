@@ -30,6 +30,7 @@ import 'package:pally/features/referral/presentation/referral_screen.dart';
 import 'package:pally/features/centre/presentation/centre_join_screen.dart';
 import 'package:pally/features/join/presentation/join_screen.dart';
 import 'package:pally/features/invite/presentation/invite_screen.dart';
+import 'package:pally/features/groups/presentation/blocked_users_screen.dart';
 import 'package:pally/features/subscription/presentation/paywall_screen.dart';
 import 'package:pally/features/subscription/presentation/subscription_plans_screen.dart';
 import 'package:pally/features/subscription/presentation/subscription_return_screen.dart';
@@ -363,6 +364,14 @@ class SettingsRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const SettingsScreen();
+}
+
+@TypedGoRoute<BlockedUsersRoute>(path: '/settings/blocked')
+class BlockedUsersRoute extends GoRouteData {
+  const BlockedUsersRoute();
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const BlockedUsersScreen();
 }
 
 @TypedGoRoute<DeleteAccountRoute>(path: '/settings/delete-account')
