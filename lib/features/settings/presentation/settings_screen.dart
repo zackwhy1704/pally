@@ -836,6 +836,10 @@ class _SubscriptionTile extends ConsumerWidget {
                           AppColors.purple),
                     ),
                   ),
+                  // DORMANT: the whole upgrade button goes, not just its price.
+                  // A plan CTA that cannot complete a purchase is the 3.1.2
+                  // failure; hiding only the number leaves the dead end intact.
+                  if (monetizationLive(ref)) ...[
                   const SizedBox(height: AppSpacing.sm),
                   SizedBox(
                     width: double.infinity,
@@ -856,6 +860,7 @@ class _SubscriptionTile extends ConsumerWidget {
                           : l.settingsKeepPremium),
                     ),
                   ),
+                  ],
                 ],
               ),
             ),

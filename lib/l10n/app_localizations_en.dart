@@ -5464,4 +5464,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get blockedListLoadFailed => 'We couldn\'t load your blocked list.';
+
+  @override
+  String get plansUnavailable => 'Subscriptions aren\'t available right now.';
 }

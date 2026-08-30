@@ -24,6 +24,9 @@ class _TrialCountdownBannerState extends ConsumerState<TrialCountdownBanner> {
 
   @override
   Widget build(BuildContext context) {
+    // Dormant: a countdown toward a purchase that cannot happen is just a
+    // clock counting down to a locked door. Hidden entirely.
+    if (!monetizationLive(ref)) return const SizedBox.shrink();
     if (_dismissed) return const SizedBox.shrink();
     final trialAsync = ref.watch(trialStatusProvider);
     final trial = trialAsync.valueOrNull;

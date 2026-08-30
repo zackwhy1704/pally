@@ -156,6 +156,13 @@ class _WebUpgradeCtaState extends ConsumerState<WebUpgradeCta> {
 
   @override
   Widget build(BuildContext context) {
+    // DORMANT MONETIZATION: the WHOLE CTA disappears, not just its price.
+    // "Price hidden" still shows a plan button that cannot complete a purchase,
+    // which is the App Store 3.1.2 failure (title, length, price, Terms and
+    // privacy are all required wherever a subscription is offered). Nothing is
+    // offered here until an offering exists.
+    if (!monetizationLive(ref)) return const SizedBox.shrink();
+
     // On iOS the one-tap launch is hidden (App Store 3.1.1) UNTIL Apple grants
     // the External Link Account Entitlement, at which point the server flips
     // ios_external_link_enabled and the button appears. Android/host always show it.

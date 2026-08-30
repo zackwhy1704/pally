@@ -5177,4 +5177,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get blockedListLoadFailed => '无法加载已屏蔽名单。';
+
+  @override
+  String get plansUnavailable => '目前无法订阅。';
 }

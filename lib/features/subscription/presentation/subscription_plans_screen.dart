@@ -170,6 +170,30 @@ class _SubscriptionPlansScreenState
         // features only. Same guard WebUpgradeCta uses for the launch button.
         final allowPrice = allowPriceDisplay(ref);
 
+        // DORMANT: this route still exists (nothing is deleted) but must not
+        // present tier names, prices or plan CTAs when no purchase can
+        // complete. Shows a plain unavailable state instead of the plan grid.
+        if (!monetizationLive(ref)) {
+          return Scaffold(
+            backgroundColor: AppColors.bg,
+            appBar: AppBar(
+              backgroundColor: AppColors.bg,
+              elevation: 0,
+              leading: const BackButton(),
+            ),
+            body: Center(
+              child: Padding(
+                padding: AppSpacing.card,
+                child: Text(
+                  AppLocalizations.of(context).plansUnavailable,
+                  style: AppTextStyles.body,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          );
+        }
+
         return Scaffold(
           backgroundColor: AppColors.bg,
           appBar: AppBar(
