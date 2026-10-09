@@ -65,7 +65,7 @@ jobs:
             --split-debug-info=build/symbols
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: app-release
           path: build/app/outputs/flutter-apk/app-release.apk
